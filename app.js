@@ -4664,7 +4664,14 @@ async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
 
   if ("serviceWorker" in navigator) {
-    try { await navigator.serviceWorker.register("./sw.js"); } catch (e) { /* ignore */ }
+    try {
+      const registration = await navigator.serviceWorker.register("./sw.js");
+      // Force une vérification de nouvelle version à chaque ouverture de
+      // l'application, plutôt que d'attendre la vérification automatique
+      // et différée du navigateur — pour que les corrections arrivent
+      // plus vite après une mise à jour du dépôt.
+      registration.update().catch(() => {});
+    } catch (e) { /* ignore */ }
   }
 
   await loadReferenceData();
