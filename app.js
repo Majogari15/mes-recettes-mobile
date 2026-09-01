@@ -2129,20 +2129,20 @@ async function openQrScanModal() {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const code = window.jsQR(imageData.data, imageData.width, imageData.height);
-    if (!code || !code.data) return false;
+    if (!code || !code.data) return "no_code";
     const items = decodeShoppingListFromQr(code.data);
     if (items && items.length) {
       cleanup();
       overlay.remove();
       confirmImportScannedShoppingList(items);
-      return true;
+      return "success";
     }
     const parsedRecipe = parseRecipeFromQrText(code.data);
     if (parsedRecipe) {
       cleanup();
       overlay.remove();
       confirmImportScannedRecipe(parsedRecipe);
-      return true;
+      return "success";
     }
     // Affiche le texte brut réellement décodé (tronqué) : plutôt que de
     // deviner encore à l'aveugle pourquoi il n'est pas reconnu, ça
@@ -2151,7 +2151,7 @@ async function openQrScanModal() {
     statusEl.innerHTML = "";
     statusEl.appendChild(el(`<div>${escapeHtml(t("qrscan_not_recognized"))}</div>`));
     statusEl.appendChild(el(`<div style="font-size:11px;margin-top:6px;word-break:break-word;white-space:pre-wrap;user-select:text;">${escapeHtml(preview)}</div>`));
-    return false;
+    return "not_recognized";
   }
 
   function tick() {
@@ -2172,7 +2172,8 @@ async function openQrScanModal() {
 
   manualBtn.addEventListener("click", () => {
     try {
-      processFrame();
+      const result = processFrame();
+      if (result === "no_code") statusEl.textContent = t("qrscan_no_code_found");
     } catch (e) {
       statusEl.textContent = (e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e));
     }

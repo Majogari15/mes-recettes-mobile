@@ -119,14 +119,16 @@ haut).
 Contrairement aux autres fonctionnalités, celle-ci dépend de services
 tiers gratuits pour contourner une restriction de sécurité des
 navigateurs (CORS) — sans eux, il serait impossible de récupérer le
-contenu d'un autre site directement depuis le téléphone. Trois services
+contenu d'un autre site directement depuis le téléphone. Cinq services
 sont essayés automatiquement l'un après l'autre en cas d'échec
-(`allorigins.win`, `codetabs.com`, `cors.x2u.in`), ce qui règle le
-problème "ça marche une fois sur deux" : si l'un est temporairement
-indisponible ou saturé, le suivant prend le relais sans action de votre
-part. Deux conséquences à connaître :
+(`cors.x2u.in`, `corsfix.com`, `cors.lol`, `allorigins.win`,
+`codetabs.com`), ce qui règle le problème "ça marche une fois sur
+deux" : si l'un est temporairement indisponible ou saturé, le suivant
+prend le relais sans action de votre part — utile notamment lors de
+pannes ponctuelles (déjà observées sur deux de ces services
+simultanément). Deux conséquences à connaître :
 - L'adresse que vous collez est transmise à ces services intermédiaires
-- Si les trois deviennent indisponibles un jour, cette fonctionnalité
+- Si les cinq deviennent indisponibles un jour, cette fonctionnalité
   cesserait de fonctionner jusqu'à ce qu'on la fasse pointer vers
   d'autres services équivalents
 
