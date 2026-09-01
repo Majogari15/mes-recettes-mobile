@@ -1889,7 +1889,13 @@ async function openQrCodeModal(recipe, persons) {
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
 
-  const lines = [recipe.name, "", t("qrcode_ingredients_heading", { persons: String(persons) })];
+  const lines = [recipe.name, ""];
+  if (recipe.prepTime) lines.push(`${t("pdf_prep_label")} : ${recipe.prepTime} ${t("recipe_min")}`);
+  if (recipe.cookTime) lines.push(`${t("pdf_cook_label")} : ${recipe.cookTime} ${t("recipe_min")}`);
+  if (recipe.allergens && recipe.allergens.length) {
+    lines.push(`${t("recipe_allergens")} : ${recipe.allergens.map(translateAllergen).join(", ")}`);
+  }
+  lines.push("", t("qrcode_ingredients_heading", { persons: String(persons) }));
   (recipe.ingredients || []).forEach((ing) => {
     const scaled = ing.quantity != null ? ing.quantity * persons : null;
     const qty = scaled != null ? `${fmtQty(scaled)} ${translateUnit(ing.unit)} ` : "";
@@ -1988,9 +1994,23 @@ function parseRecipeFromQrText(text) {
   const ingIdx = lines.findIndex((l) => ingredientMarker.test(l));
   if (ingIdx < 1) return null; // pas de section ingrédients reconnue, ou rien avant elle
   const name = lines[0];
+
+  // Les lignes entre le nom et la section ingrédients peuvent contenir
+  // le temps de préparation/cuisson et les allergènes, si présents à la
+  // génération — recherche tolérante (accepte français et anglais).
+  let prepTime = null, cookTime = null, allergens = [];
+  lines.slice(1, ingIdx).forEach((line) => {
+    const prepMatch = line.match(/pr[eé]paration\s*:\s*(\d+)/i) || line.match(/prep(?:aration)?\s*time\s*:\s*(\d+)/i);
+    if (prepMatch) prepTime = parseInt(prepMatch[1], 10);
+    const cookMatch = line.match(/cuisson\s*:\s*(\d+)/i) || line.match(/cook\s*time\s*:\s*(\d+)/i);
+    if (cookMatch) cookTime = parseInt(cookMatch[1], 10);
+    const allergenMatch = line.match(/allerg[eè]nes?\s*:\s*(.+)/i);
+    if (allergenMatch) allergens = allergenMatch[1].split(",").map((a) => a.trim()).filter(Boolean);
+  });
+
   const ingredients = lines.slice(ingIdx + 1).map(parseQrIngredientLine).filter((i) => i.name);
   if (!ingredients.length) return null;
-  return { name, ingredients };
+  return { name, ingredients, prepTime, cookTime, allergens };
 }
 
 // Retire des articles (depuis la fin) jusqu'à ce que le contenu tienne
@@ -2268,10 +2288,24 @@ async function confirmImportScannedRecipe(parsed) {
     quantity: i.quantity,
     unit: i.unit,
   }));
-  state.formAllergens = [];
+  // Fait correspondre les allergènes lus (potentiellement traduits) à
+  // la liste interne (toujours en français) — ignore silencieusement
+  // ceux qui ne correspondent à rien de connu plutôt que d'échouer.
+  state.formAllergens = (parsed.allergens || [])
+    .map((name) => {
+      const key = normalize(name);
+      return ALLERGEN_OPTIONS.find((a) => normalize(a) === key || normalize(translateAllergen(a)) === key);
+    })
+    .filter(Boolean);
   state.formPhoto = null;
   state.screen = "form";
-  state._importPrefill = { name: parsed.name, description: "", defaultPersons: 4 };
+  state._importPrefill = {
+    name: parsed.name,
+    description: "",
+    defaultPersons: 4,
+    prepTime: parsed.prepTime,
+    cookTime: parsed.cookTime,
+  };
   render();
 }
 
