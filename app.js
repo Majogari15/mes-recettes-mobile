@@ -1848,6 +1848,12 @@ function loadQrCodeLib() {
 // essaie donc des tailles croissantes jusqu'à ce qu'une soit assez
 // grande pour contenir le texte.
 function generateQrCodeImgTag(text) {
+  // Sans ce réglage, la bibliothèque n'encode pas en UTF-8 par défaut et
+  // corrompt les caractères accentués (é, è, à...) — ce qui cassait la
+  // reconnaissance automatique du mot "Ingrédients" au moment du scan.
+  if (window.qrcode.stringToBytesFuncs && window.qrcode.stringToBytesFuncs["UTF-8"]) {
+    window.qrcode.stringToBytes = window.qrcode.stringToBytesFuncs["UTF-8"];
+  }
   let lastError = null;
   for (let typeNumber = 1; typeNumber <= 40; typeNumber++) {
     try {
@@ -3817,11 +3823,16 @@ function parseIngredientString(str) {
 // automatiquement avant d'abandonner. Corrige le comportement "ça marche
 // une fois sur deux" observé avec un seul service.
 const CORS_PROXIES = [
-  (url) => "https://cors.x2u.in/" + url,
-  (url) => "https://corsfix.com/" + url,
-  (url) => "https://api.cors.lol/?url=" + encodeURIComponent(url),
   (url) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
   (url) => "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(url),
+  // Ces deux services attendent l'adresse cible collée directement à la
+  // fin (pas en paramètre nommé) — sans encodage, un "?" ou "&" dans
+  // l'adresse d'origine (courant sur beaucoup de sites de recettes)
+  // pouvait être mal interprété par le serveur du proxy lui-même et
+  // provoquer une erreur 404.
+  (url) => "https://cors.x2u.in/" + encodeURIComponent(url),
+  (url) => "https://api.cors.lol/?url=" + encodeURIComponent(url),
+  (url) => "https://corsfix.com/" + encodeURIComponent(url),
 ];
 
 function fetchWithTimeout(url, ms) {
