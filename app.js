@@ -1968,7 +1968,11 @@ function parseQrIngredientLine(line) {
 function parseRecipeFromQrText(text) {
   const lines = (text || "").split("\n").map((l) => l.trim()).filter(Boolean);
   if (lines.length < 2) return null;
-  const ingredientMarker = /ingr[ée]dients?|ingredients|ingredientes|zutaten/i;
+  // Volontairement très permissif ("ingr" seul, sans exiger la suite) :
+  // si l'encodage du caractère accentué a été corrompu quelque part
+  // entre la génération et la lecture du QR code, seul le début du mot
+  // ("Ingr", toujours en ASCII simple) est garanti de rester intact.
+  const ingredientMarker = /ingr|zutat/i;
   const ingIdx = lines.findIndex((l) => ingredientMarker.test(l));
   if (ingIdx < 1) return null; // pas de section ingrédients reconnue, ou rien avant elle
   const name = lines[0];
@@ -2140,7 +2144,13 @@ async function openQrScanModal() {
       confirmImportScannedRecipe(parsedRecipe);
       return true;
     }
-    statusEl.textContent = t("qrscan_not_recognized");
+    // Affiche le texte brut réellement décodé (tronqué) : plutôt que de
+    // deviner encore à l'aveugle pourquoi il n'est pas reconnu, ça
+    // permet de voir exactement ce que la caméra a lu.
+    const preview = code.data.length > 200 ? code.data.slice(0, 200) + "…" : code.data;
+    statusEl.innerHTML = "";
+    statusEl.appendChild(el(`<div>${escapeHtml(t("qrscan_not_recognized"))}</div>`));
+    statusEl.appendChild(el(`<div style="font-size:11px;margin-top:6px;word-break:break-word;white-space:pre-wrap;user-select:text;">${escapeHtml(preview)}</div>`));
     return false;
   }
 
@@ -2162,8 +2172,7 @@ async function openQrScanModal() {
 
   manualBtn.addEventListener("click", () => {
     try {
-      const found = processFrame();
-      if (!found && !stopped) statusEl.textContent = t("qrscan_not_recognized");
+      processFrame();
     } catch (e) {
       statusEl.textContent = (e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e));
     }
