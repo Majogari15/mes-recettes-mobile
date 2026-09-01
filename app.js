@@ -4046,20 +4046,29 @@ function parseIsoDurationToMinutes(duration) {
    ====================================================================== */
 function parseOcrRecipeText(rawText) {
   const lines = (rawText || "").split("\n").map((l) => l.trim()).filter(Boolean);
-  if (!lines.length) return { name: "", ingredients: [], description: "" };
+  if (!lines.length) return { name: "", ingredients: [], description: "", prepTime: null, cookTime: null };
 
   const ingredientMarker = /^(ingr[ée]dients?|ingredients|ingredientes|zutaten)\s*:?\s*$/i;
   const instructionMarker = /^(pr[ée]paration|[ée]tapes|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\s*:?\s*$/i;
+  // Toute section qui doit arrêter la liste des ingrédients, pas
+  // seulement celle des étapes — "Ustensiles" par exemple, très courant
+  // juste après les ingrédients et avant la vraie section de
+  // préparation sur beaucoup de sites.
+  const sectionBoundaryMarker = /^(pr[ée]paration|[ée]tapes|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensiles?|utensils?|mat[ée]riel|equipment)\s*:?\s*$/i;
 
   const name = lines[0];
   const ingIdx = lines.findIndex((l) => ingredientMarker.test(l));
+  const boundaryIdx = lines.findIndex((l, i) => (ingIdx < 0 || i > ingIdx) && sectionBoundaryMarker.test(l));
   const instrIdx = lines.findIndex((l, i) => (ingIdx < 0 || i > ingIdx) && instructionMarker.test(l));
 
   let ingredientLines = [];
   let descriptionLines = [];
   if (ingIdx >= 0) {
-    const end = instrIdx >= 0 ? instrIdx : lines.length;
-    ingredientLines = lines.slice(ingIdx + 1, end);
+    const end = boundaryIdx >= 0 ? boundaryIdx : lines.length;
+    ingredientLines = lines.slice(ingIdx + 1, end)
+      // Repère de compteur "- personnes +" (choix du nombre de
+      // personnes sur la page), pas un ingrédient.
+      .filter((l) => !/^personnes?\s*[+\-]?$/i.test(l));
   }
   if (instrIdx >= 0) {
     descriptionLines = lines.slice(instrIdx + 1);
@@ -4076,7 +4085,18 @@ function parseOcrRecipeText(rawText) {
     .map(parseIngredientString)
     .filter((i) => i.name);
 
-  return { name, ingredients, description: descriptionLines.join("\n") };
+  // Les temps de préparation/cuisson apparaissent souvent après les
+  // ingrédients (pas avant) — recherche sur tout le texte plutôt que
+  // sur une zone précise.
+  let prepTime = null, cookTime = null;
+  lines.forEach((line) => {
+    const prepMatch = line.match(/pr[eé]paration\s*:\s*(\d+)/i) || line.match(/prep(?:aration)?\s*time\s*:\s*(\d+)/i);
+    if (prepMatch) prepTime = parseInt(prepMatch[1], 10);
+    const cookMatch = line.match(/cuisson\s*:\s*(\d+)/i) || line.match(/cook\s*time\s*:\s*(\d+)/i);
+    if (cookMatch) cookTime = parseInt(cookMatch[1], 10);
+  });
+
+  return { name, ingredients, description: descriptionLines.join("\n"), prepTime, cookTime };
 }
 
 let tesseractLibPromise = null;
@@ -4137,7 +4157,7 @@ function renderImportPhoto() {
       state.formAllergens = [];
       state.formPhoto = null;
       state.screen = "form";
-      state._importPrefill = { name: parsed.name, description: parsed.description, defaultPersons: 4 };
+      state._importPrefill = { name: parsed.name, description: parsed.description, defaultPersons: 4, prepTime: parsed.prepTime, cookTime: parsed.cookTime };
       render();
     } catch (err) {
       statusHolder.innerHTML = "";
@@ -4324,13 +4344,56 @@ async function fetchViaJinaReader(url) {
 // ligne, pour que le texte ressemble à ce que l'analyseur heuristique
 // (conçu pour du texte brut OCR) sait déjà traiter.
 function stripJinaMarkdownNoise(markdown) {
-  const lines = markdown.split("\n");
-  const contentStart = lines.findIndex((l) => /^markdown content:/i.test(l.trim()));
-  const relevant = contentStart >= 0 ? lines.slice(contentStart + 1) : lines;
-  return relevant
-    .map((l) => l.replace(/^#{1,6}\s*/, "").replace(/^[*\-•]\s+/, "").replace(/\*\*/g, "").trim())
-    .filter((l) => !/^\[.*\]\(.*\)$/.test(l)) // retire les lignes qui ne sont qu'un lien Markdown
-    .join("\n");
+  const rawLines = markdown.split("\n");
+  const contentMarkerIdx = rawLines.findIndex((l) => /^markdown content:/i.test(l.trim()));
+  let relevant = contentMarkerIdx >= 0 ? rawLines.slice(contentMarkerIdx + 1) : rawLines;
+
+  // Beaucoup de sites (bandeau de cookies, menu de navigation...) font
+  // précéder le vrai contenu par des centaines de lignes sans rapport.
+  // Le premier "vrai" titre (un seul "#", pas "##"/"###") est presque
+  // toujours le titre de la recette elle-même — on coupe tout ce qui
+  // précède d'un coup.
+  const h1Idx = relevant.findIndex((l) => /^#\s+\S/.test(l.trim()));
+  if (h1Idx > 0) relevant = relevant.slice(h1Idx);
+
+  // Nettoie chaque ligne (images, liens, ponctuation Markdown) avant
+  // de les regrouper.
+  const cleanedRawLines = relevant.map((l) => l
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[image[^\]]*\]/gi, "")
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/\*\*/g, "")
+    .replace(/\*/g, "")
+  );
+
+  // Sur certains sites (Marmiton notamment), un seul ingrédient est
+  // éclaté sur plusieurs lignes brutes (image, quantité, nom chacun
+  // séparément). On regroupe tout ce qui suit une puce ("- ...") en une
+  // seule "ligne logique", jusqu'à la puce ou le titre suivant.
+  const grouped = [];
+  let current = null;
+  cleanedRawLines.forEach((raw) => {
+    const trimmed = raw.trim();
+    if (!trimmed) return; // ligne vide : bruit de mise en page, ignorée
+    const headingMatch = trimmed.match(/^#{1,6}\s*(.*)$/);
+    const bulletMatch = trimmed.match(/^[-*•]\s*(?:\[x\]\s*)?(.*)$/i);
+
+    if (headingMatch) {
+      if (current !== null) grouped.push(current);
+      current = null;
+      grouped.push(headingMatch[1].trim());
+    } else if (bulletMatch) {
+      if (current !== null) grouped.push(current);
+      current = bulletMatch[1].trim();
+    } else if (current !== null) {
+      current = current.length ? current + " " + trimmed : trimmed;
+    } else {
+      grouped.push(trimmed);
+    }
+  });
+  if (current !== null) grouped.push(current);
+
+  return grouped.filter(Boolean).join("\n");
 }
 
 async function fetchRecipeFromUrl(url, onAttempt) {
@@ -4356,8 +4419,8 @@ async function fetchRecipeFromUrl(url, onAttempt) {
           description: parsedFromText.description,
           ingredients: parsedFromText.ingredients.map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) })),
           persons: 4,
-          prepTime: null,
-          cookTime: null,
+          prepTime: parsedFromText.prepTime,
+          cookTime: parsedFromText.cookTime,
           category: "Autre",
           photo: null,
         };
