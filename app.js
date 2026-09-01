@@ -1935,8 +1935,14 @@ function encodeShoppingListForQr(items) {
   return SHOPPING_QR_PREFIX + lines.join("\n");
 }
 function decodeShoppingListFromQr(text) {
-  if (!text || !text.startsWith(SHOPPING_QR_PREFIX)) return null;
-  const body = text.slice(SHOPPING_QR_PREFIX.length);
+  // Normalise les fins de ligne et les espaces superflus avant de
+  // comparer : le caractère exact de retour à la ligne peut varier
+  // légèrement selon l'encodage/décodage du QR code, même quand le
+  // texte affiché semble identique.
+  const normalized = (text || "").replace(/\r\n/g, "\n").trim();
+  const prefixCore = SHOPPING_QR_PREFIX.trim(); // "MESRECETTES_SHOPPING:1", sans le saut de ligne
+  if (!normalized.startsWith(prefixCore)) return null;
+  const body = normalized.slice(prefixCore.length).replace(/^\n/, "");
   return body.split("\n").filter(Boolean).map((line) => {
     const [name, qty, unit, checked] = line.split("|");
     return {
