@@ -4055,6 +4055,11 @@ function parseOcrRecipeText(rawText) {
   // juste après les ingrédients et avant la vraie section de
   // préparation sur beaucoup de sites.
   const sectionBoundaryMarker = /^(pr[ée]paration|[ée]tapes|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensiles?|utensils?|mat[ée]riel|equipment)\s*:?\s*$/i;
+  // Marque la fin du vrai contenu de la recette : au-delà, ce n'est
+  // presque toujours plus que des avis, des recettes similaires ou de
+  // la navigation — sans ça, la description engloberait toute la fin
+  // de la page.
+  const descriptionEndMarker = /^(commentaires?|comments?|avis|reviews?|vous aimerez aussi|you (may|might) also like|related recipes?|plus de recettes|ces contenus devraient vous int[ée]resser|note de l['’]auteur|donnez votre avis)/i;
 
   const name = lines[0];
   const ingIdx = lines.findIndex((l) => ingredientMarker.test(l));
@@ -4071,13 +4076,15 @@ function parseOcrRecipeText(rawText) {
       .filter((l) => !/^personnes?\s*[+\-]?$/i.test(l));
   }
   if (instrIdx >= 0) {
-    descriptionLines = lines.slice(instrIdx + 1);
+    const descEndIdx = lines.findIndex((l, i) => i > instrIdx && descriptionEndMarker.test(l));
+    descriptionLines = lines.slice(instrIdx + 1, descEndIdx >= 0 ? descEndIdx : lines.length);
   } else if (ingIdx < 0) {
     // Aucun des deux mots-clés trouvé : impossible de distinguer les
     // sections, tout ce qui suit le nom devient la description — mieux
     // vaut laisser les ingrédients vides (à remplir à la main) qu'un
     // découpage hasardeux.
-    descriptionLines = lines.slice(1);
+    const descEndIdx = lines.findIndex((l, i) => i > 0 && descriptionEndMarker.test(l));
+    descriptionLines = lines.slice(1, descEndIdx >= 0 ? descEndIdx : lines.length);
   }
 
   const ingredients = ingredientLines
