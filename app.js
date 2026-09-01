@@ -2008,9 +2008,21 @@ function parseRecipeFromQrText(text) {
     if (allergenMatch) allergens = allergenMatch[1].split(",").map((a) => a.trim()).filter(Boolean);
   });
 
-  const ingredients = lines.slice(ingIdx + 1).map(parseQrIngredientLine).filter((i) => i.name);
+  // Le nombre de personnes est indiqué dans la ligne d'en-tête des
+  // ingrédients ("... pour 4 personnes ..."). Important : les quantités
+  // du QR code sont déjà calculées pour ce nombre précis, alors que
+  // l'application stocke toujours les quantités "pour 1 personne" en
+  // interne — sans cette division, les quantités importées seraient
+  // multipliées une seconde fois à l'affichage.
+  const personsMatch = lines[ingIdx].match(/\d+/);
+  const persons = personsMatch ? Math.max(1, parseInt(personsMatch[0], 10)) : 4;
+
+  const ingredients = lines.slice(ingIdx + 1)
+    .map(parseQrIngredientLine)
+    .filter((i) => i.name)
+    .map((i) => ({ ...i, quantity: i.quantity != null ? i.quantity / persons : null }));
   if (!ingredients.length) return null;
-  return { name, ingredients, prepTime, cookTime, allergens };
+  return { name, ingredients, prepTime, cookTime, allergens, persons };
 }
 
 // Retire des articles (depuis la fin) jusqu'à ce que le contenu tienne
@@ -2302,7 +2314,7 @@ async function confirmImportScannedRecipe(parsed) {
   state._importPrefill = {
     name: parsed.name,
     description: "",
-    defaultPersons: 4,
+    defaultPersons: parsed.persons || 4,
     prepTime: parsed.prepTime,
     cookTime: parsed.cookTime,
   };
