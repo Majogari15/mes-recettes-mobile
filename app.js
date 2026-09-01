@@ -2145,20 +2145,20 @@ async function openQrScanModal() {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const code = window.jsQR(imageData.data, imageData.width, imageData.height);
-    if (!code || !code.data) return "no_code";
+    if (!code || !code.data) return { status: "no_code", width: canvas.width, height: canvas.height };
     const items = decodeShoppingListFromQr(code.data);
     if (items && items.length) {
       cleanup();
       overlay.remove();
       confirmImportScannedShoppingList(items);
-      return "success";
+      return { status: "success" };
     }
     const parsedRecipe = parseRecipeFromQrText(code.data);
     if (parsedRecipe) {
       cleanup();
       overlay.remove();
       confirmImportScannedRecipe(parsedRecipe);
-      return "success";
+      return { status: "success" };
     }
     // Affiche le texte brut réellement décodé (tronqué) : plutôt que de
     // deviner encore à l'aveugle pourquoi il n'est pas reconnu, ça
@@ -2167,7 +2167,7 @@ async function openQrScanModal() {
     statusEl.innerHTML = "";
     statusEl.appendChild(el(`<div>${escapeHtml(t("qrscan_not_recognized"))}</div>`));
     statusEl.appendChild(el(`<div style="font-size:11px;margin-top:6px;word-break:break-word;white-space:pre-wrap;user-select:text;">${escapeHtml(preview)}</div>`));
-    return "not_recognized";
+    return { status: "not_recognized" };
   }
 
   function tick() {
@@ -2189,7 +2189,9 @@ async function openQrScanModal() {
   manualBtn.addEventListener("click", () => {
     try {
       const result = processFrame();
-      if (result === "no_code") statusEl.textContent = t("qrscan_no_code_found");
+      if (result.status === "no_code") {
+        statusEl.textContent = `${t("qrscan_no_code_found")} (${result.width}×${result.height}px, ${video.videoWidth}×${video.videoHeight})`;
+      }
     } catch (e) {
       statusEl.textContent = (e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e));
     }
