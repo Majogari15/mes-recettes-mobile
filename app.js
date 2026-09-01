@@ -473,12 +473,15 @@ function renderHome() {
   importPhotoBtn.addEventListener("click", () => { state.screen = "importPhoto"; render(); });
   const importQrBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("shopping_qr_scan_button")}</button>`);
   importQrBtn.addEventListener("click", () => openQrScanModal());
+  const importQrPasteBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_qr_paste_button")}</button>`);
+  importQrPasteBtn.addEventListener("click", () => openQrPasteModal());
   actions.appendChild(viewBtn);
   actions.appendChild(shopBtn);
   actions.appendChild(addBtn);
   actions.appendChild(importUrlBtn);
   actions.appendChild(importPhotoBtn);
   actions.appendChild(importQrBtn);
+  actions.appendChild(importQrPasteBtn);
   actions.appendChild(ingBtn);
   actions.appendChild(manageSubsBtn);
   actions.appendChild(planningBtn);
@@ -996,8 +999,11 @@ function renderShopping() {
   savedListsBtn.addEventListener("click", () => { state.screen = "savedShoppingLists"; render(); });
   const scanBtn = el(`<button class="btn btn-outline btn-sm">${t("shopping_qr_scan_button")}</button>`);
   scanBtn.addEventListener("click", () => openQrScanModal());
+  const pasteBtn = el(`<button class="btn btn-outline btn-sm">${t("home_qr_paste_button")}</button>`);
+  pasteBtn.addEventListener("click", () => openQrPasteModal());
   topRow.appendChild(savedListsBtn);
   topRow.appendChild(scanBtn);
+  topRow.appendChild(pasteBtn);
   wrap.appendChild(topRow);
 
   if (!state.shopping.length) {
@@ -2206,6 +2212,51 @@ async function openQrScanModal() {
     } catch (e) {
       statusEl.textContent = (e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e));
     }
+  });
+}
+
+// Solution de repli face aux limites de la lecture QR par caméra sur
+// certains appareils : scanner avec n'importe quelle autre application
+// (celle de l'appareil photo, un lecteur de QR classique...), copier le
+// texte obtenu, puis le coller ici — la même reconnaissance (recette ou
+// liste de courses) s'applique ensuite.
+function openQrPasteModal() {
+  const overlay = el(`<div class="modal-overlay"></div>`);
+  const sheet = el(`<div class="modal-sheet">
+    <h2>${t("qrpaste_title")}</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;">${escapeHtml(t("qrpaste_hint"))}</p>
+    <div class="field">
+      <label for="qrpaste-input">${t("qrpaste_label")}</label>
+      <textarea id="qrpaste-input" rows="6"></textarea>
+    </div>
+    <div id="qrpaste-status" style="font-size:12px;color:var(--text-muted);margin-bottom:12px;min-height:16px;word-break:break-word;white-space:pre-wrap;"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-outline" id="qrpaste-close">${t("form_cancel")}</button>
+      <button type="button" class="btn btn-primary" id="qrpaste-submit">${t("qrpaste_submit_button")}</button>
+    </div>
+  </div>`);
+  overlay.appendChild(sheet);
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+  sheet.querySelector("#qrpaste-close").addEventListener("click", () => overlay.remove());
+
+  const statusEl = sheet.querySelector("#qrpaste-status");
+  sheet.querySelector("#qrpaste-submit").addEventListener("click", () => {
+    const text = sheet.querySelector("#qrpaste-input").value;
+    if (!text.trim()) { statusEl.textContent = t("qrpaste_empty"); return; }
+    const items = decodeShoppingListFromQr(text);
+    if (items && items.length) {
+      overlay.remove();
+      confirmImportScannedShoppingList(items);
+      return;
+    }
+    const parsedRecipe = parseRecipeFromQrText(text);
+    if (parsedRecipe) {
+      overlay.remove();
+      confirmImportScannedRecipe(parsedRecipe);
+      return;
+    }
+    statusEl.textContent = t("qrscan_not_recognized");
   });
 }
 
