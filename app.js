@@ -4305,12 +4305,69 @@ function extractMicrodataRecipe(docHtml) {
   };
 }
 
-async function fetchRecipeFromUrl(url, onAttempt) {
-  const html = await fetchHtmlViaProxies(url, onAttempt);
-  const parser = new DOMParser();
-  const docHtml = parser.parseFromString(html, "text/html");
+// Jina AI Reader ne renvoie pas le HTML brut mais une version nettoyée
+// en texte (Markdown) de la page — inutile pour ma méthode habituelle
+// (qui cherche des données structurées cachées dans le HTML), mais un
+// bon point de départ pour la même analyse heuristique que l'import
+// par photo. Un filet de secours d'un genre différent, pas juste un
+// service de plus qui fait la même chose que les autres.
+async function fetchViaJinaReader(url) {
+  const res = await fetchWithTimeout("https://r.jina.ai/" + url, 20000);
+  if (!res.ok) throw new Error("jina_http_" + res.status);
+  const text = await res.text();
+  if (!text || text.length < 50) throw new Error("jina_empty_response");
+  return text;
+}
 
-  const recipeData = extractJsonLdRecipe(docHtml) || extractMicrodataRecipe(docHtml);
+// Retire l'en-tête technique de Jina (Title:/URL Source:/Markdown
+// Content:) et la ponctuation Markdown (#, *, -, ** ...) en début de
+// ligne, pour que le texte ressemble à ce que l'analyseur heuristique
+// (conçu pour du texte brut OCR) sait déjà traiter.
+function stripJinaMarkdownNoise(markdown) {
+  const lines = markdown.split("\n");
+  const contentStart = lines.findIndex((l) => /^markdown content:/i.test(l.trim()));
+  const relevant = contentStart >= 0 ? lines.slice(contentStart + 1) : lines;
+  return relevant
+    .map((l) => l.replace(/^#{1,6}\s*/, "").replace(/^[*\-•]\s+/, "").replace(/\*\*/g, "").trim())
+    .filter((l) => !/^\[.*\]\(.*\)$/.test(l)) // retire les lignes qui ne sont qu'un lien Markdown
+    .join("\n");
+}
+
+async function fetchRecipeFromUrl(url, onAttempt) {
+  let recipeData = null;
+  try {
+    const html = await fetchHtmlViaProxies(url, onAttempt);
+    const parser = new DOMParser();
+    const docHtml = parser.parseFromString(html, "text/html");
+    recipeData = extractJsonLdRecipe(docHtml) || extractMicrodataRecipe(docHtml);
+  } catch (e) {
+    // Tous les services intermédiaires habituels ont échoué : on tente
+    // Jina AI Reader plus bas avant d'abandonner définitivement.
+  }
+
+  if (!recipeData) {
+    try {
+      const markdown = await fetchViaJinaReader(url);
+      const cleanedText = stripJinaMarkdownNoise(markdown);
+      const parsedFromText = parseOcrRecipeText(cleanedText);
+      if (parsedFromText && parsedFromText.ingredients.length) {
+        return {
+          name: parsedFromText.name,
+          description: parsedFromText.description,
+          ingredients: parsedFromText.ingredients.map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) })),
+          persons: 4,
+          prepTime: null,
+          cookTime: null,
+          category: "Autre",
+          photo: null,
+        };
+      }
+    } catch (e) {
+      // Jina a aussi échoué — on abandonne ci-dessous avec le même
+      // message d'erreur que d'habitude.
+    }
+  }
+
   if (!recipeData) throw new Error("no_recipe_found");
 
   const name = typeof recipeData.name === "string" ? recipeData.name : "";
