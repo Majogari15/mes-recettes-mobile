@@ -2107,7 +2107,17 @@ async function openQrScanModal() {
   if (stopped) return;
 
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: "environment",
+        // Sans ces contraintes, certains navigateurs démarrent la
+        // caméra en basse résolution par défaut — largement suffisant
+        // pour un appel vidéo, mais souvent trop flou/petit pour qu'un
+        // QR code y soit détecté correctement.
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+      },
+    });
   } catch (e) {
     cameraStatusEl.textContent = t("qrscan_camera_denied");
     return;
