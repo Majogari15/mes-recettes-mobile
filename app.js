@@ -2048,16 +2048,20 @@ async function openQrScanModal() {
   const sheet = el(`<div class="modal-sheet">
     <h2>${t("qrscan_title")}</h2>
     <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;">${escapeHtml(t("qrscan_hint"))}</p>
-    <div id="qrscan-holder" style="position:relative;width:100%;aspect-ratio:1;background:#000;border-radius:12px;overflow:hidden;margin-bottom:16px;display:flex;align-items:center;justify-content:center;">
-      <span id="qrscan-status" style="color:#fff;font-size:13px;text-align:center;padding:20px;"></span>
+    <div id="qrscan-holder" style="position:relative;width:100%;aspect-ratio:1;background:#000;border-radius:12px;overflow:hidden;margin-bottom:12px;display:flex;align-items:center;justify-content:center;">
+      <span id="qrscan-camera-status" style="color:#fff;font-size:13px;text-align:center;padding:20px;"></span>
     </div>
+    <div id="qrscan-status" style="font-size:12px;color:var(--text-muted);margin-bottom:12px;min-height:16px;"></div>
+    <button type="button" class="btn btn-secondary" id="qrscan-manual" style="margin-bottom:10px;" disabled>${t("qrscan_manual_button")}</button>
     <button type="button" class="btn btn-outline" id="qrscan-close">${t("cooking_close")}</button>
   </div>`);
   overlay.appendChild(sheet);
   document.body.appendChild(overlay);
 
   const holder = sheet.querySelector("#qrscan-holder");
+  const cameraStatusEl = sheet.querySelector("#qrscan-camera-status");
   const statusEl = sheet.querySelector("#qrscan-status");
+  const manualBtn = sheet.querySelector("#qrscan-manual");
   let stream = null;
   let stopped = false;
 
@@ -2069,19 +2073,19 @@ async function openQrScanModal() {
   overlay.addEventListener("click", (e) => { if (e.target === overlay) { cleanup(); overlay.remove(); } });
 
   if (!window.isSecureContext) {
-    statusEl.textContent = t("qrscan_camera_https_hint");
+    cameraStatusEl.textContent = t("qrscan_camera_https_hint");
     return;
   }
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    statusEl.textContent = t("qrscan_camera_denied");
+    cameraStatusEl.textContent = t("qrscan_camera_denied");
     return;
   }
 
-  statusEl.textContent = t("qrcode_loading");
+  cameraStatusEl.textContent = t("qrcode_loading");
   try {
     await loadJsQrLib();
   } catch (e) {
-    statusEl.textContent = t("qrscan_lib_load_error");
+    cameraStatusEl.textContent = t("qrscan_lib_load_error");
     return;
   }
   if (stopped) return;
@@ -2089,7 +2093,7 @@ async function openQrScanModal() {
   try {
     stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
   } catch (e) {
-    statusEl.textContent = t("qrscan_camera_denied");
+    cameraStatusEl.textContent = t("qrscan_camera_denied");
     return;
   }
   if (stopped) { stream.getTracks().forEach((tr) => tr.stop()); return; }
@@ -2102,38 +2106,62 @@ async function openQrScanModal() {
   holder.innerHTML = "";
   holder.appendChild(video);
   await video.play();
+  manualBtn.disabled = false;
 
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
 
+  // Analyse une image de la caméra ; retourne true si un QR code
+  // reconnu (liste ou recette) a été trouvé et traité.
+  function processFrame() {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = window.jsQR(imageData.data, imageData.width, imageData.height);
+    if (!code || !code.data) return false;
+    const items = decodeShoppingListFromQr(code.data);
+    if (items && items.length) {
+      cleanup();
+      overlay.remove();
+      confirmImportScannedShoppingList(items);
+      return true;
+    }
+    const parsedRecipe = parseRecipeFromQrText(code.data);
+    if (parsedRecipe) {
+      cleanup();
+      overlay.remove();
+      confirmImportScannedRecipe(parsedRecipe);
+      return true;
+    }
+    statusEl.textContent = t("qrscan_not_recognized");
+    return false;
+  }
+
   function tick() {
     if (stopped) return;
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = window.jsQR(imageData.data, imageData.width, imageData.height);
-      if (code && code.data) {
-        const items = decodeShoppingListFromQr(code.data);
-        if (items && items.length) {
-          cleanup();
-          overlay.remove();
-          confirmImportScannedShoppingList(items);
-          return;
-        }
-        const parsedRecipe = parseRecipeFromQrText(code.data);
-        if (parsedRecipe) {
-          cleanup();
-          overlay.remove();
-          confirmImportScannedRecipe(parsedRecipe);
-          return;
-        }
+      try {
+        processFrame();
+      } catch (e) {
+        // Une erreur de décodage ponctuelle sur une image ne doit pas
+        // arrêter la détection en continu — mais si le lecteur est
+        // réellement cassé, le bouton manuel ci-dessous permettra de
+        // voir le détail exact de l'erreur plutôt qu'un blocage muet.
       }
     }
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
+
+  manualBtn.addEventListener("click", () => {
+    try {
+      const found = processFrame();
+      if (!found && !stopped) statusEl.textContent = t("qrscan_not_recognized");
+    } catch (e) {
+      statusEl.textContent = (e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e));
+    }
+  });
 }
 
 async function confirmImportScannedRecipe(parsed) {
@@ -3789,9 +3817,11 @@ function parseIngredientString(str) {
 // automatiquement avant d'abandonner. Corrige le comportement "ça marche
 // une fois sur deux" observé avec un seul service.
 const CORS_PROXIES = [
+  (url) => "https://cors.x2u.in/" + url,
+  (url) => "https://corsfix.com/" + url,
+  (url) => "https://api.cors.lol/?url=" + encodeURIComponent(url),
   (url) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
   (url) => "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(url),
-  (url) => "https://cors.x2u.in/" + url,
 ];
 
 function fetchWithTimeout(url, ms) {
