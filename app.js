@@ -2140,10 +2140,21 @@ async function openQrScanModal() {
   // Analyse une image de la caméra ; retourne true si un QR code
   // reconnu (liste ou recette) a été trouvé et traité.
   function processFrame() {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    // Ne garde que le carré central de l'image — c'est la seule partie
+    // réellement visible à l'écran (le CSS recadre l'aperçu en carré
+    // avec "object-fit: cover"). Sans ce recadrage, l'image analysée
+    // était bien plus grande que ce que l'utilisateur vise et vers quoi
+    // il cadre le QR code, qui y occupait une part trop petite pour
+    // être détecté de façon fiable.
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+    const size = Math.min(vw, vh);
+    const sx = (vw - size) / 2;
+    const sy = (vh - size) / 2;
+    canvas.width = size;
+    canvas.height = size;
+    ctx.drawImage(video, sx, sy, size, size, 0, 0, size, size);
+    const imageData = ctx.getImageData(0, 0, size, size);
     const code = window.jsQR(imageData.data, imageData.width, imageData.height);
     if (!code || !code.data) return { status: "no_code", width: canvas.width, height: canvas.height };
     const items = decodeShoppingListFromQr(code.data);
