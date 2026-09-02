@@ -3499,20 +3499,22 @@ async function exportAllData() {
 // chaque fois. Retourne false si le partage de fichier n'est pas pris
 // en charge par ce navigateur (repli possible vers exportAllData()).
 async function shareBackupData() {
-  if (!navigator.canShare) return false;
+  if (!navigator.canShare) return { ok: false, cancelled: false };
   const data = await buildBackupData();
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const file = new File([blob], backupFileName(), { type: "application/json" });
-  if (!navigator.canShare({ files: [file] })) return false;
+  if (!navigator.canShare({ files: [file] })) return { ok: false, cancelled: false };
   try {
     await navigator.share({ files: [file], title: t("backup_share_title") });
     localStorage.setItem("lastBackupAt", new Date().toISOString());
-    return true;
+    return { ok: true, cancelled: false };
   } catch (e) {
-    // L'utilisateur a annulé le partage, ou une erreur est survenue :
-    // ni un vrai succès, ni un cas où il faut basculer sur le
-    // téléchargement classique (il a fait un choix délibéré).
-    return true;
+    // "AbortError" : l'utilisateur a lui-même fermé le menu de partage
+    // sans rien choisir — un choix délibéré, pas une erreur à afficher
+    // ni un cas où basculer sur le téléchargement classique. Toute
+    // autre erreur est un vrai échec technique à ne pas cacher.
+    if (e && e.name === "AbortError") return { ok: true, cancelled: true };
+    return { ok: false, cancelled: false, error: (e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e)) };
   }
 }
 
@@ -3560,11 +3562,13 @@ function renderBackup() {
   });
   if (canShareFiles) {
     exportSection.querySelector("#share-btn").addEventListener("click", async () => {
-      const shared = await shareBackupData();
-      if (!shared) {
+      const result = await shareBackupData();
+      if (!result.ok) {
         // Repli si le partage échoue pour une raison technique malgré
         // la détection préalable — au moins le téléchargement classique
-        // fonctionne toujours.
+        // fonctionne toujours. On affiche le détail de l'erreur pour
+        // un vrai diagnostic, plutôt que de la faire disparaître.
+        if (result.error) alert(result.error);
         await exportAllData();
         alert(t("backup_export_success"));
       }
