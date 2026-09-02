@@ -127,25 +127,27 @@ haut).
 ## ⚠️ À savoir sur l'import de recette depuis un lien
 
 Contrairement aux autres fonctionnalités, celle-ci dépend de services
-tiers gratuits pour contourner une restriction de sécurité des
-navigateurs (CORS) — sans eux, il serait impossible de récupérer le
-contenu d'un autre site directement depuis le téléphone. Cinq services
-sont essayés automatiquement l'un après l'autre en cas d'échec
-(`allorigins.win`, `codetabs.com`, `cors.x2u.in`, `cors.lol`,
-`corsfix.com`), ce qui règle le problème "ça marche une fois sur
-deux" : si l'un est temporairement indisponible ou saturé, le suivant
-prend le relais sans action de votre part — utile notamment lors de
-pannes ponctuelles (déjà observées sur deux de ces services
-simultanément). Si tous les cinq échouent, un sixième filet de secours
-d'un genre différent prend le relais : **Jina AI Reader**, qui ne
-transmet pas le HTML brut mais une version déjà nettoyée en texte de la
-page, analysée ensuite avec la même méthode que l'import par photo
-(repérage des mots "Ingrédients"/"Préparation") — moins précis qu'une
-extraction de données structurées, mais qui peut réussir sur des sites
-qui bloquent les cinq services habituels. Deux conséquences à
-connaître :
+tiers pour contourner une restriction de sécurité des navigateurs
+(CORS) — sans eux, il serait impossible de récupérer le contenu d'un
+autre site directement depuis le téléphone. Un **Worker Cloudflare**
+propre à cette application est essayé en premier : il ne fait que
+transmettre la page (et sa photo) sans en garder de copie, et permet en
+plus une récupération automatique et précise de la photo de la recette.
+S'il échoue ou n'est pas configuré, **Jina AI Reader** prend le relais :
+il ne transmet pas le HTML brut mais une version déjà nettoyée en texte
+de la page, analysée ensuite avec la même méthode que l'import par
+photo (repérage des mots "Ingrédients"/"Préparation") — moins précis
+qu'une extraction de données structurées, et sans récupération de photo
+automatique, mais nettement plus fiable en pratique que les services
+suivants. Si Jina échoue aussi, trois services CORS publics classiques
+sont essayés automatiquement l'un après l'autre (`allorigins.win`,
+`codetabs.com`, `cors.lol`) en tout dernier recours ; chaque réponse est
+vérifiée pour confirmer qu'elle contient réellement une recette avant
+d'être acceptée (une page d'erreur ou de blocage renvoyée par l'un de
+ces services ne fait donc plus stopper la recherche à tort). Deux
+conséquences à connaître :
 - L'adresse que vous collez est transmise à ces services intermédiaires
-- Si les six deviennent indisponibles un jour, cette fonctionnalité
+- Si tous deviennent indisponibles un jour, cette fonctionnalité
   cesserait de fonctionner jusqu'à ce qu'on la fasse pointer vers
   d'autres services équivalents
 

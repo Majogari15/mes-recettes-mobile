@@ -38,15 +38,18 @@ L'application fonctionne hors connexion pour l'immense majorité de ses
 fonctionnalités. Elle se connecte à internet dans les cas suivants,
 toujours à votre initiative explicite :
 
-- **Import d'une recette depuis un lien** : les navigateurs empêchant une
-  application web de récupérer directement le contenu d'un autre site,
-  cette fonctionnalité transmet l'adresse que vous collez à l'un des
-  services intermédiaires suivants (essayés automatiquement l'un après
-  l'autre) pour contourner cette restriction technique : Jina AI Reader
-  (r.jina.ai), allorigins.win, codetabs.com, cors.x2u.in, cors.lol,
-  corsfix.com. Ces services reçoivent l'adresse que vous avez collée afin
-  de récupérer la page à votre place ; consultez leurs propres politiques
-  de confidentialité pour savoir comment ils traitent ces requêtes.
+- **Import d'une recette depuis un lien (ou de sa photo)** : les
+  navigateurs empêchant une application web de récupérer directement le
+  contenu d'un autre site, cette fonctionnalité transmet l'adresse que
+  vous collez à l'un des services intermédiaires suivants (essayés
+  automatiquement l'un après l'autre) pour contourner cette restriction
+  technique : un service Cloudflare Worker propre à cette application
+  (qui ne fait que transmettre la page sans en conserver de copie),
+  Jina AI Reader (r.jina.ai), allorigins.win, codetabs.com, cors.lol.
+  Ces services reçoivent l'adresse que vous avez collée afin de
+  récupérer la page à votre place ; consultez leurs propres politiques
+  de confidentialité
+  pour savoir comment ils traitent ces requêtes.
 - **Import de recette par photo (reconnaissance de texte)** : cette
   fonctionnalité s'exécute directement sur votre appareil, via une
   bibliothèque (Tesseract.js) téléchargée une seule fois depuis un serveur

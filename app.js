@@ -489,7 +489,8 @@ function renderBottomNav() {
    ====================================================================== */
 function renderHome() {
   const wrap = el(`<div></div>`);
-  if (!isRunningStandalone() && (deferredInstallPrompt || isIosDevice())) {
+  const installBannerDismissed = !!localStorage.getItem("install_dismissed");
+  if (!isRunningStandalone() && (isIosDevice() || (deferredInstallPrompt && installBannerDismissed))) {
     const installBtn = el(`<button class="btn btn-secondary" style="margin-bottom:14px;">${t("home_install_button")}</button>`);
     installBtn.addEventListener("click", triggerInstall);
     wrap.appendChild(installBtn);
@@ -1073,6 +1074,18 @@ function renderRecipeForm() {
   });
   allergenSection.appendChild(detectBtn);
   wrap.appendChild(allergenSection);
+  // Détection automatique une seule fois juste après un import (lien,
+  // photo, QR code ou brouillon retrouvé) : épargne le geste manuel
+  // dans le cas le plus courant, tout en gardant l'avertissement
+  // ci-dessus qui rappelle de vérifier le résultat. "prefill" n'est
+  // vrai que sur le tout premier rendu suivant l'import (voir plus
+  // haut, où il est aussitôt réinitialisé) — un ajout d'ingrédient ou
+  // toute autre interaction ultérieure re-render le formulaire sans
+  // jamais redéclencher cette détection, donc un décochage manuel
+  // reste toujours respecté ensuite.
+  if (prefill && state.formIngredients.some((i) => (i.name || "").trim())) {
+    state.formAllergens = computeRecipeAllergens(state.formIngredients.map((i) => ({ name: (i.name || "").trim() })).filter((i) => i.name));
+  }
   renderAllergenCheckboxes(allergenHolder);
 
   wrap.appendChild(el(`<div class="field">
@@ -2740,7 +2753,7 @@ async function confirmImportScannedRecipe(parsed) {
   state._importPrefill = {
     name: parsed.name,
     description: "",
-    defaultPersons: parsed.persons || 4,
+    persons: parsed.persons || 4,
     prepTime: parsed.prepTime,
     cookTime: parsed.cookTime,
   };
@@ -4484,6 +4497,28 @@ function renderPlanningHistory() {
    ====================================================================== */
 function parseIngredientString(str) {
   const text = String(str || "").trim();
+
+  // Repère d'abord les unités françaises composées de plusieurs mots
+  // ("cuillère à café/soupe") : la reconnaissance générale ci-dessous
+  // ne capture qu'un seul mot comme unité candidate, donc "cuillère"
+  // seul y était reconnu, jamais l'expression complète — le reste
+  // ("à café de gingembre") finissait alors inclus dans le nom de
+  // l'ingrédient plutôt que dans son unité.
+  const spoonMatch = text.match(/^([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*cuill[eè]res?\s+à\s+(caf[eé]|soupe)\s+(?:de\s+|d['’])?(.*)$/i);
+  if (spoonMatch) {
+    const [, qtyStr, spoonType, rest] = spoonMatch;
+    let spoonQty;
+    if (qtyStr.includes("/")) {
+      const [num, den] = qtyStr.split("/").map((s) => parseFloat(s.trim().replace(",", ".")));
+      spoonQty = den ? num / den : null;
+    } else {
+      spoonQty = parseFloat(qtyStr.replace(",", "."));
+    }
+    if (Number.isNaN(spoonQty)) spoonQty = null;
+    const spoonUnit = /caf[eé]/i.test(spoonType) ? "c. à café" : "c. à soupe";
+    return { name: rest.trim() || text, quantity: spoonQty, unit: spoonUnit };
+  }
+
   const match = text.match(/^([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([a-zA-Zéèàêûîôçñü]*)\.?\s*(.*)$/);
   if (!match || !match[1]) return { name: text, quantity: null, unit: "pièce" };
   const [, qtyStr, unitWordRaw, rest] = match;
@@ -4513,7 +4548,7 @@ function parseIngredientString(str) {
   let name;
   if (unit) {
     quantity = quantity != null ? Math.round(quantity * factor * 100) / 100 : null;
-    name = rest.trim();
+    name = rest.trim().replace(/^(?:de\s+|d['’])/i, "");
   } else {
     unit = "pièce";
     name = (unitWordRaw + " " + rest).trim();
@@ -4664,6 +4699,21 @@ function parseOcrRecipeText(rawText) {
     .map(parseIngredientString)
     .filter((i) => i.name);
 
+  // Les quantités reconnues dans le texte correspondent à la recette
+  // entière pour le nombre de personnes indiqué sur la page d'origine
+  // (quand il est repérable), pas à une seule personne — même
+  // correction que pour l'import par lien, pour éviter que les
+  // quantités soient multipliées une seconde fois à l'affichage.
+  let persons = null;
+  lines.forEach((line) => {
+    if (persons != null) return;
+    const personsMatch = line.match(/\b(\d+)\s*(?:personnes?|convives?|parts?|servings?|portions?|personas?|raciones?|personen|portionen)\b/i);
+    if (personsMatch) persons = Math.max(1, parseInt(personsMatch[1], 10));
+  });
+  const adjustedIngredients = persons
+    ? ingredients.map((i) => ({ ...i, quantity: i.quantity != null ? i.quantity / persons : null }))
+    : ingredients;
+
   // Les temps de préparation/cuisson apparaissent souvent après les
   // ingrédients (pas avant) — recherche sur tout le texte plutôt que
   // sur une zone précise.
@@ -4675,7 +4725,7 @@ function parseOcrRecipeText(rawText) {
     if (cookMatch) cookTime = parseInt(cookMatch[1], 10);
   });
 
-  return { name, ingredients, description: descriptionLines.join("\n"), prepTime, cookTime };
+  return { name, ingredients: adjustedIngredients, description: descriptionLines.join("\n"), prepTime, cookTime, persons: persons || 4 };
 }
 
 let tesseractLibPromise = null;
@@ -4736,7 +4786,7 @@ function renderImportPhoto() {
       state.formAllergens = [];
       state.formPhoto = null;
       state.screen = "form";
-      state._importPrefill = { name: parsed.name, description: parsed.description, defaultPersons: 4, prepTime: parsed.prepTime, cookTime: parsed.cookTime };
+      state._importPrefill = { name: parsed.name, description: parsed.description, persons: parsed.persons || 4, prepTime: parsed.prepTime, cookTime: parsed.cookTime };
       render();
     } catch (err) {
       statusHolder.innerHTML = "";
@@ -5014,12 +5064,6 @@ async function buildRecipeFromStructuredData(recipeData) {
   const shortDescription = typeof recipeData.description === "string" ? recipeData.description.trim() : "";
   const description = instructions || shortDescription;
 
-  const rawIngredients = Array.isArray(recipeData.recipeIngredient) ? recipeData.recipeIngredient : [];
-  const ingredients = rawIngredients
-    .map(parseIngredientString)
-    .filter((i) => i.name)
-    .map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) }));
-
   let persons = 4;
   const yieldRaw = recipeData.recipeYield || recipeData.yield;
   if (yieldRaw) {
@@ -5028,6 +5072,20 @@ async function buildRecipeFromStructuredData(recipeData) {
     const m = String(y).match(/\d+/);
     if (m) persons = parseInt(m[0], 10);
   }
+  persons = Math.max(1, persons);
+
+  const rawIngredients = Array.isArray(recipeData.recipeIngredient) ? recipeData.recipeIngredient : [];
+  const ingredients = rawIngredients
+    .map(parseIngredientString)
+    // Les quantités indiquées par le site source correspondent à la
+    // recette entière pour "persons" personnes, alors que l'application
+    // stocke toujours les quantités "pour 1 personne" en interne — sans
+    // cette division, elles seraient multipliées une seconde fois à
+    // l'affichage (ex. "1 poulet" pour 4 personnes deviendrait "4
+    // poulets" une fois affiché pour 4 personnes).
+    .map((i) => ({ ...i, quantity: i.quantity != null ? i.quantity / persons : null }))
+    .filter((i) => i.name)
+    .map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) }));
 
   const prepTime = parseIsoDurationToMinutes(recipeData.prepTime);
   const cookTime = parseIsoDurationToMinutes(recipeData.cookTime);
@@ -5151,7 +5209,7 @@ function renderImportUrl() {
       state._importPrefill = {
         name: result.name,
         description: result.description,
-        defaultPersons: result.persons,
+        persons: result.persons,
         category: result.category,
         prepTime: result.prepTime,
         cookTime: result.cookTime,
