@@ -3479,6 +3479,11 @@ function backupFileName() {
   const dateStr = new Date().toISOString().slice(0, 10);
   return `mes-recettes-sauvegarde-${dateStr}.json`;
 }
+async function buildBackupFile() {
+  const data = await buildBackupData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  return new File([blob], backupFileName(), { type: "application/json" });
+}
 async function exportAllData() {
   const data = await buildBackupData();
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -3496,13 +3501,17 @@ async function exportAllData() {
 // sauvegarde, pour l'envoyer vers Google Drive, Dropbox, OneDrive, par
 // email... selon ce que l'utilisateur a d'installé — pas d'intégration
 // directe avec un service en particulier, l'utilisateur choisit à
-// chaque fois. Retourne false si le partage de fichier n'est pas pris
-// en charge par ce navigateur (repli possible vers exportAllData()).
-async function shareBackupData() {
+// chaque fois. Retourne { ok: false } si le partage de fichier n'est
+// pas pris en charge (repli possible vers exportAllData()).
+//
+// Accepte optionnellement une promesse de fichier déjà en cours de
+// construction (préchargée dès l'ouverture de l'écran) : reconstruire
+// le fichier ici, après le clic, ajoutait un délai qui pouvait faire
+// perdre au navigateur l'autorisation liée au geste de l'utilisateur
+// et provoquer une erreur "NotAllowedError" au moment de partager.
+async function shareBackupData(preloadedFilePromise) {
   if (!navigator.canShare) return { ok: false, cancelled: false };
-  const data = await buildBackupData();
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const file = new File([blob], backupFileName(), { type: "application/json" });
+  const file = await (preloadedFilePromise || buildBackupFile());
   if (!navigator.canShare({ files: [file] })) return { ok: false, cancelled: false };
   try {
     await navigator.share({ files: [file], title: t("backup_share_title") });
@@ -3547,6 +3556,15 @@ function renderBackup() {
   const wrap = el(`<div></div>`);
 
   const canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [new File([""], "test.json")] }));
+  // Précharge les données de sauvegarde dès l'ouverture de cet écran,
+  // en tâche de fond — pour qu'au moment où l'utilisateur clique sur
+  // "Partager", le fichier soit déjà prêt et l'appel à navigator.share()
+  // se fasse sans aucun délai après le clic. Un délai, même court (le
+  // temps de lire IndexedDB), peut faire perdre au navigateur
+  // l'autorisation liée au geste de l'utilisateur et provoquer une
+  // erreur "NotAllowedError".
+  const preloadedBackupFilePromise = canShareFiles ? buildBackupFile() : null;
+
   const exportSection = el(`<div class="section">
     <div class="section-label">${t("backup_export_title")}</div>
     <div class="card" style="padding:16px;">
@@ -3562,7 +3580,7 @@ function renderBackup() {
   });
   if (canShareFiles) {
     exportSection.querySelector("#share-btn").addEventListener("click", async () => {
-      const result = await shareBackupData();
+      const result = await shareBackupData(preloadedBackupFilePromise);
       if (!result.ok) {
         // Repli si le partage échoue pour une raison technique malgré
         // la détection préalable — au moins le téléchargement classique
