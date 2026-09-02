@@ -548,24 +548,6 @@ a { color: inherit; }
 .install-banner .btn-install { background: #fff; color: var(--primary); }
 .install-banner .btn-dismiss { background: transparent; color: rgba(255,255,255,0.85); }
 
-/* ---------- Rangée langue/thème (page réglages simplifiée dans accueil) ---------- */
-.settings-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 4px;
-  border-bottom: 1px solid var(--border);
-}
-.settings-row:last-child { border-bottom: none; }
-.lang-select {
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  padding: 8px 10px;
-  background: var(--card);
-  color: var(--text);
-  font-weight: 600;
-}
-
 /* ---------- Accessibilité clavier ---------- */
 button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
   outline: 2px solid var(--primary);
@@ -685,7 +667,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .compare-values { flex: 1; display: flex; }
 .compare-values > div { flex: 1; text-align: center; font-size: 14px; padding: 0 4px; }
 .compare-ing-list { font-size: 13px; line-height: 1.8; }
-.compare-ing-list .only-tag { color: var(--text-muted); font-size: 11px; }
 .compare-only-columns { display: flex; }
 .compare-only-columns > div {
   flex: 1;

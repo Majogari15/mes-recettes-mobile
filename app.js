@@ -4404,6 +4404,32 @@ function stripJinaMarkdownNoise(markdown) {
 }
 
 async function fetchRecipeFromUrl(url, onAttempt) {
+  // Jina AI Reader en premier : plus fiable en pratique que les 5
+  // services CORS classiques, même si son texte nettoyé donne une
+  // extraction un peu moins précise (pas de photo automatique, temps/
+  // nombre de personnes parfois approximatifs) qu'une vraie extraction
+  // de données structurées quand elle réussit.
+  try {
+    const markdown = await fetchViaJinaReader(url);
+    const cleanedText = stripJinaMarkdownNoise(markdown);
+    const parsedFromText = parseOcrRecipeText(cleanedText);
+    if (parsedFromText && parsedFromText.ingredients.length) {
+      return {
+        name: parsedFromText.name,
+        description: parsedFromText.description,
+        ingredients: parsedFromText.ingredients.map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) })),
+        persons: 4,
+        prepTime: parsedFromText.prepTime,
+        cookTime: parsedFromText.cookTime,
+        category: "Autre",
+        photo: null,
+      };
+    }
+  } catch (e) {
+    // Jina a échoué ou n'a rien trouvé d'exploitable : on tente les 5
+    // services habituels ci-dessous avant d'abandonner définitivement.
+  }
+
   let recipeData = null;
   try {
     const html = await fetchHtmlViaProxies(url, onAttempt);
@@ -4411,31 +4437,7 @@ async function fetchRecipeFromUrl(url, onAttempt) {
     const docHtml = parser.parseFromString(html, "text/html");
     recipeData = extractJsonLdRecipe(docHtml) || extractMicrodataRecipe(docHtml);
   } catch (e) {
-    // Tous les services intermédiaires habituels ont échoué : on tente
-    // Jina AI Reader plus bas avant d'abandonner définitivement.
-  }
-
-  if (!recipeData) {
-    try {
-      const markdown = await fetchViaJinaReader(url);
-      const cleanedText = stripJinaMarkdownNoise(markdown);
-      const parsedFromText = parseOcrRecipeText(cleanedText);
-      if (parsedFromText && parsedFromText.ingredients.length) {
-        return {
-          name: parsedFromText.name,
-          description: parsedFromText.description,
-          ingredients: parsedFromText.ingredients.map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) })),
-          persons: 4,
-          prepTime: parsedFromText.prepTime,
-          cookTime: parsedFromText.cookTime,
-          category: "Autre",
-          photo: null,
-        };
-      }
-    } catch (e) {
-      // Jina a aussi échoué — on abandonne ci-dessous avec le même
-      // message d'erreur que d'habitude.
-    }
+    // Tous les services intermédiaires habituels ont aussi échoué.
   }
 
   if (!recipeData) throw new Error("no_recipe_found");
