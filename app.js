@@ -171,7 +171,18 @@ function fmtQty(qty) {
   if (qty == null || qty === "") return "";
   const n = Number(qty);
   if (Number.isNaN(n)) return qty;
-  return n % 1 === 0 ? String(n) : String(Math.round(n * 100) / 100).replace(".", ",");
+  if (n === 0) return "0";
+  if (n % 1 === 0) return String(n);
+  // Pour les très petites quantités non nulles (ex. 1g converti en kg =
+  // 0,001), 2 décimales fixes arrondiraient à 0 — on augmente la
+  // précision progressivement jusqu'à ce qu'un chiffre significatif
+  // apparaisse, plutôt que de perdre la valeur entièrement.
+  let decimals = 2;
+  while (Math.round(n * Math.pow(10, decimals)) === 0 && decimals < 6) {
+    decimals++;
+  }
+  const factor = Math.pow(10, decimals);
+  return String(Math.round(n * factor) / factor).replace(".", ",");
 }
 function normalize(str) {
   return (str || "")

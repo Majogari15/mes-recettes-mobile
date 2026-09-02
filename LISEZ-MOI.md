@@ -93,14 +93,21 @@ sans serveur ni abonnement, toutes les données restent sur l'appareil.
   recette** partagée depuis un autre appareil — compatible avec les QR
   codes générés par la version bureau, pas seulement par mobile
   (nécessite HTTPS pour la caméra, donc utilisable seulement une fois
-  l'application mise en ligne)
+  l'application mise en ligne). Si la lecture par caméra ne fonctionne
+  pas bien sur votre appareil, **"Coller le texte d'un QR code"**
+  propose la même reconnaissance à partir du texte obtenu via une autre
+  application de scan (l'appareil photo, un lecteur classique...)
 - **"Que puis-je cuisiner ?"** : indiquez vos ingrédients disponibles
   (repris du garde-manger), voir quelles recettes sont réalisables ou
   presque
 - Ajout d'une recette à la liste de courses (quantités fusionnées
   automatiquement)
 - Mode courses avec cases à cocher
-- Garde-manger simple (ajout/suppression d'articles)
+- Garde-manger (ajout/modification/suppression d'articles), avec **seuil
+  d'alerte optionnel** par article : un rappel apparaît sur l'accueil
+  dès que la quantité passe en dessous, touchez-le pour ajouter
+  directement ces articles à la liste de courses (avec le seuil comme
+  quantité suggérée)
 - Mode cuisine avec **plusieurs minuteurs** réglables (décompte,
   sonnerie **et vibration**, clignotement à zéro)
 - Multilingue : français, anglais, espagnol, allemand
@@ -121,14 +128,21 @@ tiers gratuits pour contourner une restriction de sécurité des
 navigateurs (CORS) — sans eux, il serait impossible de récupérer le
 contenu d'un autre site directement depuis le téléphone. Cinq services
 sont essayés automatiquement l'un après l'autre en cas d'échec
-(`cors.x2u.in`, `corsfix.com`, `cors.lol`, `allorigins.win`,
-`codetabs.com`), ce qui règle le problème "ça marche une fois sur
+(`allorigins.win`, `codetabs.com`, `cors.x2u.in`, `cors.lol`,
+`corsfix.com`), ce qui règle le problème "ça marche une fois sur
 deux" : si l'un est temporairement indisponible ou saturé, le suivant
 prend le relais sans action de votre part — utile notamment lors de
 pannes ponctuelles (déjà observées sur deux de ces services
-simultanément). Deux conséquences à connaître :
+simultanément). Si tous les cinq échouent, un sixième filet de secours
+d'un genre différent prend le relais : **Jina AI Reader**, qui ne
+transmet pas le HTML brut mais une version déjà nettoyée en texte de la
+page, analysée ensuite avec la même méthode que l'import par photo
+(repérage des mots "Ingrédients"/"Préparation") — moins précis qu'une
+extraction de données structurées, mais qui peut réussir sur des sites
+qui bloquent les cinq services habituels. Deux conséquences à
+connaître :
 - L'adresse que vous collez est transmise à ces services intermédiaires
-- Si les cinq deviennent indisponibles un jour, cette fonctionnalité
+- Si les six deviennent indisponibles un jour, cette fonctionnalité
   cesserait de fonctionner jusqu'à ce qu'on la fasse pointer vers
   d'autres services équivalents
 
