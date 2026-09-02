@@ -318,6 +318,16 @@ function render() {
   }
 
   app.appendChild(topbar);
+
+  if (state.updateAvailable) {
+    const updateBanner = el(`<div style="background:var(--primary);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;font-weight:600;">
+      <span>${escapeHtml(t("update_available_banner"))}</span>
+      <button type="button" style="background:#fff;color:var(--primary);border:none;border-radius:999px;padding:6px 14px;font-weight:700;font-size:12px;">${t("update_available_button")}</button>
+    </div>`);
+    updateBanner.querySelector("button").addEventListener("click", () => location.reload());
+    app.appendChild(updateBanner);
+  }
+
   app.appendChild(screenEl);
 
   if (!["form", "ingredients", "ingredientDuplicates", "backup", "compare", "menus", "menu", "planning", "planningHistory", "importUrl", "unitConverter", "trash", "savedShoppingLists", "whatCanICook", "cookbookExport", "manageSubstitutions", "statistics", "importPhoto"].includes(state.screen)) {
@@ -637,7 +647,7 @@ function renderRecipeRow(recipe) {
   row.appendChild(thumb);
   const info = el(`<div class="recipe-info">
     <div class="recipe-name">${escapeHtml(recipe.name)}</div>
-    <div class="recipe-meta">${escapeHtml(translateCategory(recipe.category))}${recipe.prepTime || recipe.cookTime ? " · " + ((Number(recipe.prepTime) || 0) + (Number(recipe.cookTime) || 0)) + " " + t("recipe_min") : ""}</div>
+    <div class="recipe-meta">${escapeHtml(translateCategory(recipe.category))}${recipe.prepTime || recipe.cookTime ? " · " + ((Number(recipe.prepTime) || 0) + (Number(recipe.cookTime) || 0)) + " " + t("recipe_min") : ""}${recipe.personalRating ? ` · ${"★".repeat(recipe.personalRating)}` : ""}</div>
   </div>`);
   row.appendChild(info);
   if (recipe.favorite) row.appendChild(el(`<span class="recipe-star">⭐</span>`));
@@ -794,6 +804,19 @@ function renderRecipeView() {
   if (r.notes) {
     wrap.appendChild(el(`<div class="section"><div class="section-label">${t("recipe_notes")}</div><div class="card" style="padding:14px 16px;"><p class="prose">${escapeHtml(r.notes)}</p></div></div>`));
   }
+  if (r.personalRating) {
+    const filledStars = "★".repeat(r.personalRating) + "☆".repeat(5 - r.personalRating);
+    wrap.appendChild(el(`<div class="section"><div class="section-label">${t("recipe_my_rating")}</div><div class="card" style="padding:14px 16px;"><p style="margin:0;font-size:22px;color:var(--accent);letter-spacing:4px;">${filledStars}</p></div></div>`));
+  }
+  if (r.familyOpinion) {
+    wrap.appendChild(el(`<div class="section"><div class="section-label">${t("recipe_family_opinion")}</div><div class="card" style="padding:14px 16px;"><p class="prose">${escapeHtml(r.familyOpinion)}</p></div></div>`));
+  }
+  if (r.improvementNotes) {
+    wrap.appendChild(el(`<div class="section"><div class="section-label">${t("recipe_improvement_notes")}</div><div class="card" style="padding:14px 16px;"><p class="prose">${escapeHtml(r.improvementNotes)}</p></div></div>`));
+  }
+  if (r.actualDifficulty) {
+    wrap.appendChild(el(`<div class="section"><div class="section-label">${t("recipe_actual_difficulty")}</div><div class="card" style="padding:14px 16px;"><p class="prose">${escapeHtml(translateDifficulty(r.actualDifficulty))}</p></div></div>`));
+  }
 
   const actions = el(`<div class="action-row"></div>`);
   const addShopBtn = el(`<button class="btn btn-primary">${t("recipe_add_to_shopping")}</button>`);
@@ -844,6 +867,10 @@ function renderRecipeView() {
       favorite: false,
       timesCooked: 0,
       cookLog: [],
+      personalRating: 0,
+      familyOpinion: "",
+      improvementNotes: "",
+      actualDifficulty: "",
       ingredients: (r.ingredients || []).map((i) => ({ ...i })),
       allergens: [...(r.allergens || [])],
     };
@@ -897,6 +924,10 @@ function captureRecipeFormDraft() {
     wishlist: document.getElementById("f-wishlist").checked,
     description: document.getElementById("f-description").value,
     notes: document.getElementById("f-notes").value,
+    personalRating: Number(document.getElementById("f-rating-stars").dataset.value) || 0,
+    familyOpinion: document.getElementById("f-family-opinion").value,
+    improvementNotes: document.getElementById("f-improvement-notes").value,
+    actualDifficulty: document.getElementById("f-actual-difficulty").value,
     ingredients: state.formIngredients,
     allergens: state.formAllergens,
     photo: state.formPhoto,
@@ -1053,6 +1084,48 @@ function renderRecipeForm() {
     <textarea id="f-notes">${escapeHtml(r ? r.notes || "" : (prefill ? prefill.notes || "" : ""))}</textarea>
   </div>`));
 
+  // Note personnelle : 5 étoiles cliquables, valeur gardée dans un
+  // attribut data-value plutôt qu'un champ de formulaire classique.
+  const initialRating = r ? r.personalRating || 0 : (prefill ? prefill.personalRating || 0 : 0);
+  const ratingField = el(`<div class="field">
+    <label>${t("form_my_rating_label")}</label>
+    <div id="f-rating-stars" data-value="${initialRating}" style="font-size:30px;letter-spacing:6px;cursor:pointer;line-height:1;"></div>
+  </div>`);
+  const starsEl = ratingField.querySelector("#f-rating-stars");
+  function renderStars(value) {
+    starsEl.dataset.value = String(value);
+    starsEl.innerHTML = [1, 2, 3, 4, 5].map((n) =>
+      `<span data-star="${n}" style="color:${n <= value ? "var(--accent)" : "var(--border)"};">★</span>`
+    ).join("");
+  }
+  renderStars(initialRating);
+  starsEl.addEventListener("click", (e) => {
+    const starEl = e.target.closest("[data-star]");
+    if (!starEl) return;
+    const clicked = Number(starEl.dataset.star);
+    // Cliquer sur l'étoile déjà sélectionnée comme valeur maximale
+    // efface la note, pour pouvoir revenir à "pas encore noté".
+    renderStars(clicked === Number(starsEl.dataset.value) ? 0 : clicked);
+  });
+  wrap.appendChild(ratingField);
+
+  wrap.appendChild(el(`<div class="field">
+    <label for="f-family-opinion">${t("form_family_opinion_label")}</label>
+    <input type="text" id="f-family-opinion" placeholder="${t("form_family_opinion_placeholder")}" value="${escapeHtml(r ? r.familyOpinion || "" : (prefill ? prefill.familyOpinion || "" : ""))}">
+  </div>`));
+  wrap.appendChild(el(`<div class="field">
+    <label for="f-improvement-notes">${t("form_improvement_notes_label")}</label>
+    <input type="text" id="f-improvement-notes" placeholder="${t("form_improvement_notes_placeholder")}" value="${escapeHtml(r ? r.improvementNotes || "" : (prefill ? prefill.improvementNotes || "" : ""))}">
+  </div>`));
+  const actualDiffField = el(`<div class="field">
+    <label for="f-actual-difficulty">${t("form_actual_difficulty_label")}</label>
+    <select id="f-actual-difficulty"><option value="">${t("form_actual_difficulty_placeholder")}</option></select>
+  </div>`);
+  const actualDiffSelect = actualDiffField.querySelector("#f-actual-difficulty");
+  DIFFICULTY_OPTIONS.forEach((d) => actualDiffSelect.appendChild(el(`<option value="${d}">${escapeHtml(translateDifficulty(d))}</option>`)));
+  actualDiffSelect.value = r ? r.actualDifficulty || "" : (prefill ? prefill.actualDifficulty || "" : "");
+  wrap.appendChild(actualDiffField);
+
   const submitBtn = el(`<button type="submit" class="btn btn-primary" style="margin-bottom:10px;">${t("form_save")}</button>`);
   const cancelBtn = el(`<button type="button" class="btn btn-outline">${t("form_cancel")}</button>`);
   cancelBtn.addEventListener("click", () => {
@@ -1152,6 +1225,10 @@ async function saveRecipeForm(wrap, existing) {
     allergens: state.formAllergens.slice(),
     description: wrap.querySelector("#f-description").value.trim(),
     notes: wrap.querySelector("#f-notes").value.trim(),
+    personalRating: Number(wrap.querySelector("#f-rating-stars").dataset.value) || 0,
+    familyOpinion: wrap.querySelector("#f-family-opinion").value.trim(),
+    improvementNotes: wrap.querySelector("#f-improvement-notes").value.trim(),
+    actualDifficulty: wrap.querySelector("#f-actual-difficulty").value,
     photo: state.formPhoto,
     createdAt: existing ? existing.createdAt : new Date().toISOString(),
   };
@@ -1187,7 +1264,39 @@ function addRecipeToShoppingSilent(recipe, persons) {
   return Promise.all(puts.map((item) => storePut("shopping", item)));
 }
 async function addRecipeToShopping(recipe, persons) {
-  await addRecipeToShoppingSilent(recipe, persons);
+  const items = state.shopping;
+  const summaryLines = [];
+  const plan = [];
+
+  (recipe.ingredients || []).forEach((ing) => {
+    const neededQty = ing.quantity != null ? Number(ing.quantity) * persons : null;
+    const { adjustedQty, reducedAmount, fullyCovered } = computePantryReduction(ing.name, ing.unit, neededQty);
+    if (fullyCovered) {
+      summaryLines.push(t("pantry_reduction_fully_covered", { name: translateIngredientName(ing.name) }));
+    } else if (reducedAmount > 0) {
+      summaryLines.push(t("pantry_reduction_reduced", { name: translateIngredientName(ing.name), qty: fmtQty(adjustedQty), unit: translateUnit(ing.unit) }));
+    }
+    if (!fullyCovered) plan.push({ name: ing.name, quantity: adjustedQty, unit: ing.unit });
+  });
+
+  if (summaryLines.length) {
+    const summaryText = `${t("pantry_reduction_summary_title")}\n\n${summaryLines.join("\n")}\n\n${t("pantry_reduction_confirm_continue")}`;
+    if (!await customConfirm(summaryText)) return;
+  }
+
+  const puts = [];
+  plan.forEach((ing) => {
+    const existing = items.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
+    if (existing && ing.quantity != null && existing.quantity != null) {
+      existing.quantity += ing.quantity;
+      puts.push(existing);
+    } else {
+      const item = { id: uid(), name: ing.name, quantity: ing.quantity, unit: ing.unit, checked: false };
+      items.push(item);
+      puts.push(item);
+    }
+  });
+  await Promise.all(puts.map((item) => storePut("shopping", item)));
   state.screen = "shopping";
   render();
 }
@@ -1398,11 +1507,30 @@ function openAddItemModal(storeName, existingItem) {
   sheet.querySelector("#modal-confirm").addEventListener("click", async () => {
     const name = resolveIngredientInput((typedName || nameInput.value).trim());
     if (!name) { nameInput.focus(); return; }
+    let quantity = parseQtyOrNull(sheet.querySelector("#modal-ing-qty").value);
+    const unit = unitSelect.value;
+
+    // Vérifie le garde-manger uniquement pour un nouvel article de la
+    // liste de courses (pas en modification, ni pour le garde-manger
+    // lui-même, où ça n'aurait pas de sens).
+    if (storeName === "shopping" && !isEdit) {
+      const { adjustedQty, reducedAmount, fullyCovered } = computePantryReduction(name, unit, quantity);
+      if (fullyCovered || reducedAmount > 0) {
+        const line = fullyCovered
+          ? t("pantry_reduction_fully_covered", { name: translateIngredientName(name) })
+          : t("pantry_reduction_reduced", { name: translateIngredientName(name), qty: fmtQty(adjustedQty), unit: translateUnit(unit) });
+        const summaryText = `${t("pantry_reduction_summary_title")}\n\n${line}\n\n${t("pantry_reduction_confirm_continue")}`;
+        if (!await customConfirm(summaryText)) return;
+        if (fullyCovered) { overlay.remove(); return; }
+        quantity = adjustedQty;
+      }
+    }
+
     const item = {
       id: isEdit ? existingItem.id : uid(),
       name,
-      quantity: parseQtyOrNull(sheet.querySelector("#modal-ing-qty").value),
-      unit: unitSelect.value,
+      quantity,
+      unit,
     };
     if (storeName === "shopping") item.checked = isEdit ? existingItem.checked : false;
     if (isPantry) item.threshold = parseQtyOrNull(sheet.querySelector("#modal-ing-threshold").value);
@@ -1842,6 +1970,26 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, includePhoto)
   if (recipe.notes) {
     heading(t("pdf_notes_label"));
     paragraph(recipe.notes);
+    y += 5;
+  }
+  if (recipe.personalRating) {
+    heading(t("recipe_my_rating"));
+    paragraph("★".repeat(recipe.personalRating) + "☆".repeat(5 - recipe.personalRating));
+    y += 5;
+  }
+  if (recipe.familyOpinion) {
+    heading(t("recipe_family_opinion"));
+    paragraph(recipe.familyOpinion);
+    y += 5;
+  }
+  if (recipe.improvementNotes) {
+    heading(t("recipe_improvement_notes"));
+    paragraph(recipe.improvementNotes);
+    y += 5;
+  }
+  if (recipe.actualDifficulty) {
+    heading(t("recipe_actual_difficulty"));
+    paragraph(translateDifficulty(recipe.actualDifficulty));
   }
 
   doc.setFontSize(8);
@@ -3569,6 +3717,28 @@ function unitToBase(quantity, unit) {
   return { kind: "count", value: quantity };
 }
 
+// Réduit la quantité à acheter d'un ingrédient selon ce qui est déjà
+// disponible au garde-manger — uniquement quand les unités sont
+// directement comparables (même nature : poids, volume, ou nombre de
+// pièces), sinon on ne déduit rien plutôt que de risquer un calcul
+// trompeur (ex. "2 pièces" contre "500 g" ne se comparent pas).
+function computePantryReduction(name, unit, neededQty) {
+  const noReduction = { adjustedQty: neededQty, reducedAmount: 0, fullyCovered: false };
+  if (neededQty == null) return noReduction;
+  const pantryItem = state.pantry.find((p) => normalize(p.name) === normalize(name));
+  if (!pantryItem || pantryItem.quantity == null) return noReduction;
+  const neededBase = unitToBase(neededQty, unit);
+  const pantryBase = unitToBase(pantryItem.quantity, pantryItem.unit);
+  if (neededBase.kind !== pantryBase.kind || neededBase.value <= 0) return noReduction;
+  if (pantryBase.value >= neededBase.value) {
+    return { adjustedQty: null, reducedAmount: neededQty, fullyCovered: true };
+  }
+  if (pantryBase.value <= 0) return noReduction;
+  const remainingRatio = (neededBase.value - pantryBase.value) / neededBase.value;
+  const adjustedQty = neededQty * remainingRatio;
+  return { adjustedQty, reducedAmount: neededQty - adjustedQty, fullyCovered: false };
+}
+
 function computeIngredientCost(name, quantity, unit) {
   const price = getIngredientPrice(name);
   if (!price || quantity == null || !price.amount) return null;
@@ -4359,14 +4529,7 @@ function parseIngredientString(str) {
 const CORS_PROXIES = [
   (url) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
   (url) => "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(url),
-  // Ces deux services attendent l'adresse cible collée directement à la
-  // fin (pas en paramètre nommé) — sans encodage, un "?" ou "&" dans
-  // l'adresse d'origine (courant sur beaucoup de sites de recettes)
-  // pouvait être mal interprété par le serveur du proxy lui-même et
-  // provoquer une erreur 404.
-  (url) => "https://cors.x2u.in/" + encodeURIComponent(url),
   (url) => "https://api.cors.lol/?url=" + encodeURIComponent(url),
-  (url) => "https://corsfix.com/" + encodeURIComponent(url),
 ];
 
 function fetchWithTimeout(url, ms) {
@@ -4384,7 +4547,7 @@ function fetchWithTimeout(url, ms) {
   ]);
 }
 
-async function fetchHtmlViaProxies(targetUrl, onAttempt) {
+async function fetchRecipeDataViaProxies(targetUrl, onAttempt) {
   let lastError = null;
   const failureDetails = [];
   for (let i = 0; i < CORS_PROXIES.length; i++) {
@@ -4402,7 +4565,18 @@ async function fetchHtmlViaProxies(targetUrl, onAttempt) {
         failureDetails.push(`Service ${i + 1} : réponse vide`);
         continue;
       }
-      return html;
+      // Vérifie que la réponse contient réellement une recette
+      // structurée, plutôt que de considérer toute réponse assez
+      // longue comme une réussite : une page de blocage, d'erreur ou
+      // d'inscription renvoyée par un service dépasse très souvent
+      // 50 caractères sans contenir la moindre recette, ce qui
+      // empêchait auparavant d'essayer les services suivants.
+      const parser = new DOMParser();
+      const docHtml = parser.parseFromString(html, "text/html");
+      const recipeData = extractJsonLdRecipe(docHtml) || extractMicrodataRecipe(docHtml);
+      if (recipeData) return recipeData;
+      lastError = new Error("no_recipe_in_response");
+      failureDetails.push(`Service ${i + 1} : page reçue mais sans recette reconnaissable`);
     } catch (e) {
       lastError = e;
       failureDetails.push(`Service ${i + 1} : ${e.name || "Error"} — ${e.message || "inconnue"}`);
@@ -4667,7 +4841,12 @@ function resizeBlobToDataUrl(blob) {
 // que pour la page elle-même en repli. Un échec ici n'empêche jamais
 // l'import du reste de la recette.
 async function fetchImageAsDataUrl(imageUrl) {
-  const attempts = [imageUrl, ...CORS_PROXIES.map((p) => p(imageUrl))];
+  const attempts = [imageUrl];
+  // Le Worker Cloudflare personnel (si configuré) est essayé avant les
+  // 3 services de repli publics, pour la même raison de fiabilité que
+  // pour le texte de la recette.
+  if (CLOUDFLARE_WORKER_URL) attempts.push(CLOUDFLARE_WORKER_URL + "?url=" + encodeURIComponent(imageUrl));
+  attempts.push(...CORS_PROXIES.map((p) => p(imageUrl)));
   for (const attemptUrl of attempts) {
     try {
       const res = await fetchWithTimeout(attemptUrl, 15000);
@@ -4815,45 +4994,19 @@ function stripJinaMarkdownNoise(markdown) {
   return grouped.filter(Boolean).join("\n");
 }
 
-async function fetchRecipeFromUrl(url, onAttempt) {
-  // Jina AI Reader en premier : plus fiable en pratique que les 5
-  // services CORS classiques, même si son texte nettoyé donne une
-  // extraction un peu moins précise (pas de photo automatique, temps/
-  // nombre de personnes parfois approximatifs) qu'une vraie extraction
-  // de données structurées quand elle réussit.
-  try {
-    const markdown = await fetchViaJinaReader(url);
-    const cleanedText = stripJinaMarkdownNoise(markdown);
-    const parsedFromText = parseOcrRecipeText(cleanedText);
-    if (parsedFromText && parsedFromText.ingredients.length) {
-      return {
-        name: parsedFromText.name,
-        description: parsedFromText.description,
-        ingredients: parsedFromText.ingredients.map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) })),
-        persons: 4,
-        prepTime: parsedFromText.prepTime,
-        cookTime: parsedFromText.cookTime,
-        category: "Autre",
-        photo: null,
-      };
-    }
-  } catch (e) {
-    // Jina a échoué ou n'a rien trouvé d'exploitable : on tente les 5
-    // services habituels ci-dessous avant d'abandonner définitivement.
-  }
+// ⚠️ À CONFIGURER : une fois votre Worker Cloudflare déployé (voir
+// COMMENT_DEPLOYER.md), collez son adresse ici, sans "/" ni paramètre
+// à la fin (ex. "https://mes-recettes-proxy.votre-pseudo.workers.dev").
+// Laissez vide ("") pour désactiver cette étape et passer directement
+// à Jina AI Reader puis aux 3 services de repli.
+const CLOUDFLARE_WORKER_URL = "https://mes-recettes-proxy.fabricemoritel.workers.dev";
 
-  let recipeData = null;
-  try {
-    const html = await fetchHtmlViaProxies(url, onAttempt);
-    const parser = new DOMParser();
-    const docHtml = parser.parseFromString(html, "text/html");
-    recipeData = extractJsonLdRecipe(docHtml) || extractMicrodataRecipe(docHtml);
-  } catch (e) {
-    // Tous les services intermédiaires habituels ont aussi échoué.
-  }
-
-  if (!recipeData) throw new Error("no_recipe_found");
-
+// Convertit les données structurées "Recipe" (JSON-LD ou microdonnées,
+// peu importe le service qui les a fournies) vers le format interne de
+// l'application — factorisé ici pour être utilisé aussi bien après le
+// Worker Cloudflare qu'après les 3 services de repli, qui produisent
+// tous les deux la même forme de données en cas de succès.
+async function buildRecipeFromStructuredData(recipeData) {
   const name = typeof recipeData.name === "string" ? recipeData.name : "";
   const instructions = extractRecipeInstructions(recipeData);
   const shortDescription = typeof recipeData.description === "string" ? recipeData.description.trim() : "";
@@ -4885,6 +5038,76 @@ async function fetchRecipeFromUrl(url, onAttempt) {
   }
 
   return { name, description, ingredients, persons, prepTime, cookTime, category, photo };
+}
+
+// Récupère et analyse une page via le Worker Cloudflare personnel
+// (voir CLOUDFLARE_WORKER_URL ci-dessus) — quand il est configuré et
+// fonctionne, c'est la source la plus fiable et la plus complète
+// (photo automatique, temps et personnes précis), puisque c'est un
+// service qu'on contrôle entièrement plutôt qu'un proxy public
+// partagé par de nombreuses autres applications.
+async function fetchRecipeDataViaWorker(targetUrl) {
+  if (!CLOUDFLARE_WORKER_URL) throw new Error("worker_not_configured");
+  const res = await fetchWithTimeout(CLOUDFLARE_WORKER_URL + "?url=" + encodeURIComponent(targetUrl), 20000);
+  if (!res.ok) throw new Error("worker_http_" + res.status);
+  const html = await res.text();
+  if (!html || html.length < 50) throw new Error("worker_empty_response");
+  const parser = new DOMParser();
+  const docHtml = parser.parseFromString(html, "text/html");
+  const recipeData = extractJsonLdRecipe(docHtml) || extractMicrodataRecipe(docHtml);
+  if (!recipeData) throw new Error("worker_no_recipe_in_response");
+  return recipeData;
+}
+
+async function fetchRecipeFromUrl(url, onAttempt) {
+  // 1. Worker Cloudflare personnel en premier, si configuré : c'est la
+  // source la plus fiable et la plus complète (voir commentaire de
+  // fetchRecipeDataViaWorker ci-dessus).
+  try {
+    const recipeData = await fetchRecipeDataViaWorker(url);
+    return await buildRecipeFromStructuredData(recipeData);
+  } catch (e) {
+    // Pas configuré, ou a échoué : on continue avec Jina ci-dessous.
+  }
+
+  // 2. Jina AI Reader ensuite : plus fiable en pratique que les 3
+  // services CORS classiques restants, même si son texte nettoyé donne
+  // une extraction un peu moins précise (pas de photo automatique,
+  // temps/nombre de personnes parfois approximatifs) qu'une vraie
+  // extraction de données structurées quand elle réussit.
+  try {
+    const markdown = await fetchViaJinaReader(url);
+    const cleanedText = stripJinaMarkdownNoise(markdown);
+    const parsedFromText = parseOcrRecipeText(cleanedText);
+    if (parsedFromText && parsedFromText.ingredients.length) {
+      return {
+        name: parsedFromText.name,
+        description: parsedFromText.description,
+        ingredients: parsedFromText.ingredients.map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) })),
+        persons: 4,
+        prepTime: parsedFromText.prepTime,
+        cookTime: parsedFromText.cookTime,
+        category: "Autre",
+        photo: null,
+      };
+    }
+  } catch (e) {
+    // Jina a échoué ou n'a rien trouvé d'exploitable : on tente les 3
+    // services habituels ci-dessous avant d'abandonner définitivement.
+  }
+
+  // 3. Les 3 services CORS publics classiques, en tout dernier
+  // recours : les moins fiables des trois approches, mais un dernier
+  // filet de secours utile quand les deux précédentes ont échoué.
+  let recipeData = null;
+  try {
+    recipeData = await fetchRecipeDataViaProxies(url, onAttempt);
+  } catch (e) {
+    // Tous les services intermédiaires habituels ont aussi échoué.
+  }
+
+  if (!recipeData) throw new Error("no_recipe_found");
+  return await buildRecipeFromStructuredData(recipeData);
 }
 
 function renderImportUrl() {
@@ -5349,6 +5572,17 @@ async function init() {
   });
 
   if ("serviceWorker" in navigator) {
+    // Une vraie mise à jour a eu lieu seulement si un contrôleur existait
+    // déjà avant ce changement (sinon, c'est juste la toute première
+    // prise de contrôle au premier lancement, pas une nouvelle version).
+    let hadControllerBefore = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (hadControllerBefore) {
+        state.updateAvailable = true;
+        render();
+      }
+      hadControllerBefore = true;
+    });
     try {
       const registration = await navigator.serviceWorker.register("./sw.js");
       // Force une vérification de nouvelle version à chaque ouverture de
