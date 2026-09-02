@@ -831,6 +831,30 @@ function renderRecipeView() {
   const editRow = el(`<div class="action-row"></div>`);
   const editBtn = el(`<button class="btn btn-outline">${t("recipe_edit")}</button>`);
   editBtn.addEventListener("click", () => openRecipeForm(r.id));
+  const dupBtn = el(`<button class="btn btn-outline">${t("recipe_duplicate")}</button>`);
+  dupBtn.addEventListener("click", async () => {
+    // Copie complète de la recette (ingrédients, allergènes, photo...)
+    // avec un nouvel identifiant, mais sans hériter de l'historique de
+    // cuisine ni du statut favori de l'originale — c'est une nouvelle
+    // variante, pas encore cuisinée.
+    const duplicate = {
+      ...r,
+      id: uid(),
+      name: r.name + t("recipe_duplicate_suffix"),
+      favorite: false,
+      timesCooked: 0,
+      cookLog: [],
+      ingredients: (r.ingredients || []).map((i) => ({ ...i })),
+      allergens: [...(r.allergens || [])],
+    };
+    await storePut("recipes", duplicate);
+    state.recipes.push(duplicate);
+    await customAlert(t("recipe_duplicate_success"));
+    state.editingRecipeId = null;
+    state.currentRecipeId = duplicate.id;
+    state.screen = "recipe";
+    render();
+  });
   const delBtn = el(`<button class="btn btn-danger">${t("recipe_delete")}</button>`);
   delBtn.addEventListener("click", async () => {
     if (await customConfirm(t("recipe_delete_confirm"))) {
@@ -840,6 +864,7 @@ function renderRecipeView() {
     }
   });
   editRow.appendChild(editBtn);
+  editRow.appendChild(dupBtn);
   editRow.appendChild(delBtn);
   wrap.appendChild(editRow);
 
@@ -849,17 +874,70 @@ function renderRecipeView() {
 /* ======================================================================
    ÉCRAN : FORMULAIRE RECETTE (ajout / modification)
    ====================================================================== */
-function openRecipeForm(recipeId) {
+// Brouillon automatique : si l'utilisateur quitte accidentellement
+// l'application en pleine création d'une recette (pas en modification
+// d'une recette existante, pour éviter toute confusion), l'état du
+// formulaire est capturé quand la page passe en arrière-plan, et une
+// restauration est proposée à la prochaine ouverture du formulaire.
+const RECIPE_DRAFT_KEY = "recipeDraft";
+function captureRecipeFormDraft() {
+  if (state.screen !== "form" || state.editingRecipeId) return;
+  const nameEl = document.getElementById("f-name");
+  if (!nameEl) return; // le formulaire n'est pas (ou plus) affiché
+  const draft = {
+    savedAt: new Date().toISOString(),
+    name: nameEl.value,
+    category: document.getElementById("f-category").value,
+    difficulty: document.getElementById("f-difficulty").value,
+    persons: document.getElementById("f-persons").value,
+    prepTime: document.getElementById("f-prep").value,
+    cookTime: document.getElementById("f-cook").value,
+    favorite: document.getElementById("f-favorite").checked,
+    vegetarian: document.getElementById("f-vegetarian").checked,
+    wishlist: document.getElementById("f-wishlist").checked,
+    description: document.getElementById("f-description").value,
+    notes: document.getElementById("f-notes").value,
+    ingredients: state.formIngredients,
+    allergens: state.formAllergens,
+    photo: state.formPhoto,
+  };
+  // Un brouillon vide (rien de saisi) n'a aucun intérêt à être gardé.
+  const hasContent = draft.name.trim() || draft.ingredients.some((i) => (i.name || "").trim());
+  if (hasContent) localStorage.setItem(RECIPE_DRAFT_KEY, JSON.stringify(draft));
+}
+function getRecipeFormDraft() {
+  try {
+    const raw = localStorage.getItem(RECIPE_DRAFT_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+function clearRecipeFormDraft() {
+  localStorage.removeItem(RECIPE_DRAFT_KEY);
+}
+
+async function openRecipeForm(recipeId) {
   state.editingRecipeId = recipeId;
+  state._formDraftToApply = null;
   if (recipeId) {
     const r = state.recipes.find((x) => x.id === recipeId);
     state.formIngredients = (r.ingredients || []).map((i) => ({ ...i }));
     state.formPhoto = r.photo || null;
     state.formAllergens = (r.allergens || []).slice();
   } else {
-    state.formIngredients = [{ name: "", quantity: "", unit: "pièce" }];
-    state.formPhoto = null;
-    state.formAllergens = [];
+    const draft = getRecipeFormDraft();
+    if (draft && await customConfirm(t("form_draft_found_confirm", { name: draft.name || t("form_draft_untitled") }))) {
+      state.formIngredients = draft.ingredients && draft.ingredients.length ? draft.ingredients : [{ name: "", quantity: "", unit: "pièce" }];
+      state.formPhoto = draft.photo || null;
+      state.formAllergens = draft.allergens || [];
+      state._formDraftToApply = draft;
+    } else {
+      if (draft) clearRecipeFormDraft();
+      state.formIngredients = [{ name: "", quantity: "", unit: "pièce" }];
+      state.formPhoto = null;
+      state.formAllergens = [];
+    }
   }
   state.screen = "form";
   render();
@@ -867,10 +945,12 @@ function openRecipeForm(recipeId) {
 
 function renderRecipeForm() {
   const r = state.editingRecipeId ? state.recipes.find((x) => x.id === state.editingRecipeId) : null;
-  // Pré-remplissage à usage unique venant de l'import depuis un lien
-  // (ne s'applique jamais en modification d'une recette existante).
-  const prefill = !r && state._importPrefill ? state._importPrefill : null;
+  // Pré-remplissage à usage unique venant de l'import depuis un lien ou
+  // d'un brouillon retrouvé (ne s'applique jamais en modification d'une
+  // recette existante).
+  const prefill = !r ? (state._importPrefill || state._formDraftToApply || null) : null;
   state._importPrefill = null;
+  state._formDraftToApply = null;
   const wrap = el(`<form id="recipe-form"></form>`);
 
   const photoBox = el(`<div class="photo-upload">
@@ -916,6 +996,7 @@ function renderRecipeForm() {
   const diffSelect = diffField.querySelector("select");
   DIFFICULTY_OPTIONS.forEach((d) => diffSelect.appendChild(el(`<option value="${d}">${escapeHtml(translateDifficulty(d))}</option>`)));
   if (r) diffSelect.value = r.difficulty || "Facile";
+  else if (prefill && prefill.difficulty) diffSelect.value = prefill.difficulty;
   row1.appendChild(diffField);
   wrap.appendChild(row1);
 
@@ -926,9 +1007,9 @@ function renderRecipeForm() {
   wrap.appendChild(row2);
 
   const checks = el(`<div class="card" style="padding:2px 14px;margin-bottom:20px;">
-    <div class="checkbox-row"><input type="checkbox" id="f-favorite" ${r && r.favorite ? "checked" : ""}><label for="f-favorite">${t("form_favorite")}</label></div>
-    <div class="checkbox-row"><input type="checkbox" id="f-vegetarian" ${r && r.vegetarian ? "checked" : ""}><label for="f-vegetarian">${t("form_vegetarian")}</label></div>
-    <div class="checkbox-row"><input type="checkbox" id="f-wishlist" ${r && r.wishlist ? "checked" : ""}><label for="f-wishlist">${t("form_wishlist")}</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="f-favorite" ${(r && r.favorite) || (prefill && prefill.favorite) ? "checked" : ""}><label for="f-favorite">${t("form_favorite")}</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="f-vegetarian" ${(r && r.vegetarian) || (prefill && prefill.vegetarian) ? "checked" : ""}><label for="f-vegetarian">${t("form_vegetarian")}</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="f-wishlist" ${(r && r.wishlist) || (prefill && prefill.wishlist) ? "checked" : ""}><label for="f-wishlist">${t("form_wishlist")}</label></div>
   </div>`);
   wrap.appendChild(checks);
 
@@ -969,12 +1050,13 @@ function renderRecipeForm() {
   </div>`));
   wrap.appendChild(el(`<div class="field">
     <label for="f-notes">${t("form_notes")}</label>
-    <textarea id="f-notes">${escapeHtml(r ? r.notes || "" : "")}</textarea>
+    <textarea id="f-notes">${escapeHtml(r ? r.notes || "" : (prefill ? prefill.notes || "" : ""))}</textarea>
   </div>`));
 
   const submitBtn = el(`<button type="submit" class="btn btn-primary" style="margin-bottom:10px;">${t("form_save")}</button>`);
   const cancelBtn = el(`<button type="button" class="btn btn-outline">${t("form_cancel")}</button>`);
   cancelBtn.addEventListener("click", () => {
+    if (!r) clearRecipeFormDraft();
     state.screen = r ? "recipe" : "recipes";
     render();
   });
@@ -1076,6 +1158,7 @@ async function saveRecipeForm(wrap, existing) {
   await storePut("recipes", recipe);
   const idx = state.recipes.findIndex((x) => x.id === recipe.id);
   if (idx >= 0) state.recipes[idx] = recipe; else state.recipes.push(recipe);
+  if (!existing) clearRecipeFormDraft();
 
   state.currentRecipeId = recipe.id;
   state.viewPersons = recipe.defaultPersons;
@@ -3523,8 +3606,11 @@ async function buildBackupData() {
   return data;
 }
 function backupFileName() {
-  const dateStr = new Date().toISOString().slice(0, 10);
-  return `mes-recettes-sauvegarde-${dateStr}.json`;
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  const timeStr = `${pad(now.getHours())}-${pad(now.getMinutes())}`;
+  return `mes-recettes-sauvegarde-${dateStr}_${timeStr}.json`;
 }
 async function buildBackupFile() {
   const data = await buildBackupData();
@@ -3580,7 +3666,7 @@ async function shareBackupData(preloadedFilePromise) {
   }
 }
 
-async function importAllData(file, mode) {
+async function parseBackupFile(file) {
   const text = await file.text();
   let data;
   try {
@@ -3591,6 +3677,20 @@ async function importAllData(file, mode) {
   if (!data || typeof data !== "object" || !BACKUP_STORES.some((s) => Array.isArray(data[s]))) {
     throw new Error("invalid");
   }
+  return data;
+}
+function buildBackupPreviewText(data) {
+  const count = (storeName) => (Array.isArray(data[storeName]) ? data[storeName].length : 0);
+  const dateLabel = data.exportedAt ? new Date(data.exportedAt).toLocaleString() + "\n" : "";
+  return t("backup_preview_text", {
+    date: dateLabel,
+    recipes: String(count("recipes")),
+    ingredients: String(count("ingredients")),
+    menus: String(count("menus")),
+    shopping: String(count("shopping")),
+  });
+}
+async function importAllData(data, mode) {
   if (mode === "replace") {
     for (const storeName of BACKUP_STORES) await storeClear(storeName);
   }
@@ -3672,13 +3772,38 @@ function renderBackup() {
     const file = e.target.files[0];
     if (!file) return;
     const mode = importSection.querySelector("#import-mode").value;
-    if (mode === "replace" && !await customConfirm(t("backup_import_confirm_replace"))) {
+
+    let data;
+    try {
+      data = await parseBackupFile(file);
+    } catch (err) {
+      await customAlert(t("backup_import_error"));
       e.target.value = "";
       return;
     }
+
+    if (!await customConfirm(buildBackupPreviewText(data))) {
+      e.target.value = "";
+      return;
+    }
+
+    let didSafetyBackup = false;
+    if (mode === "replace") {
+      if (!await customConfirm(t("backup_import_confirm_replace"))) {
+        e.target.value = "";
+        return;
+      }
+      // Sauvegarde automatique des données actuelles avant de les
+      // remplacer — au cas où le mauvais fichier aurait été
+      // sélectionné par erreur, rien n'est perdu définitivement.
+      if (state.recipes.length > 0) {
+        await exportAllData();
+        didSafetyBackup = true;
+      }
+    }
     try {
-      await importAllData(file, mode);
-      await customAlert(t("backup_import_success"));
+      await importAllData(data, mode);
+      await customAlert(t(didSafetyBackup ? "backup_import_success_with_safety" : "backup_import_success"));
       state.screen = "home";
       render();
     } catch (err) {
@@ -5214,6 +5339,14 @@ function renderStatistics() {
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
+
+  // Capture un brouillon de la recette en cours de création si
+  // l'application passe en arrière-plan ou se ferme — plus fiable que
+  // "beforeunload" sur mobile, qui ne se déclenche pas toujours de
+  // façon cohérente en changeant d'application.
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") captureRecipeFormDraft();
+  });
 
   if ("serviceWorker" in navigator) {
     try {

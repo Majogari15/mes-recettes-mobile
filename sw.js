@@ -3,7 +3,7 @@
 // ensuite (les données elles-mêmes sont stockées séparément, dans IndexedDB,
 // géré directement par app.js).
 
-const CACHE_NAME = "mes-recettes-cache-v82";
+const CACHE_NAME = "mes-recettes-cache-v84";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -78,19 +78,40 @@ self.addEventListener("fetch", (event) => {
   // requêtes de mutation n'ont pas à être mises en cache.
   if (event.request.method !== "GET") return;
 
-  // Stratégie "cache d'abord, réseau en repli" : rapide, et fonctionne
-  // même hors connexion une fois le premier chargement effectué. Pour une
-  // navigation (ouverture de page), on retombe sur index.html si tout
-  // échoue ; pour les autres ressources, on laisse l'échec se produire
-  // normalement plutôt que de le masquer avec un mauvais contenu.
   const isNavigation = event.request.mode === "navigate";
+  const pathname = new URL(event.request.url).pathname;
+  // Ces trois fichiers contiennent la logique de l'application et sont
+  // les seuls à vraiment poser problème s'ils restent périmés en cache
+  // (c'est ce qui obligeait auparavant à vider le cache manuellement
+  // après chaque mise à jour) — ils essaient donc toujours le réseau
+  // en premier, avec le cache uniquement en repli si hors connexion.
+  const isCriticalFile = isNavigation || pathname.endsWith("/app.js") || pathname.endsWith("/i18n.js") || pathname.endsWith("/index.html");
+
+  if (isCriticalFile) {
+    event.respondWith(
+      fetch(event.request)
+        .then((res) => {
+          const resClone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
+          return res;
+        })
+        .catch(() =>
+          caches.match(event.request).then((cached) => {
+            if (cached) return cached;
+            return isNavigation ? caches.match("./index.html") : Response.error();
+          })
+        )
+    );
+    return;
+  }
+
+  // Pour tout le reste (images, données de référence, bibliothèques
+  // externes) : cache d'abord — plus rapide, et ces fichiers changent
+  // rarement d'une version à l'autre.
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
-      return fetch(event.request).catch(() => {
-        if (isNavigation) return caches.match("./index.html");
-        return Response.error();
-      });
+      return fetch(event.request).catch(() => Response.error());
     })
   );
 });
