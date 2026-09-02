@@ -475,6 +475,18 @@ function renderHome() {
     wrap.appendChild(reminder);
   }
 
+  // Rappel de sauvegarde : seulement s'il y a des recettes à protéger,
+  // et si ça fait longtemps (ou jamais) qu'un export/partage a eu lieu.
+  const lastBackupAt = localStorage.getItem("lastBackupAt");
+  const daysSinceBackup = lastBackupAt ? (Date.now() - new Date(lastBackupAt).getTime()) / 86400000 : Infinity;
+  if (state.recipes.length > 0 && daysSinceBackup >= 14) {
+    const backupReminder = el(`<div style="background:var(--accent-light);color:var(--accent);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;">
+      ${escapeHtml(t("home_backup_reminder"))}
+    </div>`);
+    backupReminder.addEventListener("click", () => { state.screen = "backup"; render(); });
+    wrap.appendChild(backupReminder);
+  }
+
   const shoppingCount = state.shopping.filter((i) => !i.checked).length;
 
   // Groupe principal (sans en-tête, actions les plus utilisées)
@@ -3404,21 +3416,52 @@ function computeShoppingTotal(items) {
    ====================================================================== */
 const BACKUP_STORES = ["recipes", "shopping", "pantry", "ingredients", "ingredientOverrides", "menus", "planTemplates", "planHistory", "trash", "savedShoppingLists", "kv"];
 
-async function exportAllData() {
+async function buildBackupData() {
   const data = { exportedAt: new Date().toISOString(), version: 1 };
   for (const storeName of BACKUP_STORES) {
     data[storeName] = await storeAll(storeName);
   }
+  return data;
+}
+function backupFileName() {
+  const dateStr = new Date().toISOString().slice(0, 10);
+  return `mes-recettes-sauvegarde-${dateStr}.json`;
+}
+async function exportAllData() {
+  const data = await buildBackupData();
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  const dateStr = new Date().toISOString().slice(0, 10);
   a.href = url;
-  a.download = `mes-recettes-sauvegarde-${dateStr}.json`;
+  a.download = backupFileName();
   document.body.appendChild(a);
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+  localStorage.setItem("lastBackupAt", new Date().toISOString());
+}
+// Ouvre le menu de partage natif du téléphone avec le fichier de
+// sauvegarde, pour l'envoyer vers Google Drive, Dropbox, OneDrive, par
+// email... selon ce que l'utilisateur a d'installé — pas d'intégration
+// directe avec un service en particulier, l'utilisateur choisit à
+// chaque fois. Retourne false si le partage de fichier n'est pas pris
+// en charge par ce navigateur (repli possible vers exportAllData()).
+async function shareBackupData() {
+  if (!navigator.canShare) return false;
+  const data = await buildBackupData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const file = new File([blob], backupFileName(), { type: "application/json" });
+  if (!navigator.canShare({ files: [file] })) return false;
+  try {
+    await navigator.share({ files: [file], title: t("backup_share_title") });
+    localStorage.setItem("lastBackupAt", new Date().toISOString());
+    return true;
+  } catch (e) {
+    // L'utilisateur a annulé le partage, ou une erreur est survenue :
+    // ni un vrai succès, ni un cas où il faut basculer sur le
+    // téléchargement classique (il a fait un choix délibéré).
+    return true;
+  }
 }
 
 async function importAllData(file, mode) {
@@ -3449,21 +3492,35 @@ async function importAllData(file, mode) {
 function renderBackup() {
   const wrap = el(`<div></div>`);
 
+  const canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [new File([""], "test.json")] }));
   const exportSection = el(`<div class="section">
     <div class="section-label">${t("backup_export_title")}</div>
     <div class="card" style="padding:16px;">
       <p class="prose" style="margin:0 0 14px;font-size:14px;">${escapeHtml(t("backup_export_text"))}</p>
-      <button class="btn btn-primary" id="export-btn">${t("backup_export_button")}</button>
+      <button class="btn btn-primary" id="export-btn" style="margin-bottom:10px;">${t("backup_export_button")}</button>
+      ${canShareFiles ? `<button class="btn btn-secondary" id="share-btn">${t("backup_share_button")}</button>
+      <p style="font-size:12px;color:var(--text-muted);margin:8px 0 0;">${escapeHtml(t("backup_share_hint"))}</p>` : ""}
     </div>
   </div>`);
   exportSection.querySelector("#export-btn").addEventListener("click", async () => {
     await exportAllData();
     alert(t("backup_export_success"));
   });
+  if (canShareFiles) {
+    exportSection.querySelector("#share-btn").addEventListener("click", async () => {
+      const shared = await shareBackupData();
+      if (!shared) {
+        // Repli si le partage échoue pour une raison technique malgré
+        // la détection préalable — au moins le téléchargement classique
+        // fonctionne toujours.
+        await exportAllData();
+        alert(t("backup_export_success"));
+      }
+    });
+  }
   wrap.appendChild(exportSection);
 
-  const importSection = el(`<div class="section">
-    <div class="section-label">${t("backup_import_title")}</div>
+  const importSection = el(`<div class="section">    <div class="section-label">${t("backup_import_title")}</div>
     <div class="card" style="padding:16px;">
       <p class="prose" style="margin:0 0 14px;font-size:14px;">${escapeHtml(t("backup_import_text"))}</p>
       <div class="field">
@@ -5021,6 +5078,14 @@ async function init() {
       // plus vite après une mise à jour du dépôt.
       registration.update().catch(() => {});
     } catch (e) { /* ignore */ }
+  }
+
+  // Réduit (sans l'éliminer) le risque que le navigateur efface les
+  // données automatiquement par manque d'espace — ne protège pas contre
+  // un effacement volontaire des données du site par l'utilisateur,
+  // d'où l'intérêt des rappels et boutons de sauvegarde par ailleurs.
+  if (navigator.storage && navigator.storage.persist) {
+    navigator.storage.persist().catch(() => {});
   }
 
   await loadReferenceData();

@@ -61,6 +61,13 @@ toujours à votre initiative explicite :
   fonctionnement de ces outils sur votre appareil.
 - **Bouton « Faire un don »** : ouvre, uniquement si vous cliquez dessus,
   la page https://buymeacoffee.com/majogari dans votre navigateur.
+- **Partager la sauvegarde** (fonctionnalité optionnelle) : le bouton
+  « Partager la sauvegarde » ouvre le menu de partage natif de votre
+  téléphone, vous laissant choisir vous-même une application (Google
+  Drive, Dropbox, email...) vers laquelle envoyer votre fichier de
+  sauvegarde. L'application ne communique directement avec aucun de ces
+  services : c'est l'application que vous choisissez dans ce menu qui
+  reçoit le fichier, selon sa propre politique de confidentialité.
 
 ## 5. Aucune collecte, aucun suivi
 
