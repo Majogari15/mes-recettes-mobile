@@ -167,6 +167,44 @@ function escapeHtml(str) {
   div.textContent = str == null ? "" : String(str);
   return div.innerHTML;
 }
+// Remplace window.alert()/window.confirm() par des fenêtres propres à
+// l'application — les fenêtres natives du navigateur affichent toujours
+// le nom du site ("majogari15.github.io indique...") avant le message,
+// ce qui n'est pas adapté à une application destinée au grand public.
+function customAlert(message) {
+  return new Promise((resolve) => {
+    const overlay = el(`<div class="modal-overlay"></div>`);
+    const sheet = el(`<div class="modal-sheet">
+      <p style="margin:0 0 20px;font-size:15px;line-height:1.5;white-space:pre-line;">${escapeHtml(message)}</p>
+      <button type="button" class="btn btn-primary" id="custom-alert-ok">${t("common_ok")}</button>
+    </div>`);
+    overlay.appendChild(sheet);
+    document.body.appendChild(overlay);
+    const okBtn = sheet.querySelector("#custom-alert-ok");
+    const close = () => { overlay.remove(); resolve(); };
+    okBtn.addEventListener("click", close);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+    okBtn.focus();
+  });
+}
+function customConfirm(message) {
+  return new Promise((resolve) => {
+    const overlay = el(`<div class="modal-overlay"></div>`);
+    const sheet = el(`<div class="modal-sheet">
+      <p style="margin:0 0 20px;font-size:15px;line-height:1.5;white-space:pre-line;">${escapeHtml(message)}</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="custom-confirm-cancel">${t("form_cancel")}</button>
+        <button type="button" class="btn btn-primary" id="custom-confirm-ok">${t("common_ok")}</button>
+      </div>
+    </div>`);
+    overlay.appendChild(sheet);
+    document.body.appendChild(overlay);
+    const finish = (value) => { overlay.remove(); resolve(value); };
+    sheet.querySelector("#custom-confirm-cancel").addEventListener("click", () => finish(false));
+    sheet.querySelector("#custom-confirm-ok").addEventListener("click", () => finish(true));
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) finish(false); });
+  });
+}
 function fmtQty(qty) {
   if (qty == null || qty === "") return "";
   const n = Number(qty);
@@ -795,7 +833,7 @@ function renderRecipeView() {
   editBtn.addEventListener("click", () => openRecipeForm(r.id));
   const delBtn = el(`<button class="btn btn-danger">${t("recipe_delete")}</button>`);
   delBtn.addEventListener("click", async () => {
-    if (confirm(t("recipe_delete_confirm"))) {
+    if (await customConfirm(t("recipe_delete_confirm"))) {
       await moveRecipeToTrash(r);
       state.screen = "recipes";
       render();
@@ -999,11 +1037,11 @@ function renderAllergenCheckboxes(holder) {
 
 async function saveRecipeForm(wrap, existing) {
   const name = wrap.querySelector("#f-name").value.trim();
-  if (!name) { alert(t("form_error_name")); return; }
+  if (!name) { await customAlert(t("form_error_name")); return; }
   const validIngredients = state.formIngredients
     .map((i) => ({ name: resolveIngredientInput((i.name || "").trim()), quantity: parseQtyOrNull(i.quantity), unit: i.unit }))
     .filter((i) => i.name);
-  if (!validIngredients.length) { alert(t("form_error_ingredient")); return; }
+  if (!validIngredients.length) { await customAlert(t("form_error_ingredient")); return; }
 
   // Tout ingrédient réellement nouveau (ne correspondant à aucun nom déjà
   // connu, ni en français ni traduit) est ajouté à la liste des
@@ -1133,7 +1171,7 @@ function renderShopping() {
 
   const clearBtn = el(`<button class="btn btn-danger" style="margin-top:10px;">${t("shopping_clear")}</button>`);
   clearBtn.addEventListener("click", async () => {
-    if (confirm(t("shopping_clear_confirm"))) {
+    if (await customConfirm(t("shopping_clear_confirm"))) {
       await storeClear("shopping");
       state.shopping = [];
       render();
@@ -1162,7 +1200,7 @@ function renderSavedShoppingLists() {
       </div>
     </div>`);
     card.querySelector(".load").addEventListener("click", async () => {
-      if (state.shopping.length && !confirm(t("shopping_load_list_confirm"))) return;
+      if (state.shopping.length && !await customConfirm(t("shopping_load_list_confirm"))) return;
       await storeClear("shopping");
       const items = JSON.parse(JSON.stringify(saved.items)).map((i) => ({ ...i, id: uid() }));
       for (const item of items) await storePut("shopping", item);
@@ -1171,7 +1209,7 @@ function renderSavedShoppingLists() {
       render();
     });
     card.querySelector(".del").addEventListener("click", async () => {
-      if (!confirm(t("shopping_delete_list_confirm"))) return;
+      if (!await customConfirm(t("shopping_delete_list_confirm"))) return;
       await storeDelete("savedShoppingLists", saved.id);
       state.savedShoppingLists = state.savedShoppingLists.filter((x) => x.id !== saved.id);
       render();
@@ -1370,7 +1408,7 @@ function renderIngredientManage() {
       </div>`);
       row.querySelector(".edit").addEventListener("click", () => openIngredientNameModal(name));
       row.querySelector(".del").addEventListener("click", async () => {
-        if (confirm(t("ingredient_delete_confirm", { name }))) {
+        if (await customConfirm(t("ingredient_delete_confirm", { name }))) {
           await deleteIngredientName(name);
           fillList(searchBar.querySelector("input").value);
         }
@@ -1591,13 +1629,13 @@ function openIngredientNameModal(existingName) {
     if (!value) { input.focus(); return; }
     if (existingName) {
       if (value !== existingName && state.ingredientNames.some((n) => normalize(n) === normalize(value))) {
-        alert(t("ingredient_already_exists"));
+        await customAlert(t("ingredient_already_exists"));
         return;
       }
       if (value !== existingName) await renameIngredientName(existingName, value);
     } else {
       if (state.ingredientNames.some((n) => normalize(n) === normalize(value))) {
-        alert(t("ingredient_already_exists"));
+        await customAlert(t("ingredient_already_exists"));
         return;
       }
       await addIngredientName(value);
@@ -1729,12 +1767,12 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, includePhoto)
   doc.setTextColor(0);
 }
 
-function exportRecipePdf(recipe, persons) {
+async function exportRecipePdf(recipe, persons) {
   if (!window.jspdf) {
-    alert(t("backup_import_error"));
+    await customAlert(t("backup_import_error"));
     return;
   }
-  const includePhoto = recipe.photo ? confirm(t("pdf_include_photo_confirm")) : false;
+  const includePhoto = recipe.photo ? await customConfirm(t("pdf_include_photo_confirm")) : false;
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const margin = 20;
@@ -1746,9 +1784,9 @@ function exportRecipePdf(recipe, persons) {
   doc.save(`${safeName}.pdf`);
 }
 
-function exportShoppingListPdf() {
+async function exportShoppingListPdf() {
   if (!window.jspdf) {
-    alert(t("backup_import_error"));
+    await customAlert(t("backup_import_error"));
     return;
   }
   const { jsPDF } = window.jspdf;
@@ -1809,9 +1847,9 @@ function exportShoppingListPdf() {
 // Les numéros de page du sommaire sont remplis après coup, une fois que
 // la vraie page de chaque recette est connue (chaque recette démarre
 // toujours sur une page neuve, ce qui rend ce numéro prévisible).
-function exportCookbookPdf(recipes, includePhotos) {
+async function exportCookbookPdf(recipes, includePhotos) {
   if (!window.jspdf) {
-    alert(t("backup_import_error"));
+    await customAlert(t("backup_import_error"));
     return;
   }
   const { jsPDF } = window.jspdf;
@@ -1917,8 +1955,8 @@ function renderCookbookExport() {
   wrap.appendChild(photosRow);
 
   const exportBtn = el(`<button class="btn btn-primary">${t("cookbook_export_button")}</button>`);
-  exportBtn.addEventListener("click", () => {
-    if (!selected.size) { alert(t("cookbook_no_selection")); return; }
+  exportBtn.addEventListener("click", async () => {
+    if (!selected.size) { await customAlert(t("cookbook_no_selection")); return; }
     const chosen = sortedRecipes.filter((r) => selected.has(r.id));
     const includePhotos = wrap.querySelector("#cb-include-photos").checked;
     exportCookbookPdf(chosen, includePhotos);
@@ -2190,12 +2228,12 @@ function loadJsQrLib() {
 }
 
 async function confirmImportScannedShoppingList(items) {
-  if (!confirm(t("qrscan_import_confirm", { count: String(items.length) }))) return;
+  if (!await customConfirm(t("qrscan_import_confirm", { count: String(items.length) }))) return;
   for (const item of items) {
     await storePut("shopping", item);
     state.shopping.push(item);
   }
-  alert(t("qrscan_import_success"));
+  await customAlert(t("qrscan_import_success"));
   render();
 }
 
@@ -2450,7 +2488,7 @@ function openQrPasteModal() {
 }
 
 async function confirmImportScannedRecipe(parsed) {
-  if (!confirm(t("qrscan_recipe_import_confirm", { name: parsed.name }))) return;
+  if (!await customConfirm(t("qrscan_recipe_import_confirm", { name: parsed.name }))) return;
   state.editingRecipeId = null;
   state.formIngredients = parsed.ingredients.map((i) => ({
     name: resolveImportedIngredientName(i.name),
@@ -2626,7 +2664,7 @@ function openCookLogViewModal(recipe) {
         openCookLogAddModal(recipe, entry, fillEntries);
       });
       headerRow.querySelector(".del").addEventListener("click", async () => {
-        if (!confirm(t("cooklog_delete_confirm"))) return;
+        if (!await customConfirm(t("cooklog_delete_confirm"))) return;
         recipe.cookLog = (recipe.cookLog || []).filter((x) => x !== entry);
         recipe.timesCooked = Math.max(0, (recipe.timesCooked || 1) - 1);
         await storePut("recipes", recipe);
@@ -2905,7 +2943,7 @@ function isIosDevice() {
 }
 async function triggerInstall() {
   if (isRunningStandalone()) {
-    alert(t("install_already_installed"));
+    await customAlert(t("install_already_installed"));
   } else if (deferredInstallPrompt) {
     deferredInstallPrompt.prompt();
     await deferredInstallPrompt.userChoice;
@@ -2913,7 +2951,7 @@ async function triggerInstall() {
   } else if (isIosDevice()) {
     openIosInstallInstructions();
   } else {
-    alert(t("install_already_installed"));
+    await customAlert(t("install_already_installed"));
   }
 }
 function openIosInstallInstructions() {
@@ -3591,19 +3629,18 @@ function renderBackup() {
   </div>`);
   exportSection.querySelector("#export-btn").addEventListener("click", async () => {
     await exportAllData();
-    alert(t("backup_export_success"));
+    await customAlert(t("backup_export_success"));
   });
   if (canShareFiles) {
     exportSection.querySelector("#share-btn").addEventListener("click", async () => {
       const result = await shareBackupData(preloadedBackupFilePromise);
       if (!result.ok) {
-        // Repli si le partage échoue pour une raison technique malgré
-        // la détection préalable — au moins le téléchargement classique
-        // fonctionne toujours. On affiche le détail de l'erreur pour
-        // un vrai diagnostic, plutôt que de la faire disparaître.
-        if (result.error) alert(result.error);
+        // Repli silencieux vers le téléchargement classique : après
+        // plusieurs pistes explorées sans succès sur cet appareil, le
+        // message d'erreur technique n'apporte plus d'information utile
+        // et n'est là que pour inquiéter inutilement l'utilisateur.
         await exportAllData();
-        alert(t("backup_export_success"));
+        await customAlert(t("backup_export_success"));
       }
     });
   }
@@ -3635,17 +3672,17 @@ function renderBackup() {
     const file = e.target.files[0];
     if (!file) return;
     const mode = importSection.querySelector("#import-mode").value;
-    if (mode === "replace" && !confirm(t("backup_import_confirm_replace"))) {
+    if (mode === "replace" && !await customConfirm(t("backup_import_confirm_replace"))) {
       e.target.value = "";
       return;
     }
     try {
       await importAllData(file, mode);
-      alert(t("backup_import_success"));
+      await customAlert(t("backup_import_success"));
       state.screen = "home";
       render();
     } catch (err) {
-      alert(t("backup_import_error"));
+      await customAlert(t("backup_import_error"));
     }
   });
   wrap.appendChild(importSection);
@@ -3898,7 +3935,7 @@ function renderMenuDetail() {
 
   async function saveMenu() {
     const nameValue = wrap.querySelector("#menu-name").value.trim();
-    if (!nameValue) { alert(t("menu_error_name")); return null; }
+    if (!nameValue) { await customAlert(t("menu_error_name")); return null; }
     const menu = { id: existing ? existing.id : uid(), name: nameValue, items: items.slice() };
     await storePut("menus", menu);
     const idx = state.menus.findIndex((m) => m.id === menu.id);
@@ -3927,7 +3964,7 @@ function renderMenuDetail() {
 
     const delBtn = el(`<button class="btn btn-danger">${t("common_delete")}</button>`);
     delBtn.addEventListener("click", async () => {
-      if (confirm(t("menu_delete_confirm"))) {
+      if (await customConfirm(t("menu_delete_confirm"))) {
         await storeDelete("menus", existing.id);
         state.menus = state.menus.filter((m) => m.id !== existing.id);
         state.screen = "menus";
@@ -4044,7 +4081,7 @@ function renderPlanning() {
 
   const clearBtn = el(`<button class="btn btn-danger" style="margin-bottom:20px;">${t("planning_clear")}</button>`);
   clearBtn.addEventListener("click", async () => {
-    if (confirm(t("planning_clear_confirm"))) {
+    if (await customConfirm(t("planning_clear_confirm"))) {
       await archiveCurrentPlanIfNotEmpty();
       state.weeklyPlan = {};
       await saveWeeklyPlan();
@@ -4067,14 +4104,14 @@ function renderPlanning() {
         </span>
       </div>`);
       row.querySelector(".apply").addEventListener("click", async () => {
-        if (!confirm(t("planning_apply_template_confirm"))) return;
+        if (!await customConfirm(t("planning_apply_template_confirm"))) return;
         await archiveCurrentPlanIfNotEmpty();
         state.weeklyPlan = JSON.parse(JSON.stringify(template.plan));
         await saveWeeklyPlan();
         render();
       });
       row.querySelector(".del").addEventListener("click", async () => {
-        if (!confirm(t("planning_delete_template_confirm"))) return;
+        if (!await customConfirm(t("planning_delete_template_confirm"))) return;
         await storeDelete("planTemplates", template.id);
         state.planTemplates = state.planTemplates.filter((x) => x.id !== template.id);
         render();
@@ -4118,7 +4155,7 @@ function renderPlanningHistory() {
     const actionsRow = el(`<div class="action-row" style="margin-bottom:20px;"></div>`);
     const reapplyBtn = el(`<button class="btn btn-secondary">${t("planning_history_reapply")}</button>`);
     reapplyBtn.addEventListener("click", async () => {
-      if (!confirm(t("planning_history_reapply_confirm"))) return;
+      if (!await customConfirm(t("planning_history_reapply_confirm"))) return;
       await archiveCurrentPlanIfNotEmpty();
       state.weeklyPlan = JSON.parse(JSON.stringify(entry.plan));
       await saveWeeklyPlan();
@@ -4127,7 +4164,7 @@ function renderPlanningHistory() {
     });
     const delBtn = el(`<button class="btn btn-danger">${t("common_delete")}</button>`);
     delBtn.addEventListener("click", async () => {
-      if (!confirm(t("planning_history_delete_confirm"))) return;
+      if (!await customConfirm(t("planning_history_delete_confirm"))) return;
       await storeDelete("planHistory", entry.id);
       state.planHistory = state.planHistory.filter((x) => x.id !== entry.id);
       render();
@@ -4848,7 +4885,7 @@ function renderTrash() {
       render();
     });
     card.querySelector(".del-forever").addEventListener("click", async () => {
-      if (!confirm(t("trash_delete_forever_confirm"))) return;
+      if (!await customConfirm(t("trash_delete_forever_confirm"))) return;
       await deleteFromTrashForever(entry.id);
       render();
     });
@@ -4856,7 +4893,7 @@ function renderTrash() {
   });
   const emptyAllBtn = el(`<button class="btn btn-danger" style="margin-top:8px;">${t("trash_empty_all_button")}</button>`);
   emptyAllBtn.addEventListener("click", async () => {
-    if (!confirm(t("trash_empty_all_confirm"))) return;
+    if (!await customConfirm(t("trash_empty_all_confirm"))) return;
     await storeClear("trash");
     state.trash = [];
     render();
