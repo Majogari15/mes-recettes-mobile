@@ -4841,15 +4841,17 @@ function resizeBlobToDataUrl(blob) {
 // que pour la page elle-même en repli. Un échec ici n'empêche jamais
 // l'import du reste de la recette.
 async function fetchImageAsDataUrl(imageUrl) {
-  const attempts = [imageUrl];
+  const attempts = [{ url: imageUrl, timeout: 15000 }];
   // Le Worker Cloudflare personnel (si configuré) est essayé avant les
   // 3 services de repli publics, pour la même raison de fiabilité que
-  // pour le texte de la recette.
-  if (CLOUDFLARE_WORKER_URL) attempts.push(CLOUDFLARE_WORKER_URL + "?url=" + encodeURIComponent(imageUrl));
-  attempts.push(...CORS_PROXIES.map((p) => p(imageUrl)));
-  for (const attemptUrl of attempts) {
+  // pour le texte de la recette — avec un délai plus généreux (30s,
+  // supérieur aux 25s internes du Worker), les images pouvant prendre
+  // plus de temps à récupérer que les autres services plus simples.
+  if (CLOUDFLARE_WORKER_URL) attempts.push({ url: CLOUDFLARE_WORKER_URL + "?url=" + encodeURIComponent(imageUrl), timeout: 30000 });
+  attempts.push(...CORS_PROXIES.map((p) => ({ url: p(imageUrl), timeout: 15000 })));
+  for (const attempt of attempts) {
     try {
-      const res = await fetchWithTimeout(attemptUrl, 15000);
+      const res = await fetchWithTimeout(attempt.url, attempt.timeout);
       if (!res.ok) continue;
       const blob = await res.blob();
       if (!blob.type.startsWith("image/")) continue;
@@ -5048,7 +5050,7 @@ async function buildRecipeFromStructuredData(recipeData) {
 // partagé par de nombreuses autres applications.
 async function fetchRecipeDataViaWorker(targetUrl) {
   if (!CLOUDFLARE_WORKER_URL) throw new Error("worker_not_configured");
-  const res = await fetchWithTimeout(CLOUDFLARE_WORKER_URL + "?url=" + encodeURIComponent(targetUrl), 20000);
+  const res = await fetchWithTimeout(CLOUDFLARE_WORKER_URL + "?url=" + encodeURIComponent(targetUrl), 30000);
   if (!res.ok) throw new Error("worker_http_" + res.status);
   const html = await res.text();
   if (!html || html.length < 50) throw new Error("worker_empty_response");
