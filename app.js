@@ -2494,6 +2494,8 @@ async function openQrScanModal() {
     </div>
     <div id="qrscan-status" style="font-size:12px;color:var(--text-muted);margin-bottom:12px;min-height:16px;"></div>
     <button type="button" class="btn btn-secondary" id="qrscan-manual" style="margin-bottom:10px;" disabled>${t("qrscan_manual_button")}</button>
+    <button type="button" class="btn btn-outline" id="qrscan-choose-image" style="margin-bottom:10px;">${t("qrscan_choose_image_button")}</button>
+    <input type="file" accept="image/*" id="qrscan-file-input" style="display:none;">
     <button type="button" class="btn btn-outline" id="qrscan-close">${t("cooking_close")}</button>
   </div>`);
   overlay.appendChild(sheet);
@@ -2513,20 +2515,10 @@ async function openQrScanModal() {
   sheet.querySelector("#qrscan-close").addEventListener("click", () => { cleanup(); overlay.remove(); });
   overlay.addEventListener("click", (e) => { if (e.target === overlay) { cleanup(); overlay.remove(); } });
 
-  if (!window.isSecureContext) {
-    cameraStatusEl.textContent = t("qrscan_camera_https_hint");
-    return;
-  }
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    cameraStatusEl.textContent = t("qrscan_camera_denied");
-    return;
-  }
-
   // Le détecteur natif du système (disponible sur Chrome Android depuis
   // 2020) utilise le même moteur de reconnaissance que les applications
   // de scan classiques — nettement plus fiable en pratique qu'une
-  // bibliothèque JavaScript pure. On ne charge jsQR (plus lourd, moins
-  // fiable) que si cette API native n'est pas disponible.
+  // bibliothèque JavaScript pure.
   let nativeBarcodeDetector = null;
   if ("BarcodeDetector" in window) {
     try {
@@ -2534,6 +2526,130 @@ async function openQrScanModal() {
     } catch (e) {
       nativeBarcodeDetector = null;
     }
+  }
+
+  // Ce qui suit (canvas, décodage, bouton "choisir une image") est mis
+  // en place avant même de vérifier si la caméra est disponible : cette
+  // voie alternative doit continuer à fonctionner même si la caméra
+  // échoue entièrement (contexte non sécurisé, permission refusée,
+  // appareil sans caméra...), puisqu'elle ne dépend pas d'elle.
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  // Décode le contenu actuellement dessiné dans "canvas" (taille
+  // size×size) — natif en priorité avec repli automatique sur jsQR,
+  // factorisé ici pour être utilisé aussi bien sur une image de la
+  // caméra que sur une image importée depuis un fichier.
+  async function decodeCanvasContent(size) {
+    let decodedText = null;
+    let nativeError = null;
+    if (nativeBarcodeDetector) {
+      try {
+        const barcodes = await nativeBarcodeDetector.detect(canvas);
+        if (barcodes && barcodes.length) decodedText = barcodes[0].rawValue;
+      } catch (e) {
+        nativeError = e;
+        if (e && (e.name === "NotSupportedError" || e.name === "NotAllowedError")) {
+          nativeBarcodeDetector = null;
+          if (!window.jsQR) {
+            statusEl.textContent = t("qrscan_native_fallback");
+            try { await loadJsQrLib(); } catch (loadErr) { /* si jsQR ne charge pas non plus, le repli habituel s'appliquera juste en dessous */ }
+          }
+        }
+      }
+    }
+    if (decodedText == null && window.jsQR) {
+      const imageData = ctx.getImageData(0, 0, size, size);
+      const code = window.jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "attemptBoth" });
+      if (code && code.data) decodedText = code.data;
+    }
+    return { decodedText, nativeError };
+  }
+
+  // Traite un texte décodé (peu importe sa source, caméra ou fichier
+  // importé) de façon identique : reconnaissance recette/liste de
+  // courses, ou affichage du texte brut si non reconnu.
+  function handleDecodedText(decodedText, nativeError, size) {
+    if (decodedText == null) {
+      return {
+        status: "no_code",
+        width: size,
+        height: size,
+        nativeError: nativeError ? ((nativeError.name || "Error") + " — " + (nativeError.message || String(nativeError))) : null,
+      };
+    }
+    const items = decodeShoppingListFromQr(decodedText);
+    if (items && items.length) {
+      cleanup();
+      overlay.remove();
+      confirmImportScannedShoppingList(items);
+      return { status: "success" };
+    }
+    const parsedRecipe = parseRecipeFromQrText(decodedText);
+    if (parsedRecipe) {
+      cleanup();
+      overlay.remove();
+      confirmImportScannedRecipe(parsedRecipe);
+      return { status: "success" };
+    }
+    const preview = decodedText.length > 200 ? decodedText.slice(0, 200) + "…" : decodedText;
+    statusEl.innerHTML = "";
+    statusEl.appendChild(el(`<div>${escapeHtml(t("qrscan_not_recognized"))}</div>`));
+    statusEl.appendChild(el(`<div style="font-size:11px;margin-top:6px;word-break:break-word;white-space:pre-wrap;user-select:text;">${escapeHtml(preview)}</div>`));
+    return { status: "not_recognized" };
+  }
+
+  // Décode une image choisie depuis les fichiers de l'appareil (une
+  // capture d'écran, ou le PNG enregistré via "Enregistrer en image")
+  // — un chemin totalement indépendant de la caméra, qui sert à la
+  // fois de vraie fonctionnalité (recevoir un QR reçu par message) et
+  // de test de diagnostic pour savoir si un souci vient de la caméra
+  // ou du décodage lui-même.
+  async function decodeQrImageFile(file) {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    try {
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = objectUrl;
+      });
+      const size = Math.max(img.naturalWidth, img.naturalHeight);
+      canvas.width = size;
+      canvas.height = size;
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, size, size);
+      ctx.drawImage(img, (size - img.naturalWidth) / 2, (size - img.naturalHeight) / 2);
+      const { decodedText, nativeError } = await decodeCanvasContent(size);
+      return handleDecodedText(decodedText, nativeError, size);
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
+  }
+
+  const fileInput = sheet.querySelector("#qrscan-file-input");
+  sheet.querySelector("#qrscan-choose-image").addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const result = await decodeQrImageFile(file);
+      if (result.status === "no_code") {
+        statusEl.textContent = `${t("qrscan_no_code_found")} (${result.width}×${result.height}px)` + (result.nativeError ? ` [${result.nativeError}]` : "");
+      }
+    } catch (err) {
+      statusEl.textContent = (err && err.name ? err.name + " — " : "") + (err && err.message ? err.message : String(err));
+    }
+    e.target.value = "";
+  });
+
+  if (!window.isSecureContext) {
+    cameraStatusEl.textContent = t("qrscan_camera_https_hint");
+    return;
+  }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    cameraStatusEl.textContent = t("qrscan_camera_denied");
+    return;
   }
 
   cameraStatusEl.textContent = t("qrcode_loading");
@@ -2584,9 +2700,6 @@ async function openQrScanModal() {
   // est retombé sur jsQR.
   statusEl.textContent = nativeBarcodeDetector ? t("qrscan_using_native") : t("qrscan_using_jsqr");
 
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-
   // Analyse une image de la caméra ; retourne true si un QR code
   // reconnu (liste ou recette) a été trouvé et traité.
   async function processFrame() {
@@ -2605,73 +2718,8 @@ async function openQrScanModal() {
     canvas.height = size;
     ctx.drawImage(video, sx, sy, size, size, 0, 0, size, size);
 
-    let decodedText = null;
-    let nativeError = null;
-    if (nativeBarcodeDetector) {
-      try {
-        const barcodes = await nativeBarcodeDetector.detect(canvas);
-        if (barcodes && barcodes.length) decodedText = barcodes[0].rawValue;
-      } catch (e) {
-        // Le détecteur natif a échoué pour une raison quelconque : on
-        // retombe sur jsQR ci-dessous s'il a été chargé, mais on garde
-        // le détail de l'erreur pour l'afficher si tout échoue plutôt
-        // que de la faire disparaître silencieusement.
-        nativeError = e;
-        // "NotSupportedError"/"NotAllowedError" signalent un problème
-        // durable (service Android indisponible, permission refusée) —
-        // pas la peine de retenter le natif à chaque image suivante :
-        // ça ralentit l'analyse pour rien (une tentative qui échoue à
-        // chaque image, sur toute la durée du scan) et peut donner une
-        // impression de gel de l'image. On l'abandonne donc
-        // définitivement pour cette session, et on s'assure que jsQR
-        // est réellement prêt (pas seulement lancé en arrière-plan
-        // sans attendre) avant de continuer.
-        if (e && (e.name === "NotSupportedError" || e.name === "NotAllowedError")) {
-          nativeBarcodeDetector = null;
-          if (!window.jsQR) {
-            statusEl.textContent = t("qrscan_native_fallback");
-            try { await loadJsQrLib(); } catch (loadErr) { /* si jsQR ne charge pas non plus, le repli habituel ("aucun QR détecté") s'appliquera juste en dessous */ }
-          }
-        }
-      }
-    }
-    if (decodedText == null && window.jsQR) {
-      const imageData = ctx.getImageData(0, 0, size, size);
-      const code = window.jsQR(imageData.data, imageData.width, imageData.height);
-      if (code && code.data) decodedText = code.data;
-    }
-
-    if (decodedText == null) {
-      return {
-        status: "no_code",
-        width: canvas.width,
-        height: canvas.height,
-        nativeError: nativeError ? ((nativeError.name || "Error") + " — " + (nativeError.message || String(nativeError))) : null,
-      };
-    }
-
-    const items = decodeShoppingListFromQr(decodedText);
-    if (items && items.length) {
-      cleanup();
-      overlay.remove();
-      confirmImportScannedShoppingList(items);
-      return { status: "success" };
-    }
-    const parsedRecipe = parseRecipeFromQrText(decodedText);
-    if (parsedRecipe) {
-      cleanup();
-      overlay.remove();
-      confirmImportScannedRecipe(parsedRecipe);
-      return { status: "success" };
-    }
-    // Affiche le texte brut réellement décodé (tronqué) : plutôt que de
-    // deviner encore à l'aveugle pourquoi il n'est pas reconnu, ça
-    // permet de voir exactement ce que la caméra a lu.
-    const preview = decodedText.length > 200 ? decodedText.slice(0, 200) + "…" : decodedText;
-    statusEl.innerHTML = "";
-    statusEl.appendChild(el(`<div>${escapeHtml(t("qrscan_not_recognized"))}</div>`));
-    statusEl.appendChild(el(`<div style="font-size:11px;margin-top:6px;word-break:break-word;white-space:pre-wrap;user-select:text;">${escapeHtml(preview)}</div>`));
-    return { status: "not_recognized" };
+    const { decodedText, nativeError } = await decodeCanvasContent(size);
+    return handleDecodedText(decodedText, nativeError, size);
   }
 
   async function tick() {

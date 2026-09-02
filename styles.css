@@ -683,3 +683,16 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   color: var(--primary);
   margin-bottom: 6px;
 }
+
+/* ---------- QR code : rendu net, jamais lissé/flouté ---------- */
+/* Un QR code photographié depuis un autre appareil doit rester net à
+   l'écran — un lissage par défaut du navigateur en cas de
+   redimensionnement pourrait rendre ses petits carrés flous au point
+   de gêner leur lecture par une caméra externe. */
+#qrcode-canvas-holder img,
+#qrcode-shopping-holder img {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  max-width: 100%;
+  height: auto;
+}
