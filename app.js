@@ -2246,7 +2246,12 @@ async function openQrScanModal() {
   }
 
   cameraStatusEl.textContent = t("qrcode_loading");
-  if (!nativeBarcodeDetector) {
+  if (nativeBarcodeDetector) {
+    // Charge quand même jsQR en tâche de fond, comme vrai filet de
+    // secours si le détecteur natif échoue silencieusement pour une
+    // raison quelconque — sans bloquer le démarrage de la caméra dessus.
+    loadJsQrLib().catch(() => {});
+  } else {
     try {
       await loadJsQrLib();
     } catch (e) {
@@ -2310,13 +2315,17 @@ async function openQrScanModal() {
     ctx.drawImage(video, sx, sy, size, size, 0, 0, size, size);
 
     let decodedText = null;
+    let nativeError = null;
     if (nativeBarcodeDetector) {
       try {
         const barcodes = await nativeBarcodeDetector.detect(canvas);
         if (barcodes && barcodes.length) decodedText = barcodes[0].rawValue;
       } catch (e) {
         // Le détecteur natif a échoué pour une raison quelconque : on
-        // retombe sur jsQR ci-dessous s'il a été chargé.
+        // retombe sur jsQR ci-dessous s'il a été chargé, mais on garde
+        // le détail de l'erreur pour l'afficher si tout échoue plutôt
+        // que de la faire disparaître silencieusement.
+        nativeError = e;
       }
     }
     if (decodedText == null && window.jsQR) {
@@ -2325,7 +2334,14 @@ async function openQrScanModal() {
       if (code && code.data) decodedText = code.data;
     }
 
-    if (decodedText == null) return { status: "no_code", width: canvas.width, height: canvas.height };
+    if (decodedText == null) {
+      return {
+        status: "no_code",
+        width: canvas.width,
+        height: canvas.height,
+        nativeError: nativeError ? ((nativeError.name || "Error") + " — " + (nativeError.message || String(nativeError))) : null,
+      };
+    }
 
     const items = decodeShoppingListFromQr(decodedText);
     if (items && items.length) {
@@ -2371,7 +2387,7 @@ async function openQrScanModal() {
     try {
       const result = await processFrame();
       if (result.status === "no_code") {
-        statusEl.textContent = `${t("qrscan_no_code_found")} (${result.width}×${result.height}px, ${video.videoWidth}×${video.videoHeight})`;
+        statusEl.textContent = `${t("qrscan_no_code_found")} (${result.width}×${result.height}px, ${video.videoWidth}×${video.videoHeight})` + (result.nativeError ? ` [${result.nativeError}]` : "");
       }
     } catch (e) {
       statusEl.textContent = (e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e));

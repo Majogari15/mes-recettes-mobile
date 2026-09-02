@@ -93,10 +93,13 @@ sans serveur ni abonnement, toutes les données restent sur l'appareil.
   recette** partagée depuis un autre appareil — compatible avec les QR
   codes générés par la version bureau, pas seulement par mobile
   (nécessite HTTPS pour la caméra, donc utilisable seulement une fois
-  l'application mise en ligne). Si la lecture par caméra ne fonctionne
-  pas bien sur votre appareil, **"Coller le texte d'un QR code"**
-  propose la même reconnaissance à partir du texte obtenu via une autre
-  application de scan (l'appareil photo, un lecteur classique...)
+  l'application mise en ligne). Utilise en priorité la détection de QR
+  code intégrée au système (le même moteur que les applications de scan
+  classiques, disponible sur Chrome Android), avec une bibliothèque de
+  repli si l'appareil ne la propose pas. Si la lecture par caméra ne
+  fonctionne toujours pas bien sur votre appareil, **"Coller le texte
+  d'un QR code"** propose la même reconnaissance à partir du texte
+  obtenu via une autre application de scan
 - **"Que puis-je cuisiner ?"** : indiquez vos ingrédients disponibles
   (repris du garde-manger), voir quelles recettes sont réalisables ou
   presque
