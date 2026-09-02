@@ -3490,8 +3490,14 @@ function backupFileName() {
 }
 async function buildBackupFile() {
   const data = await buildBackupData();
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  return new File([blob], backupFileName(), { type: "application/json" });
+  // "text/plain" plutôt que "application/json" pour le partage
+  // spécifiquement : plusieurs sources indiquent une prise en charge
+  // plus large de ce type MIME par le partage natif Android, alors que
+  // application/json n'est pas toujours reconnu comme partageable. Le
+  // nom de fichier garde ".json" (la réimportation l'accepte par
+  // extension aussi bien que par type).
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "text/plain" });
+  return new File([blob], backupFileName(), { type: "text/plain" });
 }
 async function exportAllData() {
   const data = await buildBackupData();
@@ -3564,7 +3570,7 @@ async function importAllData(file, mode) {
 function renderBackup() {
   const wrap = el(`<div></div>`);
 
-  const canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [new File([""], "test.json")] }));
+  const canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [new File([""], "test.json", { type: "text/plain" })] }));
   // Précharge les données de sauvegarde dès l'ouverture de cet écran,
   // en tâche de fond — pour qu'au moment où l'utilisateur clique sur
   // "Partager", le fichier soit déjà prêt et l'appel à navigator.share()
