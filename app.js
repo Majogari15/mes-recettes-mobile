@@ -448,6 +448,15 @@ function renderHome() {
   }
   wrap.appendChild(el(`<div class="section"><h2 class="display" style="font-size:22px;">${t("home_title")}</h2></div>`));
 
+  if (state.recipes.length === 0) {
+    const restoreHint = el(`<div style="background:var(--primary-light);color:var(--primary);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;text-align:center;">
+      <p style="margin:0 0 8px;">${escapeHtml(t("home_empty_restore_hint"))}</p>
+      <button class="btn btn-secondary" id="empty-restore-btn" style="width:auto;padding:8px 16px;">${t("home_empty_restore_button")}</button>
+    </div>`);
+    restoreHint.querySelector("#empty-restore-btn").addEventListener("click", () => { state.screen = "backup"; render(); });
+    wrap.appendChild(restoreHint);
+  }
+
   const lowStock = getLowStockPantryItems();
   if (lowStock.length) {
     const names = lowStock.map((i) => translateIngredientName(i.name)).sort().join(", ");
@@ -3593,6 +3602,12 @@ function renderBackup() {
     });
   }
   wrap.appendChild(exportSection);
+
+  const androidTip = el(`<div style="background:var(--accent-light);color:var(--accent);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;">
+    <strong>${escapeHtml(t("backup_android_tip_title"))}</strong>
+    <p style="margin:6px 0 0;line-height:1.5;">${escapeHtml(t("backup_android_tip_text"))}</p>
+  </div>`);
+  wrap.appendChild(androidTip);
 
   const importSection = el(`<div class="section">    <div class="section-label">${t("backup_import_title")}</div>
     <div class="card" style="padding:16px;">
