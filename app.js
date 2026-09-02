@@ -437,6 +437,33 @@ function renderHome() {
   }
   wrap.appendChild(el(`<div class="section"><h2 class="display" style="font-size:22px;">${t("home_title")}</h2></div>`));
 
+  const lowStock = getLowStockPantryItems();
+  if (lowStock.length) {
+    const names = lowStock.map((i) => translateIngredientName(i.name)).sort().join(", ");
+    const reminder = el(`<div style="background:var(--accent-light);color:var(--accent);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;">
+      ${escapeHtml(t("home_low_stock_reminder", { count: String(lowStock.length), names }))}
+    </div>`);
+    reminder.addEventListener("click", async () => {
+      const puts = [];
+      lowStock.forEach((pantryItem) => {
+        const qty = pantryItem.threshold;
+        const existing = state.shopping.find((i) => normalize(i.name) === normalize(pantryItem.name) && i.unit === pantryItem.unit && !i.checked);
+        if (existing && qty != null && existing.quantity != null) {
+          existing.quantity += qty;
+          puts.push(existing);
+        } else {
+          const item = { id: uid(), name: pantryItem.name, quantity: qty, unit: pantryItem.unit, checked: false };
+          state.shopping.push(item);
+          puts.push(item);
+        }
+      });
+      await Promise.all(puts.map((item) => storePut("shopping", item)));
+      state.screen = "shopping";
+      render();
+    });
+    wrap.appendChild(reminder);
+  }
+
   const shoppingCount = state.shopping.filter((i) => !i.checked).length;
   const actions = el(`<div class="section"></div>`);
   const addBtn = el(`<button class="btn btn-primary" style="margin-bottom:10px;">${t("home_add_recipe")}</button>`);
@@ -1148,10 +1175,19 @@ function renderShoppingInto(oldWrap) {
   const fresh = renderShopping();
   oldWrap.replaceWith(fresh);
 }
-function openAddItemModal(storeName) {
+// Articles du garde-manger dont la quantité est passée sous le seuil
+// d'alerte défini par l'utilisateur (uniquement ceux où un seuil a été
+// renseigné) — même logique que la version bureau.
+function getLowStockPantryItems() {
+  return state.pantry.filter((item) => item.threshold != null && (item.quantity || 0) < item.threshold);
+}
+
+function openAddItemModal(storeName, existingItem) {
+  const isEdit = !!existingItem;
+  const isPantry = storeName === "pantry";
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
-    <h2>${t("form_add_ingredient")}</h2>
+    <h2>${isEdit ? t("form_edit_ingredient") : t("form_add_ingredient")}</h2>
     <div class="field">
       <label for="modal-ing-name">${t("form_ingredient_name")}</label>
       <div class="autocomplete-wrap"><input type="text" id="modal-ing-name" placeholder="${t("form_ingredient_name")}"></div>
@@ -1160,6 +1196,11 @@ function openAddItemModal(storeName) {
       <div class="field"><label for="modal-ing-qty">${t("form_ingredient_qty")}</label><input type="number" step="any" id="modal-ing-qty"></div>
       <div class="field"><label for="modal-ing-unit">${t("form_ingredient_unit")}</label><select id="modal-ing-unit"></select></div>
     </div>
+    ${isPantry ? `<div class="field">
+      <label for="modal-ing-threshold">${t("pantry_threshold_label")}</label>
+      <input type="number" step="any" id="modal-ing-threshold">
+      <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0;">${escapeHtml(t("pantry_threshold_hint"))}</p>
+    </div>` : ""}
     <div class="modal-actions">
       <button type="button" class="btn btn-outline" id="modal-cancel">${t("form_cancel")}</button>
       <button type="button" class="btn btn-primary" id="modal-confirm">${t("form_save")}</button>
@@ -1167,10 +1208,15 @@ function openAddItemModal(storeName) {
   </div>`);
   const unitSelect = sheet.querySelector("#modal-ing-unit");
   UNIT_OPTIONS.forEach((u) => unitSelect.appendChild(el(`<option value="${u}">${escapeHtml(translateUnit(u))}</option>`)));
-  unitSelect.value = "pièce";
+  unitSelect.value = isEdit ? (existingItem.unit || "pièce") : "pièce";
 
-  let typedName = "";
+  let typedName = isEdit ? existingItem.name : "";
   const nameInput = sheet.querySelector("#modal-ing-name");
+  if (isEdit) {
+    nameInput.value = translateIngredientName(existingItem.name);
+    if (existingItem.quantity != null) sheet.querySelector("#modal-ing-qty").value = existingItem.quantity;
+    if (isPantry && existingItem.threshold != null) sheet.querySelector("#modal-ing-threshold").value = existingItem.threshold;
+  }
   attachIngredientAutocomplete(nameInput, (value) => (typedName = value));
 
   overlay.appendChild(sheet);
@@ -1180,14 +1226,20 @@ function openAddItemModal(storeName) {
     const name = resolveIngredientInput((typedName || nameInput.value).trim());
     if (!name) { nameInput.focus(); return; }
     const item = {
-      id: uid(),
+      id: isEdit ? existingItem.id : uid(),
       name,
       quantity: parseQtyOrNull(sheet.querySelector("#modal-ing-qty").value),
       unit: unitSelect.value,
     };
-    if (storeName === "shopping") item.checked = false;
+    if (storeName === "shopping") item.checked = isEdit ? existingItem.checked : false;
+    if (isPantry) item.threshold = parseQtyOrNull(sheet.querySelector("#modal-ing-threshold").value);
     await storePut(storeName, item);
-    state[storeName].push(item);
+    if (isEdit) {
+      const idx = state[storeName].findIndex((i) => i.id === existingItem.id);
+      if (idx >= 0) state[storeName][idx] = item;
+    } else {
+      state[storeName].push(item);
+    }
     overlay.remove();
     render();
   });
@@ -1213,9 +1265,10 @@ function renderPantry() {
     .sort((a, b) => a.name.localeCompare(b.name))
     .forEach((item) => {
       const row = el(`<div class="shopping-item">
-        <span class="label">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}</span>
+        <span class="label" style="cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}${item.threshold != null ? escapeHtml(t("pantry_threshold_suffix", { threshold: fmtQty(item.threshold) })) : ""}</span>
         <button class="remove-ing" style="width:32px;height:32px;" aria-label="${t("common_delete")}">🗑</button>
       </div>`);
+      row.querySelector(".label").addEventListener("click", () => openAddItemModal("pantry", item));
       row.querySelector("button").addEventListener("click", async () => {
         await storeDelete("pantry", item.id);
         state.pantry = state.pantry.filter((p) => p.id !== item.id);
