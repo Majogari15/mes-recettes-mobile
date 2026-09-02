@@ -4523,6 +4523,20 @@ function stripJinaMarkdownNoise(markdown) {
   cleanedRawLines.forEach((raw) => {
     const trimmed = raw.trim();
     if (!trimmed) return; // ligne vide : bruit de mise en page, ignorée
+
+    // Repères de sous-section ("pour la marinade :", "pour la pâte :")
+    // ou texte d'interface récurrent ("Voir plus") : on clôt
+    // l'ingrédient en cours sans les y mélanger, sans les garder non
+    // plus comme ligne à part — ce ne sont ni des ingrédients, ni du
+    // vrai contenu de recette.
+    const isNoiseLine = /^pour\s+.{1,40}\s*:\s*$/i.test(trimmed)
+      || /^voir plus$/i.test(trimmed)
+      || /^en cliquant sur les liens/i.test(trimmed);
+    if (isNoiseLine) {
+      if (current !== null) { grouped.push(current); current = null; }
+      return;
+    }
+
     const headingMatch = trimmed.match(/^#{1,6}\s*(.*)$/);
     const bulletMatch = trimmed.match(/^[-*•]\s*(?:\[x\]\s*)?(.*)$/i);
 
