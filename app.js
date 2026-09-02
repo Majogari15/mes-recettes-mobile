@@ -465,62 +465,80 @@ function renderHome() {
   }
 
   const shoppingCount = state.shopping.filter((i) => !i.checked).length;
-  const actions = el(`<div class="section"></div>`);
+
+  // Groupe principal (sans en-tête, actions les plus utilisées)
+  const mainActions = el(`<div class="section"></div>`);
   const addBtn = el(`<button class="btn btn-primary" style="margin-bottom:10px;">${t("home_add_recipe")}</button>`);
   addBtn.addEventListener("click", () => openRecipeForm(null));
   const viewBtn = el(`<button class="btn btn-secondary" style="margin-bottom:10px;">${t("home_view_recipes")}</button>`);
   viewBtn.addEventListener("click", () => { state.screen = "recipes"; render(); });
   const shopBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_shopping_list")}${shoppingCount ? ` (${shoppingCount})` : ""}</button>`);
   shopBtn.addEventListener("click", () => { state.screen = "shopping"; render(); });
-  const ingBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_manage_ingredients")}</button>`);
-  ingBtn.addEventListener("click", () => { state.screen = "ingredients"; render(); });
-  const compareBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_compare_recipes")}</button>`);
-  compareBtn.addEventListener("click", () => { state.screen = "compare"; render(); });
-  const menusBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_menus")}</button>`);
-  menusBtn.addEventListener("click", () => { state.screen = "menus"; render(); });
-  const planningBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_planning")}</button>`);
-  planningBtn.addEventListener("click", () => { state.screen = "planning"; render(); });
+  mainActions.appendChild(viewBtn);
+  mainActions.appendChild(shopBtn);
+  mainActions.appendChild(addBtn);
+  wrap.appendChild(mainActions);
+
+  // Groupe "Importer une recette"
+  const importActions = el(`<div class="section"><div class="section-label">${t("home_group_import")}</div></div>`);
   const importUrlBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_import_url")}</button>`);
   importUrlBtn.addEventListener("click", () => { state.screen = "importUrl"; render(); });
-  const backupBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_backup")}</button>`);
-  backupBtn.addEventListener("click", () => { state.screen = "backup"; render(); });
-  const unitConvBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_unit_converter")}</button>`);
-  unitConvBtn.addEventListener("click", () => { state.screen = "unitConverter"; render(); });
-  const trashBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_trash")}${state.trash.length ? ` (${state.trash.length})` : ""}</button>`);
-  trashBtn.addEventListener("click", () => { state.screen = "trash"; render(); });
-  const whatCanICookBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_what_can_i_cook")}</button>`);
-  whatCanICookBtn.addEventListener("click", () => { state.whatCanICookIngredients = null; state.screen = "whatCanICook"; render(); });
-  const cookbookBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_cookbook_export")}</button>`);
-  cookbookBtn.addEventListener("click", () => { state.screen = "cookbookExport"; render(); });
-  const manageSubsBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_manage_substitutions")}</button>`);
-  manageSubsBtn.addEventListener("click", () => { state.screen = "manageSubstitutions"; render(); });
-  const statsBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_statistics")}</button>`);
-  statsBtn.addEventListener("click", () => { state.screen = "statistics"; render(); });
   const importPhotoBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_import_photo")}</button>`);
   importPhotoBtn.addEventListener("click", () => { state.screen = "importPhoto"; render(); });
   const importQrBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("shopping_qr_scan_button")}</button>`);
   importQrBtn.addEventListener("click", () => openQrScanModal());
   const importQrPasteBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_qr_paste_button")}</button>`);
   importQrPasteBtn.addEventListener("click", () => openQrPasteModal());
-  actions.appendChild(viewBtn);
-  actions.appendChild(shopBtn);
-  actions.appendChild(addBtn);
-  actions.appendChild(importUrlBtn);
-  actions.appendChild(importPhotoBtn);
-  actions.appendChild(importQrBtn);
-  actions.appendChild(importQrPasteBtn);
-  actions.appendChild(ingBtn);
-  actions.appendChild(manageSubsBtn);
-  actions.appendChild(planningBtn);
-  actions.appendChild(menusBtn);
-  actions.appendChild(compareBtn);
-  actions.appendChild(unitConvBtn);
-  actions.appendChild(whatCanICookBtn);
-  actions.appendChild(cookbookBtn);
-  actions.appendChild(statsBtn);
-  actions.appendChild(trashBtn);
-  actions.appendChild(backupBtn);
-  wrap.appendChild(actions);
+  importActions.appendChild(importUrlBtn);
+  importActions.appendChild(importPhotoBtn);
+  importActions.appendChild(importQrBtn);
+  importActions.appendChild(importQrPasteBtn);
+  wrap.appendChild(importActions);
+
+  // Groupe "Organiser"
+  const organizeActions = el(`<div class="section"><div class="section-label">${t("home_group_organize")}</div></div>`);
+  const ingBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_manage_ingredients")}</button>`);
+  ingBtn.addEventListener("click", () => { state.screen = "ingredients"; render(); });
+  const manageSubsBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_manage_substitutions")}</button>`);
+  manageSubsBtn.addEventListener("click", () => { state.screen = "manageSubstitutions"; render(); });
+  const planningBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_planning")}</button>`);
+  planningBtn.addEventListener("click", () => { state.screen = "planning"; render(); });
+  const menusBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_menus")}</button>`);
+  menusBtn.addEventListener("click", () => { state.screen = "menus"; render(); });
+  organizeActions.appendChild(ingBtn);
+  organizeActions.appendChild(manageSubsBtn);
+  organizeActions.appendChild(planningBtn);
+  organizeActions.appendChild(menusBtn);
+  wrap.appendChild(organizeActions);
+
+  // Groupe "Outils"
+  const toolsActions = el(`<div class="section"><div class="section-label">${t("home_group_tools")}</div></div>`);
+  const compareBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_compare_recipes")}</button>`);
+  compareBtn.addEventListener("click", () => { state.screen = "compare"; render(); });
+  const unitConvBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_unit_converter")}</button>`);
+  unitConvBtn.addEventListener("click", () => { state.screen = "unitConverter"; render(); });
+  const whatCanICookBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_what_can_i_cook")}</button>`);
+  whatCanICookBtn.addEventListener("click", () => { state.whatCanICookIngredients = null; state.screen = "whatCanICook"; render(); });
+  const cookbookBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_cookbook_export")}</button>`);
+  cookbookBtn.addEventListener("click", () => { state.screen = "cookbookExport"; render(); });
+  const statsBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_statistics")}</button>`);
+  statsBtn.addEventListener("click", () => { state.screen = "statistics"; render(); });
+  toolsActions.appendChild(compareBtn);
+  toolsActions.appendChild(unitConvBtn);
+  toolsActions.appendChild(whatCanICookBtn);
+  toolsActions.appendChild(cookbookBtn);
+  toolsActions.appendChild(statsBtn);
+  wrap.appendChild(toolsActions);
+
+  // Groupe "Autre"
+  const otherActions = el(`<div class="section"><div class="section-label">${t("home_group_other")}</div></div>`);
+  const trashBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_trash")}${state.trash.length ? ` (${state.trash.length})` : ""}</button>`);
+  trashBtn.addEventListener("click", () => { state.screen = "trash"; render(); });
+  const backupBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_backup")}</button>`);
+  backupBtn.addEventListener("click", () => { state.screen = "backup"; render(); });
+  otherActions.appendChild(trashBtn);
+  otherActions.appendChild(backupBtn);
+  wrap.appendChild(otherActions);
 
   // Favoris rapides
   const favorites = state.recipes.filter((r) => r.favorite);
@@ -686,7 +704,9 @@ function renderRecipeView() {
 
   const nutrition = computeRecipeNutrition(r.ingredients);
   if (nutrition) {
-    const nutriLabel = t("recipe_nutrition") + (nutrition.partial ? ` (${t("recipe_nutrition_partial")})` : "");
+    const nutriLabel = nutrition.partial
+      ? `${t("recipe_nutrition_base")} (${t("recipe_nutrition_partial")})`
+      : t("recipe_nutrition");
     const nutriCard = el(`<div class="card" style="padding:14px 16px;"></div>`);
     nutriCard.appendChild(el(`<div class="stat-row" style="margin-bottom:0;">
       <div class="stat-pill"><div class="value">${nutrition.kcal}</div><div class="label">${t("nutrition_kcal")}</div></div>
@@ -1026,7 +1046,7 @@ function renderShopping() {
   savedListsBtn.addEventListener("click", () => { state.screen = "savedShoppingLists"; render(); });
   const scanBtn = el(`<button class="btn btn-outline btn-sm">${t("shopping_qr_scan_button")}</button>`);
   scanBtn.addEventListener("click", () => openQrScanModal());
-  const pasteBtn = el(`<button class="btn btn-outline btn-sm">${t("home_qr_paste_button")}</button>`);
+  const pasteBtn = el(`<button class="btn btn-outline btn-sm">${t("shopping_qr_paste_button_short")}</button>`);
   pasteBtn.addEventListener("click", () => openQrPasteModal());
   topRow.appendChild(savedListsBtn);
   topRow.appendChild(scanBtn);
