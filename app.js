@@ -2617,6 +2617,22 @@ async function openQrScanModal() {
         // le détail de l'erreur pour l'afficher si tout échoue plutôt
         // que de la faire disparaître silencieusement.
         nativeError = e;
+        // "NotSupportedError"/"NotAllowedError" signalent un problème
+        // durable (service Android indisponible, permission refusée) —
+        // pas la peine de retenter le natif à chaque image suivante :
+        // ça ralentit l'analyse pour rien (une tentative qui échoue à
+        // chaque image, sur toute la durée du scan) et peut donner une
+        // impression de gel de l'image. On l'abandonne donc
+        // définitivement pour cette session, et on s'assure que jsQR
+        // est réellement prêt (pas seulement lancé en arrière-plan
+        // sans attendre) avant de continuer.
+        if (e && (e.name === "NotSupportedError" || e.name === "NotAllowedError")) {
+          nativeBarcodeDetector = null;
+          if (!window.jsQR) {
+            statusEl.textContent = t("qrscan_native_fallback");
+            try { await loadJsQrLib(); } catch (loadErr) { /* si jsQR ne charge pas non plus, le repli habituel ("aucun QR détecté") s'appliquera juste en dessous */ }
+          }
+        }
       }
     }
     if (decodedText == null && window.jsQR) {
