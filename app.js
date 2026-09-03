@@ -1041,14 +1041,17 @@ async function openRecipeForm(recipeId) {
 
 function renderRecipeForm() {
   const r = state.editingRecipeId ? state.recipes.find((x) => x.id === state.editingRecipeId) : null;
-  // Pré-remplissage à usage unique venant de l'import depuis un lien ou
-  // d'un brouillon retrouvé (ne s'applique jamais en modification d'une
-  // recette existante). Distingue les deux sources : un import a
-  // effectivement recalculé les quantités depuis la recette d'origine,
-  // alors qu'un brouillon retrouvé contient déjà les valeurs telles que
-  // l'utilisateur les avait lui-même saisies, sans conversion.
-  const isRealImport = !r && !!state._importPrefill;
-  const prefill = !r ? (state._importPrefill || state._formDraftToApply || null) : null;
+  // Pré-remplissage venant soit d'un import (toujours pour une nouvelle
+  // recette uniquement), soit d'un brouillon retrouvé — celui-ci peut
+  // concerner aussi bien une nouvelle recette qu'une modification en
+  // cours (voir openRecipeForm, qui ne le propose que si son recipeId
+  // correspond exactement au contexte actuel). Le brouillon, quand il
+  // existe, prend la priorité sur les valeurs déjà enregistrées dans
+  // "r" : il représente un état plus récent, pas encore sauvegardé.
+  const draftPrefill = state._formDraftToApply || null;
+  const importPrefill = !r ? state._importPrefill || null : null;
+  const prefill = draftPrefill || importPrefill;
+  const isRealImport = !!importPrefill;
   state._importPrefill = null;
   state._formDraftToApply = null;
   const wrap = el(`<form id="recipe-form"></form>`);
@@ -1082,34 +1085,34 @@ function renderRecipeForm() {
 
   wrap.appendChild(el(`<div class="field">
     <label for="f-name">${t("form_name")}</label>
-    <input type="text" id="f-name" placeholder="${t("form_name_placeholder")}" value="${escapeHtml(r ? r.name : (prefill ? prefill.name : ""))}">
+    <input type="text" id="f-name" placeholder="${t("form_name_placeholder")}" value="${escapeHtml(prefill ? prefill.name : (r ? r.name : ""))}">
   </div>`));
 
   const row1 = el(`<div class="field-row"></div>`);
   const catField = el(`<div class="field"><label for="f-category">${t("form_category")}</label><select id="f-category"></select></div>`);
   const catSelect = catField.querySelector("select");
   CATEGORY_OPTIONS.forEach((c) => catSelect.appendChild(el(`<option value="${c}">${escapeHtml(translateCategory(c))}</option>`)));
-  if (r) catSelect.value = r.category;
-  else if (prefill && prefill.category) catSelect.value = prefill.category;
+  if (prefill && prefill.category) catSelect.value = prefill.category;
+  else if (r) catSelect.value = r.category;
   row1.appendChild(catField);
   const diffField = el(`<div class="field"><label for="f-difficulty">${t("form_difficulty")}</label><select id="f-difficulty"></select></div>`);
   const diffSelect = diffField.querySelector("select");
   DIFFICULTY_OPTIONS.forEach((d) => diffSelect.appendChild(el(`<option value="${d}">${escapeHtml(translateDifficulty(d))}</option>`)));
-  if (r) diffSelect.value = r.difficulty || "Facile";
-  else if (prefill && prefill.difficulty) diffSelect.value = prefill.difficulty;
+  if (prefill && prefill.difficulty) diffSelect.value = prefill.difficulty;
+  else if (r) diffSelect.value = r.difficulty || "Facile";
   row1.appendChild(diffField);
   wrap.appendChild(row1);
 
   const row2 = el(`<div class="field-row"></div>`);
-  row2.appendChild(el(`<div class="field"><label for="f-persons">${t("form_persons")}</label><input type="number" min="1" id="f-persons" value="${r ? r.defaultPersons : (prefill ? prefill.persons : 4)}"></div>`));
-  row2.appendChild(el(`<div class="field"><label for="f-prep">${t("form_prep_time")}</label><input type="number" min="0" id="f-prep" value="${r && r.prepTime ? r.prepTime : (prefill && prefill.prepTime ? prefill.prepTime : "")}"></div>`));
-  row2.appendChild(el(`<div class="field"><label for="f-cook">${t("form_cook_time")}</label><input type="number" min="0" id="f-cook" value="${r && r.cookTime ? r.cookTime : (prefill && prefill.cookTime ? prefill.cookTime : "")}"></div>`));
+  row2.appendChild(el(`<div class="field"><label for="f-persons">${t("form_persons")}</label><input type="number" min="1" id="f-persons" value="${prefill && prefill.persons ? prefill.persons : (r ? r.defaultPersons : 4)}"></div>`));
+  row2.appendChild(el(`<div class="field"><label for="f-prep">${t("form_prep_time")}</label><input type="number" min="0" id="f-prep" value="${prefill && prefill.prepTime ? prefill.prepTime : (r && r.prepTime ? r.prepTime : "")}"></div>`));
+  row2.appendChild(el(`<div class="field"><label for="f-cook">${t("form_cook_time")}</label><input type="number" min="0" id="f-cook" value="${prefill && prefill.cookTime ? prefill.cookTime : (r && r.cookTime ? r.cookTime : "")}"></div>`));
   wrap.appendChild(row2);
 
   const checks = el(`<div class="card" style="padding:2px 14px;margin-bottom:20px;">
-    <div class="checkbox-row"><input type="checkbox" id="f-favorite" ${(r && r.favorite) || (prefill && prefill.favorite) ? "checked" : ""}><label for="f-favorite">${t("form_favorite")}</label></div>
-    <div class="checkbox-row"><input type="checkbox" id="f-vegetarian" ${(r && r.vegetarian) || (prefill && prefill.vegetarian) ? "checked" : ""}><label for="f-vegetarian">${t("form_vegetarian")}</label></div>
-    <div class="checkbox-row"><input type="checkbox" id="f-wishlist" ${(r && r.wishlist) || (prefill && prefill.wishlist) ? "checked" : ""}><label for="f-wishlist">${t("form_wishlist")}</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="f-favorite" ${prefill ? (prefill.favorite ? "checked" : "") : (r && r.favorite ? "checked" : "")}><label for="f-favorite">${t("form_favorite")}</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="f-vegetarian" ${prefill ? (prefill.vegetarian ? "checked" : "") : (r && r.vegetarian ? "checked" : "")}><label for="f-vegetarian">${t("form_vegetarian")}</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="f-wishlist" ${prefill ? (prefill.wishlist ? "checked" : "") : (r && r.wishlist ? "checked" : "")}><label for="f-wishlist">${t("form_wishlist")}</label></div>
   </div>`);
   wrap.appendChild(checks);
 
@@ -1164,16 +1167,16 @@ function renderRecipeForm() {
 
   wrap.appendChild(el(`<div class="field">
     <label for="f-description">${t("form_description")}</label>
-    <textarea id="f-description">${escapeHtml(r ? r.description || "" : (prefill ? prefill.description : ""))}</textarea>
+    <textarea id="f-description">${escapeHtml(prefill ? prefill.description || "" : (r ? r.description || "" : ""))}</textarea>
   </div>`));
   wrap.appendChild(el(`<div class="field">
     <label for="f-notes">${t("form_notes")}</label>
-    <textarea id="f-notes">${escapeHtml(r ? r.notes || "" : (prefill ? prefill.notes || "" : ""))}</textarea>
+    <textarea id="f-notes">${escapeHtml(prefill ? prefill.notes || "" : (r ? r.notes || "" : ""))}</textarea>
   </div>`));
 
   // Note personnelle : 5 étoiles cliquables, valeur gardée dans un
   // attribut data-value plutôt qu'un champ de formulaire classique.
-  const initialRating = r ? r.personalRating || 0 : (prefill ? prefill.personalRating || 0 : 0);
+  const initialRating = prefill ? prefill.personalRating || 0 : (r ? r.personalRating || 0 : 0);
   const ratingField = el(`<div class="field">
     <label id="f-rating-label">${t("form_my_rating_label")}</label>
     <div id="f-rating-stars" data-value="${initialRating}" role="radiogroup" aria-labelledby="f-rating-label" style="font-size:30px;letter-spacing:6px;line-height:1;"></div>
@@ -1198,11 +1201,11 @@ function renderRecipeForm() {
 
   wrap.appendChild(el(`<div class="field">
     <label for="f-family-opinion">${t("form_family_opinion_label")}</label>
-    <input type="text" id="f-family-opinion" placeholder="${t("form_family_opinion_placeholder")}" value="${escapeHtml(r ? r.familyOpinion || "" : (prefill ? prefill.familyOpinion || "" : ""))}">
+    <input type="text" id="f-family-opinion" placeholder="${t("form_family_opinion_placeholder")}" value="${escapeHtml(prefill ? prefill.familyOpinion || "" : (r ? r.familyOpinion || "" : ""))}">
   </div>`));
   wrap.appendChild(el(`<div class="field">
     <label for="f-improvement-notes">${t("form_improvement_notes_label")}</label>
-    <input type="text" id="f-improvement-notes" placeholder="${t("form_improvement_notes_placeholder")}" value="${escapeHtml(r ? r.improvementNotes || "" : (prefill ? prefill.improvementNotes || "" : ""))}">
+    <input type="text" id="f-improvement-notes" placeholder="${t("form_improvement_notes_placeholder")}" value="${escapeHtml(prefill ? prefill.improvementNotes || "" : (r ? r.improvementNotes || "" : ""))}">
   </div>`));
   const actualDiffField = el(`<div class="field">
     <label for="f-actual-difficulty">${t("form_actual_difficulty_label")}</label>
@@ -1210,7 +1213,7 @@ function renderRecipeForm() {
   </div>`);
   const actualDiffSelect = actualDiffField.querySelector("#f-actual-difficulty");
   DIFFICULTY_OPTIONS.forEach((d) => actualDiffSelect.appendChild(el(`<option value="${d}">${escapeHtml(translateDifficulty(d))}</option>`)));
-  actualDiffSelect.value = r ? r.actualDifficulty || "" : (prefill ? prefill.actualDifficulty || "" : "");
+  actualDiffSelect.value = prefill ? prefill.actualDifficulty || "" : (r ? r.actualDifficulty || "" : "");
   wrap.appendChild(actualDiffField);
 
   const submitBtn = el(`<button type="submit" class="btn btn-primary" style="margin-bottom:10px;">${t("form_save")}</button>`);
@@ -1361,14 +1364,25 @@ async function addRecipeToShopping(recipe, persons) {
   const items = state.shopping;
   const summaryLines = [];
   const plan = [];
+  // Copie locale des réservations déjà confirmées : les nouvelles
+  // réservations de cette recette y sont ajoutées provisoirement pour
+  // le calcul (afin que plusieurs ingrédients identiques dans la même
+  // recette se cumulent correctement), sans toucher au vrai état tant
+  // que l'utilisateur n'a pas confirmé.
+  const pendingClaims = { ...state.pantryClaimedThisSession };
+  const claimsToCommit = [];
 
   (recipe.ingredients || []).forEach((ing) => {
     const neededQty = ing.quantity != null ? Number(ing.quantity) * persons : null;
-    const { adjustedQty, reducedAmount, fullyCovered } = computePantryReduction(ing.name, ing.unit, neededQty);
+    const { adjustedQty, reducedAmount, fullyCovered, claimKey, claimAmount } = computePantryReduction(ing.name, ing.unit, neededQty, pendingClaims);
     if (fullyCovered) {
       summaryLines.push(t("pantry_reduction_fully_covered", { name: translateIngredientName(ing.name) }));
     } else if (reducedAmount > 0) {
       summaryLines.push(t("pantry_reduction_reduced", { name: translateIngredientName(ing.name), qty: fmtQty(adjustedQty), unit: translateUnit(ing.unit) }));
+    }
+    if (claimKey && claimAmount) {
+      pendingClaims[claimKey] = (pendingClaims[claimKey] || 0) + claimAmount;
+      claimsToCommit.push({ key: claimKey, amount: claimAmount });
     }
     if (!fullyCovered) plan.push({ name: ing.name, quantity: adjustedQty, unit: ing.unit });
   });
@@ -1377,6 +1391,9 @@ async function addRecipeToShopping(recipe, persons) {
     const summaryText = `${t("pantry_reduction_summary_title")}\n\n${summaryLines.join("\n")}\n\n${t("pantry_reduction_confirm_continue")}`;
     if (!await customConfirm(summaryText)) return;
   }
+  // La réservation n'est appliquée pour de vrai qu'à partir d'ici —
+  // après un éventuel "Annuler" ci-dessus, rien n'aura été modifié.
+  claimsToCommit.forEach(({ key, amount }) => commitPantryClaim(key, amount));
 
   const puts = [];
   plan.forEach((ing) => {
@@ -1622,13 +1639,16 @@ function openAddItemModal(storeName, existingItem) {
     // liste de courses (pas en modification, ni pour le garde-manger
     // lui-même, où ça n'aurait pas de sens).
     if (storeName === "shopping" && !isEdit) {
-      const { adjustedQty, reducedAmount, fullyCovered } = computePantryReduction(name, unit, quantity);
+      const { adjustedQty, reducedAmount, fullyCovered, claimKey, claimAmount } = computePantryReduction(name, unit, quantity);
       if (fullyCovered || reducedAmount > 0) {
         const line = fullyCovered
           ? t("pantry_reduction_fully_covered", { name: translateIngredientName(name) })
           : t("pantry_reduction_reduced", { name: translateIngredientName(name), qty: fmtQty(adjustedQty), unit: translateUnit(unit) });
         const summaryText = `${t("pantry_reduction_summary_title")}\n\n${line}\n\n${t("pantry_reduction_confirm_continue")}`;
         if (!await customConfirm(summaryText)) return;
+        // La réservation n'est appliquée pour de vrai qu'après ce point,
+        // une fois la confirmation acceptée.
+        if (claimKey && claimAmount) commitPantryClaim(claimKey, claimAmount);
         if (fullyCovered) { overlay.remove(); return; }
         quantity = adjustedQty;
       }
@@ -2419,17 +2439,23 @@ async function openQrCodeModal(recipe, persons) {
   // le JSON), on retire d'abord les champs les moins essentiels un par
   // un, en gardant toujours au minimum le nom et les ingrédients.
   const MAX_QR_LENGTH = 800;
+  let descriptionWasShortened = false;
   if (content.length > MAX_QR_LENGTH) {
+    // Les notes personnelles peuvent être retirées entièrement : moins
+    // essentielles, contrairement à la description qui contient les
+    // étapes de préparation — celle-ci ne doit jamais disparaître
+    // complètement, seulement être raccourcie si vraiment nécessaire.
     delete compact.no;
     content = JSON.stringify(compact);
   }
-  if (content.length > MAX_QR_LENGTH) {
-    delete compact.de;
+  while (content.length > MAX_QR_LENGTH && compact.de && compact.de.length > 20) {
+    compact.de = compact.de.slice(0, -50) + "…";
+    descriptionWasShortened = true;
     content = JSON.stringify(compact);
   }
   if (content.length > MAX_QR_LENGTH) {
-    // En dernier recours, retire l'unité et le nom des allergènes les
-    // plus longs à défaut de mieux — rare en pratique, un cas extrême.
+    // En dernier recours, retire les allergènes plutôt que la
+    // description — un cas extrême, rare en pratique.
     delete compact.a;
     content = JSON.stringify(compact);
   }
@@ -2438,6 +2464,9 @@ async function openQrCodeModal(recipe, persons) {
   try {
     await loadQrCodeLib();
     holder.innerHTML = generateQrCodeImgTag(content);
+    if (descriptionWasShortened) {
+      holder.insertAdjacentHTML("afterend", `<p style="font-size:12px;color:var(--accent);margin:10px 0 0;">${escapeHtml(t("qrcode_description_shortened"))}</p>`);
+    }
   } catch (e) {
     holder.innerHTML = `<div><span style="font-size:13px;color:var(--danger);">${escapeHtml(t("qrcode_load_error"))}</span><div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml((e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e)))}</div></div>`;
   }
@@ -4088,7 +4117,12 @@ function unitToBase(quantity, unit) {
 // aboutissait à ce que les DEUX soient considérées comme entièrement
 // couvertes (chacune comparée seule au stock complet), alors que le
 // besoin réel cumulé (1,6 kg) dépasse largement ce qui est disponible.
-function computePantryReduction(name, unit, neededQty) {
+// Calcule la réduction possible sans modifier l'état — un simple calcul
+// en lecture seule. "pendingClaims" permet de simuler des réservations
+// pas encore confirmées (utile pour cumuler plusieurs ingrédients d'une
+// même recette avant la confirmation, sans toucher au vrai état tant
+// que l'utilisateur n'a pas validé).
+function computePantryReduction(name, unit, neededQty, pendingClaims) {
   const noReduction = { adjustedQty: neededQty, reducedAmount: 0, fullyCovered: false };
   if (neededQty == null) return noReduction;
   const pantryItem = state.pantry.find((p) => normalize(p.name) === normalize(name));
@@ -4098,18 +4132,23 @@ function computePantryReduction(name, unit, neededQty) {
   if (neededBase.kind !== pantryBase.kind || neededBase.value <= 0) return noReduction;
 
   const key = normalize(name);
-  const alreadyClaimed = state.pantryClaimedThisSession[key] || 0;
+  const claims = pendingClaims || state.pantryClaimedThisSession;
+  const alreadyClaimed = claims[key] || 0;
   const effectiveAvailable = Math.max(0, pantryBase.value - alreadyClaimed);
   if (effectiveAvailable <= 0) return noReduction;
 
   if (effectiveAvailable >= neededBase.value) {
-    state.pantryClaimedThisSession[key] = alreadyClaimed + neededBase.value;
-    return { adjustedQty: null, reducedAmount: neededQty, fullyCovered: true };
+    return { adjustedQty: null, reducedAmount: neededQty, fullyCovered: true, claimKey: key, claimAmount: neededBase.value };
   }
   const remainingRatio = (neededBase.value - effectiveAvailable) / neededBase.value;
   const adjustedQty = neededQty * remainingRatio;
-  state.pantryClaimedThisSession[key] = alreadyClaimed + effectiveAvailable;
-  return { adjustedQty, reducedAmount: neededQty - adjustedQty, fullyCovered: false };
+  return { adjustedQty, reducedAmount: neededQty - adjustedQty, fullyCovered: false, claimKey: key, claimAmount: effectiveAvailable };
+}
+// N'applique réellement la réservation qu'une fois l'utilisateur passé
+// par la confirmation — à appeler uniquement après un customConfirm()
+// accepté, jamais avant, pour qu'un "Annuler" n'affecte jamais l'état.
+function commitPantryClaim(key, amount) {
+  state.pantryClaimedThisSession[key] = (state.pantryClaimedThisSession[key] || 0) + amount;
 }
 
 function computeIngredientCost(name, quantity, unit) {
@@ -4229,7 +4268,14 @@ function isValidPhotoField(photo) {
 // silencieusement par IndexedDB ou pourrait en écraser un autre de
 // façon imprévisible.
 function hasValidId(item, storeName) {
-  const keyField = storeName === "kv" ? "key" : "id";
+  // "kv" utilise "key", "ingredients" et "ingredientOverrides"
+  // utilisent "name" (voir la création des entrepôts IndexedDB) — tous
+  // les autres utilisent "id". Sans cette distinction, chaque
+  // restauration filtrait silencieusement la totalité des ingrédients
+  // personnalisés et de leurs surcharges (allergènes, prix, valeurs
+  // nutritionnelles modifiés), puisqu'ils possèdent "name" mais pas
+  // "id" et étaient donc à tort considérés comme invalides.
+  const keyField = storeName === "kv" ? "key" : (storeName === "ingredients" || storeName === "ingredientOverrides") ? "name" : "id";
   return typeof item[keyField] === "string" && item[keyField].trim().length > 0;
 }
 
@@ -6084,7 +6130,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 110;
+const APP_VERSION = 111;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
