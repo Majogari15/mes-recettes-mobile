@@ -3,7 +3,7 @@
 // ensuite (les données elles-mêmes sont stockées séparément, dans IndexedDB,
 // géré directement par app.js).
 
-const CACHE_NAME = "mes-recettes-cache-v98";
+const CACHE_NAME = "mes-recettes-cache-v110";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -24,13 +24,13 @@ const FILES_TO_CACHE = [
   "./data/ingredient_substitutions_en.json",
   "./data/ingredient_substitutions_es.json",
   "./data/ingredient_substitutions_de.json",
+  "./lib/qrcode-generator.js",
 ];
 // Ressources externes indispensables (ex. génération de PDF) : mises en
 // cache elles aussi dès le premier chargement, pour continuer de
 // fonctionner hors connexion ensuite malgré leur origine différente.
 const CROSS_ORIGIN_TO_CACHE = [
   "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
-  "https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.0.3/qrcode.min.js",
   "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js",
   "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js",
 ];

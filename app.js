@@ -128,6 +128,11 @@ const state = {
   recipes: [],
   shopping: [],
   pantry: [],
+  // Suivi, pour la session en cours, de ce qui a déjà été "réservé" du
+  // garde-manger par des ajouts précédents à la liste de courses — voir
+  // computePantryReduction(). Remis à zéro quand la liste de courses
+  // est entièrement vidée.
+  pantryClaimedThisSession: {},
   currentRecipeId: null,
   editingRecipeId: null,
   search: "",
@@ -171,17 +176,41 @@ function escapeHtml(str) {
 // l'application — les fenêtres natives du navigateur affichent toujours
 // le nom du site ("majogari15.github.io indique...") avant le message,
 // ce qui n'est pas adapté à une application destinée au grand public.
+// Piège le focus (Tab/Maj+Tab) à l'intérieur d'une fenêtre modale, et
+// permet de fermer avec la touche Échap — comportement standard attendu
+// pour tout dialogue, indispensable à la navigation au clavier.
+function trapFocusInModal(sheet, onEscape) {
+  const focusable = sheet.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  const handler = (e) => {
+    if (e.key === "Escape") { e.preventDefault(); onEscape(); return; }
+    if (e.key !== "Tab" || !first || !last) return;
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
+  document.addEventListener("keydown", handler);
+  return () => document.removeEventListener("keydown", handler);
+}
+
 function customAlert(message) {
   return new Promise((resolve) => {
+    const previouslyFocused = document.activeElement;
     const overlay = el(`<div class="modal-overlay"></div>`);
-    const sheet = el(`<div class="modal-sheet">
-      <p style="margin:0 0 20px;font-size:15px;line-height:1.5;white-space:pre-line;">${escapeHtml(message)}</p>
+    const sheet = el(`<div class="modal-sheet" role="alertdialog" aria-modal="true" aria-labelledby="custom-alert-message">
+      <p id="custom-alert-message" style="margin:0 0 20px;font-size:15px;line-height:1.5;white-space:pre-line;">${escapeHtml(message)}</p>
       <button type="button" class="btn btn-primary" id="custom-alert-ok">${t("common_ok")}</button>
     </div>`);
     overlay.appendChild(sheet);
     document.body.appendChild(overlay);
     const okBtn = sheet.querySelector("#custom-alert-ok");
-    const close = () => { overlay.remove(); resolve(); };
+    const removeTrap = trapFocusInModal(sheet, close);
+    function close() {
+      removeTrap();
+      overlay.remove();
+      if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
+      resolve();
+    }
     okBtn.addEventListener("click", close);
     overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
     okBtn.focus();
@@ -189,9 +218,10 @@ function customAlert(message) {
 }
 function customConfirm(message) {
   return new Promise((resolve) => {
+    const previouslyFocused = document.activeElement;
     const overlay = el(`<div class="modal-overlay"></div>`);
-    const sheet = el(`<div class="modal-sheet">
-      <p style="margin:0 0 20px;font-size:15px;line-height:1.5;white-space:pre-line;">${escapeHtml(message)}</p>
+    const sheet = el(`<div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="custom-confirm-message">
+      <p id="custom-confirm-message" style="margin:0 0 20px;font-size:15px;line-height:1.5;white-space:pre-line;">${escapeHtml(message)}</p>
       <div class="modal-actions">
         <button type="button" class="btn btn-outline" id="custom-confirm-cancel">${t("form_cancel")}</button>
         <button type="button" class="btn btn-primary" id="custom-confirm-ok">${t("common_ok")}</button>
@@ -199,10 +229,17 @@ function customConfirm(message) {
     </div>`);
     overlay.appendChild(sheet);
     document.body.appendChild(overlay);
-    const finish = (value) => { overlay.remove(); resolve(value); };
+    const removeTrap = trapFocusInModal(sheet, () => finish(false));
+    function finish(value) {
+      removeTrap();
+      overlay.remove();
+      if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
+      resolve(value);
+    }
     sheet.querySelector("#custom-confirm-cancel").addEventListener("click", () => finish(false));
     sheet.querySelector("#custom-confirm-ok").addEventListener("click", () => finish(true));
     overlay.addEventListener("click", (e) => { if (e.target === overlay) finish(false); });
+    sheet.querySelector("#custom-confirm-ok").focus();
   });
 }
 function fmtQty(qty) {
@@ -471,7 +508,7 @@ function renderBottomNav() {
   const nav = el(`<nav class="bottom-nav"></nav>`);
   items.forEach((item) => {
     const active = state.screen === item.key || (state.screen === "recipe" && item.key === "recipes");
-    const btn = el(`<button class="nav-item ${active ? "active" : ""}">
+    const btn = el(`<button class="nav-item ${active ? "active" : ""}" ${active ? 'aria-current="page"' : ""}>
       <span class="nav-icon">${item.icon}</span><span>${escapeHtml(item.label)}</span>
     </button>`);
     btn.addEventListener("click", () => {
@@ -903,17 +940,22 @@ function renderRecipeView() {
    ÉCRAN : FORMULAIRE RECETTE (ajout / modification)
    ====================================================================== */
 // Brouillon automatique : si l'utilisateur quitte accidentellement
-// l'application en pleine création d'une recette (pas en modification
-// d'une recette existante, pour éviter toute confusion), l'état du
-// formulaire est capturé quand la page passe en arrière-plan, et une
-// restauration est proposée à la prochaine ouverture du formulaire.
+// l'application en pleine création OU modification d'une recette,
+// l'état du formulaire est capturé quand la page passe en
+// arrière-plan, et une restauration est proposée à la prochaine
+// ouverture du même contexte (nouvelle recette, ou modification de
+// cette même recette précise). Stocké dans IndexedDB plutôt que
+// localStorage : une photo en base64 peut facilement dépasser le quota
+// habituel de localStorage (quelques Mo), provoquant une erreur
+// silencieuse qui empêchait le brouillon d'être réellement sauvegardé.
 const RECIPE_DRAFT_KEY = "recipeDraft";
-function captureRecipeFormDraft() {
-  if (state.screen !== "form" || state.editingRecipeId) return;
+async function captureRecipeFormDraft() {
+  if (state.screen !== "form") return;
   const nameEl = document.getElementById("f-name");
   if (!nameEl) return; // le formulaire n'est pas (ou plus) affiché
   const draft = {
     savedAt: new Date().toISOString(),
+    recipeId: state.editingRecipeId || null,
     name: nameEl.value,
     category: document.getElementById("f-category").value,
     difficulty: document.getElementById("f-difficulty").value,
@@ -935,37 +977,59 @@ function captureRecipeFormDraft() {
   };
   // Un brouillon vide (rien de saisi) n'a aucun intérêt à être gardé.
   const hasContent = draft.name.trim() || draft.ingredients.some((i) => (i.name || "").trim());
-  if (hasContent) localStorage.setItem(RECIPE_DRAFT_KEY, JSON.stringify(draft));
-}
-function getRecipeFormDraft() {
+  if (!hasContent) return;
   try {
-    const raw = localStorage.getItem(RECIPE_DRAFT_KEY);
-    return raw ? JSON.parse(raw) : null;
+    await kvSet(RECIPE_DRAFT_KEY, draft);
+  } catch (e) {
+    // Espace de stockage insuffisant ou autre échec : le brouillon
+    // n'est simplement pas conservé, sans casser le reste de l'app.
+  }
+}
+async function getRecipeFormDraft() {
+  try {
+    return await kvGet(RECIPE_DRAFT_KEY);
   } catch (e) {
     return null;
   }
 }
-function clearRecipeFormDraft() {
-  localStorage.removeItem(RECIPE_DRAFT_KEY);
+async function clearRecipeFormDraft() {
+  try {
+    await storeDelete("kv", RECIPE_DRAFT_KEY);
+  } catch (e) { /* déjà absent ou erreur sans conséquence */ }
 }
 
 async function openRecipeForm(recipeId) {
   state.editingRecipeId = recipeId;
   state._formDraftToApply = null;
+  const draft = await getRecipeFormDraft();
+  // Un brouillon n'est proposé que s'il correspond exactement au
+  // contexte actuel : soit les deux concernent une nouvelle recette
+  // (recipeId absent des deux côtés), soit les deux concernent la
+  // modification de la même recette précise — jamais un brouillon de
+  // modification d'une autre recette, ni un brouillon de nouvelle
+  // recette lors de la modification d'une recette existante.
+  const draftMatches = draft && (draft.recipeId || null) === (recipeId || null);
   if (recipeId) {
     const r = state.recipes.find((x) => x.id === recipeId);
-    state.formIngredients = (r.ingredients || []).map((i) => ({ ...i }));
-    state.formPhoto = r.photo || null;
-    state.formAllergens = (r.allergens || []).slice();
-  } else {
-    const draft = getRecipeFormDraft();
-    if (draft && await customConfirm(t("form_draft_found_confirm", { name: draft.name || t("form_draft_untitled") }))) {
+    if (draftMatches && await customConfirm(t("form_draft_found_confirm", { name: draft.name || r.name }))) {
       state.formIngredients = draft.ingredients && draft.ingredients.length ? draft.ingredients : [{ name: "", quantity: "", unit: "pièce" }];
       state.formPhoto = draft.photo || null;
       state.formAllergens = draft.allergens || [];
       state._formDraftToApply = draft;
     } else {
-      if (draft) clearRecipeFormDraft();
+      if (draftMatches) await clearRecipeFormDraft();
+      state.formIngredients = (r.ingredients || []).map((i) => ({ ...i }));
+      state.formPhoto = r.photo || null;
+      state.formAllergens = (r.allergens || []).slice();
+    }
+  } else {
+    if (draftMatches && await customConfirm(t("form_draft_found_confirm", { name: draft.name || t("form_draft_untitled") }))) {
+      state.formIngredients = draft.ingredients && draft.ingredients.length ? draft.ingredients : [{ name: "", quantity: "", unit: "pièce" }];
+      state.formPhoto = draft.photo || null;
+      state.formAllergens = draft.allergens || [];
+      state._formDraftToApply = draft;
+    } else {
+      if (draftMatches) await clearRecipeFormDraft();
       state.formIngredients = [{ name: "", quantity: "", unit: "pièce" }];
       state.formPhoto = null;
       state.formAllergens = [];
@@ -1111,14 +1175,14 @@ function renderRecipeForm() {
   // attribut data-value plutôt qu'un champ de formulaire classique.
   const initialRating = r ? r.personalRating || 0 : (prefill ? prefill.personalRating || 0 : 0);
   const ratingField = el(`<div class="field">
-    <label>${t("form_my_rating_label")}</label>
-    <div id="f-rating-stars" data-value="${initialRating}" style="font-size:30px;letter-spacing:6px;cursor:pointer;line-height:1;"></div>
+    <label id="f-rating-label">${t("form_my_rating_label")}</label>
+    <div id="f-rating-stars" data-value="${initialRating}" role="radiogroup" aria-labelledby="f-rating-label" style="font-size:30px;letter-spacing:6px;line-height:1;"></div>
   </div>`);
   const starsEl = ratingField.querySelector("#f-rating-stars");
   function renderStars(value) {
     starsEl.dataset.value = String(value);
     starsEl.innerHTML = [1, 2, 3, 4, 5].map((n) =>
-      `<span data-star="${n}" style="color:${n <= value ? "var(--accent)" : "var(--border)"};">★</span>`
+      `<button type="button" data-star="${n}" role="radio" aria-checked="${n === value}" aria-label="${n}" style="background:none;border:none;padding:0 2px;cursor:pointer;font:inherit;color:${n <= value ? "var(--accent)" : "var(--border)"};">★</button>`
     ).join("");
   }
   renderStars(initialRating);
@@ -1151,8 +1215,8 @@ function renderRecipeForm() {
 
   const submitBtn = el(`<button type="submit" class="btn btn-primary" style="margin-bottom:10px;">${t("form_save")}</button>`);
   const cancelBtn = el(`<button type="button" class="btn btn-outline">${t("form_cancel")}</button>`);
-  cancelBtn.addEventListener("click", () => {
-    if (!r) clearRecipeFormDraft();
+  cancelBtn.addEventListener("click", async () => {
+    await clearRecipeFormDraft();
     state.screen = r ? "recipe" : "recipes";
     render();
   });
@@ -1254,11 +1318,18 @@ async function saveRecipeForm(wrap, existing) {
     actualDifficulty: wrap.querySelector("#f-actual-difficulty").value,
     photo: state.formPhoto,
     createdAt: existing ? existing.createdAt : new Date().toISOString(),
+    // Sans cette reprise explicite, modifier une recette existante (même
+    // un simple changement de nom) effaçait silencieusement tout
+    // l'historique de préparation — puisque l'objet "recipe" ci-dessus
+    // est entièrement reconstruit à partir des seuls champs du
+    // formulaire, qui ne contient ni le journal ni ce compteur.
+    cookLog: existing ? existing.cookLog || [] : [],
+    timesCooked: existing ? existing.timesCooked || 0 : 0,
   };
   await storePut("recipes", recipe);
   const idx = state.recipes.findIndex((x) => x.id === recipe.id);
   if (idx >= 0) state.recipes[idx] = recipe; else state.recipes.push(recipe);
-  if (!existing) clearRecipeFormDraft();
+  await clearRecipeFormDraft();
 
   state.currentRecipeId = recipe.id;
   state.viewPersons = recipe.defaultPersons;
@@ -1345,7 +1416,7 @@ function renderShopping() {
   const totalCount = state.shopping.length;
   const checked = state.shopping.filter((i) => i.checked).length;
   wrap.appendChild(el(`<div style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">${checked} / ${totalCount} ${t("shopping_checked_of")}</div>`));
-  wrap.appendChild(el(`<div class="progress-bar-track"><div class="progress-bar-fill" style="width:${totalCount ? (checked / totalCount) * 100 : 0}%"></div></div>`));
+  wrap.appendChild(el(`<div class="progress-bar-track" role="progressbar" aria-valuenow="${checked}" aria-valuemin="0" aria-valuemax="${totalCount}" aria-label="${escapeHtml(`${checked} / ${totalCount} ${t("shopping_checked_of")}`)}"><div class="progress-bar-fill" style="width:${totalCount ? (checked / totalCount) * 100 : 0}%"></div></div>`));
 
   const costInfo = computeShoppingTotal(state.shopping);
   const totalRow = el(`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;">
@@ -1389,6 +1460,7 @@ function renderShopping() {
     if (await customConfirm(t("shopping_clear_confirm"))) {
       await storeClear("shopping");
       state.shopping = [];
+      state.pantryClaimedThisSession = {};
       render();
     }
   });
@@ -1420,6 +1492,7 @@ function renderSavedShoppingLists() {
       const items = JSON.parse(JSON.stringify(saved.items)).map((i) => ({ ...i, id: uid() }));
       for (const item of items) await storePut("shopping", item);
       state.shopping = items;
+      state.pantryClaimedThisSession = {};
       state.screen = "shopping";
       render();
     });
@@ -1437,11 +1510,23 @@ function renderSavedShoppingLists() {
 function shoppingItemRow(item, wrap) {
   const row = el(`<div class="shopping-item ${item.checked ? "checked" : ""}">
     <input type="checkbox" ${item.checked ? "checked" : ""}>
-    <span class="label">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}</span>
+    <span class="label" style="flex:1;cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}</span>
+    <button type="button" class="shopping-item-delete" aria-label="${escapeHtml(t("common_delete"))}" style="background:none;border:none;color:var(--text-muted);font-size:18px;padding:4px 8px;cursor:pointer;line-height:1;">×</button>
   </div>`);
   row.querySelector("input").addEventListener("change", async (e) => {
     item.checked = e.target.checked;
     await storePut("shopping", item);
+    renderShoppingInto(wrap);
+  });
+  // Toucher le texte de l'article ouvre la même fenêtre de modification
+  // que pour un article du garde-manger — permet de corriger le nom, la
+  // quantité ou l'unité sans avoir à tout supprimer et retaper.
+  row.querySelector(".label").addEventListener("click", () => openAddItemModal("shopping", item));
+  row.querySelector(".shopping-item-delete").addEventListener("click", async (e) => {
+    e.stopPropagation();
+    if (!await customConfirm(t("shopping_item_delete_confirm", { name: translateIngredientName(item.name) }))) return;
+    await storeDelete("shopping", item.id);
+    state.shopping = state.shopping.filter((i) => i.id !== item.id);
     renderShoppingInto(wrap);
   });
   return row;
@@ -2234,7 +2319,7 @@ function loadQrCodeLib() {
   if (qrCodeLibPromise) return qrCodeLibPromise;
   qrCodeLibPromise = new Promise((resolve, reject) => {
     const script = document.createElement("script");
-    script.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.0.3/qrcode.min.js";
+    script.src = "./lib/qrcode-generator.js";
     script.onload = () => resolve();
     script.onerror = () => { qrCodeLibPromise = null; reject(new Error("qrcode_lib_load_failed")); };
     document.head.appendChild(script);
@@ -2306,37 +2391,48 @@ async function openQrCodeModal(recipe, persons) {
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
 
-  const lines = [recipe.name, ""];
-  if (recipe.prepTime) lines.push(`${t("pdf_prep_label")} : ${recipe.prepTime} ${t("recipe_min")}`);
-  if (recipe.cookTime) lines.push(`${t("pdf_cook_label")} : ${recipe.cookTime} ${t("recipe_min")}`);
-  if (recipe.difficulty) lines.push(`${t("form_difficulty")} : ${translateDifficulty(recipe.difficulty)}`);
-  if (recipe.allergens && recipe.allergens.length) {
-    lines.push(`${t("recipe_allergens")} : ${recipe.allergens.map(translateAllergen).join(", ")}`);
-  }
-  // Description et notes tronquées à une longueur raisonnable : un texte
-  // libre trop long grignoterait sinon toute la capacité du QR code au
-  // détriment des ingrédients, qui restent la donnée la plus importante
-  // à préserver en cas de contenu volumineux.
+  // Format compact et indépendant de la langue : utilise les noms
+  // internes canoniques (français) directement, sans jamais passer par
+  // la traduction ni par une analyse de texte — évite à la fois la
+  // densité inutile des libellés écrits en toutes lettres et les
+  // problèmes de reconnaissance (unités composées, allergènes en
+  // anglais...) qui ne peuvent plus se produire puisqu'aucune
+  // traduction n'intervient à aucun moment entre la génération et la
+  // lecture.
   const MAX_FREE_TEXT_LENGTH = 300;
   const truncateFreeText = (s) => (s && s.length > MAX_FREE_TEXT_LENGTH ? s.slice(0, MAX_FREE_TEXT_LENGTH - 1) + "…" : s);
-  if (recipe.description) {
-    lines.push("", `${t("recipe_description")} :`, truncateFreeText(recipe.description));
-  }
-  if (recipe.notes) {
-    lines.push("", `${t("recipe_notes")} :`, truncateFreeText(recipe.notes));
-  }
-  lines.push("", t("qrcode_ingredients_heading", { persons: String(persons) }));
-  (recipe.ingredients || []).forEach((ing) => {
-    const scaled = ing.quantity != null ? ing.quantity * persons : null;
-    const qty = scaled != null ? `${fmtQty(scaled)} ${translateUnit(ing.unit)} ` : "";
-    lines.push(`- ${qty}${translateIngredientName(ing.name)}`);
+  const compact = { v: 1, n: recipe.name, p: persons };
+  if (recipe.difficulty) compact.d = recipe.difficulty;
+  if (recipe.prepTime) compact.pt = recipe.prepTime;
+  if (recipe.cookTime) compact.ct = recipe.cookTime;
+  if (recipe.allergens && recipe.allergens.length) compact.a = recipe.allergens;
+  if (recipe.description) compact.de = truncateFreeText(recipe.description);
+  if (recipe.notes) compact.no = truncateFreeText(recipe.notes);
+  compact.i = (recipe.ingredients || []).map((ing) => {
+    const scaled = ing.quantity != null ? Math.round(ing.quantity * persons * 100) / 100 : null;
+    return [ing.name, scaled, ing.unit];
   });
-  let content = lines.join("\n");
+  let content = JSON.stringify(compact);
   // Un QR code a une capacité limitée : au-delà d'une certaine taille, il
   // devient soit impossible à générer, soit trop dense pour être scanné
-  // de façon fiable — on tronque proprement plutôt que d'échouer.
+  // de façon fiable. Plutôt que de tronquer au milieu (ce qui casserait
+  // le JSON), on retire d'abord les champs les moins essentiels un par
+  // un, en gardant toujours au minimum le nom et les ingrédients.
   const MAX_QR_LENGTH = 800;
-  if (content.length > MAX_QR_LENGTH) content = content.slice(0, MAX_QR_LENGTH - 1) + "…";
+  if (content.length > MAX_QR_LENGTH) {
+    delete compact.no;
+    content = JSON.stringify(compact);
+  }
+  if (content.length > MAX_QR_LENGTH) {
+    delete compact.de;
+    content = JSON.stringify(compact);
+  }
+  if (content.length > MAX_QR_LENGTH) {
+    // En dernier recours, retire l'unité et le nom des allergènes les
+    // plus longs à défaut de mieux — rare en pratique, un cas extrême.
+    delete compact.a;
+    content = JSON.stringify(compact);
+  }
 
   const holder = sheet.querySelector("#qrcode-canvas-holder");
   try {
@@ -2413,7 +2509,49 @@ function parseQrIngredientLine(line) {
   }
   return parseIngredientString(cleaned);
 }
+// Tente de lire le texte comme le format JSON compact généré par la
+// version actuelle de l'application ; retourne null (sans erreur) s'il
+// ne s'agit manifestement pas de ce format, pour laisser le lecteur
+// tenter ensuite l'ancien format texte, utilisé par d'éventuels QR
+// générés par une version antérieure.
+function tryParseCompactRecipeQr(text) {
+  const trimmed = (text || "").trim();
+  if (!trimmed.startsWith("{")) return null;
+  let data;
+  try {
+    data = JSON.parse(trimmed);
+  } catch (e) {
+    return null;
+  }
+  if (!data || typeof data !== "object" || data.v !== 1 || typeof data.n !== "string" || !Array.isArray(data.i)) {
+    return null;
+  }
+  const ingredients = data.i
+    .filter((tuple) => Array.isArray(tuple) && typeof tuple[0] === "string" && tuple[0].trim())
+    .map((tuple) => ({ name: resolveImportedIngredientName(tuple[0]), quantity: tuple[1] != null ? Number(tuple[1]) : null, unit: tuple[2] || "pièce" }));
+  const persons = Number(data.p) > 0 ? Number(data.p) : 4;
+  return {
+    name: data.n,
+    ingredients: ingredients.map((i) => ({ ...i, quantity: i.quantity != null ? i.quantity / persons : null })),
+    prepTime: Number(data.pt) > 0 ? Number(data.pt) : null,
+    cookTime: Number(data.ct) > 0 ? Number(data.ct) : null,
+    difficulty: typeof data.d === "string" ? data.d : null,
+    allergens: Array.isArray(data.a) ? data.a : [],
+    description: typeof data.de === "string" ? data.de : "",
+    notes: typeof data.no === "string" ? data.no : "",
+    persons,
+  };
+}
+
 function parseRecipeFromQrText(text) {
+  // Format compact prioritaire : essaie d'abord de lire le texte comme
+  // le JSON généré par la version actuelle de l'application — les noms
+  // d'ingrédients et d'allergènes y sont déjà dans leur forme interne
+  // canonique, donc aucune traduction ni analyse de texte n'est
+  // nécessaire pour les reconnaître correctement.
+  const compactParsed = tryParseCompactRecipeQr(text);
+  if (compactParsed) return compactParsed;
+
   const lines = (text || "").split("\n").map((l) => l.trim()).filter(Boolean);
   if (lines.length < 2) return null;
   // Volontairement très permissif ("ingr" seul, sans exiger la suite) :
@@ -3521,7 +3659,10 @@ async function renameIngredientName(oldName, newName) {
   state.ingredientNames.sort((a, b) => a.localeCompare(b, "fr"));
   await moveIngredientOverride(oldName, trimmed);
   // Met aussi à jour ce nom partout où il est déjà utilisé, pour ne pas
-  // casser les recettes/listes existantes.
+  // casser les recettes/listes existantes — sans cette propagation, un
+  // ingrédient renommé continuait à apparaître sous son ancien nom dans
+  // la liste de courses, le garde-manger et les listes enregistrées,
+  // créant des doublons de fait entre l'ancien et le nouveau nom.
   let touched = false;
   state.recipes.forEach((r) => {
     (r.ingredients || []).forEach((ing) => {
@@ -3529,6 +3670,28 @@ async function renameIngredientName(oldName, newName) {
     });
   });
   if (touched) for (const r of state.recipes) await storePut("recipes", r);
+
+  for (const item of state.shopping) {
+    if (item.name === oldName) {
+      item.name = trimmed;
+      await storePut("shopping", item);
+    }
+  }
+  for (const item of state.pantry) {
+    if (item.name === oldName) {
+      item.name = trimmed;
+      await storePut("pantry", item);
+    }
+  }
+  let savedListsTouched = false;
+  state.savedShoppingLists.forEach((list) => {
+    (list.items || []).forEach((item) => {
+      if (item.name === oldName) { item.name = trimmed; savedListsTouched = true; }
+    });
+  });
+  if (savedListsTouched) {
+    for (const list of state.savedShoppingLists) await storePut("savedShoppingLists", list);
+  }
   return true;
 }
 async function deleteIngredientName(name) {
@@ -3691,11 +3854,35 @@ function findClosestIngredientMatch(typedName) {
   return best;
 }
 
+let autocompleteIdCounter = 0;
 function attachIngredientAutocomplete(input, onChange) {
   let dropdown = null;
+  let items = []; // éléments actuellement affichés dans la liste
+  let highlightedIndex = -1;
+  const listboxId = `autocomplete-listbox-${++autocompleteIdCounter}`;
+
+  input.setAttribute("role", "combobox");
+  input.setAttribute("aria-autocomplete", "list");
+  input.setAttribute("aria-expanded", "false");
+  input.setAttribute("aria-controls", listboxId);
+
+  function setHighlighted(index) {
+    items.forEach((item, i) => item.setAttribute("aria-selected", String(i === index)));
+    highlightedIndex = index;
+    if (index >= 0 && items[index]) {
+      items[index].scrollIntoView({ block: "nearest" });
+      input.setAttribute("aria-activedescendant", items[index].id);
+    } else {
+      input.removeAttribute("aria-activedescendant");
+    }
+  }
 
   function close() {
     if (dropdown) { dropdown.remove(); dropdown = null; }
+    items = [];
+    highlightedIndex = -1;
+    input.setAttribute("aria-expanded", "false");
+    input.removeAttribute("aria-activedescendant");
   }
   function open() {
     close();
@@ -3705,9 +3892,15 @@ function attachIngredientAutocomplete(input, onChange) {
     if (!results.length && !showSuggestion) return;
     dropdown = document.createElement("div");
     dropdown.className = "autocomplete-dropdown";
+    dropdown.id = listboxId;
+    dropdown.setAttribute("role", "listbox");
+    let itemIndex = 0;
     if (showSuggestion) {
       const suggestItem = document.createElement("div");
       suggestItem.className = "autocomplete-item add-new";
+      suggestItem.id = `${listboxId}-item-${itemIndex++}`;
+      suggestItem.setAttribute("role", "option");
+      suggestItem.setAttribute("aria-selected", "false");
       suggestItem.textContent = t("ingredient_did_you_mean", { name: translateIngredientName(closest.name) });
       suggestItem.addEventListener("mousedown", (e) => e.preventDefault());
       suggestItem.addEventListener("click", () => {
@@ -3716,10 +3909,14 @@ function attachIngredientAutocomplete(input, onChange) {
         close();
       });
       dropdown.appendChild(suggestItem);
+      items.push(suggestItem);
     }
     results.forEach((frenchName) => {
       const item = document.createElement("div");
       item.className = "autocomplete-item";
+      item.id = `${listboxId}-item-${itemIndex++}`;
+      item.setAttribute("role", "option");
+      item.setAttribute("aria-selected", "false");
       item.textContent = translateIngredientName(frenchName);
       item.addEventListener("mousedown", (e) => e.preventDefault());
       item.addEventListener("click", () => {
@@ -3728,8 +3925,10 @@ function attachIngredientAutocomplete(input, onChange) {
         close();
       });
       dropdown.appendChild(item);
+      items.push(item);
     });
     input.parentElement.appendChild(dropdown);
+    input.setAttribute("aria-expanded", "true");
   }
 
   input.addEventListener("input", () => {
@@ -3743,6 +3942,25 @@ function attachIngredientAutocomplete(input, onChange) {
   });
   input.addEventListener("focus", open);
   input.addEventListener("blur", () => setTimeout(close, 200));
+  // Navigation au clavier : flèches pour parcourir la liste, Entrée
+  // pour choisir l'élément en surbrillance, Échap pour fermer — sans
+  // ça, l'autocomplétion n'était utilisable qu'à la souris/au toucher.
+  input.addEventListener("keydown", (e) => {
+    if (!items.length) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlighted(highlightedIndex < items.length - 1 ? highlightedIndex + 1 : 0);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlighted(highlightedIndex > 0 ? highlightedIndex - 1 : items.length - 1);
+    } else if (e.key === "Enter" && highlightedIndex >= 0) {
+      e.preventDefault();
+      items[highlightedIndex].dispatchEvent(new MouseEvent("mousedown"));
+      items[highlightedIndex].click();
+    } else if (e.key === "Escape") {
+      close();
+    }
+  });
 }
 
 /* ======================================================================
@@ -3862,6 +4080,14 @@ function unitToBase(quantity, unit) {
 // directement comparables (même nature : poids, volume, ou nombre de
 // pièces), sinon on ne déduit rien plutôt que de risquer un calcul
 // trompeur (ex. "2 pièces" contre "500 g" ne se comparent pas).
+//
+// Important : suit aussi, pour la session en cours, la quantité déjà
+// "réservée" par des ajouts précédents (state.pantryClaimedThisSession)
+// — sans ce suivi, ajouter séparément deux recettes ayant chacune
+// besoin de 800 g d'un ingrédient dont le garde-manger contient 1 kg
+// aboutissait à ce que les DEUX soient considérées comme entièrement
+// couvertes (chacune comparée seule au stock complet), alors que le
+// besoin réel cumulé (1,6 kg) dépasse largement ce qui est disponible.
 function computePantryReduction(name, unit, neededQty) {
   const noReduction = { adjustedQty: neededQty, reducedAmount: 0, fullyCovered: false };
   if (neededQty == null) return noReduction;
@@ -3870,12 +4096,19 @@ function computePantryReduction(name, unit, neededQty) {
   const neededBase = unitToBase(neededQty, unit);
   const pantryBase = unitToBase(pantryItem.quantity, pantryItem.unit);
   if (neededBase.kind !== pantryBase.kind || neededBase.value <= 0) return noReduction;
-  if (pantryBase.value >= neededBase.value) {
+
+  const key = normalize(name);
+  const alreadyClaimed = state.pantryClaimedThisSession[key] || 0;
+  const effectiveAvailable = Math.max(0, pantryBase.value - alreadyClaimed);
+  if (effectiveAvailable <= 0) return noReduction;
+
+  if (effectiveAvailable >= neededBase.value) {
+    state.pantryClaimedThisSession[key] = alreadyClaimed + neededBase.value;
     return { adjustedQty: null, reducedAmount: neededQty, fullyCovered: true };
   }
-  if (pantryBase.value <= 0) return noReduction;
-  const remainingRatio = (neededBase.value - pantryBase.value) / neededBase.value;
+  const remainingRatio = (neededBase.value - effectiveAvailable) / neededBase.value;
   const adjustedQty = neededQty * remainingRatio;
+  state.pantryClaimedThisSession[key] = alreadyClaimed + effectiveAvailable;
   return { adjustedQty, reducedAmount: neededQty - adjustedQty, fullyCovered: false };
 }
 
@@ -3976,7 +4209,70 @@ async function shareBackupData(preloadedFilePromise) {
   }
 }
 
+// Taille maximale raisonnable pour un fichier de sauvegarde — au-delà,
+// soit le fichier est corrompu/mal formé, soit il ne peut de toute
+// façon pas provenir d'un usage normal de l'application (même avec
+// beaucoup de photos, cette limite laisse une large marge).
+const MAX_BACKUP_FILE_SIZE = 200 * 1024 * 1024; // 200 Mo
+
+// Un champ photo valide est soit absent, soit une image encodée en
+// data URL — jamais une chaîne arbitraire, pour éviter qu'une valeur
+// fabriquée dans un fichier de sauvegarde modifié ne se retrouve
+// utilisée telle quelle comme adresse d'image ailleurs dans l'app.
+function isValidPhotoField(photo) {
+  return photo == null || (typeof photo === "string" && /^data:image\/(png|jpe?g|webp|gif);base64,/i.test(photo));
+}
+
+// Un identifiant valide est une chaîne non vide — tous les entrepôts de
+// sauvegarde utilisent soit "id" soit "key" (pour "kv") comme clé
+// primaire ; un enregistrement sans identifiant valide serait rejeté
+// silencieusement par IndexedDB ou pourrait en écraser un autre de
+// façon imprévisible.
+function hasValidId(item, storeName) {
+  const keyField = storeName === "kv" ? "key" : "id";
+  return typeof item[keyField] === "string" && item[keyField].trim().length > 0;
+}
+
+// Ramène toute valeur numérique négative ou invalide à null plutôt que
+// de la conserver telle quelle — une quantité, un temps de préparation
+// ou un seuil négatif n'a pas de sens et pourrait fausser des calculs
+// ailleurs dans l'application (listes de courses, statistiques...).
+function sanitizeNonNegativeNumber(value) {
+  const n = Number(value);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
+// Nettoie un enregistrement individuel selon les champs numériques et
+// photo connus pour son entrepôt — filtre les valeurs dangereuses ou
+// incohérentes sans rejeter l'enregistrement entier pour autant (un
+// champ isolé invalide ne doit pas faire perdre le reste d'une
+// recette par ailleurs valide).
+function sanitizeBackupItem(item, storeName) {
+  const cleaned = { ...item };
+  if ("photo" in cleaned && !isValidPhotoField(cleaned.photo)) cleaned.photo = null;
+  if (storeName === "recipes") {
+    if ("prepTime" in cleaned) cleaned.prepTime = sanitizeNonNegativeNumber(cleaned.prepTime);
+    if ("cookTime" in cleaned) cleaned.cookTime = sanitizeNonNegativeNumber(cleaned.cookTime);
+    if ("defaultPersons" in cleaned) cleaned.defaultPersons = sanitizeNonNegativeNumber(cleaned.defaultPersons) || 4;
+    if ("timesCooked" in cleaned) cleaned.timesCooked = sanitizeNonNegativeNumber(cleaned.timesCooked) || 0;
+    if (Array.isArray(cleaned.ingredients)) {
+      cleaned.ingredients = cleaned.ingredients.map((i) => (i && typeof i === "object" ? { ...i, quantity: i.quantity != null ? sanitizeNonNegativeNumber(i.quantity) : null } : i));
+    }
+    if (Array.isArray(cleaned.cookLog)) {
+      cleaned.cookLog = cleaned.cookLog.map((entry) => (entry && typeof entry === "object" && "photo" in entry && !isValidPhotoField(entry.photo) ? { ...entry, photo: null } : entry));
+    }
+  }
+  if (storeName === "shopping" || storeName === "pantry") {
+    if ("quantity" in cleaned) cleaned.quantity = cleaned.quantity != null ? sanitizeNonNegativeNumber(cleaned.quantity) : null;
+    if ("threshold" in cleaned) cleaned.threshold = cleaned.threshold != null ? sanitizeNonNegativeNumber(cleaned.threshold) : null;
+  }
+  return cleaned;
+}
+
 async function parseBackupFile(file) {
+  if (file.size > MAX_BACKUP_FILE_SIZE) {
+    throw new Error("file_too_large");
+  }
   const text = await file.text();
   let data;
   try {
@@ -3984,10 +4280,22 @@ async function parseBackupFile(file) {
   } catch (e) {
     throw new Error("invalid");
   }
-  if (!data || typeof data !== "object" || !BACKUP_STORES.some((s) => Array.isArray(data[s]))) {
+  if (!data || typeof data !== "object" || Array.isArray(data) || !BACKUP_STORES.some((s) => Array.isArray(data[s]))) {
     throw new Error("invalid");
   }
-  return data;
+  // Nettoie chaque entrepôt : ne garde que les enregistrements qui sont
+  // de vrais objets avec un identifiant valide, et assainit leurs
+  // champs numériques/photo — un enregistrement individuellement
+  // corrompu est simplement ignoré plutôt que de faire échouer tout
+  // l'import.
+  const cleanedData = { ...data };
+  BACKUP_STORES.forEach((storeName) => {
+    if (!Array.isArray(data[storeName])) return;
+    cleanedData[storeName] = data[storeName]
+      .filter((item) => item && typeof item === "object" && !Array.isArray(item) && hasValidId(item, storeName))
+      .map((item) => sanitizeBackupItem(item, storeName));
+  });
+  return cleanedData;
 }
 function buildBackupPreviewText(data) {
   const count = (storeName) => (Array.isArray(data[storeName]) ? data[storeName].length : 0);
@@ -4001,13 +4309,31 @@ function buildBackupPreviewText(data) {
   });
 }
 async function importAllData(data, mode) {
-  if (mode === "replace") {
-    for (const storeName of BACKUP_STORES) await storeClear(storeName);
-  }
-  for (const storeName of BACKUP_STORES) {
-    const items = Array.isArray(data[storeName]) ? data[storeName] : [];
-    for (const item of items) await storePut(storeName, item);
-  }
+  const db = await openDB();
+  // Une seule transaction couvrant tous les entrepôts à la fois : soit
+  // l'ensemble des opérations (vidage puis réécriture) réussit
+  // entièrement, soit IndexedDB annule automatiquement tout ce qui a
+  // déjà été fait dans cette même transaction en cas d'erreur — plutôt
+  // que l'ancienne approche (une mini-transaction séparée par entrepôt
+  // et par élément), où une panne en plein milieu pouvait laisser
+  // certains entrepôts vidés sans être repeuplés, ou partiellement
+  // réécrits avec un mélange d'anciennes et de nouvelles données.
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction(BACKUP_STORES, "readwrite");
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error || new Error("transaction_error"));
+    tx.onabort = () => reject(tx.error || new Error("transaction_aborted"));
+    try {
+      BACKUP_STORES.forEach((storeName) => {
+        const store = tx.objectStore(storeName);
+        if (mode === "replace") store.clear();
+        const items = Array.isArray(data[storeName]) ? data[storeName] : [];
+        items.forEach((item) => store.put(item));
+      });
+    } catch (e) {
+      tx.abort();
+    }
+  });
   state.recipes = await storeAll("recipes");
   state.shopping = await storeAll("shopping");
   state.pantry = await storeAll("pantry");
@@ -4105,8 +4431,13 @@ function renderBackup() {
       }
       // Sauvegarde automatique des données actuelles avant de les
       // remplacer — au cas où le mauvais fichier aurait été
-      // sélectionné par erreur, rien n'est perdu définitivement.
-      if (state.recipes.length > 0) {
+      // sélectionné par erreur, rien n'est perdu définitivement. On
+      // vérifie tous les entrepôts (pas seulement les recettes) : un
+      // utilisateur sans aucune recette peut très bien avoir une liste
+      // de courses, un garde-manger ou des menus à protéger.
+      const storeContents = await Promise.all(BACKUP_STORES.map((s) => storeAll(s)));
+      const hasAnyData = storeContents.some((items) => items && items.length > 0);
+      if (hasAnyData) {
         await exportAllData();
         didSafetyBackup = true;
       }
@@ -5753,7 +6084,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 98;
+const APP_VERSION = 110;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
@@ -5811,6 +6142,18 @@ async function init() {
   await ensureIngredientListLoaded();
   await loadIngredientOverrides();
   await loadDismissedPairs();
+
+  // Raccourcis PWA (appui long sur l'icône de l'application) : ouvre
+  // directement l'écran demandé au lancement, plutôt que de toujours
+  // démarrer sur l'accueil.
+  const requestedScreen = new URLSearchParams(location.search).get("screen");
+  if (requestedScreen === "form") {
+    await openRecipeForm(null); // gère déjà son propre appel à render()
+    return;
+  }
+  if (requestedScreen === "shopping") {
+    state.screen = "shopping";
+  }
 
   render();
 }
