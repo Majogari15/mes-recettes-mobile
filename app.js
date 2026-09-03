@@ -2241,11 +2241,18 @@ function loadQrCodeLib() {
 // essaie donc des tailles croissantes jusqu'à ce qu'une soit assez
 // grande pour contenir le texte.
 function generateQrCodeImgTag(text) {
-  // Sans ce réglage, la bibliothèque n'encode pas en UTF-8 par défaut et
-  // corrompt les caractères accentués (é, è, à...) — ce qui cassait la
-  // reconnaissance automatique du mot "Ingrédients" au moment du scan.
-  if (window.qrcode.stringToBytesFuncs && window.qrcode.stringToBytesFuncs["UTF-8"]) {
-    window.qrcode.stringToBytes = window.qrcode.stringToBytesFuncs["UTF-8"];
+  // La version de la bibliothèque réellement chargée (1.0.3) n'expose
+  // pas de propriété "stringToBytesFuncs" — la vérification qui suivait
+  // auparavant ne s'activait donc jamais, et l'encodage par défaut de la
+  // bibliothèque (un octet par caractère, tronqué) corrompait tous les
+  // caractères accentués (é, è, à...). Or même une recette presque vide
+  // contient "Préparation", "Ingrédients", "Allergènes" ou "pièce" — un
+  // seul caractère mal encodé suffit à faire échouer certains lecteurs
+  // (jsQR notamment, plus strict qu'un décodeur comme celui utilisé
+  // pour vérifier ce correctif). TextEncoder est une API standard des
+  // navigateurs qui produit un vrai encodage UTF-8 fiable.
+  if (window.TextEncoder) {
+    window.qrcode.stringToBytes = (s) => Array.from(new TextEncoder().encode(s));
   }
   let lastError = null;
   for (let typeNumber = 1; typeNumber <= 40; typeNumber++) {
