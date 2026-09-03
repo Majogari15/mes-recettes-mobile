@@ -1082,8 +1082,13 @@ function renderRecipeForm() {
   // haut, où il est aussitôt réinitialisé) — un ajout d'ingrédient ou
   // toute autre interaction ultérieure re-render le formulaire sans
   // jamais redéclencher cette détection, donc un décochage manuel
-  // reste toujours respecté ensuite.
-  if (prefill && state.formIngredients.some((i) => (i.name || "").trim())) {
+  // reste toujours respecté ensuite. On ne détecte automatiquement que
+  // si aucun allergène n'est déjà connu avec certitude par la source de
+  // l'import elle-même (un QR code de recette, par exemple, peut
+  // directement indiquer les allergènes d'origine — les écraser par une
+  // détection seulement basée sur les noms d'ingrédients serait une
+  // régression, pas une aide).
+  if (prefill && !state.formAllergens.length && state.formIngredients.some((i) => (i.name || "").trim())) {
     state.formAllergens = computeRecipeAllergens(state.formIngredients.map((i) => ({ name: (i.name || "").trim() })).filter((i) => i.name));
   }
   renderAllergenCheckboxes(allergenHolder);
@@ -2299,8 +2304,21 @@ async function openQrCodeModal(recipe, persons) {
   const lines = [recipe.name, ""];
   if (recipe.prepTime) lines.push(`${t("pdf_prep_label")} : ${recipe.prepTime} ${t("recipe_min")}`);
   if (recipe.cookTime) lines.push(`${t("pdf_cook_label")} : ${recipe.cookTime} ${t("recipe_min")}`);
+  if (recipe.difficulty) lines.push(`${t("form_difficulty")} : ${translateDifficulty(recipe.difficulty)}`);
   if (recipe.allergens && recipe.allergens.length) {
     lines.push(`${t("recipe_allergens")} : ${recipe.allergens.map(translateAllergen).join(", ")}`);
+  }
+  // Description et notes tronquées à une longueur raisonnable : un texte
+  // libre trop long grignoterait sinon toute la capacité du QR code au
+  // détriment des ingrédients, qui restent la donnée la plus importante
+  // à préserver en cas de contenu volumineux.
+  const MAX_FREE_TEXT_LENGTH = 300;
+  const truncateFreeText = (s) => (s && s.length > MAX_FREE_TEXT_LENGTH ? s.slice(0, MAX_FREE_TEXT_LENGTH - 1) + "…" : s);
+  if (recipe.description) {
+    lines.push("", `${t("recipe_description")} :`, truncateFreeText(recipe.description));
+  }
+  if (recipe.notes) {
+    lines.push("", `${t("recipe_notes")} :`, truncateFreeText(recipe.notes));
   }
   lines.push("", t("qrcode_ingredients_heading", { persons: String(persons) }));
   (recipe.ingredients || []).forEach((ing) => {
@@ -2403,17 +2421,35 @@ function parseRecipeFromQrText(text) {
   const name = lines[0];
 
   // Les lignes entre le nom et la section ingrédients peuvent contenir
-  // le temps de préparation/cuisson et les allergènes, si présents à la
-  // génération — recherche tolérante (accepte français et anglais).
-  let prepTime = null, cookTime = null, allergens = [];
+  // le temps de préparation/cuisson, la difficulté, les allergènes, et
+  // la description/les notes personnelles (sur plusieurs lignes) — les
+  // deux derniers passent par un suivi de "section courante", puisque
+  // leur contenu libre peut s'étaler sur plusieurs lignes contrairement
+  // aux autres champs, tous tenant sur une seule ligne "clé : valeur".
+  let prepTime = null, cookTime = null, allergens = [], difficulty = null;
+  const descriptionLines = [], notesLines = [];
+  let currentSection = null;
   lines.slice(1, ingIdx).forEach((line) => {
     const prepMatch = line.match(/pr[eé]paration\s*:\s*(\d+)/i) || line.match(/prep(?:aration)?\s*time\s*:\s*(\d+)/i);
-    if (prepMatch) prepTime = parseInt(prepMatch[1], 10);
+    if (prepMatch) { prepTime = parseInt(prepMatch[1], 10); currentSection = null; return; }
     const cookMatch = line.match(/cuisson\s*:\s*(\d+)/i) || line.match(/cook\s*time\s*:\s*(\d+)/i);
-    if (cookMatch) cookTime = parseInt(cookMatch[1], 10);
-    const allergenMatch = line.match(/allerg[eè]nes?\s*:\s*(.+)/i);
-    if (allergenMatch) allergens = allergenMatch[1].split(",").map((a) => a.trim()).filter(Boolean);
+    if (cookMatch) { cookTime = parseInt(cookMatch[1], 10); currentSection = null; return; }
+    const difficultyMatch = line.match(/difficult[ée]\s*:\s*(.+)/i) || line.match(/difficulty\s*:\s*(.+)/i);
+    if (difficultyMatch) {
+      const key = normalize(difficultyMatch[1]);
+      difficulty = DIFFICULTY_OPTIONS.find((d) => normalize(d) === key || normalize(translateDifficulty(d)) === key) || null;
+      currentSection = null;
+      return;
+    }
+    const allergenMatch = line.match(/allerg(?:[eè]ne|en)s?\s*:\s*(.+)/i);
+    if (allergenMatch) { allergens = allergenMatch[1].split(",").map((a) => a.trim()).filter(Boolean); currentSection = null; return; }
+    if (/^descri?ption\s*:?\s*$/i.test(line)) { currentSection = "description"; return; }
+    if (/^(personal\s+)?notes?(\s+personnelles?)?\s*:?\s*$/i.test(line)) { currentSection = "notes"; return; }
+    if (currentSection === "description") descriptionLines.push(line);
+    else if (currentSection === "notes") notesLines.push(line);
   });
+  const description = descriptionLines.join("\n");
+  const notes = notesLines.join("\n");
 
   // Le nombre de personnes est indiqué dans la ligne d'en-tête des
   // ingrédients ("... pour 4 personnes ..."). Important : les quantités
@@ -2429,7 +2465,7 @@ function parseRecipeFromQrText(text) {
     .filter((i) => i.name)
     .map((i) => ({ ...i, quantity: i.quantity != null ? i.quantity / persons : null }));
   if (!ingredients.length) return null;
-  return { name, ingredients, prepTime, cookTime, allergens, persons };
+  return { name, ingredients, prepTime, cookTime, difficulty, allergens, description, notes, persons };
 }
 
 // Retire des articles (depuis la fin) jusqu'à ce que le contenu tienne
@@ -2836,10 +2872,12 @@ async function confirmImportScannedRecipe(parsed) {
   state.screen = "form";
   state._importPrefill = {
     name: parsed.name,
-    description: "",
+    description: parsed.description || "",
     persons: parsed.persons || 4,
     prepTime: parsed.prepTime,
     cookTime: parsed.cookTime,
+    difficulty: parsed.difficulty,
+    notes: parsed.notes || "",
   };
   render();
 }
