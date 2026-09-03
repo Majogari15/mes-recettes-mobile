@@ -979,7 +979,11 @@ function renderRecipeForm() {
   const r = state.editingRecipeId ? state.recipes.find((x) => x.id === state.editingRecipeId) : null;
   // Pré-remplissage à usage unique venant de l'import depuis un lien ou
   // d'un brouillon retrouvé (ne s'applique jamais en modification d'une
-  // recette existante).
+  // recette existante). Distingue les deux sources : un import a
+  // effectivement recalculé les quantités depuis la recette d'origine,
+  // alors qu'un brouillon retrouvé contient déjà les valeurs telles que
+  // l'utilisateur les avait lui-même saisies, sans conversion.
+  const isRealImport = !r && !!state._importPrefill;
   const prefill = !r ? (state._importPrefill || state._formDraftToApply || null) : null;
   state._importPrefill = null;
   state._formDraftToApply = null;
@@ -1047,6 +1051,7 @@ function renderRecipeForm() {
 
   const ingSection = el(`<div class="section"><div class="section-label">${t("form_ingredients")}</div>
     <p style="font-size:13px;color:var(--text-muted);margin:0 0 12px;line-height:1.4;">${escapeHtml(t("form_ingredients_hint"))}</p>
+    ${isRealImport && prefill && prefill.persons && prefill.persons > 1 ? `<div style="background:var(--accent-light);color:var(--accent);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:13px;line-height:1.4;">${escapeHtml(t("form_import_quantity_reminder", { persons: String(prefill.persons) }))}</div>` : ""}
   </div>`);
   const ingHolder = el(`<div id="ing-holder"></div>`);
   ingSection.appendChild(ingHolder);
