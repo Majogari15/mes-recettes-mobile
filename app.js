@@ -2250,10 +2250,23 @@ function generateQrCodeImgTag(text) {
   let lastError = null;
   for (let typeNumber = 1; typeNumber <= 40; typeNumber++) {
     try {
-      const qr = window.qrcode(typeNumber, "M");
+      // Niveau "L" (plutôt que "M") : moins de redondance de correction
+      // d'erreur, donc un code moins dense pour la même quantité de
+      // texte — plus simple à décoder correctement une fois
+      // photographié depuis un autre appareil.
+      const qr = window.qrcode(typeNumber, "L");
       qr.addData(text);
       qr.make();
-      return qr.createImgTag(5, 4);
+      // Important : le deuxième paramètre de createImgTag() est une
+      // marge exprimée directement en pixels, pas en "modules" comme on
+      // pourrait le supposer (vérifié dans le code source de la
+      // bibliothèque) — la norme QR exige une zone blanche d'au moins 4
+      // modules, soit ici 4 × 6 = 24 pixels avec des cellules de 6px.
+      // La valeur précédente (4, littéralement 4 pixels) violait cette
+      // exigence et pouvait gêner la lecture par certains décodeurs.
+      const cellSize = 6;
+      const margin = cellSize * 4;
+      return qr.createImgTag(cellSize, margin);
     } catch (e) {
       lastError = e;
     }
