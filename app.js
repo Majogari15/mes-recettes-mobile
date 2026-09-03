@@ -4122,6 +4122,8 @@ function renderBackup() {
   });
   wrap.appendChild(importSection);
 
+  wrap.appendChild(el(`<p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">v${APP_VERSION}</p>`));
+
   return wrap;
 }
 
@@ -5746,6 +5748,12 @@ function renderStatistics() {
 
   return wrap;
 }
+
+// À incrémenter à chaque livraison, en même temps que CACHE_NAME dans
+// sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
+// sans deviner, que la dernière version est bien celle actuellement
+// utilisée.
+const APP_VERSION = 98;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
