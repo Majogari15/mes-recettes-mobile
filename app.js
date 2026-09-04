@@ -4483,6 +4483,16 @@ function backupFileName() {
   const timeStr = `${pad(now.getHours())}-${pad(now.getMinutes())}`;
   return `mes-recettes-sauvegarde-${dateStr}_${timeStr}.json`;
 }
+// Nom dédié au partage (pas au téléchargement direct) : ".txt" plutôt
+// que ".json", cohérent avec le type "text/plain" déjà utilisé pour le
+// partage — une extension qui ne correspond pas au type MIME déclaré
+// peut faire échouer la validation de certains navigateurs avant même
+// que le menu de partage ne s'ouvre. Le contenu reste le même JSON ;
+// seule l'extension change. La restauration accepte déjà les deux
+// extensions par contenu, pas seulement par extension.
+function backupShareFileName() {
+  return backupFileName().replace(/\.json$/, ".txt");
+}
 async function buildBackupFile() {
   const data = await buildBackupData();
   // "text/plain" plutôt que "application/json" pour le partage
@@ -4492,7 +4502,7 @@ async function buildBackupFile() {
   // nom de fichier garde ".json" (la réimportation l'accepte par
   // extension aussi bien que par type).
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "text/plain" });
-  return new File([blob], backupFileName(), { type: "text/plain" });
+  return new File([blob], backupShareFileName(), { type: "text/plain" });
 }
 async function exportAllData() {
   const data = await buildBackupData();
@@ -4511,30 +4521,31 @@ async function exportAllData() {
 // sauvegarde, pour l'envoyer vers Google Drive, Dropbox, OneDrive, par
 // email... selon ce que l'utilisateur a d'installé — pas d'intégration
 // directe avec un service en particulier, l'utilisateur choisit à
-// chaque fois. Retourne { ok: false } si le partage de fichier n'est
-// pas pris en charge (repli possible vers exportAllData()).
+// chaque fois. Retourne { ok: false } si le partage échoue.
 //
-// Accepte optionnellement une promesse de fichier déjà en cours de
-// construction (préchargée dès l'ouverture de l'écran) : reconstruire
-// le fichier ici, après le clic, ajoutait un délai qui pouvait faire
-// perdre au navigateur l'autorisation liée au geste de l'utilisateur
-// et provoquer une erreur "NotAllowedError" au moment de partager.
-async function shareBackupData(preloadedFilePromise) {
-  if (!navigator.canShare) return { ok: false, cancelled: false };
-  const file = await (preloadedFilePromise || buildBackupFile());
-  if (!navigator.canShare({ files: [file] })) return { ok: false, cancelled: false };
-  try {
-    await navigator.share({ files: [file], title: t("backup_share_title") });
-    localStorage.setItem("lastBackupAt", new Date().toISOString());
-    return { ok: true, cancelled: false };
-  } catch (e) {
-    // "AbortError" : l'utilisateur a lui-même fermé le menu de partage
-    // sans rien choisir — un choix délibéré, pas une erreur à afficher
-    // ni un cas où basculer sur le téléchargement classique. Toute
-    // autre erreur est un vrai échec technique à ne pas cacher.
-    if (e && e.name === "AbortError") return { ok: true, cancelled: true };
-    return { ok: false, cancelled: false, error: (e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e)) };
+// Prend directement un fichier déjà résolu (pas une promesse) : aucun
+// await ne doit précéder l'appel à navigator.share() lui-même, sinon le
+// navigateur peut considérer que le clic de l'utilisateur n'est plus
+// "actif" au moment de l'appel, ce qui provoque une erreur
+// "NotAllowedError" même quand le partage serait normalement possible.
+function shareBackupData(file) {
+  if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
+    return Promise.resolve({ ok: false, cancelled: false });
   }
+  return navigator.share({ files: [file], title: t("backup_share_title") }).then(
+    () => {
+      localStorage.setItem("lastBackupAt", new Date().toISOString());
+      return { ok: true, cancelled: false };
+    },
+    (e) => {
+      // "AbortError" : l'utilisateur a lui-même fermé le menu de partage
+      // sans rien choisir — un choix délibéré, pas une erreur à afficher
+      // ni un cas où basculer sur le téléchargement classique. Toute
+      // autre erreur est un vrai échec technique à ne pas cacher.
+      if (e && e.name === "AbortError") return { ok: true, cancelled: true };
+      return { ok: false, cancelled: false, error: (e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e)) };
+    }
+  );
 }
 
 // Taille maximale raisonnable pour un fichier de sauvegarde — au-delà,
@@ -4821,22 +4832,14 @@ async function renderDiagnostic() {
 function renderBackup() {
   const wrap = el(`<div></div>`);
 
-  const canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [new File([""], "test.json", { type: "text/plain" })] }));
-  // Précharge les données de sauvegarde dès l'ouverture de cet écran,
-  // en tâche de fond — pour qu'au moment où l'utilisateur clique sur
-  // "Partager", le fichier soit déjà prêt et l'appel à navigator.share()
-  // se fasse sans aucun délai après le clic. Un délai, même court (le
-  // temps de lire IndexedDB), peut faire perdre au navigateur
-  // l'autorisation liée au geste de l'utilisateur et provoquer une
-  // erreur "NotAllowedError".
-  const preloadedBackupFilePromise = canShareFiles ? buildBackupFile() : null;
+  const canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [new File([""], "test.txt", { type: "text/plain" })] }));
 
   const exportSection = el(`<div class="section">
     <div class="section-label">${t("backup_export_title")}</div>
     <div class="card" style="padding:16px;">
       <p class="prose" style="margin:0 0 14px;font-size:14px;">${escapeHtml(t("backup_export_text"))}</p>
       <button class="btn btn-primary" id="export-btn" style="margin-bottom:10px;">${t("backup_export_button")}</button>
-      ${canShareFiles ? `<button class="btn btn-secondary" id="share-btn">${t("backup_share_button")}</button>
+      ${canShareFiles ? `<button class="btn btn-secondary" id="share-btn" disabled>${t("backup_share_preparing")}</button>
       <p style="font-size:12px;color:var(--text-muted);margin:8px 0 0;">${escapeHtml(t("backup_share_hint"))}</p>` : ""}
     </div>
   </div>`);
@@ -4845,25 +4848,40 @@ function renderBackup() {
     await customAlert(t("backup_export_success"));
   });
   if (canShareFiles) {
-    exportSection.querySelector("#share-btn").addEventListener("click", async () => {
-      const result = await shareBackupData(preloadedBackupFilePromise);
-      if (!result.ok) {
-        // Le partage a échoué (pas simplement annulé par l'utilisateur,
-        // ce cas renvoie cancelled:true sans passer ici) : le fichier
-        // est tout de même mis en sécurité par téléchargement classique,
-        // mais l'utilisateur doit être informé que ce n'est PAS ce qu'il
-        // a demandé — un message explicite évite de lui laisser croire
-        // à tort que le partage vers le cloud a réussi. Le détail
-        // technique est conservé pour le diagnostic (voir Sauvegarde →
-        // Diagnostic) : les tentatives précédentes de corriger ce
-        // problème sans connaître l'erreur exacte n'ont pas abouti.
-        if (result.error) {
-          try { localStorage.setItem("lastShareError", `${new Date().toISOString()} — ${result.error}`.slice(0, 300)); } catch (e) { /* sans conséquence */ }
+    const shareBtn = exportSection.querySelector("#share-btn");
+    // Le fichier est entièrement préparé et résolu AVANT que le bouton
+    // ne devienne cliquable — pas seulement "lancé en tâche de fond" —
+    // pour garantir qu'aucun await ne se produise entre le clic de
+    // l'utilisateur et l'appel à navigator.share() lui-même, condition
+    // nécessaire pour que le navigateur reconnaisse encore le geste
+    // comme "actif" à ce moment précis.
+    let readyFile = null;
+    buildBackupFile().then((file) => {
+      readyFile = file;
+      shareBtn.disabled = false;
+      shareBtn.textContent = t("backup_share_button");
+    });
+    shareBtn.addEventListener("click", () => {
+      if (!readyFile) return; // ne devrait pas arriver, bouton désactivé jusque-là
+      shareBackupData(readyFile).then(async (result) => {
+        if (!result.ok) {
+          // Le partage a échoué (pas simplement annulé par l'utilisateur,
+          // ce cas renvoie cancelled:true sans passer ici) : le fichier
+          // est tout de même mis en sécurité par téléchargement classique,
+          // mais l'utilisateur doit être informé que ce n'est PAS ce qu'il
+          // a demandé — un message explicite évite de lui laisser croire
+          // à tort que le partage vers le cloud a réussi. Le détail
+          // technique est conservé pour le diagnostic (voir Sauvegarde →
+          // Diagnostic) : les tentatives précédentes de corriger ce
+          // problème sans connaître l'erreur exacte n'ont pas abouti.
+          if (result.error) {
+            try { localStorage.setItem("lastShareError", `${new Date().toISOString()} — ${result.error}`.slice(0, 300)); } catch (e) { /* sans conséquence */ }
+          }
+          await exportAllData();
+          const detail = result.error ? `\n\n(${result.error})` : "";
+          await customAlert(t("backup_share_fallback_notice") + detail);
         }
-        await exportAllData();
-        const detail = result.error ? `\n\n(${result.error})` : "";
-        await customAlert(t("backup_share_fallback_notice") + detail);
-      }
+      });
     });
   }
   wrap.appendChild(exportSection);
@@ -4886,7 +4904,7 @@ function renderBackup() {
       </div>
       <div class="field">
         <label for="import-file">${t("backup_import_button")}</label>
-        <input type="file" accept="application/json,.json" id="import-file">
+        <input type="file" accept="application/json,text/plain,.json,.txt" id="import-file">
       </div>
     </div>
   </div>`);
@@ -6614,7 +6632,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 128;
+const APP_VERSION = 129;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
