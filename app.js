@@ -4805,6 +4805,8 @@ async function renderDiagnostic() {
   addRow(t("diagnostic_last_import_error"), lastImportError || t("diagnostic_none"));
   const lastShareError = localStorage.getItem("lastShareError");
   addRow(t("diagnostic_last_share_error"), lastShareError || t("diagnostic_none"));
+  const lastWorkerError = localStorage.getItem("lastWorkerError");
+  addRow(t("diagnostic_last_worker_error"), lastWorkerError || t("diagnostic_none"));
 
   addRow(t("diagnostic_connection"), navigator.onLine ? t("diagnostic_online") : t("diagnostic_offline"));
   addRow(t("diagnostic_qr_native"), ("BarcodeDetector" in window) ? t("diagnostic_available") : t("diagnostic_unavailable"));
@@ -6138,9 +6140,17 @@ async function fetchRecipeFromUrl(url, onAttempt) {
       const recipeData = await fetchRecipeDataViaWorker(url);
       const result = await buildRecipeFromStructuredData(recipeData);
       recordImportDiagnostic("Worker Cloudflare");
+      try { localStorage.removeItem("lastWorkerError"); } catch (e) { /* sans conséquence */ }
       return result;
     } catch (e) {
       // Pas configuré, ou a échoué : on continue avec Jina ci-dessous.
+      // L'erreur précise est conservée pour le diagnostic, même si
+      // l'import réussit ensuite via un autre service — sans ça,
+      // impossible de savoir POURQUOI le Worker a échoué si un service
+      // de repli masque le problème en réussissant à sa place.
+      try {
+        localStorage.setItem("lastWorkerError", `${new Date().toISOString()} — ${(e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e))}`.slice(0, 300));
+      } catch (err) { /* sans conséquence */ }
     }
   }
 
@@ -6647,7 +6657,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 130;
+const APP_VERSION = 131;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
