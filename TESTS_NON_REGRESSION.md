@@ -50,13 +50,16 @@ attendu → résultat obtenu → version testée.
   tous corrects.
 - **Version testée** : v111
 
-### 1.4 — Duplication d'une recette *(physique)*
+### 1.4 — Duplication d'une recette *(testé en production, v123)*
 - **Manipulation** : dupliquer une recette ayant favori/historique/notes
   personnelles remplis.
 - **Résultat attendu** : la copie n'hérite ni du favori, ni de l'historique,
   ni des notes personnelles ; tout le reste (ingrédients, photo) est identique.
-- **Résultat obtenu** : _à tester_
-- **Appareil** : _à renseigner_
+- **Résultat obtenu** : ⚠️ Défaut trouvé en v123 — favori, historique, note
+  chiffrée, avis famille et améliorations correctement effacés, mais le
+  champ "Notes personnelles" textuel restait dupliqué (oubli dans le code).
+  **Corrigé** et retesté : ✅ Réussi.
+- **Appareil** : testé en production (v123), correctif v124
 
 ### 1.5 — Analyse des ingrédients : unités-contenants et alternatives *(simulé)*
 - **Manipulation** : analyser "1 boîte de purée de tomate", "2 sachets de
@@ -70,6 +73,13 @@ attendu → résultat obtenu → version testée.
   "oie ou canard" nettoyé ; "1 citron ou 2 citrons verts" resté inchangé
   (nombres différents, correctement préservés).
 - **Version testée** : v121
+- **Complément (testé en production, v123)** : les 5 nouvelles unités
+  étaient correctement enregistrées et affichées après sauvegarde, mais le
+  menu déroulant du formulaire d'import/modification les affichait vides
+  (absentes de la liste des options). **Corrigé** (ajoutées à
+  `UNIT_OPTIONS`, source commune à tous les menus d'unité de l'app) et
+  retesté : ✅ Réussi — "boîte" et "gousse" correctement sélectionnées dans
+  le menu, pas vides.
 
 ---
 
@@ -132,7 +142,8 @@ attendu → résultat obtenu → version testée.
   Marmiton, 8 personnes, 17 ingrédients, 9 étapes, description 1037/1037
   caractères).
 - **Appareil** : appareil de l'utilisateur (non précisé)
-- **Version testée** : v118
+- **Version testée** : v118, reconfirmé en v123 (8 personnes, 40 min,
+  330 min, 17 ingrédients, 9 étapes)
 
 ### 3.2 — Repli Jina conserve le nombre de personnes *(simulé)*
 - **Conditions initiales** : texte façon extraction Jina contenant
@@ -327,7 +338,7 @@ attendu → résultat obtenu → version testée.
   seulement "dialogue").
 - **Résultat obtenu** : _à tester_
 
-### 8.6 — Étoiles : groupe radio complet (une seule tabulable, flèches) *(simulé)*
+### 8.6 — Étoiles : groupe radio complet (une seule tabulable, flèches) *(simulé + confirmé en production)*
 - **Manipulation** : vérifier qu'une seule étoile a `tabindex="0"` ; depuis
   l'étoile 1, appuyer 2× flèche droite (doit arriver à 3) ; 5× flèche gauche
   depuis 3 (doit s'arrêter à 1, jamais en dessous) ; 10× flèche droite
@@ -337,6 +348,8 @@ attendu → résultat obtenu → version testée.
 - **Résultat obtenu** : ✅ Réussi — une seule étoile tabulable confirmée ;
   flèche droite ×2 → 3 (focus suit) ; flèche gauche ×5 → arrêt à 1 ; flèche
   droite ×10 → arrêt à 5 ; clic sur étoile 2 → 2 (non-régression confirmée).
+  Reconfirmé sur la v123 publiée (une seule étoile tabulable, 2× flèche
+  droite → étoile 3).
 - **Version testée** : v123
 
 ---
@@ -369,7 +382,7 @@ attendu → résultat obtenu → version testée.
   confirmé (contenu du presse-papiers vérifié).
 - **Version testée** : v122
 
-### 10.2 — Worker : limite de longueur d'URL cible *(simulé, logique)*
+### 10.2 — Worker : limite de longueur d'URL cible *(simulé + confirmé en production)*
 - **Manipulation** : simuler la vérification sur une URL normale (75
   caractères), une URL abusive (3000+ caractères), et une URL à caractères
   spéciaux (50 caractères réels mais 122 une fois encodée dans la requête).
@@ -378,14 +391,17 @@ attendu → résultat obtenu → version testée.
   l'encodage.
 - **Résultat obtenu** : ✅ Réussi — URL normale acceptée, URL abusive
   rejetée, URL à caractères spéciaux correctement mesurée sur sa longueur
-  décodée (50), pas la longueur encodée (122).
+  décodée (50), pas la longueur encodée (122). **Confirmé en production
+  sur le vrai Worker déployé** : URL normale → HTTP 200 ; URL de plus de
+  2048 caractères → HTTP 414 "URL too long" ; en-têtes CORS limités à
+  `https://majogari15.github.io`.
 - **Version testée** : worker.js (non versionné avec l'app — à redéployer
   manuellement sur Cloudflare)
 - **Note** : la vraie limitation du nombre de requêtes par IP reste en
   attente (nécessite Wrangler + binding Rate Limiting, ou un domaine
   personnalisé + règle WAF — voir échanges du 04/09/2026).
 
-### 10.3 — Manifeste externalisé (`manifest-loader.js`) *(simulé)*
+### 10.3 — Manifeste externalisé (`manifest-loader.js`) *(simulé + confirmé en production)*
 - **Manipulation** : vérifier la sélection du bon manifeste après
   externalisation du script (déplacé hors de `index.html`, chargé après la
   CSP).
@@ -393,7 +409,9 @@ attendu → résultat obtenu → version testée.
   l'externalisation.
 - **Résultat obtenu** : ✅ Réussi — navigateur en français sans langue
   enregistrée → `manifest.json` ; langue "de" enregistrée →
-  `manifest-de.json`.
+  `manifest-de.json`. **Confirmé en production** : fichier présent dans le
+  cache du service worker, changement FR→EN reflété correctement
+  (`manifest.json` → `manifest-en.json` après rechargement).
 - **Version testée** : v123
 
 ---
@@ -406,12 +424,18 @@ attendu → résultat obtenu → version testée.
 
 ---
 
-## Résumé — état au 04/09/2026 (v123)
+## Résumé — état au 04/09/2026 (v124)
 
-- **Tests simulés réalisés** : 30
-- **Tests simulés réussis** : 30 / 30
-- **Tests physiques restants** : 13, dont 1 déjà rapporté réussi par
-  l'utilisateur (import Marmiton complet)
+- **Tests simulés réussis** : 32
+- **Tests confirmés en production (v123)** : Worker (HTTP 200/414/CORS),
+  manifeste multilingue, étoiles clavier, import Marmiton, cache et
+  chargement général — aucune erreur
+- **2 défauts trouvés en production et corrigés en v124** : notes
+  personnelles dupliquées ; nouvelles unités absentes du menu déroulant du
+  formulaire (données bien enregistrées, seul l'affichage était en cause)
+- **Tests physiques restants** : 12, regroupés en 6 séances pratiques
+  (brouillon Android, sauvegarde/partage/Drive, caméra et multi-QR,
+  enregistrement des QR, mode hors connexion, mise à jour + accessibilité)
 
 Aucune régression détectée dans les tests simulables à ce jour. Les tests
 physiques (caméra réelle, comportement Android, plusieurs appareils, mode

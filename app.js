@@ -157,7 +157,7 @@ const state = {
 
 const CATEGORY_OPTIONS = ["Petit-déjeuner", "Entrée", "Plat", "Dessert", "Apéro", "Boisson", "Sauce", "Autre"];
 const DIFFICULTY_OPTIONS = ["Facile", "Moyen", "Difficile"];
-const UNIT_OPTIONS = ["pièce", "g", "kg", "cl", "L", "c. à soupe", "c. à café", "autre"];
+const UNIT_OPTIONS = ["pièce", "g", "kg", "cl", "L", "c. à soupe", "c. à café", "boîte", "sachet", "pot", "tranche", "gousse", "autre"];
 
 /* ======================================================================
    UTILITAIRES
@@ -967,6 +967,7 @@ function renderRecipeView() {
       familyOpinion: "",
       improvementNotes: "",
       actualDifficulty: "",
+      notes: "",
       ingredients: (r.ingredients || []).map((i) => ({ ...i })),
       allergens: [...(r.allergens || [])],
     };
@@ -6558,7 +6559,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 123;
+const APP_VERSION = 124;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
