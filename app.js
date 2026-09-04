@@ -2455,23 +2455,62 @@ function generateQrCodeImgTag(text) {
 // partie parmi plusieurs, avant même d'essayer de l'interpréter comme
 // une recette complète.
 const MULTI_QR_PREFIX = "MRQ1";
+// Somme de contrôle simple (pas cryptographique, juste utile pour
+// détecter une corruption accidentelle) — permet de vérifier après
+// réassemblage que le contenu reconstitué correspond exactement à
+// celui d'origine, plutôt que de compter uniquement sur JSON.parse()
+// qui ne détecte pas toute altération restant syntaxiquement valide.
+function computeChecksum(str) {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i += 1) {
+    hash = ((hash << 5) + hash + str.charCodeAt(i)) >>> 0;
+  }
+  return hash.toString(36);
+}
 // Découpe un texte trop long pour un seul QR en plusieurs fragments à
 // peu près égaux, chacun précédé d'un petit en-tête indiquant sa
-// position ("2/3" par exemple) et un identifiant commun à toutes les
-// parties — nécessaire pour que le lecteur puisse regrouper des
-// fragments provenant de scans séparés, potentiellement dans le
-// désordre, et détecter s'il en manque encore.
-function splitIntoQrParts(content, maxChunkLength) {
-  if (content.length <= maxChunkLength) return [content];
-  const totalParts = Math.ceil(content.length / maxChunkLength);
-  const chunkSize = Math.ceil(content.length / totalParts);
-  const batchId = uid().slice(0, 6);
-  const parts = [];
-  for (let i = 0; i < totalParts; i += 1) {
-    const chunk = content.slice(i * chunkSize, (i + 1) * chunkSize);
-    parts.push(`${MULTI_QR_PREFIX}|${batchId}|${i + 1}|${totalParts}|${chunk}`);
+// position ("2/3" par exemple), un identifiant commun à toutes les
+// parties, et une somme de contrôle du contenu complet — nécessaire
+// pour que le lecteur puisse regrouper des fragments provenant de
+// scans séparés, potentiellement dans le désordre, détecter s'il en
+// manque encore, et vérifier l'intégrité une fois tout reconstitué.
+// Découpe "content" en fragments dont la taille en OCTETS UTF-8 (pas en
+// nombre de caractères) ne dépasse jamais "maxChunkBytes" — un accent
+// ou un caractère spécial peut peser 2 à 4 octets en UTF-8 pour un seul
+// caractère JavaScript, donc se fier uniquement à .length aurait pu
+// produire des fragments plus lourds que prévu une fois encodés dans
+// le QR. Ne coupe jamais au milieu d'un caractère : avance caractère
+// par caractère (pas octet par octet) pour décider où couper.
+function splitIntoQrParts(content, maxChunkBytes) {
+  const encoder = new TextEncoder();
+  if (encoder.encode(content).length <= maxChunkBytes) return [content];
+
+  const chars = Array.from(content); // respecte les paires de substitution Unicode
+  const chunks = [];
+  let current = "";
+  let currentBytes = 0;
+  for (const ch of chars) {
+    const chBytes = encoder.encode(ch).length;
+    if (currentBytes + chBytes > maxChunkBytes && current) {
+      chunks.push(current);
+      current = "";
+      currentBytes = 0;
+    }
+    current += ch;
+    currentBytes += chBytes;
   }
-  return parts;
+  if (current) chunks.push(current);
+
+  // uid().slice(0, 6) ne prenait que le début de l'horodatage (jamais
+  // la partie aléatoire, qui vient après) — deux recettes générées à
+  // quelques millisecondes d'écart recevaient donc exactement le même
+  // identifiant de lot, confirmé concrètement en test. crypto.randomUUID()
+  // est réellement aléatoire sur toute sa longueur ; repli sur uid()
+  // complet (pas juste ses 6 premiers caractères) si indisponible.
+  const batchId = (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, "") : uid()).slice(0, 12);
+  const totalParts = chunks.length;
+  const checksum = computeChecksum(content);
+  return chunks.map((chunk, i) => `${MULTI_QR_PREFIX}|${batchId}|${i + 1}|${totalParts}|${checksum}|${chunk}`);
 }
 // Reconnaît un fragment multi-QR et en extrait les composants, ou
 // retourne null si le texte ne correspond pas à ce format (auquel cas
@@ -2481,13 +2520,15 @@ function tryParseMultiPartQrFragment(text) {
   const firstSep = text.indexOf("|", MULTI_QR_PREFIX.length + 1);
   const secondSep = text.indexOf("|", firstSep + 1);
   const thirdSep = text.indexOf("|", secondSep + 1);
-  if (firstSep < 0 || secondSep < 0 || thirdSep < 0) return null;
+  const fourthSep = text.indexOf("|", thirdSep + 1);
+  if (firstSep < 0 || secondSep < 0 || thirdSep < 0 || fourthSep < 0) return null;
   const batchId = text.slice(MULTI_QR_PREFIX.length + 1, firstSep);
   const partIndex = parseInt(text.slice(firstSep + 1, secondSep), 10);
   const totalParts = parseInt(text.slice(secondSep + 1, thirdSep), 10);
-  const chunk = text.slice(thirdSep + 1);
-  if (!batchId || !Number.isFinite(partIndex) || !Number.isFinite(totalParts) || partIndex < 1 || partIndex > totalParts) return null;
-  return { batchId, partIndex, totalParts, chunk };
+  const checksum = text.slice(thirdSep + 1, fourthSep);
+  const chunk = text.slice(fourthSep + 1);
+  if (!batchId || !checksum || !Number.isFinite(partIndex) || !Number.isFinite(totalParts) || partIndex < 1 || partIndex > totalParts) return null;
+  return { batchId, partIndex, totalParts, checksum, chunk };
 }
 
 async function openQrCodeModal(recipe, persons) {
@@ -2846,6 +2887,12 @@ async function openQrScanModal() {
   let multiPartAccumulator = null;
 
   function cleanup() {
+    // Idempotente : peut être appelée plusieurs fois sans effet
+    // supplémentaire (le bouton Fermer l'appelle directement, et le
+    // mécanisme générique de fermeture des fenêtres peut aussi la
+    // déclencher via beforeClose — arrêter une piste déjà arrêtée est
+    // sans risque, mais autant l'éviter proprement).
+    if (stopped) return;
     stopped = true;
     if (stream) stream.getTracks().forEach((tr) => tr.stop());
   }
@@ -2928,10 +2975,17 @@ async function openQrScanModal() {
         // on repart d'un accumulateur neuf plutôt que de mélanger deux
         // recettes différentes.
         const isSwitch = !!multiPartAccumulator;
-        multiPartAccumulator = { batchId: fragment.batchId, totalParts: fragment.totalParts, parts: {} };
+        multiPartAccumulator = { batchId: fragment.batchId, totalParts: fragment.totalParts, checksum: fragment.checksum, parts: {} };
         if (isSwitch) {
           statusEl.textContent = t("qrscan_multi_new_batch");
         }
+      }
+      if (fragment.totalParts !== multiPartAccumulator.totalParts || fragment.checksum !== multiPartAccumulator.checksum) {
+        // Même identifiant de lot, mais nombre de parties ou somme de
+        // contrôle incohérente : un fragment corrompu ou mal transmis.
+        // On l'ignore plutôt que de risquer une reconstitution erronée.
+        statusEl.textContent = t("qrscan_multi_inconsistent");
+        return { status: "partial" };
       }
       if (multiPartAccumulator.parts[fragment.partIndex]) {
         statusEl.textContent = t("qrscan_multi_already_have");
@@ -2944,11 +2998,18 @@ async function openQrScanModal() {
         return { status: "partial" };
       }
       // Toutes les parties sont là : reconstitue le contenu complet
-      // dans l'ordre, puis le traite exactement comme un QR de recette
+      // dans l'ordre, vérifie la somme de contrôle (JSON.parse() seul
+      // ne détecte pas toute altération restant syntaxiquement
+      // valide), puis le traite exactement comme un QR de recette
       // classique en un seul morceau.
       let reassembled = "";
       for (let i = 1; i <= multiPartAccumulator.totalParts; i += 1) reassembled += multiPartAccumulator.parts[i];
+      const expectedChecksum = multiPartAccumulator.checksum;
       multiPartAccumulator = null;
+      if (computeChecksum(reassembled) !== expectedChecksum) {
+        statusEl.textContent = t("qrscan_multi_checksum_failed");
+        return { status: "not_recognized" };
+      }
       const parsedRecipe = tryParseCompactRecipeQr(reassembled);
       if (parsedRecipe) {
         cleanup();
@@ -6336,7 +6397,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 118;
+const APP_VERSION = 119;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
