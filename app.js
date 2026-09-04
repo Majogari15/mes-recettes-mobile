@@ -193,6 +193,31 @@ function trapFocusInModal(sheet, onEscape) {
   return () => document.removeEventListener("keydown", handler);
 }
 
+// Ajoute à une fenêtre modale déjà affichée (overlay + sheet, déjà
+// insérés dans la page) : rôle de dialogue, piège de focus, fermeture
+// par Échap, et restauration du focus vers l'élément qui avait le
+// focus juste avant l'ouverture. Utilise un MutationObserver pour
+// détecter automatiquement le moment où la fenêtre est retirée du DOM
+// — peu importe comment elle se ferme (bouton, clic à l'extérieur,
+// Échap...) — plutôt que de devoir adapter la logique de fermeture
+// propre à chacune des nombreuses fenêtres de l'application.
+function initModalA11y(overlay, sheet) {
+  if (!sheet.hasAttribute("role")) sheet.setAttribute("role", "dialog");
+  sheet.setAttribute("aria-modal", "true");
+  const previouslyFocused = document.activeElement;
+  const removeTrap = trapFocusInModal(sheet, () => overlay.remove());
+  const observer = new MutationObserver(() => {
+    if (!document.body.contains(overlay)) {
+      removeTrap();
+      observer.disconnect();
+      if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
+    }
+  });
+  observer.observe(document.body, { childList: true });
+  const focusable = sheet.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  if (focusable) focusable.focus();
+}
+
 function customAlert(message) {
   return new Promise((resolve) => {
     const previouslyFocused = document.activeElement;
@@ -1673,6 +1698,7 @@ function openAddItemModal(storeName, existingItem) {
     render();
   });
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
   nameInput.focus();
 }
 function openShoppingAddPrompt() {
@@ -1862,6 +1888,7 @@ function openMergeChoiceModal(nameA, nameB, onDone) {
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
 }
 
 function openIngredientNameModal(existingName) {
@@ -1997,6 +2024,7 @@ function openIngredientNameModal(existingName) {
     render();
   });
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
   input.focus();
   input.select();
 }
@@ -2410,6 +2438,7 @@ async function openQrCodeModal(recipe, persons) {
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
 
   // Format compact et indépendant de la langue : utilise les noms
   // internes canoniques (français) directement, sans jamais passer par
@@ -2665,6 +2694,7 @@ async function openShoppingQrCodeModal() {
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
   sheet.querySelector("button").addEventListener("click", () => overlay.remove());
 
   const holder = sheet.querySelector("#qrcode-shopping-holder");
@@ -2728,6 +2758,7 @@ async function openQrScanModal() {
   </div>`);
   overlay.appendChild(sheet);
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
 
   const holder = sheet.querySelector("#qrscan-holder");
   const cameraStatusEl = sheet.querySelector("#qrscan-camera-status");
@@ -3001,6 +3032,7 @@ function openQrPasteModal() {
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
   sheet.querySelector("#qrpaste-close").addEventListener("click", () => overlay.remove());
 
   const statusEl = sheet.querySelector("#qrpaste-status");
@@ -3087,6 +3119,7 @@ function openSubstitutesModal(recipe) {
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
 }
 
 /* ======================================================================
@@ -3171,6 +3204,7 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
 }
 
 function openCookLogViewModal(recipe) {
@@ -3224,6 +3258,7 @@ function openCookLogViewModal(recipe) {
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
 }
 
 /* ======================================================================
@@ -3447,6 +3482,7 @@ function openCookingMode(recipe) {
   overlay.appendChild(addTimerBtn);
 
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
 }
 
 /* ======================================================================
@@ -3503,6 +3539,7 @@ function openIosInstallInstructions() {
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
 }
 function showInstallBanner() {
   if (document.querySelector(".install-banner")) return;
@@ -4293,24 +4330,52 @@ function sanitizeNonNegativeNumber(value) {
 // incohérentes sans rejeter l'enregistrement entier pour autant (un
 // champ isolé invalide ne doit pas faire perdre le reste d'une
 // recette par ailleurs valide).
-function sanitizeBackupItem(item, storeName) {
+function sanitizeBackupItem(item, storeName, report) {
   const cleaned = { ...item };
-  if ("photo" in cleaned && !isValidPhotoField(cleaned.photo)) cleaned.photo = null;
+  if ("photo" in cleaned && cleaned.photo != null && !isValidPhotoField(cleaned.photo)) {
+    cleaned.photo = null;
+    report.photosRemoved += 1;
+  }
   if (storeName === "recipes") {
-    if ("prepTime" in cleaned) cleaned.prepTime = sanitizeNonNegativeNumber(cleaned.prepTime);
-    if ("cookTime" in cleaned) cleaned.cookTime = sanitizeNonNegativeNumber(cleaned.cookTime);
-    if ("defaultPersons" in cleaned) cleaned.defaultPersons = sanitizeNonNegativeNumber(cleaned.defaultPersons) || 4;
+    ["prepTime", "cookTime"].forEach((field) => {
+      if (field in cleaned && cleaned[field] != null) {
+        const sanitized = sanitizeNonNegativeNumber(cleaned[field]);
+        if (sanitized !== cleaned[field]) report.numbersFixed += 1;
+        cleaned[field] = sanitized;
+      }
+    });
+    if ("defaultPersons" in cleaned) {
+      const sanitized = sanitizeNonNegativeNumber(cleaned.defaultPersons) || 4;
+      if (sanitized !== cleaned.defaultPersons) report.numbersFixed += 1;
+      cleaned.defaultPersons = sanitized;
+    }
     if ("timesCooked" in cleaned) cleaned.timesCooked = sanitizeNonNegativeNumber(cleaned.timesCooked) || 0;
     if (Array.isArray(cleaned.ingredients)) {
-      cleaned.ingredients = cleaned.ingredients.map((i) => (i && typeof i === "object" ? { ...i, quantity: i.quantity != null ? sanitizeNonNegativeNumber(i.quantity) : null } : i));
+      cleaned.ingredients = cleaned.ingredients.map((i) => {
+        if (!i || typeof i !== "object" || i.quantity == null) return i;
+        const sanitized = sanitizeNonNegativeNumber(i.quantity);
+        if (sanitized !== i.quantity) report.numbersFixed += 1;
+        return { ...i, quantity: sanitized };
+      });
     }
     if (Array.isArray(cleaned.cookLog)) {
-      cleaned.cookLog = cleaned.cookLog.map((entry) => (entry && typeof entry === "object" && "photo" in entry && !isValidPhotoField(entry.photo) ? { ...entry, photo: null } : entry));
+      cleaned.cookLog = cleaned.cookLog.map((entry) => {
+        if (entry && typeof entry === "object" && "photo" in entry && entry.photo != null && !isValidPhotoField(entry.photo)) {
+          report.photosRemoved += 1;
+          return { ...entry, photo: null };
+        }
+        return entry;
+      });
     }
   }
   if (storeName === "shopping" || storeName === "pantry") {
-    if ("quantity" in cleaned) cleaned.quantity = cleaned.quantity != null ? sanitizeNonNegativeNumber(cleaned.quantity) : null;
-    if ("threshold" in cleaned) cleaned.threshold = cleaned.threshold != null ? sanitizeNonNegativeNumber(cleaned.threshold) : null;
+    ["quantity", "threshold"].forEach((field) => {
+      if (field in cleaned && cleaned[field] != null) {
+        const sanitized = sanitizeNonNegativeNumber(cleaned[field]);
+        if (sanitized !== cleaned[field]) report.numbersFixed += 1;
+        cleaned[field] = sanitized;
+      }
+    });
   }
   return cleaned;
 }
@@ -4333,26 +4398,44 @@ async function parseBackupFile(file) {
   // de vrais objets avec un identifiant valide, et assainit leurs
   // champs numériques/photo — un enregistrement individuellement
   // corrompu est simplement ignoré plutôt que de faire échouer tout
-  // l'import.
+  // l'import. Le rapport retourné permet d'informer l'utilisateur de ce
+  // qui a été filtré ou corrigé, plutôt que de le faire silencieusement.
+  const report = { validCount: 0, ignoredCount: 0, photosRemoved: 0, numbersFixed: 0 };
   const cleanedData = { ...data };
   BACKUP_STORES.forEach((storeName) => {
     if (!Array.isArray(data[storeName])) return;
-    cleanedData[storeName] = data[storeName]
-      .filter((item) => item && typeof item === "object" && !Array.isArray(item) && hasValidId(item, storeName))
-      .map((item) => sanitizeBackupItem(item, storeName));
+    const valid = [];
+    data[storeName].forEach((item) => {
+      if (item && typeof item === "object" && !Array.isArray(item) && hasValidId(item, storeName)) {
+        valid.push(sanitizeBackupItem(item, storeName, report));
+      } else {
+        report.ignoredCount += 1;
+      }
+    });
+    report.validCount += valid.length;
+    cleanedData[storeName] = valid;
   });
-  return cleanedData;
+  return { data: cleanedData, report };
 }
-function buildBackupPreviewText(data) {
+function buildBackupPreviewText(data, report) {
   const count = (storeName) => (Array.isArray(data[storeName]) ? data[storeName].length : 0);
   const dateLabel = data.exportedAt ? new Date(data.exportedAt).toLocaleString() + "\n" : "";
-  return t("backup_preview_text", {
+  let text = t("backup_preview_text", {
     date: dateLabel,
     recipes: String(count("recipes")),
     ingredients: String(count("ingredients")),
     menus: String(count("menus")),
     shopping: String(count("shopping")),
   });
+  // N'affiche le rapport de validation que s'il y a effectivement
+  // quelque chose à signaler — inutile d'alourdir l'aperçu d'une
+  // sauvegarde parfaitement saine avec des lignes à "0".
+  if (report) {
+    if (report.ignoredCount > 0) text += t("backup_ignored_items", { count: String(report.ignoredCount) });
+    if (report.photosRemoved > 0) text += t("backup_photos_removed", { count: String(report.photosRemoved) });
+    if (report.numbersFixed > 0) text += t("backup_numbers_fixed", { count: String(report.numbersFixed) });
+  }
+  return text;
 }
 async function importAllData(data, mode) {
   const db = await openDB();
@@ -4455,16 +4538,16 @@ function renderBackup() {
     if (!file) return;
     const mode = importSection.querySelector("#import-mode").value;
 
-    let data;
+    let data, report;
     try {
-      data = await parseBackupFile(file);
+      ({ data, report } = await parseBackupFile(file));
     } catch (err) {
       await customAlert(t("backup_import_error"));
       e.target.value = "";
       return;
     }
 
-    if (!await customConfirm(buildBackupPreviewText(data))) {
+    if (!await customConfirm(buildBackupPreviewText(data, report))) {
       e.target.value = "";
       return;
     }
@@ -4667,6 +4750,7 @@ function openRecipePickerModal(onPick) {
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
 }
 
 /* ======================================================================
@@ -6130,7 +6214,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 111;
+const APP_VERSION = 115;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
@@ -6193,6 +6277,12 @@ async function init() {
   // directement l'écran demandé au lancement, plutôt que de toujours
   // démarrer sur l'accueil.
   const requestedScreen = new URLSearchParams(location.search).get("screen");
+  if (requestedScreen) {
+    // Retire le paramètre de l'adresse une fois lu — sinon, une simple
+    // actualisation de la page rouvrait indéfiniment le même écran au
+    // lieu de respecter la navigation normale de l'utilisateur.
+    history.replaceState(null, "", location.pathname);
+  }
   if (requestedScreen === "form") {
     await openRecipeForm(null); // gère déjà son propre appel à render()
     return;

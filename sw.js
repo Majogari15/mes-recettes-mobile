@@ -3,7 +3,7 @@
 // ensuite (les données elles-mêmes sont stockées séparément, dans IndexedDB,
 // géré directement par app.js).
 
-const CACHE_NAME = "mes-recettes-cache-v111";
+const CACHE_NAME = "mes-recettes-cache-v115";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -11,6 +11,9 @@ const FILES_TO_CACHE = [
   "./app.js",
   "./i18n.js",
   "./manifest.json",
+  "./manifest-en.json",
+  "./manifest-es.json",
+  "./manifest-de.json",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",
