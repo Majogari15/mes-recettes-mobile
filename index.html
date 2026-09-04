@@ -6,23 +6,6 @@
 <title>Mes Recettes</title>
 <meta name="description" content="Recettes, courses et planning de repas — sur votre téléphone">
 <meta name="theme-color" content="#2F5233">
-<script>
-  // Choisit le bon fichier de manifeste selon la langue déjà
-  // enregistrée (même mécanisme que le reste de l'app, voir i18n.js) —
-  // sans ça, le nom de l'app et les raccourcis PWA (appui long sur
-  // l'icône) resteraient toujours en français, même en anglais/
-  // espagnol/allemand. Créé dynamiquement plutôt qu'en lien statique,
-  // pour être certain qu'un seul manifeste (le bon) soit jamais chargé.
-  (function () {
-    var lang = localStorage.getItem("lang") || (navigator.language || "fr").slice(0, 2);
-    var supported = ["fr", "en", "es", "de"];
-    var file = supported.indexOf(lang) !== -1 && lang !== "fr" ? "manifest-" + lang + ".json" : "manifest.json";
-    var link = document.createElement("link");
-    link.rel = "manifest";
-    link.href = file;
-    document.head.appendChild(link);
-  })();
-</script>
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -49,6 +32,7 @@
   base-uri 'self';
   form-action 'self';
 ">
+<script src="manifest-loader.js"></script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>

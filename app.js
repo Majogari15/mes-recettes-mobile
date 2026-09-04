@@ -360,6 +360,14 @@ function render() {
     case "backup":
       screenEl.appendChild(renderBackup());
       break;
+    case "diagnostic": {
+      const placeholder = el(`<div style="text-align:center;padding:40px 0;color:var(--text-muted);font-size:13px;">${escapeHtml(t("qrcode_loading"))}</div>`);
+      screenEl.appendChild(placeholder);
+      renderDiagnostic().then((content) => {
+        if (state.screen === "diagnostic" && placeholder.isConnected) placeholder.replaceWith(content);
+      });
+      break;
+    }
     case "compare":
       screenEl.appendChild(renderCompare());
       break;
@@ -1234,8 +1242,14 @@ function renderRecipeForm() {
   const starsEl = ratingField.querySelector("#f-rating-stars");
   function renderStars(value) {
     starsEl.dataset.value = String(value);
+    // Une seule étoile dans l'ordre de tabulation (comportement
+    // standard d'un groupe radio) : celle qui correspond à la valeur
+    // actuelle, ou la première si aucune note n'est encore donnée —
+    // les flèches permettent ensuite de se déplacer entre elles sans
+    // jamais avoir à tabuler cinq fois de suite.
+    const tabbableStar = value || 1;
     starsEl.innerHTML = [1, 2, 3, 4, 5].map((n) =>
-      `<button type="button" data-star="${n}" role="radio" aria-checked="${n === value}" aria-label="${n}" style="background:none;border:none;padding:0 2px;cursor:pointer;font:inherit;color:${n <= value ? "var(--accent)" : "var(--border)"};">★</button>`
+      `<button type="button" data-star="${n}" role="radio" aria-checked="${n === value}" aria-label="${n}" tabindex="${n === tabbableStar ? "0" : "-1"}" style="background:none;border:none;padding:0 2px;cursor:pointer;font:inherit;color:${n <= value ? "var(--accent)" : "var(--border)"};">★</button>`
     ).join("");
   }
   renderStars(initialRating);
@@ -1246,6 +1260,16 @@ function renderRecipeForm() {
     // Cliquer sur l'étoile déjà sélectionnée comme valeur maximale
     // efface la note, pour pouvoir revenir à "pas encore noté".
     renderStars(clicked === Number(starsEl.dataset.value) ? 0 : clicked);
+  });
+  starsEl.addEventListener("keydown", (e) => {
+    const current = Number(starsEl.dataset.value) || 1;
+    let next = null;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = Math.min(5, current + 1);
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = Math.max(1, current - 1);
+    if (next == null || next === current) return;
+    e.preventDefault();
+    renderStars(next);
+    starsEl.querySelector(`[data-star="${next}"]`).focus();
   });
   wrap.appendChild(ratingField);
 
@@ -4653,6 +4677,100 @@ async function importAllData(data, mode) {
   await loadIngredientOverrides();
 }
 
+async function renderDiagnostic() {
+  const wrap = el(`<div></div>`);
+  wrap.appendChild(el(`<button type="button" class="btn btn-outline" id="diag-back" style="margin-bottom:16px;">← ${escapeHtml(t("cooking_close"))}</button>`));
+  wrap.querySelector("#diag-back").addEventListener("click", () => { state.screen = "backup"; render(); });
+
+  wrap.appendChild(el(`<h2>${escapeHtml(t("diagnostic_title"))}</h2>`));
+  wrap.appendChild(el(`<p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;line-height:1.5;">${escapeHtml(t("diagnostic_intro"))}</p>`));
+
+  const rowsHolder = el(`<div class="card" style="padding:4px 16px;"></div>`);
+  wrap.appendChild(rowsHolder);
+
+  function addRow(label, value) {
+    rowsHolder.appendChild(el(`<div style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;">
+      <span style="color:var(--text-muted);">${escapeHtml(label)}</span>
+      <span style="text-align:right;font-weight:500;word-break:break-word;">${escapeHtml(value)}</span>
+    </div>`));
+  }
+
+  // Version de l'app et du cache actuellement servi (ce dernier lu
+  // directement depuis les caches réels du navigateur, plutôt que
+  // supposé identique à APP_VERSION — utile si les deux venaient un
+  // jour à diverger).
+  let cacheVersionLabel = String(APP_VERSION);
+  try {
+    const cacheKeys = await caches.keys();
+    const recipeCache = cacheKeys.find((k) => k.startsWith("mes-recettes-cache-"));
+    if (recipeCache) cacheVersionLabel = recipeCache.replace("mes-recettes-cache-", "");
+  } catch (e) { /* API caches indisponible, on garde la valeur par défaut */ }
+  addRow(t("diagnostic_app_version"), `v${APP_VERSION}`);
+  addRow(t("diagnostic_cache_version"), cacheVersionLabel);
+
+  // Navigateur et système : extraction simple depuis userAgent, sans
+  // prétendre à une détection exhaustive — suffisant pour un
+  // diagnostic technique de base.
+  const ua = navigator.userAgent || "";
+  const browserMatch = ua.match(/(Chrome|Firefox|Safari|Edg|Samsung)\/?[\d.]*/);
+  addRow(t("diagnostic_browser"), browserMatch ? browserMatch[0] : ua.slice(0, 60));
+  const osMatch = ua.match(/(Android [\d.]+|iPhone OS [\d_]+|Windows NT [\d.]+|Mac OS X [\d_]+|Linux)/);
+  addRow(t("diagnostic_os"), osMatch ? osMatch[0].replace(/_/g, ".") : "?");
+
+  const isStandalone = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
+  addRow(t("diagnostic_install_mode"), isStandalone ? t("diagnostic_install_standalone") : t("diagnostic_install_browser"));
+
+  // Stockage persistant : évite que le système ne purge les données en
+  // cas de manque d'espace — utile de savoir si ce n'est pas le cas.
+  if (navigator.storage && navigator.storage.persisted) {
+    try {
+      const persisted = await navigator.storage.persisted();
+      addRow(t("diagnostic_storage_persistent"), persisted ? t("diagnostic_storage_granted") : t("diagnostic_storage_not_granted"));
+    } catch (e) {
+      addRow(t("diagnostic_storage_persistent"), t("diagnostic_storage_unsupported"));
+    }
+  } else {
+    addRow(t("diagnostic_storage_persistent"), t("diagnostic_storage_unsupported"));
+  }
+  if (navigator.storage && navigator.storage.estimate) {
+    try {
+      const estimate = await navigator.storage.estimate();
+      const usedMb = estimate.usage != null ? (estimate.usage / (1024 * 1024)).toFixed(1) : "?";
+      addRow(t("diagnostic_storage_used"), `${usedMb} Mo`);
+    } catch (e) { /* estimation indisponible, on n'affiche simplement pas cette ligne */ }
+  }
+
+  const lastBackupAt = localStorage.getItem("lastBackupAt");
+  addRow(t("diagnostic_last_backup"), lastBackupAt ? new Date(lastBackupAt).toLocaleString() : t("diagnostic_never"));
+
+  const lastImportService = localStorage.getItem("lastImportService");
+  addRow(t("diagnostic_last_import_service"), lastImportService || t("diagnostic_none"));
+  const lastImportError = localStorage.getItem("lastImportError");
+  addRow(t("diagnostic_last_import_error"), lastImportError || t("diagnostic_none"));
+
+  addRow(t("diagnostic_connection"), navigator.onLine ? t("diagnostic_online") : t("diagnostic_offline"));
+  addRow(t("diagnostic_qr_native"), ("BarcodeDetector" in window) ? t("diagnostic_available") : t("diagnostic_unavailable"));
+
+  const copyBtn = el(`<button type="button" class="btn btn-primary" style="margin-top:16px;">${escapeHtml(t("diagnostic_copy_button"))}</button>`);
+  copyBtn.addEventListener("click", async () => {
+    const lines = Array.from(rowsHolder.children).map((row) => {
+      const spans = row.querySelectorAll("span");
+      return `${spans[0].textContent} : ${spans[1].textContent}`;
+    });
+    const text = lines.join("\n");
+    try {
+      await navigator.clipboard.writeText(text);
+      copyBtn.textContent = t("diagnostic_copied");
+      setTimeout(() => { copyBtn.textContent = t("diagnostic_copy_button"); }, 2000);
+    } catch (e) {
+      await customAlert(text);
+    }
+  });
+  wrap.appendChild(copyBtn);
+
+  return wrap;
+}
+
 function renderBackup() {
   const wrap = el(`<div></div>`);
 
@@ -4765,7 +4883,13 @@ function renderBackup() {
   });
   wrap.appendChild(importSection);
 
-  wrap.appendChild(el(`<p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">v${APP_VERSION}</p>`));
+  const diagLink = el(`<p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">v${APP_VERSION} · <a href="#" id="open-diagnostic" style="color:var(--accent);">${escapeHtml(t("nav_diagnostic"))}</a></p>`);
+  diagLink.querySelector("#open-diagnostic").addEventListener("click", (e) => {
+    e.preventDefault();
+    state.screen = "diagnostic";
+    render();
+  });
+  wrap.appendChild(diagLink);
 
   return wrap;
 }
@@ -5909,13 +6033,28 @@ async function fetchRecipeDataViaWorker(targetUrl) {
   return recipeData;
 }
 
+// Pour le panneau de diagnostic (voir renderDiagnostic) : garde une
+// trace du dernier service d'import ayant réussi et de la dernière
+// erreur rencontrée, sans jamais conserver l'adresse importée
+// elle-même ni aucun contenu de recette — uniquement le nom du service
+// et un message d'erreur générique, utile pour un futur signalement de
+// bogue sans exposer de donnée personnelle.
+function recordImportDiagnostic(service, errorMessage) {
+  try {
+    if (service) localStorage.setItem("lastImportService", service);
+    if (errorMessage) localStorage.setItem("lastImportError", `${new Date().toISOString()} — ${errorMessage}`.slice(0, 300));
+  } catch (e) { /* stockage indisponible, sans conséquence pour le diagnostic */ }
+}
+
 async function fetchRecipeFromUrl(url, onAttempt) {
   // 1. Worker Cloudflare personnel en premier, si configuré : c'est la
   // source la plus fiable et la plus complète (voir commentaire de
   // fetchRecipeDataViaWorker ci-dessus).
   try {
     const recipeData = await fetchRecipeDataViaWorker(url);
-    return await buildRecipeFromStructuredData(recipeData);
+    const result = await buildRecipeFromStructuredData(recipeData);
+    recordImportDiagnostic("Worker Cloudflare");
+    return result;
   } catch (e) {
     // Pas configuré, ou a échoué : on continue avec Jina ci-dessous.
   }
@@ -5930,6 +6069,7 @@ async function fetchRecipeFromUrl(url, onAttempt) {
     const cleanedText = stripJinaMarkdownNoise(markdown);
     const parsedFromText = parseOcrRecipeText(cleanedText);
     if (parsedFromText && parsedFromText.ingredients.length) {
+      recordImportDiagnostic("Jina AI Reader");
       return {
         name: parsedFromText.name,
         description: parsedFromText.description,
@@ -5956,7 +6096,11 @@ async function fetchRecipeFromUrl(url, onAttempt) {
     // Tous les services intermédiaires habituels ont aussi échoué.
   }
 
-  if (!recipeData) throw new Error("no_recipe_found");
+  if (!recipeData) {
+    recordImportDiagnostic(null, "no_recipe_found (tous les services ont échoué)");
+    throw new Error("no_recipe_found");
+  }
+  recordImportDiagnostic("Service de secours (proxy public)");
   return await buildRecipeFromStructuredData(recipeData);
 }
 
@@ -6414,7 +6558,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 121;
+const APP_VERSION = 123;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
