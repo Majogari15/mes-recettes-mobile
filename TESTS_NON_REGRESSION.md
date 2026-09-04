@@ -178,6 +178,32 @@ attendu → résultat obtenu → version testée.
   correctement ce scénario (avec ou sans le "www." manquant en plus du
   protocole).
 
+### 3.1ter — Repli Jina : conversion "Xh YY" en minutes *(cause racine trouvée et corrigée, v134)*
+- **Contexte** : l'utilisateur a rapporté qu'un temps de cuisson affiché
+  comme "5h30" sur le site importait "5 min" au lieu de 330 minutes.
+- **Cause** : la recherche ne capturait qu'un seul nombre après
+  "Cuisson :", ignorant complètement le "h" et tout ce qui suivait.
+- **Corrigé** : nouvelle fonction de conversion gérant "Xh YY" (heures +
+  minutes), "Xh" seul, et le format simple en minutes.
+- **Résultat obtenu** : ✅ Réussi — testé avec "5h30" → 330 minutes
+  (cas exact rapporté), et non-régression confirmée sur le format
+  simple "35 min" → 35 minutes (inchangé).
+- **Version testée** : v134
+
+### 3.1quater — Repli Jina : contenu hors-sujet dans la description *(cause racine trouvée et corrigée, v134)*
+- **Contexte** : l'utilisateur a rapporté que la description importée
+  incluait des sections sans rapport avec la recette (commentaires,
+  "Qu'est-ce qu'on mange ce soir ?" et suggestions diverses du site).
+- **Cause** : la liste des marqueurs de fin de description ne couvrait
+  pas tous les intitulés utilisés par les sites de recettes.
+- **Corrigé** : liste élargie (découvrir aussi, recettes similaires,
+  publicité, newsletter, partager/imprimer la recette, etc.).
+- **Résultat obtenu** : ✅ Réussi — testé avec un texte contenant "Qu'est-
+  ce qu'on mange ce soir ?" et "Commentaires" après les vraies étapes :
+  les deux sont maintenant exclues, seules les étapes réelles restent
+  dans la description.
+- **Version testée** : v134
+
 ### 3.2 — Repli Jina conserve le nombre de personnes *(simulé)*
 - **Conditions initiales** : texte façon extraction Jina contenant
   "Pour 8 personnes".

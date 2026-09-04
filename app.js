@@ -5655,8 +5655,10 @@ function parseOcrRecipeText(rawText) {
   // Marque la fin du vrai contenu de la recette : au-delà, ce n'est
   // presque toujours plus que des avis, des recettes similaires ou de
   // la navigation — sans ça, la description engloberait toute la fin
-  // de la page.
-  const descriptionEndMarker = /^(commentaires?|comments?|avis|reviews?|vous aimerez aussi|you (may|might) also like|related recipes?|plus de recettes|ces contenus devraient vous int[ée]resser|note de l['’]auteur|donnez votre avis)/i;
+  // de la page. Liste élargie après avoir constaté des sections encore
+  // non couvertes (ex. "Qu'est-ce qu'on mange ce soir ?", propre à
+  // Marmiton mais représentative du genre de contenu à exclure).
+  const descriptionEndMarker = /^(commentaires?|comments?|avis|reviews?|vous aimerez aussi|you (may|might) also like|related recipes?|plus de recettes|ces contenus devraient vous int[ée]resser|note de l['’]auteur|donnez votre avis|qu['’]est-ce qu['’]on mange|découvrir aussi|à découvrir|on vous propose|d[ée]couvrez aussi|dans la m[êe]me cat[ée]gorie|recettes similaires|similar recipes?|nos coups de coeur|publicit[ée]|advertisement|partager cette recette|share this recipe|imprimer|print recipe|newsletter)/i;
 
   const name = lines[0];
   const ingIdx = lines.findIndex((l) => ingredientMarker.test(l));
@@ -5704,15 +5706,30 @@ function parseOcrRecipeText(rawText) {
     ? ingredients.map((i) => ({ ...i, quantity: i.quantity != null ? i.quantity / persons : null }))
     : ingredients;
 
+  // Convertit une expression de durée en minutes, en gérant les formats
+  // "Xh YY" (heures + minutes, ex. "5h30" pour un temps de cuisson
+  // long), "Xh" seul, ou un simple nombre de minutes — sans cette
+  // conversion, "5h30" était pris à tort pour "5 minutes" (seul le
+  // premier nombre était lu, sans tenir compte du "h").
+  function parseTimeExpression(str) {
+    if (!str) return null;
+    const s = str.trim();
+    const hourMinMatch = s.match(/(\d+)\s*h\s*(\d+)/i);
+    if (hourMinMatch) return parseInt(hourMinMatch[1], 10) * 60 + parseInt(hourMinMatch[2], 10);
+    const hourOnlyMatch = s.match(/(\d+)\s*h\b/i);
+    if (hourOnlyMatch) return parseInt(hourOnlyMatch[1], 10) * 60;
+    const minMatch = s.match(/(\d+)/);
+    return minMatch ? parseInt(minMatch[1], 10) : null;
+  }
   // Les temps de préparation/cuisson apparaissent souvent après les
   // ingrédients (pas avant) — recherche sur tout le texte plutôt que
   // sur une zone précise.
   let prepTime = null, cookTime = null;
   lines.forEach((line) => {
-    const prepMatch = line.match(/pr[eé]paration\s*:\s*(\d+)/i) || line.match(/prep(?:aration)?\s*time\s*:\s*(\d+)/i);
-    if (prepMatch) prepTime = parseInt(prepMatch[1], 10);
-    const cookMatch = line.match(/cuisson\s*:\s*(\d+)/i) || line.match(/cook\s*time\s*:\s*(\d+)/i);
-    if (cookMatch) cookTime = parseInt(cookMatch[1], 10);
+    const prepMatch = line.match(/pr[eé]paration\s*:\s*([^\n]+)/i) || line.match(/prep(?:aration)?\s*time\s*:\s*([^\n]+)/i);
+    if (prepMatch) { const t = parseTimeExpression(prepMatch[1]); if (t != null) prepTime = t; }
+    const cookMatch = line.match(/cuisson\s*:\s*([^\n]+)/i) || line.match(/cook\s*time\s*:\s*([^\n]+)/i);
+    if (cookMatch) { const t = parseTimeExpression(cookMatch[1]); if (t != null) cookTime = t; }
   });
 
   return { name, ingredients: adjustedIngredients, description: descriptionLines.join("\n"), prepTime, cookTime, persons: persons || 4 };
@@ -6671,7 +6688,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 133;
+const APP_VERSION = 134;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
