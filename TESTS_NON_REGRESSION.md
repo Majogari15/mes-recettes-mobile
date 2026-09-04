@@ -35,8 +35,8 @@ attendu → résultat obtenu → version testée.
   mettre l'application en arrière-plan (pas fermer), revenir plus tard.
 - **Résultat attendu** : proposition de restaurer le brouillon avec tous les
   champs remplis.
-- **Résultat obtenu** : _à tester_
-- **Appareil** : _à renseigner_
+- **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel
+- **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
 
 ### 1.3 — Brouillon de modification (tous les champs) *(simulé)*
 - **Conditions initiales** : recette existante, brouillon capturé pour cette
@@ -128,8 +128,8 @@ attendu → résultat obtenu → version testée.
 - **Manipulation** : exporter une sauvegarde, utiliser le partage natif
   Android.
 - **Résultat attendu** : le fichier s'exporte sans erreur `NotAllowedError`.
-- **Résultat obtenu** : _à tester_
-- **Appareil** : _à renseigner_
+- **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel
+- **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
 
 ---
 
@@ -228,16 +228,16 @@ attendu → résultat obtenu → version testée.
   fermeture par Échap.
 - **Résultat obtenu (simulé)** : ✅ Réussi (testé isolément, sans dépendre du
   chargement de jsQR qui échoue dans l'environnement de simulation).
-- **Résultat obtenu (physique)** : _à tester — vérifier que le voyant caméra
-  s'éteint immédiatement après Échap/Retour Android_
+- **Résultat obtenu** : Smartphone Reussi / Tablette Reussi
+- **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
 - **Version testée** : v117
 
 ### 4.10 — Cycle physique tablette → téléphone *(physique, prioritaire)*
 - **Manipulation** : afficher un multi-QR (4-5 parties) sur une tablette,
   scanner avec un téléphone.
 - **Résultat attendu** : import réussi, recette complète.
-- **Résultat obtenu** : _à tester_
-- **Appareil** : _à renseigner_
+- **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel
+- **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
 
 ---
 
@@ -280,12 +280,14 @@ attendu → résultat obtenu → version testée.
 - **Manipulation** : ouvrir l'application une première fois (en ligne), puis
   couper le réseau et relancer.
 - **Résultat attendu** : l'application se charge normalement.
-- **Résultat obtenu** : _à tester_
+- **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel
+- **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
 
 ### 6.2 — Fonctions indisponibles hors connexion
 - **Manipulation** : tenter un import par lien hors connexion.
 - **Résultat attendu** : message clair, pas de plantage silencieux.
-- **Résultat obtenu** : _à tester_
+- **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel
+- **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
 
 ---
 
@@ -296,13 +298,15 @@ attendu → résultat obtenu → version testée.
   mettre à jour vers la dernière version.
 - **Résultat attendu** : toutes les recettes/courses/garde-manger présentes
   après la mise à jour.
-- **Résultat obtenu** : _à tester_
+- **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel
+- **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
 
 ### 7.2 — Numéro de version affiché correspond
 - **Manipulation** : ouvrir l'écran Sauvegarde après mise à jour.
 - **Résultat attendu** : le numéro affiché correspond à la version
   effectivement installée.
-- **Résultat obtenu** : _à tester_
+- **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel
+- **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
 
 ---
 
@@ -335,8 +339,8 @@ attendu → résultat obtenu → version testée.
 ### 8.5 — Lecteur d'écran réel (TalkBack) *(physique)*
 - **Manipulation** : activer TalkBack, naviguer dans l'application.
 - **Résultat attendu** : titres des fenêtres annoncés correctement (pas
-  seulement "dialogue").
-- **Résultat obtenu** : _à tester_
+- **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel
+- **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
 
 ### 8.6 — Étoiles : groupe radio complet (une seule tabulable, flèches) *(simulé + confirmé en production)*
 - **Manipulation** : vérifier qu'une seule étoile a `tabindex="0"` ; depuis
