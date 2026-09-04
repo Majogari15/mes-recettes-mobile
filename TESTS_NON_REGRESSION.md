@@ -344,6 +344,7 @@ attendu → résultat obtenu → version testée.
 ### 8.5 — Lecteur d'écran réel (TalkBack) *(physique)*
 - **Manipulation** : activer TalkBack, naviguer dans l'application.
 - **Résultat attendu** : titres des fenêtres annoncés correctement (pas
+  seulement "dialogue").
 - **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel
 - **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
 
@@ -470,23 +471,28 @@ attendu → résultat obtenu → version testée.
 
 ---
 
-## Résumé — état au 04/09/2026 (v125)
+## Résumé — état au 04/09/2026 (v126)
 
 - **Tests simulés réussis** : 32
 - **Campagne de tests physiques réalisée par l'utilisateur** (2 appareils :
   Smartphone Samsung A06 à jour, Tablette Lenovo Android 11 non à jour) —
   quasi-totalité des tests physiques du document effectués
-- **5 défauts réels trouvés en conditions réelles, tous corrigés** :
+- **6 défauts réels trouvés en conditions réelles, tous corrigés** :
   1. Notes personnelles dupliquées (v124)
   2. Nouvelles unités absentes du menu déroulant du formulaire, données
      bien enregistrées (v124)
   3. Message trompeur lors d'un import hors connexion (v125)
-  4. Message "[object Event]" illisible lors du choix d'une image
-     invalide pour le scanner (v125)
+  4. Message "[object Event]" lors du choix d'une image invalide —
+     symptôme d'une cause plus profonde trouvée ensuite : le QR
+     enregistré était en réalité un GIF portant l'extension `.png`.
+     Corrigé en profondeur : vrai PNG exporté désormais, repli pour les
+     anciens fichiers, chargement d'image rendu plus robuste (v125→v126)
   5. Astuce Google Drive trompeuse — clarifiée, pas un bug de code (v125)
-- **Tests physiques restants** : 2 seulement (3.3 et 3.4, nécessitent une
-  coupure volontaire du Worker — pas urgent, pas prioritaire avant
-  diffusion publique)
+  6. Phrase coupée dans la documentation du test 8.5 (v126)
+- **Tests physiques restants** : 3 — 3.3 et 3.4 (pas urgent), et **9.2 à
+  revérifier sur les deux appareils réels** pour confirmer que la vraie
+  cause racine (GIF nommé .png) est bien résolue en conditions réelles,
+  le correctif v126 n'ayant pu être testé qu'en simulation
 
 Aucune régression détectée dans les tests simulables. La quasi-totalité des
 tests physiques a maintenant été réalisée par l'utilisateur sur deux
