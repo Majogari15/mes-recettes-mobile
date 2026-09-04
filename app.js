@@ -4792,6 +4792,8 @@ async function renderDiagnostic() {
   addRow(t("diagnostic_last_import_service"), lastImportService || t("diagnostic_none"));
   const lastImportError = localStorage.getItem("lastImportError");
   addRow(t("diagnostic_last_import_error"), lastImportError || t("diagnostic_none"));
+  const lastShareError = localStorage.getItem("lastShareError");
+  addRow(t("diagnostic_last_share_error"), lastShareError || t("diagnostic_none"));
 
   addRow(t("diagnostic_connection"), navigator.onLine ? t("diagnostic_online") : t("diagnostic_offline"));
   addRow(t("diagnostic_qr_native"), ("BarcodeDetector" in window) ? t("diagnostic_available") : t("diagnostic_unavailable"));
@@ -4851,9 +4853,16 @@ function renderBackup() {
         // est tout de même mis en sécurité par téléchargement classique,
         // mais l'utilisateur doit être informé que ce n'est PAS ce qu'il
         // a demandé — un message explicite évite de lui laisser croire
-        // à tort que le partage vers le cloud a réussi.
+        // à tort que le partage vers le cloud a réussi. Le détail
+        // technique est conservé pour le diagnostic (voir Sauvegarde →
+        // Diagnostic) : les tentatives précédentes de corriger ce
+        // problème sans connaître l'erreur exacte n'ont pas abouti.
+        if (result.error) {
+          try { localStorage.setItem("lastShareError", `${new Date().toISOString()} — ${result.error}`.slice(0, 300)); } catch (e) { /* sans conséquence */ }
+        }
         await exportAllData();
-        await customAlert(t("backup_share_fallback_notice"));
+        const detail = result.error ? `\n\n(${result.error})` : "";
+        await customAlert(t("backup_share_fallback_notice") + detail);
       }
     });
   }
@@ -6605,7 +6614,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 127;
+const APP_VERSION = 128;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

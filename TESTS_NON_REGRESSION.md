@@ -366,19 +366,31 @@ attendu → résultat obtenu → version testée.
 
 ## 9. Partage et export Android *(entièrement physique)*
 
-### 9.1 — Sauvegarde automatique vers Google Drive *(clarifié v124)*
+### 9.1 — Sauvegarde automatique vers Google Drive *(clarifié v124, approfondi v127)*
 - **Manipulation** : exporter une sauvegarde avec la fonction "backup
   automatique" Android activée.
 - **Résultat attendu** : le fichier apparaît ensuite dans Drive.
 - **Résultat obtenu** : ⚠️ Pas un bug de l'app, mais une incompréhension du
-  texte d'astuce affiché. Le fichier apparaît bien dans le dossier
-  Téléchargements de l'appareil, mais **cette sauvegarde Android est
-  propre à chaque appareil** (utile pour restaurer ce même appareil après
-  une réinitialisation), **pas une synchronisation entre appareils** — le
-  fichier n'apparaît donc pas automatiquement sur un autre appareil.
-  **Corrigé** : texte de l'astuce clarifié dans les 4 langues, orientant
-  vers le bouton "Partager" (déjà testé avec succès, test 2.5) pour un
-  vrai transfert entre appareils.
+  texte d'astuce affiché — approfondi une seconde fois après une remarque
+  externe. Recherche effectuée : il existe en réalité **deux mécanismes
+  Android différents** — l'ancienne "sauvegarde automatique des
+  applications" (ne couvre pas Téléchargements) et une **nouvelle**
+  fonction de sauvegarde spécifique du dossier Téléchargements vers
+  Drive, déployée progressivement depuis février 2026 (stable depuis
+  fin juillet 2026), **désactivée par défaut**. Plutôt que de continuer à
+  décrire un comportement Android qui varie selon la version/le
+  déploiement, le texte a été **simplifié pour ne plus faire aucune
+  affirmation sur le fonctionnement interne d'Android** — il se
+  concentre uniquement sur ce que l'app garantit elle-même (le bouton
+  "Exporter" reste local à l'appareil ; "Partager" est la vraie solution
+  pour un autre appareil).
+  **Défaut additionnel trouvé et corrigé** : si le partage échoue
+  réellement (pas juste annulé par l'utilisateur), le code téléchargeait
+  silencieusement le fichier en affichant "export réussi" — donnant
+  l'impression trompeuse que le partage avait fonctionné. **Corrigé** :
+  message explicite désormais affiché ("le partage direct n'est pas
+  disponible... enregistré dans Téléchargements à la place"), testé et
+  confirmé avec un échec de partage simulé.
 - **Appareil** : appareil de test de l'utilisateur
 
 ### 9.2 — Enregistrement d'un QR en image *(cause racine trouvée, corrigée et confirmée physiquement, v126)*
