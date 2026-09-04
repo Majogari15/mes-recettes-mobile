@@ -5317,6 +5317,15 @@ function parseIngredientString(str) {
   else if (uw === "cup") { unit = "cl"; factor = 24; }
   else if (["oz", "ounce"].includes(uw)) { unit = "g"; factor = 28.35; }
   else if (["lb", "pound"].includes(uw)) { unit = "g"; factor = 453.6; }
+  // Unités-contenants françaises courantes : gardées comme unité à part
+  // entière (comptage simple, sans conversion de poids/volume — une
+  // "boîte" n'a pas de taille standard), plutôt que de tomber dans le
+  // nom de l'ingrédient sous l'unité générique "pièce".
+  else if (["boîte", "boite", "conserve"].includes(uw)) unit = "boîte";
+  else if (uw === "sachet") unit = "sachet";
+  else if (uw === "pot") unit = "pot";
+  else if (["tranche", "tranches"].includes(uw)) unit = "tranche";
+  else if (["gousse", "gousses"].includes(uw)) unit = "gousse";
 
   let name;
   if (unit) {
@@ -5325,6 +5334,14 @@ function parseIngredientString(str) {
   } else {
     unit = "pièce";
     name = (unitWordRaw + " " + rest).trim();
+  }
+  // Ingrédients alternatifs ("oie ou canard") : le nombre indiqué avant
+  // la seconde option répète souvent exactement la quantité déjà
+  // extraite ("1 oie ou 1 canard") — sans ce nettoyage, il restait
+  // collé au nom au lieu de disparaître comme la première occurrence.
+  if (quantity != null && name) {
+    const redundantNumberRegex = new RegExp("(\\bou\\s+)" + quantity.toString().replace(".", "[.,]") + "\\s+", "i");
+    name = name.replace(redundantNumberRegex, "$1");
   }
   return { name: name || text, quantity, unit };
 }
@@ -6397,7 +6414,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 120;
+const APP_VERSION = 121;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
