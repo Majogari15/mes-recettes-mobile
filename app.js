@@ -6099,7 +6099,15 @@ async function buildRecipeFromStructuredData(recipeData) {
 async function fetchRecipeDataViaWorker(targetUrl) {
   if (!CLOUDFLARE_WORKER_URL) throw new Error("worker_not_configured");
   const res = await fetchWithTimeout(CLOUDFLARE_WORKER_URL + "?url=" + encodeURIComponent(targetUrl), 30000);
-  if (!res.ok) throw new Error("worker_http_" + res.status);
+  if (!res.ok) {
+    // Le corps de la réponse contient le message précis du Worker (ex.
+    // "Refused target host", "Port not allowed"...) — sans le lire ici,
+    // seul le code HTTP générique (ex. 400) était visible dans le
+    // diagnostic, masquant la vraie raison du refus.
+    let detail = "";
+    try { detail = (await res.text()).slice(0, 150); } catch (e) { /* corps illisible, tant pis */ }
+    throw new Error("worker_http_" + res.status + (detail ? ` (${detail})` : ""));
+  }
   const html = await res.text();
   if (!html || html.length < 50) throw new Error("worker_empty_response");
   const parser = new DOMParser();
@@ -6657,7 +6665,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 131;
+const APP_VERSION = 132;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
