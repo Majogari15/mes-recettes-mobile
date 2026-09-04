@@ -201,15 +201,40 @@ function trapFocusInModal(sheet, onEscape) {
 // — peu importe comment elle se ferme (bouton, clic à l'extérieur,
 // Échap...) — plutôt que de devoir adapter la logique de fermeture
 // propre à chacune des nombreuses fenêtres de l'application.
-function initModalA11y(overlay, sheet) {
+function initModalA11y(overlay, sheet, options = {}) {
   if (!sheet.hasAttribute("role")) sheet.setAttribute("role", "dialog");
   sheet.setAttribute("aria-modal", "true");
+  // Relie automatiquement le titre (premier <h2>) pour qu'un lecteur
+  // d'écran annonce "Scanner un QR code" ou "Journal de cuisine" par
+  // exemple, plutôt que simplement "dialogue" sans plus de précision.
+  const title = sheet.querySelector("h2");
+  if (title && !sheet.hasAttribute("aria-labelledby")) {
+    if (!title.id) title.id = `modal-title-${uid()}`;
+    sheet.setAttribute("aria-labelledby", title.id);
+  }
   const previouslyFocused = document.activeElement;
-  const removeTrap = trapFocusInModal(sheet, () => overlay.remove());
+  // "beforeClose" permet à une fenêtre avec une ressource à libérer
+  // (caméra du scanner QR, par exemple) de le faire avant de
+  // disparaître — sans ça, une fermeture par Échap contournait ce
+  // nettoyage (les fermetures par bouton dédié l'appelaient déjà,
+  // mais Échap passait uniquement par overlay.remove() directement).
+  let closed = false;
+  const closeModal = () => {
+    if (closed) return;
+    closed = true;
+    if (options.beforeClose) options.beforeClose();
+    overlay.remove();
+  };
+  const removeTrap = trapFocusInModal(sheet, closeModal);
   const observer = new MutationObserver(() => {
     if (!document.body.contains(overlay)) {
       removeTrap();
       observer.disconnect();
+      // Si la fenêtre a été retirée par un autre chemin que closeModal
+      // (ex. un bouton qui appelle lui-même overlay.remove() sans
+      // passer par ici), on nettoie quand même une seule fois.
+      if (!closed && options.beforeClose) options.beforeClose();
+      closed = true;
       if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
     }
   });
@@ -2424,12 +2449,58 @@ function generateQrCodeImgTag(text) {
   throw lastError || new Error("qrcode_generation_failed");
 }
 
+// Préfixe identifiant un fragment de recette multi-QR — distinct du
+// format compact JSON à usage unique (qui commence par "{") pour que
+// le lecteur puisse reconnaître immédiatement qu'il s'agit d'une seule
+// partie parmi plusieurs, avant même d'essayer de l'interpréter comme
+// une recette complète.
+const MULTI_QR_PREFIX = "MRQ1";
+// Découpe un texte trop long pour un seul QR en plusieurs fragments à
+// peu près égaux, chacun précédé d'un petit en-tête indiquant sa
+// position ("2/3" par exemple) et un identifiant commun à toutes les
+// parties — nécessaire pour que le lecteur puisse regrouper des
+// fragments provenant de scans séparés, potentiellement dans le
+// désordre, et détecter s'il en manque encore.
+function splitIntoQrParts(content, maxChunkLength) {
+  if (content.length <= maxChunkLength) return [content];
+  const totalParts = Math.ceil(content.length / maxChunkLength);
+  const chunkSize = Math.ceil(content.length / totalParts);
+  const batchId = uid().slice(0, 6);
+  const parts = [];
+  for (let i = 0; i < totalParts; i += 1) {
+    const chunk = content.slice(i * chunkSize, (i + 1) * chunkSize);
+    parts.push(`${MULTI_QR_PREFIX}|${batchId}|${i + 1}|${totalParts}|${chunk}`);
+  }
+  return parts;
+}
+// Reconnaît un fragment multi-QR et en extrait les composants, ou
+// retourne null si le texte ne correspond pas à ce format (auquel cas
+// le lecteur doit essayer les autres formats reconnus).
+function tryParseMultiPartQrFragment(text) {
+  if (typeof text !== "string" || !text.startsWith(MULTI_QR_PREFIX + "|")) return null;
+  const firstSep = text.indexOf("|", MULTI_QR_PREFIX.length + 1);
+  const secondSep = text.indexOf("|", firstSep + 1);
+  const thirdSep = text.indexOf("|", secondSep + 1);
+  if (firstSep < 0 || secondSep < 0 || thirdSep < 0) return null;
+  const batchId = text.slice(MULTI_QR_PREFIX.length + 1, firstSep);
+  const partIndex = parseInt(text.slice(firstSep + 1, secondSep), 10);
+  const totalParts = parseInt(text.slice(secondSep + 1, thirdSep), 10);
+  const chunk = text.slice(thirdSep + 1);
+  if (!batchId || !Number.isFinite(partIndex) || !Number.isFinite(totalParts) || partIndex < 1 || partIndex > totalParts) return null;
+  return { batchId, partIndex, totalParts, chunk };
+}
+
 async function openQrCodeModal(recipe, persons) {
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
     <h2>${t("qrcode_title")}</h2>
-    <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;">${escapeHtml(t("qrcode_hint"))}</p>
-    <div id="qrcode-canvas-holder" style="display:flex;justify-content:center;margin-bottom:20px;min-height:240px;align-items:center;text-align:center;"><span style="font-size:13px;color:var(--text-muted);">${escapeHtml(t("qrcode_loading"))}</span></div>
+    <p id="qrcode-hint" style="font-size:13px;color:var(--text-muted);margin:0 0 16px;">${escapeHtml(t("qrcode_hint"))}</p>
+    <div id="qrcode-canvas-holder" style="display:flex;justify-content:center;margin-bottom:12px;min-height:240px;align-items:center;text-align:center;"><span style="font-size:13px;color:var(--text-muted);">${escapeHtml(t("qrcode_loading"))}</span></div>
+    <div id="qrcode-part-nav" style="display:none;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;">
+      <button type="button" class="btn btn-outline" id="qrcode-part-prev" style="flex:1;"></button>
+      <span id="qrcode-part-indicator" style="font-size:13px;font-weight:600;color:var(--text-muted);white-space:nowrap;"></span>
+      <button type="button" class="btn btn-outline" id="qrcode-part-next" style="flex:1;"></button>
+    </div>
     <div class="modal-actions">
       <button type="button" class="btn btn-outline" id="qrcode-close">${t("cooking_close")}</button>
       <button type="button" class="btn btn-primary" id="qrcode-save">${t("qrcode_save_button")}</button>
@@ -2448,65 +2519,63 @@ async function openQrCodeModal(recipe, persons) {
   // anglais...) qui ne peuvent plus se produire puisqu'aucune
   // traduction n'intervient à aucun moment entre la génération et la
   // lecture.
-  const MAX_FREE_TEXT_LENGTH = 300;
-  const truncateFreeText = (s) => (s && s.length > MAX_FREE_TEXT_LENGTH ? s.slice(0, MAX_FREE_TEXT_LENGTH - 1) + "…" : s);
   const compact = { v: 1, n: recipe.name, p: persons };
   if (recipe.difficulty) compact.d = recipe.difficulty;
   if (recipe.prepTime) compact.pt = recipe.prepTime;
   if (recipe.cookTime) compact.ct = recipe.cookTime;
   if (recipe.allergens && recipe.allergens.length) compact.a = recipe.allergens;
-  if (recipe.description) compact.de = truncateFreeText(recipe.description);
-  if (recipe.notes) compact.no = truncateFreeText(recipe.notes);
+  if (recipe.description) compact.de = recipe.description;
+  if (recipe.notes) compact.no = recipe.notes;
   compact.i = (recipe.ingredients || []).map((ing) => {
     const scaled = ing.quantity != null ? Math.round(ing.quantity * persons * 100) / 100 : null;
     return [ing.name, scaled, ing.unit];
   });
-  let content = JSON.stringify(compact);
-  // Un QR code a une capacité limitée : au-delà d'une certaine taille, il
-  // devient soit impossible à générer, soit trop dense pour être scanné
-  // de façon fiable. Plutôt que de tronquer au milieu (ce qui casserait
-  // le JSON), on retire d'abord les champs les moins essentiels un par
-  // un, en gardant toujours au minimum le nom et les ingrédients.
+  const content = JSON.stringify(compact);
+  // Au-delà de cette taille, un seul QR devient trop dense pour être
+  // scanné de façon fiable — la recette est alors répartie sur
+  // plusieurs QR à scanner successivement, plutôt que de raccourcir ou
+  // de retirer des informations (la préparation ne doit jamais être
+  // incomplète silencieusement).
   const MAX_QR_LENGTH = 800;
-  let descriptionWasShortened = false;
-  if (content.length > MAX_QR_LENGTH) {
-    // Les notes personnelles peuvent être retirées entièrement : moins
-    // essentielles, contrairement à la description qui contient les
-    // étapes de préparation — celle-ci ne doit jamais disparaître
-    // complètement, seulement être raccourcie si vraiment nécessaire.
-    delete compact.no;
-    content = JSON.stringify(compact);
-  }
-  while (content.length > MAX_QR_LENGTH && compact.de && compact.de.length > 20) {
-    compact.de = compact.de.slice(0, -50) + "…";
-    descriptionWasShortened = true;
-    content = JSON.stringify(compact);
-  }
-  if (content.length > MAX_QR_LENGTH) {
-    // En dernier recours, retire les allergènes plutôt que la
-    // description — un cas extrême, rare en pratique.
-    delete compact.a;
-    content = JSON.stringify(compact);
-  }
+  const parts = splitIntoQrParts(content, MAX_QR_LENGTH);
+  let currentPart = 0;
 
   const holder = sheet.querySelector("#qrcode-canvas-holder");
-  try {
-    await loadQrCodeLib();
-    holder.innerHTML = generateQrCodeImgTag(content);
-    if (descriptionWasShortened) {
-      holder.insertAdjacentHTML("afterend", `<p style="font-size:12px;color:var(--accent);margin:10px 0 0;">${escapeHtml(t("qrcode_description_shortened"))}</p>`);
+  const navBar = sheet.querySelector("#qrcode-part-nav");
+  const indicator = sheet.querySelector("#qrcode-part-indicator");
+  const prevBtn = sheet.querySelector("#qrcode-part-prev");
+  const nextBtn = sheet.querySelector("#qrcode-part-next");
+  prevBtn.textContent = t("qrcode_part_prev");
+  nextBtn.textContent = t("qrcode_part_next");
+
+  async function renderCurrentPart() {
+    holder.innerHTML = `<span style="font-size:13px;color:var(--text-muted);">${escapeHtml(t("qrcode_loading"))}</span>`;
+    try {
+      await loadQrCodeLib();
+      holder.innerHTML = generateQrCodeImgTag(parts[currentPart]);
+    } catch (e) {
+      holder.innerHTML = `<div><span style="font-size:13px;color:var(--danger);">${escapeHtml(t("qrcode_load_error"))}</span><div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml((e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e)))}</div></div>`;
     }
-  } catch (e) {
-    holder.innerHTML = `<div><span style="font-size:13px;color:var(--danger);">${escapeHtml(t("qrcode_load_error"))}</span><div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml((e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e)))}</div></div>`;
+    if (parts.length > 1) {
+      navBar.style.display = "flex";
+      indicator.textContent = t("qrcode_part_indicator", { current: String(currentPart + 1), total: String(parts.length) });
+      prevBtn.disabled = currentPart === 0;
+      nextBtn.disabled = currentPart === parts.length - 1;
+      sheet.querySelector("#qrcode-hint").textContent = t("qrcode_multi_hint", { total: String(parts.length) });
+    }
   }
+  prevBtn.addEventListener("click", () => { if (currentPart > 0) { currentPart -= 1; renderCurrentPart(); } });
+  nextBtn.addEventListener("click", () => { if (currentPart < parts.length - 1) { currentPart += 1; renderCurrentPart(); } });
+  await renderCurrentPart();
 
   sheet.querySelector("#qrcode-close").addEventListener("click", () => overlay.remove());
   sheet.querySelector("#qrcode-save").addEventListener("click", () => {
     const img = holder.querySelector("img");
     if (!img) return;
     const safeName = (recipe.name || "recette").replace(/[^\w\s-]/g, "").trim() || "recette";
+    const suffix = parts.length > 1 ? `-${currentPart + 1}sur${parts.length}` : "";
     const link = document.createElement("a");
-    link.download = `${safeName}-qrcode.png`;
+    link.download = `${safeName}-qrcode${suffix}.png`;
     link.href = img.src;
     link.click();
   });
@@ -2758,7 +2827,11 @@ async function openQrScanModal() {
   </div>`);
   overlay.appendChild(sheet);
   document.body.appendChild(overlay);
-  initModalA11y(overlay, sheet);
+  // "cleanup" est déclarée plus bas (via une fonction nommée, donc
+  // accessible dès maintenant grâce au hoisting), mais on l'appelle
+  // depuis une fonction anonyme pour rester explicite plutôt que de
+  // compter silencieusement sur ce détail.
+  initModalA11y(overlay, sheet, { beforeClose: () => cleanup() });
 
   const holder = sheet.querySelector("#qrscan-holder");
   const cameraStatusEl = sheet.querySelector("#qrscan-camera-status");
@@ -2766,6 +2839,11 @@ async function openQrScanModal() {
   const manualBtn = sheet.querySelector("#qrscan-manual");
   let stream = null;
   let stopped = false;
+  // Accumule les parties d'une recette répartie sur plusieurs QR — ne
+  // suit qu'un seul lot à la fois : si un fragment d'un lot différent
+  // est scanné en cours de route, on recommence avec ce nouveau lot
+  // plutôt que de mélanger deux recettes différentes.
+  let multiPartAccumulator = null;
 
   function cleanup() {
     stopped = true;
@@ -2836,6 +2914,50 @@ async function openQrScanModal() {
         height: size,
         nativeError: nativeError ? ((nativeError.name || "Error") + " — " + (nativeError.message || String(nativeError))) : null,
       };
+    }
+    // Un fragment de recette répartie sur plusieurs QR est traité en
+    // priorité, avant même d'essayer les autres formats reconnus —
+    // aucune chance qu'il corresponde à une liste de courses ou une
+    // recette complète de toute façon, mais être explicite évite toute
+    // ambiguïté.
+    const fragment = tryParseMultiPartQrFragment(decodedText);
+    if (fragment) {
+      if (!multiPartAccumulator || multiPartAccumulator.batchId !== fragment.batchId) {
+        // Nouveau lot : soit le tout premier fragment scanné, soit un
+        // changement de recette en cours de route — dans les deux cas,
+        // on repart d'un accumulateur neuf plutôt que de mélanger deux
+        // recettes différentes.
+        const isSwitch = !!multiPartAccumulator;
+        multiPartAccumulator = { batchId: fragment.batchId, totalParts: fragment.totalParts, parts: {} };
+        if (isSwitch) {
+          statusEl.textContent = t("qrscan_multi_new_batch");
+        }
+      }
+      if (multiPartAccumulator.parts[fragment.partIndex]) {
+        statusEl.textContent = t("qrscan_multi_already_have");
+        return { status: "partial" };
+      }
+      multiPartAccumulator.parts[fragment.partIndex] = fragment.chunk;
+      const receivedCount = Object.keys(multiPartAccumulator.parts).length;
+      if (receivedCount < multiPartAccumulator.totalParts) {
+        statusEl.textContent = t("qrscan_multi_progress", { current: String(receivedCount), total: String(multiPartAccumulator.totalParts) });
+        return { status: "partial" };
+      }
+      // Toutes les parties sont là : reconstitue le contenu complet
+      // dans l'ordre, puis le traite exactement comme un QR de recette
+      // classique en un seul morceau.
+      let reassembled = "";
+      for (let i = 1; i <= multiPartAccumulator.totalParts; i += 1) reassembled += multiPartAccumulator.parts[i];
+      multiPartAccumulator = null;
+      const parsedRecipe = tryParseCompactRecipeQr(reassembled);
+      if (parsedRecipe) {
+        cleanup();
+        overlay.remove();
+        confirmImportScannedRecipe(parsedRecipe);
+        return { status: "success" };
+      }
+      statusEl.textContent = t("qrscan_not_recognized");
+      return { status: "not_recognized" };
     }
     const items = decodeShoppingListFromQr(decodedText);
     if (items && items.length) {
@@ -6214,7 +6336,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 115;
+const APP_VERSION = 118;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
