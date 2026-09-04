@@ -2640,10 +2640,27 @@ async function openQrCodeModal(recipe, persons) {
     if (!img) return;
     const safeName = (recipe.name || "recette").replace(/[^\w\s-]/g, "").trim() || "recette";
     const suffix = parts.length > 1 ? `-${currentPart + 1}sur${parts.length}` : "";
-    const link = document.createElement("a");
-    link.download = `${safeName}-qrcode${suffix}.png`;
-    link.href = img.src;
-    link.click();
+    // La bibliothèque de génération produit en réalité un GIF (voir
+    // "data:image/gif;base64," dans lib/qrcode-generator.js) —
+    // l'enregistrer tel quel sous une extension .png produisait un
+    // fichier dont le contenu réel ne correspondait pas à son
+    // extension, ce que certains appareils Android refusent ensuite de
+    // décoder correctement en le resélectionnant comme image. On
+    // redessine donc l'image sur un canvas pour produire un vrai
+    // fichier PNG, cohérent avec son extension.
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    canvas.getContext("2d").drawImage(img, 0, 0);
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.download = `${safeName}-qrcode${suffix}.png`;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+    }, "image/png");
   });
 }
 
@@ -3072,14 +3089,40 @@ async function openQrScanModal() {
   // fois de vraie fonctionnalité (recevoir un QR reçu par message) et
   // de test de diagnostic pour savoir si un souci vient de la caméra
   // ou du décodage lui-même.
+  // Détecte le vrai format d'une image à partir de sa signature d'octets
+  // plutôt que de se fier à l'extension du fichier ou à son type MIME
+  // déclaré (potentiellement incorrect, notamment pour d'anciens QR
+  // enregistrés sous l'extension .png mais contenant en réalité un GIF).
+  function detectImageMimeType(bytes) {
+    const sig = Array.from(bytes.slice(0, 8));
+    if (sig[0] === 0x89 && sig[1] === 0x50 && sig[2] === 0x4e && sig[3] === 0x47) return "image/png";
+    if (sig[0] === 0x47 && sig[1] === 0x49 && sig[2] === 0x46) return "image/gif";
+    if (sig[0] === 0xff && sig[1] === 0xd8 && sig[2] === 0xff) return "image/jpeg";
+    if (sig[0] === 0x52 && sig[1] === 0x49 && sig[2] === 0x46 && sig[3] === 0x46) return "image/webp";
+    return null;
+  }
   async function decodeQrImageFile(file) {
     const img = new Image();
-    const objectUrl = URL.createObjectURL(file);
     try {
+      // Construit une URL data: directement à partir des octets réels du
+      // fichier, avec le type MIME détecté par signature — plus fiable
+      // dans la pratique qu'un Blob avec URL.createObjectURL (qui s'est
+      // révélé échouer sur certains appareils même pour un fichier
+      // parfaitement valide dont le type MIME était pourtant correct),
+      // et corrige au passage le cas des anciens QR enregistrés sous
+      // l'extension .png alors qu'ils contenaient en réalité un GIF.
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      const mimeType = detectImageMimeType(bytes) || file.type || "image/png";
+      let binary = "";
+      const chunkSize = 8192;
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+      }
+      const dataUrl = `data:${mimeType};base64,${btoa(binary)}`;
       await new Promise((resolve, reject) => {
         img.onload = resolve;
-        img.onerror = reject;
-        img.src = objectUrl;
+        img.onerror = () => reject(new Error(t("qrscan_image_load_error")));
+        img.src = dataUrl;
       });
       const size = Math.max(img.naturalWidth, img.naturalHeight);
       canvas.width = size;
@@ -3089,8 +3132,9 @@ async function openQrScanModal() {
       ctx.drawImage(img, (size - img.naturalWidth) / 2, (size - img.naturalHeight) / 2);
       const { decodedText, nativeError } = await decodeCanvasContent(size);
       return handleDecodedText(decodedText, nativeError, size);
-    } finally {
-      URL.revokeObjectURL(objectUrl);
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      throw new Error(t("qrscan_image_load_error"));
     }
   }
 
@@ -6152,7 +6196,7 @@ function renderImportUrl() {
       render();
     } catch (e) {
       statusHolder.innerHTML = "";
-      statusHolder.appendChild(el(`<div>${escapeHtml(t("import_url_error"))}</div>`));
+      statusHolder.appendChild(el(`<div>${escapeHtml(navigator.onLine === false ? t("import_url_error_offline") : t("import_url_error"))}</div>`));
       if (e && e.details) {
         statusHolder.appendChild(el(`<div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml(e.details)}</div>`));
       }
@@ -6559,7 +6603,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 124;
+const APP_VERSION = 126;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

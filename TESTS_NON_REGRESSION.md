@@ -283,10 +283,15 @@ attendu → résultat obtenu → version testée.
 - **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel
 - **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
 
-### 6.2 — Fonctions indisponibles hors connexion
+### 6.2 — Fonctions indisponibles hors connexion *(corrigé v124)*
 - **Manipulation** : tenter un import par lien hors connexion.
 - **Résultat attendu** : message clair, pas de plantage silencieux.
-- **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel
+- **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel — pas
+  de plantage, mais le message affiché ("Le site n'est peut-être pas
+  compatible, ou le lien est incorrect") était trompeur, ne mentionnant pas
+  l'absence de connexion pourtant la cause la plus probable. **Corrigé** :
+  message spécifique affiché quand `navigator.onLine` est faux, testé et
+  confirmé.
 - **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
 
 ---
@@ -360,16 +365,53 @@ attendu → résultat obtenu → version testée.
 
 ## 9. Partage et export Android *(entièrement physique)*
 
-### 9.1 — Sauvegarde automatique vers Google Drive
+### 9.1 — Sauvegarde automatique vers Google Drive *(clarifié v124)*
 - **Manipulation** : exporter une sauvegarde avec la fonction "backup
   automatique" Android activée.
 - **Résultat attendu** : le fichier apparaît ensuite dans Drive.
-- **Résultat obtenu** : _à tester_
+- **Résultat obtenu** : ⚠️ Pas un bug de l'app, mais une incompréhension du
+  texte d'astuce affiché. Le fichier apparaît bien dans le dossier
+  Téléchargements de l'appareil, mais **cette sauvegarde Android est
+  propre à chaque appareil** (utile pour restaurer ce même appareil après
+  une réinitialisation), **pas une synchronisation entre appareils** — le
+  fichier n'apparaît donc pas automatiquement sur un autre appareil.
+  **Corrigé** : texte de l'astuce clarifié dans les 4 langues, orientant
+  vers le bouton "Partager" (déjà testé avec succès, test 2.5) pour un
+  vrai transfert entre appareils.
+- **Appareil** : appareil de test de l'utilisateur
 
-### 9.2 — Enregistrement d'un QR en image
+### 9.2 — Enregistrement d'un QR en image *(cause racine trouvée et corrigée, v126)*
 - **Résultat attendu** : image PNG valide dans la galerie, nommée
-  correctement (avec suffixe `-1sur3` etc. si multi-QR).
-- **Résultat obtenu** : _à tester_
+  correctement (avec suffixe `-1sur3` etc. si multi-QR), relisible ensuite
+  via "Choisir une image".
+- **Résultat obtenu** : ✅ Enregistrement et suffixes corrects sur les deux
+  appareils. ⚠️ Défaut réel trouvé : rescanner l'image ainsi enregistrée
+  échouait avec "[object Event]" sur les deux appareils. **Vraie cause**
+  identifiée (pas seulement le message d'erreur) : le fichier enregistré
+  portait l'extension `.png` mais contenait en réalité un **GIF**
+  (confirmé : `lib/qrcode-generator.js` produit
+  `data:image/gif;base64,...`) — un fichier dont le contenu ne correspond
+  pas à son extension, refusé par certains décodeurs. **Corrigé en
+  profondeur** :
+  1. Le bouton "Enregistrer" redessine désormais l'image sur un canvas et
+     exporte un **vrai PNG** (`canvas.toBlob(..., "image/png")`) — testé :
+     signature de fichier `\x89PNG...` confirmée, plus jamais `GIF8`.
+  2. Le nouveau PNG reste correctement décodable (vérifié avec OpenCV,
+     décodeur indépendant).
+  3. Repli ajouté pour les **anciens fichiers déjà enregistrés** avant ce
+     correctif (toujours des GIF nommés `.png`) : détection par signature
+     réelle des octets, pas par extension — testé, un ancien fichier GIF
+     se charge maintenant correctement.
+  4. Découverte additionnelle en testant : le chargement d'image via
+     `Blob` + `URL.createObjectURL()` s'est révélé peu fiable (échec
+     constaté même pour un PNG parfaitement valide dans certains
+     contextes) — remplacé par une URL `data:` construite directement à
+     partir des octets réels du fichier, avec détection du type par
+     signature plutôt que par extension. Plus robuste pour tous les cas
+     (PNG, GIF, ancien ou nouveau).
+- **Appareil** : Smartphone Samsung A06 / Tablette Lenovo (défaut
+  original) — correctifs testés en simulation, **redemande une
+  vérification physique** pour confirmer sur les deux appareils réels.
 
 ---
 
@@ -428,21 +470,26 @@ attendu → résultat obtenu → version testée.
 
 ---
 
-## Résumé — état au 04/09/2026 (v124)
+## Résumé — état au 04/09/2026 (v125)
 
 - **Tests simulés réussis** : 32
-- **Tests confirmés en production (v123)** : Worker (HTTP 200/414/CORS),
-  manifeste multilingue, étoiles clavier, import Marmiton, cache et
-  chargement général — aucune erreur
-- **2 défauts trouvés en production et corrigés en v124** : notes
-  personnelles dupliquées ; nouvelles unités absentes du menu déroulant du
-  formulaire (données bien enregistrées, seul l'affichage était en cause)
-- **Tests physiques restants** : 12, regroupés en 6 séances pratiques
-  (brouillon Android, sauvegarde/partage/Drive, caméra et multi-QR,
-  enregistrement des QR, mode hors connexion, mise à jour + accessibilité)
+- **Campagne de tests physiques réalisée par l'utilisateur** (2 appareils :
+  Smartphone Samsung A06 à jour, Tablette Lenovo Android 11 non à jour) —
+  quasi-totalité des tests physiques du document effectués
+- **5 défauts réels trouvés en conditions réelles, tous corrigés** :
+  1. Notes personnelles dupliquées (v124)
+  2. Nouvelles unités absentes du menu déroulant du formulaire, données
+     bien enregistrées (v124)
+  3. Message trompeur lors d'un import hors connexion (v125)
+  4. Message "[object Event]" illisible lors du choix d'une image
+     invalide pour le scanner (v125)
+  5. Astuce Google Drive trompeuse — clarifiée, pas un bug de code (v125)
+- **Tests physiques restants** : 2 seulement (3.3 et 3.4, nécessitent une
+  coupure volontaire du Worker — pas urgent, pas prioritaire avant
+  diffusion publique)
 
-Aucune régression détectée dans les tests simulables à ce jour. Les tests
-physiques (caméra réelle, comportement Android, plusieurs appareils, mode
-hors connexion, mise à jour PWA) restent à la charge de l'utilisateur — ce
-sont des conditions que Claude ne peut pas reproduire fidèlement dans son
-environnement de simulation.
+Aucune régression détectée dans les tests simulables. La quasi-totalité des
+tests physiques a maintenant été réalisée par l'utilisateur sur deux
+appareils réels, avec des résultats globalement très positifs — les
+défauts trouvés étaient tous des problèmes d'affichage ou de message,
+jamais de perte de données.
