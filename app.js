@@ -6121,16 +6121,27 @@ function recordImportDiagnostic(service, errorMessage) {
 }
 
 async function fetchRecipeFromUrl(url, onAttempt) {
+  // Mode de test temporaire, activé uniquement en ajoutant
+  // "?importtest=..." à l'adresse — jamais présent en usage normal,
+  // sert uniquement à vérifier manuellement les vrais chemins de repli
+  // (tests 3.3/3.4 de TESTS_NON_REGRESSION.md) sans devoir couper le
+  // vrai Worker Cloudflare pour tout le monde. Valeurs reconnues :
+  // "jina" (saute le Worker), "proxy" (saute Worker + Jina), "fail"
+  // (saute les trois, pour vérifier le message final).
+  const importTestMode = new URLSearchParams(location.search).get("importtest");
+
   // 1. Worker Cloudflare personnel en premier, si configuré : c'est la
   // source la plus fiable et la plus complète (voir commentaire de
   // fetchRecipeDataViaWorker ci-dessus).
-  try {
-    const recipeData = await fetchRecipeDataViaWorker(url);
-    const result = await buildRecipeFromStructuredData(recipeData);
-    recordImportDiagnostic("Worker Cloudflare");
-    return result;
-  } catch (e) {
-    // Pas configuré, ou a échoué : on continue avec Jina ci-dessous.
+  if (!importTestMode) {
+    try {
+      const recipeData = await fetchRecipeDataViaWorker(url);
+      const result = await buildRecipeFromStructuredData(recipeData);
+      recordImportDiagnostic("Worker Cloudflare");
+      return result;
+    } catch (e) {
+      // Pas configuré, ou a échoué : on continue avec Jina ci-dessous.
+    }
   }
 
   // 2. Jina AI Reader ensuite : plus fiable en pratique que les 3
@@ -6138,43 +6149,47 @@ async function fetchRecipeFromUrl(url, onAttempt) {
   // une extraction un peu moins précise (pas de photo automatique,
   // temps/nombre de personnes parfois approximatifs) qu'une vraie
   // extraction de données structurées quand elle réussit.
-  try {
-    const markdown = await fetchViaJinaReader(url);
-    const cleanedText = stripJinaMarkdownNoise(markdown);
-    const parsedFromText = parseOcrRecipeText(cleanedText);
-    if (parsedFromText && parsedFromText.ingredients.length) {
-      recordImportDiagnostic("Jina AI Reader");
-      return {
-        name: parsedFromText.name,
-        description: parsedFromText.description,
-        ingredients: parsedFromText.ingredients.map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) })),
-        persons: parsedFromText.persons || 4,
-        prepTime: parsedFromText.prepTime,
-        cookTime: parsedFromText.cookTime,
-        category: "Autre",
-        photo: null,
-      };
+  if (importTestMode !== "proxy" && importTestMode !== "fail") {
+    try {
+      const markdown = await fetchViaJinaReader(url);
+      const cleanedText = stripJinaMarkdownNoise(markdown);
+      const parsedFromText = parseOcrRecipeText(cleanedText);
+      if (parsedFromText && parsedFromText.ingredients.length) {
+        recordImportDiagnostic("Jina AI Reader" + (importTestMode ? " (test)" : ""));
+        return {
+          name: parsedFromText.name,
+          description: parsedFromText.description,
+          ingredients: parsedFromText.ingredients.map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) })),
+          persons: parsedFromText.persons || 4,
+          prepTime: parsedFromText.prepTime,
+          cookTime: parsedFromText.cookTime,
+          category: "Autre",
+          photo: null,
+        };
+      }
+    } catch (e) {
+      // Jina a échoué ou n'a rien trouvé d'exploitable : on tente les 3
+      // services habituels ci-dessous avant d'abandonner définitivement.
     }
-  } catch (e) {
-    // Jina a échoué ou n'a rien trouvé d'exploitable : on tente les 3
-    // services habituels ci-dessous avant d'abandonner définitivement.
   }
 
   // 3. Les 3 services CORS publics classiques, en tout dernier
   // recours : les moins fiables des trois approches, mais un dernier
   // filet de secours utile quand les deux précédentes ont échoué.
   let recipeData = null;
-  try {
-    recipeData = await fetchRecipeDataViaProxies(url, onAttempt);
-  } catch (e) {
-    // Tous les services intermédiaires habituels ont aussi échoué.
+  if (importTestMode !== "fail") {
+    try {
+      recipeData = await fetchRecipeDataViaProxies(url, onAttempt);
+    } catch (e) {
+      // Tous les services intermédiaires habituels ont aussi échoué.
+    }
   }
 
   if (!recipeData) {
     recordImportDiagnostic(null, "no_recipe_found (tous les services ont échoué)");
     throw new Error("no_recipe_found");
   }
-  recordImportDiagnostic("Service de secours (proxy public)");
+  recordImportDiagnostic("Service de secours (proxy public)" + (importTestMode ? " (test)" : ""));
   return await buildRecipeFromStructuredData(recipeData);
 }
 
@@ -6632,7 +6647,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 129;
+const APP_VERSION = 130;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
