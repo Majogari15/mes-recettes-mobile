@@ -4846,12 +4846,14 @@ function renderBackup() {
     exportSection.querySelector("#share-btn").addEventListener("click", async () => {
       const result = await shareBackupData(preloadedBackupFilePromise);
       if (!result.ok) {
-        // Repli silencieux vers le téléchargement classique : après
-        // plusieurs pistes explorées sans succès sur cet appareil, le
-        // message d'erreur technique n'apporte plus d'information utile
-        // et n'est là que pour inquiéter inutilement l'utilisateur.
+        // Le partage a échoué (pas simplement annulé par l'utilisateur,
+        // ce cas renvoie cancelled:true sans passer ici) : le fichier
+        // est tout de même mis en sécurité par téléchargement classique,
+        // mais l'utilisateur doit être informé que ce n'est PAS ce qu'il
+        // a demandé — un message explicite évite de lui laisser croire
+        // à tort que le partage vers le cloud a réussi.
         await exportAllData();
-        await customAlert(t("backup_export_success"));
+        await customAlert(t("backup_share_fallback_notice"));
       }
     });
   }
@@ -6603,7 +6605,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 126;
+const APP_VERSION = 127;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
