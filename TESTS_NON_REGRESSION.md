@@ -58,6 +58,19 @@ attendu → résultat obtenu → version testée.
 - **Résultat obtenu** : _à tester_
 - **Appareil** : _à renseigner_
 
+### 1.5 — Analyse des ingrédients : unités-contenants et alternatives *(simulé)*
+- **Manipulation** : analyser "1 boîte de purée de tomate", "2 sachets de
+  levure", "1 pot de crème", "3 tranches de jambon", "2 gousses ail", "1 oie
+  ou 1 canard", et un cas de contrôle "1 citron ou 2 citrons verts" (nombres
+  différents, ne doit rien changer).
+- **Résultat attendu** : unité reconnue (boîte/sachet/pot/tranche/gousse) au
+  lieu de "pièce" générique ; nombre redondant après "ou" supprimé
+  uniquement s'il est identique à la quantité déjà extraite.
+- **Résultat obtenu** : ✅ Réussi — les 5 unités correctement reconnues ;
+  "oie ou canard" nettoyé ; "1 citron ou 2 citrons verts" resté inchangé
+  (nombres différents, correctement préservés).
+- **Version testée** : v121
+
 ---
 
 ## 2. Sauvegarde et restauration
@@ -314,6 +327,18 @@ attendu → résultat obtenu → version testée.
   seulement "dialogue").
 - **Résultat obtenu** : _à tester_
 
+### 8.6 — Étoiles : groupe radio complet (une seule tabulable, flèches) *(simulé)*
+- **Manipulation** : vérifier qu'une seule étoile a `tabindex="0"` ; depuis
+  l'étoile 1, appuyer 2× flèche droite (doit arriver à 3) ; 5× flèche gauche
+  depuis 3 (doit s'arrêter à 1, jamais en dessous) ; 10× flèche droite
+  (doit s'arrêter à 5, jamais au-dessus).
+- **Résultat attendu** : navigation correcte aux flèches, limites
+  respectées, clic toujours fonctionnel (non-régression).
+- **Résultat obtenu** : ✅ Réussi — une seule étoile tabulable confirmée ;
+  flèche droite ×2 → 3 (focus suit) ; flèche gauche ×5 → arrêt à 1 ; flèche
+  droite ×10 → arrêt à 5 ; clic sur étoile 2 → 2 (non-régression confirmée).
+- **Version testée** : v123
+
 ---
 
 ## 9. Partage et export Android *(entièrement physique)*
@@ -331,6 +356,48 @@ attendu → résultat obtenu → version testée.
 
 ---
 
+## 10. Diagnostic, Worker et manifeste
+
+### 10.1 — Panneau de diagnostic *(simulé)*
+- **Manipulation** : ouvrir Sauvegarde → Diagnostic, vérifier les 12 lignes,
+  tester le bouton "Copier le diagnostic".
+- **Résultat attendu** : version app et cache correctes, navigateur/système
+  détectés, service d'import et dernière sauvegarde affichés, copie
+  fonctionnelle — jamais de recette, nom, adresse ou photo.
+- **Résultat obtenu** : ✅ Réussi — les 12 lignes correctement remplies
+  (ex. "App version : v121", "Cache version : v121"), bouton copier
+  confirmé (contenu du presse-papiers vérifié).
+- **Version testée** : v122
+
+### 10.2 — Worker : limite de longueur d'URL cible *(simulé, logique)*
+- **Manipulation** : simuler la vérification sur une URL normale (75
+  caractères), une URL abusive (3000+ caractères), et une URL à caractères
+  spéciaux (50 caractères réels mais 122 une fois encodée dans la requête).
+- **Résultat attendu** : la limite de 2048 caractères s'applique à l'adresse
+  cible **décodée**, jamais à la longueur artificiellement gonflée par
+  l'encodage.
+- **Résultat obtenu** : ✅ Réussi — URL normale acceptée, URL abusive
+  rejetée, URL à caractères spéciaux correctement mesurée sur sa longueur
+  décodée (50), pas la longueur encodée (122).
+- **Version testée** : worker.js (non versionné avec l'app — à redéployer
+  manuellement sur Cloudflare)
+- **Note** : la vraie limitation du nombre de requêtes par IP reste en
+  attente (nécessite Wrangler + binding Rate Limiting, ou un domaine
+  personnalisé + règle WAF — voir échanges du 04/09/2026).
+
+### 10.3 — Manifeste externalisé (`manifest-loader.js`) *(simulé)*
+- **Manipulation** : vérifier la sélection du bon manifeste après
+  externalisation du script (déplacé hors de `index.html`, chargé après la
+  CSP).
+- **Résultat attendu** : aucune régression — même comportement qu'avant
+  l'externalisation.
+- **Résultat obtenu** : ✅ Réussi — navigateur en français sans langue
+  enregistrée → `manifest.json` ; langue "de" enregistrée →
+  `manifest-de.json`.
+- **Version testée** : v123
+
+---
+
 ## Modèle de tableau pour les tests physiques
 
 | Test | Appareil | Android | Chrome | PWA installée ? | Résultat | Remarque |
@@ -339,10 +406,10 @@ attendu → résultat obtenu → version testée.
 
 ---
 
-## Résumé — état au 04/09/2026 (v121)
+## Résumé — état au 04/09/2026 (v123)
 
-- **Tests simulés réalisés** : 25
-- **Tests simulés réussis** : 25 / 25
+- **Tests simulés réalisés** : 30
+- **Tests simulés réussis** : 30 / 30
 - **Tests physiques restants** : 13, dont 1 déjà rapporté réussi par
   l'utilisateur (import Marmiton complet)
 
