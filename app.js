@@ -6232,7 +6232,13 @@ function renderImportUrl() {
     wrap.querySelector("#import-url-input").focus();
   });
   btn.addEventListener("click", async () => {
-    const url = wrap.querySelector("#import-url-input").value.trim();
+    let url = wrap.querySelector("#import-url-input").value.trim();
+    // Ajoute automatiquement le protocole si absent — cas fréquent
+    // quand le lien est copié depuis un endroit qui l'affiche sans
+    // préfixe (aperçu, résultat de recherche...) ; sans cette
+    // correction, new URL() rejette silencieusement l'adresse comme
+    // invalide alors qu'elle est parfaitement reconnaissable.
+    if (url && !/^https?:\/\//i.test(url)) url = "https://" + url;
     if (!url) { statusHolder.textContent = t("import_url_no_url"); return; }
     btn.disabled = true;
     statusHolder.textContent = t("import_url_fetching");
@@ -6665,7 +6671,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 132;
+const APP_VERSION = 133;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

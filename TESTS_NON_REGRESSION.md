@@ -144,6 +144,39 @@ attendu → résultat obtenu → version testée.
 - **Appareil** : appareil de l'utilisateur (non précisé)
 - **Version testée** : v118, reconfirmé en v123 (8 personnes, 40 min,
   330 min, 17 ingrédients, 9 étapes)
+- **Doute résolu en v131** : l'utilisateur s'est demandé si c'était
+  vraiment le Worker qui fonctionnait ou si Jina faisait le travail en
+  coulisse. Un champ de diagnostic ("Dernière erreur du Worker") a été
+  ajouté pour clarifier ce genre de doute à l'avenir. **Confirmé via le
+  panneau Diagnostic** : le Worker Cloudflare fonctionne réellement (5
+  imports d'affilée réussis, "Dernier service d'import utilisé" affiche
+  bien "Worker Cloudflare", pas "Jina AI Reader").
+
+### 3.1bis — Lien collé sans protocole (https://) *(cause racine trouvée et corrigée, v133)*
+- **Contexte** : l'utilisateur a rencontré `worker_http_400 (Invalid
+  url)` en réimportant la même recette Marmiton qui avait pourtant
+  fonctionné plus tôt. Message du Worker enrichi (v132) pour inclure le
+  détail technique exact : `Invalid URL string., length=63`.
+- **Enquête** : la vraie URL fait 75 caractères ; 63 caractères
+  correspond exactement à la même adresse **sans le préfixe
+  "https://www."** — confirmé en testant : `new URL()` échoue
+  effectivement sur cette version tronquée. L'utilisateur avait
+  vraisemblablement collé le lien depuis un endroit qui l'affiche sans
+  protocole (comme cela s'est produit dans son propre message de test).
+- **Corrigé** : le champ d'import ajoute désormais automatiquement
+  "https://" si l'adresse collée n'a pas de protocole, au lieu de la
+  rejeter froidement.
+- **Résultat obtenu** : ✅ Réussi — testé avec le cas exact rencontré
+  (URL sans protocole → corrigée → valide) et 3 cas de non-régression
+  (http://, https://, HTTPS:// en majuscules → tous inchangés,
+  correctement reconnus comme ayant déjà un protocole).
+- **Version testée** : v133
+- **Cause confirmée par l'utilisateur** : le copier-coller via Google
+  Lens (recherche visuelle depuis l'écran) extrait le texte affiché du
+  lien, pas l'adresse réelle — le protocole "http://www." disparaît
+  systématiquement dans ce cas précis. Le correctif v133 gère
+  correctement ce scénario (avec ou sans le "www." manquant en plus du
+  protocole).
 
 ### 3.2 — Repli Jina conserve le nombre de personnes *(simulé)*
 - **Conditions initiales** : texte façon extraction Jina contenant
@@ -154,14 +187,20 @@ attendu → résultat obtenu → version testée.
 - **Résultat obtenu** : ✅ Réussi.
 - **Version testée** : v120
 
-### 3.3 — Worker indisponible → repli Jina *(physique, nécessite coupure temporaire du Worker)*
+### 3.3 — Worker indisponible → repli Jina *(testé via le mode de test v130)*
 - **Résultat attendu** : import réussi via Jina, message indiquant si un
   champ est moins précis.
-- **Résultat obtenu** : _à tester_
+- **Résultat obtenu** : ✅ Réussi — testé avec `?importtest=jina` (Worker
+  volontairement contourné), import réussi via Jina, confirmé dans le
+  diagnostic ("Jina AI Reader (test)").
+- **Appareil** : appareil de l'utilisateur
 
-### 3.4 — Tous les services indisponibles *(physique)*
+### 3.4 — Tous les services indisponibles *(testé via le mode de test v130)*
 - **Résultat attendu** : message d'erreur compréhensible, pas de plantage.
-- **Résultat obtenu** : _à tester_
+- **Résultat obtenu** : ✅ Réussi — testé avec `?importtest=fail` (tous les
+  services volontairement contournés), message d'erreur clair affiché,
+  aucun plantage.
+- **Appareil** : appareil de l'utilisateur
 
 ---
 
@@ -366,7 +405,7 @@ attendu → résultat obtenu → version testée.
 
 ## 9. Partage et export Android *(entièrement physique)*
 
-### 9.1 — Sauvegarde automatique vers Google Drive *(clarifié v124, approfondi v127)*
+### 9.1 — Sauvegarde automatique vers Google Drive *(clarifié v124, approfondi v127, cause racine du partage trouvée v129)*
 - **Manipulation** : exporter une sauvegarde avec la fonction "backup
   automatique" Android activée.
 - **Résultat attendu** : le fichier apparaît ensuite dans Drive.
@@ -392,6 +431,34 @@ attendu → résultat obtenu → version testée.
   disponible... enregistré dans Téléchargements à la place"), testé et
   confirmé avec un échec de partage simulé.
 - **Appareil** : appareil de test de l'utilisateur
+
+  - **Défaut additionnel trouvé grâce au diagnostic v128** : l'utilisateur
+    a rapporté l'erreur exacte via le nouveau panneau de diagnostic —
+    `NotAllowedError — Permission denied`. Recherche menée sur la
+    documentation officielle MDN du Web Share API, **deux causes
+    confirmées et corrigées ensemble en v129** :
+    1. **Extension incohérente avec le type MIME** : le fichier partagé
+       utilisait déjà `text/plain` (bon choix) mais gardait l'extension
+       `.json` — or la liste officielle des types de fichiers
+       partageables (vérifiée directement sur MDN) associe `.txt` à
+       `text/plain`, jamais `.json`. **Corrigé** : nom de fichier dédié
+       au partage avec extension `.txt`, testé — fichier transmis à
+       `navigator.share()` confirmé `nom.txt` / `text/plain` exacts.
+    2. **Activation utilisateur potentiellement perdue** : le fichier
+       était préchargé via une promesse, mais un `await` restait entre
+       le clic et l'appel à `navigator.share()`. **Corrigé** : le bouton
+       reste désactivé ("Préparation...") jusqu'à ce que le fichier soit
+       entièrement résolu, puis le clic appelle `navigator.share()`
+       sans aucun délai. Testé : bouton désactivé puis activé
+       correctement, aucun `await` avant l'appel.
+    3. Restauration élargie pour accepter `.txt` en plus de `.json`
+       (par contenu, comme avant, mais aussi par sélecteur de fichier).
+       **Testé** : cycle complet partage (.txt) → restauration → recette
+       intacte, confirmé.
+  - **Redemande une vérification physique** sur l'appareil Samsung pour
+    confirmer que le partage fonctionne enfin réellement (impossible à
+    tester avec certitude en simulation, `navigator.share()` n'étant pas
+    disponible dans l'environnement de test).
 
 ### 9.2 — Enregistrement d'un QR en image *(cause racine trouvée, corrigée et confirmée physiquement, v126)*
 - **Résultat attendu** : image PNG valide dans la galerie, nommée
@@ -482,13 +549,14 @@ attendu → résultat obtenu → version testée.
 
 ---
 
-## Résumé — état au 04/09/2026 (v126)
+## Résumé — état au 04/09/2026 (v131)
 
 - **Tests simulés réussis** : 32
 - **Campagne de tests physiques réalisée par l'utilisateur** (2 appareils :
-  Smartphone Samsung A06 à jour, Tablette Lenovo Android 11 non à jour) —
-  quasi-totalité des tests physiques du document effectués
-- **6 défauts réels trouvés en conditions réelles, tous corrigés et
+  Smartphone Samsung A06 à jour, Tablette Lenovo Android 11 non à jour)
+  — **tous les tests du document sont maintenant résolus, aucun restant
+  marqué "à tester"**
+- **7 défauts réels trouvés en conditions réelles, tous corrigés et
   confirmés** :
   1. Notes personnelles dupliquées (v124) ✅
   2. Nouvelles unités absentes du menu déroulant du formulaire, données
@@ -501,9 +569,25 @@ attendu → résultat obtenu → version testée.
      et **confirmé fonctionnel sur les deux appareils réels** (v126) ✅
   5. Astuce Google Drive trompeuse — clarifiée, pas un bug de code (v125) ✅
   6. Phrase coupée dans la documentation du test 8.5 (v126) ✅
-- **Tests physiques restants** : 2 seulement (3.3 et 3.4 — nécessitent une
-  coupure volontaire du Worker, pas urgent, pas prioritaire avant
-  diffusion publique)
+  7. Partage vers Drive échouait silencieusement (`NotAllowedError`) —
+     deux vraies causes trouvées via un diagnostic ajouté spécialement
+     (extension `.json` incohérente avec le type `text/plain`, activation
+     utilisateur perdue avant l'appel à `navigator.share()`) et corrigées
+     ensemble (v129) ✅
+- **Mode de test ajouté (v130)** pour vérifier les chemins de repli
+  d'import sans jamais couper le Worker en production
+  (`?importtest=jina` / `?importtest=proxy` / `?importtest=fail`)
+- **Doute sur le Worker Cloudflare résolu** : un problème temporaire
+  (cause exacte inconnue, non liée à une modification du code) s'est
+  résorbé de lui-même — confirmé via le diagnostic que le Worker
+  fonctionne réellement (5 imports d'affilée), pas seulement Jina en
+  coulisse (v131)
+- **Tests physiques restants : aucun**
+
+Aucune régression détectée. Les 16 tests physiques initialement en
+attente ont tous été résolus, soit par test réel sur appareil, soit via
+le mode de test dédié pour les scénarios de panne réseau. L'application
+est dans un état solide et entièrement validé selon ce document.
 
 Aucune régression détectée dans les tests simulables. La quasi-totalité des
 tests physiques a maintenant été réalisée par l'utilisateur sur deux
