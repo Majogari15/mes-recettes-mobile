@@ -5917,7 +5917,7 @@ async function fetchRecipeFromUrl(url, onAttempt) {
         name: parsedFromText.name,
         description: parsedFromText.description,
         ingredients: parsedFromText.ingredients.map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) })),
-        persons: 4,
+        persons: parsedFromText.persons || 4,
         prepTime: parsedFromText.prepTime,
         cookTime: parsedFromText.cookTime,
         category: "Autre",
@@ -6397,7 +6397,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 119;
+const APP_VERSION = 120;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
