@@ -381,7 +381,7 @@ attendu → résultat obtenu → version testée.
   vrai transfert entre appareils.
 - **Appareil** : appareil de test de l'utilisateur
 
-### 9.2 — Enregistrement d'un QR en image *(cause racine trouvée et corrigée, v126)*
+### 9.2 — Enregistrement d'un QR en image *(cause racine trouvée, corrigée et confirmée physiquement, v126)*
 - **Résultat attendu** : image PNG valide dans la galerie, nommée
   correctement (avec suffixe `-1sur3` etc. si multi-QR), relisible ensuite
   via "Choisir une image".
@@ -410,9 +410,8 @@ attendu → résultat obtenu → version testée.
      partir des octets réels du fichier, avec détection du type par
      signature plutôt que par extension. Plus robuste pour tous les cas
      (PNG, GIF, ancien ou nouveau).
-- **Appareil** : Smartphone Samsung A06 / Tablette Lenovo (défaut
-  original) — correctifs testés en simulation, **redemande une
-  vérification physique** pour confirmer sur les deux appareils réels.
+- **Appareil** : Smartphone Samsung A06 / Tablette Lenovo — **✅ Confirmé
+  fonctionnel sur les deux appareils réels après le correctif v126.**
 
 ---
 
@@ -477,25 +476,25 @@ attendu → résultat obtenu → version testée.
 - **Campagne de tests physiques réalisée par l'utilisateur** (2 appareils :
   Smartphone Samsung A06 à jour, Tablette Lenovo Android 11 non à jour) —
   quasi-totalité des tests physiques du document effectués
-- **6 défauts réels trouvés en conditions réelles, tous corrigés** :
-  1. Notes personnelles dupliquées (v124)
+- **6 défauts réels trouvés en conditions réelles, tous corrigés et
+  confirmés** :
+  1. Notes personnelles dupliquées (v124) ✅
   2. Nouvelles unités absentes du menu déroulant du formulaire, données
-     bien enregistrées (v124)
-  3. Message trompeur lors d'un import hors connexion (v125)
-  4. Message "[object Event]" lors du choix d'une image invalide —
-     symptôme d'une cause plus profonde trouvée ensuite : le QR
-     enregistré était en réalité un GIF portant l'extension `.png`.
-     Corrigé en profondeur : vrai PNG exporté désormais, repli pour les
-     anciens fichiers, chargement d'image rendu plus robuste (v125→v126)
-  5. Astuce Google Drive trompeuse — clarifiée, pas un bug de code (v125)
-  6. Phrase coupée dans la documentation du test 8.5 (v126)
-- **Tests physiques restants** : 3 — 3.3 et 3.4 (pas urgent), et **9.2 à
-  revérifier sur les deux appareils réels** pour confirmer que la vraie
-  cause racine (GIF nommé .png) est bien résolue en conditions réelles,
-  le correctif v126 n'ayant pu être testé qu'en simulation
+     bien enregistrées (v124) ✅
+  3. Message trompeur lors d'un import hors connexion (v125) ✅
+  4. "[object Event]" — symptôme d'une cause plus profonde trouvée
+     ensuite : le QR enregistré était en réalité un GIF portant
+     l'extension `.png`. Corrigé en profondeur (vrai PNG exporté, repli
+     pour les anciens fichiers, chargement d'image rendu plus robuste)
+     et **confirmé fonctionnel sur les deux appareils réels** (v126) ✅
+  5. Astuce Google Drive trompeuse — clarifiée, pas un bug de code (v125) ✅
+  6. Phrase coupée dans la documentation du test 8.5 (v126) ✅
+- **Tests physiques restants** : 2 seulement (3.3 et 3.4 — nécessitent une
+  coupure volontaire du Worker, pas urgent, pas prioritaire avant
+  diffusion publique)
 
 Aucune régression détectée dans les tests simulables. La quasi-totalité des
 tests physiques a maintenant été réalisée par l'utilisateur sur deux
-appareils réels, avec des résultats globalement très positifs — les
-défauts trouvés étaient tous des problèmes d'affichage ou de message,
-jamais de perte de données.
+appareils réels, avec des résultats globalement très positifs — tous les
+défauts trouvés ont été corrigés puis reconfirmés fonctionnels, jamais de
+perte de données à aucun moment de cette campagne.
