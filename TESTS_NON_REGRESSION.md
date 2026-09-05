@@ -1040,8 +1040,12 @@ attendu → résultat obtenu → version testée.
   contrairement au scanner de recette/liste qui avait été testé
   fonctionnel plus tôt — écart à clarifier).
 
-### 14.7 — Notification et vibration Android *(physique)*
-- **Résultat obtenu** : Non testé.
+### 14.7 — Notification et vibration Android *(physique — terminé)*
+- **Résultat obtenu** : ✅ Fiable au premier plan (sonnerie, vibration,
+  répétition, arrêt) ; ⚠️ non fiable en arrière-plan (vibration
+  différée) ; ❌ non fiable écran verrouillé (rien à l'heure prévue,
+  déclenché seulement au réveil de l'écran) ; ❌ aucune notification
+  système dans aucun cas. Voir le détail complet en section 19.1.
 
 ### 14.8 — Manifestes/raccourcis après changement de langue et redémarrage *(physique)*
 - **Résultat obtenu** : ✅ Réussi, avec une nuance mineure et attendue :
@@ -1371,21 +1375,26 @@ attendu → résultat obtenu → version testée.
 
 ## 19. Minuteur Android et mode cuisine (session du 05/09/2026)
 
-### 19.1 — Test physique du minuteur *(physique)*
-- **Application visible** : ✅ Terminé affiché, ✅ sonnerie, ✅
-  vibration, ✅ répétition, ✅ arrêt de l'alarme — tout fonctionne.
-- **Application en arrière-plan** : ⚠️ sonnerie fonctionnelle, mais
-  vibration différée jusqu'au retour dans l'application ; aucune
-  notification système affichée.
-- **Écran verrouillé** : ❌ minuteur suspendu, aucune sonnerie ni
-  vibration à l'heure prévue — l'alarme ne se déclenche qu'au réveil de
-  l'écran ou au retour dans l'application.
+### 19.1 — Test physique du minuteur *(physique — terminé)*
+- **Application visible** : ✅ « Terminé ! » affiché, ✅ sonnerie, ✅
+  vibration, ✅ répétition, ✅ le bouton arrête correctement l'alarme.
+- **Application en arrière-plan** : ⚠️ sonnerie fonctionnelle ; ⚠️
+  vibration différée jusqu'au retour dans l'application ; ❌ aucune
+  notification système.
+- **Écran verrouillé** : ❌ aucune sonnerie à l'heure prévue ; ❌ aucune
+  vibration à l'heure prévue ; ⚠️ la sonnerie commence au réveil de
+  l'écran, même avant la saisie du code PIN ; ⚠️ la vibration ne
+  commence qu'au retour dans l'application ; ❌ aucune notification
+  système.
+- **Conclusion** : le minuteur est fiable lorsque l'application reste
+  visible. Son fonctionnement n'est pas fiable en arrière-plan ou écran
+  verrouillé.
 - **Cause identifiée** : le minuteur repose sur `setInterval()`, que
   Android ralentit ou suspend quand l'application n'est plus visible,
   particulièrement écran verrouillé. Aucune notification système n'est
   implémentée dans le code actuel (absence de `Notification`/
   `showNotification()`).
-- **Appareil** : appareil de l'utilisateur
+- **Appareil** : Samsung Galaxy A06
 
 ### 19.2 — Bug critique trouvé en marge : mode cuisine plantait systématiquement *(cause racine trouvée et corrigée, v155)*
 - **Contexte** : en vérifiant le code pour implémenter le Wake Lock,
@@ -1467,11 +1476,13 @@ attendu → résultat obtenu → version testée.
 - **Mode de test disponible** (`?importtest=jina/proxy/fail`, localhost
   uniquement) pour vérifier les chemins de repli d'import sans jamais
   couper le Worker en production
-- **Tests physiques restants** : 3 points confirmés non résolus par
+- **Tests physiques restants** : 2 points confirmés non résolus par
   l'utilisateur (voir section 14) — OCR réel par photo (encore peu
-  fiable), import QR par caméra/galerie (encore peu fiable),
-  notification/vibration Android (non testé). Aucun autre test du
-  document lui-même n'est en attente.
+  fiable), import QR par caméra/galerie (encore peu fiable).
+  Notification/vibration Android désormais testée (section 19.1) :
+  fiable au premier plan uniquement, pas en arrière-plan ni écran
+  verrouillé — un correctif partiel (Wake Lock) a été apporté en v155.
+  Aucun autre test du document lui-même n'est en attente.
 - **Régression trouvée et corrigée après coup** (v152) : le déplacement
   du bouton "Coller le texte d'un QR code" (point 15.5) avait introduit
   une régression — la caméra restait active et deux fenêtres modales

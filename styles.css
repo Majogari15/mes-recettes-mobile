@@ -216,6 +216,9 @@ a { color: inherit; }
   color: var(--text);
 }
 .field textarea { resize: vertical; min-height: 90px; }
+/* Description et notes de recette : agrandies de 50 % (90px -> 135px),
+   trop petites pour naviguer confortablement sur un petit écran. */
+#f-description, #f-notes { min-height: 135px; }
 .field input:focus, .field select:focus, .field textarea:focus {
   outline: 2px solid var(--primary);
   outline-offset: 1px;
