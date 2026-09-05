@@ -50,18 +50,19 @@ toujours à votre initiative explicite :
   récupérer la page à votre place ; consultez leurs propres politiques
   de confidentialité
   pour savoir comment ils traitent ces requêtes.
-- **Import de recette par photo (reconnaissance de texte)** : cette
-  fonctionnalité s'exécute directement sur votre appareil, via une
-  bibliothèque (Tesseract.js) téléchargée une seule fois depuis un serveur
-  de distribution de contenu (jsDelivr) lors de la première utilisation.
-  Aucune photo ni aucun texte n'est envoyé à un serveur externe : seule la
-  bibliothèque elle-même est téléchargée, pas vos données.
-- **Génération et lecture de QR code, export PDF** : ces fonctionnalités
-  utilisent des bibliothèques techniques également téléchargées depuis des
-  serveurs de distribution de contenu (cdnjs, jsDelivr) lors de la première
-  utilisation. Vos données (recettes, listes) ne sont jamais transmises à
-  ces serveurs, qui ne font que fournir le code nécessaire au
-  fonctionnement de ces outils sur votre appareil.
+- **Import de recette par photo (reconnaissance de texte)**, **lecture
+  de QR code par caméra**, et **export PDF** : ces fonctionnalités
+  utilisent des bibliothèques techniques (Tesseract.js, jsQR, jsPDF)
+  téléchargées depuis des serveurs de distribution de contenu (cdnjs,
+  jsDelivr) — et mises en cache pour un usage hors connexion ensuite.
+  Ce téléchargement a lieu dès la première visite de l'application
+  (installation du fonctionnement hors connexion), pas seulement au
+  moment où vous utilisez réellement l'une de ces fonctions. Aucune
+  photo, aucun texte ni aucune donnée personnelle n'est envoyé à ces
+  serveurs : seules les bibliothèques elles-mêmes sont téléchargées.
+  La **génération** de QR code (pour partager une recette ou une liste
+  de courses) fonctionne en revanche entièrement à partir d'un fichier
+  inclus dans l'application elle-même, sans aucun téléchargement externe.
 - **Bouton « Faire un don »** : ouvre, uniquement si vous cliquez dessus,
   la page https://buymeacoffee.com/majogari dans votre navigateur.
 - **Partager la sauvegarde** (fonctionnalité optionnelle) : le bouton

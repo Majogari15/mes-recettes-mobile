@@ -1,10 +1,10 @@
 # Mes Recettes — version mobile (PWA)
 
-Première version de l'application mobile, sous forme de site web
-installable ("Progressive Web App") — fonctionne sur Android et iPhone,
-sans serveur ni abonnement, toutes les données restent sur l'appareil.
+Application mobile, sous forme de site web installable ("Progressive Web
+App") — fonctionne sur Android et iPhone, sans serveur ni abonnement,
+toutes les données restent sur l'appareil.
 
-## Fonctionnalités incluses dans cette première version
+## Fonctionnalités
 
 - Ajouter / modifier / supprimer une recette (avec photo prise depuis le
   téléphone)
@@ -31,11 +31,13 @@ sans serveur ni abonnement, toutes les données restent sur l'appareil.
   suppression définitive), **convertisseur d'unités** indépendant,
   **listes de courses enregistrées** (à recharger plus tard), **export
   PDF de la liste de courses**, **partage de la liste de courses par QR
-  code** (à scanner depuis un autre appareil pour l'importer — le scan
-  nécessite une connexion sécurisée HTTPS, donc indisponible tant que
-  l'app n'est pas mise en ligne), **recherche rapide globale** (icône 🔍
-  en haut de l'accueil/recettes/courses/garde-manger), **QR code d'une
-  recette** (nom + ingrédients, à scanner ou enregistrer en image), et
+  code, avec répartition automatique sur plusieurs QR si nécessaire**
+  (à scanner depuis un autre appareil pour l'importer), **recherche
+  rapide globale** (icône 🔍 en haut de l'accueil/recettes/courses/garde-manger), **QR code d'une
+  recette** (nom, ingrédients, temps, allergènes, description complète
+  et notes — répartis automatiquement sur plusieurs QR si le contenu est
+  trop long, sans jamais rien tronquer), à scanner ou enregistrer en
+  image, et
   **"Que puis-je cuisiner ?"** (repéré depuis le garde-manger, indique
   les recettes réalisables ou presque avec ce que vous avez déjà),
   **export "livre de cuisine"** (plusieurs recettes choisies, réunies en
@@ -87,14 +89,12 @@ sans serveur ni abonnement, toutes les données restent sur l'appareil.
 - **Export PDF de la liste de courses**
 - **Recherche rapide** globale (icône 🔍 en haut, accessible depuis les
   4 écrans principaux)
-- **QR code d'une recette** (nom + ingrédients), à scanner et à
-  enregistrer en image
 - **Scanner un QR code** pour importer une liste de courses **ou une
-  recette** partagée depuis un autre appareil — compatible avec les QR
-  codes générés par la version bureau, pas seulement par mobile
-  (nécessite HTTPS pour la caméra, donc utilisable seulement une fois
-  l'application mise en ligne). Utilise en priorité la détection de QR
-  code intégrée au système (le même moteur que les applications de scan
+  recette** partagée depuis un autre appareil, y compris répartie sur
+  plusieurs QR (dans n'importe quel ordre, avec somme de contrôle) —
+  compatible avec les QR codes générés par la version bureau, pas
+  seulement par mobile. Utilise en priorité la détection de QR code
+  intégrée au système (le même moteur que les applications de scan
   classiques, disponible sur Chrome Android), avec une bibliothèque de
   repli si l'appareil ne la propose pas. Si la lecture par caméra ne
   fonctionne toujours pas bien sur votre appareil, **"Coller le texte
@@ -191,8 +191,18 @@ déjà un dépôt GitHub pour ce projet.
 - `app.js` — toute la logique de l'application
 - `i18n.js` — traductions (4 langues)
 - `styles.css` — apparence
-- `manifest.json` — configuration de l'installation en tant qu'app
+- `manifest.json`, `manifest-en.json`, `manifest-es.json`,
+  `manifest-de.json` — configuration de l'installation en tant qu'app,
+  une par langue (nom, raccourcis) ; `manifest-loader.js` choisit le bon
+  fichier selon la langue déjà enregistrée
 - `sw.js` — fonctionnement hors connexion
 - `icons/` — icônes de l'application
+- `lib/` — bibliothèque de génération de QR code, embarquée localement
+- `worker/` — code source du Worker Cloudflare utilisé pour l'import de
+  recette par lien (à déployer manuellement sur Cloudflare, non exécuté
+  par l'application elle-même — voir `worker/README.md`)
 - `data/` — bases d'allergènes et de valeurs nutritionnelles (référence
   uniquement, jamais modifiées par l'application)
+- `TESTS_NON_REGRESSION.md` — liste des tests à rejouer avant chaque
+  nouvelle version
+- `POLITIQUE_DE_CONFIDENTIALITE.md` — politique de confidentialité

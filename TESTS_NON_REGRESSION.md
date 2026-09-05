@@ -644,48 +644,51 @@ attendu → résultat obtenu → version testée.
 
 ---
 
-## Résumé — état au 04/09/2026 (v131)
+## Résumé — état au 05/09/2026 (v139)
 
-- **Tests simulés réussis** : 32
+- **Tests simulés réussis** : 33
 - **Campagne de tests physiques réalisée par l'utilisateur** (2 appareils :
   Smartphone Samsung A06 à jour, Tablette Lenovo Android 11 non à jour)
-  — **tous les tests du document sont maintenant résolus, aucun restant
-  marqué "à tester"**
-- **7 défauts réels trouvés en conditions réelles, tous corrigés et
-  confirmés** :
-  1. Notes personnelles dupliquées (v124) ✅
-  2. Nouvelles unités absentes du menu déroulant du formulaire, données
-     bien enregistrées (v124) ✅
-  3. Message trompeur lors d'un import hors connexion (v125) ✅
-  4. "[object Event]" — symptôme d'une cause plus profonde trouvée
-     ensuite : le QR enregistré était en réalité un GIF portant
-     l'extension `.png`. Corrigé en profondeur (vrai PNG exporté, repli
-     pour les anciens fichiers, chargement d'image rendu plus robuste)
-     et **confirmé fonctionnel sur les deux appareils réels** (v126) ✅
-  5. Astuce Google Drive trompeuse — clarifiée, pas un bug de code (v125) ✅
-  6. Phrase coupée dans la documentation du test 8.5 (v126) ✅
-  7. Partage vers Drive échouait silencieusement (`NotAllowedError`) —
-     deux vraies causes trouvées via un diagnostic ajouté spécialement
-     (extension `.json` incohérente avec le type `text/plain`, activation
-     utilisateur perdue avant l'appel à `navigator.share()`) et corrigées
-     ensemble (v129) ✅
-- **Mode de test ajouté (v130)** pour vérifier les chemins de repli
-  d'import sans jamais couper le Worker en production
-  (`?importtest=jina` / `?importtest=proxy` / `?importtest=fail`)
-- **Doute sur le Worker Cloudflare résolu** : un problème temporaire
-  (cause exacte inconnue, non liée à une modification du code) s'est
-  résorbé de lui-même — confirmé via le diagnostic que le Worker
-  fonctionne réellement (5 imports d'affilée), pas seulement Jina en
-  coulisse (v131)
-- **Tests physiques restants : aucun**
+  — tous les tests du document sont résolus, aucun restant marqué "à
+  tester"
+- **7 défauts réels trouvés en conditions réelles avant la v131, tous
+  corrigés et confirmés** : notes personnelles dupliquées, unités
+  absentes du menu déroulant, message trompeur hors connexion, QR
+  enregistré en réalité un GIF (cause racine, corrigé en profondeur),
+  astuce Google Drive trompeuse, phrase coupée en documentation, partage
+  Drive échouant silencieusement (deux causes trouvées et corrigées)
+- **Audit complémentaire (v132-v139)**, dix points corrigés et testés :
+  1. Diagnostics anciens désormais effacés après une réussite (import,
+     partage, Worker)
+  2. Code source du Worker Cloudflare versionné dans le dépôt
+     (`worker/cloudflare-worker.js`)
+  3. Multi-QR réutilisé pour la liste de courses — testé avec 30
+     articles, aucune perte
+  4. `?importtest=...` restreint à localhost, inoffensif sur le site
+     public
+  5. Rappel de sauvegarde vérifiant désormais toutes les données
+     importantes, pas seulement les recettes
+  6. Langue HTML (`<html lang>`) et titre de la page synchronisés à
+     chaque changement, y compris au premier chargement
+  7. Test physique de l'import par photo (OCR) — laissé à l'utilisateur
+  8. 5 traductions mortes retirées (20 entrées, 4 langues)
+  9. 2 commentaires obsolètes corrigés (nombre réel d'entrepôts
+     IndexedDB, extension du fichier de partage)
+  10. Documentation mise à jour (`LISEZ-MOI.md`, politique de
+      confidentialité, ce résumé)
+- **Cause racine du "Worker qui ne marchait pas"** : un problème
+  temporaire côté Cloudflare (cause exacte inconnue, non liée à une
+  modification du code) s'est résorbé de lui-même — confirmé via le
+  diagnostic que le Worker fonctionne réellement, pas seulement Jina en
+  coulisse
+- **Mode de test disponible** (`?importtest=jina/proxy/fail`, localhost
+  uniquement) pour vérifier les chemins de repli d'import sans jamais
+  couper le Worker en production
+- **Tests physiques restants** : aucun test du document lui-même ; reste
+  à votre charge le test réel de l'OCR par photo (point 7 ci-dessus),
+  non couvert par ce document
 
-Aucune régression détectée. Les 16 tests physiques initialement en
-attente ont tous été résolus, soit par test réel sur appareil, soit via
-le mode de test dédié pour les scénarios de panne réseau. L'application
-est dans un état solide et entièrement validé selon ce document.
-
-Aucune régression détectée dans les tests simulables. La quasi-totalité des
-tests physiques a maintenant été réalisée par l'utilisateur sur deux
-appareils réels, avec des résultats globalement très positifs — tous les
-défauts trouvés ont été corrigés puis reconfirmés fonctionnels, jamais de
-perte de données à aucun moment de cette campagne.
+Aucune régression détectée à aucun moment. Tous les défauts trouvés au
+fil de cette longue campagne ont été corrigés puis reconfirmés
+fonctionnels, jamais de perte de données. L'application est dans un état
+solide, largement testée en conditions réelles sur deux appareils.

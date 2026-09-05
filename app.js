@@ -3,7 +3,10 @@
 /* ======================================================================
    BASE DE DONNÉES LOCALE (IndexedDB)
    Toutes les données restent sur l'appareil, rien n'est envoyé nulle
-   part. Trois entrepôts : recettes, liste de courses, réglages.
+   part. Onze entrepôts : recettes, liste de courses, garde-manger,
+   ingrédients personnalisés et leurs surcharges, menus, modèles et
+   historique de planning, corbeille, listes de courses enregistrées,
+   et un entrepôt clé-valeur générique (réglages, brouillons...).
    ====================================================================== */
 const DB_NAME = "mes-recettes-db";
 const DB_VERSION = 7;
@@ -4530,8 +4533,9 @@ async function buildBackupFile() {
   // spécifiquement : plusieurs sources indiquent une prise en charge
   // plus large de ce type MIME par le partage natif Android, alors que
   // application/json n'est pas toujours reconnu comme partageable. Le
-  // nom de fichier garde ".json" (la réimportation l'accepte par
-  // extension aussi bien que par type).
+  // nom de fichier utilise désormais ".txt" (voir backupShareFileName),
+  // cohérent avec ce type MIME — la réimportation accepte les deux
+  // extensions par contenu, pas seulement par extension.
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "text/plain" });
   return new File([blob], backupShareFileName(), { type: "text/plain" });
 }
@@ -6735,7 +6739,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 139;
+const APP_VERSION = 140;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
