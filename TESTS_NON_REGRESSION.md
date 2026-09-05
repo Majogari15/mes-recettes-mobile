@@ -1696,7 +1696,53 @@ attendu → résultat obtenu → version testée.
   Lock, notifications, registre de réservations), tous réussis.
 - **Version testée** : v163
 
-## Résumé — état au 05/09/2026 (v163)
+### 19.12 — Régression critique et 2 corrections incomplètes de la v163 *(v164)*
+- **Priorité critique — double mode cuisine au clic sur notification**
+  *(régression confirmée exactement et corrigée)* : le gestionnaire de
+  message rappelait `openCookingMode()` sans jamais vérifier si une
+  session était déjà active. Confirmé exactement : `openCookingMode()`
+  réinitialise `state.cookingTimers = []` à chaque appel, orphelinant
+  les minuteurs d'une session précédente encore active — leur sonnerie
+  aurait continué indéfiniment, sans plus aucun moyen de l'arrêter
+  depuis l'écran. Corrigé : nouvelle référence `closeActiveCookingMode`
+  exposée par chaque session, appelée pour fermer proprement l'ancienne
+  avant d'en ouvrir une autre ; si la même recette est déjà ouverte, ne
+  rien faire de plus (le `focus()` du service worker suffit). **Testé
+  le scénario exact de l'audit** : clic sur la même recette déjà ouverte
+  (aucun doublon, minuteur original intact) ; clic sur une AUTRE recette
+  pendant qu'un minuteur de la première sonne (ancienne session
+  proprement fermée et nettoyée, une seule fenêtre au final).
+- **Priorité haute — IndexedDB toujours non attendu** *(cause racine
+  confirmée exactement et corrigée)* : `persistPantryClaims()` n'avait
+  toujours pas de `return` devant `kvSet(...)`, résolvant immédiatement
+  sans jamais attendre la vraie écriture — les 8 `await` ajoutés en
+  v163 n'apportaient donc aucune protection réelle. Corrigé avec
+  `return kvSet(...)`. **Testé en reproduisant la vérification de
+  l'audit** : avec une écriture artificiellement ralentie à 300ms,
+  `await persistPantryClaims()` prend maintenant bien ~300ms (au lieu de
+  résoudre immédiatement).
+- **Priorité moyenne — bouton poubelle ne fermait pas la notification**
+  *(confirmé exactement et corrigé)* : `closeTimerNotification(timer)`
+  ajouté au gestionnaire du bouton poubelle, comme déjà fait pour
+  `dismissAlarm()`. Testé et confirmé.
+- **Commentaire obsolète corrigé** : `persistPantryClaims()` mentionnait
+  encore "localStorage" alors que le stockage est IndexedDB depuis la
+  v160.
+- **Non-régression** : 23 tests relancés (minuteur, mode cuisine, Wake
+  Lock, notifications, registre de réservations), tous réussis.
+- **Précision honnête sur la suite de tests** : comme le note l'audit,
+  ces "N tests" ne sont pas une suite automatisée présente dans le
+  dépôt — ce sont des scripts Playwright ponctuels que je conserve et
+  relance manuellement à chaque session, documentés ici au fur et à
+  mesure. Voir aussi le point 17.3 du même sujet.
+- **Test physique Android avec deux minuteurs** : reste l'étape
+  décisive suivante, comme recommandé par l'audit — lancer deux
+  minuteurs, passer en arrière-plan, toucher une notification, vérifier
+  que le mode cuisine existant revient au premier plan sans doublon ni
+  sonnerie impossible à arrêter.
+- **Version testée** : v164
+
+## Résumé — état au 05/09/2026 (v164)
 
 - **jsQR et jsPDF désormais embarqués localement** (v141) — seul
   Tesseract (import par photo) reste chargé depuis un CDN.

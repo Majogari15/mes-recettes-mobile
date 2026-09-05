@@ -3884,6 +3884,7 @@ function renderTimerRow(holder, timer) {
   });
   row.querySelector(".stop-btn").addEventListener("click", () => {
     stopCookingTimer(timer);
+    closeTimerNotification(timer);
     state.cookingTimers = state.cookingTimers.filter((x) => x.id !== timer.id);
     row.remove();
   });
@@ -3924,6 +3925,10 @@ let activeCookingSessionId = null;
 // voir openCookingMode ; permet à la notification du minuteur de
 // cibler précisément cette recette au clic.
 let currentCookingRecipeId = null;
+// Fonction de fermeture de la session de mode cuisine actuellement
+// ouverte (null si aucune) — voir openCookingMode, qui l'assigne à
+// chaque ouverture.
+let closeActiveCookingMode = null;
 let currentWakeLock = null;
 // Une promesse partagée tant qu'une demande est en cours — empêche
 // deux demandes simultanées (une à l'ouverture, une autre lors d'un
@@ -4086,6 +4091,14 @@ function openCookingMode(recipe) {
     overlay.remove();
   });
   overlay.appendChild(header);
+  // Exposée au niveau du module pour que du code extérieur (le clic sur
+  // une notification de minuteur, notamment) puisse fermer proprement
+  // cette session avant d'en ouvrir une autre — jamais en rappelant
+  // openCookingMode() directement par-dessus une session déjà active,
+  // ce qui viderait state.cookingTimers et orphelinerait les minuteurs
+  // de l'ancienne session (leur sonnerie continuerait indéfiniment,
+  // sans plus aucun moyen de l'arrêter depuis l'écran).
+  closeActiveCookingMode = () => { cleanupCookingMode(); overlay.remove(); };
 
   const wakeLockStatus = el(`<p style="font-size:12px;color:var(--text-muted);margin:0 0 16px;"></p>`);
   overlay.appendChild(wakeLockStatus);
@@ -4998,14 +5011,18 @@ async function releasePantryClaimsForSource(sourceType, sourceId) {
   );
   if (state.pantryClaimedThisSession.length !== before) await persistPantryClaims();
 }
-// Sauvegarde légère dans localStorage (pas IndexedDB, un simple tableau
-// suffit) — sans ça, les réservations de la session n'étaient
-// conservées qu'en mémoire et disparaissaient à chaque redémarrage de
-// l'application, pouvant faire recompter deux fois le même stock si
-// l'utilisateur fermait puis rouvrait l'app entre deux ajouts de
-// recettes à la liste de courses.
+// Sauvegarde légère dans IndexedDB (store "kv") — sans ça, les
+// réservations de la session n'étaient conservées qu'en mémoire et
+// disparaissaient à chaque redémarrage de l'application, pouvant faire
+// recompter deux fois le même stock si l'utilisateur fermait puis
+// rouvrait l'app entre deux ajouts de recettes à la liste de courses.
+// Retourne bien la promesse de kvSet (pas seulement "appelée sans
+// attendre") — sinon, tous les "await persistPantryClaims()" ailleurs
+// dans le code n'attendaient en réalité rien du tout, la fonction
+// résolvant immédiatement sans jamais attendre que l'écriture
+// IndexedDB soit vraiment terminée.
 function persistPantryClaims() {
-  kvSet("pantryClaimedThisSession", state.pantryClaimedThisSession).catch(() => { /* sans conséquence */ });
+  return kvSet("pantryClaimedThisSession", state.pantryClaimedThisSession).catch(() => { /* sans conséquence */ });
 }
 // Valide chaque entrée individuellement — un tableau chargé (depuis une
 // sauvegarde restaurée, potentiellement modifiée à la main ou
@@ -7671,7 +7688,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 163;
+const APP_VERSION = 164;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
@@ -7764,11 +7781,22 @@ async function init() {
   // Même clic sur la notification du minuteur, mais alors qu'une
   // fenêtre de l'application était déjà ouverte (voir notificationclick
   // dans sw.js, qui utilise postMessage plutôt qu'une navigation dans
-  // ce cas) — ouvre directement le mode cuisine de la recette concernée
-  // sans perturber le reste de l'écran si elle n'est pas trouvée.
+  // ce cas) — ouvre le mode cuisine de la recette concernée.
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.addEventListener("message", (event) => {
       if (event.data && event.data.type === "openRecipe") {
+        // Si la même recette est déjà ouverte, ne rien faire de plus —
+        // le focus() déjà effectué par le service worker suffit à
+        // ramener la fenêtre au premier plan. Ne JAMAIS rappeler
+        // openCookingMode() directement par-dessus une session
+        // existante (même pour une AUTRE recette) : cela viderait
+        // state.cookingTimers et orphelinerait les minuteurs de
+        // l'ancienne session, dont la sonnerie continuerait
+        // indéfiniment sans plus aucun moyen de l'arrêter depuis
+        // l'écran — précisément le scénario d'un clic sur la
+        // notification pendant qu'un minuteur sonne en arrière-plan.
+        if (currentCookingRecipeId === event.data.recipeId) return;
+        if (closeActiveCookingMode) closeActiveCookingMode();
         const recipe = state.recipes.find((r) => r.id === event.data.recipeId);
         if (recipe) openCookingMode(recipe);
       }
