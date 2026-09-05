@@ -1691,7 +1691,7 @@ function shoppingItemRow(item, wrap) {
     if (!await customConfirm(t("shopping_item_delete_confirm", { name: translateIngredientName(item.name) }))) return;
     await storeDelete("shopping", item.id);
     state.shopping = state.shopping.filter((i) => i.id !== item.id);
-    state.pantryClaimedThisSession = {};
+    delete state.pantryClaimedThisSession[normalize(item.name)];
     persistPantryClaims();
     renderShoppingInto(wrap);
   });
@@ -1813,11 +1813,15 @@ function openAddItemModal(storeName, existingItem) {
     if (isPantry) item.threshold = parseQtyOrNull(sheet.querySelector("#modal-ing-threshold").value);
     await storePut(storeName, item);
     // Une réservation basée sur une ancienne quantité n'a plus de sens
-    // une fois celle-ci modifiée (courses ou garde-manger) — remise à
-    // zéro par prudence plutôt que de risquer une incohérence qui
-    // ferait croire à tort qu'une quantité est déjà couverte.
+    // une fois celle-ci modifiée (courses ou garde-manger) — seule la
+    // réservation de CET ingrédient est effacée (ancien et nouveau nom
+    // si renommé), pas celles des autres ingrédients qui n'ont aucun
+    // rapport avec cette modification.
     if (isEdit || isPantry) {
-      state.pantryClaimedThisSession = {};
+      delete state.pantryClaimedThisSession[normalize(name)];
+      if (isEdit && normalize(existingItem.name) !== normalize(name)) {
+        delete state.pantryClaimedThisSession[normalize(existingItem.name)];
+      }
       persistPantryClaims();
     }
     if (isEdit) {
@@ -1859,7 +1863,7 @@ function renderPantry() {
       row.querySelector("button").addEventListener("click", async () => {
         await storeDelete("pantry", item.id);
         state.pantry = state.pantry.filter((p) => p.id !== item.id);
-        state.pantryClaimedThisSession = {};
+        delete state.pantryClaimedThisSession[normalize(item.name)];
         persistPantryClaims();
         render();
       });
@@ -4859,7 +4863,7 @@ function sanitizeBackupItem(item, storeName, report) {
           return { ...i, name: fixedName, unit: fixedUnit, quantity: sanitized };
         });
       if (cleaned.ingredients.length !== beforeCount) report.structuralFixes += 1;
-    } else if ("ingredients" in cleaned && cleaned.ingredients != null) {
+    } else if ("ingredients" in cleaned) {
       cleaned.ingredients = [];
       report.structuralFixes += 1;
     }
@@ -4875,7 +4879,7 @@ function sanitizeBackupItem(item, storeName, report) {
           return entry;
         });
       if (cleaned.cookLog.length !== beforeCount) report.structuralFixes += 1;
-    } else if ("cookLog" in cleaned && cleaned.cookLog != null) {
+    } else if ("cookLog" in cleaned) {
       cleaned.cookLog = [];
       report.structuralFixes += 1;
     }
@@ -7258,7 +7262,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 152;
+const APP_VERSION = 153;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

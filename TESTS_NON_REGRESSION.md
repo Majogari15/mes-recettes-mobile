@@ -1271,7 +1271,67 @@ attendu → résultat obtenu → version testée.
   non résolus (OCR, scan QR caméra/galerie, notification/vibration)
   sont désormais explicitement cités dans le résumé final.
 
-## Résumé — état au 05/09/2026 (v152)
+## 17. Réservations du garde-manger, ciblage précis (session du 05/09/2026)
+
+### 17.1 — Remise à zéro globale trop large *(régression confirmée et corrigée, v153)*
+- **Contexte** : la remise à zéro globale ajoutée en v152 (point 16.2)
+  réglait le problème des réservations obsolètes, mais en introduisait
+  un nouveau : modifier ou supprimer N'IMPORTE QUEL article effaçait
+  TOUTES les réservations, y compris celles d'ingrédients sans aucun
+  rapport. Scénario concret confirmé : farine réservée par une recette
+  A (800 g sur 1000 g disponibles), puis modification d'un article
+  totalement différent efface la réservation de farine — une recette B
+  ayant aussi besoin de farine croit alors disposer des 1000 g complets
+  alors que 800 g sont déjà utilisés, ne proposant plus d'en acheter
+  alors qu'il en manque réellement 600 g.
+- **Corrigé** : remise à zéro ciblée sur l'ingrédient concerné
+  uniquement (ancien et nouveau nom si renommé), pas sur l'ensemble des
+  réservations — pour les 3 cas d'un seul article (suppression et
+  modification d'un article de courses, suppression d'un article de
+  garde-manger). Les 3 cas d'opération groupée (vider toute la liste,
+  charger une autre liste enregistrée, restaurer une sauvegarde)
+  gardent à raison la remise à zéro complète, puisque tout change
+  réellement dans ces cas-là.
+- **Résultat obtenu** : ✅ Réussi — testé avec le scénario exact de
+  l'audit : la réservation de farine (800g) survit bien à la
+  suppression d'un article sans rapport ("Sel") ; et, cas
+  complémentaire, supprimer la farine elle-même efface bien
+  correctement sa propre réservation.
+- **Limite reconnue** : reste approximatif si le MÊME ingrédient est
+  concerné par plusieurs recettes/articles à la fois (ex. modifier
+  l'article de farine lui-même alors que 2 recettes l'ont réservé
+  séparément) — une refonte complète attachant chaque réservation à
+  son article/sa recette d'origine resterait nécessaire pour un
+  comportement parfaitement correct dans tous les cas, mais ce
+  correctif couvre déjà le scénario concret le plus courant (article
+  sans rapport modifié).
+- **Version testée** : v153
+
+### 17.2 — `null` non normalisé dans la validation des sauvegardes *(cause racine trouvée et corrigée, v153)*
+- **Contexte** : `ingredients: null` et `cookLog: null` n'étaient pas
+  transformés en tableau vide, contrairement aux chaînes, nombres et
+  objets (la condition excluait explicitement les valeurs `null`).
+- **Corrigé** : condition simplifiée pour couvrir aussi `null`/
+  `undefined`.
+- **Résultat obtenu** : ✅ Réussi — testé avec les deux champs
+  explicitement à `null` : tous deux correctement normalisés en `[]`.
+- **Version testée** : v153
+
+### 17.3 — Nature réelle de cette suite de tests *(précision honnête, sans changement de code)*
+- **Point soulevé** : ce document ne constitue pas une suite
+  automatisée exécutable (pas de CI, pas de protection automatique des
+  futures versions) — les tests dits "simulés" sont des vérifications
+  ponctuelles effectuées manuellement à chaque session de
+  développement, puis documentées ici. Les tests "physiques" sont
+  réalisés par l'utilisateur sur ses propres appareils.
+- **Décision** : ce document reste donc une **trace de vérifications
+  ponctuelles**, utile pour suivre l'historique des défauts trouvés et
+  corrigés, mais ne remplace pas une vraie suite automatisée qui
+  s'exécuterait seule avant chaque publication. Construire une telle
+  suite serait un chantier à part entière, non entrepris ici faute
+  d'avoir été demandé en priorité.
+
+## Résumé — état au 05/09/2026 (v153)
 
 - **jsQR et jsPDF désormais embarqués localement** (v141) — seul
   Tesseract (import par photo) reste chargé depuis un CDN.
