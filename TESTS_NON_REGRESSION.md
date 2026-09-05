@@ -1492,7 +1492,35 @@ attendu → résultat obtenu → version testée.
   fermeture par bouton (toujours fonctionnels).
 - **Version testée** : v157
 
-## Résumé — état au 05/09/2026 (v157)
+### 19.6 — Demandes de Wake Lock simultanées *(cause racine trouvée et corrigée, v158)*
+- **Contexte** : deux demandes de Wake Lock pouvaient s'exécuter en
+  parallèle (une à l'ouverture, une autre lors d'un retour de
+  visibilité) — celle qui se terminait en second écrasait la référence
+  de l'autre, "perdant" le premier verrou (jamais relâché). Un risque
+  additionnel existait dans `releaseWakeLock()` elle-même : la variable
+  n'était remise à `null` qu'après avoir attendu `release()`, ce qui
+  pouvait effacer un NOUVEAU verrou assigné entre-temps par une demande
+  différente survenue pendant cette attente.
+- **Corrigé** : une promesse partagée empêche désormais deux vraies
+  demandes simultanées — un second appel pendant qu'une demande est
+  déjà en cours attend simplement le résultat de la première plutôt
+  que d'en lancer une nouvelle. `releaseWakeLock()` capture le verrou
+  localement et remet la variable globale à `null` immédiatement,
+  avant d'attendre `release()`.
+- **Résultat obtenu** : ✅ Réussi — testé les deux scénarios exacts :
+  deux appels "simultanés" à `requestWakeLock()` ne déclenchent qu'un
+  seul vrai appel à `navigator.wakeLock.request()`, les deux appelants
+  recevant correctement le même résultat ; et, pour la course au
+  relâchement, un nouveau verrou assigné pendant qu'un ancien
+  relâchement est encore en attente **survit** correctement — vérifié
+  en confirmant que ce nouveau verrou est bien relâché lors de la
+  fermeture réelle qui suit, pas perdu silencieusement.
+- **Non-régression** : Échap, fermeture par bouton, octroi tardif après
+  fermeture simple, et idempotence du nettoyage — tous revérifiés,
+  toujours fonctionnels.
+- **Version testée** : v158
+
+## Résumé — état au 05/09/2026 (v158)
 
 - **jsQR et jsPDF désormais embarqués localement** (v141) — seul
   Tesseract (import par photo) reste chargé depuis un CDN.

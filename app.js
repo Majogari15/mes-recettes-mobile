@@ -3830,23 +3830,41 @@ function stopSpeaking() {
 // donc le redemander quand la visibilité revient, tant que le mode
 // cuisine est encore ouvert.
 let currentWakeLock = null;
+// Une promesse partagée tant qu'une demande est en cours — empêche
+// deux demandes simultanées (une à l'ouverture, une autre lors d'un
+// retour de visibilité) de s'exécuter en parallèle, ce qui pouvait
+// faire perdre la référence de l'une des deux (celle qui se termine en
+// premier se faisant écraser par celle qui se termine ensuite).
+let wakeLockRequestInFlight = null;
 async function requestWakeLock() {
   if (!("wakeLock" in navigator)) return false;
-  try {
-    currentWakeLock = await navigator.wakeLock.request("screen");
-    return true;
-  } catch (e) {
-    // Refusé (économie d'énergie, batterie faible...) : l'écran pourra
-    // s'éteindre normalement, ce n'est pas une erreur à signaler comme
-    // un vrai problème technique.
-    currentWakeLock = null;
-    return false;
-  }
+  if (wakeLockRequestInFlight) return wakeLockRequestInFlight;
+  wakeLockRequestInFlight = (async () => {
+    try {
+      currentWakeLock = await navigator.wakeLock.request("screen");
+      return true;
+    } catch (e) {
+      // Refusé (économie d'énergie, batterie faible...) : l'écran pourra
+      // s'éteindre normalement, ce n'est pas une erreur à signaler comme
+      // un vrai problème technique.
+      currentWakeLock = null;
+      return false;
+    } finally {
+      wakeLockRequestInFlight = null;
+    }
+  })();
+  return wakeLockRequestInFlight;
 }
 async function releaseWakeLock() {
-  if (currentWakeLock) {
-    try { await currentWakeLock.release(); } catch (e) { /* sans conséquence */ }
-    currentWakeLock = null;
+  // Capturé localement et la variable globale remise à null
+  // IMMÉDIATEMENT, avant d'attendre release() — si un nouveau verrou
+  // est assigné à currentWakeLock pendant cette attente (par une
+  // demande différente), il ne doit surtout pas être effacé une fois
+  // ce relâchement-ci terminé.
+  const lock = currentWakeLock;
+  currentWakeLock = null;
+  if (lock) {
+    try { await lock.release(); } catch (e) { /* sans conséquence */ }
   }
 }
 
@@ -7404,7 +7422,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 157;
+const APP_VERSION = 158;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
