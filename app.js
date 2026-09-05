@@ -5623,6 +5623,7 @@ function parseIngredientString(str) {
   else if (["boîte", "boite", "conserve"].includes(uw)) unit = "boîte";
   else if (uw === "sachet") unit = "sachet";
   else if (uw === "pot") unit = "pot";
+  else if (uw === "paquet") unit = "sachet";
   else if (["tranche", "tranches"].includes(uw)) unit = "tranche";
   else if (["gousse", "gousses"].includes(uw)) unit = "gousse";
 
@@ -5831,7 +5832,7 @@ function parseOcrRecipeText(rawText) {
     if (cookMatch) { const t = parseTimeExpression(cookMatch[1]); if (t != null) cookTime = t; }
   });
 
-  return { name, ingredients: adjustedIngredients, description: descriptionLines.join("\n"), prepTime, cookTime, persons: persons || 4 };
+  return { name, ingredients: adjustedIngredients, description: descriptionLines.join("\n"), prepTime, cookTime, persons };
 }
 
 let tesseractLibPromise = null;
@@ -5849,16 +5850,34 @@ function loadTesseractLib() {
 }
 const TESSERACT_LANG_MAP = { fr: "fra", en: "eng", es: "spa", de: "deu" };
 
-async function runOcrOnImage(file) {
+// Un seul Worker Tesseract réutilisé pour toute une série de photos,
+// plutôt que d'en créer et détruire un à chaque image — avec huit
+// photos, cela représentait huit initialisations complètes du moteur
+// (chargement du modèle de langue compris), lent et gourmand en
+// mémoire sur les appareils d'entrée de gamme.
+let sharedTesseractWorker = null;
+let sharedTesseractWorkerLang = null;
+async function getSharedTesseractWorker() {
   await loadTesseractLib();
   const lang = TESSERACT_LANG_MAP[CURRENT_LANG] || "eng";
-  const worker = await window.Tesseract.createWorker(lang);
-  try {
-    const { data } = await worker.recognize(file);
-    return data.text;
-  } finally {
-    await worker.terminate();
+  if (sharedTesseractWorker && sharedTesseractWorkerLang === lang) return sharedTesseractWorker;
+  if (sharedTesseractWorker) await sharedTesseractWorker.terminate();
+  sharedTesseractWorker = await window.Tesseract.createWorker(lang);
+  sharedTesseractWorkerLang = lang;
+  return sharedTesseractWorker;
+}
+async function terminateSharedTesseractWorker() {
+  if (sharedTesseractWorker) {
+    const w = sharedTesseractWorker;
+    sharedTesseractWorker = null;
+    sharedTesseractWorkerLang = null;
+    await w.terminate();
   }
+}
+async function runOcrOnImage(file) {
+  const worker = await getSharedTesseractWorker();
+  const { data } = await worker.recognize(file);
+  return data.text;
 }
 
 // Devine à quelle section appartient le texte reconnu sur une photo :
@@ -5876,27 +5895,64 @@ function detectPhotoSection(parsed) {
   return null;
 }
 
+// Réinterprète le texte brut d'une photo selon la section choisie
+// (automatiquement ou manuellement) — le choix manuel doit vraiment
+// changer la méthode d'analyse, pas seulement l'étiquette affichée.
+// Une photo classée "Ingrédients" traite chaque ligne comme un
+// ingrédient potentiel, sans exiger de mot-clé "Ingrédients" en tête
+// (la photo est déjà supposée cadrée sur cette seule section) ; une
+// photo "Préparation" garde tout le texte tel quel comme étapes ; une
+// photo "Recette complète" utilise l'analyse habituelle (recherche des
+// deux sections dans le même texte) ; "Infos générales" ne cherche que
+// le nom, le nombre de personnes et les temps, jamais d'ingrédients ni
+// d'étapes ; "Autre" ne participe pas à la fusion.
+function deriveSectionDataForPhoto(rawText, section) {
+  const empty = { name: "", ingredients: [], description: "", persons: null, prepTime: null, cookTime: null };
+  if (section === "mixed") return parseOcrRecipeText(rawText);
+  if (section === "general") {
+    const full = parseOcrRecipeText(rawText);
+    return { ...empty, name: full.name, persons: full.persons, prepTime: full.prepTime, cookTime: full.cookTime };
+  }
+  if (section === "ingredients") {
+    const lines = (rawText || "").split("\n").map((l) => l.trim()).filter(Boolean);
+    const ingredients = lines
+      .filter((l) => !/^personnes?\s*[+\-]?$/i.test(l))
+      .map((l) => l.replace(/^[-•*]\s*/, ""))
+      .map(parseIngredientString)
+      .filter((i) => i.name);
+    return { ...empty, ingredients };
+  }
+  if (section === "preparation") {
+    const lines = (rawText || "").split("\n").map((l) => l.trim()).filter(Boolean);
+    return { ...empty, description: lines.join("\n") };
+  }
+  return empty; // "other" : aucune extraction
+}
+
 // Combine les résultats de plusieurs photos, chacune étiquetée avec sa
 // section, en une seule recette prête à être vérifiée dans le
-// formulaire — dans l'ordre où les photos ont été ajoutées.
+// formulaire — dans l'ordre où les photos ont été ajoutées. Le nom et
+// le nombre de personnes ne viennent jamais d'une photo "Ingrédients"
+// ou "Préparation" seule (leur "première ligne" n'a aucune raison
+// d'être le nom de la recette), et une valeur de secours (4 personnes)
+// n'est appliquée qu'une fois toutes les photos combinées, jamais
+// avant — sinon, une photo sans portion détectée imposait sa valeur
+// par défaut avant même qu'une autre photo n'ait pu fournir la vraie
+// valeur, selon l'ordre d'ajout.
 function mergeMultiPhotoResults(photos) {
   let name = "";
   let ingredients = [];
   let descriptionParts = [];
   let persons = null, prepTime = null, cookTime = null;
   photos.forEach((p) => {
-    if (!p.parsed) return;
-    const section = p.section;
-    if (section === "ingredients" || section === "mixed") {
-      ingredients = ingredients.concat(p.parsed.ingredients);
-    }
-    if (section === "preparation" || section === "mixed") {
-      if (p.parsed.description && p.parsed.description.trim()) descriptionParts.push(p.parsed.description.trim());
-    }
-    if (!name && p.parsed.name) name = p.parsed.name;
-    if (persons == null && p.parsed.persons) persons = p.parsed.persons;
-    if (prepTime == null && p.parsed.prepTime) prepTime = p.parsed.prepTime;
-    if (cookTime == null && p.parsed.cookTime) cookTime = p.parsed.cookTime;
+    const data = p.sectionData;
+    if (!data) return;
+    if (data.ingredients && data.ingredients.length) ingredients = ingredients.concat(data.ingredients);
+    if (data.description && data.description.trim()) descriptionParts.push(data.description.trim());
+    if (!name && data.name) name = data.name;
+    if (persons == null && data.persons) persons = data.persons;
+    if (prepTime == null && data.prepTime) prepTime = data.prepTime;
+    if (cookTime == null && data.cookTime) cookTime = data.cookTime;
   });
   return { name, ingredients, description: descriptionParts.join("\n\n"), persons: persons || 4, prepTime, cookTime };
 }
@@ -5955,7 +6011,12 @@ function renderImportPhoto() {
         const select = el(`<select style="width:100%;padding:6px;border-radius:8px;border:1px solid var(--border);font-size:13px;">
           ${Object.keys(SECTION_LABELS).map((key) => `<option value="${key}" ${p.section === key ? "selected" : ""}>${escapeHtml(SECTION_LABELS[key]())}</option>`).join("")}
         </select>`);
-        select.addEventListener("change", () => { p.section = select.value; p.autoDetected = false; });
+        select.addEventListener("change", () => {
+          p.section = select.value;
+          p.autoDetected = false;
+          p.sectionData = deriveSectionDataForPhoto(p.rawText, p.section);
+          refreshUi();
+        });
         info.appendChild(select);
         if (p.autoDetected) {
           info.appendChild(el(`<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">✓ ${escapeHtml(t("import_photo_auto_detected"))}</div>`));
@@ -5988,7 +6049,7 @@ function renderImportPhoto() {
       reader.onload = () => resolve(reader.result);
       reader.readAsDataURL(file);
     });
-    const entry = { id: uid(), thumbnail, status: "processing", parsed: null, section: null, autoDetected: false, errorMessage: null };
+    const entry = { id: uid(), thumbnail, status: "processing", rawText: null, parsed: null, sectionData: null, section: null, autoDetected: false, errorMessage: null };
     state.multiPhotoImport.push(entry);
     refreshUi();
     try {
@@ -5997,10 +6058,12 @@ function renderImportPhoto() {
         entry.status = "error";
         entry.errorMessage = t("import_photo_no_text");
       } else {
+        entry.rawText = rawText;
         entry.parsed = parseOcrRecipeText(rawText);
         const detected = detectPhotoSection(entry.parsed);
         entry.section = detected || "other";
         entry.autoDetected = !!detected;
+        entry.sectionData = deriveSectionDataForPhoto(rawText, entry.section);
         entry.status = "done";
       }
     } catch (err) {
@@ -6013,10 +6076,11 @@ function renderImportPhoto() {
   cameraInput.addEventListener("change", (e) => { handleNewPhoto(e.target.files[0]); e.target.value = ""; });
   galleryInput.addEventListener("change", (e) => { handleNewPhoto(e.target.files[0]); e.target.value = ""; });
 
-  mergeBtn.addEventListener("click", () => {
+  mergeBtn.addEventListener("click", async () => {
     const usable = state.multiPhotoImport.filter((p) => p.status === "done");
     const merged = mergeMultiPhotoResults(usable);
     state.multiPhotoImport = [];
+    await terminateSharedTesseractWorker();
     state.editingRecipeId = null;
     state.formIngredients = merged.ingredients.length ? merged.ingredients : [{ name: "", quantity: "", unit: "pièce" }];
     state.formAllergens = [];
@@ -6922,7 +6986,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 145;
+const APP_VERSION = 146;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

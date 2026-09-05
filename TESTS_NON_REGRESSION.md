@@ -777,6 +777,75 @@ attendu → résultat obtenu → version testée.
   photos et le vrai OCR Tesseract (impossible à simuler entièrement
   dans l'environnement de test).
 
+### 13.5 — Choix manuel réellement fonctionnel *(cause racine trouvée et corrigée, v146)*
+- **Contexte** : après un vrai test avec des photos HelloFresh, l'autre
+  IA a confirmé que le sélecteur manuel ne faisait que changer
+  l'étiquette affichée — il ne réanalysait jamais le texte brut. Une
+  photo mal classée automatiquement restait donc mal analysée même
+  après correction manuelle.
+- **Corrigé** : le texte OCR brut est désormais conservé pour chaque
+  photo, et 4 analyseurs dédiés par section réinterprètent vraiment ce
+  texte selon le choix (fait automatiquement ou manuellement) —
+  "Ingrédients" traite chaque ligne comme un ingrédient potentiel sans
+  exiger de mot-clé, "Préparation" garde tout comme étapes, "Recette
+  complète" utilise l'analyse habituelle, "Infos générales" ne cherche
+  que nom/personnes/temps.
+- **Résultat obtenu** : ✅ Réussi — testé avec un vrai clic utilisateur
+  sur le menu déroulant (`select_option`, pas un appel direct à une
+  fonction) : un texte mal classé automatiquement en "Préparation" (0
+  ingrédient trouvé) donne bien les 3 ingrédients corrects une fois
+  reclassé manuellement en "Ingrédients".
+- **Version testée** : v146
+
+### 13.6 — Fusion : nom et personnes ne dépendent plus de l'ordre *(cause racine trouvée et corrigée, v146)*
+- **Contexte** : deux bugs trouvés lors du test réel : (1) le nom
+  pouvait venir de n'importe quelle photo, y compris une photo
+  "Ingrédients" dont la première ligne n'a aucune raison d'être un nom
+  de recette ; (2) chaque photo sans portion détectée recevait
+  automatiquement 4, et la fusion gardait la valeur de la première
+  photo traitée — une photo d'étapes traitée avant une photo
+  d'ingrédients avec la vraie portion (2) pouvait donc imposer 4 à
+  tort, doublant certaines quantités à l'affichage.
+- **Corrigé** : `parseOcrRecipeText()` renvoie maintenant `null` quand
+  aucune portion n'est réellement détectée (au lieu de supposer 4
+  immédiatement) ; le repli à 4 ne s'applique qu'une fois toutes les
+  photos fusionnées. Le nom ne peut plus provenir des sections
+  "Ingrédients"/"Préparation" (les analyseurs dédiés ne le renseignent
+  jamais pour ces sections).
+- **Résultat obtenu** : ✅ Réussi — testé avec le vrai pipeline complet
+  (`deriveSectionDataForPhoto` puis `mergeMultiPhotoResults`, pas des
+  données fabriquées à la main) : le nom vient bien de la photo "Infos
+  générales", jamais de la photo "Ingrédients" même quand sa première
+  ligne ressemble à un titre. Personnes confirmées identiques (2) peu
+  importe l'ordre des deux photos testées.
+- **Version testée** : v146
+
+### 13.7 — Un seul Worker Tesseract réutilisé *(cause racine trouvée et corrigée, v146)*
+- **Contexte** : un nouveau Worker Tesseract était créé et détruit à
+  chaque photo — avec huit images, cela représente huit initialisations
+  complètes du moteur, lent et gourmand en mémoire sur les appareils
+  d'entrée de gamme (signalé pour le Samsung A06).
+- **Corrigé** : un seul Worker partagé pour toute la série de photos,
+  recréé seulement si la langue change, terminé une fois la fusion
+  effectuée.
+- **Résultat obtenu** : ✅ Réussi — testé avec 2 photos : une seule
+  création de Worker confirmée (au lieu de 2).
+- **Version testée** : v146
+
+### 13.8 — Unité "paquet" non reconnue *(cause racine trouvée et corrigée, v146)*
+- **Contexte** : "1paquet Chips" ne reconnaissait pas "paquet" comme
+  unité, le mot entier finissant dans le nom de l'ingrédient.
+- **Corrigé** : "paquet"/"paquets" reconnus, fusionnés avec l'unité
+  "sachet" déjà existante dans le formulaire.
+- **Résultat obtenu** : ✅ Réussi — testé au singulier et au pluriel.
+- **Version testée** : v146
+- **Limite structurelle non résolue** : une photo complète
+  multi-colonnes (HelloFresh notamment) peut toujours faire lire par
+  Tesseract plusieurs colonnes fusionnées sur une même ligne — aucune
+  de ces corrections ne peut séparer un ingrédient et une étape
+  mélangés sur la même ligne reconnue. Une photo bien rapprochée d'une
+  seule section reste nécessaire pour un résultat fiable.
+
 ## 11. Bibliothèques embarquées localement
 
 ### 11.1 — jsQR et jsPDF en local *(fourni par l'utilisateur, testé et intégré, v141)*
