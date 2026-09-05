@@ -123,6 +123,24 @@ function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
+// Formate une erreur interceptée en texte lisible, quelle que soit sa
+// forme réelle — un rejet de promesse n'est pas toujours un vrai objet
+// Error (Tesseract, par exemple, peut rejeter sans aucune valeur), et
+// `String(undefined)` produit littéralement le texte "undefined" à
+// l'écran, ce qui n'aide personne à comprendre ce qui s'est passé.
+function formatCaughtError(err) {
+  if (err instanceof Error) return (err.name ? err.name + " — " : "") + (err.message || "");
+  if (err && typeof err === "object") {
+    if (err.message) return String(err.message);
+    if (err.type) return "Event — " + err.type; // ex. une erreur DOM capturée comme un Event, pas une vraie Error
+    try {
+      const asJson = JSON.stringify(err);
+      if (asJson && asJson !== "{}") return asJson;
+    } catch (e) { /* pas sérialisable, retombe sur String(err) ci-dessous */ }
+  }
+  return err === undefined || err === null ? "Erreur inconnue" : String(err);
+}
+
 /* ======================================================================
    ÉTAT DE L'APPLICATION
    ====================================================================== */
@@ -2630,7 +2648,7 @@ async function openQrCodeModal(recipe, persons) {
       await loadQrCodeLib();
       holder.innerHTML = generateQrCodeImgTag(parts[currentPart]);
     } catch (e) {
-      holder.innerHTML = `<div><span style="font-size:13px;color:var(--danger);">${escapeHtml(t("qrcode_load_error"))}</span><div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml((e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e)))}</div></div>`;
+      holder.innerHTML = `<div><span style="font-size:13px;color:var(--danger);">${escapeHtml(t("qrcode_load_error"))}</span><div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml(formatCaughtError(e))}</div></div>`;
     }
     if (parts.length > 1) {
       navBar.style.display = "flex";
@@ -2676,9 +2694,11 @@ async function openQrCodeModal(recipe, persons) {
 
 /* ======================================================================
    PARTAGE DE LA LISTE DE COURSES VIA QR CODE
-   Format compact (pas du JSON, pour maximiser ce qui tient dans un seul
-   QR code) : une ligne d'en-tête pour identifier le format, puis une
-   ligne par article "nom|quantité|unité|coché".
+   Format compact (pas du JSON, pour rester léger) : une ligne d'en-tête
+   pour identifier le format, puis une ligne par article
+   "nom|quantité|unité|coché". Réparti automatiquement sur plusieurs QR
+   si nécessaire (voir splitIntoQrParts) — aucun article n'est jamais
+   retiré, contrairement à l'ancienne troncature.
    ====================================================================== */
 const SHOPPING_QR_PREFIX = "MESRECETTES_SHOPPING:1\n";
 
@@ -2877,7 +2897,7 @@ async function openShoppingQrCodeModal() {
       await loadQrCodeLib();
       holder.innerHTML = generateQrCodeImgTag(parts[currentPart]);
     } catch (e) {
-      holder.innerHTML = `<div><span style="font-size:13px;color:var(--danger);">${escapeHtml(t("qrcode_load_error"))}</span><div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml((e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e)))}</div></div>`;
+      holder.innerHTML = `<div><span style="font-size:13px;color:var(--danger);">${escapeHtml(t("qrcode_load_error"))}</span><div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml(formatCaughtError(e))}</div></div>`;
     }
     if (parts.length > 1) {
       navBar.style.display = "flex";
@@ -3184,7 +3204,7 @@ async function openQrScanModal() {
         statusEl.textContent = `${t("qrscan_no_code_found")} (${result.width}×${result.height}px)` + (result.nativeError ? ` [${result.nativeError}]` : "");
       }
     } catch (err) {
-      statusEl.textContent = (err && err.name ? err.name + " — " : "") + (err && err.message ? err.message : String(err));
+      statusEl.textContent = formatCaughtError(err);
     }
     e.target.value = "";
   });
@@ -3291,7 +3311,7 @@ async function openQrScanModal() {
         statusEl.textContent = `${t("qrscan_no_code_found")} (${result.width}×${result.height}px, ${video.videoWidth}×${video.videoHeight})` + (result.nativeError ? ` [${result.nativeError}]` : "");
       }
     } catch (e) {
-      statusEl.textContent = (e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e));
+      statusEl.textContent = formatCaughtError(e);
     }
   });
 }
@@ -4579,7 +4599,7 @@ function shareBackupData(file) {
       // ni un cas où basculer sur le téléchargement classique. Toute
       // autre erreur est un vrai échec technique à ne pas cacher.
       if (e && e.name === "AbortError") return { ok: true, cancelled: true };
-      return { ok: false, cancelled: false, error: (e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e)) };
+      return { ok: false, cancelled: false, error: formatCaughtError(e) };
     }
   );
 }
@@ -5535,7 +5555,20 @@ function parseIngredientString(str) {
   }
 
   const match = text.match(/^([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([a-zA-Zéèàêûîôçñü]*)\.?\s*(.*)$/);
-  if (!match || !match[1]) return { name: text, quantity: null, unit: "pièce" };
+  if (!match || !match[1]) {
+    // Aucun chiffre en tête : essaie l'ordre inversé "Nom Quantité
+    // Unité" (ex. "Grenailles 500 g", "Thon au naturel 1 boîte") — un
+    // format courant sur certains sites/kits repas (HelloFresh
+    // notamment), où la quantité et l'unité arrivent à la fin plutôt
+    // qu'au début.
+    const reversedMatch = text.match(/^(.+?)\s+([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([a-zA-Zéèàêûîôçñü]+)\.?\s*$/i);
+    if (reversedMatch) {
+      const [, namePart, qtyStr, unitWordRaw] = reversedMatch;
+      const reversedResult = parseIngredientString(`${qtyStr} ${unitWordRaw} ${namePart}`);
+      if (reversedResult.name) return reversedResult;
+    }
+    return { name: text, quantity: null, unit: "pièce" };
+  }
   const [, qtyStr, unitWordRaw, rest] = match;
   let quantity;
   if (qtyStr.includes("/")) {
@@ -5687,7 +5720,7 @@ function parseOcrRecipeText(rawText) {
   const lines = (rawText || "").split("\n").map((l) => l.trim()).filter(Boolean);
   if (!lines.length) return { name: "", ingredients: [], description: "", prepTime: null, cookTime: null };
 
-  const ingredientMarker = /^(ingr[ée]dients?|ingredients|ingredientes|zutaten)\s*:?\s*$/i;
+  const ingredientMarker = /^(ingr[ée]dients?|ingredients|ingredientes|zutaten)\s*:?\s*(pour\s+\d+\s*(personnes?)?|for\s+\d+\s*(people|servings?)?|para\s+\d+\s*(personas?)?|f[üu]r\s+\d+\s*(personen)?)?\s*$/i;
   const instructionMarker = /^(pr[ée]paration|[ée]tapes|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\s*:?\s*$/i;
   // Toute section qui doit arrêter la liste des ingrédients, pas
   // seulement celle des étapes — "Ustensiles" par exemple, très courant
@@ -5840,7 +5873,7 @@ function renderImportPhoto() {
     } catch (err) {
       statusHolder.innerHTML = "";
       statusHolder.appendChild(el(`<div>${escapeHtml(t("import_photo_error"))}</div>`));
-      statusHolder.appendChild(el(`<div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml((err && err.name ? err.name + " — " : "") + (err && err.message ? err.message : String(err)))}</div>`));
+      statusHolder.appendChild(el(`<div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml(formatCaughtError(err))}</div>`));
       chooseBtn.disabled = false;
     }
   });
@@ -6226,7 +6259,7 @@ async function fetchRecipeFromUrl(url, onAttempt) {
       // impossible de savoir POURQUOI le Worker a échoué si un service
       // de repli masque le problème en réussissant à sa place.
       try {
-        localStorage.setItem("lastWorkerError", `${new Date().toISOString()} — ${(e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e))}`.slice(0, 300));
+        localStorage.setItem("lastWorkerError", `${new Date().toISOString()} — ${formatCaughtError(e)}`.slice(0, 300));
       } catch (err) { /* sans conséquence */ }
     }
   }
@@ -6740,7 +6773,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 141;
+const APP_VERSION = 143;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

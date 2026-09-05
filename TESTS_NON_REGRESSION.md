@@ -644,6 +644,61 @@ attendu → résultat obtenu → version testée.
 
 ---
 
+## 12. Import par photo (OCR)
+
+### 12.1 — CSP bloquait le Worker Tesseract *(cause racine trouvée et corrigée, v143)*
+- **Contexte** : l'import par photo échouait systématiquement (4 échecs
+  rapportés) avec un message "undefined" peu informatif.
+- **Cause confirmée** par plusieurs sources indépendantes (AWS IVS,
+  Mapbox, Apryse, exemple CSP spécifique à Tesseract.js) : la CSP
+  n'autorisait pas les Web Workers créés via `blob:` (utilisés par
+  Tesseract.js), ni la compilation WebAssembly.
+- **Corrigé** : ajout de `worker-src 'self' blob: https://cdn.jsdelivr.net;`
+  et de `'wasm-unsafe-eval'` à `script-src`.
+- **Version testée** : v143 — **redemande une vérification physique**
+  pour confirmer que l'OCR démarre enfin réellement (impossible à
+  tester avec certitude en simulation, Tesseract nécessitant un vrai
+  appareil pour la reconnaissance).
+
+### 12.2 — Message "undefined" en cas d'échec *(cause racine trouvée et corrigée, v143)*
+- **Cause confirmée** : un rejet de promesse sans valeur (`undefined`)
+  faisait passer par `String(undefined)`, produisant littéralement le
+  texte "undefined" à l'écran. Ce même motif fragile existait à 7
+  endroits différents dans le code, pas seulement pour l'OCR.
+- **Corrigé** : nouvelle fonction `formatCaughtError()` réutilisée
+  partout, gérant explicitement les cas `undefined`/`null`, les objets
+  sans `.name`/`.message`, les `Event` DOM, et les valeurs simples.
+- **Résultat obtenu** : ✅ Réussi — testé avec 8 formes d'erreur
+  différentes (dont `undefined` et `null`), aucune ne produit plus la
+  chaîne "undefined".
+- **Version testée** : v143
+
+### 12.3 — Analyse : en-tête "Ingrédients pour X personnes" *(cause racine trouvée et corrigée, v143)*
+- **Contexte** : des photos HelloFresh contenant "Ingrédients pour 2
+  personnes" n'étaient pas reconnues comme le début de la section
+  ingrédients (seul le mot seul "Ingrédients" était reconnu).
+- **Corrigé** : la détection accepte désormais un texte de personnes
+  après le mot-clé, dans les 4 langues.
+- **Résultat obtenu** : ✅ Réussi — testé avec le texte exact "Ingrédients
+  pour 2 personnes" suivi de 3 ingrédients : les 3 correctement
+  détectés, et le nombre de personnes (2) correctement extrait pour
+  normaliser les quantités par personne.
+- **Version testée** : v143
+
+### 12.4 — Analyse : ordre inversé "Nom Quantité Unité" *(cause racine trouvée et corrigée, v143)*
+- **Contexte** : le format HelloFresh place la quantité et l'unité
+  après le nom ("Grenailles 500 g"), jamais géré jusqu'ici — toute la
+  ligne devenait le nom, avec quantité nulle.
+- **Corrigé** : repli sur l'ordre inversé quand aucun chiffre n'est
+  trouvé en tête de ligne, en réutilisant toute la logique de
+  reconnaissance d'unité déjà existante.
+- **Résultat obtenu** : ✅ Réussi — testé avec "Grenailles 500 g",
+  "Haricots verts 1 sachet", "Thon au naturel 1 boîte" : tous
+  correctement reconnus (nom, quantité et unité exacts). Non-régression
+  confirmée sur l'ordre normal ("500 g Farine") et sur un ingrédient
+  sans quantité ("Sel").
+- **Version testée** : v143
+
 ## 11. Bibliothèques embarquées localement
 
 ### 11.1 — jsQR et jsPDF en local *(fourni par l'utilisateur, testé et intégré, v141)*
