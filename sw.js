@@ -3,7 +3,7 @@
 // ensuite (les données elles-mêmes sont stockées séparément, dans IndexedDB,
 // géré directement par app.js).
 
-const CACHE_NAME = "mes-recettes-cache-v161";
+const CACHE_NAME = "mes-recettes-cache-v163";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -125,15 +125,24 @@ self.addEventListener("fetch", (event) => {
 // Clic sur une notification (ex. minuteur de cuisine terminé) : ramène
 // au premier plan une fenêtre déjà ouverte de l'application plutôt que
 // d'en ouvrir une nouvelle à chaque fois, ou en ouvre une si aucune
-// n'est disponible.
+// n'est disponible. Si la notification indique une recette précise
+// (voir showTimerNotification dans app.js), navigue vers elle avec un
+// paramètre d'URL que app.js interprète au démarrage pour rouvrir
+// directement le mode cuisine correspondant, plutôt que de simplement
+// ramener au premier plan l'écran où l'utilisateur se trouvait avant.
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
+  const recipeId = event.notification.data && event.notification.data.recipeId;
+  const targetUrl = recipeId ? `./?openRecipe=${encodeURIComponent(recipeId)}` : "./";
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
-        if ("focus" in client) return client.focus();
+        if ("focus" in client) {
+          if (recipeId && "postMessage" in client) client.postMessage({ type: "openRecipe", recipeId });
+          return client.focus();
+        }
       }
-      if (self.clients.openWindow) return self.clients.openWindow("./");
+      if (self.clients.openWindow) return self.clients.openWindow(targetUrl);
     })
   );
 });

@@ -1527,7 +1527,7 @@ async function addRecipeToShopping(recipe, persons) {
 
   (recipe.ingredients || []).forEach((ing) => {
     const neededQty = ing.quantity != null ? Number(ing.quantity) * persons : null;
-    const { adjustedQty, reducedAmount, fullyCovered, claimKey, claimAmount } = computePantryReduction(ing.name, ing.unit, neededQty, pendingClaims);
+    const { adjustedQty, reducedAmount, fullyCovered, claimKey, claimAmount, claimKind } = computePantryReduction(ing.name, ing.unit, neededQty, pendingClaims);
     if (fullyCovered) {
       summaryLines.push(t("pantry_reduction_fully_covered", { name: translateIngredientName(ing.name) }));
     } else if (reducedAmount > 0) {
@@ -1537,9 +1537,9 @@ async function addRecipeToShopping(recipe, persons) {
       pendingClaims.push({ ingredientKey: claimKey, amount: claimAmount });
     }
     if (fullyCovered) {
-      if (claimKey && claimAmount) fullyCoveredClaims.push({ claimKey, claimAmount });
+      if (claimKey && claimAmount) fullyCoveredClaims.push({ claimKey, claimAmount, claimKind });
     } else {
-      plan.push({ name: ing.name, quantity: adjustedQty, unit: ing.unit, claimKey, claimAmount });
+      plan.push({ name: ing.name, quantity: adjustedQty, unit: ing.unit, claimKey, claimAmount, claimKind });
     }
   });
 
@@ -1551,10 +1551,12 @@ async function addRecipeToShopping(recipe, persons) {
   // d'ici — après un éventuel "Annuler" ci-dessus, rien n'aura été
   // modifié. Celles des ingrédients entièrement couverts sont
   // attachées à cette opération d'ajout précise (voir operationId).
-  fullyCoveredClaims.forEach(({ claimKey, claimAmount }) => commitPantryClaim(claimKey, claimAmount, "recipe", operationId));
+  for (const { claimKey, claimAmount, claimKind } of fullyCoveredClaims) {
+    await commitPantryClaim(claimKey, claimAmount, "recipe", operationId, claimKind);
+  }
 
   const puts = [];
-  plan.forEach((ing) => {
+  for (const ing of plan) {
     const existing = items.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
     let resultItem;
     if (existing && ing.quantity != null && existing.quantity != null) {
@@ -1568,8 +1570,8 @@ async function addRecipeToShopping(recipe, persons) {
     // Attachée à l'article de courses réel qui en résulte (existant
     // fusionné, ou nouvellement créé) — permet de la libérer
     // précisément si CET article est ensuite supprimé ou modifié.
-    if (ing.claimKey && ing.claimAmount) commitPantryClaim(ing.claimKey, ing.claimAmount, "shopping", resultItem.id);
-  });
+    if (ing.claimKey && ing.claimAmount) await commitPantryClaim(ing.claimKey, ing.claimAmount, "shopping", resultItem.id, ing.claimKind);
+  }
   await Promise.all(puts.map((item) => storePut("shopping", item)));
   state.screen = "shopping";
   render();
@@ -1640,7 +1642,7 @@ function renderShopping() {
     if (await customConfirm(t("shopping_clear_confirm"))) {
       await storeClear("shopping");
       state.shopping = [];
-      state.pantryClaimedThisSession = []; persistPantryClaims();
+      state.pantryClaimedThisSession = []; await persistPantryClaims();
       render();
     }
   });
@@ -1672,7 +1674,7 @@ function renderSavedShoppingLists() {
       const items = JSON.parse(JSON.stringify(saved.items)).map((i) => ({ ...i, id: uid() }));
       for (const item of items) await storePut("shopping", item);
       state.shopping = items;
-      state.pantryClaimedThisSession = []; persistPantryClaims();
+      state.pantryClaimedThisSession = []; await persistPantryClaims();
       state.screen = "shopping";
       render();
     });
@@ -1707,7 +1709,7 @@ function shoppingItemRow(item, wrap) {
     if (!await customConfirm(t("shopping_item_delete_confirm", { name: translateIngredientName(item.name) }))) return;
     await storeDelete("shopping", item.id);
     state.shopping = state.shopping.filter((i) => i.id !== item.id);
-    releasePantryClaimsForSource("shopping", item.id);
+    await releasePantryClaimsForSource("shopping", item.id);
     renderShoppingInto(wrap);
   });
   return row;
@@ -1808,7 +1810,7 @@ function openAddItemModal(storeName, existingItem) {
     // liste de courses (pas en modification, ni pour le garde-manger
     // lui-même, où ça n'aurait pas de sens).
     if (storeName === "shopping" && !isEdit) {
-      const { adjustedQty, reducedAmount, fullyCovered, claimKey, claimAmount } = computePantryReduction(name, unit, quantity);
+      const { adjustedQty, reducedAmount, fullyCovered, claimKey, claimAmount, claimKind } = computePantryReduction(name, unit, quantity);
       if (fullyCovered || reducedAmount > 0) {
         const line = fullyCovered
           ? t("pantry_reduction_fully_covered", { name: translateIngredientName(name) })
@@ -1818,7 +1820,7 @@ function openAddItemModal(storeName, existingItem) {
         // La réservation n'est appliquée pour de vrai qu'après ce point,
         // une fois la confirmation acceptée — attachée à cet article de
         // courses précis (voir itemId ci-dessus).
-        if (claimKey && claimAmount) commitPantryClaim(claimKey, claimAmount, "shopping", itemId);
+        if (claimKey && claimAmount) await commitPantryClaim(claimKey, claimAmount, "shopping", itemId, claimKind);
         if (fullyCovered) { overlay.remove(); return; }
         quantity = adjustedQty;
       }
@@ -1838,16 +1840,16 @@ function openAddItemModal(storeName, existingItem) {
       // éventuelle obsolète (basée sur l'ancienne quantité) — libère
       // UNIQUEMENT sa propre réservation, jamais celles créées par
       // d'autres articles pour ce même ingrédient.
-      releasePantryClaimsForSource("shopping", itemId);
+      await releasePantryClaimsForSource("shopping", itemId);
     }
     if (isPantry) {
       // Le stock physique du garde-manger a changé de façon
       // imprévisible (quantité, voire nom si renommé) — toute
       // réservation contre cet ingrédient devient invalide, peu
       // importe quelle source l'avait créée.
-      releasePantryClaimsForIngredient(normalize(name));
+      await releasePantryClaimsForIngredient(normalize(name));
       if (isEdit && normalize(existingItem.name) !== normalize(name)) {
-        releasePantryClaimsForIngredient(normalize(existingItem.name));
+        await releasePantryClaimsForIngredient(normalize(existingItem.name));
       }
     }
     if (isEdit) {
@@ -1888,7 +1890,7 @@ function renderPantry() {
         row.querySelector("button").addEventListener("click", async () => {
           await storeDelete("pantry", item.id);
           state.pantry = state.pantry.filter((p) => p.id !== item.id);
-          releasePantryClaimsForIngredient(normalize(item.name));
+          await releasePantryClaimsForIngredient(normalize(item.name));
           render();
         });
         list.appendChild(row);
@@ -1910,6 +1912,8 @@ function renderPantry() {
       let sourceLabel;
       if (claim.sourceType === "recipe") {
         sourceLabel = t("pantry_reservation_from_recipe");
+      } else if (claim.sourceType === "legacy") {
+        sourceLabel = t("pantry_reservation_legacy");
       } else {
         const shoppingItem = state.shopping.find((i) => i.id === claim.sourceId);
         sourceLabel = shoppingItem
@@ -1922,12 +1926,12 @@ function renderPantry() {
       // échoue silencieusement et affiche la clé brute non traduite.
       const properName = state.ingredientNames.find((n) => normalize(n) === claim.ingredientKey) || claim.ingredientKey;
       const row = el(`<div class="shopping-item">
-        <span class="label">${escapeHtml(translateIngredientName(properName))} — ${fmtQty(claim.amount)} <span style="color:var(--text-muted);font-size:12px;">(${escapeHtml(sourceLabel)})</span></span>
+        <span class="label">${escapeHtml(translateIngredientName(properName))} — ${fmtQty(claim.amount)} ${escapeHtml(kindToDisplayUnit(claim.kind))} <span style="color:var(--text-muted);font-size:12px;">(${escapeHtml(sourceLabel)})</span></span>
         <button class="remove-ing" style="width:32px;height:32px;" aria-label="${escapeHtml(t("pantry_reservation_cancel"))}">🗑</button>
       </div>`);
-      row.querySelector("button").addEventListener("click", () => {
+      row.querySelector("button").addEventListener("click", async () => {
         state.pantryClaimedThisSession = state.pantryClaimedThisSession.filter((c) => c.id !== claim.id);
-        persistPantryClaims();
+        await persistPantryClaims();
         render();
       });
       reservationsCard.appendChild(row);
@@ -1936,7 +1940,7 @@ function renderPantry() {
     resetBtn.addEventListener("click", async () => {
       if (!await customConfirm(t("pantry_reservations_reset_confirm"))) return;
       state.pantryClaimedThisSession = [];
-      persistPantryClaims();
+      await persistPantryClaims();
       render();
     });
     reservationsCard.appendChild(resetBtn);
@@ -3801,6 +3805,7 @@ function renderTimerRow(holder, timer) {
   }
   function dismissAlarm() {
     stopCookingTimer(timer);
+    closeTimerNotification(timer);
     row.classList.remove("alarming");
     startBtn.textContent = "▶️";
     startBtn.setAttribute("aria-label", t("cooking_timer_start"));
@@ -3814,8 +3819,16 @@ function renderTimerRow(holder, timer) {
     // passe brièvement en arrière-plan, le moteur JS est occupé...),
     // "remaining--" accumulerait ce retard silencieusement, faisant
     // sonner l'alarme plus tard que prévu même à l'écran visible.
-    timer.remaining = Math.max(0, Math.round((timer.endAt - Date.now()) / 1000));
-    if (timer.remaining <= 0) {
+    //
+    // Le déclenchement se décide sur le temps restant en millisecondes
+    // (msLeft), jamais sur la valeur arrondie en secondes : avec
+    // Math.round, un reste de 400 ms donnerait 0 et déclencherait
+    // l'alarme environ une demi-seconde trop tôt. Math.ceil pour
+    // l'affichage évite aussi d'afficher "0" pendant qu'il reste
+    // encore un peu de temps.
+    const msLeft = timer.endAt - Date.now();
+    timer.remaining = Math.max(0, Math.ceil(msLeft / 1000));
+    if (msLeft <= 0) {
       clearInterval(timer.interval);
       timer.interval = null;
       timer.running = false;
@@ -3825,7 +3838,7 @@ function renderTimerRow(holder, timer) {
       startBtn.setAttribute("aria-label", t("cooking_stop_alarm"));
       playBeep();
       vibrateDevice();
-      showTimerNotification();
+      showTimerNotification(timer);
       timer.alarmInterval = setInterval(() => { playBeep(); vibrateDevice(); }, 1200);
     } else {
       countdownEl.textContent = formatCountdown(timer.remaining);
@@ -3834,11 +3847,17 @@ function renderTimerRow(holder, timer) {
   startBtn.addEventListener("click", () => {
     if (timer.alarming) { dismissAlarm(); return; }
     if (timer.running) {
+      // Recalcule le temps restant exact à cet instant précis, avant
+      // d'arrêter — sans ça, la valeur pouvait dater du dernier tick()
+      // (jusqu'à presque une seconde de moins que le temps réellement
+      // écoulé).
+      timer.remaining = Math.max(0, Math.ceil((timer.endAt - Date.now()) / 1000));
       clearInterval(timer.interval);
       timer.interval = null;
       timer.running = false;
       startBtn.textContent = "▶️";
       startBtn.setAttribute("aria-label", t("cooking_timer_start"));
+      countdownEl.textContent = formatCountdown(timer.remaining);
       setInputsDisabled(false);
     } else {
       if (timer.remaining <= 0) timer.remaining = timer.minutes * 60 + timer.seconds;
@@ -3849,7 +3868,15 @@ function renderTimerRow(holder, timer) {
       startBtn.setAttribute("aria-label", t("cooking_timer_pause"));
       setInputsDisabled(true);
       timer.interval = setInterval(tick, 1000);
-      ensureNotificationPermission();
+      ensureNotificationPermission().then(() => {
+        if ("Notification" in window && Notification.permission === "denied") {
+          const statusEl = document.getElementById("cooking-notification-status");
+          if (statusEl) {
+            statusEl.textContent = t("cooking_notification_permission_denied");
+            statusEl.style.display = "block";
+          }
+        }
+      });
     }
   });
   row.querySelector(".reset-btn").addEventListener("click", () => {
@@ -3884,6 +3911,19 @@ function stopSpeaking() {
 // devient invisible (changement d'application, par exemple) : il faut
 // donc le redemander quand la visibilité revient, tant que le mode
 // cuisine est encore ouvert.
+// Identifiant de la session de mode cuisine actuellement active — pas
+// un simple booléen par fermeture, car si le mode cuisine est fermé
+// puis immédiatement rouvert pendant qu'une demande de Wake Lock de
+// l'ANCIENNE session est encore en attente (partageant potentiellement
+// la même promesse en cours, voir wakeLockRequestInFlight), la
+// résolution tardive de cette ancienne demande pourrait relâcher le
+// verrou attendu par la nouvelle session, qui afficherait pourtant
+// "actif" à tort.
+let activeCookingSessionId = null;
+// Identifiant de la recette actuellement affichée en mode cuisine —
+// voir openCookingMode ; permet à la notification du minuteur de
+// cibler précisément cette recette au clic.
+let currentCookingRecipeId = null;
 let currentWakeLock = null;
 // Une promesse partagée tant qu'une demande est en cours — empêche
 // deux demandes simultanées (une à l'ouverture, une autre lors d'un
@@ -3944,20 +3984,41 @@ async function ensureNotificationPermission() {
 // que le constructeur Notification direct — bien mieux pris en charge
 // sur Chrome Android, et permet de gérer le clic dessus (voir
 // "notificationclick" dans sw.js) pour revenir à l'application.
-async function showTimerNotification() {
+async function showTimerNotification(timer) {
   if (!("Notification" in window) || Notification.permission !== "granted") return;
   try {
+    // Identifiant unique par minuteur (pas le même pour tous) — sinon
+    // d'autres minuteurs terminés à la suite remplacent silencieusement
+    // la notification précédente, Android n'en affichant alors qu'une
+    // seule alors que plusieurs sont réellement terminés.
+    const originalDuration = timer ? formatCountdown(timer.minutes * 60 + timer.seconds) : "";
+    const body = originalDuration ? `${t("cooking_notification_body")} (${originalDuration})` : t("cooking_notification_body");
+    const tag = timer ? `cooking-timer-${timer.id}` : "cooking-timer";
     if ("serviceWorker" in navigator) {
       const registration = await navigator.serviceWorker.ready;
       await registration.showNotification(t("cooking_notification_title"), {
-        body: t("cooking_notification_body"),
+        body,
         icon: "./icons/icon-192.png",
-        tag: "cooking-timer",
+        tag,
+        data: { recipeId: currentCookingRecipeId },
       });
     } else {
-      new Notification(t("cooking_notification_title"), { body: t("cooking_notification_body") });
+      new Notification(t("cooking_notification_title"), { body });
     }
   } catch (e) { /* sans conséquence, le minuteur continue de sonner/vibrer normalement */ }
+}
+// Ferme la notification déjà affichée pour ce minuteur précis — sans
+// ça, arrêter l'alarme dans l'application (bouton ou notification déjà
+// vue) laissait la notification persister inutilement dans le centre
+// de notifications, comme si le minuteur sonnait encore.
+async function closeTimerNotification(timer) {
+  if (!("serviceWorker" in navigator) || !timer) return;
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const tag = `cooking-timer-${timer.id}`;
+    const notifications = await registration.getNotifications({ tag });
+    notifications.forEach((n) => n.close());
+  } catch (e) { /* sans conséquence */ }
 }
 
 function openCookingMode(recipe) {
@@ -3966,16 +4027,36 @@ function openCookingMode(recipe) {
     <h2 style="font-size:19px;">${escapeHtml(recipe.name)}</h2>
     <button class="icon-btn">${t("cooking_close")}</button>
   </div>`);
-  let cookingModeOpen = true;
+  // Mémorisé pour que la notification du minuteur puisse indiquer
+  // quelle recette cibler au clic (voir showTimerNotification et
+  // notificationclick dans sw.js) — sans ça, cliquer sur la
+  // notification ramenait bien à l'application, mais jamais
+  // directement à la recette ou au minuteur concerné.
+  currentCookingRecipeId = recipe.id;
+  // Identifie cette session précise — voir le commentaire sur
+  // activeCookingSessionId plus haut dans le fichier : une simple
+  // variable booléenne locale ne suffit pas si le mode cuisine est
+  // fermé puis immédiatement rouvert pendant qu'une demande de Wake
+  // Lock de l'ancienne session est encore en attente.
+  const sessionId = uid();
+  activeCookingSessionId = sessionId;
+  const isActiveSession = () => activeCookingSessionId === sessionId;
   const handleVisibilityChange = () => {
     // Le verrou est automatiquement relâché par le navigateur quand
     // l'onglet devient invisible — le redemander dès que la visibilité
-    // revient, tant que le mode cuisine est toujours ouvert. La
+    // revient, tant que cette session est toujours l'active. La
     // demande étant asynchrone, l'état est revérifié après coup (voir
     // commentaire sur requestWakeLock ci-dessous).
-    if (cookingModeOpen && document.visibilityState === "visible") {
+    if (isActiveSession() && document.visibilityState === "visible") {
       requestWakeLock().then(() => {
-        if (!cookingModeOpen) releaseWakeLock();
+        // Ne relâche que si VRAIMENT plus aucune session n'est active
+        // (activeCookingSessionId === null) — pas seulement si CETTE
+        // session précise ne l'est plus plus. Sinon, si une AUTRE
+        // session est devenue active entre-temps (fermeture puis
+        // réouverture rapide, partageant la même demande en attente),
+        // ce callback relâcherait à tort le verrou que cette autre
+        // session attend légitimement.
+        if (activeCookingSessionId === null) releaseWakeLock();
       });
     }
   };
@@ -3990,10 +4071,13 @@ function openCookingMode(recipe) {
   function cleanupCookingMode() {
     if (cookingModeCleaned) return;
     cookingModeCleaned = true;
-    state.cookingTimers.forEach(stopCookingTimer);
+    state.cookingTimers.forEach((tm) => { stopCookingTimer(tm); closeTimerNotification(tm); });
     state.cookingTimers = [];
     stopSpeaking();
-    cookingModeOpen = false;
+    if (isActiveSession()) {
+      activeCookingSessionId = null;
+      currentCookingRecipeId = null;
+    }
     document.removeEventListener("visibilitychange", handleVisibilityChange);
     releaseWakeLock();
   }
@@ -4005,15 +4089,40 @@ function openCookingMode(recipe) {
 
   const wakeLockStatus = el(`<p style="font-size:12px;color:var(--text-muted);margin:0 0 16px;"></p>`);
   overlay.appendChild(wakeLockStatus);
-  // La demande est asynchrone : si le mode cuisine est fermé avant la
-  // réponse d'Android, le verrou pourrait être accordé APRÈS le
-  // nettoyage (qui ne trouverait alors encore rien à relâcher) et
-  // rester actif indéfiniment. Revérifie donc l'état une fois la
-  // réponse reçue, et relâche immédiatement si entre-temps fermé.
+  // La demande est asynchrone : si cette session n'est plus l'active
+  // avant la réponse d'Android (fermée, ou remplacée par une nouvelle
+  // ouverture immédiate), le verrou pourrait être accordé pour une
+  // session qui n'existe plus et rester actif indéfiniment, ou être
+  // relâché à tort par une ancienne session au profit de la nouvelle.
+  // Revérifie donc quelle session est active une fois la réponse
+  // reçue, plutôt qu'un simple booléen local.
   requestWakeLock().then((success) => {
-    if (!cookingModeOpen) { releaseWakeLock(); return; }
-    wakeLockStatus.textContent = success ? t("cooking_wake_lock_active") : t("cooking_wake_lock_unavailable");
+    if (isActiveSession()) {
+      wakeLockStatus.textContent = success ? t("cooking_wake_lock_active") : t("cooking_wake_lock_unavailable");
+    } else if (activeCookingSessionId === null) {
+      // Vraiment plus aucune session active — celle-ci a fermé sans
+      // qu'aucune autre ne l'ait remplacée, personne d'autre ne
+      // relâchera ce verrou à sa place.
+      releaseWakeLock();
+    }
+    // Sinon (une AUTRE session est devenue active entre-temps) : ne
+    // rien faire ici, c'est à cette autre session de gérer son propre
+    // affichage et son propre verrou — le relâcher ici serait
+    // incorrect si elle en a toujours besoin.
   });
+
+  // Affiche clairement si les notifications sont bloquées, une fois la
+  // réponse connue — auparavant, la traduction existait mais n'était
+  // jamais montrée à l'utilisateur.
+  const notificationStatus = el(`<p id="cooking-notification-status" style="font-size:12px;color:var(--text-muted);margin:0 0 16px;display:none;"></p>`);
+  overlay.appendChild(notificationStatus);
+  function updateNotificationStatus() {
+    if ("Notification" in window && Notification.permission === "denied") {
+      notificationStatus.textContent = t("cooking_notification_permission_denied");
+      notificationStatus.style.display = "block";
+    }
+  }
+  updateNotificationStatus();
 
   overlay.appendChild(el(`<div class="section-label">${t("recipe_ingredients")}</div>`));
   const ingCard = el(`<div class="card" style="padding:4px 16px;margin-bottom:20px;"></div>`);
@@ -4788,6 +4897,18 @@ function unitToBase(quantity, unit) {
   // considérée compatible avec une autre unité de comptage différente.
   return { kind: "count:" + lu, value: quantity };
 }
+// Fonction inverse d'unitToBase, pour l'affichage : convertit le
+// "kind" stocké avec une réservation vers un libellé d'unité
+// compréhensible — sans elle, une quantité réservée s'affichait comme
+// un nombre nu, sans indiquer s'il s'agit de grammes, de centilitres
+// ou d'un nombre de pièces/boîtes/sachets.
+function kindToDisplayUnit(kind) {
+  if (!kind) return "";
+  if (kind === "weight") return "g";
+  if (kind === "volume") return "cl";
+  if (kind.startsWith("count:")) return translateUnit(kind.slice(6));
+  return "";
+}
 
 // Réduit la quantité à acheter d'un ingrédient selon ce qui est déjà
 // disponible au garde-manger — uniquement quand les unités sont
@@ -4839,11 +4960,11 @@ function computePantryReduction(name, unit, neededQty, pendingClaims) {
   if (effectiveAvailable <= 0) return noReduction;
 
   if (effectiveAvailable >= neededBase.value) {
-    return { adjustedQty: null, reducedAmount: neededQty, fullyCovered: true, claimKey: key, claimAmount: neededBase.value };
+    return { adjustedQty: null, reducedAmount: neededQty, fullyCovered: true, claimKey: key, claimAmount: neededBase.value, claimKind: neededBase.kind };
   }
   const remainingRatio = (neededBase.value - effectiveAvailable) / neededBase.value;
   const adjustedQty = neededQty * remainingRatio;
-  return { adjustedQty, reducedAmount: neededQty - adjustedQty, fullyCovered: false, claimKey: key, claimAmount: effectiveAvailable };
+  return { adjustedQty, reducedAmount: neededQty - adjustedQty, fullyCovered: false, claimKey: key, claimAmount: effectiveAvailable, claimKind: neededBase.kind };
 }
 // N'applique réellement la réservation qu'une fois l'utilisateur passé
 // par la confirmation — à appeler uniquement après un customConfirm()
@@ -4851,9 +4972,9 @@ function computePantryReduction(name, unit, neededQty, pendingClaims) {
 // "sourceType"/"sourceId" identifient ce qui crée cette réservation
 // précise (voir commentaire ci-dessus) — obligatoires pour pouvoir la
 // libérer plus tard sans toucher aux réservations d'autres sources.
-function commitPantryClaim(ingredientKey, amount, sourceType, sourceId) {
-  state.pantryClaimedThisSession.push({ id: uid(), ingredientKey, amount, sourceType, sourceId });
-  persistPantryClaims();
+async function commitPantryClaim(ingredientKey, amount, sourceType, sourceId, kind) {
+  state.pantryClaimedThisSession.push({ id: uid(), ingredientKey, amount, sourceType, sourceId, kind: kind || null });
+  await persistPantryClaims();
 }
 // Libère uniquement les réservations liées à cette source précise —
 // jamais les autres réservations du même ingrédient créées ailleurs.
@@ -4865,17 +4986,17 @@ function commitPantryClaim(ingredientKey, amount, sourceType, sourceId) {
 // (contrairement à la suppression d'un article de COURSES, qui ne
 // devrait libérer que SA propre réservation — voir
 // releasePantryClaimsForSource ci-dessus).
-function releasePantryClaimsForIngredient(ingredientKey) {
+async function releasePantryClaimsForIngredient(ingredientKey) {
   const before = state.pantryClaimedThisSession.length;
   state.pantryClaimedThisSession = state.pantryClaimedThisSession.filter((c) => c.ingredientKey !== ingredientKey);
-  if (state.pantryClaimedThisSession.length !== before) persistPantryClaims();
+  if (state.pantryClaimedThisSession.length !== before) await persistPantryClaims();
 }
-function releasePantryClaimsForSource(sourceType, sourceId) {
+async function releasePantryClaimsForSource(sourceType, sourceId) {
   const before = state.pantryClaimedThisSession.length;
   state.pantryClaimedThisSession = state.pantryClaimedThisSession.filter(
     (c) => !(c.sourceType === sourceType && c.sourceId === sourceId)
   );
-  if (state.pantryClaimedThisSession.length !== before) persistPantryClaims();
+  if (state.pantryClaimedThisSession.length !== before) await persistPantryClaims();
 }
 // Sauvegarde légère dans localStorage (pas IndexedDB, un simple tableau
 // suffit) — sans ça, les réservations de la session n'étaient
@@ -4893,22 +5014,39 @@ function persistPantryClaims() {
 // réduction) si elles étaient conservées telles quelles.
 function sanitizePantryClaims(rawClaims) {
   if (!Array.isArray(rawClaims)) return [];
-  return rawClaims.filter((c) =>
-    c && typeof c === "object" && !Array.isArray(c) &&
-    typeof c.ingredientKey === "string" && c.ingredientKey.trim() &&
-    Number.isFinite(c.amount) && c.amount > 0 &&
-    (c.sourceType === "recipe" || c.sourceType === "shopping") &&
-    typeof c.sourceId === "string" && c.sourceId.trim()
-  );
+  return rawClaims
+    .filter((c) =>
+      c && typeof c === "object" && !Array.isArray(c) &&
+      typeof c.ingredientKey === "string" && c.ingredientKey.trim() &&
+      Number.isFinite(c.amount) && c.amount > 0 &&
+      (c.sourceType === "recipe" || c.sourceType === "shopping" || c.sourceType === "legacy") &&
+      typeof c.sourceId === "string" && c.sourceId.trim()
+    )
+    // "kind" est optionnel (les réservations d'avant ce champ n'en ont
+    // pas) — normalisé à null si présent mais invalide, pour ne
+    // jamais planter kindToDisplayUnit() lors de l'affichage.
+    .map((c) => ({ ...c, kind: typeof c.kind === "string" ? c.kind : null }));
 }
 async function loadPantryClaims() {
   try {
     const raw = await kvGet("pantryClaimedThisSession");
-    // Compatibilité avec l'ancien format (objet {ingrédient: total},
-    // utilisé jusqu'à la v153) — ignoré simplement plutôt que de
-    // planter dessus : ces anciennes réservations n'ont de toute façon
-    // plus d'origine identifiable, elles ne peuvent pas être converties
-    // fidèlement vers le nouveau format par source précise.
+    if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+      // Ancien format v153 (objet {ingrédient: total}) — migré plutôt
+      // que rejeté silencieusement : l'origine précise de chaque
+      // réservation n'est pas connue (aucune source identifiable),
+      // mais la quantité l'est. Chaque entrée devient une réservation
+      // "legacy", visible et annulable individuellement via l'écran
+      // garde-manger, plutôt que d'être perdue sans que l'utilisateur
+      // ne s'en rende compte.
+      const migrated = Object.entries(raw)
+        .filter(([key, amount]) => typeof key === "string" && key.trim() && Number.isFinite(amount) && amount > 0)
+        .map(([key, amount]) => ({ id: uid(), ingredientKey: key, amount, sourceType: "legacy", sourceId: key, kind: null }));
+      state.pantryClaimedThisSession = migrated;
+      await persistPantryClaims();
+      return;
+    }
+    // Compatibilité avec tout autre format inattendu — ignoré
+    // simplement plutôt que de planter dessus.
     state.pantryClaimedThisSession = sanitizePantryClaims(raw);
   } catch (e) {
     state.pantryClaimedThisSession = [];
@@ -7533,7 +7671,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 161;
+const APP_VERSION = 163;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
@@ -7597,7 +7735,11 @@ async function init() {
   // directement l'écran demandé au lancement, plutôt que de toujours
   // démarrer sur l'accueil.
   const requestedScreen = new URLSearchParams(location.search).get("screen");
-  if (requestedScreen) {
+  // Clic sur la notification du minuteur alors qu'aucune fenêtre de
+  // l'application n'était déjà ouverte (voir notificationclick dans
+  // sw.js) : ouvre directement le mode cuisine de la recette concernée.
+  const requestedRecipeId = new URLSearchParams(location.search).get("openRecipe");
+  if (requestedScreen || requestedRecipeId) {
     // Retire le paramètre de l'adresse une fois lu — sinon, une simple
     // actualisation de la page rouvrait indéfiniment le même écran au
     // lieu de respecter la navigation normale de l'utilisateur.
@@ -7609,6 +7751,28 @@ async function init() {
   }
   if (requestedScreen === "shopping") {
     state.screen = "shopping";
+  }
+  if (requestedRecipeId) {
+    const recipe = state.recipes.find((r) => r.id === requestedRecipeId);
+    if (recipe) {
+      render();
+      openCookingMode(recipe);
+      return;
+    }
+  }
+
+  // Même clic sur la notification du minuteur, mais alors qu'une
+  // fenêtre de l'application était déjà ouverte (voir notificationclick
+  // dans sw.js, qui utilise postMessage plutôt qu'une navigation dans
+  // ce cas) — ouvre directement le mode cuisine de la recette concernée
+  // sans perturber le reste de l'écran si elle n'est pas trouvée.
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      if (event.data && event.data.type === "openRecipe") {
+        const recipe = state.recipes.find((r) => r.id === event.data.recipeId);
+        if (recipe) openCookingMode(recipe);
+      }
+    });
   }
 
   render();

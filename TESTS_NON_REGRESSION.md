@@ -1611,7 +1611,92 @@ attendu → résultat obtenu → version testée.
   relancés avec succès.
 - **Version testée** : v161
 
-## Résumé — état au 05/09/2026 (v161)
+### 19.10 — Six défauts confirmés et corrigés sur le minuteur/notifications/réservations *(v162)*
+- **1. Minuteur déclenché ~0,5s trop tôt** *(cause racine confirmée et corrigée)* :
+  `Math.round((endAt-Date.now())/1000)` donnait 0 dès 400ms restant,
+  déclenchant l'alarme prématurément. Corrigé : le déclenchement se
+  décide désormais sur `msLeft <= 0` (millisecondes brutes), l'affichage
+  utilise `Math.ceil` (jamais "0" tant qu'il reste vraiment du temps).
+  Testé avec le vrai `tick()` et une échéance à 400ms exactement : ne se
+  déclenche plus avant l'échéance réelle.
+- **2. Pause ne recalculait pas le temps exact** *(cause racine confirmée et corrigée)* :
+  testé avec une manipulation directe de l'horloge (isolant le vrai
+  défaut, mon premier essai avait une attente erronée) : la pause
+  recalcule bien depuis l'heure réelle, pas la valeur figée du dernier
+  tick.
+- **3. Notifications de minuteurs qui s'écrasaient** *(cause racine confirmée et corrigée)* :
+  identifiant unique par minuteur (`cooking-timer-{id}`) au lieu du même
+  pour tous, durée d'origine incluse dans le texte. Testé avec deux
+  minuteurs terminés simultanément : deux notifications distinctes
+  confirmées (tags différents).
+- **4. Réservations sans unité affichée** *(cause racine confirmée et corrigée)* :
+  `claimKind` (poids/volume/unité de comptage précise) propagé depuis
+  `computePantryReduction()` jusqu'à l'affichage via une nouvelle
+  fonction `kindToDisplayUnit()`, avec validation renforcée pour ce
+  nouveau champ optionnel.
+- **5. Cas limite Wake Lock (fermeture/réouverture rapide)** *(cause racine confirmée, corrigée en 2 temps)* :
+  un identifiant de session partagé remplace le simple booléen par
+  fermeture — mais un premier correctif s'est révélé encore incomplet
+  à l'test : le callback d'une session fermée (A) pouvait relâcher à
+  tort le verrou qu'une session rouverte immédiatement (B) recevait via
+  la même demande partagée. Corrigé en ne relâchant que si vraiment
+  plus aucune session n'est active (`activeCookingSessionId === null`),
+  pas seulement si CETTE session précise ne l'est plus. Testé le
+  scénario exact : B conserve bien son verrou actif, 0 relâchement
+  erroné ; testé aussi que la fermeture simple sans réouverture continue
+  de relâcher correctement.
+- **6. Refus des notifications jamais affiché** *(corrigé)* : message
+  affiché à l'ouverture du mode cuisine si déjà refusé, et après une
+  demande refusée au démarrage d'un minuteur.
+- **Non traité, consciemment différé** (classés "moins urgents" par
+  l'audit) : écritures IndexedDB des réservations non explicitement
+  attendues ; migration de l'ancien format v153 (toujours ignoré plutôt
+  que converti, aucune origine identifiable pour le faire fidèlement) ;
+  clic sur une notification ne cible pas la recette/minuteur précis ;
+  arrêter l'alarme dans l'app ne retire pas la notification déjà
+  affichée.
+- **Non-régression** : 17 tests relancés (minuteur, mode cuisine,
+  Wake Lock, notifications, registre de réservations), tous réussis.
+- **Test physique encore indispensable** : comme le note l'audit, rien
+  ne remplace une confirmation réelle sur le Samsung A06 — permission
+  au premier minuteur, notification visible app ouverte/arrière-plan,
+  comportement écran verrouillé, deux minuteurs successifs, clic sur
+  la notification, présence après arrêt de l'alarme.
+- **Version testée** : v162
+
+### 19.11 — Les 4 points "moins urgents" traités *(v163)*
+- **1. Écritures IndexedDB non attendues** : `commitPantryClaim()`,
+  `releasePantryClaimsForIngredient()` et `releasePantryClaimsForSource()`
+  sont désormais `async`, tous leurs appelants (8 au total, dont 2
+  boucles converties de `.forEach` à `for...of`) attendent correctement
+  leur exécution avant de continuer.
+- **2. Migration de l'ancien format v153** : plutôt que d'être
+  silencieusement ignoré, chaque ancienne réservation `{ingrédient:
+  total}` devient une entrée `sourceType: "legacy"` — visible et
+  annulable individuellement via l'écran garde-manger (libellé "ancienne
+  réservation, origine non conservée"), plutôt que perdue sans que
+  l'utilisateur ne s'en rende compte. Testé : migration confirmée,
+  persistée en nouveau format (ne se reproduit qu'une fois), libellé
+  correctement affiché.
+- **3. Clic sur la notification ne ciblait pas la recette précise** :
+  corrigé pour les deux cas — aucune fenêtre déjà ouverte (navigation
+  avec `?openRecipe=<id>`, lu et retiré de l'URL au démarrage, suivant
+  le même modèle que le paramètre `?screen=` existant pour les
+  raccourcis PWA) et une fenêtre déjà ouverte (message envoyé via
+  `postMessage`, écouté par l'application). Testé les deux chemins
+  séparément avec un vrai chargement de page (paramètre d'URL) et un
+  vrai événement `message` (postMessage) : les deux ouvrent
+  correctement le mode cuisine de la bonne recette.
+- **4. Arrêter l'alarme ne retirait pas la notification** : nouvelle
+  fonction `closeTimerNotification()`, appelée à la fois lors de l'arrêt
+  individuel d'une alarme et lors de la fermeture complète du mode
+  cuisine (cohérence). Testé : la notification du minuteur concerné est
+  bien fermée après arrêt de son alarme.
+- **Non-régression** : 21 tests relancés (minuteur, mode cuisine, Wake
+  Lock, notifications, registre de réservations), tous réussis.
+- **Version testée** : v163
+
+## Résumé — état au 05/09/2026 (v163)
 
 - **jsQR et jsPDF désormais embarqués localement** (v141) — seul
   Tesseract (import par photo) reste chargé depuis un CDN.
