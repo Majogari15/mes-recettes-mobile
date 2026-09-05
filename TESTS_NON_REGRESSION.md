@@ -1407,7 +1407,7 @@ attendu → résultat obtenu → version testée.
   l'ouverture du mode cuisine, la fenêtre s'affiche correctement.
 - **Version testée** : v155
 
-### 19.3 — Maintien de l'écran allumé pendant la cuisine (Wake Lock) *(amélioration recommandée, implémentée et testée, v155)*
+### 19.3 — Maintien de l'écran allumé pendant la cuisine (Wake Lock) *(implémenté v155, validé physiquement v155)*
 - **Contexte** : recommandation de priorité haute pour rendre le
   minuteur fiable dans le scénario normal de cuisine (écran resté
   allumé, visible en permanence) — ne résout pas le cas écran
@@ -1420,21 +1420,47 @@ attendu → résultat obtenu → version testée.
   ("🔆 Écran maintenu allumé pendant la cuisine"), avec message clair si
   refusé ou non disponible (économie d'énergie, appareil non
   compatible).
-- **Résultat obtenu** : ✅ Réussi — testé le cycle complet : une seule
-  demande à l'ouverture, redemande confirmée après un changement de
-  visibilité simulé, relâchement confirmé à la fermeture ; message de
-  repli confirmé quand l'API n'est pas disponible.
-- **Reste à tester physiquement** : confirmer sur un vrai appareil que
-  l'écran reste effectivement allumé et que le minuteur se déclenche
-  bien à l'heure en mode cuisine ouvert (impossible à vérifier
-  entièrement en simulation, le comportement réel de l'écran physique
-  n'étant pas observable dans l'environnement de test).
+- **Résultat obtenu (simulé)** : ✅ Réussi — cycle complet testé : une
+  seule demande à l'ouverture, redemande confirmée après un changement
+  de visibilité simulé, relâchement confirmé à la fermeture ; message
+  de repli confirmé quand l'API n'est pas disponible.
+- **Résultat obtenu (physique) — validation complète** : ✅ message
+  affiché ; ✅ écran encore allumé après 2 minutes (mise en veille
+  automatique réglée à 15 secondes) ; ✅ minuteur déclenché à l'heure
+  prévue ; ✅ sonnerie ; ✅ vibration ; ✅ répétition ; ✅ arrêt par le
+  bouton ; ✅ Wake Lock libéré après fermeture, écran s'éteignant
+  ensuite normalement ; ✅ Wake Lock repris après un changement
+  d'application ; ✅ fonctionnel même avec le mode économie d'énergie
+  activé.
+- **Limite confirmée, inchangée** : ne rend pas le minuteur fiable si
+  l'utilisateur verrouille volontairement l'écran ou laisse
+  l'application en arrière-plan — seul le cas "application visible,
+  écran non verrouillé" est concerné par cette amélioration.
+- **Appareil** : Samsung Galaxy A06, Android 16, Chrome 152.0.7977.75
 - **Non traité pour l'instant** (comme convenu, priorité moyenne/basse) :
   notification système classique, et alarme fiable écran verrouillé
   (nécessiterait une vraie application native).
-- **Version testée** : v155
+- **Version testée** : v155/v156
 
-## Résumé — état au 05/09/2026 (v155)
+### 19.4 — Fermeture par Échap contournait le nettoyage *(cause racine trouvée et corrigée, v156)*
+- **Contexte** : la fermeture par le bouton dédié nettoyait bien tout
+  (minuteurs, lecture à voix haute, Wake Lock, écouteur de visibilité),
+  mais une fermeture par la touche Échap (clavier externe) passait par
+  un chemin différent qui contournait entièrement ce nettoyage —
+  laissant potentiellement le Wake Lock jamais relâché.
+- **Corrigé** : le nettoyage a été extrait dans une fonction nommée
+  (`cleanupCookingMode`), réutilisée à la fois par le bouton ET passée
+  comme `beforeClose` à `initModalA11y()` (déjà conçu pour ce cas, déjà
+  utilisé pour la caméra du scanner QR).
+- **Résultat obtenu** : ✅ Réussi — testé : Échap déclenche maintenant
+  bien le relâchement du Wake Lock (confirmé une seule fois) et ferme
+  la fenêtre ; non-régression confirmée sur la fermeture par bouton
+  (toujours fonctionnelle, sans double relâchement).
+- **Portée** : cas rare sur téléphone (nécessite un clavier externe),
+  mais désormais couvert.
+- **Version testée** : v156
+
+## Résumé — état au 05/09/2026 (v156)
 
 - **jsQR et jsPDF désormais embarqués localement** (v141) — seul
   Tesseract (import par photo) reste chargé depuis un CDN.

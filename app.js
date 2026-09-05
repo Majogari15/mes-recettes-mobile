@@ -3864,13 +3864,21 @@ function openCookingMode(recipe) {
     if (cookingModeOpen && document.visibilityState === "visible") requestWakeLock();
   };
   document.addEventListener("visibilitychange", handleVisibilityChange);
-  header.querySelector("button").addEventListener("click", () => {
+  // Fonction nommée réutilisée à la fois par le bouton de fermeture ET
+  // par "beforeClose" (déclenché par Échap) — une fermeture par Échap
+  // avec un clavier externe contournait auparavant tout ce nettoyage,
+  // laissant les minuteurs actifs, la lecture à voix haute en cours et
+  // le Wake Lock jamais relâché.
+  function cleanupCookingMode() {
     state.cookingTimers.forEach(stopCookingTimer);
     state.cookingTimers = [];
     stopSpeaking();
     cookingModeOpen = false;
     document.removeEventListener("visibilitychange", handleVisibilityChange);
     releaseWakeLock();
+  }
+  header.querySelector("button").addEventListener("click", () => {
+    cleanupCookingMode();
     overlay.remove();
   });
   overlay.appendChild(header);
@@ -3929,7 +3937,7 @@ function openCookingMode(recipe) {
   overlay.appendChild(addTimerBtn);
 
   document.body.appendChild(overlay);
-  initModalA11y(overlay, overlay);
+  initModalA11y(overlay, overlay, { beforeClose: () => cleanupCookingMode() });
 }
 
 /* ======================================================================
@@ -7380,7 +7388,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 155;
+const APP_VERSION = 156;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
