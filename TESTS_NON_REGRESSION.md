@@ -1205,7 +1205,73 @@ attendu → résultat obtenu → version testée.
 
 ---
 
-## Résumé — état au 05/09/2026 (v151)
+## 16. Corrections suite à l'audit de la v151 (session du 05/09/2026)
+
+### 16.1 — Régression scanner/collage QR *(régression trouvée et corrigée, v152)*
+- **Contexte** : le déplacement du bouton "Coller le texte d'un QR
+  code" vers l'écran de scan (v151, point 15.5) avait introduit une
+  régression : le lien de secours ouvrait la fenêtre de collage sans
+  arrêter la caméra ni fermer la fenêtre de scan — caméra active
+  derrière, deux fenêtres modales empilées.
+- **Corrigé** : `cleanup()` et `overlay.remove()` appelés avant
+  d'ouvrir la fenêtre de collage.
+- **Résultat obtenu** : ✅ Réussi — testé avec un flux caméra simulé :
+  caméra bien arrêtée, une seule fenêtre modale présente après le clic
+  (celle du collage), plus de superposition.
+- **Version testée** : v152
+
+### 16.2 — Réservations du garde-manger recalculées *(cause racine trouvée et corrigée, v152)*
+- **Contexte** : les réservations, désormais persistantes (v151),
+  n'étaient toujours pas remises à zéro après suppression/modification
+  d'un article de courses ou de garde-manger, ni après restauration
+  d'une sauvegarde différente — une ancienne réservation incorrecte
+  pouvait donc survivre indéfiniment.
+- **Corrigé** (solution minimale, comme recommandé — la refonte
+  complète avec rattachement précis reste différée) : remise à zéro
+  après modification d'un article de courses/garde-manger, suppression
+  d'un article de courses/garde-manger, et après toute restauration de
+  sauvegarde.
+- **Résultat obtenu** : ✅ Réussi — testé sur la suppression d'article
+  et la restauration de sauvegarde, les deux confirmées à `{}`.
+- **Version testée** : v152
+
+### 16.3 — Résolution de "Peanut (Arachide)" *(cause racine trouvée et corrigée, v152)*
+- **Contexte** : la désambiguïsation des collisions de traduction
+  (v151, point 15.10) affiche "Peanut (Arachide)", mais
+  `resolveIngredientInput()` ne reconnaissait pas cette forme complète
+  — la resaisir aurait créé un nouvel ingrédient personnalisé au lieu
+  de retrouver l'original.
+- **Corrigé** : la partie entre parenthèses est désormais extraite et
+  reconnue si elle correspond à un ingrédient existant.
+- **Résultat obtenu** : ✅ Réussi — testé : "Peanut (Arachide)" résolu
+  vers "Arachide" ; un texte avec parenthèses ne correspondant à rien
+  reste inchangé (pas de faux positif).
+- **Version testée** : v152
+
+### 16.4 — Tri des ingrédients retrié après changement de langue *(cause racine trouvée et corrigée, v152)*
+- **Contexte** : le tri par traduction (v151, point 15.9) ne
+  s'appliquait qu'au chargement initial — changer de langue en cours
+  d'utilisation ne retriait pas immédiatement la liste, seulement au
+  prochain redémarrage.
+- **Corrigé** : `setLang()` retrie désormais immédiatement.
+- **Résultat obtenu** : ✅ Réussi — testé avec des traductions
+  inversant l'ordre alphabétique français : le tri suit bien le nouvel
+  ordre immédiatement après l'appel, sans redémarrage nécessaire.
+- **Version testée** : v152
+
+### 16.5 — Petits points *(v152)*
+- **`customPrompt()`** : `aria-labelledby` ajouté au champ de saisie
+  (pointant vers le message de la fenêtre) — TalkBack n'annonçait
+  auparavant que le titre général, pas ce qui est précisément demandé.
+- **Validation des sauvegardes** : `ingredients`/`cookLog` remis à `[]`
+  s'ils existent mais ne sont pas des tableaux du tout (chaîne, nombre,
+  objet) — auparavant conservés tels quels. Testé et confirmé.
+- **Résumé du document de tests** : corrigé pour ne plus prétendre à
+  tort qu'aucun test ne reste en attente — les 3 points authentiquement
+  non résolus (OCR, scan QR caméra/galerie, notification/vibration)
+  sont désormais explicitement cités dans le résumé final.
+
+## Résumé — état au 05/09/2026 (v152)
 
 - **jsQR et jsPDF désormais embarqués localement** (v141) — seul
   Tesseract (import par photo) reste chargé depuis un CDN.
@@ -1247,11 +1313,21 @@ attendu → résultat obtenu → version testée.
 - **Mode de test disponible** (`?importtest=jina/proxy/fail`, localhost
   uniquement) pour vérifier les chemins de repli d'import sans jamais
   couper le Worker en production
-- **Tests physiques restants** : aucun test du document lui-même ; reste
-  à votre charge le test réel de l'OCR par photo (point 7 ci-dessus),
-  non couvert par ce document
+- **Tests physiques restants** : 3 points confirmés non résolus par
+  l'utilisateur (voir section 14) — OCR réel par photo (encore peu
+  fiable), import QR par caméra/galerie (encore peu fiable),
+  notification/vibration Android (non testé). Aucun autre test du
+  document lui-même n'est en attente.
+- **Régression trouvée et corrigée après coup** (v152) : le déplacement
+  du bouton "Coller le texte d'un QR code" (point 15.5) avait introduit
+  une régression — la caméra restait active et deux fenêtres modales
+  s'empilaient au clic sur ce lien de secours. Corrigé : caméra arrêtée
+  et fenêtre de scan fermée avant d'ouvrir celle de collage.
 
-Aucune régression détectée à aucun moment. Tous les défauts trouvés au
-fil de cette longue campagne ont été corrigés puis reconfirmés
-fonctionnels, jamais de perte de données. L'application est dans un état
-solide, largement testée en conditions réelles sur deux appareils.
+Aucune régression détectée dans les points explicitement retestés après
+chaque correctif. Les 3 points OCR/scan QR/notification ci-dessus restent
+authentiquement non résolus ou non testés — ce résumé ne prétend pas le
+contraire. Tous les autres défauts trouvés au fil de cette longue
+campagne ont été corrigés puis reconfirmés fonctionnels, jamais de perte
+de données. L'application est dans un état solide, largement testée en
+conditions réelles sur deux appareils, à l'exception des 3 points cités.

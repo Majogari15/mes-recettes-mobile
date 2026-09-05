@@ -305,7 +305,7 @@ function customPrompt(message, defaultValue) {
     const overlay = el(`<div class="modal-overlay"></div>`);
     const sheet = el(`<div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="custom-prompt-message">
       <p id="custom-prompt-message" style="margin:0 0 12px;font-size:15px;line-height:1.5;white-space:pre-line;">${escapeHtml(message)}</p>
-      <input type="text" id="custom-prompt-input" value="${escapeHtml(defaultValue || "")}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);font-size:15px;margin-bottom:20px;box-sizing:border-box;">
+      <input type="text" id="custom-prompt-input" aria-labelledby="custom-prompt-message" value="${escapeHtml(defaultValue || "")}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);font-size:15px;margin-bottom:20px;box-sizing:border-box;">
       <div class="modal-actions">
         <button type="button" class="btn btn-outline" id="custom-prompt-cancel">${t("form_cancel")}</button>
         <button type="button" class="btn btn-primary" id="custom-prompt-ok">${t("common_ok")}</button>
@@ -1691,6 +1691,8 @@ function shoppingItemRow(item, wrap) {
     if (!await customConfirm(t("shopping_item_delete_confirm", { name: translateIngredientName(item.name) }))) return;
     await storeDelete("shopping", item.id);
     state.shopping = state.shopping.filter((i) => i.id !== item.id);
+    state.pantryClaimedThisSession = {};
+    persistPantryClaims();
     renderShoppingInto(wrap);
   });
   return row;
@@ -1810,6 +1812,14 @@ function openAddItemModal(storeName, existingItem) {
     if (storeName === "shopping") item.checked = isEdit ? existingItem.checked : false;
     if (isPantry) item.threshold = parseQtyOrNull(sheet.querySelector("#modal-ing-threshold").value);
     await storePut(storeName, item);
+    // Une réservation basée sur une ancienne quantité n'a plus de sens
+    // une fois celle-ci modifiée (courses ou garde-manger) — remise à
+    // zéro par prudence plutôt que de risquer une incohérence qui
+    // ferait croire à tort qu'une quantité est déjà couverte.
+    if (isEdit || isPantry) {
+      state.pantryClaimedThisSession = {};
+      persistPantryClaims();
+    }
     if (isEdit) {
       const idx = state[storeName].findIndex((i) => i.id === existingItem.id);
       if (idx >= 0) state[storeName][idx] = item;
@@ -1849,6 +1859,8 @@ function renderPantry() {
       row.querySelector("button").addEventListener("click", async () => {
         await storeDelete("pantry", item.id);
         state.pantry = state.pantry.filter((p) => p.id !== item.id);
+        state.pantryClaimedThisSession = {};
+        persistPantryClaims();
         render();
       });
       list.appendChild(row);
@@ -3016,7 +3028,11 @@ async function openQrScanModal() {
   const cameraStatusEl = sheet.querySelector("#qrscan-camera-status");
   const statusEl = sheet.querySelector("#qrscan-status");
   const manualBtn = sheet.querySelector("#qrscan-manual");
-  sheet.querySelector("#qrscan-paste-fallback").addEventListener("click", () => openQrPasteModal());
+  sheet.querySelector("#qrscan-paste-fallback").addEventListener("click", () => {
+    cleanup();
+    overlay.remove();
+    openQrPasteModal();
+  });
   let stream = null;
   let stopped = false;
   // Accumule les parties d'une recette répartie sur plusieurs QR — ne
@@ -4059,6 +4075,18 @@ function resolveIngredientInput(typedName) {
   if (!trimmed) return trimmed;
   const exact = state.ingredientNames.find((n) => normalize(n) === normalize(trimmed));
   if (exact) return exact;
+  // Forme désambiguïsée d'une collision de traduction, ex.
+  // "Peanut (Arachide)" — la partie entre parenthèses est le nom
+  // français d'origine (voir translateIngredientName) : si elle
+  // correspond à un ingrédient déjà connu, on la retrouve directement,
+  // sans quoi resaisir ce libellé complet créerait à tort un nouvel
+  // ingrédient personnalisé plutôt que de reconnaître l'original.
+  const parenMatch = trimmed.match(/\(([^()]+)\)\s*$/);
+  if (parenMatch) {
+    const inner = parenMatch[1].trim();
+    const exactInner = state.ingredientNames.find((n) => normalize(n) === normalize(inner));
+    if (exactInner) return exactInner;
+  }
   const dict = INGREDIENT_REVERSE_TRANSLATIONS[CURRENT_LANG];
   if (dict) {
     const resolved = dict[normalize(trimmed)];
@@ -4831,6 +4859,9 @@ function sanitizeBackupItem(item, storeName, report) {
           return { ...i, name: fixedName, unit: fixedUnit, quantity: sanitized };
         });
       if (cleaned.ingredients.length !== beforeCount) report.structuralFixes += 1;
+    } else if ("ingredients" in cleaned && cleaned.ingredients != null) {
+      cleaned.ingredients = [];
+      report.structuralFixes += 1;
     }
     if (Array.isArray(cleaned.cookLog)) {
       const beforeCount = cleaned.cookLog.length;
@@ -4844,6 +4875,9 @@ function sanitizeBackupItem(item, storeName, report) {
           return entry;
         });
       if (cleaned.cookLog.length !== beforeCount) report.structuralFixes += 1;
+    } else if ("cookLog" in cleaned && cleaned.cookLog != null) {
+      cleaned.cookLog = [];
+      report.structuralFixes += 1;
     }
   }
   if (storeName === "shopping" || storeName === "pantry") {
@@ -4945,6 +4979,8 @@ async function importAllData(data, mode) {
   state.recipes = await storeAll("recipes");
   state.shopping = await storeAll("shopping");
   state.pantry = await storeAll("pantry");
+  state.pantryClaimedThisSession = {};
+  persistPantryClaims();
   await ensureIngredientListLoaded();
   await loadIngredientOverrides();
 }
@@ -7222,7 +7258,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 151;
+const APP_VERSION = 152;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

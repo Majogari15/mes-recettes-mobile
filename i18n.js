@@ -2279,6 +2279,12 @@ function setLang(lang) {
   localStorage.setItem("lang", lang);
   document.documentElement.lang = lang;
   document.title = t("app_name");
+  // Retrie immédiatement selon la traduction de la nouvelle langue —
+  // sans ça, la liste restait triée selon l'ordre de la langue
+  // précédente jusqu'au prochain redémarrage de l'application.
+  if (typeof state !== "undefined" && state.ingredientNames && typeof compareIngredientNamesForDisplay === "function") {
+    state.ingredientNames.sort(compareIngredientNamesForDisplay);
+  }
 }
 function translateCategory(cat) {
   return t(CATEGORY_KEYS[cat] || "cat_autre");
