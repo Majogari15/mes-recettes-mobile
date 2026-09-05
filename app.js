@@ -348,7 +348,12 @@ function parseQtyOrNull(value) {
    ====================================================================== */
 const app = document.getElementById("app");
 
+let _previousScreen = null;
 function render() {
+  if (_previousScreen === "importPhoto" && state.screen !== "importPhoto" && sharedTesseractWorker) {
+    terminateSharedTesseractWorker().catch(() => { /* sans conséquence, nettoyage best-effort */ });
+  }
+  _previousScreen = state.screen;
   app.innerHTML = "";
   const topbar = renderTopbar();
   const screenEl = document.createElement("div");
@@ -5605,13 +5610,15 @@ function parseIngredientString(str) {
   // tort "cs" en "c" (perdu, jamais reconnu comme cuillère à soupe).
   if (uwRaw === "cs") unit = "c. à soupe";
   else if (uwRaw === "cc") unit = "c. à café";
-  else if (["pièce", "piece"].includes(uw)) unit = "pièce";
+  else if (uwRaw === "el") unit = "c. à soupe";
+  else if (uwRaw === "tl") unit = "c. à café";
+  else if (["pièce", "piece", "pieza", "piezas", "stück"].includes(uw)) unit = "pièce";
   else if (["g", "gr", "gram", "gramme"].includes(uw)) unit = "g";
   else if (["kg", "kilo"].includes(uw)) unit = "kg";
   else if (uw === "ml") { unit = "cl"; factor = 0.1; }
   else if (uw === "cl") unit = "cl";
   else if (["l", "litre", "liter"].includes(uw)) unit = "L";
-  else if (["tbsp", "tablespoon"].includes(uw)) unit = "c. à soupe";
+  else if (["tbsp", "tablespoon", "cucharada", "cucharadas"].includes(uw)) unit = "c. à soupe";
   else if (["tsp", "teaspoon"].includes(uw)) unit = "c. à café";
   else if (uw === "cup") { unit = "cl"; factor = 24; }
   else if (["oz", "ounce"].includes(uw)) { unit = "g"; factor = 28.35; }
@@ -5620,10 +5627,10 @@ function parseIngredientString(str) {
   // entière (comptage simple, sans conversion de poids/volume — une
   // "boîte" n'a pas de taille standard), plutôt que de tomber dans le
   // nom de l'ingrédient sous l'unité générique "pièce".
-  else if (["boîte", "boite", "conserve"].includes(uw)) unit = "boîte";
+  else if (["boîte", "boite", "conserve", "lata", "latas", "dose", "dosen"].includes(uw)) unit = "boîte";
   else if (uw === "sachet") unit = "sachet";
   else if (uw === "pot") unit = "pot";
-  else if (uw === "paquet") unit = "sachet";
+  else if (["paquet", "paquete", "paquetes", "packung", "packungen"].includes(uw)) unit = "sachet";
   else if (["tranche", "tranches"].includes(uw)) unit = "tranche";
   else if (["gousse", "gousses"].includes(uw)) unit = "gousse";
 
@@ -5772,7 +5779,7 @@ function parseOcrRecipeText(rawText) {
     ingredientLines = lines.slice(ingIdx + 1, end)
       // Repère de compteur "- personnes +" (choix du nombre de
       // personnes sur la page), pas un ingrédient.
-      .filter((l) => !/^personnes?\s*[+\-]?$/i.test(l));
+      .filter((l) => !/^(pour\s+|for\s+)?\d*\s*(personnes?|people|persons?|personas?|personen)\s*[+\-]?$/i.test(l));
   }
   if (instrIdx >= 0) {
     const descEndIdx = lines.findIndex((l, i) => i > instrIdx && descriptionEndMarker.test(l));
@@ -5793,18 +5800,19 @@ function parseOcrRecipeText(rawText) {
 
   // Les quantités reconnues dans le texte correspondent à la recette
   // entière pour le nombre de personnes indiqué sur la page d'origine
-  // (quand il est repérable), pas à une seule personne — même
-  // correction que pour l'import par lien, pour éviter que les
-  // quantités soient multipliées une seconde fois à l'affichage.
+  // (quand il est repérable), pas à une seule personne. On ne divise
+  // plus ici : avec l'import à plusieurs photos, le nombre de
+  // personnes peut être détecté sur une AUTRE photo que celle des
+  // ingrédients, donc diviser trop tôt (avant de connaître le nombre
+  // final retenu après fusion) provoquait un doublement des quantités
+  // affichées. La division se fait une seule fois, après la fusion
+  // complète — voir mergeMultiPhotoResults et le repli Jina ci-dessous.
   let persons = null;
   lines.forEach((line) => {
     if (persons != null) return;
     const personsMatch = line.match(/\b(\d+)\s*(?:personnes?|convives?|parts?|servings?|portions?|personas?|raciones?|personen|portionen)\b/i);
     if (personsMatch) persons = Math.max(1, parseInt(personsMatch[1], 10));
   });
-  const adjustedIngredients = persons
-    ? ingredients.map((i) => ({ ...i, quantity: i.quantity != null ? i.quantity / persons : null }))
-    : ingredients;
 
   // Convertit une expression de durée en minutes, en gérant les formats
   // "Xh YY" (heures + minutes, ex. "5h30" pour un temps de cuisson
@@ -5832,7 +5840,7 @@ function parseOcrRecipeText(rawText) {
     if (cookMatch) { const t = parseTimeExpression(cookMatch[1]); if (t != null) cookTime = t; }
   });
 
-  return { name, ingredients: adjustedIngredients, description: descriptionLines.join("\n"), prepTime, cookTime, persons };
+  return { name, ingredients, description: descriptionLines.join("\n"), prepTime, cookTime, persons };
 }
 
 let tesseractLibPromise = null;
@@ -5916,7 +5924,7 @@ function deriveSectionDataForPhoto(rawText, section) {
   if (section === "ingredients") {
     const lines = (rawText || "").split("\n").map((l) => l.trim()).filter(Boolean);
     const ingredients = lines
-      .filter((l) => !/^personnes?\s*[+\-]?$/i.test(l))
+      .filter((l) => !/^(pour\s+|for\s+)?\d*\s*(personnes?|people|persons?|personas?|personen)\s*[+\-]?$/i.test(l))
       .map((l) => l.replace(/^[-•*]\s*/, ""))
       .map(parseIngredientString)
       .filter((i) => i.name);
@@ -5954,7 +5962,17 @@ function mergeMultiPhotoResults(photos) {
     if (prepTime == null && data.prepTime) prepTime = data.prepTime;
     if (cookTime == null && data.cookTime) cookTime = data.cookTime;
   });
-  return { name, ingredients, description: descriptionParts.join("\n\n"), persons: persons || 4, prepTime, cookTime };
+  // Les quantités reconnues sur chaque photo sont des totaux bruts,
+  // jamais divisés avant ce point (voir parseOcrRecipeText et
+  // deriveSectionDataForPhoto) — précisément pour éviter de diviser
+  // trop tôt, avant de connaître le nombre de personnes qui pourrait
+  // n'être détecté que sur une AUTRE photo que celle des ingrédients.
+  // Le diviseur utilisé ici doit toujours être exactement la valeur
+  // enregistrée comme nombre de personnes final, pour que les
+  // quantités restent correctes une fois réaffichées pour ce nombre.
+  const finalPersons = persons || 4;
+  const dividedIngredients = ingredients.map((i) => ({ ...i, quantity: i.quantity != null ? i.quantity / finalPersons : null }));
+  return { name, ingredients: dividedIngredients, description: descriptionParts.join("\n\n"), persons: finalPersons, prepTime, cookTime };
 }
 
 const MAX_IMPORT_PHOTOS = 8;
@@ -6038,7 +6056,10 @@ function renderImportPhoto() {
     addSection.style.display = atMax ? "none" : "flex";
     maxReachedNote.style.display = atMax ? "block" : "none";
     const doneCount = state.multiPhotoImport.filter((p) => p.status === "done").length;
-    mergeBtn.disabled = doneCount === 0;
+    const anyProcessing = state.multiPhotoImport.some((p) => p.status === "processing");
+    mergeBtn.disabled = doneCount === 0 || anyProcessing;
+    cameraBtn.disabled = anyProcessing;
+    galleryBtn.disabled = anyProcessing;
   }
 
   async function handleNewPhoto(file) {
@@ -6080,7 +6101,13 @@ function renderImportPhoto() {
     const usable = state.multiPhotoImport.filter((p) => p.status === "done");
     const merged = mergeMultiPhotoResults(usable);
     state.multiPhotoImport = [];
-    await terminateSharedTesseractWorker();
+    try {
+      await terminateSharedTesseractWorker();
+    } catch (e) {
+      // Sans conséquence pour l'utilisateur : le Worker sera de toute
+      // façon recréé au prochain import si besoin. La fusion elle-même
+      // ne doit jamais rester bloquée pour un problème de nettoyage.
+    }
     state.editingRecipeId = null;
     state.formIngredients = merged.ingredients.length ? merged.ingredients : [{ name: "", quantity: "", unit: "pièce" }];
     state.formAllergens = [];
@@ -6489,11 +6516,20 @@ async function fetchRecipeFromUrl(url, onAttempt) {
       const parsedFromText = parseOcrRecipeText(cleanedText);
       if (parsedFromText && parsedFromText.ingredients.length) {
         recordImportDiagnostic("Jina AI Reader" + (importTestMode ? " (test)" : ""));
+        // Divise ici par le nombre de personnes détecté (une seule
+        // fois) : parseOcrRecipeText renvoie désormais les quantités
+        // totales brutes, la division se faisant au moment opportun
+        // selon le chemin d'import (ici directement, puisqu'il n'y a
+        // pas d'étape de fusion multi-photos sur ce chemin).
+        const detectedPersons = parsedFromText.persons;
+        const dividedIngredients = detectedPersons
+          ? parsedFromText.ingredients.map((i) => ({ ...i, quantity: i.quantity != null ? i.quantity / detectedPersons : null }))
+          : parsedFromText.ingredients;
         return {
           name: parsedFromText.name,
           description: parsedFromText.description,
-          ingredients: parsedFromText.ingredients.map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) })),
-          persons: parsedFromText.persons || 4,
+          ingredients: dividedIngredients.map((i) => ({ ...i, name: resolveImportedIngredientName(i.name) })),
+          persons: detectedPersons || 4,
           prepTime: parsedFromText.prepTime,
           cookTime: parsedFromText.cookTime,
           category: "Autre",
@@ -6986,7 +7022,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 146;
+const APP_VERSION = 147;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

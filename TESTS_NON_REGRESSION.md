@@ -846,6 +846,58 @@ attendu → résultat obtenu → version testée.
   mélangés sur la même ligne reconnue. Une photo bien rapprochée d'une
   seule section reste nécessaire pour un résultat fiable.
 
+### 13.9 — Doublement des quantités après reclassement manuel *(cause racine trouvée et corrigée, v147)*
+- **Contexte** : après un vrai test avec des photos HelloFresh, l'autre
+  IA a trouvé que les quantités d'une photo "Recette complète" étaient
+  divisées par le nombre de personnes détecté, mais celles d'une photo
+  reclassée manuellement en "Ingrédients" ne l'étaient jamais — la
+  fusion pouvait donc appliquer un nombre de personnes détecté sur une
+  AUTRE photo à des quantités jamais divisées, doublant l'affichage
+  final (500 g → 1000 g pour 2 personnes).
+- **Corrigé** : `parseOcrRecipeText()` ne divise plus du tout en
+  interne ; la division par le nombre de personnes final se fait une
+  seule fois, après la fusion complète de toutes les photos
+  (`mergeMultiPhotoResults`), avec le diviseur toujours identique à la
+  valeur enregistrée comme nombre de personnes. Le repli Jina (import
+  par lien) applique désormais cette division lui-même, puisqu'il n'a
+  pas d'étape de fusion.
+- **Résultat obtenu** : ✅ Réussi — testé avec le scénario exact
+  rapporté (Grenailles 500 g, 2 personnes détectées sur une photo
+  séparée) dans les deux ordres de photos : 250 g/personne stocké dans
+  les deux cas, 500 g correctement réaffiché pour 2 personnes, jamais
+  1000 g.
+- **Version testée** : v147
+
+### 13.10 — Traitements simultanés et nettoyage du Worker *(cause racine trouvée et corrigée, v147)*
+- **Contexte** : le bouton "Fusionner" restait actif même si une autre
+  photo était encore en cours d'analyse, risquant de terminer le
+  Worker Tesseract pendant qu'il était utilisé.
+- **Corrigé** : "Fusionner" et les boutons d'ajout de photo sont
+  désormais désactivés tant qu'une photo est en cours ; la terminaison
+  du Worker est protégée par try/catch ; le Worker est aussi nettoyé
+  automatiquement si l'utilisateur quitte l'écran sans fusionner.
+- **Résultat obtenu** : ✅ Réussi — testé avec une reconnaissance
+  volontairement bloquée : les deux boutons confirmés désactivés
+  pendant le traitement, réactivés une fois terminé ; un seul appel à
+  `terminate()` confirmé après avoir quitté l'écran sans fusionner.
+- **Version testée** : v147
+
+### 13.11 — Unités espagnoles/allemandes et filtre "personnes" multilingue *(cause racine trouvée et corrigée, v147)*
+- **Contexte** : l'analyseur manuel d'ingrédients ne reconnaissait que
+  les unités françaises/anglaises ; le filtre retirant les lignes de
+  comptage de personnes ne cherchait que le mot français "personnes".
+- **Corrigé** : ajout de "pieza", "paquete", "lata", "cucharada"
+  (espagnol) et "Stück", "Packung", "Dose", "EL", "TL" (allemand) ;
+  filtre élargi à "people"/"persons"/"personas"/"personen", avec ou
+  sans nombre devant (ex. "4 people").
+- **Résultat obtenu** : ✅ Réussi — les 9 unités testées individuellement
+  toutes correctes ; "4 people" confirmé exclu des ingrédients (seul
+  "Flour" reste).
+- **Version testée** : v147
+- **Limite connue** : les unités catalanes, portugaises ou italiennes
+  ne sont pas couvertes ; à ajouter si des photos dans ces langues
+  posent problème.
+
 ## 11. Bibliothèques embarquées localement
 
 ### 11.1 — jsQR et jsPDF en local *(fourni par l'utilisateur, testé et intégré, v141)*
