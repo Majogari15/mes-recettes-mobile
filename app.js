@@ -3860,16 +3860,26 @@ function openCookingMode(recipe) {
   const handleVisibilityChange = () => {
     // Le verrou est automatiquement relâché par le navigateur quand
     // l'onglet devient invisible — le redemander dès que la visibilité
-    // revient, tant que le mode cuisine est toujours ouvert.
-    if (cookingModeOpen && document.visibilityState === "visible") requestWakeLock();
+    // revient, tant que le mode cuisine est toujours ouvert. La
+    // demande étant asynchrone, l'état est revérifié après coup (voir
+    // commentaire sur requestWakeLock ci-dessous).
+    if (cookingModeOpen && document.visibilityState === "visible") {
+      requestWakeLock().then(() => {
+        if (!cookingModeOpen) releaseWakeLock();
+      });
+    }
   };
   document.addEventListener("visibilitychange", handleVisibilityChange);
   // Fonction nommée réutilisée à la fois par le bouton de fermeture ET
   // par "beforeClose" (déclenché par Échap) — une fermeture par Échap
   // avec un clavier externe contournait auparavant tout ce nettoyage,
   // laissant les minuteurs actifs, la lecture à voix haute en cours et
-  // le Wake Lock jamais relâché.
+  // le Wake Lock jamais relâché. Rendue idempotente (le bouton ET le
+  // MutationObserver de initModalA11y peuvent tous deux l'appeler).
+  let cookingModeCleaned = false;
   function cleanupCookingMode() {
+    if (cookingModeCleaned) return;
+    cookingModeCleaned = true;
     state.cookingTimers.forEach(stopCookingTimer);
     state.cookingTimers = [];
     stopSpeaking();
@@ -3885,7 +3895,13 @@ function openCookingMode(recipe) {
 
   const wakeLockStatus = el(`<p style="font-size:12px;color:var(--text-muted);margin:0 0 16px;"></p>`);
   overlay.appendChild(wakeLockStatus);
+  // La demande est asynchrone : si le mode cuisine est fermé avant la
+  // réponse d'Android, le verrou pourrait être accordé APRÈS le
+  // nettoyage (qui ne trouverait alors encore rien à relâcher) et
+  // rester actif indéfiniment. Revérifie donc l'état une fois la
+  // réponse reçue, et relâche immédiatement si entre-temps fermé.
   requestWakeLock().then((success) => {
+    if (!cookingModeOpen) { releaseWakeLock(); return; }
     wakeLockStatus.textContent = success ? t("cooking_wake_lock_active") : t("cooking_wake_lock_unavailable");
   });
 
@@ -7388,7 +7404,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 156;
+const APP_VERSION = 157;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

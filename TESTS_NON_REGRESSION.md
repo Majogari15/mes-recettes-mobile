@@ -1460,7 +1460,39 @@ attendu → résultat obtenu → version testée.
   mais désormais couvert.
 - **Version testée** : v156
 
-## Résumé — état au 05/09/2026 (v156)
+### 19.5 — Deux cas limites du Wake Lock *(causes racines trouvées et corrigées, v157)*
+- **Contexte** : après la validation physique complète (section 19.3),
+  une relecture attentive de la séquence asynchrone a révélé deux
+  défauts potentiels, non visibles lors des tests normaux mais réels :
+  1. **Course fermeture/octroi** : la demande de Wake Lock est
+     asynchrone (`await navigator.wakeLock.request(...)`) — si le mode
+     cuisine est fermé avant qu'Android ne réponde, `releaseWakeLock()`
+     ne trouve encore rien à relâcher ; si Android accorde ensuite le
+     verrou (après la fermeture), il restait actif indéfiniment. Même
+     risque lors d'une redemande après un retour de visibilité.
+  2. **Nettoyage non idempotent** : `cleanupCookingMode()` peut être
+     appelé une première fois par le bouton, puis une seconde fois par
+     le `MutationObserver` de `initModalA11y()` (son propre drapeau
+     interne "closed" ne voit pas un appel direct au nettoyage
+     contournant `closeModal`) — pas dangereux en pratique dans ce cas
+     précis, mais fragile.
+- **Corrigé** : l'état `cookingModeOpen` est revérifié après chaque
+  demande de Wake Lock (à l'ouverture et après un retour de
+  visibilité), relâchant immédiatement si fermé entre-temps.
+  `cleanupCookingMode()` protégée par un drapeau (`cookingModeCleaned`),
+  ne s'exécutant réellement qu'une seule fois quel que soit le nombre
+  d'appels.
+- **Résultat obtenu** : ✅ Réussi — testé la course exacte décrite :
+  fermeture immédiate simulée AVANT la résolution de la demande de
+  Wake Lock (0 relâchement à cet instant, confirmé), puis Android
+  "accorde" le verrou après coup (1 relâchement correctement déclenché
+  à ce moment). Testé aussi le vrai scénario de double appel (bouton
+  puis `MutationObserver` réel, pas un appel direct répété) : un seul
+  relâchement au total. Non-régression confirmée sur Échap et la
+  fermeture par bouton (toujours fonctionnels).
+- **Version testée** : v157
+
+## Résumé — état au 05/09/2026 (v157)
 
 - **jsQR et jsPDF désormais embarqués localement** (v141) — seul
   Tesseract (import par photo) reste chargé depuis un CDN.
