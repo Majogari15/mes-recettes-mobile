@@ -3,7 +3,7 @@
 // ensuite (les données elles-mêmes sont stockées séparément, dans IndexedDB,
 // géré directement par app.js).
 
-const CACHE_NAME = "mes-recettes-cache-v141";
+const CACHE_NAME = "mes-recettes-cache-v145";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -77,7 +77,7 @@ self.addEventListener("fetch", (event) => {
   const isCrossOriginAllowed = CROSS_ORIGIN_TO_CACHE.includes(event.request.url);
   // Ne jamais intercepter les requêtes vers un autre domaine (ex. Google
   // Fonts), sauf celles explicitement mises en liste blanche ci-dessus
-  // (ex. jsPDF) : les autres suivent leur cours normalement, échec
+  // (ex. Tesseract) : les autres suivent leur cours normalement, échec
   // inclus, sans être remplacées par une page de l'application.
   if (!isCrossOriginAllowed && new URL(event.request.url).origin !== self.location.origin) return;
   // Ignore aussi tout ce qui n'est pas une simple lecture (GET) : les

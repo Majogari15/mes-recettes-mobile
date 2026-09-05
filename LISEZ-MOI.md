@@ -197,7 +197,9 @@ déjà un dépôt GitHub pour ce projet.
   fichier selon la langue déjà enregistrée
 - `sw.js` — fonctionnement hors connexion
 - `icons/` — icônes de l'application
-- `lib/` — bibliothèque de génération de QR code, embarquée localement
+- `lib/` — bibliothèques embarquées localement : génération de QR code,
+  lecture de QR code (jsQR), et export PDF (jsPDF) — voir
+  `lib/LICENSES.md` pour le détail de chacune
 - `worker/` — code source du Worker Cloudflare utilisé pour l'import de
   recette par lien (à déployer manuellement sur Cloudflare, non exécuté
   par l'application elle-même — voir `worker/README.md`)
