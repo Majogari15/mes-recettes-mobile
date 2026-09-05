@@ -699,6 +699,84 @@ attendu → résultat obtenu → version testée.
   sans quantité ("Sel").
 - **Version testée** : v143
 
+### 12.5 — Import HelloFresh réel, cas complet *(cause racine trouvée et corrigée, v144)*
+- **Contexte** : après un vrai test physique, l'OCR démarrait
+  correctement (v143), mais le classement échouait — Tesseract avait lu
+  "ingrédients pour £ personnes" (confusion "2"/"£"), non reconnu par la
+  détection stricte alors en place.
+- **Corrigé, plusieurs points ensemble** :
+  1. Détection du titre assouplie (accepte tout préfixe "Ingrédients",
+     peu importe ce qui suit — insensible aux erreurs OCR sur le nombre
+     de personnes)
+  2. "Valeurs nutritionnelles"/"Allergènes" ajoutés comme fins de liste
+     d'ingrédients (4 langues)
+  3. Fractions unicode (½, ⅔, ¼, ¾...) converties en décimal
+  4. Suffixe "(s)" ignoré ("sachet(s)" → "sachet")
+  5. Abréviations HelloFresh "cs"/"cc" reconnues (cuillère à soupe/café)
+  6. **Bug additionnel trouvé en testant** : "cs" perdait son "s" à
+     cause de la règle générique de singulier/pluriel, devenant "c"
+     (jamais reconnu) — corrigé en vérifiant "cs"/"cc" sur le mot brut,
+     avant cette normalisation
+  7. **Second bug trouvé** : "pièce" n'était pas reconnu comme unité à
+     part entière (seulement comme repli par défaut), faisant échouer
+     le réassemblage de l'ordre inversé pour les fractions — corrigé
+- **Résultat obtenu** : ✅ Réussi — testé avec le texte exact rapporté
+  (6 ingrédients dont fractions et abréviations, plus "Valeurs
+  nutritionnelles" après) : les 6 ingrédients correctement reconnus
+  (nom, quantité, unité exacts), "Valeurs nutritionnelles" correctement
+  exclue de la liste. Non-régression confirmée sur les tests 12.3/12.4
+  précédents.
+- **Version testée** : v144
+- **Limite structurelle non résolue** (signalée par les deux audits) :
+  une photo complète d'une fiche HelloFresh multi-colonnes peut faire
+  lire par Tesseract plusieurs colonnes fusionnées sur une même ligne
+  (ingrédient + étape mélangés) — aucune expression régulière ne peut
+  fiablement séparer ça après coup. Voir la discussion sur l'import à
+  plusieurs photos.
+
+## 13. Import par plusieurs photos
+
+### 13.1 — Deux boutons distincts (caméra / galerie) *(simulé)*
+- **Résultat attendu** : deux boutons explicites, pas de dépendance au
+  comportement variable du navigateur avec `capture="environment"`
+  seul (peu fiable sur iPhone notamment).
+- **Résultat obtenu** : ✅ Réussi — les deux boutons "Prendre une photo"
+  et "Choisir depuis la galerie" confirmés présents, chacun relié à son
+  propre champ de fichier.
+- **Version testée** : v145
+
+### 13.2 — Détection automatique de la section par photo *(simulé)*
+- **Manipulation** : 4 photos avec un texte OCR simulé différent —
+  ingrédients seuls, étapes seules, les deux à la fois, et un texte
+  sans rapport (ambigu).
+- **Résultat attendu** : détection correcte pour les 3 premiers cas ;
+  repli sur "Autre" avec sélection manuelle requise pour le 4e.
+- **Résultat obtenu** : ✅ Réussi — les 4 cas exactement comme attendu
+  (`ingredients`/`preparation`/`mixed` détectés automatiquement, `other`
+  sans détection automatique pour le cas ambigu).
+- **Version testée** : v145
+
+### 13.3 — Fusion de plusieurs photos en une seule recette *(simulé)*
+- **Manipulation** : une photo "ingrédients" (nom + 2 ingrédients) et
+  une photo "étapes" (2 étapes), fusionnées.
+- **Résultat attendu** : nom repris de la première photo, ingrédients
+  et étapes combinés, formulaire ouvert prérempli, état de l'import
+  vidé après la fusion.
+- **Résultat obtenu** : ✅ Réussi — nom exact, les 2 étapes des deux
+  photos bien présentes dans la description, 2 ingrédients dans le
+  formulaire, aucune photo restante en mémoire après la fusion.
+- **Version testée** : v145
+
+### 13.4 — Suppression d'une photo et limite maximale *(simulé)*
+- **Résultat attendu** : le bouton "×" retire bien la photo choisie ;
+  au-delà de 8 photos, les tentatives suivantes sont ignorées.
+- **Résultat obtenu** : ✅ Réussi — suppression confirmée (1 → 0), et
+  limite de 8 respectée même en tentant d'en ajouter 9.
+- **Version testée** : v145
+- **Reste à tester physiquement** : le cycle complet avec de vraies
+  photos et le vrai OCR Tesseract (impossible à simuler entièrement
+  dans l'environnement de test).
+
 ## 11. Bibliothèques embarquées localement
 
 ### 11.1 — jsQR et jsPDF en local *(fourni par l'utilisateur, testé et intégré, v141)*

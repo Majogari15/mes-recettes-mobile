@@ -174,6 +174,7 @@ const state = {
   savedShoppingLists: [],
   whatCanICookIngredients: null,
   _importPrefill: null,
+  multiPhotoImport: [], // import par plusieurs photos, en cours de traitement
 };
 
 const CATEGORY_OPTIONS = ["Petit-déjeuner", "Entrée", "Plat", "Dessert", "Apéro", "Boisson", "Sauce", "Autre"];
@@ -5530,8 +5531,24 @@ function renderPlanningHistory() {
    recherche. La reconnaissance des quantités reste approximative :
    l'utilisateur est toujours invité à vérifier avant d'enregistrer.
    ====================================================================== */
+// Fractions unicode courantes (½, ⅔...) vers leur valeur décimale — les
+// photos de recettes (HelloFresh notamment) les utilisent souvent au
+// lieu d'un nombre classique, ce que l'analyse ne reconnaissait pas du
+// tout jusqu'ici.
+const UNICODE_FRACTIONS = { "½": 0.5, "⅓": 0.33, "⅔": 0.67, "¼": 0.25, "¾": 0.75, "⅕": 0.2, "⅖": 0.4, "⅗": 0.6, "⅘": 0.8, "⅙": 0.17, "⅚": 0.83, "⅛": 0.125, "⅜": 0.375, "⅝": 0.625, "⅞": 0.875 };
+function normalizeUnicodeFractions(str) {
+  return str.replace(/(\d+\s*)?([½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞])/g, (match, whole, frac) => {
+    const wholeNum = whole ? parseFloat(whole) : 0;
+    return String(Math.round((wholeNum + UNICODE_FRACTIONS[frac]) * 100) / 100);
+  });
+}
 function parseIngredientString(str) {
-  const text = String(str || "").trim();
+  let text = String(str || "").trim();
+  text = normalizeUnicodeFractions(text);
+  // "(s)" est un simple marqueur de pluriel optionnel sur certaines
+  // fiches (HelloFresh notamment : "sachet(s)", "boîte(s)") — ne porte
+  // aucune information utile et gênait la reconnaissance de l'unité.
+  text = text.replace(/\(s\)/gi, "");
 
   // Repère d'abord les unités françaises composées de plusieurs mots
   // ("cuillère à café/soupe") : la reconnaissance générale ci-dessous
@@ -5579,10 +5596,17 @@ function parseIngredientString(str) {
   }
   if (Number.isNaN(quantity)) quantity = null;
 
-  const uw = unitWordRaw.toLowerCase().replace(/s$/, "");
+  const uwRaw = unitWordRaw.toLowerCase();
+  const uw = uwRaw.replace(/s$/, "");
   let unit = null;
   let factor = 1;
-  if (["g", "gr", "gram", "gramme"].includes(uw)) unit = "g";
+  // "cs"/"cc" (abréviations HelloFresh) sont vérifiées sur le mot brut,
+  // avant le retrait du "s" final ci-dessus qui transformerait sinon à
+  // tort "cs" en "c" (perdu, jamais reconnu comme cuillère à soupe).
+  if (uwRaw === "cs") unit = "c. à soupe";
+  else if (uwRaw === "cc") unit = "c. à café";
+  else if (["pièce", "piece"].includes(uw)) unit = "pièce";
+  else if (["g", "gr", "gram", "gramme"].includes(uw)) unit = "g";
   else if (["kg", "kilo"].includes(uw)) unit = "kg";
   else if (uw === "ml") { unit = "cl"; factor = 0.1; }
   else if (uw === "cl") unit = "cl";
@@ -5720,13 +5744,13 @@ function parseOcrRecipeText(rawText) {
   const lines = (rawText || "").split("\n").map((l) => l.trim()).filter(Boolean);
   if (!lines.length) return { name: "", ingredients: [], description: "", prepTime: null, cookTime: null };
 
-  const ingredientMarker = /^(ingr[ée]dients?|ingredients|ingredientes|zutaten)\s*:?\s*(pour\s+\d+\s*(personnes?)?|for\s+\d+\s*(people|servings?)?|para\s+\d+\s*(personas?)?|f[üu]r\s+\d+\s*(personen)?)?\s*$/i;
-  const instructionMarker = /^(pr[ée]paration|[ée]tapes|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\s*:?\s*$/i;
+  const ingredientMarker = /^(ingr[ée]dients?|ingredients|ingredientes|zutaten)\b/i;
+  const instructionMarker = /^(pr[ée]paration|[ée]tapes|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\b/i;
   // Toute section qui doit arrêter la liste des ingrédients, pas
   // seulement celle des étapes — "Ustensiles" par exemple, très courant
   // juste après les ingrédients et avant la vraie section de
   // préparation sur beaucoup de sites.
-  const sectionBoundaryMarker = /^(pr[ée]paration|[ée]tapes|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensiles?|utensils?|mat[ée]riel|equipment)\s*:?\s*$/i;
+  const sectionBoundaryMarker = /^(pr[ée]paration|[ée]tapes|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensiles?|utensils?|mat[ée]riel|equipment|valeurs?\s+nutritionnelles?|nutritional\s+values?|valores?\s+nutricionales?|n[äa]hrwerte?|allerg[èe]nes?|allergens?|al[ée]rgenos?)\b/i;
   // Marque la fin du vrai contenu de la recette : au-delà, ce n'est
   // presque toujours plus que des avis, des recettes similaires ou de
   // la navigation — sans ça, la description engloberait toute la fin
@@ -5837,47 +5861,172 @@ async function runOcrOnImage(file) {
   }
 }
 
+// Devine à quelle section appartient le texte reconnu sur une photo :
+// une photo peut ne contenir que les ingrédients, que les étapes, les
+// deux à la fois (une fiche courte tenant sur une seule photo), ou
+// aucun des deux de façon franche (photo de couverture, infos
+// générales...). Retourne null si le résultat est trop incertain pour
+// choisir automatiquement — il faudra alors demander à l'utilisateur.
+function detectPhotoSection(parsed) {
+  const hasIngredients = parsed.ingredients && parsed.ingredients.length > 0;
+  const hasDescription = parsed.description && parsed.description.trim().length > 20;
+  if (hasIngredients && hasDescription) return "mixed";
+  if (hasIngredients) return "ingredients";
+  if (hasDescription) return "preparation";
+  return null;
+}
+
+// Combine les résultats de plusieurs photos, chacune étiquetée avec sa
+// section, en une seule recette prête à être vérifiée dans le
+// formulaire — dans l'ordre où les photos ont été ajoutées.
+function mergeMultiPhotoResults(photos) {
+  let name = "";
+  let ingredients = [];
+  let descriptionParts = [];
+  let persons = null, prepTime = null, cookTime = null;
+  photos.forEach((p) => {
+    if (!p.parsed) return;
+    const section = p.section;
+    if (section === "ingredients" || section === "mixed") {
+      ingredients = ingredients.concat(p.parsed.ingredients);
+    }
+    if (section === "preparation" || section === "mixed") {
+      if (p.parsed.description && p.parsed.description.trim()) descriptionParts.push(p.parsed.description.trim());
+    }
+    if (!name && p.parsed.name) name = p.parsed.name;
+    if (persons == null && p.parsed.persons) persons = p.parsed.persons;
+    if (prepTime == null && p.parsed.prepTime) prepTime = p.parsed.prepTime;
+    if (cookTime == null && p.parsed.cookTime) cookTime = p.parsed.cookTime;
+  });
+  return { name, ingredients, description: descriptionParts.join("\n\n"), persons: persons || 4, prepTime, cookTime };
+}
+
+const MAX_IMPORT_PHOTOS = 8;
+
 function renderImportPhoto() {
   const wrap = el(`<div></div>`);
   wrap.appendChild(el(`<p style="font-size:13px;color:var(--text-muted);margin:0 0 20px;line-height:1.5;">${escapeHtml(t("import_photo_disclaimer"))}</p>`));
 
-  const fileInput = el(`<input type="file" accept="image/*" capture="environment" style="display:none;">`);
-  const chooseBtn = el(`<button class="btn btn-primary">${t("import_photo_choose_button")}</button>`);
-  chooseBtn.addEventListener("click", () => fileInput.click());
-  wrap.appendChild(chooseBtn);
-  wrap.appendChild(fileInput);
+  const listHolder = el(`<div></div>`);
+  wrap.appendChild(listHolder);
 
-  const statusHolder = el(`<div style="margin-top:16px;font-size:14px;"></div>`);
-  wrap.appendChild(statusHolder);
+  const addSection = el(`<div style="display:flex;gap:10px;margin-top:10px;"></div>`);
+  const cameraInput = el(`<input type="file" accept="image/*" capture="environment" style="display:none;">`);
+  const galleryInput = el(`<input type="file" accept="image/*" style="display:none;">`);
+  const cameraBtn = el(`<button type="button" class="btn btn-outline" style="flex:1;">${t("import_photo_add_camera")}</button>`);
+  const galleryBtn = el(`<button type="button" class="btn btn-outline" style="flex:1;">${t("import_photo_add_gallery")}</button>`);
+  cameraBtn.addEventListener("click", () => cameraInput.click());
+  galleryBtn.addEventListener("click", () => galleryInput.click());
+  addSection.appendChild(cameraBtn);
+  addSection.appendChild(galleryBtn);
+  addSection.appendChild(cameraInput);
+  addSection.appendChild(galleryInput);
+  wrap.appendChild(addSection);
 
-  fileInput.addEventListener("change", async (e) => {
-    const file = e.target.files[0];
+  const maxReachedNote = el(`<p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:8px;display:none;">${escapeHtml(t("import_photo_max_reached"))}</p>`);
+  wrap.appendChild(maxReachedNote);
+
+  const mergeBtn = el(`<button type="button" class="btn btn-primary" style="width:100%;margin-top:16px;" disabled>${t("import_photo_merge_button")}</button>`);
+  const mergeHint = el(`<p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:8px;">${escapeHtml(t("import_photo_merge_hint"))}</p>`);
+  wrap.appendChild(mergeBtn);
+  wrap.appendChild(mergeHint);
+
+  const SECTION_LABELS = {
+    ingredients: () => t("import_photo_section_ingredients"),
+    preparation: () => t("import_photo_section_preparation"),
+    general: () => t("import_photo_section_general"),
+    mixed: () => t("import_photo_section_mixed"),
+    other: () => t("import_photo_section_other"),
+  };
+
+  function refreshUi() {
+    listHolder.innerHTML = "";
+    state.multiPhotoImport.forEach((p) => {
+      const card = el(`<div class="card" style="padding:12px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;"></div>`);
+      card.appendChild(el(`<img src="${p.thumbnail}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0;">`));
+      const info = el(`<div style="flex:1;min-width:0;"></div>`);
+      if (p.status === "processing") {
+        info.appendChild(el(`<div style="font-size:13px;color:var(--text-muted);">${escapeHtml(t("import_photo_processing_short"))}</div>`));
+      } else if (p.status === "error") {
+        info.appendChild(el(`<div style="font-size:13px;color:var(--danger);">${escapeHtml(t("import_photo_error"))}</div>`));
+        info.appendChild(el(`<div style="font-size:11px;color:var(--text-muted);word-break:break-word;">${escapeHtml(p.errorMessage || "")}</div>`));
+      } else {
+        info.appendChild(el(`<div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">${escapeHtml(t("import_photo_section_label"))}</div>`));
+        const select = el(`<select style="width:100%;padding:6px;border-radius:8px;border:1px solid var(--border);font-size:13px;">
+          ${Object.keys(SECTION_LABELS).map((key) => `<option value="${key}" ${p.section === key ? "selected" : ""}>${escapeHtml(SECTION_LABELS[key]())}</option>`).join("")}
+        </select>`);
+        select.addEventListener("change", () => { p.section = select.value; p.autoDetected = false; });
+        info.appendChild(select);
+        if (p.autoDetected) {
+          info.appendChild(el(`<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">✓ ${escapeHtml(t("import_photo_auto_detected"))}</div>`));
+        } else if (p.section === "other") {
+          info.appendChild(el(`<div style="font-size:11px;color:var(--accent);margin-top:2px;">${escapeHtml(t("import_photo_manual_needed"))}</div>`));
+        }
+      }
+      card.appendChild(info);
+      const removeBtn = el(`<button type="button" aria-label="${escapeHtml(t("import_photo_remove"))}" style="background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:4px;flex-shrink:0;">×</button>`);
+      removeBtn.addEventListener("click", () => {
+        state.multiPhotoImport = state.multiPhotoImport.filter((x) => x.id !== p.id);
+        refreshUi();
+      });
+      card.appendChild(removeBtn);
+      listHolder.appendChild(card);
+    });
+
+    const atMax = state.multiPhotoImport.length >= MAX_IMPORT_PHOTOS;
+    addSection.style.display = atMax ? "none" : "flex";
+    maxReachedNote.style.display = atMax ? "block" : "none";
+    const doneCount = state.multiPhotoImport.filter((p) => p.status === "done").length;
+    mergeBtn.disabled = doneCount === 0;
+  }
+
+  async function handleNewPhoto(file) {
     if (!file) return;
-    chooseBtn.disabled = true;
-    statusHolder.textContent = t("import_photo_processing");
+    if (state.multiPhotoImport.length >= MAX_IMPORT_PHOTOS) return;
+    const thumbnail = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(file);
+    });
+    const entry = { id: uid(), thumbnail, status: "processing", parsed: null, section: null, autoDetected: false, errorMessage: null };
+    state.multiPhotoImport.push(entry);
+    refreshUi();
     try {
       const rawText = await runOcrOnImage(file);
       if (!rawText || !rawText.trim()) {
-        statusHolder.textContent = t("import_photo_no_text");
-        chooseBtn.disabled = false;
-        return;
+        entry.status = "error";
+        entry.errorMessage = t("import_photo_no_text");
+      } else {
+        entry.parsed = parseOcrRecipeText(rawText);
+        const detected = detectPhotoSection(entry.parsed);
+        entry.section = detected || "other";
+        entry.autoDetected = !!detected;
+        entry.status = "done";
       }
-      const parsed = parseOcrRecipeText(rawText);
-      state.editingRecipeId = null;
-      state.formIngredients = parsed.ingredients.length ? parsed.ingredients : [{ name: "", quantity: "", unit: "pièce" }];
-      state.formAllergens = [];
-      state.formPhoto = null;
-      state.screen = "form";
-      state._importPrefill = { name: parsed.name, description: parsed.description, persons: parsed.persons || 4, prepTime: parsed.prepTime, cookTime: parsed.cookTime };
-      render();
     } catch (err) {
-      statusHolder.innerHTML = "";
-      statusHolder.appendChild(el(`<div>${escapeHtml(t("import_photo_error"))}</div>`));
-      statusHolder.appendChild(el(`<div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml(formatCaughtError(err))}</div>`));
-      chooseBtn.disabled = false;
+      entry.status = "error";
+      entry.errorMessage = formatCaughtError(err);
     }
+    refreshUi();
+  }
+
+  cameraInput.addEventListener("change", (e) => { handleNewPhoto(e.target.files[0]); e.target.value = ""; });
+  galleryInput.addEventListener("change", (e) => { handleNewPhoto(e.target.files[0]); e.target.value = ""; });
+
+  mergeBtn.addEventListener("click", () => {
+    const usable = state.multiPhotoImport.filter((p) => p.status === "done");
+    const merged = mergeMultiPhotoResults(usable);
+    state.multiPhotoImport = [];
+    state.editingRecipeId = null;
+    state.formIngredients = merged.ingredients.length ? merged.ingredients : [{ name: "", quantity: "", unit: "pièce" }];
+    state.formAllergens = [];
+    state.formPhoto = null;
+    state.screen = "form";
+    state._importPrefill = merged;
+    render();
   });
 
+  refreshUi();
   return wrap;
 }
 
@@ -6773,7 +6922,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 143;
+const APP_VERSION = 145;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
