@@ -1735,12 +1735,29 @@ attendu → résultat obtenu → version testée.
   dépôt — ce sont des scripts Playwright ponctuels que je conserve et
   relance manuellement à chaque session, documentés ici au fur et à
   mesure. Voir aussi le point 17.3 du même sujet.
-- **Test physique Android avec deux minuteurs** : reste l'étape
-  décisive suivante, comme recommandé par l'audit — lancer deux
-  minuteurs, passer en arrière-plan, toucher une notification, vérifier
-  que le mode cuisine existant revient au premier plan sans doublon ni
-  sonnerie impossible à arrêter.
+- **Test physique Android avec deux minuteurs** : ✅ confirmé réussi par
+  l'utilisateur — le scénario décisif recommandé par l'audit (deux
+  minuteurs lancés, application en arrière-plan, deux notifications
+  reçues, clic sur une notification) fonctionne correctement : le mode
+  cuisine existant revient au premier plan sans doublon ni sonnerie
+  impossible à arrêter.
 - **Version testée** : v164
+
+### 19.13 — Confirmation physique finale du système minuteur/notifications *(physique — réussi)*
+- **Résultat obtenu** : ✅ le test physique décisif (deux minuteurs,
+  arrière-plan, notifications, clic ciblant la bonne recette) est
+  confirmé réussi par l'utilisateur sur son appareil réel.
+- **Portée** : clôture la série de corrections apportées entre les
+  v155 et v164 sur le Wake Lock, le minuteur basé sur une échéance
+  absolue, le registre de réservations et les notifications système —
+  l'ensemble est désormais validé à la fois par simulation (tests
+  Playwright ponctuels) et par un usage réel sur Samsung Galaxy A06.
+- **Limites toujours valables, non concernées par cette confirmation** :
+  écran verrouillé (le minuteur reste suspendu tant que l'écran est
+  verrouillé — nécessiterait une vraie application native, prévu pour
+  la conversion Play Store) ; l'alarme sonne dès le réveil de l'écran,
+  même avant la saisie du code PIN (comportement du navigateur, pas de
+  l'application).
 
 ## Résumé — état au 05/09/2026 (v164)
 
