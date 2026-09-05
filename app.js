@@ -1874,27 +1874,74 @@ function renderPantry() {
   const wrap = el(`<div></div>`);
   if (!state.pantry.length) {
     wrap.appendChild(el(`<div class="empty-state"><div class="emoji">📦</div><p>${escapeHtml(t("pantry_empty"))}</p></div>`));
-    return wrap;
+  } else {
+    const list = el(`<div class="card" style="padding:4px 16px;margin-bottom:20px;"></div>`);
+    state.pantry
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((item) => {
+        const row = el(`<div class="shopping-item">
+          <span class="label" style="cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}${item.threshold != null ? escapeHtml(t("pantry_threshold_suffix", { threshold: fmtQty(item.threshold) })) : ""}</span>
+          <button class="remove-ing" style="width:32px;height:32px;" aria-label="${t("common_delete")}">🗑</button>
+        </div>`);
+        row.querySelector(".label").addEventListener("click", () => openAddItemModal("pantry", item));
+        row.querySelector("button").addEventListener("click", async () => {
+          await storeDelete("pantry", item.id);
+          state.pantry = state.pantry.filter((p) => p.id !== item.id);
+          releasePantryClaimsForIngredient(normalize(item.name));
+          render();
+        });
+        list.appendChild(row);
+      });
+    wrap.appendChild(list);
   }
-  const list = el(`<div class="card" style="padding:4px 16px;"></div>`);
-  state.pantry
-    .slice()
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .forEach((item) => {
+
+  // Section des réservations — affichée même si le garde-manger est
+  // vide (une réservation peut survivre à la suppression de tous les
+  // articles de garde-manger si elle n'a jamais été explicitement
+  // effacée), pour que l'utilisateur garde toujours la main dessus.
+  wrap.appendChild(el(`<div class="section-label">${t("pantry_reservations_title")}</div>`));
+  const reservationsCard = el(`<div class="card" style="padding:14px 16px;"></div>`);
+  reservationsCard.appendChild(el(`<p style="font-size:12px;color:var(--text-muted);margin:0 0 12px;">${escapeHtml(t("pantry_reservations_hint"))}</p>`));
+  if (!state.pantryClaimedThisSession.length) {
+    reservationsCard.appendChild(el(`<p style="font-size:13px;color:var(--text-muted);margin:0;">${escapeHtml(t("pantry_reservations_none"))}</p>`));
+  } else {
+    state.pantryClaimedThisSession.forEach((claim) => {
+      let sourceLabel;
+      if (claim.sourceType === "recipe") {
+        sourceLabel = t("pantry_reservation_from_recipe");
+      } else {
+        const shoppingItem = state.shopping.find((i) => i.id === claim.sourceId);
+        sourceLabel = shoppingItem
+          ? t("pantry_reservation_from_shopping", { name: translateIngredientName(shoppingItem.name) })
+          : t("pantry_reservation_from_shopping_deleted");
+      }
+      // "claim.ingredientKey" est normalisée (minuscules, sans accents)
+      // — il faut retrouver le nom correctement casé pour que
+      // translateIngredientName() le reconnaisse, sinon la traduction
+      // échoue silencieusement et affiche la clé brute non traduite.
+      const properName = state.ingredientNames.find((n) => normalize(n) === claim.ingredientKey) || claim.ingredientKey;
       const row = el(`<div class="shopping-item">
-        <span class="label" style="cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}${item.threshold != null ? escapeHtml(t("pantry_threshold_suffix", { threshold: fmtQty(item.threshold) })) : ""}</span>
-        <button class="remove-ing" style="width:32px;height:32px;" aria-label="${t("common_delete")}">🗑</button>
+        <span class="label">${escapeHtml(translateIngredientName(properName))} — ${fmtQty(claim.amount)} <span style="color:var(--text-muted);font-size:12px;">(${escapeHtml(sourceLabel)})</span></span>
+        <button class="remove-ing" style="width:32px;height:32px;" aria-label="${escapeHtml(t("pantry_reservation_cancel"))}">🗑</button>
       </div>`);
-      row.querySelector(".label").addEventListener("click", () => openAddItemModal("pantry", item));
-      row.querySelector("button").addEventListener("click", async () => {
-        await storeDelete("pantry", item.id);
-        state.pantry = state.pantry.filter((p) => p.id !== item.id);
-        releasePantryClaimsForIngredient(normalize(item.name));
+      row.querySelector("button").addEventListener("click", () => {
+        state.pantryClaimedThisSession = state.pantryClaimedThisSession.filter((c) => c.id !== claim.id);
+        persistPantryClaims();
         render();
       });
-      list.appendChild(row);
+      reservationsCard.appendChild(row);
     });
-  wrap.appendChild(list);
+    const resetBtn = el(`<button type="button" class="btn btn-outline btn-sm" style="margin-top:12px;">${escapeHtml(t("pantry_reservations_reset_all"))}</button>`);
+    resetBtn.addEventListener("click", async () => {
+      if (!await customConfirm(t("pantry_reservations_reset_confirm"))) return;
+      state.pantryClaimedThisSession = [];
+      persistPantryClaims();
+      render();
+    });
+    reservationsCard.appendChild(resetBtn);
+  }
+  wrap.appendChild(reservationsCard);
   return wrap;
 }
 function openPantryAddPrompt() {
@@ -3701,7 +3748,7 @@ function formatCountdown(totalSeconds) {
 }
 function createCookingTimer(holder) {
   const timer = {
-    id: uid(), minutes: 5, seconds: 0, remaining: 5 * 60,
+    id: uid(), minutes: 5, seconds: 0, remaining: 5 * 60, endAt: null,
     running: false, interval: null, alarming: false, alarmInterval: null,
   };
   state.cookingTimers.push(timer);
@@ -3762,7 +3809,12 @@ function renderTimerRow(holder, timer) {
     setInputsDisabled(false);
   }
   function tick() {
-    timer.remaining--;
+    // Recalculé à partir de l'échéance réelle (endAt), pas par simple
+    // décrémentation — si Android retarde ou saute un tick (l'app
+    // passe brièvement en arrière-plan, le moteur JS est occupé...),
+    // "remaining--" accumulerait ce retard silencieusement, faisant
+    // sonner l'alarme plus tard que prévu même à l'écran visible.
+    timer.remaining = Math.max(0, Math.round((timer.endAt - Date.now()) / 1000));
     if (timer.remaining <= 0) {
       clearInterval(timer.interval);
       timer.interval = null;
@@ -3773,6 +3825,7 @@ function renderTimerRow(holder, timer) {
       startBtn.setAttribute("aria-label", t("cooking_stop_alarm"));
       playBeep();
       vibrateDevice();
+      showTimerNotification();
       timer.alarmInterval = setInterval(() => { playBeep(); vibrateDevice(); }, 1200);
     } else {
       countdownEl.textContent = formatCountdown(timer.remaining);
@@ -3790,11 +3843,13 @@ function renderTimerRow(holder, timer) {
     } else {
       if (timer.remaining <= 0) timer.remaining = timer.minutes * 60 + timer.seconds;
       if (timer.remaining <= 0) return;
+      timer.endAt = Date.now() + timer.remaining * 1000;
       timer.running = true;
       startBtn.textContent = "⏸";
       startBtn.setAttribute("aria-label", t("cooking_timer_pause"));
       setInputsDisabled(true);
       timer.interval = setInterval(tick, 1000);
+      ensureNotificationPermission();
     }
   });
   row.querySelector(".reset-btn").addEventListener("click", () => {
@@ -3866,6 +3921,43 @@ async function releaseWakeLock() {
   if (lock) {
     try { await lock.release(); } catch (e) { /* sans conséquence */ }
   }
+}
+
+// Demande l'autorisation de notification, une seule fois par session —
+// déclenchée au premier démarrage d'un minuteur (un moment naturel où
+// l'utilisateur vient d'exprimer l'intérêt pour cette fonctionnalité),
+// jamais de façon proactive au chargement de la page.
+let notificationPermissionAsked = false;
+async function ensureNotificationPermission() {
+  if (!("Notification" in window)) return false;
+  if (Notification.permission === "granted") return true;
+  if (Notification.permission === "denied" || notificationPermissionAsked) return false;
+  notificationPermissionAsked = true;
+  try {
+    const result = await Notification.requestPermission();
+    return result === "granted";
+  } catch (e) {
+    return false;
+  }
+}
+// Affiche via le service worker (registration.showNotification) plutôt
+// que le constructeur Notification direct — bien mieux pris en charge
+// sur Chrome Android, et permet de gérer le clic dessus (voir
+// "notificationclick" dans sw.js) pour revenir à l'application.
+async function showTimerNotification() {
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  try {
+    if ("serviceWorker" in navigator) {
+      const registration = await navigator.serviceWorker.ready;
+      await registration.showNotification(t("cooking_notification_title"), {
+        body: t("cooking_notification_body"),
+        icon: "./icons/icon-192.png",
+        tag: "cooking-timer",
+      });
+    } else {
+      new Notification(t("cooking_notification_title"), { body: t("cooking_notification_body") });
+    }
+  } catch (e) { /* sans conséquence, le minuteur continue de sonner/vibrer normalement */ }
 }
 
 function openCookingMode(recipe) {
@@ -4792,19 +4884,35 @@ function releasePantryClaimsForSource(sourceType, sourceId) {
 // l'utilisateur fermait puis rouvrait l'app entre deux ajouts de
 // recettes à la liste de courses.
 function persistPantryClaims() {
-  try { localStorage.setItem("pantryClaimedThisSession", JSON.stringify(state.pantryClaimedThisSession)); } catch (e) { /* sans conséquence */ }
+  kvSet("pantryClaimedThisSession", state.pantryClaimedThisSession).catch(() => { /* sans conséquence */ });
 }
-function loadPantryClaims() {
+// Valide chaque entrée individuellement — un tableau chargé (depuis une
+// sauvegarde restaurée, potentiellement modifiée à la main ou
+// corrompue) peut contenir des entrées malformées qui provoqueraient
+// des erreurs ailleurs (affichage des réservations, calculs de
+// réduction) si elles étaient conservées telles quelles.
+function sanitizePantryClaims(rawClaims) {
+  if (!Array.isArray(rawClaims)) return [];
+  return rawClaims.filter((c) =>
+    c && typeof c === "object" && !Array.isArray(c) &&
+    typeof c.ingredientKey === "string" && c.ingredientKey.trim() &&
+    Number.isFinite(c.amount) && c.amount > 0 &&
+    (c.sourceType === "recipe" || c.sourceType === "shopping") &&
+    typeof c.sourceId === "string" && c.sourceId.trim()
+  );
+}
+async function loadPantryClaims() {
   try {
-    const raw = localStorage.getItem("pantryClaimedThisSession");
-    const parsed = raw ? JSON.parse(raw) : [];
-    // Compatibilité avec l'ancien format (objet {ingrédient: total}) —
-    // si une session précédente avait laissé ce format en localStorage,
-    // on l'ignore simplement plutôt que de planter dessus : ces
-    // anciennes réservations n'ont de toute façon plus d'origine
-    // identifiable, elles ne peuvent pas être converties fidèlement.
-    state.pantryClaimedThisSession = Array.isArray(parsed) ? parsed : [];
-  } catch (e) { /* reste à [] par défaut */ }
+    const raw = await kvGet("pantryClaimedThisSession");
+    // Compatibilité avec l'ancien format (objet {ingrédient: total},
+    // utilisé jusqu'à la v153) — ignoré simplement plutôt que de
+    // planter dessus : ces anciennes réservations n'ont de toute façon
+    // plus d'origine identifiable, elles ne peuvent pas être converties
+    // fidèlement vers le nouveau format par source précise.
+    state.pantryClaimedThisSession = sanitizePantryClaims(raw);
+  } catch (e) {
+    state.pantryClaimedThisSession = [];
+  }
 }
 
 function computeIngredientCost(name, quantity, unit) {
@@ -5143,8 +5251,11 @@ async function importAllData(data, mode) {
   state.recipes = await storeAll("recipes");
   state.shopping = await storeAll("shopping");
   state.pantry = await storeAll("pantry");
-  state.pantryClaimedThisSession = [];
-  persistPantryClaims();
+  // Les réservations sont désormais incluses dans les sauvegardes (via
+  // le store kv, restauré comme les autres ci-dessus) — on les recharge
+  // donc depuis ce qui vient d'être restauré, plutôt que de toujours
+  // les remettre à zéro comme avant leur inclusion dans les sauvegardes.
+  await loadPantryClaims();
   await ensureIngredientListLoaded();
   await loadIngredientOverrides();
 }
@@ -7422,11 +7533,11 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 158;
+const APP_VERSION = 161;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
-  loadPantryClaims();
+  await loadPantryClaims();
 
   // Capture un brouillon de la recette en cours de création si
   // l'application passe en arrière-plan ou se ferme — plus fiable que

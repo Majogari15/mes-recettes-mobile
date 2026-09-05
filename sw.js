@@ -3,7 +3,7 @@
 // ensuite (les données elles-mêmes sont stockées séparément, dans IndexedDB,
 // géré directement par app.js).
 
-const CACHE_NAME = "mes-recettes-cache-v158";
+const CACHE_NAME = "mes-recettes-cache-v161";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -118,6 +118,22 @@ self.addEventListener("fetch", (event) => {
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
       return fetch(event.request).catch(() => Response.error());
+    })
+  );
+});
+
+// Clic sur une notification (ex. minuteur de cuisine terminé) : ramène
+// au premier plan une fenêtre déjà ouverte de l'application plutôt que
+// d'en ouvrir une nouvelle à chaque fois, ou en ouvre une si aucune
+// n'est disponible.
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if ("focus" in client) return client.focus();
+      }
+      if (self.clients.openWindow) return self.clients.openWindow("./");
     })
   );
 });

@@ -1520,7 +1520,98 @@ attendu → résultat obtenu → version testée.
   toujours fonctionnels.
 - **Version testée** : v158
 
-## Résumé — état au 05/09/2026 (v158)
+### 19.7 — Minuteur basé sur une échéance absolue *(amélioration recommandée, implémentée et testée, v159)*
+- **Contexte** : le minuteur reposait sur un simple `remaining--` à
+  chaque `tick()` — si Android retarde ou saute un tick (l'app passe
+  brièvement en arrière-plan, le moteur JS est occupé...), ce retard
+  s'accumule silencieusement, faisant sonner l'alarme plus tard que
+  prévu même à l'écran visible, indépendamment du Wake Lock.
+- **Corrigé** : le temps restant est désormais recalculé à chaque tick
+  à partir d'une échéance absolue (`endAt = Date.now() + durée`,
+  calculée une fois au démarrage/reprise), pas par simple
+  décrémentation — `remaining = Math.max(0, Math.round((endAt -
+  Date.now()) / 1000))`.
+- **Résultat obtenu** : ✅ Réussi — testé avec un bond d'horloge simulé
+  de 3,5 secondes sur un minuteur de 3 secondes (représentant un
+  retard Android) : l'alarme se déclenche correctement dès le premier
+  tick suivant, sans attendre les tick manqués. Comportement normal
+  (sans retard) confirmé inchangé : décompte correct seconde par
+  seconde, alarme à l'heure exacte. Pause/reprise testée : le temps
+  reste bien figé pendant la pause, une nouvelle échéance est
+  correctement recalculée à la reprise à partir du temps restant.
+- **Version testée** : v159
+
+### 19.8 — Registre de réservations du garde-manger finalisé *(6 sous-points implémentés et testés, v160)*
+- **Contexte** : le registre par source (v154) fonctionnait
+  correctement en interne, mais restait invisible et non géré pour
+  l'utilisateur — plusieurs points concrets manquaient.
+- **Implémenté et testé, chaque sous-point individuellement** :
+  1. **Affichage des réservations entièrement couvertes** (celles qui
+     ne produisent aucun article de courses) — nouvelle section
+     "Réservations en cours" dans l'écran garde-manger, affichée même
+     si le garde-manger est vide.
+  2. **Annulation individuelle** — testé, une réservation précise se
+     retire sans toucher aux autres.
+  3. **Réinitialisation même liste vide** — testée, le bouton reste
+     disponible et fonctionne même sans aucun article de garde-manger
+     ni de courses.
+  4. **Inclusion dans les sauvegardes** — migré de localStorage vers
+     le store `kv` (IndexedDB), déjà couvert par le mécanisme de
+     sauvegarde existant. Testé le cycle complet : sauvegarde puis
+     restauration, les réservations survivent correctement (au lieu
+     d'être systématiquement effacées comme avant ce correctif).
+  5. **Validation des entrées chargées** — nouvelle fonction
+     `sanitizePantryClaims()`, testée avec 8 cas dont 6 malformés
+     (null, quantité négative, type de source invalide, clé vide,
+     champ manquant, valeur non-objet) : seules les 2 entrées
+     réellement valides sont conservées.
+  6. **Ancien format v153** — testé explicitement : un objet (ancien
+     format) donné à `sanitizePantryClaims()` renvoie correctement un
+     tableau vide, sans planter.
+- **Défaut trouvé en testant l'affichage** : le nom d'ingrédient
+  affiché utilisait la clé normalisée (minuscules, ex. "sucre") au lieu
+  du vrai nom, faisant échouer silencieusement la traduction. Corrigé
+  en retrouvant le nom correctement casé dans `state.ingredientNames`
+  avant de traduire — testé, "Sucre"/"Farine" s'affichent maintenant
+  correctement traduits.
+- **Non-régression** : tests précédents du registre (fusion précise,
+  suppression garde-manger, ajout unitaire) tous relancés avec succès.
+  Un ancien test (`test_pantry_reset`) a été retiré : il utilisait un
+  format d'API obsolète (v150) et testait un comportement
+  intentionnellement changé par ce correctif (la restauration de
+  sauvegarde restaure désormais les réservations au lieu de les
+  effacer) — les cas qu'il couvrait restent testés par les tests plus
+  récents avec la bonne API.
+- **Version testée** : v160
+
+### 19.9 — Notification système du minuteur *(implémentée et testée, v161)*
+- **Contexte** : le minuteur sonne et vibre correctement quand l'app
+  est visible, mais rien n'était affiché quand l'app tourne encore en
+  arrière-plan sans être au premier plan — améliore ce cas précis, sans
+  prétendre résoudre l'écran verrouillé (voir section 19.1/19.3).
+- **Implémenté** :
+  1. Demande d'autorisation au premier démarrage effectif d'un
+     minuteur (moment naturel, jamais proactive au chargement de la
+     page), une seule fois par session.
+  2. Notification affichée via `registration.showNotification()` (le
+     service worker) plutôt que le constructeur direct — meilleure
+     prise en charge Android — quand le minuteur atteint zéro, en plus
+     de la sonnerie/vibration existantes.
+  3. Gestion du clic sur la notification (`notificationclick` dans
+     `sw.js`) : ramène au premier plan une fenêtre déjà ouverte de
+     l'application, ou en ouvre une si aucune n'est disponible.
+- **Résultat obtenu** : ✅ Réussi — testé : une seule vraie demande
+  d'autorisation même après plusieurs appels ; permission déjà refusée
+  correctement gérée sans redemander ; notification affichée avec le
+  bon titre/texte/icône quand accordée. **Intégration complète testée**
+  avec le vrai minuteur : démarrage → expiration → notification
+  affichée automatiquement, confirmé de bout en bout.
+- **Non-régression** : tests précédents du minuteur (échéance absolue,
+  pause/reprise) et du mode cuisine (Wake Lock, nettoyage) tous
+  relancés avec succès.
+- **Version testée** : v161
+
+## Résumé — état au 05/09/2026 (v161)
 
 - **jsQR et jsPDF désormais embarqués localement** (v141) — seul
   Tesseract (import par photo) reste chargé depuis un CDN.
