@@ -228,6 +228,20 @@ attendu → résultat obtenu → version testée.
   aucun plantage.
 - **Appareil** : appareil de l'utilisateur
 
+### 3.4bis — Mode de test restreint à localhost *(cause racine trouvée et corrigée, v137)*
+- **Contexte** : `?importtest=...` restait exploitable par n'importe qui
+  sur le site public déployé, pouvant perturber volontairement l'import
+  d'un autre utilisateur.
+- **Corrigé** : le paramètre n'est désormais pris en compte que si
+  `location.hostname` correspond à localhost/127.0.0.1 — ignoré
+  silencieusement partout ailleurs, y compris sur le site public.
+- **Résultat obtenu** : ✅ Réussi — testé sur un vrai serveur local
+  (`127.0.0.1`, mode pris en compte) et avec un nom d'hôte simulé de
+  production (`majogari15.github.io`, mode correctement ignoré).
+- **Note** : les futurs tests 3.3/3.4 nécessiteront un serveur local
+  plutôt que le site public déployé.
+- **Version testée** : v137
+
 ---
 
 ## 4. QR simple et multi-QR
@@ -307,6 +321,43 @@ attendu → résultat obtenu → version testée.
 ---
 
 ## 5. Courses et garde-manger
+
+### 5.0 — Multi-QR pour la liste de courses *(cause racine trouvée et corrigée, v136)*
+- **Contexte** : contrairement aux recettes, la liste de courses ne
+  bénéficiait pas du multi-QR — au-delà de 900 caractères, les derniers
+  articles étaient silencieusement retirés (avec un avertissement
+  visible, mais un transfert incomplet quand même).
+- **Corrigé** : réutilisation complète du système multi-QR partagé avec
+  les recettes (découpage, navigation, somme de contrôle, réassemblage
+  dans n'importe quel ordre) — plus aucun article n'est jamais retiré.
+  Fonction de troncature devenue inutile retirée, ainsi que sa
+  traduction associée dans les 4 langues.
+- **Résultat obtenu** : ✅ Réussi — testé avec 30 articles (largement
+  au-delà de l'ancienne limite), génération en 2 QR confirmée, scan dans
+  le désordre, **30 articles sur 30 retrouvés après import, premier et
+  dernier article présents**, aucune perte.
+- **Version testée** : v136
+
+### 5.0bis — Rappel de sauvegarde pour toutes les données importantes *(cause racine trouvée et corrigée, v138)*
+- **Contexte** : le rappel après 14 jours ne vérifiait que
+  `state.recipes.length > 0`, ne s'affichant donc jamais pour quelqu'un
+  n'ayant que des courses, un garde-manger, des menus ou des plannings.
+- **Corrigé** : vérifie désormais recettes, courses, garde-manger,
+  menus, modèles de planning, historique de planning, listes de courses
+  enregistrées, et le planning hebdomadaire actif.
+- **Résultat obtenu** : ✅ Réussi — testé avec 5 scénarios : rien du tout
+  (pas de rappel, correct), seulement des courses (rappel affiché),
+  seulement un garde-manger (rappel affiché), seulement un planning
+  hebdomadaire (rappel affiché), et avec des recettes (non-régression,
+  toujours affiché). Un premier test avait échoué à tort à cause d'une
+  détection cherchant le mot français alors que l'app tournait en
+  anglais — corrigé avec une détection par l'emoji 💾, indépendante de
+  la langue, confirmant que le vrai correctif fonctionnait déjà.
+- **Limite connue** : les ingrédients personnalisés seuls (sans aucune
+  autre donnée) ne déclenchent pas le rappel, n'étant pas chargés en
+  mémoire de façon permanente — cas très marginal, non couvert par ce
+  correctif.
+- **Version testée** : v138
 
 ### 5.1 — Réduction garde-manger, calcul cumulé sur 2 recettes *(simulé)*
 - **Conditions initiales** : 1 kg de farine en stock ; 2 recettes ayant
@@ -412,6 +463,24 @@ attendu → résultat obtenu → version testée.
   seulement "dialogue").
 - **Résultat obtenu** : Smartphone fonctionnel / Tablette fonctionnel
 - **Appareil** : Smartphone Samsung A06 (a jour) / Tablete Lenovo android 11 chrome pas a jour
+
+### 8.5bis — Langue HTML synchronisée *(cause racine trouvée et corrigée, v139)*
+- **Contexte** : l'interface changeait correctement de langue, mais
+  `<html lang="fr">` restait figé — un lecteur d'écran pouvait donc
+  prononcer l'anglais, l'espagnol ou l'allemand comme si c'était du
+  français.
+- **Corrigé** : `setLang()` met maintenant à jour `document.
+  documentElement.lang` et `document.title` à chaque changement ; la
+  langue détectée au premier chargement (avant tout choix manuel) est
+  également synchronisée dès le départ.
+- **Résultat obtenu** : ✅ Réussi — testé avec une langue "de" déjà
+  enregistrée au chargement (`html lang="de"` confirmé, titre "Meine
+  Rezepte") et un changement manuel vers l'espagnol en cours de session
+  (`html lang="es"` confirmé, titre "Mis Recetas"). Confirmé aussi que
+  le chargement initial correspond bien à la langue du navigateur quand
+  rien n'est encore enregistré (testé avec le navigateur réglé en
+  français : `html lang="fr"` correct).
+- **Version testée** : v139
 
 ### 8.6 — Étoiles : groupe radio complet (une seule tabulable, flèches) *(simulé + confirmé en production)*
 - **Manipulation** : vérifier qu'une seule étoile a `tabindex="0"` ; depuis

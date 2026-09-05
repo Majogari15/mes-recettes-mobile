@@ -77,7 +77,6 @@ const TRANSLATIONS = {
     qrscan_import_confirm: "Ajouter ces {count} article(s) à la liste de courses actuelle ?",
     qrscan_import_success: "Liste importée avec succès.",
     qrscan_lib_load_error: "Impossible de charger le lecteur de QR code. Vérifiez votre connexion et réessayez.",
-    qrcode_shopping_truncated: "Trop d'articles pour un seul QR code : seuls les {included} premiers sur {total} sont inclus.",
     shopping_delete_list_confirm: "Supprimer cette liste enregistrée ?",
     shopping_list_item_count: "{count} article(s)",
     home_import_photo: "📷 Importer depuis une photo",
@@ -568,7 +567,6 @@ const TRANSLATIONS = {
     qrscan_native_fallback: "The system's native reader is not available on this device — switching to the backup reader.",
     qrscan_lib_load_error: "Couldn't load the QR code reader. Check your connection and try again.",
     shopping_list_item_count: "{count} item(s)",
-    qrcode_shopping_truncated: "Too many items for a single QR code: only the first {included} of {total} are included.",
     trash_title: "Trash",
     quick_search_label: "Quick search",
     trash_empty: "The trash is empty.",
@@ -1056,7 +1054,6 @@ const TRANSLATIONS = {
     trash_delete_forever_button: "Eliminar definitivamente",
     qrscan_image_load_error: "No se pudo leer este archivo como imagen — comprueba que sea una foto o captura de pantalla válida.",
     trash_delete_forever_confirm: "¿Eliminar definitivamente esta receta? No se puede deshacer.",
-    qrcode_shopping_truncated: "Demasiados artículos para un solo código QR: solo se incluyen los primeros {included} de {total}.",
     qrscan_using_native: "Detección nativa del sistema activada — apunta al código QR.",
     qrscan_using_jsqr: "Detección estándar activada — apunta al código QR.",
     quick_search_label: "Búsqueda rápida",
@@ -1547,7 +1544,6 @@ const TRANSLATIONS = {
     shopping_qr_paste_button_short: "📋 Text einfügen",
     qrscan_no_code_found: "Kein QR-Code im Bild erkannt. Halten Sie das Telefon näher oder weiter weg, oder überprüfen Sie die Beleuchtung.",
     quick_search_label: "Schnellsuche",
-    qrcode_shopping_truncated: "Zu viele Artikel für einen einzigen QR-Code: nur die ersten {included} von {total} sind enthalten.",
     unitconv_quantity_label: "Menge",
     qrscan_image_load_error: "Diese Datei konnte nicht als Bild gelesen werden — bitte prüfen Sie, ob es sich um ein gültiges Foto oder einen Screenshot handelt.",
     unitconv_from_label: "Von",
@@ -2180,6 +2176,17 @@ const UNIT_KEYS = {
 
 let CURRENT_LANG = localStorage.getItem("lang") || (navigator.language || "fr").slice(0, 2);
 if (!TRANSLATIONS[CURRENT_LANG]) CURRENT_LANG = "fr";
+// Synchronise dès le chargement initial (pas seulement lors d'un
+// changement manuel via setLang) — sans ça, un appareil détecté en
+// anglais/espagnol/allemand dès la première visite gardait quand même
+// l'attribut "fr" figé dans index.html, faisant prononcer le contenu
+// dans la mauvaise langue par un lecteur d'écran.
+if (typeof document !== "undefined") {
+  document.documentElement.lang = CURRENT_LANG;
+  if (TRANSLATIONS[CURRENT_LANG] && TRANSLATIONS[CURRENT_LANG].app_name) {
+    document.title = TRANSLATIONS[CURRENT_LANG].app_name;
+  }
+}
 
 function t(key, params) {
   let str = (TRANSLATIONS[CURRENT_LANG] && TRANSLATIONS[CURRENT_LANG][key]) || TRANSLATIONS.fr[key] || key;
@@ -2194,6 +2201,8 @@ function setLang(lang) {
   if (!TRANSLATIONS[lang]) return;
   CURRENT_LANG = lang;
   localStorage.setItem("lang", lang);
+  document.documentElement.lang = lang;
+  document.title = t("app_name");
 }
 function translateCategory(cat) {
   return t(CATEGORY_KEYS[cat] || "cat_autre");

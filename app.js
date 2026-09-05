@@ -628,11 +628,18 @@ function renderHome() {
     wrap.appendChild(reminder);
   }
 
-  // Rappel de sauvegarde : seulement s'il y a des recettes à protéger,
-  // et si ça fait longtemps (ou jamais) qu'un export/partage a eu lieu.
+  // Rappel de sauvegarde : dès qu'il y a une donnée importante à
+  // protéger (pas seulement des recettes — une personne n'ayant que des
+  // courses, un garde-manger, des menus ou des plannings mérite aussi
+  // le rappel), et si ça fait longtemps (ou jamais) qu'un export/partage
+  // a eu lieu.
+  const hasImportantData = [
+    state.recipes, state.shopping, state.pantry, state.menus,
+    state.planTemplates, state.planHistory, state.savedShoppingLists,
+  ].some((arr) => arr.length > 0) || Object.keys(state.weeklyPlan || {}).length > 0;
   const lastBackupAt = localStorage.getItem("lastBackupAt");
   const daysSinceBackup = lastBackupAt ? (Date.now() - new Date(lastBackupAt).getTime()) / 86400000 : Infinity;
-  if (state.recipes.length > 0 && daysSinceBackup >= 14) {
+  if (hasImportantData && daysSinceBackup >= 14) {
     const backupReminder = el(`<div style="background:var(--accent-light);color:var(--accent);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;">
       ${escapeHtml(t("home_backup_reminder"))}
     </div>`);
@@ -2824,45 +2831,62 @@ function parseRecipeFromQrText(text) {
 // Retire des articles (depuis la fin) jusqu'à ce que le contenu tienne
 // dans la capacité d'un QR code, plutôt que de couper au milieu d'une
 // ligne et casser le format.
-function buildTruncatedShoppingQrContent(items, maxLength) {
-  let truncated = items.slice();
-  let content = encodeShoppingListForQr(truncated);
-  while (content.length > maxLength && truncated.length > 1) {
-    truncated = truncated.slice(0, -1);
-    content = encodeShoppingListForQr(truncated);
-  }
-  return { content, includedCount: truncated.length, totalCount: items.length };
-}
 
 async function openShoppingQrCodeModal() {
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
     <h2>${t("qrcode_shopping_title")}</h2>
-    <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;">${escapeHtml(t("qrcode_shopping_hint"))}</p>
+    <p id="qrcode-shopping-hint" style="font-size:13px;color:var(--text-muted);margin:0 0 16px;">${escapeHtml(t("qrcode_shopping_hint"))}</p>
     <div id="qrcode-shopping-holder" style="display:flex;justify-content:center;margin-bottom:12px;min-height:240px;align-items:center;text-align:center;"><span style="font-size:13px;color:var(--text-muted);">${escapeHtml(t("qrcode_loading"))}</span></div>
-    <div id="qrcode-shopping-note" style="font-size:12px;color:var(--text-muted);text-align:center;margin-bottom:16px;"></div>
+    <div id="qrcode-shopping-part-nav" style="display:none;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;">
+      <button type="button" class="btn btn-outline" id="qrcode-shopping-part-prev" style="flex:1;"></button>
+      <span id="qrcode-shopping-part-indicator" style="font-size:13px;font-weight:600;color:var(--text-muted);white-space:nowrap;"></span>
+      <button type="button" class="btn btn-outline" id="qrcode-shopping-part-next" style="flex:1;"></button>
+    </div>
     <button type="button" class="btn btn-outline">${t("cooking_close")}</button>
   </div>`);
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
   initModalA11y(overlay, sheet);
-  sheet.querySelector("button").addEventListener("click", () => overlay.remove());
+  sheet.querySelector("button:last-of-type").addEventListener("click", () => overlay.remove());
 
   const holder = sheet.querySelector("#qrcode-shopping-holder");
-  const noteHolder = sheet.querySelector("#qrcode-shopping-note");
-  const MAX_QR_LENGTH = 900;
-  const { content, includedCount, totalCount } = buildTruncatedShoppingQrContent(state.shopping, MAX_QR_LENGTH);
-  if (includedCount < totalCount) {
-    noteHolder.textContent = t("qrcode_shopping_truncated", { included: String(includedCount), total: String(totalCount) });
-  }
+  const navBar = sheet.querySelector("#qrcode-shopping-part-nav");
+  const indicator = sheet.querySelector("#qrcode-shopping-part-indicator");
+  const prevBtn = sheet.querySelector("#qrcode-shopping-part-prev");
+  const nextBtn = sheet.querySelector("#qrcode-shopping-part-next");
+  prevBtn.textContent = t("qrcode_part_prev");
+  nextBtn.textContent = t("qrcode_part_next");
 
-  try {
-    await loadQrCodeLib();
-    holder.innerHTML = generateQrCodeImgTag(content);
-  } catch (e) {
-    holder.innerHTML = `<div><span style="font-size:13px;color:var(--danger);">${escapeHtml(t("qrcode_load_error"))}</span><div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml((e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e)))}</div></div>`;
+  // Découpe en plusieurs QR si nécessaire (même système que les
+  // recettes) plutôt que de retirer des articles pour faire tenir la
+  // liste dans un seul QR — aucun article n'est plus jamais perdu, même
+  // silencieusement avec un avertissement.
+  const content = encodeShoppingListForQr(state.shopping);
+  const MAX_QR_LENGTH = 800;
+  const parts = splitIntoQrParts(content, MAX_QR_LENGTH);
+  let currentPart = 0;
+
+  async function renderCurrentPart() {
+    holder.innerHTML = `<span style="font-size:13px;color:var(--text-muted);">${escapeHtml(t("qrcode_loading"))}</span>`;
+    try {
+      await loadQrCodeLib();
+      holder.innerHTML = generateQrCodeImgTag(parts[currentPart]);
+    } catch (e) {
+      holder.innerHTML = `<div><span style="font-size:13px;color:var(--danger);">${escapeHtml(t("qrcode_load_error"))}</span><div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml((e && e.name ? e.name + " — " : "") + (e && e.message ? e.message : String(e)))}</div></div>`;
+    }
+    if (parts.length > 1) {
+      navBar.style.display = "flex";
+      indicator.textContent = t("qrcode_part_indicator", { current: String(currentPart + 1), total: String(parts.length) });
+      prevBtn.disabled = currentPart === 0;
+      nextBtn.disabled = currentPart === parts.length - 1;
+      sheet.querySelector("#qrcode-shopping-hint").textContent = t("qrcode_multi_hint", { total: String(parts.length) });
+    }
   }
+  prevBtn.addEventListener("click", () => { if (currentPart > 0) { currentPart -= 1; renderCurrentPart(); } });
+  nextBtn.addEventListener("click", () => { if (currentPart < parts.length - 1) { currentPart += 1; renderCurrentPart(); } });
+  await renderCurrentPart();
 }
 
 // Charge le lecteur de QR code (jsQR) à la demande, uniquement quand le
@@ -3057,6 +3081,13 @@ async function openQrScanModal() {
         cleanup();
         overlay.remove();
         confirmImportScannedRecipe(parsedRecipe);
+        return { status: "success" };
+      }
+      const parsedShoppingItems = decodeShoppingListFromQr(reassembled);
+      if (parsedShoppingItems && parsedShoppingItems.length) {
+        cleanup();
+        overlay.remove();
+        confirmImportScannedShoppingList(parsedShoppingItems);
         return { status: "success" };
       }
       statusEl.textContent = t("qrscan_not_recognized");
@@ -4866,6 +4897,12 @@ function renderBackup() {
     shareBtn.addEventListener("click", () => {
       if (!readyFile) return; // ne devrait pas arriver, bouton désactivé jusque-là
       shareBackupData(readyFile).then(async (result) => {
+        if (result.ok && !result.cancelled) {
+          // Réussite confirmée (pas juste annulée) : efface l'ancienne
+          // erreur, sans quoi elle restait affichée dans le diagnostic
+          // même après un partage qui fonctionne désormais correctement.
+          try { localStorage.removeItem("lastShareError"); } catch (e) { /* sans conséquence */ }
+        }
         if (!result.ok) {
           // Le partage a échoué (pas simplement annulé par l'utilisateur,
           // ce cas renvoie cancelled:true sans passer ici) : le fichier
@@ -6142,7 +6179,13 @@ async function fetchRecipeDataViaWorker(targetUrl) {
 // bogue sans exposer de donnée personnelle.
 function recordImportDiagnostic(service, errorMessage) {
   try {
-    if (service) localStorage.setItem("lastImportService", service);
+    if (service) {
+      localStorage.setItem("lastImportService", service);
+      // Une réussite efface l'ancienne erreur : sans ça, un import
+      // réussi laissait quand même affichée une erreur d'un essai
+      // précédent, pouvant faire croire à tort à un problème persistant.
+      localStorage.removeItem("lastImportError");
+    }
     if (errorMessage) localStorage.setItem("lastImportError", `${new Date().toISOString()} — ${errorMessage}`.slice(0, 300));
   } catch (e) { /* stockage indisponible, sans conséquence pour le diagnostic */ }
 }
@@ -6155,7 +6198,11 @@ async function fetchRecipeFromUrl(url, onAttempt) {
   // vrai Worker Cloudflare pour tout le monde. Valeurs reconnues :
   // "jina" (saute le Worker), "proxy" (saute Worker + Jina), "fail"
   // (saute les trois, pour vérifier le message final).
-  const importTestMode = new URLSearchParams(location.search).get("importtest");
+  // Restreint à localhost : sur le site public déployé, ce paramètre
+  // est purement et simplement ignoré, pour qu'il ne puisse jamais être
+  // utilisé pour perturber volontairement l'import de quelqu'un d'autre.
+  const isLocalhost = ["localhost", "127.0.0.1", "[::1]", ""].includes(location.hostname);
+  const importTestMode = isLocalhost ? new URLSearchParams(location.search).get("importtest") : null;
 
   // 1. Worker Cloudflare personnel en premier, si configuré : c'est la
   // source la plus fiable et la plus complète (voir commentaire de
@@ -6688,7 +6735,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 134;
+const APP_VERSION = 139;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
