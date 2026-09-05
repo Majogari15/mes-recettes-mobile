@@ -1297,14 +1297,10 @@ attendu → résultat obtenu → version testée.
   suppression d'un article sans rapport ("Sel") ; et, cas
   complémentaire, supprimer la farine elle-même efface bien
   correctement sa propre réservation.
-- **Limite reconnue** : reste approximatif si le MÊME ingrédient est
-  concerné par plusieurs recettes/articles à la fois (ex. modifier
-  l'article de farine lui-même alors que 2 recettes l'ont réservé
-  séparément) — une refonte complète attachant chaque réservation à
-  son article/sa recette d'origine resterait nécessaire pour un
-  comportement parfaitement correct dans tous les cas, mais ce
-  correctif couvre déjà le scénario concret le plus courant (article
-  sans rapport modifié).
+- **Limite reconnue en v153, résolue en v154** : restait approximatif
+  si le MÊME ingrédient était concerné par plusieurs recettes/articles
+  à la fois — voir section 18 pour la refonte complète qui corrige
+  précisément ce cas.
 - **Version testée** : v153
 
 ### 17.2 — `null` non normalisé dans la validation des sauvegardes *(cause racine trouvée et corrigée, v153)*
@@ -1331,7 +1327,49 @@ attendu → résultat obtenu → version testée.
   suite serait un chantier à part entière, non entrepris ici faute
   d'avoir été demandé en priorité.
 
-## Résumé — état au 05/09/2026 (v153)
+## 18. Refonte complète du registre de réservations (session du 05/09/2026)
+
+### 18.1 — Registre précis par source *(refonte complète, v154)*
+- **Contexte** : la v153 corrigeait le cas "ingrédient sans rapport",
+  mais restait imprécise pour le MÊME ingrédient réservé par plusieurs
+  sources — scénario confirmé par l'audit : deux recettes réservant
+  séparément 400 g de farine chacune (800 g au total), puis la
+  suppression d'un seul article "Farine" effaçait les 800 g au lieu de
+  seulement la part concernée.
+- **Corrigé, refonte complète** : `state.pantryClaimedThisSession`
+  devient un tableau d'entrées individuelles `{id, ingredientKey,
+  amount, sourceType, sourceId}`, chacune attachée précisément à ce qui
+  l'a créée :
+  - un article de courses (`sourceType: "shopping"`, son propre
+    identifiant) pour un ingrédient partiellement couvert ;
+  - un identifiant d'opération d'ajout de recette
+    (`sourceType: "recipe"`) pour un ingrédient **entièrement** couvert
+    par le garde-manger, qui n'a donc aucun article de courses
+    correspondant.
+  - `releasePantryClaimsForSource()` libère uniquement les entrées
+    d'une source précise ; `releasePantryClaimsForIngredient()` libère
+    toutes les entrées d'un ingrédient donné (utilisé uniquement pour
+    la suppression/modification d'un article de **garde-manger**, où
+    le stock physique lui-même change ou disparaît, invalidant toute
+    réservation contre lui quelle que soit sa source).
+- **Résultat obtenu** : ✅ Réussi — testé avec le scénario exact de
+  l'audit : deux "recettes" réservant chacune 400 g de farine (stock
+  limité à 600 g, l'une entièrement couverte, l'autre partiellement)
+  donnent deux entrées distinctes ; supprimer l'article de courses
+  résultant de la seconde libère précisément ses 200 g, la réservation
+  de 400 g de la première **survit intacte**. Testé aussi : ajout
+  unitaire via la fenêtre modale, suppression d'un article de
+  garde-manger (libère bien toutes les sources pour cet ingrédient,
+  sans toucher aux autres ingrédients), et persistance dans
+  localStorage avec le nouveau format (survit à un rechargement complet
+  de la page).
+- **Compatibilité** : l'ancien format (objet) éventuellement encore en
+  localStorage chez un utilisateur est simplement ignoré au chargement
+  plutôt que de planter dessus — ces anciennes réservations n'ont de
+  toute façon plus d'origine identifiable pour les convertir fidèlement.
+- **Version testée** : v154
+
+## Résumé — état au 05/09/2026 (v154)
 
 - **jsQR et jsPDF désormais embarqués localement** (v141) — seul
   Tesseract (import par photo) reste chargé depuis un CDN.

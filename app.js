@@ -160,11 +160,13 @@ const state = {
   recipes: [],
   shopping: [],
   pantry: [],
-  // Suivi, pour la session en cours, de ce qui a déjà été "réservé" du
-  // garde-manger par des ajouts précédents à la liste de courses — voir
-  // computePantryReduction(). Remis à zéro quand la liste de courses
-  // est entièrement vidée.
-  pantryClaimedThisSession: {},
+  // Registre des réservations du garde-manger pour la session en
+  // cours — un tableau d'entrées {id, ingredientKey, amount,
+  // sourceType, sourceId}, voir commitPantryClaim() et
+  // computePantryReduction(). Remis à zéro entièrement lors d'une
+  // opération globale (vider toute la liste, en charger une autre,
+  // restaurer une sauvegarde) ; libéré précisément par source sinon.
+  pantryClaimedThisSession: [],
   currentRecipeId: null,
   editingRecipeId: null,
   search: "",
@@ -1510,14 +1512,18 @@ function addRecipeToShoppingSilent(recipe, persons) {
 async function addRecipeToShopping(recipe, persons) {
   const items = state.shopping;
   const summaryLines = [];
-  const plan = [];
+  const plan = []; // ingrédients pas entièrement couverts : deviendront un article de courses
+  const fullyCoveredClaims = []; // ingrédients entièrement couverts : aucun article de courses ne les représente
   // Copie locale des réservations déjà confirmées : les nouvelles
   // réservations de cette recette y sont ajoutées provisoirement pour
   // le calcul (afin que plusieurs ingrédients identiques dans la même
   // recette se cumulent correctement), sans toucher au vrai état tant
   // que l'utilisateur n'a pas confirmé.
-  const pendingClaims = { ...state.pantryClaimedThisSession };
-  const claimsToCommit = [];
+  const pendingClaims = [...state.pantryClaimedThisSession];
+  // Identifiant unique de cette opération d'ajout : sert de source pour
+  // les réservations d'ingrédients entièrement couverts, qui n'ont pas
+  // d'article de courses correspondant auquel s'attacher.
+  const operationId = uid();
 
   (recipe.ingredients || []).forEach((ing) => {
     const neededQty = ing.quantity != null ? Number(ing.quantity) * persons : null;
@@ -1528,31 +1534,41 @@ async function addRecipeToShopping(recipe, persons) {
       summaryLines.push(t("pantry_reduction_reduced", { name: translateIngredientName(ing.name), qty: fmtQty(adjustedQty), unit: translateUnit(ing.unit) }));
     }
     if (claimKey && claimAmount) {
-      pendingClaims[claimKey] = (pendingClaims[claimKey] || 0) + claimAmount;
-      claimsToCommit.push({ key: claimKey, amount: claimAmount });
+      pendingClaims.push({ ingredientKey: claimKey, amount: claimAmount });
     }
-    if (!fullyCovered) plan.push({ name: ing.name, quantity: adjustedQty, unit: ing.unit });
+    if (fullyCovered) {
+      if (claimKey && claimAmount) fullyCoveredClaims.push({ claimKey, claimAmount });
+    } else {
+      plan.push({ name: ing.name, quantity: adjustedQty, unit: ing.unit, claimKey, claimAmount });
+    }
   });
 
   if (summaryLines.length) {
     const summaryText = `${t("pantry_reduction_summary_title")}\n\n${summaryLines.join("\n")}\n\n${t("pantry_reduction_confirm_continue")}`;
     if (!await customConfirm(summaryText)) return;
   }
-  // La réservation n'est appliquée pour de vrai qu'à partir d'ici —
-  // après un éventuel "Annuler" ci-dessus, rien n'aura été modifié.
-  claimsToCommit.forEach(({ key, amount }) => commitPantryClaim(key, amount));
+  // Les réservations ne sont appliquées pour de vrai qu'à partir
+  // d'ici — après un éventuel "Annuler" ci-dessus, rien n'aura été
+  // modifié. Celles des ingrédients entièrement couverts sont
+  // attachées à cette opération d'ajout précise (voir operationId).
+  fullyCoveredClaims.forEach(({ claimKey, claimAmount }) => commitPantryClaim(claimKey, claimAmount, "recipe", operationId));
 
   const puts = [];
   plan.forEach((ing) => {
     const existing = items.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
+    let resultItem;
     if (existing && ing.quantity != null && existing.quantity != null) {
       existing.quantity += ing.quantity;
-      puts.push(existing);
+      resultItem = existing;
     } else {
-      const item = { id: uid(), name: ing.name, quantity: ing.quantity, unit: ing.unit, checked: false };
-      items.push(item);
-      puts.push(item);
+      resultItem = { id: uid(), name: ing.name, quantity: ing.quantity, unit: ing.unit, checked: false };
+      items.push(resultItem);
     }
+    puts.push(resultItem);
+    // Attachée à l'article de courses réel qui en résulte (existant
+    // fusionné, ou nouvellement créé) — permet de la libérer
+    // précisément si CET article est ensuite supprimé ou modifié.
+    if (ing.claimKey && ing.claimAmount) commitPantryClaim(ing.claimKey, ing.claimAmount, "shopping", resultItem.id);
   });
   await Promise.all(puts.map((item) => storePut("shopping", item)));
   state.screen = "shopping";
@@ -1624,7 +1640,7 @@ function renderShopping() {
     if (await customConfirm(t("shopping_clear_confirm"))) {
       await storeClear("shopping");
       state.shopping = [];
-      state.pantryClaimedThisSession = {}; persistPantryClaims();
+      state.pantryClaimedThisSession = []; persistPantryClaims();
       render();
     }
   });
@@ -1656,7 +1672,7 @@ function renderSavedShoppingLists() {
       const items = JSON.parse(JSON.stringify(saved.items)).map((i) => ({ ...i, id: uid() }));
       for (const item of items) await storePut("shopping", item);
       state.shopping = items;
-      state.pantryClaimedThisSession = {}; persistPantryClaims();
+      state.pantryClaimedThisSession = []; persistPantryClaims();
       state.screen = "shopping";
       render();
     });
@@ -1691,8 +1707,7 @@ function shoppingItemRow(item, wrap) {
     if (!await customConfirm(t("shopping_item_delete_confirm", { name: translateIngredientName(item.name) }))) return;
     await storeDelete("shopping", item.id);
     state.shopping = state.shopping.filter((i) => i.id !== item.id);
-    delete state.pantryClaimedThisSession[normalize(item.name)];
-    persistPantryClaims();
+    releasePantryClaimsForSource("shopping", item.id);
     renderShoppingInto(wrap);
   });
   return row;
@@ -1783,6 +1798,11 @@ function openAddItemModal(storeName, existingItem) {
     if (!name) { nameInput.focus(); return; }
     let quantity = parseQtyOrNull(sheet.querySelector("#modal-ing-qty").value);
     const unit = unitSelect.value;
+    // Déterminé maintenant (avant toute réservation), pour pouvoir
+    // attacher précisément la nouvelle réservation à cet article
+    // précis — indispensable pour pouvoir la libérer plus tard sans
+    // toucher aux réservations d'autres articles.
+    const itemId = isEdit ? existingItem.id : uid();
 
     // Vérifie le garde-manger uniquement pour un nouvel article de la
     // liste de courses (pas en modification, ni pour le garde-manger
@@ -1796,15 +1816,16 @@ function openAddItemModal(storeName, existingItem) {
         const summaryText = `${t("pantry_reduction_summary_title")}\n\n${line}\n\n${t("pantry_reduction_confirm_continue")}`;
         if (!await customConfirm(summaryText)) return;
         // La réservation n'est appliquée pour de vrai qu'après ce point,
-        // une fois la confirmation acceptée.
-        if (claimKey && claimAmount) commitPantryClaim(claimKey, claimAmount);
+        // une fois la confirmation acceptée — attachée à cet article de
+        // courses précis (voir itemId ci-dessus).
+        if (claimKey && claimAmount) commitPantryClaim(claimKey, claimAmount, "shopping", itemId);
         if (fullyCovered) { overlay.remove(); return; }
         quantity = adjustedQty;
       }
     }
 
     const item = {
-      id: isEdit ? existingItem.id : uid(),
+      id: itemId,
       name,
       quantity,
       unit,
@@ -1812,17 +1833,22 @@ function openAddItemModal(storeName, existingItem) {
     if (storeName === "shopping") item.checked = isEdit ? existingItem.checked : false;
     if (isPantry) item.threshold = parseQtyOrNull(sheet.querySelector("#modal-ing-threshold").value);
     await storePut(storeName, item);
-    // Une réservation basée sur une ancienne quantité n'a plus de sens
-    // une fois celle-ci modifiée (courses ou garde-manger) — seule la
-    // réservation de CET ingrédient est effacée (ancien et nouveau nom
-    // si renommé), pas celles des autres ingrédients qui n'ont aucun
-    // rapport avec cette modification.
-    if (isEdit || isPantry) {
-      delete state.pantryClaimedThisSession[normalize(name)];
+    if (storeName === "shopping" && isEdit) {
+      // Modifier un article de courses existant rend sa réservation
+      // éventuelle obsolète (basée sur l'ancienne quantité) — libère
+      // UNIQUEMENT sa propre réservation, jamais celles créées par
+      // d'autres articles pour ce même ingrédient.
+      releasePantryClaimsForSource("shopping", itemId);
+    }
+    if (isPantry) {
+      // Le stock physique du garde-manger a changé de façon
+      // imprévisible (quantité, voire nom si renommé) — toute
+      // réservation contre cet ingrédient devient invalide, peu
+      // importe quelle source l'avait créée.
+      releasePantryClaimsForIngredient(normalize(name));
       if (isEdit && normalize(existingItem.name) !== normalize(name)) {
-        delete state.pantryClaimedThisSession[normalize(existingItem.name)];
+        releasePantryClaimsForIngredient(normalize(existingItem.name));
       }
-      persistPantryClaims();
     }
     if (isEdit) {
       const idx = state[storeName].findIndex((i) => i.id === existingItem.id);
@@ -1863,8 +1889,7 @@ function renderPantry() {
       row.querySelector("button").addEventListener("click", async () => {
         await storeDelete("pantry", item.id);
         state.pantry = state.pantry.filter((p) => p.id !== item.id);
-        delete state.pantryClaimedThisSession[normalize(item.name)];
-        persistPantryClaims();
+        releasePantryClaimsForIngredient(normalize(item.name));
         render();
       });
       list.appendChild(row);
@@ -4597,6 +4622,22 @@ function unitToBase(quantity, unit) {
 // aboutissait à ce que les DEUX soient considérées comme entièrement
 // couvertes (chacune comparée seule au stock complet), alors que le
 // besoin réel cumulé (1,6 kg) dépasse largement ce qui est disponible.
+//
+// Le registre est un TABLEAU d'entrées individuelles (pas un simple
+// total par ingrédient) : { id, ingredientKey, amount, sourceType,
+// sourceId }. "sourceType"/"sourceId" identifient précisément ce qui a
+// créé la réservation (un article de courses, un article de
+// garde-manger, ou l'ajout d'une recette entière) — ce qui permet de
+// libérer UNIQUEMENT la réservation concernée quand sa source
+// disparaît, sans jamais effacer une réservation créée par une autre
+// source pour ce même ingrédient (défaut confirmé des versions
+// précédentes : effacer toute réservation portant le même nom
+// d'ingrédient, même si deux recettes différentes l'avaient réservé
+// séparément).
+function getTotalClaimedForIngredient(ingredientKey, claimsArray) {
+  const claims = claimsArray || state.pantryClaimedThisSession;
+  return claims.filter((c) => c.ingredientKey === ingredientKey).reduce((sum, c) => sum + c.amount, 0);
+}
 // Calcule la réduction possible sans modifier l'état — un simple calcul
 // en lecture seule. "pendingClaims" permet de simuler des réservations
 // pas encore confirmées (utile pour cumuler plusieurs ingrédients d'une
@@ -4613,7 +4654,7 @@ function computePantryReduction(name, unit, neededQty, pendingClaims) {
 
   const key = normalize(name);
   const claims = pendingClaims || state.pantryClaimedThisSession;
-  const alreadyClaimed = claims[key] || 0;
+  const alreadyClaimed = getTotalClaimedForIngredient(key, claims);
   const effectiveAvailable = Math.max(0, pantryBase.value - alreadyClaimed);
   if (effectiveAvailable <= 0) return noReduction;
 
@@ -4627,24 +4668,55 @@ function computePantryReduction(name, unit, neededQty, pendingClaims) {
 // N'applique réellement la réservation qu'une fois l'utilisateur passé
 // par la confirmation — à appeler uniquement après un customConfirm()
 // accepté, jamais avant, pour qu'un "Annuler" n'affecte jamais l'état.
-function commitPantryClaim(key, amount) {
-  state.pantryClaimedThisSession[key] = (state.pantryClaimedThisSession[key] || 0) + amount;
+// "sourceType"/"sourceId" identifient ce qui crée cette réservation
+// précise (voir commentaire ci-dessus) — obligatoires pour pouvoir la
+// libérer plus tard sans toucher aux réservations d'autres sources.
+function commitPantryClaim(ingredientKey, amount, sourceType, sourceId) {
+  state.pantryClaimedThisSession.push({ id: uid(), ingredientKey, amount, sourceType, sourceId });
   persistPantryClaims();
 }
-// Sauvegarde légère dans localStorage (pas IndexedDB, un simple objet
-// clé-valeur suffit) — sans ça, les réservations de la session
-// n'étaient conservées qu'en mémoire et disparaissaient à chaque
-// redémarrage de l'application, pouvant faire recompter deux fois le
-// même stock si l'utilisateur fermait puis rouvrait l'app entre deux
-// ajouts de recettes à la liste de courses.
+// Libère uniquement les réservations liées à cette source précise —
+// jamais les autres réservations du même ingrédient créées ailleurs.
+// Libère TOUTES les réservations d'un ingrédient, peu importe leur
+// source — spécifiquement pour la suppression/modification d'un
+// article de GARDE-MANGER : si le stock physique réservé change ou
+// disparaît de façon imprévisible, toute réservation contre ce stock
+// devient invalide, quelle que soit la source qui l'avait créée
+// (contrairement à la suppression d'un article de COURSES, qui ne
+// devrait libérer que SA propre réservation — voir
+// releasePantryClaimsForSource ci-dessus).
+function releasePantryClaimsForIngredient(ingredientKey) {
+  const before = state.pantryClaimedThisSession.length;
+  state.pantryClaimedThisSession = state.pantryClaimedThisSession.filter((c) => c.ingredientKey !== ingredientKey);
+  if (state.pantryClaimedThisSession.length !== before) persistPantryClaims();
+}
+function releasePantryClaimsForSource(sourceType, sourceId) {
+  const before = state.pantryClaimedThisSession.length;
+  state.pantryClaimedThisSession = state.pantryClaimedThisSession.filter(
+    (c) => !(c.sourceType === sourceType && c.sourceId === sourceId)
+  );
+  if (state.pantryClaimedThisSession.length !== before) persistPantryClaims();
+}
+// Sauvegarde légère dans localStorage (pas IndexedDB, un simple tableau
+// suffit) — sans ça, les réservations de la session n'étaient
+// conservées qu'en mémoire et disparaissaient à chaque redémarrage de
+// l'application, pouvant faire recompter deux fois le même stock si
+// l'utilisateur fermait puis rouvrait l'app entre deux ajouts de
+// recettes à la liste de courses.
 function persistPantryClaims() {
   try { localStorage.setItem("pantryClaimedThisSession", JSON.stringify(state.pantryClaimedThisSession)); } catch (e) { /* sans conséquence */ }
 }
 function loadPantryClaims() {
   try {
     const raw = localStorage.getItem("pantryClaimedThisSession");
-    if (raw) state.pantryClaimedThisSession = JSON.parse(raw) || {};
-  } catch (e) { /* reste à {} par défaut */ }
+    const parsed = raw ? JSON.parse(raw) : [];
+    // Compatibilité avec l'ancien format (objet {ingrédient: total}) —
+    // si une session précédente avait laissé ce format en localStorage,
+    // on l'ignore simplement plutôt que de planter dessus : ces
+    // anciennes réservations n'ont de toute façon plus d'origine
+    // identifiable, elles ne peuvent pas être converties fidèlement.
+    state.pantryClaimedThisSession = Array.isArray(parsed) ? parsed : [];
+  } catch (e) { /* reste à [] par défaut */ }
 }
 
 function computeIngredientCost(name, quantity, unit) {
@@ -4983,7 +5055,7 @@ async function importAllData(data, mode) {
   state.recipes = await storeAll("recipes");
   state.shopping = await storeAll("shopping");
   state.pantry = await storeAll("pantry");
-  state.pantryClaimedThisSession = {};
+  state.pantryClaimedThisSession = [];
   persistPantryClaims();
   await ensureIngredientListLoaded();
   await loadIngredientOverrides();
@@ -7262,7 +7334,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 153;
+const APP_VERSION = 154;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
