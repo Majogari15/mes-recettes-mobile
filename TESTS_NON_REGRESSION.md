@@ -116,6 +116,27 @@ attendu → résultat obtenu → version testée.
 - **Résultat obtenu** : ✅ Réussi.
 - **Version testée** : v121
 
+### 2.3bis — Validation structurelle renforcée *(cause racine trouvée et corrigée, v150)*
+- **Contexte** : la restauration ne validait pas encore la structure
+  interne des recettes — un nom absent, une note personnelle hors de
+  0-5, un ingrédient malformé, une catégorie/unité/difficulté inconnue,
+  ou une entrée de journal de préparation corrompue pouvaient passer la
+  validation et provoquer des erreurs à l'affichage ensuite (tri par
+  `localeCompare`, widget d'étoiles).
+- **Corrigé** : nom de recette non textuel remplacé par une chaîne
+  vide ; note personnelle plafonnée à 0-5 ; catégorie/difficulté
+  inconnues normalisées ; ingrédients non-objets retirés du tableau,
+  nom non textuel et unité inconnue corrigés individuellement ;
+  entrées de journal non-objets retirées. Nouveau compteur
+  `structuralFixes` dans le rapport affiché à l'utilisateur.
+- **Résultat obtenu** : ✅ Réussi — testé avec un fichier combinant
+  tous ces défauts simultanément : nom devenu chaîne vide, note
+  plafonnée à 5, catégorie/difficulté corrigées, 2 ingrédients
+  malformés retirés (null et chaîne simple) sur 4, les 2 valides
+  correctement conservés et corrigés (nom/unité), entrée de journal
+  malformée retirée, `structuralFixes: 8` confirmé dans le rapport.
+- **Version testée** : v150
+
 ### 2.4 — Sauvegarde de sécurité même sans recette *(simulé, testé en v99)*
 - **Conditions initiales** : 0 recette, mais 1 article de liste de courses.
 - **Manipulation** : import en mode "Remplacer tout".
@@ -321,6 +342,37 @@ attendu → résultat obtenu → version testée.
 ---
 
 ## 5. Courses et garde-manger
+
+### 5.0bis — Fusion d'ingrédients propagée partout *(cause racine trouvée et corrigée, v150)*
+- **Contexte** : fusionner deux ingrédients en double remplaçait bien
+  l'ancien nom dans les recettes, mais jamais dans la liste de
+  courses, le garde-manger, ni les listes de courses enregistrées —
+  l'ancien ingrédient pouvait donc rester visible à ces endroits après
+  une fusion.
+- **Corrigé** : `mergeIngredientNames()` propage désormais le
+  renommage aux 3 emplacements manquants, chacun persisté
+  individuellement.
+- **Résultat obtenu** : ✅ Réussi — testé avec une recette, un article
+  de courses, un article de garde-manger et une liste enregistrée
+  portant tous le même ancien nom : les 4 emplacements confirmés
+  correctement renommés après la fusion.
+- **Version testée** : v150
+
+### 5.0ter — Unités non convertibles enfin distinctes *(cause racine trouvée et corrigée, v150)*
+- **Contexte** : pièce, boîte, sachet, pot, tranche, gousse et autre
+  étaient toutes regroupées sous une seule catégorie "comptable"
+  générique — une boîte au garde-manger pouvait donc à tort couvrir
+  une pièce demandée par une recette, et un prix fixé au sachet
+  pouvait s'appliquer à tort à une quantité en boîte.
+- **Corrigé** : chaque unité non convertible devient son propre
+  groupe distinct ("count:unité") — seuls le poids (g/kg) et le
+  volume (cl/L) restent de vrais groupes convertibles entre eux.
+- **Résultat obtenu** : ✅ Réussi — testé sur le garde-manger (boîte ne
+  couvre plus une pièce, mais boîte contre boîte fonctionne toujours,
+  et kg/g reste convertible) et sur le calcul de prix (prix au sachet
+  ne s'applique plus à une quantité en boîte, mais sachet contre
+  sachet fonctionne toujours).
+- **Version testée** : v150
 
 ### 5.0 — Multi-QR pour la liste de courses *(cause racine trouvée et corrigée, v136)*
 - **Contexte** : contrairement aux recettes, la liste de courses ne
@@ -644,6 +696,30 @@ attendu → résultat obtenu → version testée.
 
 ---
 
+## 11. Bibliothèques embarquées localement
+
+### 11.1 — jsQR et jsPDF en local *(fourni par l'utilisateur, testé et intégré, v141)*
+- **Contexte** : Claude ne pouvait pas récupérer ces deux fichiers
+  complets avec ses outils (fichiers trop volumineux pour son outil de
+  récupération web). L'utilisateur les a téléchargés lui-même et
+  transmis directement.
+- **Intégré** : `lib/jsQR.js` (257 Ko, Apache-2.0) et
+  `lib/jspdf.umd.min.js` (364 Ko, MIT) — adresses CDN remplacées dans
+  `app.js`, `index.html` et `sw.js` ; CSP resserrée (retrait de
+  `cdnjs.cloudflare.com`, plus utilisé par rien) ; fichier
+  `lib/LICENSES.md` créé pour conserver les mentions de licence ;
+  politique de confidentialité mise à jour (seul Tesseract reste
+  externe désormais).
+- **Résultat obtenu** : ✅ Réussi — testé fonctionnellement (pas
+  seulement un chargement) : jsPDF génère un vrai PDF valide
+  (signature `data:application/pdf` confirmée) ; jsQR décode
+  correctement un QR généré par la bibliothèque locale de génération,
+  contenu exact retrouvé caractère pour caractère. Confirmé par
+  surveillance réseau qu'aucune requête ne part plus vers
+  `cdnjs.cloudflare.com` ni vers `jsdelivr.net` pour jsqr, y compris
+  lors de l'ouverture réelle du scanner.
+- **Version testée** : v141
+
 ## 12. Import par photo (OCR)
 
 ### 12.1 — CSP bloquait le Worker Tesseract *(cause racine trouvée et corrigée, v143)*
@@ -938,31 +1014,54 @@ attendu → résultat obtenu → version testée.
   à tort).
 - **Version testée** : v148
 
-## 11. Bibliothèques embarquées localement
+## 14. Tests physiques d'ensemble (session du 05/09/2026)
 
-### 11.1 — jsQR et jsPDF en local *(fourni par l'utilisateur, testé et intégré, v141)*
-- **Contexte** : Claude ne pouvait pas récupérer ces deux fichiers
-  complets avec ses outils (fichiers trop volumineux pour son outil de
-  récupération web). L'utilisateur les a téléchargés lui-même et
-  transmis directement.
-- **Intégré** : `lib/jsQR.js` (257 Ko, Apache-2.0) et
-  `lib/jspdf.umd.min.js` (364 Ko, MIT) — adresses CDN remplacées dans
-  `app.js`, `index.html` et `sw.js` ; CSP resserrée (retrait de
-  `cdnjs.cloudflare.com`, plus utilisé par rien) ; fichier
-  `lib/LICENSES.md` créé pour conserver les mentions de licence ;
-  politique de confidentialité mise à jour (seul Tesseract reste
-  externe désormais).
-- **Résultat obtenu** : ✅ Réussi — testé fonctionnellement (pas
-  seulement un chargement) : jsPDF génère un vrai PDF valide
-  (signature `data:application/pdf` confirmée) ; jsQR décode
-  correctement un QR généré par la bibliothèque locale de génération,
-  contenu exact retrouvé caractère pour caractère. Confirmé par
-  surveillance réseau qu'aucune requête ne part plus vers
-  `cdnjs.cloudflare.com` ni vers `jsdelivr.net` pour jsqr, y compris
-  lors de l'ouverture réelle du scanner.
-- **Version testée** : v141
+### 14.1 — OCR réel avec plusieurs photos HelloFresh *(physique)*
+- **Résultat obtenu** : ⚠️ Peu fiable, souvent des erreurs — **mis en
+  attente**, chantier séparé (voir section 12-13, corrections en
+  cours mais résultat réel encore instable sur les vraies fiches
+  HelloFresh).
 
-## Résumé — état au 05/09/2026 (v141)
+### 14.2 — TalkBack sur les formulaires et fenêtres *(physique)*
+- **Résultat obtenu** : ✅ Réussi — fonctionne correctement.
+
+### 14.3 — Affichage allemand sur un écran étroit *(physique)*
+- **Résultat obtenu** : ✅ Réussi — fonctionne correctement.
+
+### 14.4 — Installation et mise à jour PWA sur les deux appareils *(physique)*
+- **Résultat obtenu** : ✅ Réussi — fonctionne correctement.
+
+### 14.5 — Fonctionnement hors connexion après installation neuve *(physique)*
+- **Résultat obtenu** : ✅ Réussi — fonctionne correctement.
+
+### 14.6 — Import QR par caméra et galerie sur les deux appareils *(physique)*
+- **Résultat obtenu** : ⚠️ Peu fiable, souvent des erreurs — **mis en
+  attente**, à investiguer séparément (cause non encore identifiée,
+  contrairement au scanner de recette/liste qui avait été testé
+  fonctionnel plus tôt — écart à clarifier).
+
+### 14.7 — Notification et vibration Android *(physique)*
+- **Résultat obtenu** : Non testé.
+
+### 14.8 — Manifestes/raccourcis après changement de langue et redémarrage *(physique)*
+- **Résultat obtenu** : ✅ Réussi, avec une nuance mineure et attendue :
+  - Langue interne conservée après redémarrage : réussi.
+  - Les 4 manifestes contiennent les bonnes traductions : réussi.
+  - Les raccourcis ouvrent les bons écrans : réussi.
+  - Après réinstallation, les raccourcis correspondent à la langue
+    choisie : réussi.
+  - ⚠️ Les raccourcis d'une PWA **déjà installée** ne changent pas
+    immédiatement de langue sans réinstallation — comportement normal
+    de Chrome/Android (les raccourcis sont figés à l'installation),
+    pas un bug de l'application. Non bloquant, pas de correctif prévu :
+    il ne serait pas raisonnable de demander une réinstallation
+    seulement pour deux raccourcis.
+- **Appareil** : Samsung Galaxy A06, Android 16 — One UI 8.0, Chrome
+  152.0.7977.75
+
+---
+
+## Résumé — état au 05/09/2026 (v150)
 
 - **jsQR et jsPDF désormais embarqués localement** (v141) — seul
   Tesseract (import par photo) reste chargé depuis un CDN.

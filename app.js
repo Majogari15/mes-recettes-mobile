@@ -4200,6 +4200,27 @@ async function mergeIngredientNames(keep, remove) {
     });
   });
   if (touched) for (const r of state.recipes) await storePut("recipes", r);
+  // La fusion doit aussi se propager à la liste de courses, au
+  // garde-manger et aux listes de courses enregistrées — sans ça,
+  // l'ancien nom pouvait rester visible à ces endroits après une
+  // fusion, comme s'il s'agissait encore d'un ingrédient différent.
+  let shoppingTouched = false;
+  state.shopping.forEach((item) => {
+    if (normalize(item.name) === normalize(remove)) { item.name = keep; shoppingTouched = true; }
+  });
+  if (shoppingTouched) for (const item of state.shopping) await storePut("shopping", item);
+  let pantryTouched = false;
+  state.pantry.forEach((item) => {
+    if (normalize(item.name) === normalize(remove)) { item.name = keep; pantryTouched = true; }
+  });
+  if (pantryTouched) for (const item of state.pantry) await storePut("pantry", item);
+  let savedListsTouched = false;
+  state.savedShoppingLists.forEach((saved) => {
+    (saved.items || []).forEach((item) => {
+      if (normalize(item.name) === normalize(remove)) { item.name = keep; savedListsTouched = true; }
+    });
+  });
+  if (savedListsTouched) for (const saved of state.savedShoppingLists) await storePut("savedShoppingLists", saved);
 }
 
 /* ======================================================================
@@ -4451,7 +4472,12 @@ function unitToBase(quantity, unit) {
   if (lu === "kg") return { kind: "weight", value: quantity * 1000 };
   if (lu === "cl") return { kind: "volume", value: quantity };
   if (lu === "l") return { kind: "volume", value: quantity * 100 };
-  return { kind: "count", value: quantity };
+  // Les unités restantes (pièce, boîte, sachet, pot, tranche, gousse,
+  // autre) ne sont PAS interchangeables entre elles — une boîte n'a
+  // pas de taille standard comparable à une pièce ou un sachet. Chacune
+  // devient son propre groupe ("count:unité"), pour n'être jamais
+  // considérée compatible avec une autre unité de comptage différente.
+  return { kind: "count:" + lu, value: quantity };
 }
 
 // Réduit la quantité à acheter d'un ingrédient selon ce qui est déjà
@@ -4662,6 +4688,30 @@ function sanitizeBackupItem(item, storeName, report) {
     report.photosRemoved += 1;
   }
   if (storeName === "recipes") {
+    // Un nom absent ou non textuel peut faire planter le tri de la
+    // liste des recettes (localeCompare exige une vraie chaîne) —
+    // remplacé par une chaîne vide plutôt que de rejeter toute la
+    // recette pour un seul champ corrompu.
+    if (typeof cleaned.name !== "string" || !cleaned.name.trim()) {
+      cleaned.name = "";
+      report.structuralFixes += 1;
+    }
+    // Une note hors de l'intervalle 0-5 peut faire mal s'afficher le
+    // widget d'étoiles (boucle sur 1..5 comparée à la valeur stockée).
+    if ("personalRating" in cleaned && cleaned.personalRating != null) {
+      const n = Number(cleaned.personalRating);
+      const clamped = Number.isFinite(n) ? Math.max(0, Math.min(5, Math.round(n))) : 0;
+      if (clamped !== cleaned.personalRating) report.structuralFixes += 1;
+      cleaned.personalRating = clamped;
+    }
+    if (cleaned.category && !CATEGORY_OPTIONS.includes(cleaned.category)) {
+      cleaned.category = "Autre";
+      report.structuralFixes += 1;
+    }
+    if (cleaned.difficulty && !DIFFICULTY_OPTIONS.includes(cleaned.difficulty)) {
+      cleaned.difficulty = null;
+      report.structuralFixes += 1;
+    }
     ["prepTime", "cookTime"].forEach((field) => {
       if (field in cleaned && cleaned[field] != null) {
         const sanitized = sanitizeNonNegativeNumber(cleaned[field]);
@@ -4676,21 +4726,36 @@ function sanitizeBackupItem(item, storeName, report) {
     }
     if ("timesCooked" in cleaned) cleaned.timesCooked = sanitizeNonNegativeNumber(cleaned.timesCooked) || 0;
     if (Array.isArray(cleaned.ingredients)) {
-      cleaned.ingredients = cleaned.ingredients.map((i) => {
-        if (!i || typeof i !== "object" || i.quantity == null) return i;
-        const sanitized = sanitizeNonNegativeNumber(i.quantity);
-        if (sanitized !== i.quantity) report.numbersFixed += 1;
-        return { ...i, quantity: sanitized };
-      });
+      const beforeCount = cleaned.ingredients.length;
+      cleaned.ingredients = cleaned.ingredients
+        // Un ingrédient qui n'est même pas un objet ne peut pas être
+        // réparé — retiré plutôt que conservé tel quel, ce qui
+        // provoquerait des erreurs partout où le code s'attend à un
+        // vrai objet ingrédient (affichage, calculs, export...).
+        .filter((i) => i && typeof i === "object" && !Array.isArray(i))
+        .map((i) => {
+          const fixedName = typeof i.name === "string" ? i.name : "";
+          if (fixedName !== i.name) report.structuralFixes += 1;
+          const fixedUnit = i.unit && !UNIT_OPTIONS.includes(i.unit) ? "pièce" : i.unit;
+          if (fixedUnit !== i.unit) report.structuralFixes += 1;
+          const sanitized = i.quantity != null ? sanitizeNonNegativeNumber(i.quantity) : i.quantity;
+          if (sanitized !== i.quantity) report.numbersFixed += 1;
+          return { ...i, name: fixedName, unit: fixedUnit, quantity: sanitized };
+        });
+      if (cleaned.ingredients.length !== beforeCount) report.structuralFixes += 1;
     }
     if (Array.isArray(cleaned.cookLog)) {
-      cleaned.cookLog = cleaned.cookLog.map((entry) => {
-        if (entry && typeof entry === "object" && "photo" in entry && entry.photo != null && !isValidPhotoField(entry.photo)) {
-          report.photosRemoved += 1;
-          return { ...entry, photo: null };
-        }
-        return entry;
-      });
+      const beforeCount = cleaned.cookLog.length;
+      cleaned.cookLog = cleaned.cookLog
+        .filter((entry) => entry && typeof entry === "object" && !Array.isArray(entry))
+        .map((entry) => {
+          if ("photo" in entry && entry.photo != null && !isValidPhotoField(entry.photo)) {
+            report.photosRemoved += 1;
+            return { ...entry, photo: null };
+          }
+          return entry;
+        });
+      if (cleaned.cookLog.length !== beforeCount) report.structuralFixes += 1;
     }
   }
   if (storeName === "shopping" || storeName === "pantry") {
@@ -4725,7 +4790,7 @@ async function parseBackupFile(file) {
   // corrompu est simplement ignoré plutôt que de faire échouer tout
   // l'import. Le rapport retourné permet d'informer l'utilisateur de ce
   // qui a été filtré ou corrigé, plutôt que de le faire silencieusement.
-  const report = { validCount: 0, ignoredCount: 0, photosRemoved: 0, numbersFixed: 0 };
+  const report = { validCount: 0, ignoredCount: 0, photosRemoved: 0, numbersFixed: 0, structuralFixes: 0 };
   const cleanedData = { ...data };
   BACKUP_STORES.forEach((storeName) => {
     if (!Array.isArray(data[storeName])) return;
@@ -4759,6 +4824,7 @@ function buildBackupPreviewText(data, report) {
     if (report.ignoredCount > 0) text += t("backup_ignored_items", { count: String(report.ignoredCount) });
     if (report.photosRemoved > 0) text += t("backup_photos_removed", { count: String(report.photosRemoved) });
     if (report.numbersFixed > 0) text += t("backup_numbers_fixed", { count: String(report.numbersFixed) });
+    if (report.structuralFixes > 0) text += t("backup_structural_fixes", { count: String(report.structuralFixes) });
   }
   return text;
 }
@@ -6001,7 +6067,7 @@ const MAX_IMPORT_PHOTOS = 8;
 
 function renderImportPhoto() {
   const wrap = el(`<div></div>`);
-  wrap.appendChild(el(`<p style="font-size:13px;color:var(--text-muted);margin:0 0 20px;line-height:1.5;">${escapeHtml(t("import_photo_disclaimer"))}</p>`));
+  wrap.appendChild(el(`<p style="font-size:13px;color:var(--text-muted);margin:0 0 20px;line-height:1.5;">${escapeHtml(t("import_photo_disclaimer_main"))}<span style="color:var(--danger);text-decoration:underline;">${escapeHtml(t("import_photo_disclaimer_warning"))}</span></p>`));
 
   const listHolder = el(`<div></div>`);
   wrap.appendChild(listHolder);
@@ -7068,7 +7134,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 148;
+const APP_VERSION = 150;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
