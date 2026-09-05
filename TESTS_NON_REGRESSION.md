@@ -898,6 +898,46 @@ attendu → résultat obtenu → version testée.
   ne sont pas couvertes ; à ajouter si des photos dans ces langues
   posent problème.
 
+### 13.12 — Titres complets non retirés en section manuelle *(cause racine trouvée et corrigée, v148)*
+- **Contexte** : après un vrai test avec des photos HelloFresh, l'autre
+  IA a trouvé que le filtre ne retirait que les compteurs isolés
+  ("4 people", "pour 2 personnes"), pas les vrais titres complets des
+  fiches ("Ingrédients pour 2 personnes", "Ingredientes para 4
+  personas", "Zutaten für 4 Personen") — ces titres devenaient donc de
+  faux ingrédients après un reclassement manuel en "Ingrédients". Même
+  problème, moins grave, pour "Étapes" restant dans la description.
+- **Corrigé** : les marqueurs de titre déjà utilisés par
+  `parseOcrRecipeText()` sont désormais remontés au niveau du module et
+  réutilisés dans `deriveSectionDataForPhoto()` — les titres complets
+  sont retirés avant de traiter chaque ligne comme un ingrédient
+  potentiel, et le nombre de personnes est extrait du titre avant sa
+  suppression (pas perdu).
+- **Résultat obtenu** : ✅ Réussi — testé avec les 3 titres exacts
+  rapportés (français, espagnol, allemand) : plus aucun faux
+  ingrédient, personnes correctement extraites (2, 4, 4) dans les 3
+  cas. Testé aussi que "Étapes" ne reste plus dans la description.
+- **Version testée** : v148
+
+### 13.13 — Nombre de personnes supposé silencieusement *(cause racine trouvée et corrigée, v148)*
+- **Contexte** : si aucune photo ne contenait de nombre de personnes
+  détectable, la fusion supposait 4 immédiatement et divisait toutes
+  les quantités avec cette valeur — si l'utilisateur corrigeait
+  ensuite le nombre de personnes dans le formulaire final, les
+  quantités restaient basées sur la mauvaise division.
+- **Corrigé** : un champ "Nombre de personnes" visible et modifiable a
+  été ajouté à l'écran d'import — préremplit avec la valeur détectée
+  si disponible (avec confirmation "✓ détecté"), sinon 4 avec un
+  avertissement explicite ("non détecté — valeur supposée, à
+  vérifier"). La fusion utilise toujours cette valeur confirmée par
+  l'utilisateur pour diviser les quantités, jamais une supposition
+  silencieuse.
+- **Résultat obtenu** : ✅ Réussi — testé le cycle complet : valeur par
+  défaut 4 avec avertissement affiché avant toute photo ; correction
+  manuelle à 2 par l'utilisateur ; fusion confirmée utilisant bien 2
+  (250 g stocké pour 500 g déclaré), pas 4 (ce qui aurait donné 125 g
+  à tort).
+- **Version testée** : v148
+
 ## 11. Bibliothèques embarquées localement
 
 ### 11.1 — jsQR et jsPDF en local *(fourni par l'utilisateur, testé et intégré, v141)*

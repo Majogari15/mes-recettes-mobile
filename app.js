@@ -5748,17 +5748,25 @@ function parseIsoDurationToMinutes(duration) {
    fiable qu'un import par lien (pas de données structurées), donc la
    relecture avant enregistrement est essentielle.
    ====================================================================== */
+const OCR_INGREDIENT_MARKER = /^(ingr[ée]dients?|ingredients|ingredientes|zutaten)\b/i;
+const OCR_INSTRUCTION_MARKER = /^(pr[ée]paration|[ée]tapes|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\b/i;
+// Toute section qui doit arrêter la liste des ingrédients, pas
+// seulement celle des étapes — "Ustensiles" par exemple, très courant
+// juste après les ingrédients et avant la vraie section de
+// préparation sur beaucoup de sites.
+const OCR_SECTION_BOUNDARY_MARKER = /^(pr[ée]paration|[ée]tapes|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensiles?|utensils?|mat[ée]riel|equipment|valeurs?\s+nutritionnelles?|nutritional\s+values?|valores?\s+nutricionales?|n[äa]hrwerte?|allerg[èe]nes?|allergens?|al[ée]rgenos?)\b/i;
+// Nombre de personnes indiqué juste après le mot-clé "Ingrédients" sur
+// la même ligne (ex. "Ingrédients pour 2 personnes", très courant sur
+// les fiches HelloFresh) — extrait avant de retirer la ligne, pour ne
+// pas perdre cette information quand le titre est filtré.
+const OCR_PERSONS_IN_TITLE = /\b(\d+)\s*(?:personnes?|people|persons?|personas?|personen)\b/i;
 function parseOcrRecipeText(rawText) {
   const lines = (rawText || "").split("\n").map((l) => l.trim()).filter(Boolean);
   if (!lines.length) return { name: "", ingredients: [], description: "", prepTime: null, cookTime: null };
 
-  const ingredientMarker = /^(ingr[ée]dients?|ingredients|ingredientes|zutaten)\b/i;
-  const instructionMarker = /^(pr[ée]paration|[ée]tapes|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\b/i;
-  // Toute section qui doit arrêter la liste des ingrédients, pas
-  // seulement celle des étapes — "Ustensiles" par exemple, très courant
-  // juste après les ingrédients et avant la vraie section de
-  // préparation sur beaucoup de sites.
-  const sectionBoundaryMarker = /^(pr[ée]paration|[ée]tapes|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensiles?|utensils?|mat[ée]riel|equipment|valeurs?\s+nutritionnelles?|nutritional\s+values?|valores?\s+nutricionales?|n[äa]hrwerte?|allerg[èe]nes?|allergens?|al[ée]rgenos?)\b/i;
+  const ingredientMarker = OCR_INGREDIENT_MARKER;
+  const instructionMarker = OCR_INSTRUCTION_MARKER;
+  const sectionBoundaryMarker = OCR_SECTION_BOUNDARY_MARKER;
   // Marque la fin du vrai contenu de la recette : au-delà, ce n'est
   // presque toujours plus que des avis, des recettes similaires ou de
   // la navigation — sans ça, la description engloberait toute la fin
@@ -5923,16 +5931,30 @@ function deriveSectionDataForPhoto(rawText, section) {
   }
   if (section === "ingredients") {
     const lines = (rawText || "").split("\n").map((l) => l.trim()).filter(Boolean);
+    // Un titre complet ("Ingrédients pour 2 personnes") contient à la
+    // fois le mot-clé de section ET le nombre de personnes — il faut
+    // extraire ce nombre avant de retirer la ligne, sinon cette
+    // information serait perdue plutôt que simplement filtrée.
+    let persons = null;
+    lines.forEach((l) => {
+      if (persons != null) return;
+      if (OCR_INGREDIENT_MARKER.test(l)) {
+        const m = l.match(OCR_PERSONS_IN_TITLE);
+        if (m) persons = Math.max(1, parseInt(m[1], 10));
+      }
+    });
     const ingredients = lines
+      .filter((l) => !OCR_INGREDIENT_MARKER.test(l) && !OCR_SECTION_BOUNDARY_MARKER.test(l))
       .filter((l) => !/^(pour\s+|for\s+)?\d*\s*(personnes?|people|persons?|personas?|personen)\s*[+\-]?$/i.test(l))
       .map((l) => l.replace(/^[-•*]\s*/, ""))
       .map(parseIngredientString)
       .filter((i) => i.name);
-    return { ...empty, ingredients };
+    return { ...empty, ingredients, persons };
   }
   if (section === "preparation") {
     const lines = (rawText || "").split("\n").map((l) => l.trim()).filter(Boolean);
-    return { ...empty, description: lines.join("\n") };
+    const cleaned = lines.filter((l) => !OCR_INSTRUCTION_MARKER.test(l));
+    return { ...empty, description: cleaned.join("\n") };
   }
   return empty; // "other" : aucune extraction
 }
@@ -5947,7 +5969,7 @@ function deriveSectionDataForPhoto(rawText, section) {
 // avant — sinon, une photo sans portion détectée imposait sa valeur
 // par défaut avant même qu'une autre photo n'ait pu fournir la vraie
 // valeur, selon l'ordre d'ajout.
-function mergeMultiPhotoResults(photos) {
+function mergeMultiPhotoResults(photos, confirmedPersons) {
   let name = "";
   let ingredients = [];
   let descriptionParts = [];
@@ -5967,10 +5989,10 @@ function mergeMultiPhotoResults(photos) {
   // deriveSectionDataForPhoto) — précisément pour éviter de diviser
   // trop tôt, avant de connaître le nombre de personnes qui pourrait
   // n'être détecté que sur une AUTRE photo que celle des ingrédients.
-  // Le diviseur utilisé ici doit toujours être exactement la valeur
-  // enregistrée comme nombre de personnes final, pour que les
-  // quantités restent correctes une fois réaffichées pour ce nombre.
-  const finalPersons = persons || 4;
+  // Le nombre confirmé par l'utilisateur (champ visible à l'écran,
+  // jamais une simple supposition silencieuse) prime toujours sur la
+  // détection automatique interne quand il est fourni.
+  const finalPersons = confirmedPersons || persons || 4;
   const dividedIngredients = ingredients.map((i) => ({ ...i, quantity: i.quantity != null ? i.quantity / finalPersons : null }));
   return { name, ingredients: dividedIngredients, description: descriptionParts.join("\n\n"), persons: finalPersons, prepTime, cookTime };
 }
@@ -5999,6 +6021,23 @@ function renderImportPhoto() {
 
   const maxReachedNote = el(`<p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:8px;display:none;">${escapeHtml(t("import_photo_max_reached"))}</p>`);
   wrap.appendChild(maxReachedNote);
+
+  // Le nombre de personnes conditionne directement les quantités
+  // finales (division une seule fois avant la fusion) — un champ
+  // visible et modifiable évite de supposer silencieusement 4 quand
+  // aucune photo n'indique clairement le nombre de personnes, ce qui
+  // pourrait sinon donner des quantités incorrectes si l'utilisateur
+  // corrige seulement APRÈS coup dans le formulaire final.
+  const personsSection = el(`<div class="card" style="padding:12px;margin-top:16px;">
+    <label for="import-photo-persons" style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">${escapeHtml(t("import_photo_persons_label"))}</label>
+    <input type="number" min="1" id="import-photo-persons" value="4" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);font-size:14px;">
+    <p id="import-photo-persons-note" style="font-size:11px;color:var(--text-muted);margin:6px 0 0;"></p>
+  </div>`);
+  wrap.appendChild(personsSection);
+  const personsInput = personsSection.querySelector("#import-photo-persons");
+  const personsNote = personsSection.querySelector("#import-photo-persons-note");
+  let personsManuallyEdited = false;
+  personsInput.addEventListener("input", () => { personsManuallyEdited = true; });
 
   const mergeBtn = el(`<button type="button" class="btn btn-primary" style="width:100%;margin-top:16px;" disabled>${t("import_photo_merge_button")}</button>`);
   const mergeHint = el(`<p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:8px;">${escapeHtml(t("import_photo_merge_hint"))}</p>`);
@@ -6060,6 +6099,12 @@ function renderImportPhoto() {
     mergeBtn.disabled = doneCount === 0 || anyProcessing;
     cameraBtn.disabled = anyProcessing;
     galleryBtn.disabled = anyProcessing;
+
+    if (!personsManuallyEdited) {
+      const detected = state.multiPhotoImport.map((p) => p.sectionData && p.sectionData.persons).find((v) => v != null);
+      personsInput.value = detected || 4;
+      personsNote.textContent = detected ? `✓ ${t("import_photo_persons_detected")}` : t("import_photo_persons_assumed");
+    }
   }
 
   async function handleNewPhoto(file) {
@@ -6099,7 +6144,8 @@ function renderImportPhoto() {
 
   mergeBtn.addEventListener("click", async () => {
     const usable = state.multiPhotoImport.filter((p) => p.status === "done");
-    const merged = mergeMultiPhotoResults(usable);
+    const confirmedPersons = Math.max(1, parseInt(personsInput.value, 10) || 4);
+    const merged = mergeMultiPhotoResults(usable, confirmedPersons);
     state.multiPhotoImport = [];
     try {
       await terminateSharedTesseractWorker();
@@ -7022,7 +7068,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 147;
+const APP_VERSION = 148;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
