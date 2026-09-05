@@ -1369,7 +1369,63 @@ attendu → résultat obtenu → version testée.
   toute façon plus d'origine identifiable pour les convertir fidèlement.
 - **Version testée** : v154
 
-## Résumé — état au 05/09/2026 (v154)
+## 19. Minuteur Android et mode cuisine (session du 05/09/2026)
+
+### 19.1 — Test physique du minuteur *(physique)*
+- **Application visible** : ✅ Terminé affiché, ✅ sonnerie, ✅
+  vibration, ✅ répétition, ✅ arrêt de l'alarme — tout fonctionne.
+- **Application en arrière-plan** : ⚠️ sonnerie fonctionnelle, mais
+  vibration différée jusqu'au retour dans l'application ; aucune
+  notification système affichée.
+- **Écran verrouillé** : ❌ minuteur suspendu, aucune sonnerie ni
+  vibration à l'heure prévue — l'alarme ne se déclenche qu'au réveil de
+  l'écran ou au retour dans l'application.
+- **Cause identifiée** : le minuteur repose sur `setInterval()`, que
+  Android ralentit ou suspend quand l'application n'est plus visible,
+  particulièrement écran verrouillé. Aucune notification système n'est
+  implémentée dans le code actuel (absence de `Notification`/
+  `showNotification()`).
+- **Appareil** : appareil de l'utilisateur
+
+### 19.2 — Bug critique trouvé en marge : mode cuisine plantait systématiquement *(cause racine trouvée et corrigée, v155)*
+- **Contexte** : en vérifiant le code pour implémenter le Wake Lock,
+  `openCookingMode()` s'est révélé planter à chaque appel
+  (`ReferenceError: sheet is not defined` — une variable jamais
+  déclarée, la fonction ne possède pas d'élément nommé "sheet").
+- **Corrigé** : `initModalA11y(overlay, sheet)` → `initModalA11y(overlay,
+  overlay)`.
+- **Résultat obtenu** : ✅ Réussi — testé : plus aucune erreur JS à
+  l'ouverture du mode cuisine, la fenêtre s'affiche correctement.
+- **Version testée** : v155
+
+### 19.3 — Maintien de l'écran allumé pendant la cuisine (Wake Lock) *(amélioration recommandée, implémentée et testée, v155)*
+- **Contexte** : recommandation de priorité haute pour rendre le
+  minuteur fiable dans le scénario normal de cuisine (écran resté
+  allumé, visible en permanence) — ne résout pas le cas écran
+  verrouillé, qui nécessiterait une vraie application native (prévu
+  pour la conversion Play Store, en toute fin de projet).
+- **Implémenté** : Wake Lock demandé à l'ouverture du mode cuisine,
+  relâché à la fermeture, redemandé automatiquement si la visibilité de
+  la page revient (le verrou est autrement relâché par le navigateur
+  dès que l'onglet devient invisible). Indicateur visible affiché
+  ("🔆 Écran maintenu allumé pendant la cuisine"), avec message clair si
+  refusé ou non disponible (économie d'énergie, appareil non
+  compatible).
+- **Résultat obtenu** : ✅ Réussi — testé le cycle complet : une seule
+  demande à l'ouverture, redemande confirmée après un changement de
+  visibilité simulé, relâchement confirmé à la fermeture ; message de
+  repli confirmé quand l'API n'est pas disponible.
+- **Reste à tester physiquement** : confirmer sur un vrai appareil que
+  l'écran reste effectivement allumé et que le minuteur se déclenche
+  bien à l'heure en mode cuisine ouvert (impossible à vérifier
+  entièrement en simulation, le comportement réel de l'écran physique
+  n'étant pas observable dans l'environnement de test).
+- **Non traité pour l'instant** (comme convenu, priorité moyenne/basse) :
+  notification système classique, et alarme fiable écran verrouillé
+  (nécessiterait une vraie application native).
+- **Version testée** : v155
+
+## Résumé — état au 05/09/2026 (v155)
 
 - **jsQR et jsPDF désormais embarqués localement** (v141) — seul
   Tesseract (import par photo) reste chargé depuis un CDN.

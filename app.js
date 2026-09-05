@@ -3821,19 +3821,65 @@ function stopSpeaking() {
   if ("speechSynthesis" in window) window.speechSynthesis.cancel();
 }
 
+// Empêche l'écran de s'éteindre automatiquement pendant le mode
+// cuisine — sans ça, un minuteur en cours peut ne se déclencher qu'au
+// rallumage de l'écran plutôt qu'au bon moment (Android suspend le
+// minuteur basé sur setInterval quand l'écran est éteint). Le
+// verrou est automatiquement relâché par le navigateur si l'onglet
+// devient invisible (changement d'application, par exemple) : il faut
+// donc le redemander quand la visibilité revient, tant que le mode
+// cuisine est encore ouvert.
+let currentWakeLock = null;
+async function requestWakeLock() {
+  if (!("wakeLock" in navigator)) return false;
+  try {
+    currentWakeLock = await navigator.wakeLock.request("screen");
+    return true;
+  } catch (e) {
+    // Refusé (économie d'énergie, batterie faible...) : l'écran pourra
+    // s'éteindre normalement, ce n'est pas une erreur à signaler comme
+    // un vrai problème technique.
+    currentWakeLock = null;
+    return false;
+  }
+}
+async function releaseWakeLock() {
+  if (currentWakeLock) {
+    try { await currentWakeLock.release(); } catch (e) { /* sans conséquence */ }
+    currentWakeLock = null;
+  }
+}
+
 function openCookingMode(recipe) {
   const overlay = el(`<div class="cooking-overlay"></div>`);
   const header = el(`<div class="cooking-header">
     <h2 style="font-size:19px;">${escapeHtml(recipe.name)}</h2>
     <button class="icon-btn">${t("cooking_close")}</button>
   </div>`);
+  let cookingModeOpen = true;
+  const handleVisibilityChange = () => {
+    // Le verrou est automatiquement relâché par le navigateur quand
+    // l'onglet devient invisible — le redemander dès que la visibilité
+    // revient, tant que le mode cuisine est toujours ouvert.
+    if (cookingModeOpen && document.visibilityState === "visible") requestWakeLock();
+  };
+  document.addEventListener("visibilitychange", handleVisibilityChange);
   header.querySelector("button").addEventListener("click", () => {
     state.cookingTimers.forEach(stopCookingTimer);
     state.cookingTimers = [];
     stopSpeaking();
+    cookingModeOpen = false;
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+    releaseWakeLock();
     overlay.remove();
   });
   overlay.appendChild(header);
+
+  const wakeLockStatus = el(`<p style="font-size:12px;color:var(--text-muted);margin:0 0 16px;"></p>`);
+  overlay.appendChild(wakeLockStatus);
+  requestWakeLock().then((success) => {
+    wakeLockStatus.textContent = success ? t("cooking_wake_lock_active") : t("cooking_wake_lock_unavailable");
+  });
 
   overlay.appendChild(el(`<div class="section-label">${t("recipe_ingredients")}</div>`));
   const ingCard = el(`<div class="card" style="padding:4px 16px;margin-bottom:20px;"></div>`);
@@ -3883,7 +3929,7 @@ function openCookingMode(recipe) {
   overlay.appendChild(addTimerBtn);
 
   document.body.appendChild(overlay);
-  initModalA11y(overlay, sheet);
+  initModalA11y(overlay, overlay);
 }
 
 /* ======================================================================
@@ -7334,7 +7380,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 154;
+const APP_VERSION = 155;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
