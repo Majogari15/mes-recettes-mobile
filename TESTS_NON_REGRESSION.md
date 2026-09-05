@@ -644,8 +644,34 @@ attendu → résultat obtenu → version testée.
 
 ---
 
-## Résumé — état au 05/09/2026 (v139)
+## 11. Bibliothèques embarquées localement
 
+### 11.1 — jsQR et jsPDF en local *(fourni par l'utilisateur, testé et intégré, v141)*
+- **Contexte** : Claude ne pouvait pas récupérer ces deux fichiers
+  complets avec ses outils (fichiers trop volumineux pour son outil de
+  récupération web). L'utilisateur les a téléchargés lui-même et
+  transmis directement.
+- **Intégré** : `lib/jsQR.js` (257 Ko, Apache-2.0) et
+  `lib/jspdf.umd.min.js` (364 Ko, MIT) — adresses CDN remplacées dans
+  `app.js`, `index.html` et `sw.js` ; CSP resserrée (retrait de
+  `cdnjs.cloudflare.com`, plus utilisé par rien) ; fichier
+  `lib/LICENSES.md` créé pour conserver les mentions de licence ;
+  politique de confidentialité mise à jour (seul Tesseract reste
+  externe désormais).
+- **Résultat obtenu** : ✅ Réussi — testé fonctionnellement (pas
+  seulement un chargement) : jsPDF génère un vrai PDF valide
+  (signature `data:application/pdf` confirmée) ; jsQR décode
+  correctement un QR généré par la bibliothèque locale de génération,
+  contenu exact retrouvé caractère pour caractère. Confirmé par
+  surveillance réseau qu'aucune requête ne part plus vers
+  `cdnjs.cloudflare.com` ni vers `jsdelivr.net` pour jsqr, y compris
+  lors de l'ouverture réelle du scanner.
+- **Version testée** : v141
+
+## Résumé — état au 05/09/2026 (v141)
+
+- **jsQR et jsPDF désormais embarqués localement** (v141) — seul
+  Tesseract (import par photo) reste chargé depuis un CDN.
 - **Tests simulés réussis** : 33
 - **Campagne de tests physiques réalisée par l'utilisateur** (2 appareils :
   Smartphone Samsung A06 à jour, Tablette Lenovo Android 11 non à jour)

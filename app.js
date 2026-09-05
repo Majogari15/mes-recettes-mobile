@@ -2893,14 +2893,15 @@ async function openShoppingQrCodeModal() {
 }
 
 // Charge le lecteur de QR code (jsQR) à la demande, uniquement quand le
-// scan est réellement utilisé.
+// scan est réellement utilisé. Fichier local (lib/jsQR.js) : plus
+// besoin d'une connexion au CDN, ni au premier chargement ni ensuite.
 let jsQrLibPromise = null;
 function loadJsQrLib() {
   if (window.jsQR) return Promise.resolve();
   if (jsQrLibPromise) return jsQrLibPromise;
   jsQrLibPromise = new Promise((resolve, reject) => {
     const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js";
+    script.src = "./lib/jsQR.js";
     script.onload = () => resolve();
     script.onerror = () => { jsQrLibPromise = null; reject(new Error("jsqr_lib_load_failed")); };
     document.head.appendChild(script);
@@ -6739,7 +6740,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 140;
+const APP_VERSION = 141;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

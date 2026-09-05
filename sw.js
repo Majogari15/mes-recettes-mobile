@@ -3,7 +3,7 @@
 // ensuite (les données elles-mêmes sont stockées séparément, dans IndexedDB,
 // géré directement par app.js).
 
-const CACHE_NAME = "mes-recettes-cache-v139";
+const CACHE_NAME = "mes-recettes-cache-v141";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -29,13 +29,15 @@ const FILES_TO_CACHE = [
   "./data/ingredient_substitutions_es.json",
   "./data/ingredient_substitutions_de.json",
   "./lib/qrcode-generator.js",
+  "./lib/jsQR.js",
+  "./lib/jspdf.umd.min.js",
 ];
-// Ressources externes indispensables (ex. génération de PDF) : mises en
-// cache elles aussi dès le premier chargement, pour continuer de
-// fonctionner hors connexion ensuite malgré leur origine différente.
+// Ressources externes indispensables (ex. reconnaissance de texte par
+// photo) : mises en cache elles aussi dès le premier chargement, pour
+// continuer de fonctionner hors connexion ensuite malgré leur origine
+// différente. jsQR et jsPDF sont désormais des fichiers locaux (voir
+// FILES_TO_CACHE ci-dessus), seul Tesseract reste externe pour l'instant.
 const CROSS_ORIGIN_TO_CACHE = [
-  "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
-  "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js",
   "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js",
 ];
 

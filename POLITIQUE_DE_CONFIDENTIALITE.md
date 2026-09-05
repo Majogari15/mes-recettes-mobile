@@ -50,19 +50,18 @@ toujours à votre initiative explicite :
   récupérer la page à votre place ; consultez leurs propres politiques
   de confidentialité
   pour savoir comment ils traitent ces requêtes.
-- **Import de recette par photo (reconnaissance de texte)**, **lecture
-  de QR code par caméra**, et **export PDF** : ces fonctionnalités
-  utilisent des bibliothèques techniques (Tesseract.js, jsQR, jsPDF)
-  téléchargées depuis des serveurs de distribution de contenu (cdnjs,
-  jsDelivr) — et mises en cache pour un usage hors connexion ensuite.
-  Ce téléchargement a lieu dès la première visite de l'application
+- **Import de recette par photo (reconnaissance de texte)** : cette
+  fonctionnalité utilise une bibliothèque technique (Tesseract.js)
+  téléchargée depuis un serveur de distribution de contenu (jsDelivr) —
+  et mise en cache pour un usage hors connexion ensuite. Ce
+  téléchargement a lieu dès la première visite de l'application
   (installation du fonctionnement hors connexion), pas seulement au
-  moment où vous utilisez réellement l'une de ces fonctions. Aucune
-  photo, aucun texte ni aucune donnée personnelle n'est envoyé à ces
-  serveurs : seules les bibliothèques elles-mêmes sont téléchargées.
-  La **génération** de QR code (pour partager une recette ou une liste
-  de courses) fonctionne en revanche entièrement à partir d'un fichier
-  inclus dans l'application elle-même, sans aucun téléchargement externe.
+  moment où vous utilisez réellement cette fonction. Aucune photo, aucun
+  texte ni aucune donnée personnelle n'est envoyé à ce serveur : seule la
+  bibliothèque elle-même est téléchargée.
+  La **génération et la lecture de QR code**, ainsi que l'**export PDF**,
+  fonctionnent en revanche entièrement à partir de fichiers inclus dans
+  l'application elle-même, sans aucun téléchargement externe.
 - **Bouton « Faire un don »** : ouvre, uniquement si vous cliquez dessus,
   la page https://buymeacoffee.com/majogari dans votre navigateur.
 - **Partager la sauvegarde** (fonctionnalité optionnelle) : le bouton
