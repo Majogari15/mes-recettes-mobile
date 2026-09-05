@@ -10,7 +10,9 @@ Recettes, Mes Courses » (version mobile) traite vos données personnelles.
 L'application stocke vos données **uniquement sur votre appareil**, sans
 compte ni inscription ni publicité — mais certaines fonctionnalités
 optionnelles, décrites en détail ci-dessous, transmettent des informations
-à des services tiers lorsque vous les utilisez explicitement.
+à des services tiers lorsque vous les utilisez explicitement (à
+l'exception du chargement des polices de caractères, automatique dès le
+premier chargement — voir section 4).
 
 ## 2. Où sont stockées vos données ?
 
@@ -35,9 +37,18 @@ solution de repli (coller le texte manuellement) reste disponible.
 ## 4. Connexions à internet effectuées par l'application
 
 L'application fonctionne hors connexion pour l'immense majorité de ses
-fonctionnalités. Elle se connecte à internet dans les cas suivants,
-toujours à votre initiative explicite :
+fonctionnalités. Voici les connexions qu'elle effectue, la plupart à votre
+initiative explicite — sauf une exception clairement indiquée ci-dessous :
 
+- **Polices de caractères (Google Fonts)** : contrairement aux autres
+  éléments listés ici, cette connexion est **automatique**, dès le
+  premier chargement de l'application, sans action de votre part.
+  L'application charge deux polices (Fraunces et Inter) directement
+  depuis les serveurs de Google (`fonts.googleapis.com`). Cette requête
+  transmet à Google les informations techniques habituelles de toute
+  requête web (adresse IP, type de navigateur) — consultez la politique
+  de confidentialité de Google pour plus de détails. Aucune donnée de
+  l'application elle-même (recettes, listes, photos) n'est concernée.
 - **Import d'une recette depuis un lien (ou de sa photo)** : les
   navigateurs empêchant une application web de récupérer directement le
   contenu d'un autre site, cette fonctionnalité transmet l'adresse que

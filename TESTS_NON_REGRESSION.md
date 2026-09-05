@@ -1061,7 +1061,151 @@ attendu → résultat obtenu → version testée.
 
 ---
 
-## Résumé — état au 05/09/2026 (v150)
+## 15. Accessibilité, langues et ergonomie (session du 05/09/2026)
+
+### 15.1 — `maximum-scale=1` retiré *(cause racine trouvée et corrigée, v151)*
+- **Contexte** : empêchait l'utilisateur de zoomer, un vrai problème
+  d'accessibilité.
+- **Corrigé** : retiré de la balise viewport.
+- **Version testée** : v151
+
+### 15.2 — Contrastes de couleurs insuffisants *(cause racine trouvée et corrigée, v151)*
+- **Contexte** : `--accent` sur `--accent-light` à 2,51:1 et `--danger`
+  sur `--danger-light` à 4,05:1, tous deux sous le seuil WCAG AA (4,5:1
+  pour du texte normal) — confirmé par calcul précis contre les vrais
+  fonds utilisés.
+- **Corrigé** : `--accent` assombri (#C08A2E → #886120, 4,59:1) et
+  `--danger` assombri (#B54B3A → #A84535, 4,58:1) en mode clair. Mode
+  sombre déjà correct (6,5:1 et 5,37:1), non modifié.
+- **Version testée** : v151
+
+### 15.3 — Étoiles illisibles dans l'export PDF *(cause racine trouvée et corrigée, v151)*
+- **Contexte** : les caractères ★/☆ ne sont pas correctement pris en
+  charge par la police PDF actuelle.
+- **Corrigé** : remplacés par un texte simple "X / 5".
+- **Version testée** : v151
+
+### 15.4 — Anciennes fenêtres `prompt()` remplacées *(cause racine trouvée et corrigée, v151)*
+- **Contexte** : deux `prompt()` natifs subsistaient (nommer une liste
+  de courses enregistrée, nommer un modèle de planning), incohérents
+  avec le reste de l'application.
+- **Corrigé** : nouvelle fonction `customPrompt()` suivant le même
+  modèle que `customConfirm()`/`customAlert()`, utilisée aux deux
+  endroits.
+- **Résultat obtenu** : ✅ Réussi — testé avec une valeur par défaut et
+  une saisie utilisateur, les deux correctement retournées.
+- **Version testée** : v151
+
+### 15.5 — "Coller le texte d'un QR code" déplacé *(amélioration ergonomique, v151)*
+- **Contexte** : fonction technique rarement utilisée, en place directe
+  sur l'accueil.
+- **Corrigé** : retiré de l'accueil, déplacé en option secondaire
+  discrète ("Le scan ne fonctionne pas ? Coller le contenu du QR code")
+  à l'intérieur de la fenêtre de scan — reste disponible comme solution
+  de secours, sans occuper une place directe sur l'accueil.
+- **Résultat obtenu** : ✅ Réussi — testé : accueil ne contient plus le
+  bouton, fenêtre de scan contient bien le lien, le clic ouvre
+  correctement la fenêtre de collage.
+- **Version testée** : v151
+
+### 15.6 — Limite de sauvegarde réduite *(v151)*
+- **Corrigé** : 200 Mo → 50 Mo, plus prudent pour un appareil d'entrée
+  de gamme.
+- **Version testée** : v151
+
+### 15.7 — Connexion automatique à Google Fonts documentée *(v151)*
+- **Contexte** : la politique de confidentialité laissait entendre que
+  toutes les connexions étaient déclenchées explicitement, alors que le
+  chargement des polices est automatique dès le premier chargement.
+- **Corrigé** : section dédiée ajoutée, résumé ajusté pour ne plus
+  sur-affirmer.
+- **Version testée** : v151
+
+### 15.8 — Dates selon la langue de l'application, pas du téléphone *(cause racine trouvée et corrigée, v151)*
+- **Contexte** : toutes les dates utilisaient `toLocaleDateString()`/
+  `toLocaleString()` sans locale explicite, suivant donc la langue du
+  téléphone plutôt que celle choisie dans l'application.
+- **Corrigé** : nouvelles fonctions `localeDateStr()`/
+  `localeDateTimeStr()` utilisant `CURRENT_LANG` explicitement,
+  appliquées aux 7 usages trouvés (PDF, journal de cuisine, corbeille,
+  diagnostic, statistiques mensuelles).
+- **Résultat obtenu** : ✅ Réussi — testé avec navigateur en français
+  et application réglée en allemand : date correctement au format
+  allemand (5.3.2026), différente du format français par défaut du
+  navigateur (05/03/2026).
+- **Version testée** : v151
+
+### 15.9 — Tri des ingrédients par traduction affichée *(cause racine trouvée et corrigée, v151)*
+- **Contexte** : le tri utilisait le nom français interne
+  (`localeCompare(b, "fr")`), pas la traduction visible à l'écran —
+  l'ordre alphabétique pouvait donc paraître incohérent dans les
+  autres langues.
+- **Corrigé** : nouveau comparateur `compareIngredientNamesForDisplay()`
+  triant par traduction affichée, appliqué aux 5 tris trouvés (y
+  compris un second écran, la gestion des substituts, touché par le
+  même défaut).
+- **Résultat obtenu** : ✅ Réussi — testé avec deux traductions
+  inversant l'ordre alphabétique français : le tri suit bien l'ordre
+  de la traduction affichée.
+- **Version testée** : v151
+
+### 15.10 — Collisions de traduction désambiguïsées *(cause racine trouvée et corrigée, v151)*
+- **Contexte** : 23 à 27 traductions (selon la langue) correspondent à
+  plusieurs noms français différents, souvent de vrais synonymes (ex.
+  "Arachide"/"Cacahuète" → "Peanut" en anglais), produisant deux
+  suggestions visuellement identiques.
+- **Corrigé** : les traductions en collision affichent désormais le nom
+  français d'origine entre parenthèses, uniquement à l'affichage (les
+  données sous-jacentes ne sont pas modifiées, pour éviter tout risque
+  sur les allergènes/nutrition/substitutions déjà liés aux noms
+  français existants).
+- **Résultat obtenu** : ✅ Réussi — testé : "Arachide" → "Peanut
+  (Arachide)", "Cacahuète" → "Peanut (Cacahuète)", désormais
+  distinguables ; un ingrédient sans collision ("Sel") reste inchangé.
+- **Version testée** : v151
+
+### 15.11 — Noms de fichiers PDF traduits *(v151)*
+- **Corrigé** : "liste-de-courses"/"mon-livre-de-recettes" traduits
+  dans les 4 langues.
+- **Version testée** : v151
+
+### 15.12 — Réservations du garde-manger persistées *(cause racine trouvée et corrigée, v151)*
+- **Contexte** : les réservations de la session (évite de compter deux
+  fois le même stock entre plusieurs ajouts à la liste de courses)
+  étaient perdues à chaque redémarrage de l'application.
+- **Corrigé** : persistées dans localStorage, chargées au démarrage.
+  Le recalcul automatique des réservations après modification/
+  suppression d'un article reste différé, comme convenu (refonte plus
+  large, pas prioritaire).
+- **Résultat obtenu** : ✅ Réussi — testé avec un vrai rechargement
+  complet de la page : la réservation survit exactement.
+- **Version testée** : v151
+
+### 15.13 — Noms accessibles manquants *(cause racine trouvée et corrigée, v151)*
+- **Contexte** : plusieurs champs (4 barres de recherche, la ligne
+  d'ingrédient du formulaire — nom/quantité/unité —, les champs de
+  substitution) n'avaient qu'un placeholder, insuffisant pour un
+  lecteur d'écran (TalkBack peut alors annoncer seulement "champ de
+  saisie").
+- **Corrigé** : `aria-label` ajouté à tous ces champs. Vérifié que les
+  6 autres champs à placeholder de l'application ont déjà un vrai
+  `<label>` associé (recette, avis famille, notes d'amélioration,
+  modale d'ingrédient, nom de menu, import par lien) — rien à corriger
+  pour ceux-là.
+- **Résultat obtenu** : ✅ Réussi — testé sur la ligne d'ingrédient du
+  formulaire (les 3 champs) et la recherche de recettes.
+- **Version testée** : v151
+
+### 15.14 — Texte alternatif des miniatures OCR *(cause racine trouvée et corrigée, v151)*
+- **Contexte** : les miniatures de l'import multi-photos n'avaient
+  aucun attribut `alt`.
+- **Corrigé** : texte alternatif ajouté. Vérifié qu'aucune autre image
+  de l'application n'en manque.
+- **Version testée** : v151
+
+---
+
+## Résumé — état au 05/09/2026 (v151)
 
 - **jsQR et jsPDF désormais embarqués localement** (v141) — seul
   Tesseract (import par photo) reste chargé depuis un CDN.

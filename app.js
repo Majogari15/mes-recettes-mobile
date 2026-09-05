@@ -123,6 +123,17 @@ function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
+// Formate une date selon la langue choisie DANS L'APPLICATION
+// (CURRENT_LANG), pas celle du téléphone — sans ça, une application
+// réglée en allemand sur un téléphone resté en français affichait quand
+// même les dates au format français.
+function localeDateStr(date) {
+  return new Date(date).toLocaleDateString(CURRENT_LANG);
+}
+function localeDateTimeStr(date) {
+  return new Date(date).toLocaleString(CURRENT_LANG);
+}
+
 // Formate une erreur interceptée en texte lisible, quelle que soit sa
 // forme réelle — un rejet de promesse n'est pas toujours un vrai objet
 // Error (Tesseract, par exemple, peut rejeter sans aucune valeur), et
@@ -286,6 +297,36 @@ function customAlert(message) {
     okBtn.addEventListener("click", close);
     overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
     okBtn.focus();
+  });
+}
+function customPrompt(message, defaultValue) {
+  return new Promise((resolve) => {
+    const previouslyFocused = document.activeElement;
+    const overlay = el(`<div class="modal-overlay"></div>`);
+    const sheet = el(`<div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="custom-prompt-message">
+      <p id="custom-prompt-message" style="margin:0 0 12px;font-size:15px;line-height:1.5;white-space:pre-line;">${escapeHtml(message)}</p>
+      <input type="text" id="custom-prompt-input" value="${escapeHtml(defaultValue || "")}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);font-size:15px;margin-bottom:20px;box-sizing:border-box;">
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="custom-prompt-cancel">${t("form_cancel")}</button>
+        <button type="button" class="btn btn-primary" id="custom-prompt-ok">${t("common_ok")}</button>
+      </div>
+    </div>`);
+    overlay.appendChild(sheet);
+    document.body.appendChild(overlay);
+    const input = sheet.querySelector("#custom-prompt-input");
+    const removeTrap = trapFocusInModal(sheet, () => finish(null));
+    function finish(value) {
+      removeTrap();
+      overlay.remove();
+      if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
+      resolve(value);
+    }
+    sheet.querySelector("#custom-prompt-cancel").addEventListener("click", () => finish(null));
+    sheet.querySelector("#custom-prompt-ok").addEventListener("click", () => finish(input.value));
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") finish(input.value); });
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) finish(null); });
+    input.focus();
+    input.select();
   });
 }
 function customConfirm(message) {
@@ -697,12 +738,9 @@ function renderHome() {
   importPhotoBtn.addEventListener("click", () => { state.screen = "importPhoto"; render(); });
   const importQrBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("shopping_qr_scan_button")}</button>`);
   importQrBtn.addEventListener("click", () => openQrScanModal());
-  const importQrPasteBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_qr_paste_button")}</button>`);
-  importQrPasteBtn.addEventListener("click", () => openQrPasteModal());
   importActions.appendChild(importUrlBtn);
   importActions.appendChild(importPhotoBtn);
   importActions.appendChild(importQrBtn);
-  importActions.appendChild(importQrPasteBtn);
   wrap.appendChild(importActions);
 
   // Groupe "Organiser"
@@ -805,7 +843,7 @@ function renderRecipeList() {
   const wrap = el(`<div></div>`);
   const searchBar = el(`<div class="search-bar">
     <span>🔍</span>
-    <input type="search" placeholder="${t("search_placeholder")}" />
+    <input type="search" placeholder="${t("search_placeholder")}" aria-label="${escapeHtml(t("search_placeholder"))}" />
   </div>`);
   const input = searchBar.querySelector("input");
   input.value = state.search;
@@ -1347,9 +1385,9 @@ function renderIngredientRows(holder) {
   holder.innerHTML = "";
   state.formIngredients.forEach((ing, idx) => {
     const row = el(`<div class="ing-form-row">
-      <div class="autocomplete-wrap"><input type="text" class="ing-name" placeholder="${t("form_ingredient_name")}" value="${escapeHtml(translateIngredientName(ing.name))}"></div>
-      <input type="number" step="any" class="qty ing-qty" placeholder="${t("form_ingredient_qty")}" value="${ing.quantity || ""}">
-      <select class="ing-unit"></select>
+      <div class="autocomplete-wrap"><input type="text" class="ing-name" placeholder="${t("form_ingredient_name")}" aria-label="${escapeHtml(t("form_ingredient_name"))}" value="${escapeHtml(translateIngredientName(ing.name))}"></div>
+      <input type="number" step="any" class="qty ing-qty" placeholder="${t("form_ingredient_qty")}" aria-label="${escapeHtml(t("form_ingredient_qty"))}" value="${ing.quantity || ""}">
+      <select class="ing-unit" aria-label="${escapeHtml(t("form_ingredient_unit"))}"></select>
       <button type="button" class="remove-ing" aria-label="${t("common_delete")}">${t("form_remove")}</button>
     </div>`);
     const unitSelect = row.querySelector(".ing-unit");
@@ -1572,7 +1610,7 @@ function renderShopping() {
 
   const saveListBtn = el(`<button class="btn btn-secondary" style="margin-top:10px;">${t("shopping_save_list_button")}</button>`);
   saveListBtn.addEventListener("click", async () => {
-    const name = prompt(t("shopping_save_list_prompt"));
+    const name = await customPrompt(t("shopping_save_list_prompt"));
     if (!name || !name.trim()) return;
     const saved = { id: uid(), name: name.trim(), items: JSON.parse(JSON.stringify(state.shopping)), createdAt: new Date().toISOString() };
     await storePut("savedShoppingLists", saved);
@@ -1586,7 +1624,7 @@ function renderShopping() {
     if (await customConfirm(t("shopping_clear_confirm"))) {
       await storeClear("shopping");
       state.shopping = [];
-      state.pantryClaimedThisSession = {};
+      state.pantryClaimedThisSession = {}; persistPantryClaims();
       render();
     }
   });
@@ -1618,7 +1656,7 @@ function renderSavedShoppingLists() {
       const items = JSON.parse(JSON.stringify(saved.items)).map((i) => ({ ...i, id: uid() }));
       for (const item of items) await storePut("shopping", item);
       state.shopping = items;
-      state.pantryClaimedThisSession = {};
+      state.pantryClaimedThisSession = {}; persistPantryClaims();
       state.screen = "shopping";
       render();
     });
@@ -1832,7 +1870,7 @@ function renderIngredientManage() {
   wrap.appendChild(dupBtn);
   const searchBar = el(`<div class="search-bar">
     <span>🔍</span>
-    <input type="search" placeholder="${t("ingredient_search_placeholder")}" />
+    <input type="search" placeholder="${t("ingredient_search_placeholder")}" aria-label="${escapeHtml(t("ingredient_search_placeholder"))}" />
   </div>`);
   wrap.appendChild(searchBar);
   const listHolder = el(`<div id="ingredient-list-holder"></div>`);
@@ -1879,7 +1917,7 @@ function renderManageSubstitutions() {
   wrap.appendChild(el(`<p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;line-height:1.5;">${escapeHtml(t("manage_substitutions_hint"))}</p>`));
   const searchBar = el(`<div class="search-bar">
     <span>🔍</span>
-    <input type="search" placeholder="${t("manage_substitutions_search_placeholder")}" />
+    <input type="search" placeholder="${t("manage_substitutions_search_placeholder")}" aria-label="${escapeHtml(t("manage_substitutions_search_placeholder"))}" />
   </div>`);
   wrap.appendChild(searchBar);
   const listHolder = el(`<div id="subs-list-holder"></div>`);
@@ -1891,7 +1929,7 @@ function renderManageSubstitutions() {
     const names = (key
       ? state.ingredientNames.filter((n) => normalize(n).includes(key))
       : state.ingredientNames.filter((n) => getIngredientSubstitutes(n).length > 0)
-    ).sort((a, b) => a.localeCompare(b, "fr"));
+    ).sort(compareIngredientNamesForDisplay);
     if (!names.length) {
       listHolder.appendChild(el(`<div class="empty-state"><div class="emoji">🔄</div><p>${escapeHtml(key ? t("no_recipes_found") : t("manage_substitutions_none"))}</p></div>`));
       return;
@@ -2048,8 +2086,8 @@ function openIngredientNameModal(existingName) {
     substitutesHolder.innerHTML = "";
     customSubstitutes.forEach((sub, idx) => {
       const row = el(`<div class="ing-form-row">
-        <div class="autocomplete-wrap" style="flex:1;"><input type="text" class="sub-name" placeholder="${t("ingredient_substitute_name_placeholder")}" value="${escapeHtml(sub.nom)}"></div>
-        <input type="text" class="sub-note" placeholder="${t("ingredient_substitute_note_placeholder")}" value="${escapeHtml(sub.note || "")}" style="flex:1.4;">
+        <div class="autocomplete-wrap" style="flex:1;"><input type="text" class="sub-name" placeholder="${t("ingredient_substitute_name_placeholder")}" aria-label="${escapeHtml(t("ingredient_substitute_name_placeholder"))}" value="${escapeHtml(sub.nom)}"></div>
+        <input type="text" class="sub-note" placeholder="${t("ingredient_substitute_note_placeholder")}" aria-label="${escapeHtml(t("ingredient_substitute_note_placeholder"))}" value="${escapeHtml(sub.note || "")}" style="flex:1.4;">
         <button type="button" class="remove-ing" aria-label="${t("common_delete")}">${t("form_remove")}</button>
       </div>`);
       const subNameInput = row.querySelector(".sub-name");
@@ -2214,7 +2252,10 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, includePhoto)
   }
   if (recipe.personalRating) {
     heading(t("recipe_my_rating"));
-    paragraph("★".repeat(recipe.personalRating) + "☆".repeat(5 - recipe.personalRating));
+    // Le texte simple "X / 5" plutôt que les caractères ★/☆ : la
+    // police PDF actuelle ne les prend pas correctement en charge et
+    // peut afficher d'autres symboles à la place.
+    paragraph(`${recipe.personalRating} / 5`);
     y += 5;
   }
   if (recipe.familyOpinion) {
@@ -2310,7 +2351,7 @@ async function exportShoppingListPdf() {
   doc.setFontSize(8);
   doc.setTextColor(150);
   doc.text(t("pdf_generated_by"), margin, 290);
-  doc.save("liste-de-courses.pdf");
+  doc.save(`${t("pdf_shopping_filename")}.pdf`);
 }
 
 // Génère un seul PDF regroupant plusieurs recettes : une page de garde,
@@ -2337,7 +2378,7 @@ async function exportCookbookPdf(recipes, includePhotos) {
   });
   doc.setFont("helvetica", "normal");
   doc.setFontSize(12);
-  doc.text(new Date().toLocaleDateString(), margin, 125);
+  doc.text(localeDateStr(new Date()), margin, 125);
   doc.text(t("cookbook_recipe_count", { count: String(recipes.length) }), margin, 133);
 
   // Sommaire : une page dédiée (ou plusieurs si beaucoup de recettes),
@@ -2377,7 +2418,7 @@ async function exportCookbookPdf(recipes, includePhotos) {
     doc.text(String(entry.pageNumber), pageWidth - margin, entry.tocY, { align: "right" });
   });
 
-  doc.save("mon-livre-de-recettes.pdf");
+  doc.save(`${t("pdf_recipes_filename")}.pdf`);
 }
 
 function renderCookbookExport() {
@@ -2960,6 +3001,7 @@ async function openQrScanModal() {
     <button type="button" class="btn btn-secondary" id="qrscan-manual" style="margin-bottom:10px;" disabled>${t("qrscan_manual_button")}</button>
     <button type="button" class="btn btn-outline" id="qrscan-choose-image" style="margin-bottom:10px;">${t("qrscan_choose_image_button")}</button>
     <input type="file" accept="image/*" id="qrscan-file-input" style="display:none;">
+    <button type="button" id="qrscan-paste-fallback" style="background:none;border:none;color:var(--text-muted);font-size:12px;text-decoration:underline;cursor:pointer;display:block;margin:0 auto 10px;padding:4px;">${escapeHtml(t("qrscan_paste_fallback_link"))}</button>
     <button type="button" class="btn btn-outline" id="qrscan-close">${t("cooking_close")}</button>
   </div>`);
   overlay.appendChild(sheet);
@@ -2974,6 +3016,7 @@ async function openQrScanModal() {
   const cameraStatusEl = sheet.querySelector("#qrscan-camera-status");
   const statusEl = sheet.querySelector("#qrscan-status");
   const manualBtn = sheet.querySelector("#qrscan-manual");
+  sheet.querySelector("#qrscan-paste-fallback").addEventListener("click", () => openQrPasteModal());
   let stream = null;
   let stopped = false;
   // Accumule les parties d'une recette répartie sur plusieurs QR — ne
@@ -3536,7 +3579,7 @@ function openCookLogViewModal(recipe) {
       return;
     }
     entries.forEach((entry) => {
-      const dateStr = new Date(entry.date).toLocaleDateString();
+      const dateStr = localeDateStr(entry.date);
       const card = el(`<div class="card" style="padding:12px 16px;margin-bottom:12px;"></div>`);
       const headerRow = el(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
         <span style="font-weight:600;font-size:13px;color:var(--text-muted);">${escapeHtml(dateStr)}</span>
@@ -3972,11 +4015,40 @@ function getDisplaySubstitutes(name) {
   return translatedReference.concat(customList);
 }
 
+// Calculé une seule fois par langue (mis en cache) : l'ensemble des
+// traductions qui correspondent à plusieurs noms français différents
+// (souvent de vrais synonymes, ex. "Arachide"/"Cacahuète" donnant tous
+// deux "Peanut" en anglais) — sans désambiguïsation, ces ingrédients
+// pourtant différents apparaissent comme deux suggestions identiques.
+const _ingredientTranslationCollisionsCache = {};
+function getIngredientTranslationCollisions(lang) {
+  if (_ingredientTranslationCollisionsCache[lang]) return _ingredientTranslationCollisionsCache[lang];
+  const dict = INGREDIENT_TRANSLATIONS[lang];
+  const collisions = new Set();
+  if (dict) {
+    const counts = {};
+    Object.values(dict).forEach((v) => { counts[v] = (counts[v] || 0) + 1; });
+    Object.keys(counts).forEach((v) => { if (counts[v] > 1) collisions.add(v); });
+  }
+  _ingredientTranslationCollisionsCache[lang] = collisions;
+  return collisions;
+}
 function translateIngredientName(name) {
   if (!name || CURRENT_LANG === "fr") return name;
   const dict = INGREDIENT_TRANSLATIONS[CURRENT_LANG];
   if (!dict) return name;
-  return dict[name] || name;
+  const translated = dict[name];
+  if (!translated) return name;
+  const collisions = getIngredientTranslationCollisions(CURRENT_LANG);
+  return collisions.has(translated) ? `${translated} (${name})` : translated;
+}
+// Compare deux noms d'ingrédients selon leur traduction AFFICHÉE dans la
+// langue actuelle, pas selon leur nom français interne — sans ça, la
+// liste apparaissait triée dans le désordre pour toute langue autre que
+// le français (l'ordre alphabétique français ne correspond pas
+// forcément à l'ordre alphabétique de la traduction affichée).
+function compareIngredientNamesForDisplay(a, b) {
+  return translateIngredientName(a).localeCompare(translateIngredientName(b), CURRENT_LANG);
 }
 // Résout un nom d'ingrédient tapé ou sélectionné, qu'il soit en français
 // ou dans la langue actuellement affichée, vers son nom canonique
@@ -4005,7 +4077,7 @@ function resolveIngredientInput(typedName) {
 async function ensureIngredientListLoaded() {
   const existing = await storeAll("ingredients");
   if (existing.length) {
-    state.ingredientNames = existing.map((i) => i.name).sort((a, b) => a.localeCompare(b, "fr"));
+    state.ingredientNames = existing.map((i) => i.name).sort(compareIngredientNamesForDisplay);
     return;
   }
   // Première utilisation : préremplit avec la liste fournie.
@@ -4013,7 +4085,7 @@ async function ensureIngredientListLoaded() {
     const res = await fetch("./data/ingredients_par_defaut.json");
     const defaults = res.ok ? await res.json() : [];
     for (const name of defaults) await storePut("ingredients", { name });
-    state.ingredientNames = defaults.slice().sort((a, b) => a.localeCompare(b, "fr"));
+    state.ingredientNames = defaults.slice().sort(compareIngredientNamesForDisplay);
   } catch (e) {
     state.ingredientNames = [];
   }
@@ -4025,7 +4097,7 @@ async function addIngredientName(name) {
   if (state.ingredientNames.some((n) => normalize(n) === key)) return false;
   await storePut("ingredients", { name: trimmed });
   state.ingredientNames.push(trimmed);
-  state.ingredientNames.sort((a, b) => a.localeCompare(b, "fr"));
+  state.ingredientNames.sort(compareIngredientNamesForDisplay);
   return true;
 }
 async function renameIngredientName(oldName, newName) {
@@ -4035,7 +4107,7 @@ async function renameIngredientName(oldName, newName) {
   await storePut("ingredients", { name: trimmed });
   state.ingredientNames = state.ingredientNames.filter((n) => n !== oldName);
   state.ingredientNames.push(trimmed);
-  state.ingredientNames.sort((a, b) => a.localeCompare(b, "fr"));
+  state.ingredientNames.sort(compareIngredientNamesForDisplay);
   await moveIngredientOverride(oldName, trimmed);
   // Met aussi à jour ce nom partout où il est déjà utilisé, pour ne pas
   // casser les recettes/listes existantes — sans cette propagation, un
@@ -4525,6 +4597,22 @@ function computePantryReduction(name, unit, neededQty, pendingClaims) {
 // accepté, jamais avant, pour qu'un "Annuler" n'affecte jamais l'état.
 function commitPantryClaim(key, amount) {
   state.pantryClaimedThisSession[key] = (state.pantryClaimedThisSession[key] || 0) + amount;
+  persistPantryClaims();
+}
+// Sauvegarde légère dans localStorage (pas IndexedDB, un simple objet
+// clé-valeur suffit) — sans ça, les réservations de la session
+// n'étaient conservées qu'en mémoire et disparaissaient à chaque
+// redémarrage de l'application, pouvant faire recompter deux fois le
+// même stock si l'utilisateur fermait puis rouvrait l'app entre deux
+// ajouts de recettes à la liste de courses.
+function persistPantryClaims() {
+  try { localStorage.setItem("pantryClaimedThisSession", JSON.stringify(state.pantryClaimedThisSession)); } catch (e) { /* sans conséquence */ }
+}
+function loadPantryClaims() {
+  try {
+    const raw = localStorage.getItem("pantryClaimedThisSession");
+    if (raw) state.pantryClaimedThisSession = JSON.parse(raw) || {};
+  } catch (e) { /* reste à {} par défaut */ }
 }
 
 function computeIngredientCost(name, quantity, unit) {
@@ -4640,7 +4728,7 @@ function shareBackupData(file) {
 // soit le fichier est corrompu/mal formé, soit il ne peut de toute
 // façon pas provenir d'un usage normal de l'application (même avec
 // beaucoup de photos, cette limite laisse une large marge).
-const MAX_BACKUP_FILE_SIZE = 200 * 1024 * 1024; // 200 Mo
+const MAX_BACKUP_FILE_SIZE = 50 * 1024 * 1024; // 50 Mo
 
 // Un champ photo valide est soit absent, soit une image encodée en
 // data URL — jamais une chaîne arbitraire, pour éviter qu'une valeur
@@ -4809,7 +4897,7 @@ async function parseBackupFile(file) {
 }
 function buildBackupPreviewText(data, report) {
   const count = (storeName) => (Array.isArray(data[storeName]) ? data[storeName].length : 0);
-  const dateLabel = data.exportedAt ? new Date(data.exportedAt).toLocaleString() + "\n" : "";
+  const dateLabel = data.exportedAt ? localeDateTimeStr(data.exportedAt) + "\n" : "";
   let text = t("backup_preview_text", {
     date: dateLabel,
     recipes: String(count("recipes")),
@@ -4925,7 +5013,7 @@ async function renderDiagnostic() {
   }
 
   const lastBackupAt = localStorage.getItem("lastBackupAt");
-  addRow(t("diagnostic_last_backup"), lastBackupAt ? new Date(lastBackupAt).toLocaleString() : t("diagnostic_never"));
+  addRow(t("diagnostic_last_backup"), lastBackupAt ? localeDateTimeStr(lastBackupAt) : t("diagnostic_never"));
 
   const lastImportService = localStorage.getItem("lastImportService");
   addRow(t("diagnostic_last_import_service"), lastImportService || t("diagnostic_none"));
@@ -5234,7 +5322,7 @@ function openRecipePickerModal(onPick) {
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
     <h2>${t("planning_pick_recipe_title")}</h2>
-    <div class="search-bar"><span>🔍</span><input type="search" placeholder="${t("search_placeholder")}"></div>
+    <div class="search-bar"><span>🔍</span><input type="search" placeholder="${t("search_placeholder")}" aria-label="${escapeHtml(t("search_placeholder"))}"></div>
     <div id="picker-list" style="max-height:50vh;overflow-y:auto;"></div>
     <div class="modal-actions"><button type="button" class="btn btn-outline" id="picker-cancel">${t("form_cancel")}</button></div>
   </div>`);
@@ -5485,7 +5573,7 @@ function renderPlanning() {
 
   const saveTemplateBtn = el(`<button class="btn btn-secondary" style="margin-bottom:10px;">${t("planning_save_template")}</button>`);
   saveTemplateBtn.addEventListener("click", async () => {
-    const name = prompt(t("planning_save_template_prompt"));
+    const name = await customPrompt(t("planning_save_template_prompt"));
     if (!name || !name.trim()) return;
     const template = { id: uid(), name: name.trim(), plan: JSON.parse(JSON.stringify(state.weeklyPlan)) };
     await storePut("planTemplates", template);
@@ -5549,7 +5637,7 @@ function renderPlanningHistory() {
     return wrap;
   }
   state.planHistory.forEach((entry) => {
-    const dateStr = new Date(entry.date).toLocaleDateString();
+    const dateStr = localeDateStr(entry.date);
     const block = el(`<div class="section"><div class="section-label">${escapeHtml(t("planning_history_week_of", { date: dateStr }))}</div></div>`);
     const card = el(`<div class="card" style="padding:2px 16px;margin-bottom:8px;"></div>`);
     let anyRow = false;
@@ -6122,7 +6210,7 @@ function renderImportPhoto() {
     listHolder.innerHTML = "";
     state.multiPhotoImport.forEach((p) => {
       const card = el(`<div class="card" style="padding:12px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;"></div>`);
-      card.appendChild(el(`<img src="${p.thumbnail}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0;">`));
+      card.appendChild(el(`<img src="${p.thumbnail}" alt="${escapeHtml(t("import_photo_thumbnail_alt"))}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0;">`));
       const info = el(`<div style="flex:1;min-width:0;"></div>`);
       if (p.status === "processing") {
         info.appendChild(el(`<div style="font-size:13px;color:var(--text-muted);">${escapeHtml(t("import_photo_processing_short"))}</div>`));
@@ -6789,7 +6877,7 @@ function renderTrash() {
     return wrap;
   }
   state.trash.forEach((entry) => {
-    const dateStr = new Date(entry.deletedAt).toLocaleDateString();
+    const dateStr = localeDateStr(entry.deletedAt);
     const card = el(`<div class="card" style="padding:14px 16px;margin-bottom:12px;">
       <div style="font-weight:600;margin-bottom:2px;">${escapeHtml(entry.name)}</div>
       <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">${escapeHtml(t("trash_deleted_on", { date: dateStr }))}</div>
@@ -7113,7 +7201,7 @@ function renderStatistics() {
   for (let i = 11; i >= 0; i--) {
     const d = new Date(refDate.getFullYear(), refDate.getMonth() - i, 1);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    months.push({ key, label: d.toLocaleDateString(undefined, { month: "short" }), count: monthCounts[key] || 0 });
+    months.push({ key, label: d.toLocaleDateString(CURRENT_LANG, { month: "short" }), count: monthCounts[key] || 0 });
   }
   const maxCount = Math.max(1, ...months.map((m) => m.count));
   const chartCard = el(`<div class="card" style="padding:16px 10px 10px;display:flex;align-items:flex-end;gap:4px;height:150px;"></div>`);
@@ -7134,10 +7222,11 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 150;
+const APP_VERSION = 151;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
+  loadPantryClaims();
 
   // Capture un brouillon de la recette en cours de création si
   // l'application passe en arrière-plan ou se ferme — plus fiable que
