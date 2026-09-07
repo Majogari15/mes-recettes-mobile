@@ -1,0 +1,32 @@
+{
+  "id": "photo2_salade_ingredients",
+  "sourceDescription": "Texte OCR réel (Tesseract.js 7, redimensionnement 1600px pour JPEG), vérifié valide avec le code v179",
+  "rawText": "Cest parti! 1\nPlanifiez |'ordre des recettes selon la date de péremption ‘\ninscrite sur l'étiquette de vos ingrédients. Rincez les fruits et\nlégumes\nMes ustensiles\nPassoire, casserole avec couvercle, saladier, passoire\nIngredients pour 2 personnes\nGrenailles 500g\nHaricots verts* 1 sachet(s Quelqt ies d\nEchalote % piece(s)\nCitron* 1 piéce(s e Veillez a bienre\nAneth* 1 sachet(s) gauche pour pré\nOlives Kalamata 1 paquet(s, e Portez une gran\nThon au naturel 1 boite(s) ébullition.\nFromage 2 la grecque* 1 paquet(s e Lavezlesgrena\nOrigan séché % sachet(s) en4 pour les pli\nHuile d'olive lcs\nMoutarde lcc E\nPoivre et sel selon votre goGt re ™\n* Conserver au réfrigérateur Js Mal Couha\nValeurs nutritionnelles 4\nPar portion Pour 100 g\nEnergie (kJ/keal) 2423 /579 455/109 y=\nLipides total (g) 24 4 'S\nDont saturés (g, 10,2 19 \\ 3 »\nGlucides (g) 57 1 \\E\nDont sucres (g) 8,0 1,5 =\nFibres (g) 13 3\nProtéines (g) 32 6\ngals os 0,5 Letopdut\nAllergenes :\npeor, certains ingrédients peuvent contenir des allergénes. En cas 7 JRE\nallergie, référez-vous aux étiquettes des ingrédients avant de cuisiner. Les |\nallergénes et traces d'allergénes sont indiqués en gras, en italique ou en Mcllement par\nMAJUSCULE sur les étiquettes, e Emiettez le fron\n",
+  "layoutText": "Cest parti! 1\nPlanifiez |'ordre des recettes selon la date de péremption ‘\ninscrite sur l'étiquette de vos ingrédients. Rincez les fruits et\nlégumes\nMes ustensiles\nPassoire, casserole avec couvercle, saladier, passoire\nIngredients pour 2 personnes\nGrenailles 500g\nHaricots verts* 1 sachet(s\nEchalote % piece(s)\nCitron* 1 piéce(s\nAneth* 1 sachet(s)\nOlives Kalamata 1 paquet(s,\nThon au naturel 1 boite(s)\nFromage 2 la grecque* 1 paquet(s\nOrigan séché % sachet(s)\nHuile d'olive lcs\nMoutarde lcc\nPoivre et sel selon votre goGt re ™\n* Conserver au réfrigérateur Js Mal Couha\nValeurs nutritionnelles 4\nPar portion Pour 100 g\nEnergie (kJ/keal) 2423 /579\nLipides total (g) 24\nDont saturés (g, 10,2\nGlucides (g) 57\nDont sucres (g) 8,0\nFibres (g) 13\nProtéines (g) 32\ngals os\nAllergenes :\npeor, certains ingrédients peuvent contenir des allergénes. En cas 7 JRE\nallergie, référez-vous aux étiquettes des ingrédients avant de cuisiner. Les |\nallergénes et traces d'allergénes sont indiqués en gras, en italique ou en Mcllement par\nMAJUSCULE sur les étiquettes, e Emiettez le fron",
+  "expected": {
+    "detectedSection": "ingredients",
+    "persons": 2,
+    "ingredientCount": 12,
+    "notes": "Fiche HelloFresh salade grecque, photo cadrée sur la zone ingrédients. 12 lignes réelles sur la fiche.",
+    "keyIngredients": [
+      {
+        "nameContains": "Grenailles",
+        "quantity": 500,
+        "unit": "g",
+        "confidence": "reliable"
+      },
+      {
+        "nameContains": "Aneth",
+        "quantity": 1,
+        "unit": "sachet",
+        "confidence": "reliable"
+      },
+      {
+        "nameContains": "Thon au naturel",
+        "quantity": 1,
+        "unit": "boîte",
+        "confidence": "reliable"
+      }
+    ]
+  }
+}

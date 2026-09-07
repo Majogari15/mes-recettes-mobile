@@ -1,0 +1,38 @@
+{
+  "id": "photo4_barramundi_ingredients",
+  "sourceDescription": "Texte OCR réel (Tesseract.js 7, redimensionnement 1600px pour JPEG), vérifié valide avec le code v179",
+  "rawText": "Mes ustensiies |\nPlat a four, casserole avec couvercle, éplucheur, presse-purée, petit\nbol, passoire\nIngredients pour 2 personnes\nGousse dail 1 piéce(s) @- :\nPersil plat et ciboulette* 1 sachet(s)\nPommes de terre 500g . V\nChapelure panko % sachet(s) g\nFilet de barramundi* 2 piece(s) o |\nTomates cerises* 1 barquette(s) t\n[ Asjoutervous-méme\nHuile d'olive 3¢s |\nBeurre lcs °\nLait 1 filet(s)\nPoivre et sel selon votre goGt\n* Conserver au réfrigérateur\nValeurs nutritionnelles\nge Par portion Pour 100 g\nEnergie (kJ/kcal) 2745 [656 499 /119\nLipide total (2) 30 6\nDont saturés (g) 1.5 1,4\nDont sucres (g) 9,3 13\nProtéine 1 ;\nLTE 03 01\nAttention, certains ingrédients peuvent contenir des allergenes. En cas\nay 8 rate ccrmond Aa Arieinar | oe\n",
+  "layoutText": "Mes ustensiies |\nPlat a four, casserole avec couvercle, éplucheur, presse-purée, petit\nbol, passoire\nIngredients pour 2 personnes\nGousse dail 1 piéce(s)\nPersil plat et ciboulette* 1 sachet(s)\nPommes de terre 500g\nChapelure panko % sachet(s)\nFilet de barramundi* 2 piece(s)\nTomates cerises* 1 barquette(s)\n[ Asjoutervous-méme\nHuile d'olive 3¢s\nBeurre lcs\nLait 1 filet(s)\nPoivre et sel selon votre goGt\n* Conserver au réfrigérateur\nValeurs nutritionnelles\nge Par portion\nEnergie (kJ/kcal) 2745 [656\nLipide total (2) 30\nDont saturés (g) 1.5\nDont sucres (g) 9,3\nProtéine 1\nLTE 03\nAttention, certains ingrédients peuvent contenir des allergenes. En cas\nay 8 rate ccrmond Aa Arieinar | oe",
+  "expected": {
+    "detectedSection": "ingredients",
+    "persons": 2,
+    "ingredientCount": 11,
+    "notes": "10 ingrédients réels + le séparateur déformé 'À ajouter vous-même' (non filtré depuis la v179, priorité donnée à la sécurité des données plutôt qu'à ce filtrage précis — voir TESTS_NON_REGRESSION.md point 34).",
+    "keyIngredients": [
+      {
+        "nameContains": "ciboulette",
+        "quantity": 1,
+        "unit": "sachet",
+        "confidence": "reliable"
+      },
+      {
+        "nameContains": "Pommes de terre",
+        "quantity": 500,
+        "unit": "g",
+        "confidence": "reliable"
+      },
+      {
+        "nameContains": "barramundi",
+        "quantity": 2,
+        "unit": "pièce",
+        "confidence": "reliable"
+      },
+      {
+        "nameContains": "Tomates cerises",
+        "quantity": 1,
+        "unit": "barquette",
+        "confidence": "reliable"
+      }
+    ]
+  }
+}

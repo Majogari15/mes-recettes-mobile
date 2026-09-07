@@ -1,0 +1,37 @@
+# Configuration Wrangler pour le Worker Cloudflare de l'application
+# "Mes Recettes, Mes Courses" — voir README.md pour les instructions
+# complètes de déploiement et de configuration.
+#
+# Ce fichier n'est utile que si vous déployez le Worker via la ligne de
+# commande Wrangler (npx wrangler deploy). Si vous préférez coller le
+# code de cloudflare-worker.js directement dans le tableau de bord
+# Cloudflare (interface web), c'est possible pour le reste du code —
+# mais la liaison Rate Limiting ci-dessous n'est actuellement PAS
+# configurable depuis le tableau de bord, quelle que soit sa langue
+# (confirmé par la documentation officielle Cloudflare) : Wrangler est
+# la seule méthode qui fonctionne réellement pour cette liaison
+# précise, confirmé aussi par un déploiement réel réussi.
+
+name = "mes-recettes-proxy"
+main = "cloudflare-worker.js"
+compatibility_date = "2026-01-01"
+
+# Limitation de débit par adresse IP — voir la fonction fetch() dans
+# cloudflare-worker.js, qui utilise cette liaison sous le nom
+# "RATE_LIMITER". Le Worker continue de fonctionner sans limitation si
+# cette section est absente ou mal configurée (échec permissif),
+# jamais bloquant.
+#
+# "namespace_id" doit être un nombre entier UNIQUE parmi toutes vos
+# liaisons Rate Limiting sur votre compte Cloudflare — si vous avez
+# déjà un autre Worker utilisant l'identifiant "1001", changez cette
+# valeur ici (n'importe quel entier non déjà utilisé convient).
+#
+# "limit"/"period" : 30 requêtes par minute et par adresse IP — large
+# pour un usage normal (importer plusieurs recettes d'affilée), mais
+# empêche un usage automatisé abusif. "period" ne peut être que 10 ou
+# 60 (contrainte de Cloudflare).
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "1001"
+simple = { limit = 30, period = 60 }

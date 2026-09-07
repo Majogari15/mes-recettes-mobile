@@ -1,0 +1,35 @@
+{
+  "id": "./index.html",
+  "name": "My Recipes, My Shopping",
+  "short_name": "My Recipes",
+  "description": "Recipes, shopping and meal planning — all on your phone",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FBF6EF",
+  "theme_color": "#2F5233",
+  "lang": "en",
+  "categories": ["food", "lifestyle", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "New recipe",
+      "short_name": "New recipe",
+      "description": "Add a new recipe",
+      "url": "./index.html?screen=form",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Shopping list",
+      "short_name": "Shopping",
+      "description": "View the shopping list",
+      "url": "./index.html?screen=shopping",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

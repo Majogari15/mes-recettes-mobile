@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mes Recettes</title>
+<meta name="description" content="Recettes, courses et planning de repas — sur votre téléphone">
+<meta name="theme-color" content="#2F5233">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mes Recettes">
+<!--
+  Politique de sécurité du contenu : limite les origines autorisées à
+  charger des scripts ou à recevoir des connexions réseau, réduisant le
+  risque qu'un contenu importé et mal filtré puisse exécuter du code
+  arbitraire. "unsafe-inline" reste nécessaire pour les styles (l'app
+  utilise beaucoup de style="" en ligne, un choix délibéré pour rester
+  un simple fichier sans étape de compilation) — mais jamais pour les
+  scripts, qui restent strictement limités aux origines listées
+  ci-dessous.
+-->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'wasm-unsafe-eval';
+  worker-src 'self' blob:;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com;
+  img-src 'self' data: https:;
+  connect-src 'self' https:;
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self';
+">
+<script src="manifest-loader.js"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="./lib/jspdf.umd.min.js"></script>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# Corpus de test contenant de vraies sorties OCR (captures d'écran de
+# navigateur notamment) — peut contenir des informations personnelles
+# (onglets ouverts, favoris, historique contextuel). Jamais destiné à
+# être publié. Voir tests/README.md pour le détail et la procédure.
+tests/private-ocr-corpus/

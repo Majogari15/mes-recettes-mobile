@@ -1,0 +1,13 @@
+{
+  "id": "photo3_barramundi_couverture",
+  "sourceDescription": "Texte OCR réel (Tesseract.js 7, redimensionnement 1600px pour JPEG), vérifié valide avec le code v179",
+  "rawText": ") Barramundi en croute persillee & tomates roties\navec une purée a la ciboulette\nA table dans: 35-45 Min\n: g 5%\na\nNG SE\nyr 7\ny - L, 4 ’ cli\n4 i : he\n/ Ly\n7 ;\n; pa -\nFA. ;\nro 5 y. x sak\nNeds a5 A ade '\nV0. Bs I - \"ye <\n= [2 ~ x T\nHSER Ne 5: 3\nFl SR PS J y\nLat» RE a 4 Fes\npm, a\" + 7 ts} 24 (o Fr y £\n> ah 1 4 EP 3 ai pr. =\nNE 4 The RR C3 og 2 4 32\nNWO Ce SAE lpi a\nPERE {CR hy Te A 25\n5 4 Hy RAT a Br 154\n¢ SATA. ROR eT a i 5%\nag ee w A208 0 by i Shs\n~ Food FR ST 2 RS A £8 bes\n; hr po\nS 8 Be > die\nLA ay y Bg r\n\\ Be i ¢ Somat ore\n: SER # AL\nA 3 NEA \\ Se SFR\n£3: 5 TT ARLE\n? 5 SEEN\nAs Ee\n1s votre Box, ve # Ss = :\nes ois Poisson et des crevettes labellisés (MSC, ASC...) issus d'une péche ou d'une aquaculture qui participen\nautres labels environnementaux peuvent également étre présents selon 'approvisionnement\na | Pliez, r détachez-moi! ~~ N\n",
+  "layoutText": ") Barramundi en croute persillee & tomates roties\navec une purée a la ciboulette\nA table dans: 35-45 Min\n: g\na\nNG SE\nyr 7\ny -\n4 i\n/ Ly\n7 ;\n; pa\nFA. ;\nro 5 y. x\nNeds a5 A ade\nV0. Bs\n= [2\nHSER Ne\nFl SR\nLat» RE a\npm, a\" + 7 ts} 24 (o Fr y\n> ah\nNE 4 The RR C3\nNWO Ce SAE lpi a\nPERE {CR\n5 4\n¢ SATA.\nag ee\n~ Food FR ST\n; hr\nS 8 Be\nLA ay\n\\ Be\n: SER\nA 3\n£3: 5\n? 5\nAs Ee\n1s votre Box, ve #\nes ois Poisson et des crevettes labellisés (MSC, ASC...) issus d'une péche ou d'une aquaculture qui participen\nautres labels environnementaux peuvent également étre présents selon 'approvisionnement\na | Pliez, r détachez-moi! ~~ N",
+  "expected": {
+    "detectedSection": "general",
+    "persons": null,
+    "nameContains": "Barramundi",
+    "prepTime": 35,
+    "notes": "Couverture HelloFresh Barramundi — nom et durée corrects malgré le bruit d'une grande photo du plat."
+  }
+}
