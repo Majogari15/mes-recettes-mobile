@@ -773,11 +773,14 @@ function renderHome() {
   cookbookBtn.addEventListener("click", () => { state.screen = "cookbookExport"; render(); });
   const statsBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_statistics")}</button>`);
   statsBtn.addEventListener("click", () => { state.screen = "statistics"; render(); });
+  const timerBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_timer")}</button>`);
+  timerBtn.addEventListener("click", () => openStandaloneTimers());
   toolsActions.appendChild(compareBtn);
   toolsActions.appendChild(unitConvBtn);
   toolsActions.appendChild(whatCanICookBtn);
   toolsActions.appendChild(cookbookBtn);
   toolsActions.appendChild(statsBtn);
+  toolsActions.appendChild(timerBtn);
   wrap.appendChild(toolsActions);
 
   // Groupe "Autre"
@@ -3899,6 +3902,26 @@ function renderTimerRow(holder, timer) {
     state.cookingTimers = state.cookingTimers.filter((x) => x.id !== timer.id);
     row.remove();
   });
+  // Reconnecte l'affichage à un minuteur déjà en cours ou déjà en train
+  // de sonner — cas d'une fenêtre de minuteurs autonome fermée puis
+  // rouverte (voir openStandaloneTimers) pendant qu'un minuteur tourne
+  // encore : sans ça, ce nouvel affichage resterait figé sur l'ancienne
+  // valeur jusqu'au prochain démarrage manuel, l'intervalle précédent
+  // continuant de mettre à jour une ligne désormais invisible plutôt
+  // que celle-ci.
+  if (timer.running) {
+    if (timer.interval) clearInterval(timer.interval);
+    startBtn.textContent = "⏸";
+    startBtn.setAttribute("aria-label", t("cooking_timer_pause"));
+    setInputsDisabled(true);
+    countdownEl.textContent = formatCountdown(timer.remaining);
+    timer.interval = setInterval(tick, 1000);
+  } else if (timer.alarming) {
+    row.classList.add("alarming");
+    startBtn.setAttribute("aria-label", t("cooking_stop_alarm"));
+    countdownEl.textContent = t("cooking_timer_done");
+    setInputsDisabled(true);
+  }
   holder.appendChild(row);
 }
 
@@ -4197,6 +4220,50 @@ function openCookingMode(recipe) {
 
   document.body.appendChild(overlay);
   initModalA11y(overlay, overlay, { beforeClose: () => cleanupCookingMode() });
+}
+
+// Fenêtre de minuteurs autonome — accessible depuis Accueil → Outils,
+// pour qui veut juste chronométrer quelque chose sans avoir à ouvrir
+// une recette. Réutilise toute la logique déjà existante des minuteurs
+// du mode cuisine (createCookingTimer, renderTimerRow, notifications),
+// mais SANS les particularités propres à une session de cuisine
+// (verrou d'écran, lecture à voix haute, recette associée aux
+// notifications). Différence volontaire avec le mode cuisine : fermer
+// cette fenêtre NE stoppe PAS les minuteurs en cours — ils continuent
+// de tourner (l'utilisateur peut naviguer ailleurs dans l'app pendant
+// ce temps, la notification préviendra le moment venu), plutôt que
+// d'être annulés comme à la fermeture d'une session de cuisine. Les
+// minuteurs déjà en cours au moment de l'ouverture (ex. fenêtre
+// refermée puis rouverte) sont correctement réaffichés dans leur état
+// actuel plutôt que remis à zéro.
+function openStandaloneTimers() {
+  const overlay = el(`<div class="cooking-overlay"></div>`);
+  const header = el(`<div class="cooking-header">
+    <h2 style="font-size:19px;">${t("standalone_timers_title")}</h2>
+    <button class="icon-btn">${t("cooking_close")}</button>
+  </div>`);
+  header.querySelector("button").addEventListener("click", () => overlay.remove());
+  overlay.appendChild(header);
+
+  overlay.appendChild(el(`<p class="prose" style="margin:0 0 16px;">${escapeHtml(t("standalone_timers_intro"))}</p>`));
+
+  const timersHolder = el(`<div id="timers-holder"></div>`);
+  overlay.appendChild(timersHolder);
+  // Réaffiche les minuteurs déjà existants (fenêtre rouverte) dans leur
+  // état actuel — voir la reconnexion ajoutée dans renderTimerRow —
+  // plutôt que d'en créer un nouveau à chaque ouverture, ce qui
+  // perdrait la trace des minuteurs déjà en cours.
+  if (state.cookingTimers.length) {
+    state.cookingTimers.forEach((timer) => renderTimerRow(timersHolder, timer));
+  } else {
+    createCookingTimer(timersHolder);
+  }
+  const addTimerBtn = el(`<button type="button" class="btn btn-secondary btn-sm" style="margin-bottom:24px;">${t("cooking_add_timer")}</button>`);
+  addTimerBtn.addEventListener("click", () => createCookingTimer(timersHolder));
+  overlay.appendChild(addTimerBtn);
+
+  document.body.appendChild(overlay);
+  initModalA11y(overlay, overlay, {});
 }
 
 /* ======================================================================
@@ -9111,7 +9178,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 198;
+const APP_VERSION = 199;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

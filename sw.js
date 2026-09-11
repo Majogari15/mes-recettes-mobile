@@ -3,7 +3,7 @@
 // ensuite (les données elles-mêmes sont stockées séparément, dans IndexedDB,
 // géré directement par app.js).
 
-const CACHE_NAME = "mes-recettes-cache-v198";
+const CACHE_NAME = "mes-recettes-cache-v199";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -74,15 +74,47 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  // Ne jamais intercepter les requêtes vers un autre domaine (ex.
-  // Google Fonts) : elles suivent leur cours normalement, échec inclus,
-  // sans être remplacées par une page de l'application. Tesseract étant
-  // désormais entièrement local, plus aucune requête cross-origin
-  // n'a besoin d'être mise en cache ici.
-  if (new URL(event.request.url).origin !== self.location.origin) return;
+  const requestOrigin = new URL(event.request.url).origin;
   // Ignore aussi tout ce qui n'est pas une simple lecture (GET) : les
   // requêtes de mutation n'ont pas à être mises en cache.
   if (event.request.method !== "GET") return;
+
+  // Cas particulier : polices Google Fonts. Contrairement aux
+  // bibliothèques JS/JSON/WASM (Tesseract, jsPDF, jsQR), impossible de
+  // les embarquer directement dans ce projet au moment de sa
+  // construction — leurs fichiers binaires ne peuvent pas être
+  // transférés de façon fiable dans l'environnement utilisé pour
+  // développer cette application (risque de corruption). Repli
+  // pragmatique : mise en cache à l'exécution — après un premier
+  // chargement réussi (connecté), la police reste disponible hors
+  // connexion pour toutes les fois suivantes. Un tout premier lancement
+  // hors connexion, lui, affichera la police système par défaut le
+  // temps d'une future connexion réussie.
+  const isGoogleFonts = requestOrigin === "https://fonts.googleapis.com" || requestOrigin === "https://fonts.gstatic.com";
+  if (isGoogleFonts) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(event.request)
+          .then((res) => {
+            if (res.ok) {
+              const resClone = res.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
+            }
+            return res;
+          })
+          .catch(() => Response.error());
+      })
+    );
+    return;
+  }
+
+  // Ne jamais intercepter les autres requêtes vers un domaine externe :
+  // elles suivent leur cours normalement, échec inclus, sans être
+  // remplacées par une page de l'application. Tesseract étant
+  // désormais entièrement local, plus aucune autre requête cross-origin
+  // n'a besoin d'être mise en cache ici.
+  if (requestOrigin !== self.location.origin) return;
 
   const isNavigation = event.request.mode === "navigate";
   const pathname = new URL(event.request.url).pathname;

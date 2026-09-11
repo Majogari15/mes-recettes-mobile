@@ -91,6 +91,11 @@ Depuis, la structure sépare strictement :
   nutritionnelles, traductions) importées depuis l'application Windows
   v56 (source ANSES Ciqual 2025) — voir TESTS_NON_REGRESSION.md point
   53.
+- `test_standalone_timers.py` — fenêtre de minuteurs autonome
+  (Accueil → Outils → Minuteur) : ouverture, ajout de plusieurs
+  minuteurs, persistance en arrière-plan après fermeture de la fenêtre,
+  réaffichage correct du décompte à la réouverture — voir
+  TESTS_NON_REGRESSION.md point 54.
 - `requirements.txt` — version verrouillée de Playwright.
 
 ## Utilisation

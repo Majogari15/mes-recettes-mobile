@@ -509,6 +509,17 @@ a { color: inherit; }
   padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px calc(env(safe-area-inset-bottom, 0px) + 24px);
 }
 .cooking-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+/* Le bouton fermer combine icône ET mot ("✕ Fermer"), contrairement à
+   la plupart des .icon-btn qui n'affichent qu'un seul caractère — le
+   cercle fixe de 40px de .icon-btn coupait donc ce texte. Largeur
+   automatique adaptée au contenu à la place, forme toujours arrondie. */
+.cooking-header button {
+  width: auto; height: 40px;
+  padding: 0 16px;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+}
 
 /* ---------- Minuteurs (plusieurs, décompte réglable) ---------- */
 .timer-row {

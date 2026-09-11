@@ -4024,7 +4024,97 @@ Temps de premier chargement mesuré à 2-3 secondes (fichier nutrition
 +60% plus lourd), quasi instantané ensuite grâce à la mise en cache —
 jugé tout à fait acceptable par l'utilisateur.
 
-## Résumé — état au 06/09/2026 (v198)
+### 54 — Audit complet de l'application, mise en cache des polices hors-ligne, fenêtre de minuteurs autonome *(v199)*
+
+**Contexte** : audit complet demandé par l'utilisateur (résidus de
+code, erreurs, problèmes graphiques, fonctionnalités incorrectes),
+suivi de deux demandes concrètes issues de cet audit — corriger le
+point trouvé sur les polices non disponibles hors-ligne, et ajouter un
+bouton "Minuteur" autonome dans Accueil → Outils.
+
+**Audit lui-même** : suite de tests existante (7 fichiers) entièrement
+relancée, aucune régression. Analyse statique (`console.log` résiduels,
+TODO, `alert()` natifs, blocs `catch` vides) : rien trouvé. Cohérence
+des 5 fichiers de données ingrédients ↔ les 1030 noms de référence :
+parfaite. 25 écrans testés avec de vraies données, y compris cas
+limites (recette à champs vides, comparaison, doublons) : aucune
+erreur. Un test XSS basique (injection `<script>` dans la recherche) :
+correctement neutralisé. Premier lancement avec base de données
+entièrement vide : aucun crash.
+
+**Fausse piste creusée puis écartée** : 51 clés de traduction
+semblaient inutilisées (catégories, unités, difficultés...) — en
+réalité toutes utilisées via un mécanisme d'indirection
+(`CATEGORY_KEYS`, `UNIT_KEYS`, `DIFFICULTY_KEYS`) que la recherche
+automatique par expression régulière ne pouvait pas tracer. Aucun code
+mort réel trouvé dans le système de traduction.
+
+**Vraie trouvaille de l'audit, maintenant corrigée** : les polices
+(Fraunces/Inter) étaient chargées depuis Google Fonts en ligne
+(`@import` dans `styles.css`), contrairement à Tesseract/jsPDF/jsQR,
+tous délibérément embarqués localement dans ce projet pour la
+fiabilité hors-ligne. Tentative d'embarquer directement les fichiers
+de police : **échec technique constaté**, pas de raccourci pris —
+récupération d'un fichier de police variable via GitHub explicitement
+refusée (`ROBOTS_DISALLOWED`), et le risque de corruption au transfert
+d'un fichier binaire dans cet environnement (déjà vécu avec JSZip lors
+du chantier de compatibilité des sauvegardes, voir point 50) rendait
+toute tentative alternative trop risquée pour être poursuivie sans
+garantie de fiabilité.
+
+**Solution de repli retenue, honnête sur sa portée** : mise en cache à
+l'exécution dans le service worker, spécifiquement pour les domaines
+`fonts.googleapis.com` et `fonts.gstatic.com` (cas particulier ajouté
+avant l'exclusion générale des domaines externes, qui reste inchangée
+pour tout le reste). Une fois chargée avec succès une première fois
+(connecté), la police reste disponible hors connexion ensuite ; seul
+un tout premier lancement hors-ligne, avant toute connexion réussie,
+affiche encore la police système par défaut. Testé : la logique de
+branchement par domaine fonctionne correctement (vérifiée
+explicitement pour les deux domaines concernés et pour deux domaines
+qui ne doivent pas être affectés), toute la suite de tests existante
+relancée sans régression.
+
+**Fenêtre de minuteurs autonome, réutilisant la logique déjà mature du
+mode cuisine** (`createCookingTimer`, `renderTimerRow`,
+notifications) plutôt que de la réécrire. Nouvelle fonction
+`openStandaloneTimers()`, bouton "⏱️ Minuteur" ajouté dans
+Accueil → Outils.
+
+**Différence de comportement volontaire par rapport au mode cuisine** :
+fermer cette fenêtre ne stoppe PAS les minuteurs en cours — ils
+continuent de tourner (l'utilisateur peut naviguer ailleurs dans
+l'app), la notification prévient le moment venu, plutôt que d'être
+annulés comme à la fermeture d'une session de cuisine.
+
+**Point technique résolu pour permettre cette persistance** :
+`renderTimerRow` modifiée pour se reconnecter proprement à un minuteur
+déjà en cours ou déjà en train de sonner (fenêtre refermée puis
+rouverte) — sans ce correctif, le nouvel affichage serait resté figé
+sur l'ancienne valeur, l'intervalle précédent continuant de mettre à
+jour une ligne devenue invisible plutôt que celle-ci. **Testé
+concrètement** : un minuteur démarré à 05:00, fenêtre fermée, 1,5
+seconde d'attente en arrière-plan, fenêtre rouverte — affiche
+correctement "04:59" et `running: true`, pas figé ni remis à zéro.
+
+**Bonus trouvé en réutilisant l'en-tête du mode cuisine** : le bouton
+"✕ Fermer" débordait visuellement de son cercle fixe de 40px (prévu
+pour un seul caractère, pas pour icône + mot) — **bug préexistant du
+mode cuisine, indépendant de cette nouvelle fonctionnalité**, découvert
+par ricochet et corrigé pour les deux écrans (largeur automatique
+adaptée au contenu plutôt que cercle fixe).
+
+**Test permanent ajouté** (`tests/test_standalone_timers.py`, 5 cas :
+ouverture depuis le bouton, ajout d'un second minuteur, dimensionnement
+correct du bouton fermer, persistance après fermeture, réaffichage
+correct du décompte à la réouverture).
+
+**Non-régression** : toute la suite de tests existante relancée après
+chaque changement, aucune régression.
+
+**Version testée** : v199
+
+## Résumé — état au 06/09/2026 (v199)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
   (jsQR/jsPDF depuis la v141, Tesseract depuis la v165) — plus aucune
