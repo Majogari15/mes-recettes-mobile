@@ -6,8 +6,8 @@
   "expected": {
     "detectedSection": "general",
     "persons": null,
-    "nameContains": "Barramundi",
+    "nameContains": "tomates roties avec une purée",
     "prepTime": 35,
-    "notes": "Couverture HelloFresh Barramundi — nom et durée corrects malgré le bruit d'une grande photo du plat."
+    "notes": "Couverture HelloFresh Barramundi — nom et durée corrects malgré le bruit d'une grande photo du plat. Depuis la fusion du sous-titre (voir TESTS_NON_REGRESSION.md), le titre complet sur 2 lignes est maintenant récupéré plutôt que tronqué à la première ligne seule."
   }
 }

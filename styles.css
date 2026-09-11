@@ -255,12 +255,30 @@ a { color: inherit; }
 .search-bar input:focus { outline: none; }
 
 /* ---------- Puces de filtre ---------- */
+.chip-row-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+/* Dégradé sur le bord droit — indique qu'il y a d'autres puces à
+   découvrir en faisant glisser horizontalement, sans quoi rien ne
+   distingue "toutes les puces sont visibles" de "il y en a d'autres,
+   coupées net au bord de l'écran" (la barre de défilement elle-même
+   est volontairement masquée juste en dessous, pour un rendu plus
+   propre). pointer-events:none pour ne jamais bloquer un appui sur la
+   dernière puce partiellement visible en dessous. */
+.chip-row-wrap::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 4px;
+  width: 28px;
+  background: linear-gradient(to right, transparent, var(--bg));
+  pointer-events: none;
+}
 .chip-row {
   display: flex;
   gap: 8px;
   overflow-x: auto;
   padding-bottom: 4px;
-  margin-bottom: 16px;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -361,12 +379,12 @@ a { color: inherit; }
   padding: 6px 8px;
 }
 .persons-stepper button {
-  width: 32px; height: 32px;
+  width: 44px; height: 44px;
   border-radius: 999px;
   border: none;
   background: var(--primary-light);
   color: var(--primary);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
 }
 .persons-stepper .count { font-weight: 700; min-width: 22px; text-align: center; }
@@ -392,12 +410,12 @@ a { color: inherit; }
 .ing-uncertain-badge { flex-shrink: 0; font-size: 15px; cursor: help; }
 .ing-form-row .remove-ing {
   flex-shrink: 0;
-  width: 38px; height: 38px;
+  width: 44px; height: 44px;
   border-radius: 10px;
   border: none;
   background: var(--danger-light);
   color: var(--danger);
-  font-size: 16px;
+  font-size: 17px;
 }
 .photo-upload {
   border: 2px dashed var(--border);
@@ -412,6 +430,41 @@ a { color: inherit; }
 .photo-upload img { width: 100%; border-radius: 10px; display: block; }
 .photo-upload input[type="file"] {
   position: absolute; inset: 0; opacity: 0; cursor: pointer;
+}
+
+/* Bouton de sélection de fichier personnalisé — remplace le rendu par
+   défaut du navigateur ("Choisir un fichier" + "Aucun fichier
+   choisi"), qui tranchait visuellement avec le reste de l'interface.
+   L'entrée native reste fonctionnelle et accessible (juste rendue
+   invisible et minuscule) : un clic sur le <label> associé déclenche
+   le sélecteur de fichier du système, comportement natif du HTML. */
+.file-input-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.field label.file-input-label {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.file-input-label:active { transform: scale(0.98); }
+.file-input-filename {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
 }
 
 /* ---------- Liste de courses ---------- */
@@ -629,12 +682,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .ingredient-manage-row .name { font-size: 15px; }
 .ingredient-manage-row .row-actions { display: flex; gap: 12px; }
 .ingredient-manage-row .row-actions button {
-  width: 34px; height: 34px;
-  border-radius: 9px;
+  width: 44px; height: 44px;
+  border-radius: 10px;
   border: none;
   background: var(--primary-light);
   color: var(--primary);
-  font-size: 14px;
+  font-size: 15px;
 }
 .ingredient-manage-row .row-actions button.del { background: var(--danger-light); color: var(--danger); }
 

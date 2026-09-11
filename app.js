@@ -192,7 +192,7 @@ const state = {
 
 const CATEGORY_OPTIONS = ["Petit-déjeuner", "Entrée", "Plat", "Dessert", "Apéro", "Boisson", "Sauce", "Autre"];
 const DIFFICULTY_OPTIONS = ["Facile", "Moyen", "Difficile"];
-const UNIT_OPTIONS = ["pièce", "g", "kg", "cl", "L", "c. à soupe", "c. à café", "boîte", "sachet", "pot", "barquette", "tranche", "gousse", "autre"];
+const UNIT_OPTIONS = ["pièce", "g", "kg", "cl", "L", "c. à soupe", "c. à café", "boîte", "sachet", "pot", "barquette", "tranche", "gousse", "filet", "autre"];
 
 /* ======================================================================
    UTILITAIRES
@@ -870,7 +870,9 @@ function renderRecipeList() {
     });
     chips.appendChild(chip);
   });
-  wrap.appendChild(chips);
+  const chipsWrap = el(`<div class="chip-row-wrap"></div>`);
+  chipsWrap.appendChild(chips);
+  wrap.appendChild(chipsWrap);
 
   const listHolder = el(`<div id="recipe-list-holder"></div>`);
   wrap.appendChild(listHolder);
@@ -1227,6 +1229,7 @@ function renderRecipeForm() {
   CATEGORY_OPTIONS.forEach((c) => catSelect.appendChild(el(`<option value="${c}">${escapeHtml(translateCategory(c))}</option>`)));
   if (prefill && prefill.category) catSelect.value = prefill.category;
   else if (r) catSelect.value = r.category;
+  else catSelect.value = "Plat";
   row1.appendChild(catField);
   const diffField = el(`<div class="field"><label for="f-difficulty">${t("form_difficulty")}</label><select id="f-difficulty"></select></div>`);
   const diffSelect = diffField.querySelector("select");
@@ -1237,7 +1240,7 @@ function renderRecipeForm() {
   wrap.appendChild(row1);
 
   const row2 = el(`<div class="field-row"></div>`);
-  row2.appendChild(el(`<div class="field"><label for="f-persons">${t("form_persons")}</label><input type="number" min="1" id="f-persons" value="${prefill && prefill.persons ? prefill.persons : (r ? r.defaultPersons : 4)}"></div>`));
+  row2.appendChild(el(`<div class="field"><label for="f-persons">${t("form_persons")}</label><input type="number" min="1" id="f-persons" value="${prefill && prefill.persons ? prefill.persons : (prefill ? "" : (r ? r.defaultPersons : 4))}"></div>`));
   row2.appendChild(el(`<div class="field"><label for="f-prep">${t("form_prep_time")}</label><input type="number" min="0" id="f-prep" value="${prefill && prefill.prepTime ? prefill.prepTime : (r && r.prepTime ? r.prepTime : "")}"></div>`));
   row2.appendChild(el(`<div class="field"><label for="f-cook">${t("form_cook_time")}</label><input type="number" min="0" id="f-cook" value="${prefill && prefill.cookTime ? prefill.cookTime : (r && r.cookTime ? r.cookTime : "")}"></div>`));
   wrap.appendChild(row2);
@@ -5105,7 +5108,344 @@ function computeShoppingTotal(items) {
    téléchargeable, et permet de le recharger plus tard (sur le même
    appareil après réinitialisation, ou sur un autre appareil).
    ====================================================================== */
+// ---------------------------------------------------------------------------
+// Lecteur/écrivain ZIP minimal, sans dépendance externe — nécessaire pour la
+// compatibilité des sauvegardes avec l'application Windows, qui utilise ce
+// même format (module Python zipfile, compression DEFLATE). La compression
+// elle-même s'appuie sur les API natives du navigateur
+// (CompressionStream/DecompressionStream, "deflate-raw"), disponibles depuis
+// Chrome/Edge 80+, Firefox 113+, Safari 16.4+ — aucun risque de corruption au
+// transfert d'une bibliothèque tierce minifiée, contrairement à une
+// dépendance externe copiée dans ce projet (une tentative avec JSZip a
+// justement échoué de cette façon : le fichier, near 100 Ko sur une seule
+// ligne, s'est corrompu pendant la sauvegarde locale).
+//
+// Se limite volontairement à ce dont ce projet a besoin : une archive plate
+// (pas de sous-dossiers imbriqués au-delà d'un seul niveau "images/"), noms
+// de fichiers en UTF-8, compression DEFLATE à l'écriture (comme Python
+// zipfile.ZIP_DEFLATED, pour rester compatible), lecture tolérant aussi bien
+// DEFLATE que STORE (non compressé) en entrée.
+
+async function deflateRawBytes(bytes) {
+  const cs = new CompressionStream("deflate-raw");
+  const writer = cs.writable.getWriter();
+  writer.write(bytes);
+  writer.close();
+  const chunks = [];
+  const reader = cs.readable.getReader();
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+  }
+  const total = chunks.reduce((sum, c) => sum + c.length, 0);
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const c of chunks) { out.set(c, offset); offset += c.length; }
+  return out;
+}
+
+async function inflateRawBytes(bytes) {
+  const ds = new DecompressionStream("deflate-raw");
+  const writer = ds.writable.getWriter();
+  writer.write(bytes);
+  writer.close();
+  const chunks = [];
+  const reader = ds.readable.getReader();
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+  }
+  const total = chunks.reduce((sum, c) => sum + c.length, 0);
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const c of chunks) { out.set(c, offset); offset += c.length; }
+  return out;
+}
+
+// Table de correspondance CRC-32 standard (polynôme 0xEDB88320), identique à
+// celle utilisée par zlib/zipfile — nécessaire pour que le champ CRC-32 de
+// chaque fichier soit vérifiable par n'importe quel lecteur ZIP standard.
+const CRC32_TABLE = (() => {
+  const table = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) {
+    let c = n;
+    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    table[n] = c >>> 0;
+  }
+  return table;
+})();
+function crc32(bytes) {
+  let crc = 0xffffffff;
+  for (let i = 0; i < bytes.length; i++) crc = CRC32_TABLE[(crc ^ bytes[i]) & 0xff] ^ (crc >>> 8);
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function utf8Encode(str) {
+  return new TextEncoder().encode(str);
+}
+function utf8Decode(bytes) {
+  return new TextDecoder("utf-8").decode(bytes);
+}
+
+// Écrit un entier non signé sur "bytes" octets, en little-endian (ordre
+// attendu par le format ZIP), à la position "pos" du tableau "arr".
+function writeUint(arr, pos, value, bytes) {
+  for (let i = 0; i < bytes; i++) arr[pos + i] = (value >>> (8 * i)) & 0xff;
+}
+function readUint(arr, pos, bytes) {
+  let value = 0;
+  for (let i = 0; i < bytes; i++) value |= arr[pos + i] << (8 * i);
+  return value >>> 0;
+}
+
+// Encode la date/heure courante au format DOS attendu par les en-têtes ZIP
+// (bits empaquetés : heure sur 5-6-5 bits, date sur 7-4-5 bits).
+function dosDateTime(date) {
+  const time = ((date.getHours() & 0x1f) << 11) | ((date.getMinutes() & 0x3f) << 5) | ((date.getSeconds() >> 1) & 0x1f);
+  const day = ((Math.max(date.getFullYear(), 1980) - 1980 & 0x7f) << 9) | (((date.getMonth() + 1) & 0xf) << 5) | (date.getDate() & 0x1f);
+  return { time, day };
+}
+
+// Construit une archive ZIP complète (Blob) à partir d'une liste de fichiers
+// { name, data: Uint8Array }. Utilise la compression DEFLATE pour chaque
+// fichier (comme Python zipfile.ZIP_DEFLATED), sauf si la compression
+// n'apporte aucun gain (fichier déjà compressé, comme une photo JPEG — dans
+// ce cas, le stockage brut "STORE" est utilisé, plus rapide et sans risque
+// de gonfler légèrement la taille).
+async function buildZipFile(entries) {
+  const { time, day } = dosDateTime(new Date());
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+
+  for (const entry of entries) {
+    const nameBytes = utf8Encode(entry.name);
+    const rawData = entry.data;
+    const crc = crc32(rawData);
+    const compressed = await deflateRawBytes(rawData);
+    // N'utilise la version compressée que si elle est réellement plus
+    // petite — jamais l'inverse, ce qui arriverait sur de très petits
+    // fichiers ou des données déjà compressées (JPEG notamment).
+    const useCompression = compressed.length < rawData.length;
+    const finalData = useCompression ? compressed : rawData;
+    const method = useCompression ? 8 : 0; // 8 = DEFLATE, 0 = STORE
+
+    const localHeader = new Uint8Array(30 + nameBytes.length);
+    writeUint(localHeader, 0, 0x04034b50, 4);
+    writeUint(localHeader, 4, 20, 2); // version needed
+    writeUint(localHeader, 6, 0x0800, 2); // bit 11 = noms de fichiers en UTF-8
+    writeUint(localHeader, 8, method, 2);
+    writeUint(localHeader, 10, time, 2);
+    writeUint(localHeader, 12, day, 2);
+    writeUint(localHeader, 14, crc, 4);
+    writeUint(localHeader, 18, finalData.length, 4);
+    writeUint(localHeader, 22, rawData.length, 4);
+    writeUint(localHeader, 26, nameBytes.length, 2);
+    writeUint(localHeader, 28, 0, 2); // pas de champ "extra"
+    localHeader.set(nameBytes, 30);
+
+    localParts.push(localHeader, finalData);
+
+    const centralHeader = new Uint8Array(46 + nameBytes.length);
+    writeUint(centralHeader, 0, 0x02014b50, 4);
+    writeUint(centralHeader, 4, 20, 2); // version made by
+    writeUint(centralHeader, 6, 20, 2); // version needed
+    writeUint(centralHeader, 8, 0x0800, 2);
+    writeUint(centralHeader, 10, method, 2);
+    writeUint(centralHeader, 12, time, 2);
+    writeUint(centralHeader, 14, day, 2);
+    writeUint(centralHeader, 16, crc, 4);
+    writeUint(centralHeader, 20, finalData.length, 4);
+    writeUint(centralHeader, 24, rawData.length, 4);
+    writeUint(centralHeader, 28, nameBytes.length, 2);
+    writeUint(centralHeader, 30, 0, 2); // extra field length
+    writeUint(centralHeader, 32, 0, 2); // comment length
+    writeUint(centralHeader, 34, 0, 2); // disk number start
+    writeUint(centralHeader, 36, 0, 2); // internal attributes
+    writeUint(centralHeader, 38, 0, 4); // external attributes
+    writeUint(centralHeader, 42, offset, 4); // décalage vers l'en-tête local
+    centralHeader.set(nameBytes, 46);
+    centralParts.push(centralHeader);
+
+    offset += localHeader.length + finalData.length;
+  }
+
+  const centralDirOffset = offset;
+  const centralDirSize = centralParts.reduce((sum, p) => sum + p.length, 0);
+
+  const endRecord = new Uint8Array(22);
+  writeUint(endRecord, 0, 0x06054b50, 4);
+  writeUint(endRecord, 4, 0, 2); // numéro de disque
+  writeUint(endRecord, 6, 0, 2); // disque contenant le répertoire central
+  writeUint(endRecord, 8, entries.length, 2);
+  writeUint(endRecord, 10, entries.length, 2);
+  writeUint(endRecord, 12, centralDirSize, 4);
+  writeUint(endRecord, 16, centralDirOffset, 4);
+  writeUint(endRecord, 20, 0, 2); // longueur du commentaire
+
+  return new Blob([...localParts, ...centralParts, endRecord], { type: "application/zip" });
+}
+
+// Lit une archive ZIP (ArrayBuffer) et renvoie un tableau
+// { name, data: Uint8Array } par fichier — en parcourant directement les
+// en-têtes locaux (pas le répertoire central), plus simple et suffisant ici
+// puisque les archives lues par cette fonction sont toujours des sauvegardes
+// complètes et non tronquées. Décompresse automatiquement selon la méthode
+// indiquée dans chaque en-tête (DEFLATE ou STORE) — accepte donc aussi bien
+// les archives produites par cette même fonction que celles produites par
+// Python zipfile côté application Windows.
+async function parseZipFile(arrayBuffer) {
+  const bytes = new Uint8Array(arrayBuffer);
+  const results = [];
+  let pos = 0;
+  while (pos + 4 <= bytes.length && readUint(bytes, pos, 4) === 0x04034b50) {
+    const method = readUint(bytes, pos + 8, 2);
+    const compressedSize = readUint(bytes, pos + 18, 4);
+    const nameLength = readUint(bytes, pos + 26, 2);
+    const extraLength = readUint(bytes, pos + 28, 2);
+    const nameStart = pos + 30;
+    const dataStart = nameStart + nameLength + extraLength;
+    const name = utf8Decode(bytes.subarray(nameStart, nameStart + nameLength));
+    const compressedData = bytes.subarray(dataStart, dataStart + compressedSize);
+    let data;
+    if (method === 8) data = await inflateRawBytes(compressedData);
+    else if (method === 0) data = compressedData;
+    else throw new Error(`unsupported_zip_method_${method}`);
+    if (!name.endsWith("/")) results.push({ name, data });
+    pos = dataStart + compressedSize;
+  }
+  return results;
+}
+
 const BACKUP_STORES = ["recipes", "shopping", "pantry", "ingredients", "ingredientOverrides", "menus", "planTemplates", "planHistory", "trash", "savedShoppingLists", "kv"];
+
+
+// ---------------------------------------------------------------------------
+// Conversion entre le format interne de l'app mobile et le format partagé
+// avec l'application Windows (voir buildSharedBackupZip / restoreFromSharedZip
+// plus bas) — noms de fichiers/champs identiques à ceux utilisés par
+// l'application Windows (module Python), pour qu'une sauvegarde produite par
+// l'une soit directement utilisable par l'autre.
+
+function dataUriToBytes(dataUri) {
+  const match = typeof dataUri === "string" && dataUri.match(/^data:image\/(\w+);base64,(.+)$/i);
+  if (!match) return null;
+  const ext = match[1].toLowerCase() === "jpeg" ? "jpg" : match[1].toLowerCase();
+  const binary = atob(match[2]);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return { bytes, ext };
+}
+function bytesToDataUri(bytes, ext) {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  const mime = ext === "jpg" || ext === "jpeg" ? "image/jpeg" : ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : ext === "gif" ? "image/gif" : "image/jpeg";
+  return `data:${mime};base64,${btoa(binary)}`;
+}
+
+// Recette de l'app mobile -> { json (champs "snake_case", identiques à
+// l'app Windows), photoFiles: [{filename, bytes}] } — la photo unique en
+// base64 devient un fichier séparé référencé par son nom, comme le fait déjà
+// l'app Windows pour ses propres photos.
+function recipeToSharedFormat(recipe) {
+  const photoFiles = [];
+  let images = [];
+  if (recipe.photo) {
+    const decoded = dataUriToBytes(recipe.photo);
+    if (decoded) {
+      const filename = `${recipe.id || uid()}.${decoded.ext}`;
+      photoFiles.push({ filename, bytes: decoded.bytes });
+      images = [filename];
+    }
+  }
+  const json = {
+    id: recipe.id,
+    name: recipe.name || "",
+    category: recipe.category || "",
+    favorite: !!recipe.favorite,
+    vegetarian: !!recipe.vegetarian,
+    wishlist: !!recipe.wishlist,
+    rating: recipe.personalRating || 0,
+    prep_time: recipe.prepTime ?? null,
+    cook_time: recipe.cookTime ?? null,
+    difficulty: recipe.difficulty || "",
+    default_persons: recipe.defaultPersons || 4,
+    tags: [],
+    allergens: recipe.allergens || [],
+    description: recipe.description || "",
+    personal_notes: recipe.notes || "",
+    ingredients: recipe.ingredients || [],
+    images,
+    created_at: recipe.createdAt || new Date().toISOString(),
+    times_cooked: recipe.timesCooked || 0,
+    cooked_dates: (recipe.cookLog || []).map((e) => e.date),
+    // Champs propres à l'app mobile, absents de l'app Windows — conservés
+    // tels quels pour un aller-retour sans perte, même si l'app Windows ne
+    // les affiche pas encore.
+    family_opinion: recipe.familyOpinion || "",
+    improvement_notes: recipe.improvementNotes || "",
+    actual_difficulty: recipe.actualDifficulty || "",
+    cook_log_full: recipe.cookLog || [],
+  };
+  return { json, photoFiles };
+}
+
+// Format partagé -> recette de l'app mobile, une fois les données photo déjà
+// résolues (Map nom de fichier -> Uint8Array, extraite de l'archive ZIP).
+function recipeFromSharedFormat(json, imageBytesByFilename) {
+  let photo = null;
+  const images = Array.isArray(json.images) ? json.images : (json.image ? [json.image] : []);
+  if (images.length && imageBytesByFilename && imageBytesByFilename.has(images[0])) {
+    const bytes = imageBytesByFilename.get(images[0]);
+    const ext = (images[0].split(".").pop() || "jpg").toLowerCase();
+    photo = bytesToDataUri(bytes, ext);
+  }
+  const cookLog = Array.isArray(json.cook_log_full) && json.cook_log_full.length
+    ? json.cook_log_full
+    : (Array.isArray(json.cooked_dates) ? json.cooked_dates : []).map((date) => ({ date, note: "", photo: null }));
+  return {
+    id: json.id || uid(),
+    name: json.name || "",
+    category: json.category || "Plat",
+    difficulty: json.difficulty || "Facile",
+    defaultPersons: json.default_persons || 4,
+    prepTime: json.prep_time ?? null,
+    cookTime: json.cook_time ?? null,
+    favorite: !!json.favorite,
+    vegetarian: !!json.vegetarian,
+    wishlist: !!json.wishlist,
+    ingredients: Array.isArray(json.ingredients) ? json.ingredients : [],
+    allergens: Array.isArray(json.allergens) ? json.allergens : [],
+    description: json.description || "",
+    notes: json.personal_notes || "",
+    personalRating: json.rating || 0,
+    familyOpinion: json.family_opinion || "",
+    improvementNotes: json.improvement_notes || "",
+    actualDifficulty: json.actual_difficulty || "",
+    photo,
+    createdAt: json.created_at || new Date().toISOString(),
+    cookLog,
+    timesCooked: json.times_cooked || 0,
+  };
+}
+
+// Garde-manger de l'app mobile (tableau [{id,name,quantity,unit}]) <->
+// format Windows (dictionnaire {clé normalisée: {name,quantity,unit,threshold}}).
+function pantryToSharedFormat(items) {
+  const dict = {};
+  for (const item of items) {
+    const key = (item.name || "").toLowerCase().trim();
+    if (!key) continue;
+    dict[key] = { name: item.name, quantity: item.quantity, unit: item.unit, threshold: item.threshold ?? null };
+  }
+  return dict;
+}
+function pantryFromSharedFormat(dict) {
+  if (!dict || typeof dict !== "object") return [];
+  return Object.values(dict).map((v) => ({ id: uid(), name: v.name, quantity: v.quantity, unit: v.unit, threshold: v.threshold ?? null }));
+}
 
 async function buildBackupData() {
   const data = { exportedAt: new Date().toISOString(), version: 1 };
@@ -5143,6 +5483,147 @@ async function buildBackupFile() {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "text/plain" });
   return new File([blob], backupShareFileName(), { type: "text/plain" });
 }
+
+// Nom des fichiers dans l'archive partagée avec l'application Windows,
+// identiques à ceux qu'elle utilise elle-même (module Python) — pour
+// qu'une sauvegarde produite par l'une soit directement utilisable par
+// l'autre. Volontairement centré sur les données les plus utiles à faire
+// circuler entre les deux appareils : recettes (avec leurs photos),
+// ingrédients connus, garde-manger, personnalisations (allergènes, prix,
+// substituts). Le planning hebdomadaire, les menus et les listes de
+// courses enregistrées restent hors de ce format partagé pour l'instant —
+// des différences de conception réelles entre les deux applications
+// (planning Windows : un seul créneau par jour référencé par nom de
+// recette ; planning mobile : trois créneaux par jour référencés par
+// identifiant stable) demanderaient une réflexion dédiée avant d'être
+// unifiées correctement, plutôt qu'une correspondance approximative
+// risquant de mélanger des plannings incohérents.
+function sharedBackupFileName() {
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  return `sauvegarde-partagee-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}.zip`;
+}
+
+// Construit l'archive ZIP au format partagé avec l'application Windows.
+async function buildSharedBackupZip() {
+  const entries = [];
+
+  const recipes = await storeAll("recipes");
+  const recipesJson = [];
+  for (const r of recipes) {
+    const { json, photoFiles } = recipeToSharedFormat(r);
+    recipesJson.push(json);
+    for (const pf of photoFiles) entries.push({ name: `images/${pf.filename}`, data: pf.bytes });
+  }
+  entries.push({ name: "recipes.json", data: utf8Encode(JSON.stringify(recipesJson, null, 2)) });
+
+  const ingredients = await storeAll("ingredients");
+  entries.push({ name: "ingredients.json", data: utf8Encode(JSON.stringify(ingredients.map((i) => i.name), null, 2)) });
+
+  const pantry = await storeAll("pantry");
+  entries.push({ name: "pantry.json", data: utf8Encode(JSON.stringify(pantryToSharedFormat(pantry), null, 2)) });
+
+  const overrides = await storeAll("ingredientOverrides");
+  const overridesDict = {};
+  overrides.forEach((o) => { overridesDict[o.name] = o; });
+  entries.push({ name: "ingredient_custom_data.json", data: utf8Encode(JSON.stringify(overridesDict, null, 2)) });
+
+  return buildZipFile(entries);
+}
+
+// Restaure depuis l'archive ZIP au format partagé — merge=true fusionne
+// avec les données actuelles (une recette avec un identifiant déjà connu
+// est mise à jour, une recette avec un identifiant inconnu ou absent est
+// ajoutée comme nouvelle recette avec un identifiant généré) ; merge=false
+// remplace intégralement les recettes, ingrédients, garde-manger et
+// personnalisations actuels.
+async function restoreFromSharedZip(file, merge) {
+  const buffer = await file.arrayBuffer();
+  const filesArr = await parseZipFile(buffer);
+  const filesByName = new Map(filesArr.map((f) => [f.name, f]));
+  const imageBytesByFilename = new Map();
+  filesArr.forEach((f) => {
+    if (f.name.startsWith("images/")) imageBytesByFilename.set(f.name.slice("images/".length), f.data);
+  });
+
+  const report = { recipesImported: 0, recipesUpdated: 0, ingredientsImported: 0 };
+
+  if (filesByName.has("recipes.json")) {
+    const recipesJson = JSON.parse(utf8Decode(filesByName.get("recipes.json").data));
+    const existing = merge ? await storeAll("recipes") : [];
+    const existingById = new Map(existing.map((r) => [r.id, r]));
+    if (!merge) {
+      for (const r of existing) await storeDelete("recipes", r.id);
+    }
+    for (const json of recipesJson) {
+      const recipe = recipeFromSharedFormat(json, imageBytesByFilename);
+      // Une recette important un identifiant déjà connu localement est mise
+      // à jour plutôt que dupliquée — comportement voulu pour resynchroniser
+      // la même recette entre les deux appareils, contrairement à l'import
+      // classique (fichier JSON de l'app mobile uniquement) qui duplique
+      // toujours par prudence.
+      if (merge && existingById.has(recipe.id)) {
+        report.recipesUpdated += 1;
+      } else {
+        report.recipesImported += 1;
+      }
+      await storePut("recipes", recipe);
+    }
+  }
+
+  if (filesByName.has("ingredients.json")) {
+    const names = JSON.parse(utf8Decode(filesByName.get("ingredients.json").data));
+    if (!merge) {
+      const existing = await storeAll("ingredients");
+      for (const i of existing) await storeDelete("ingredients", i.name);
+    }
+    const existingNames = new Set((await storeAll("ingredients")).map((i) => i.name.toLowerCase()));
+    for (const name of names) {
+      if (typeof name !== "string" || !name.trim()) continue;
+      if (!existingNames.has(name.toLowerCase())) {
+        await storePut("ingredients", { name });
+        existingNames.add(name.toLowerCase());
+        report.ingredientsImported += 1;
+      }
+    }
+  }
+
+  if (filesByName.has("pantry.json")) {
+    const dict = JSON.parse(utf8Decode(filesByName.get("pantry.json").data));
+    const imported = pantryFromSharedFormat(dict);
+    if (!merge) {
+      const existing = await storeAll("pantry");
+      for (const p of existing) await storeDelete("pantry", p.id);
+      for (const p of imported) await storePut("pantry", p);
+    } else {
+      // Fusionne par nom d'ingrédient (normalisé) — une entrée déjà
+      // présente localement pour le même ingrédient est mise à jour
+      // plutôt que dupliquée.
+      const existing = await storeAll("pantry");
+      const byName = new Map(existing.map((p) => [(p.name || "").toLowerCase().trim(), p]));
+      for (const p of imported) {
+        const key = (p.name || "").toLowerCase().trim();
+        const match = byName.get(key);
+        const toStore = match ? { ...p, id: match.id } : p;
+        await storePut("pantry", toStore);
+      }
+    }
+  }
+
+  if (filesByName.has("ingredient_custom_data.json")) {
+    const dict = JSON.parse(utf8Decode(filesByName.get("ingredient_custom_data.json").data));
+    if (!merge) {
+      const existing = await storeAll("ingredientOverrides");
+      for (const o of existing) await storeDelete("ingredientOverrides", o.name);
+    }
+    for (const [name, record] of Object.entries(dict || {})) {
+      if (record && typeof record === "object") await storePut("ingredientOverrides", { ...record, name: record.name || name });
+    }
+  }
+
+  return report;
+}
+
 async function exportAllData() {
   const data = await buildBackupData();
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -5602,11 +6083,16 @@ function renderBackup() {
         </select>
       </div>
       <div class="field">
-        <label for="import-file">${t("backup_import_button")}</label>
-        <input type="file" accept="application/json,text/plain,.json,.txt" id="import-file">
+        <label for="import-file" class="file-input-label">${t("backup_import_button")}</label>
+        <input type="file" accept="application/json,text/plain,.json,.txt" id="import-file" class="file-input-hidden">
+        <span class="file-input-filename" id="import-file-filename">${t("backup_no_file_chosen")}</span>
       </div>
     </div>
   </div>`);
+  importSection.querySelector("#import-file").addEventListener("change", (e) => {
+    const f = e.target.files[0];
+    importSection.querySelector("#import-file-filename").textContent = f ? f.name : t("backup_no_file_chosen");
+  });
   importSection.querySelector("#import-file").addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -5672,6 +6158,112 @@ function renderBackup() {
     }
   });
   wrap.appendChild(importSection);
+
+  const sharedSection = el(`<div class="section">
+    <div class="section-label">${t("backup_shared_title")}</div>
+    <div class="card" style="padding:16px;">
+      <p class="prose" style="margin:0 0 14px;font-size:14px;">${escapeHtml(t("backup_shared_text"))}</p>
+      <button class="btn btn-primary" id="shared-export-btn" style="margin-bottom:10px;">${t("backup_shared_export_button")}</button>
+      ${canShareFiles ? `<button class="btn btn-secondary" id="shared-share-btn" disabled style="margin-bottom:14px;">${t("backup_share_preparing")}</button>` : ""}
+      <div class="field">
+        <label for="import-mode-shared">${t("backup_import_mode_title")}</label>
+        <select id="import-mode-shared">
+          <option value="merge">${t("backup_import_mode_merge")}</option>
+          <option value="replace">${t("backup_import_mode_replace")}</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="shared-import-file" class="file-input-label">${t("backup_shared_import_button")}</label>
+        <input type="file" accept="application/zip,.zip" id="shared-import-file" class="file-input-hidden">
+        <span class="file-input-filename" id="shared-import-file-filename">${t("backup_no_file_chosen")}</span>
+      </div>
+    </div>
+  </div>`);
+  sharedSection.querySelector("#shared-import-file").addEventListener("change", (e) => {
+    const f = e.target.files[0];
+    sharedSection.querySelector("#shared-import-file-filename").textContent = f ? f.name : t("backup_no_file_chosen");
+  });
+  sharedSection.querySelector("#shared-export-btn").addEventListener("click", async () => {
+    const blob = await buildSharedBackupZip();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = sharedBackupFileName();
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+  if (canShareFiles) {
+    const sharedShareBtn = sharedSection.querySelector("#shared-share-btn");
+    // Même précaution que pour l'export classique : le fichier est
+    // entièrement préparé AVANT que le bouton ne devienne cliquable,
+    // pour qu'aucun await ne se produise entre le clic et l'appel à
+    // navigator.share() lui-même (sans quoi le navigateur peut refuser
+    // le partage, le geste n'étant plus reconnu comme "actif").
+    let readySharedFile = null;
+    buildSharedBackupZip().then((blob) => {
+      readySharedFile = new File([blob], sharedBackupFileName(), { type: "application/zip" });
+      sharedShareBtn.disabled = false;
+      sharedShareBtn.textContent = t("backup_share_button");
+    });
+    sharedShareBtn.addEventListener("click", () => {
+      if (!readySharedFile) return; // ne devrait pas arriver, bouton désactivé jusque-là
+      shareBackupData(readySharedFile).then(async (result) => {
+        if (!result.ok && !result.cancelled) {
+          // Le partage a échoué (pas simplement annulé) : le fichier
+          // est tout de même mis en sécurité par téléchargement
+          // classique, avec un message explicite — même logique que
+          // pour l'export classique, voir son commentaire ci-dessus.
+          const url = URL.createObjectURL(readySharedFile);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = readySharedFile.name;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+          const detail = result.error ? `\n\n(${result.error})` : "";
+          await customAlert(t("backup_share_fallback_notice") + detail);
+        }
+      });
+    });
+  }
+  sharedSection.querySelector("#shared-import-file").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const mode = sharedSection.querySelector("#import-mode-shared").value;
+    if (file.size > MAX_BACKUP_FILE_SIZE) {
+      await customAlert(t("backup_import_too_large", { size: Math.round(MAX_BACKUP_FILE_SIZE / (1024 * 1024)) }));
+      e.target.value = "";
+      return;
+    }
+    if (file.size > BACKUP_WARNING_SIZE) {
+      const sizeMb = Math.round(file.size / (1024 * 1024));
+      if (!await customConfirm(t("backup_import_large_file_warning", { size: sizeMb }))) {
+        e.target.value = "";
+        return;
+      }
+    }
+    if (mode === "replace" && !await customConfirm(t("backup_import_confirm_replace"))) {
+      e.target.value = "";
+      return;
+    }
+    try {
+      const report = await restoreFromSharedZip(file, mode === "merge");
+      state.recipes = await storeAll("recipes");
+      state.pantry = await storeAll("pantry");
+      await ensureIngredientListLoaded();
+      await loadIngredientOverrides();
+      await customAlert(t("backup_shared_import_success", { imported: report.recipesImported, updated: report.recipesUpdated }));
+      state.screen = "home";
+      render();
+    } catch (err) {
+      await customAlert(t("backup_import_error"));
+    }
+    e.target.value = "";
+  });
+  wrap.appendChild(sharedSection);
 
   const diagLink = el(`<p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">v${APP_VERSION} · <a href="#" id="open-diagnostic" style="color:var(--accent);">${escapeHtml(t("nav_diagnostic"))}</a></p>`);
   diagLink.querySelector("#open-diagnostic").addEventListener("click", (e) => {
@@ -6193,13 +6785,17 @@ function normalizeUnicodeFractions(str) {
     return String(Math.round((wholeNum + UNICODE_FRACTIONS[frac]) * 100) / 100);
   });
 }
-function parseIngredientString(str) {
+function parseIngredientStringInner(str) {
   let text = String(str || "").trim();
   text = normalizeUnicodeFractions(text);
   // "(s)" est un simple marqueur de pluriel optionnel sur certaines
   // fiches (HelloFresh notamment : "sachet(s)", "boîte(s)") — ne porte
   // aucune information utile et gênait la reconnaissance de l'unité.
-  text = text.replace(/\(s\)/gi, "");
+  // L'OCR le coupe de façons très diverses en fin de ligne : "(s)"
+  // complet, "(s" sans fermeture, ou même juste "(" isolé sans aucun
+  // "s" ni ")" du tout (constaté sur une vraie photo : "sachet ("). Un
+  // seul motif, ancré en fin de chaîne, couvre ces trois variantes.
+  text = text.replace(/\s*\(s?\)?\s*$/i, "");
 
   // Repère d'abord les unités françaises composées de plusieurs mots
   // ("cuillère à café/soupe") : la reconnaissance générale ci-dessous
@@ -6207,7 +6803,7 @@ function parseIngredientString(str) {
   // seul y était reconnu, jamais l'expression complète — le reste
   // ("à café de gingembre") finissait alors inclus dans le nom de
   // l'ingrédient plutôt que dans son unité.
-  const spoonMatch = text.match(/^([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*cuill[eè]res?\s+à\s+(caf[eé]|soupe)\s+(?:de\s+|d['’])?(.*)$/i);
+  const spoonMatch = text.match(/^([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*(?:cuill[eè]res?|c\.?)\s+à\s+(caf[eé]|soupe)\s+(?:de\s+|d['’])?(.*)$/i);
   if (spoonMatch) {
     const [, qtyStr, spoonType, rest] = spoonMatch;
     let spoonQty;
@@ -6222,7 +6818,13 @@ function parseIngredientString(str) {
     return { name: rest.trim() || text, quantity: spoonQty, unit: spoonUnit };
   }
 
-  const match = text.match(/^([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([a-zA-Zéèàêûîôçñü]*)\.?\s*(.*)$/);
+  // Un nombre suivi directement de "%" n'est jamais une quantité
+  // d'ingrédient — c'est un descripteur de pourcentage (matière grasse,
+  // alcool...), même en tête de ligne ("20% MG crème fraîche"). Traité
+  // comme s'il n'y avait aucun chiffre en tête, pour retomber sur le
+  // texte complet comme nom plutôt que d'extraire "20" à tort.
+  const startsWithPercent = /^\d+(?:[.,]\d+)?\s*%/.test(text);
+  const match = startsWithPercent ? null : text.match(/^([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([a-zA-Zéèàêûîôçñü]*)\.?\s*(.*)$/);
   if (!match || !match[1]) {
     // Aucun chiffre en tête : essaie l'ordre inversé "Nom Quantité
     // Unité" (ex. "Grenailles 500 g", "Thon au naturel 1 boîte") — un
@@ -6232,7 +6834,7 @@ function parseIngredientString(str) {
     const reversedMatch = text.match(/^(.+?)\s+([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([a-zA-Zéèàêûîôçñü]+)\.?\s*$/i);
     if (reversedMatch) {
       const [, namePart, qtyStr, unitWordRaw] = reversedMatch;
-      const reversedResult = parseIngredientString(`${qtyStr} ${unitWordRaw} ${namePart}`);
+      const reversedResult = parseIngredientStringInner(`${qtyStr} ${unitWordRaw} ${namePart}`);
       if (reversedResult.name) return reversedResult;
     }
     return { name: text, quantity: null, unit: "pièce" };
@@ -6277,6 +6879,7 @@ function parseIngredientString(str) {
   else if (uw === "sachet") unit = "sachet";
   else if (uw === "pot") unit = "pot";
   else if (uw === "barquette") unit = "barquette";
+  else if (uw === "filet") unit = "filet";
   else if (["paquet", "paquete", "paquetes", "packung", "packungen"].includes(uw)) unit = "sachet";
   else if (["tranche", "tranches"].includes(uw)) unit = "tranche";
   else if (["gousse", "gousses"].includes(uw)) unit = "gousse";
@@ -6298,6 +6901,28 @@ function parseIngredientString(str) {
     name = name.replace(redundantNumberRegex, "$1");
   }
   return { name: name || text, quantity, unit };
+}
+
+// Enveloppe autour de parseIngredientStringInner — attache le signal
+// "fraction probablement mal reconnue" au résultat final, exploité
+// ensuite par scoreIngredientConfidence pour marquer la ligne "à
+// vérifier" plutôt que de la laisser passer silencieusement avec une
+// quantité vide sans aucun indice.
+//
+// Un symbole "%" isolé (pas un vrai pourcentage comme "50%", qui a
+// toujours un chiffre devant) juste avant une unité est presque
+// toujours une fraction Unicode mal reconnue par l'OCR — Tesseract
+// confond fréquemment "½" ou "⅔" avec ce symbole, glyphes visuellement
+// proches. Impossible de deviner la vraie valeur de façon fiable
+// (aucun moyen de savoir si c'était ½, ⅓ ou ⅔) : plutôt que de risquer
+// une valeur fausse, la ligne est marquée explicitement comme peu
+// fiable et le symbole conservé dans le nom, visible lors de la
+// relecture.
+function parseIngredientString(str) {
+  const text = normalizeUnicodeFractions(String(str || "").trim()).replace(/\s*\(s?\)?\s*$/i, "");
+  const likelyMisreadFraction = /(?:^|\s)%\s*[a-zA-Zéèàêûîôçñü]/.test(text);
+  const result = parseIngredientStringInner(str);
+  return likelyMisreadFraction ? { ...result, likelyMisreadFraction: true } : result;
 }
 
 // Plusieurs services intermédiaires, essayés dans l'ordre : aucun d'eux
@@ -6470,7 +7095,32 @@ function parseOcrRecipeText(rawText) {
   }
   let nameIdx = lines.findIndex((l) => !looksLikeBrowserChrome(l));
   if (nameIdx < 0) nameIdx = 0;
-  const name = lines[nameIdx];
+  let name = lines[nameIdx];
+  // Une couverture affiche parfois le titre complet sur deux lignes
+  // (ex. HelloFresh : "Barramundi en croûte persillée & tomates
+  // rôties" puis "avec une purée à la ciboulette", avant la ligne de
+  // durée "À table dans : 35-45 Min") — la ligne suivante est fusionnée
+  // dans le titre si elle ressemble à un sous-titre plutôt qu'à une
+  // nouvelle section (courte, ne correspond à aucun marqueur de temps,
+  // personnes, ingrédients ou préparation).
+  const nextLine = lines[nameIdx + 1];
+  if (nextLine && nextLine.length <= 60
+    && !/[àa]\s+table\s+dans|pr[eé]paration\s*:|prep(?:aration)?\s*time|cuisson\s*:|cook\s*time|(?:ready|total\s+time)/i.test(nextLine)
+    && !/\d+\s*(personnes?|people|persons?|personas?|personen)/i.test(nextLine)
+    && !matchesIngredientTitle(nextLine)
+    && !instructionMarker.test(nextLine)
+    // Ligne de durée/difficulté/prix isolée (format Marmiton : "6h10 •
+    // Facile • Assez cher") — jamais un sous-titre de recette.
+    && !/\b\d+\s*h\s*\d{1,2}\b/i.test(nextLine)
+    && !/facile|moyen(?:ne)?|difficile|bon\s+march[ée]|assez\s+cher|cher\b/i.test(nextLine)
+  ) {
+    name = `${name} ${nextLine}`;
+  }
+  // Note et nombre de commentaires parfois collés directement au titre
+  // par l'OCR (ex. "Cassoulet à l'ancienne 4.7/5 3 commentaires") —
+  // retirés du nom, qu'ils proviennent de la fusion ci-dessus ou
+  // qu'ils soient déjà présents sur la toute première ligne.
+  name = name.replace(/\s*\d+([.,]\d+)?\s*\/\s*5\s*(\d+\s*)?(commentaires?|comments?|avis|reviews?)?\s*$/i, "").trim();
   const ingIdx = lines.findIndex((l) => matchesIngredientTitle(l));
   const boundaryIdx = lines.findIndex((l, i) => (ingIdx < 0 || i > ingIdx) && sectionBoundaryMarker.test(l));
   const instrIdx = lines.findIndex((l, i) => (ingIdx < 0 || i > ingIdx) && instructionMarker.test(l));
@@ -6553,6 +7203,15 @@ function parseOcrRecipeText(rawText) {
     if (prepTime == null && cookTime == null) {
       const totalMatch = line.match(/[àa]\s+table\s+dans\s*:?\s*([^\n]+)/i) || line.match(/(?:ready|total\s+time)\s*:?\s*(?:in\s*)?([^\n]+)/i);
       if (totalMatch) { const t = parseTimeExpression(totalMatch[1]); if (t != null) prepTime = t; }
+      // Durée isolée sans préfixe explicite (ex. Marmiton : "6h10 •
+      // Facile • Assez cher") — reconnue seulement sur une ligne
+      // raisonnablement courte, pour éviter de capturer à tort un
+      // motif "XhXX" apparaissant au milieu d'un texte plus long sans
+      // rapport avec une durée.
+      if (prepTime == null && line.length <= 40) {
+        const isolatedMatch = line.match(/\b(\d+)\s*h\s*(\d{1,2})\b/i);
+        if (isolatedMatch) prepTime = parseInt(isolatedMatch[1], 10) * 60 + parseInt(isolatedMatch[2], 10);
+      }
     }
   });
 
@@ -6648,14 +7307,170 @@ async function runOcrOnImage(file) {
   // détection ; seul le texte reconstruit sert au nettoyage des
   // lignes d'ingrédients elles-mêmes (voir deriveSectionDataForPhoto).
   //
-  // gridText : troisième variante, calculée seulement si la photo
-  // ressemble à une mise en page en grille à plusieurs colonnes
-  // (fiches de préparation HelloFresh notamment) — jamais utilisée
-  // pour la détection de section, uniquement pour tenter de séparer
-  // les étapes individuelles dans deriveSectionDataForPhoto, avec
-  // repli sur le texte brut si le résultat semble peu concluant.
-  const gridText = looksLikeMergedGridLayout(data) ? reconstructGridColumns(data, 3) : null;
+  // gridText : calculée si la photo ressemble à une mise en page en
+  // grille à plusieurs colonnes (fiches de préparation HelloFresh
+  // notamment) — jamais utilisée pour la détection de section,
+  // uniquement pour tenter de séparer les étapes individuelles dans
+  // deriveSectionDataForPhoto, avec repli sur le texte brut si le
+  // résultat semble peu concluant.
+  //
+  // Déclenchement combiné : le signal de chevauchement de mots
+  // (looksLikeMergedGridLayout) OU une simple orientation paysage —
+  // constaté que le premier signal, bien que fiable dans cet
+  // environnement de test, ne se déclenche pas toujours de façon
+  // constante sur un vrai appareil (variante WASM, netteté de la
+  // photo...). L'orientation paysage, un simple rapport largeur/hauteur
+  // de l'image, ne dépend elle jamais de la qualité de reconnaissance
+  // OCR — une photo de préparation HelloFresh est presque toujours
+  // cadrée ainsi. Un déclenchement superflu sur une photo qui n'est
+  // pas réellement en grille ne coûte que quelques secondes de
+  // traitement en plus : gridText n'est de toute façon utilisé que
+  // pour la section "preparation" (voir deriveSectionDataForPhoto),
+  // jamais pour les ingrédients ou les informations générales.
+  const isLandscape = (input.width || input.naturalWidth || 0) > (input.height || input.naturalHeight || 1) * 1.15;
+  const gridText = (looksLikeMergedGridLayout(data) || isLandscape) ? await runGridCellOcr(worker, input, 3) : null;
   return { rawText: data.text, layoutText: reconstructTextFromBlocks(data) || data.text, gridText };
+}
+
+// Détermine les limites verticales des 2 rangées de la grille par une
+// simple division proportionnelle de la hauteur de l'image (moitié
+// haute / moitié basse, avec un léger chevauchement pour ne pas
+// couper le texte pile à la frontière) — plutôt que par détection des
+// coordonnées de mots, qui s'est révélée fragile : sur une photo
+// légèrement floue ou à l'exposition différente, le texte de faible
+// confiance produit par les photos de plat au sein de la grille
+// pouvait créer un pont artificiel entre les deux vraies rangées,
+// faisant croire à l'algorithme qu'il n'existait qu'une seule grande
+// rangée (mélangeant alors les étapes dans l'ordre 1→4→2→3 au lieu de
+// 1→2→3→4→5→6). Validée directement sur deux vraies photos aux
+// orientations différentes (portrait et paysage) : les 6 étapes
+// parfaitement séparées dans les deux cas avec cette approche,
+// beaucoup plus robuste aux variations de qualité de la photo source.
+function detectGridRowBounds(imgHeight) {
+  const margin = Math.round(imgHeight * 0.03);
+  const midY = Math.round(imgHeight / 2);
+  return [
+    { y0: 0, y1: midY + margin },
+    { y0: midY - margin, y1: imgHeight },
+  ];
+}
+
+// Découpe l'image en cases (rangées x colonnes) et relance l'OCR
+// indépendamment sur chacune — voir le commentaire de runOcrOnImage
+// pour le gain constaté par rapport à la seule reconstruction
+// textuelle. En cas d'échec (image illisible, worker indisponible...),
+// renvoie null pour que l'appelant retombe sur le texte brut.
+async function runGridCellOcr(worker, input, numColumns) {
+  try {
+    // L'entrée peut être un File brut non redimensionné (cas des PNG,
+    // voir resizeImageForOcr) plutôt qu'un canvas — drawImage()
+    // n'accepte pas un File directement, d'où cette normalisation
+    // systématique en bitmap dessinable.
+    const bitmap = input instanceof HTMLCanvasElement ? input : await createImageBitmap(input);
+    const imgWidth = bitmap.width;
+    const imgHeight = bitmap.height;
+    const gridRows = detectGridRowBounds(imgHeight);
+
+    const srcCanvas = document.createElement("canvas");
+    srcCanvas.width = imgWidth;
+    srcCanvas.height = imgHeight;
+    srcCanvas.getContext("2d").drawImage(bitmap, 0, 0);
+
+    const colWidth = imgWidth / numColumns;
+    const margin = 10;
+    const cellTexts = [];
+    for (const row of gridRows) {
+      for (let col = 0; col < numColumns; col++) {
+        const x0 = Math.max(0, col * colWidth - margin);
+        const x1 = Math.min(imgWidth, (col + 1) * colWidth + margin);
+        const y0 = Math.max(0, row.y0);
+        const y1 = Math.min(imgHeight, row.y1);
+        const cellCanvas = document.createElement("canvas");
+        cellCanvas.width = x1 - x0;
+        cellCanvas.height = y1 - y0;
+        cellCanvas.getContext("2d").drawImage(srcCanvas, x0, y0, x1 - x0, y1 - y0, 0, 0, x1 - x0, y1 - y0);
+        const cellResult = await worker.recognize(cellCanvas);
+        const cellText = cellResult.data.text.trim();
+        if (cellText) cellTexts.push(cellText);
+      }
+    }
+    return cellTexts.length ? cellTexts.join("\n\n") : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+// Découpe une image de liste d'ingrédients en 2 colonnes verticales
+// (gauche/droite, pleine hauteur chacune) et relance l'OCR
+// indépendamment sur chacune — pour les listes à 2 colonnes (Marmiton
+// notamment, chaque case affichant une quantité au-dessus du nom sur
+// deux lignes), où un seul passage OCR sur l'image entière mélange les
+// deux colonnes sur une même ligne reconnue ("[sel [ poivre",
+// "oignon oignons"...). Validé directement sur une vraie capture :
+// chaque colonne ressort parfaitement séparée, quantité et nom
+// correctement associés. Renvoie les deux textes séparément (pas
+// concaténés) pour permettre à l'appelant de recomposer l'ordre de
+// lecture ligne par ligne (gauche puis droite), plutôt que toute la
+// colonne gauche suivie de toute la colonne droite. En cas d'échec,
+// renvoie null pour que l'appelant retombe sur le texte brut.
+async function runTwoColumnIngredientOcr(worker, input) {
+  try {
+    const bitmap = input instanceof HTMLCanvasElement ? input : await createImageBitmap(input);
+    const imgWidth = bitmap.width;
+    const imgHeight = bitmap.height;
+
+    const srcCanvas = document.createElement("canvas");
+    srcCanvas.width = imgWidth;
+    srcCanvas.height = imgHeight;
+    srcCanvas.getContext("2d").drawImage(bitmap, 0, 0);
+
+    const margin = Math.round(imgWidth * 0.02);
+    const midX = Math.round(imgWidth / 2);
+
+    const leftCanvas = document.createElement("canvas");
+    leftCanvas.width = midX + margin;
+    leftCanvas.height = imgHeight;
+    leftCanvas.getContext("2d").drawImage(srcCanvas, 0, 0, midX + margin, imgHeight, 0, 0, midX + margin, imgHeight);
+    const leftResult = await worker.recognize(leftCanvas);
+
+    const rightCanvas = document.createElement("canvas");
+    rightCanvas.width = imgWidth - midX + margin;
+    rightCanvas.height = imgHeight;
+    rightCanvas.getContext("2d").drawImage(srcCanvas, midX - margin, 0, imgWidth - midX + margin, imgHeight, 0, 0, imgWidth - midX + margin, imgHeight);
+    const rightResult = await worker.recognize(rightCanvas);
+
+    return { leftText: leftResult.data.text, rightText: rightResult.data.text };
+  } catch (e) {
+    return null;
+  }
+}
+
+// Orchestre le découpage en 2 colonnes d'une photo d'ingrédients déjà
+// classée comme telle : redimensionnement, OCR indépendant sur chaque
+// colonne, analyse du format "quantité puis nom" de chacune, et
+// recomposition dans l'ordre de lecture naturel d'une liste à cases à
+// cocher (une ligne de la colonne gauche, puis la ligne correspondante
+// de la colonne droite, plutôt que toute la colonne gauche suivie de
+// toute la colonne droite). Renvoie null en cas d'échec, pour que
+// l'appelant retombe sur l'extraction standard sans interruption.
+async function computeTwoColumnIngredients(file) {
+  try {
+    const worker = await getSharedTesseractWorker();
+    const input = await resizeImageForOcr(file);
+    const columns = await runTwoColumnIngredientOcr(worker, input);
+    if (!columns) return null;
+    const left = parseStackedIngredientColumn(columns.leftText);
+    const right = parseStackedIngredientColumn(columns.rightText);
+    const interleaved = [];
+    const maxLen = Math.max(left.length, right.length);
+    for (let i = 0; i < maxLen; i++) {
+      if (left[i]) interleaved.push(left[i]);
+      if (right[i]) interleaved.push(right[i]);
+    }
+    return interleaved.map((i) => ({ ...i, confidence: scoreIngredientConfidence(i) }));
+  } catch (e) {
+    return null;
+  }
 }
 
 // Redimensionne une image avant l'OCR si elle dépasse une taille
@@ -6744,83 +7559,6 @@ function looksLikeMergedGridLayout(data) {
   return totalLines >= 4 && linesWithOverlap / totalLines >= 0.15;
 }
 
-// Reconstruit un texte en grille à N colonnes à partir des coordonnées
-// des mots — en 2 temps : d'abord les rangées (grand saut vertical
-// entre elles, typiquement les photos illustrant chaque étape), puis
-// les colonnes au sein de chaque rangée (tiers fixes de la largeur de
-// l'image, correspondant à la mise en page HelloFresh connue). Dans
-// chaque cellule rangée/colonne, les mots sont regroupés en lignes par
-// proximité verticale puis triés horizontalement — imparfait sur une
-// photo à la netteté ou à l'alignement imprécis (les coordonnées de
-// mots produites par Tesseract peuvent alors se chevaucher légèrement),
-// mais le regroupement par étape individuelle reste correct, ce qui
-// est le principal gain par rapport à un seul bloc de texte mélangeant
-// les 6 étapes.
-function reconstructGridColumns(data, numColumns) {
-  if (!data || !data.blocks || !data.blocks.length) return null;
-  const imgWidth = data.width || 1000;
-  const allWords = [];
-  data.blocks.forEach((b) => (b.paragraphs || []).forEach((p) => (p.lines || []).forEach((l) => (l.words || []).forEach((w) => allWords.push(w)))));
-  if (!allWords.length) return null;
-
-  const sortedByY = allWords.slice().sort((a, b) => a.bbox.y0 - b.bbox.y0);
-  const rowGapThreshold = 60;
-  const rows = [];
-  let currentRow = [sortedByY[0]];
-  let lastY1 = sortedByY[0].bbox.y1;
-  for (let i = 1; i < sortedByY.length; i++) {
-    const w = sortedByY[i];
-    if (w.bbox.y0 - lastY1 > rowGapThreshold) {
-      rows.push(currentRow);
-      currentRow = [];
-    }
-    currentRow.push(w);
-    lastY1 = Math.max(lastY1, w.bbox.y1);
-  }
-  if (currentRow.length) rows.push(currentRow);
-
-  function wordsToText(words) {
-    const sorted = words.slice().sort((a, b) => a.bbox.y0 - b.bbox.y0);
-    const lines = [];
-    let current = [];
-    let currentY = null;
-    const yTolerance = 12;
-    for (const w of sorted) {
-      if (currentY === null || Math.abs(w.bbox.y0 - currentY) <= yTolerance) {
-        current.push(w);
-        currentY = currentY === null ? w.bbox.y0 : currentY;
-      } else {
-        lines.push(current);
-        current = [w];
-        currentY = w.bbox.y0;
-      }
-    }
-    if (current.length) lines.push(current);
-    return lines.map((l) => l.slice().sort((a, b) => a.bbox.x0 - b.bbox.x0).map((w) => w.text).join(" ")).join("\n");
-  }
-
-  const colWidth = imgWidth / numColumns;
-  const cellTexts = [];
-  rows.forEach((rowWords) => {
-    const columns = Array.from({ length: numColumns }, () => []);
-    rowWords.forEach((w) => {
-      const centerX = (w.bbox.x0 + w.bbox.x1) / 2;
-      let col = Math.floor(centerX / colWidth);
-      col = Math.max(0, Math.min(numColumns - 1, col));
-      columns[col].push(w);
-    });
-    columns.forEach((colWords) => {
-      const text = wordsToText(colWords).trim();
-      if (text) cellTexts.push(text);
-    });
-  });
-  // Une ligne vide entre chaque case (rangée x colonne) — utilisée
-  // ensuite comme séparateur d'étape par deriveSectionDataForPhoto,
-  // plutôt qu'un texte continu où la fin d'une étape et le début de la
-  // suivante ne seraient plus distinguables.
-  return cellTexts.join("\n\n");
-}
-
 function reconstructTextFromBlocks(data) {
   if (!data || !data.blocks || !data.blocks.length) return null;
   const imgWidth = data.width || 1000;
@@ -6854,7 +7592,7 @@ function reconstructTextFromBlocks(data) {
 // aucun des deux de façon franche (photo de couverture, infos
 // générales...). Retourne null si le résultat est trop incertain pour
 // choisir automatiquement — il faudra alors demander à l'utilisateur.
-function detectPhotoSection(parsed) {
+function detectPhotoSection(parsed, rawText) {
   const hasIngredients = parsed.ingredients && parsed.ingredients.length > 0;
   const hasDescription = parsed.description && parsed.description.trim().length > 20;
   // Une vraie section de préparation contient presque toujours des
@@ -6894,11 +7632,54 @@ function detectPhotoSection(parsed) {
   const hasNumberedSteps = /(?:^|\n)\s*(?:[ée]tape\s*\d+|\d+[.)])/i.test(description);
   const looksLikeRealSteps = hasNumberedSteps || descriptionLineCount > 6;
   const hasGeneralInfo = !!(parsed.persons || parsed.prepTime || parsed.cookTime);
+  // Une couverture affiche parfois déjà le tout début de la vraie
+  // liste d'ingrédients au bas du cadrage (ex. Marmiton : titre, note,
+  // durée, puis "Ingrédients" et les 3-4 premières lignes visibles
+  // avant que l'utilisateur ne fasse défiler) — sans cette protection,
+  // la présence de ces quelques ingrédients suffisait à faire basculer
+  // la classification vers "Ingrédients" à tort, perdant le nom, la
+  // durée et la difficulté de la couverture. Signal retenu : personnes
+  // ET durée présentes ENSEMBLE (jamais observé sur une vraie photo
+  // d'ingrédients dans nos données réelles, qui n'affiche presque
+  // toujours que les personnes, la durée étant une information de
+  // couverture) combiné à un petit nombre d'ingrédients trouvés (peu
+  // de lignes visibles avant le bord du cadrage, pas une vraie liste
+  // complète).
+  const looksLikeCoverLeakingIntoIngredients = parsed.persons && parsed.prepTime && hasIngredients && parsed.ingredients.length <= 5;
+  if (looksLikeCoverLeakingIntoIngredients) return "general";
   if (hasIngredients && hasDescription && looksLikeRealSteps) return "mixed";
   if (hasIngredients) return "ingredients";
+  // Repli : aucun marqueur "Ingrédients" trouvé (souvent un cadrage
+  // trop serré, coupant la ligne d'en-tête "Ingrédients pour N
+  // personnes" hors du cadre) — mais si une forte proportion des
+  // lignes ressemble à des lignes d'ingrédients (unité reconnue,
+  // "180 g", "1 sachet(s)"...), c'est très probablement une vraie
+  // photo d'ingrédients malgré tout. Sans ce repli, une telle photo se
+  // retrouvait classée "Préparation" avec zéro ingrédient extrait —
+  // cas réel découvert sur une vraie photo Carbonara cadrée ainsi.
+  if (!hasIngredients && rawText && looksLikeIngredientTableWithoutMarker(rawText)) return "ingredients";
   if (!hasIngredients && hasGeneralInfo && !looksLikeRealSteps) return "general";
   if (hasDescription) return "preparation";
   return null;
+}
+
+// Estime si un texte ressemble à une table d'ingrédients même sans le
+// marqueur de titre "Ingrédients" — en comptant la proportion de
+// lignes se terminant par une unité de mesure reconnue (chiffre suivi
+// de "g", "kg", "cl", "sachet(s)", "pièce(s)"...). Une vraie table
+// d'ingrédients (HelloFresh notamment) en contient presque toujours
+// une majorité, contrairement à un texte de préparation ou une simple
+// couverture.
+function looksLikeIngredientTableWithoutMarker(rawText) {
+  const lines = rawText.split("\n").map((l) => l.trim()).filter(Boolean);
+  const plausible = lines.filter((l) => {
+    const words = l.split(/\s+/).filter(Boolean);
+    return words.length >= 1 && words.length <= 8 && l.length <= 60;
+  });
+  if (plausible.length < 4) return false;
+  const unitPattern = /\d+\s*(g|kg|cl|l|cs|cc|c\.?\s*[àa]\s*(caf[eé]|soupe)|sachet|pi[eè]ce|bo[iî]te|barquette|paquet|gousse|tranche|filet)s?\b/i;
+  const matching = plausible.filter((l) => unitPattern.test(l)).length;
+  return matching / plausible.length >= 0.25;
 }
 
 // Score de confiance par ingrédient — remplace le principe des rejets
@@ -6918,6 +7699,11 @@ function detectPhotoSection(parsed) {
 // fraîches"), fragments réels de grille Marmiton mal reconstruite
 // ("Nes Q L 3)", "de beurre de sucre semoule de farine").
 function scoreIngredientConfidence(ingredient) {
+  // Une fraction Unicode probablement mal reconnue par l'OCR (voir
+  // parseIngredientString) force "uncertain" sans même calculer le
+  // reste du score — le nom seul ("Echalote %") peut sembler tout à
+  // fait plausible autrement, sans ce signal explicite.
+  if (ingredient.likelyMisreadFraction) return "uncertain";
   const name = ingredient.name || "";
   const words = name.split(/\s+/).filter(Boolean);
   if (words.length === 0) return "uncertain";
@@ -6991,6 +7777,55 @@ function looksLikeIngredientLine(line) {
 // d'un texte donné (brut OU reconstruit) — logique commune réutilisée
 // pour les deux, voir deriveSectionDataForPhoto ci-dessous qui choisit
 // lequel des deux résultats retenir au final.
+// Analyse une colonne d'ingrédients au format "quantité sur une
+// ligne, nom sur la ligne suivante" — mise en page courante sur
+// Marmiton et d'autres sites à cases à cocher, chaque case affichant
+// sa quantité au-dessus de son nom sur deux lignes distinctes plutôt
+// que sur une seule ("1\noignon" plutôt que "1 oignon"). Un ingrédient
+// sans quantité explicite (juste "sel", "poivre") reste accepté tel
+// quel. Validée directement contre une vraie capture d'écran : 9 des
+// 11 ingrédients d'une colonne correctement extraits (les 2 restants
+// ayant leur chiffre de quantité lui-même mal lu par l'OCR comme des
+// lettres — "1kg" devenu "like" — une limite de reconnaissance, pas
+// de cette analyse).
+function parseStackedIngredientColumn(text) {
+  const lines = (text || "").split("\n").map((l) => l.trim()).filter(Boolean);
+  const filtered = lines.filter((l) => !matchesIngredientTitle(l) && !/\d+\s*(personnes?|people|persons?|personas?|personen)/i.test(l));
+
+  // Retire un préfixe court de case à cocher mal reconnue (symbole ou
+  // 1-2 caractères isolés suivis d'un espace) devant le vrai contenu —
+  // sans quoi ce genre de préfixe (ex. "Od poivre") resterait collé au
+  // nom.
+  function stripCheckboxPrefix(line) {
+    const m = line.match(/^(\S{1,2})\s+(.+)$/);
+    if (m && (/[[\](){}]/.test(m[1]) || /^[a-zA-Z]{1,2}$/.test(m[1]))) {
+      return m[2];
+    }
+    return line.replace(/^[[\](){}]+\s*/, "");
+  }
+
+  const results = [];
+  let i = 0;
+  while (i < filtered.length) {
+    const line = filtered[i];
+    // Une ligne "quantité" tolère un court préfixe générique parasite
+    // (jusqu'à 4 caractères, résidu de case à cocher) avant le
+    // chiffre, éventuellement suivi d'un mot d'unité complet (pas
+    // seulement une abréviation courte).
+    const qtyMatch = line.match(/^.{0,4}?(\d+(?:[.,]\d+)?)\s*([a-zA-Zéèàêûîôçñü]*)\s*$/);
+    if (qtyMatch && i + 1 < filtered.length) {
+      const name = stripCheckboxPrefix(filtered[i + 1]);
+      results.push(parseIngredientString(`${qtyMatch[1]} ${qtyMatch[2]} ${name}`));
+      i += 2;
+    } else {
+      const cleaned = stripCheckboxPrefix(line);
+      if (cleaned) results.push(parseIngredientString(cleaned));
+      i += 1;
+    }
+  }
+  return results.filter((r) => r.name);
+}
+
 function extractIngredientsFromLines(text) {
   const lines = (text || "").split("\n").map((l) => l.trim()).filter(Boolean)
     // Retire les puces dès le début, avant tout filtrage — sinon
@@ -7017,7 +7852,17 @@ function extractIngredientsFromLines(text) {
   }
   const startIdx = ingIdx >= 0 ? ingIdx + 1 : 0;
   const boundaryIdx = lines.findIndex((l, i) => i >= startIdx && OCR_SECTION_BOUNDARY_MARKER.test(l));
-  const endIdx = boundaryIdx >= 0 ? boundaryIdx : lines.length;
+  // Limite de secours : le motif "nombre/nombre" (ex. "2745/656") est
+  // la signature quasi certaine d'une valeur d'énergie kJ/kcal — un
+  // signal robuste même quand le titre "Valeurs nutritionnelles" est
+  // si déformé par l'OCR qu'aucun mot-clé ne correspond ("(kifkeal)"
+  // au lieu de "kJ/kcal", constaté sur une vraie photo). Sans cette
+  // limite explicite, l'extraction ne s'arrêtait que grâce aux filtres
+  // ligne par ligne rattrapant chaque ligne parasite individuellement
+  // — fragile, pas une vraie coupure nette de la section.
+  const energyPatternIdx = lines.findIndex((l, i) => i >= startIdx && /\b\d{3,5}\s*\/\s*\d{2,4}\b/.test(l));
+  const earliestBoundaryIdx = [boundaryIdx, energyPatternIdx].filter((i) => i >= 0).sort((a, b) => a - b)[0];
+  const endIdx = earliestBoundaryIdx !== undefined ? earliestBoundaryIdx : lines.length;
   let ingredients = lines
     .slice(startIdx, endIdx)
     .filter((l) => {
@@ -7058,7 +7903,7 @@ function extractIngredientsFromLines(text) {
   return { ingredients, persons, foundMarker: ingIdx >= 0 };
 }
 
-function deriveSectionDataForPhoto(rawText, section, layoutText, gridText) {
+function deriveSectionDataForPhoto(rawText, section, layoutText, gridText, twoColumnIngredients) {
   const empty = { name: "", ingredients: [], description: "", persons: null, prepTime: null, cookTime: null };
   // Toujours le texte BRUT pour ces deux sections — jamais le texte
   // reconstruit, qui ne doit dégrader ni le nom, ni les personnes, ni
@@ -7079,13 +7924,31 @@ function deriveSectionDataForPhoto(rawText, section, layoutText, gridText) {
     // qui reste fiable pour la classification même s'il contient
     // encore un peu de contamination de la colonne voisine.
     const fromLayout = layoutText && layoutText !== rawText ? extractIngredientsFromLines(layoutText) : null;
-    if (fromLayout && fromLayout.foundMarker) {
-      // Le nombre de personnes reste préféré depuis le texte brut
-      // quand les deux l'ont trouvé — plus fiable, jamais altéré par
-      // le découpage géométrique.
-      return { ...empty, ingredients: fromLayout.ingredients, persons: fromRaw.persons ?? fromLayout.persons };
+    const best = fromLayout && fromLayout.foundMarker ? fromLayout : fromRaw;
+    // Le résultat en 2 colonnes n'est retenu que s'il produit
+    // davantage d'ingrédients ET qu'une proportion raisonnable d'entre
+    // eux ont une quantité reconnue — le nombre d'ingrédients seul ne
+    // suffit pas à distinguer une vraie mise en page à 2 colonnes
+    // correctement démêlée d'une liste à une seule colonne fragmentée
+    // à tort (chaque ligne coupée en deux morceaux sans queue ni tête,
+    // produisant PLUS de "lignes" mais de bien moins bonne qualité) —
+    // régression réelle découverte lors d'une vérification complète
+    // sur toutes les vraies photos du projet : une photo Barramundi à
+    // une seule colonne se retrouvait avec 40 "ingrédients" au lieu de
+    // 10, la plupart des fragments incohérents. Seuil calibré sur des
+    // données réelles : 68 % des ingrédients avec quantité reconnue
+    // sur un vrai cas à 2 colonnes (Cassoulet) contre seulement 18 %
+    // sur ce cas cassé — 40 % choisi comme seuil de sécurité, nettement
+    // au-dessus du cas cassé, nettement en dessous du bon cas. Les
+    // personnes restent toujours préférées depuis le texte brut,
+    // jamais affectées par ce découpage géométrique.
+    const twoColumnHasQuantityRatio = twoColumnIngredients && twoColumnIngredients.length
+      ? twoColumnIngredients.filter((i) => i.quantity != null).length / twoColumnIngredients.length
+      : 0;
+    if (twoColumnIngredients && twoColumnIngredients.length > best.ingredients.length && twoColumnHasQuantityRatio >= 0.4) {
+      return { ...empty, ingredients: twoColumnIngredients, persons: fromRaw.persons };
     }
-    return { ...empty, ingredients: fromRaw.ingredients, persons: fromRaw.persons };
+    return { ...empty, ingredients: best.ingredients, persons: fromRaw.persons ?? (fromLayout && fromLayout.persons) };
   }
   if (section === "preparation") {
     // Une mise en page en grille détectée (fiches HelloFresh
@@ -7147,9 +8010,18 @@ function mergeMultiPhotoResults(photos, confirmedPersons) {
   // n'être détecté que sur une AUTRE photo que celle des ingrédients.
   // Le nombre confirmé par l'utilisateur (champ visible à l'écran,
   // jamais une simple supposition silencieuse) prime toujours sur la
-  // détection automatique interne quand il est fourni.
-  const finalPersons = confirmedPersons || persons || 4;
-  const dividedIngredients = ingredients.map((i) => ({ ...i, quantity: i.quantity != null ? i.quantity / finalPersons : null }));
+  // détection automatique interne quand il est fourni. Quand ni l'un
+  // ni l'autre n'est disponible, les quantités ne sont PAS divisées
+  // par un nombre deviné — cette division affecte les quantités
+  // STOCKÉES, pas un simple affichage : diviser par un mauvais nombre
+  // (l'ancien repli "4" codé en dur) faussait durablement les données
+  // plutôt que de simplement paraître incomplet, un problème plus
+  // grave qu'un champ vide dans le formulaire (déjà corrigé, voir
+  // TESTS_NON_REGRESSION.md point 48). "personnes" reste explicitement
+  // null dans ce cas, cohérent avec le champ du formulaire laissé vide
+  // plutôt que rempli d'une valeur inventée.
+  const finalPersons = confirmedPersons || persons || null;
+  const dividedIngredients = ingredients.map((i) => ({ ...i, quantity: i.quantity != null && finalPersons ? i.quantity / finalPersons : i.quantity }));
   return { name, ingredients: dividedIngredients, description: descriptionParts.join("\n\n"), persons: finalPersons, prepTime, cookTime };
 }
 
@@ -7227,7 +8099,7 @@ function renderImportPhoto() {
         select.addEventListener("change", () => {
           p.section = select.value;
           p.autoDetected = false;
-          p.sectionData = deriveSectionDataForPhoto(p.rawText, p.section, p.layoutText, p.gridText);
+          p.sectionData = deriveSectionDataForPhoto(p.rawText, p.section, p.layoutText, p.gridText, p.twoColumnIngredients);
           refreshUi();
         });
         info.appendChild(select);
@@ -7271,7 +8143,7 @@ function renderImportPhoto() {
       reader.onload = () => resolve(reader.result);
       reader.readAsDataURL(file);
     });
-    const entry = { id: uid(), thumbnail, status: "processing", rawText: null, layoutText: null, gridText: null, parsed: null, sectionData: null, section: null, autoDetected: false, errorMessage: null };
+    const entry = { id: uid(), thumbnail, status: "processing", rawText: null, layoutText: null, gridText: null, twoColumnIngredients: null, parsed: null, sectionData: null, section: null, autoDetected: false, errorMessage: null };
     state.multiPhotoImport.push(entry);
     refreshUi();
     try {
@@ -7289,10 +8161,18 @@ function renderImportPhoto() {
         // reconstruction géométrique a mal segmenté certaines lignes
         // sur cet appareil précis.
         entry.parsed = parseOcrRecipeText(rawText);
-        const detected = detectPhotoSection(entry.parsed);
+        const detected = detectPhotoSection(entry.parsed, rawText);
         entry.section = detected || "other";
         entry.autoDetected = !!detected;
-        entry.sectionData = deriveSectionDataForPhoto(rawText, entry.section, layoutText, gridText);
+        // Le découpage en 2 colonnes n'est tenté qu'une fois la
+        // section "ingredients" confirmée — évite de deviner à
+        // l'avance (aucun signal fiable trouvé pour détecter ce type
+        // de mise en page avant l'OCR, contrairement à la grille de
+        // préparation) et le coût de ce traitement supplémentaire sur
+        // des photos où il ne serait de toute façon jamais utilisé.
+        const twoColumnIngredients = detected === "ingredients" ? await computeTwoColumnIngredients(file) : null;
+        entry.twoColumnIngredients = twoColumnIngredients;
+        entry.sectionData = deriveSectionDataForPhoto(rawText, entry.section, layoutText, gridText, twoColumnIngredients);
         entry.status = "done";
       }
     } catch (err) {
@@ -8231,7 +9111,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 183;
+const APP_VERSION = 198;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

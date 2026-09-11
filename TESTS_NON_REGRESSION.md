@@ -3003,7 +3003,1028 @@ bibliothèque d'analyse de quantités plus mature
 
 **Version testée** : v183
 
-## Résumé — état au 06/09/2026 (v183)
+### 39 — Signalement des fractions Unicode mal reconnues par l'OCR *(v184)*
+
+**Contexte** : chantier ciblé convenu après la comparaison avec
+`parse-ingredient` (jakeboone02) — comparer sa gestion des fractions à
+la nôtre.
+
+**Découverte importante ayant réorienté le chantier** : en vérifiant
+précisément le comportement actuel sur les vrais cas du corpus
+("Echalote % piece(s)", "Origan séché % sachet"), confirmé que le vrai
+problème n'était **pas** une lacune de notre analyseur de texte (une
+fonction `normalizeUnicodeFractions` existait déjà et gère bien les
+vrais caractères ½/⅔ quand ils sont présents), mais que **Tesseract lui
+-même lit le symbole "%" à la place du vrai caractère de fraction**,
+avant même que notre code ne voie le texte. Emprunter la logique de
+fractions de `parse-ingredient`/`numeric-quantity` n'aurait donc rien
+changé : ces bibliothèques attendent aussi un vrai caractère de
+fraction en entrée, pas un "%" déjà corrompu par l'OCR.
+
+**Chantier réajusté en conséquence** : plutôt que d'essayer de deviner
+la valeur exacte de la fraction perdue (risqué — aucun moyen fiable de
+distinguer ½, ⅓ ou ⅔ à partir d'un simple "%"), détection du motif
+précis ("%" isolé, sans chiffre juste avant, suivi d'un mot) comme
+signature d'une fraction probablement mal reconnue, puis **connexion
+avec le système de score de confiance déjà en place** (chantier
+précédent) : la ligne est marquée "à vérifier" plutôt que silencieusement
+acceptée avec une quantité vide sans aucun indice.
+
+**Implémenté proprement, sans dupliquer la détection** : la fonction
+`parseIngredientString` d'origine renommée en fonction interne
+(`parseIngredientStringInner`), enveloppée dans une nouvelle
+`parseIngredientString` qui calcule le signal une seule fois et
+l'attache au résultat final (`likelyMisreadFraction: true`) —
+`scoreIngredientConfidence` le vérifie en tout premier, avant même de
+calculer le reste du score.
+
+**Testé avec précision contre les faux positifs** : un vrai pourcentage
+authentique dans un contexte de recette ("200 g crème fraîche 20% MG",
+"1 pot crème fraîche à 30%", "Lait demi-écrémé 1,5%") n'est jamais
+signalé à tort — le motif exige que le "%" soit isolé, sans chiffre
+immédiatement devant, ce qu'un vrai pourcentage a toujours.
+
+**Testé sur les vrais cas du corpus** : "Echalote % piece(s)" et
+"Origan séché % sachet" (fiche salade grecque réelle) tous deux
+correctement marqués "uncertain" avec le signal attaché. Corpus mis à
+jour avec ces deux vérifications permanentes.
+
+**Correction apportée en cours de route sur une confusion de la session
+précédente** : clarifié que `parse-ingredient` (jakeboone02, sans "s")
+n'est **pas** nativement multilingue contrairement à ce qui avait été
+avancé — son "support" français/allemand/espagnol se limite à des
+options de configuration manuelle (séparateurs de plage, préfixes à
+retirer), sans reconnaissance native des unités françaises. Le vrai
+paquet avec support français intégré (`parse-ingredients` de magrinj,
+avec un "s") est un projet différent et plus petit.
+
+**Non-régression** : toute la suite de tests existante et le corpus
+complet relancés après chaque changement, aucune régression.
+
+**Version testée** : v184
+
+### 40 — Abréviations de cuillères, pourcentages non confondus avec une quantité, incohérence de version *(v185)*
+
+**Contexte** : la v184 confirmée fonctionner sur ses nouveautés
+principales (fractions, corpus, grille), mais 3 défauts trouvés par
+vérification indépendante.
+
+**Point 1 — incohérence de version `sw.js` v183 / `app.js` v184,
+investiguée** : la copie de travail locale montrait déjà les deux
+fichiers correctement synchronisés à v184 au moment de la
+vérification, et le contenu du zip livré (vérifié directement via
+`unzip -p` après l'incident) montrait également v184 des deux côtés —
+la cause exacte de l'écart constaté par l'utilisateur n'a pas pu être
+déterminée avec certitude (possible aléa du système de fichiers en
+réseau utilisé pour la livraison, qui avait déjà produit une erreur
+d'E/S lors de cette même opération). Version de nouveau incrémentée
+(185) et livraison entièrement reconstruite avec des vérifications
+supplémentaires (comparaison directe du nombre de fichiers
+source/livraison, contenu du zip vérifié par extraction directe) pour
+ne laisser aucune ambiguïté.
+
+**Point 2 — abréviations "c. à soupe"/"c à café" non reconnues,
+corrigé** : seule la forme complète "cuillère(s) à..." était reconnue.
+`spoonMatch` étendu pour accepter aussi "c."/"c" comme abréviation.
+**Testé avec le cas exact rapporté** ("2 c. à soupe de crème de noix
+de coco") et 5 autres variantes (formes abrégées et complètes,
+café/soupe, avec/sans point) : toutes correctement reconnues
+désormais, sans régression sur les formes déjà fonctionnelles.
+
+**Point 3 — un nombre suivi de "%" pouvait être pris pour une quantité
+d'ingrédient, corrigé** : "20% MG crème fraîche" extrayait à tort 20
+comme quantité. Un nombre immédiatement suivi de "%" (avec ou sans
+espace) n'est désormais jamais traité comme une quantité d'ingrédient
+— c'est un descripteur de pourcentage (matière grasse, alcool...), pas
+un compte d'unités, même en tête de ligne. **Testé avec 4 variantes**
+(pourcentage en tête, en fin, avec une vraie quantité+unité présente
+par ailleurs, décimale avec virgule) : toutes correctes. **Test
+permanent prévu pour surveiller ce cas à l'avenir — voir le point 41
+ci-dessous, où ce test a été effectivement créé sous le nom
+`test_ingredient_parsing.py` après un premier oubli.
+
+**Non-régression** : toute la suite de tests existante et le corpus
+complet relancés après chaque changement, aucune régression.
+
+**Version testée** : v185
+
+### 41 — Correction d'une promesse non tenue : vrai fichier de test permanent ajouté *(v186)*
+
+**Contexte** : la v185 mentionnait dans ce document l'ajout d'un test
+permanent `test_percent_not_quantity.py`, mais ce fichier n'existait en
+réalité que dans l'espace de travail temporaire — jamais réellement
+livré ni versionné dans `tests/`. Repéré par vérification indépendante
+sur le dépôt public.
+
+**Corrigé** : un vrai fichier permanent créé,
+`tests/test_ingredient_parsing.py` — autonome comme
+`run_ocr_corpus.py` (démarre et arrête lui-même un serveur local),
+couvrant :
+- les 4 cas de pourcentages non confondus avec une quantité (point 40) ;
+- les 6 cas d'abréviations de cuillères, demandées en complément par
+  le même retour (point 40) ;
+- 3 cas de détection des fractions mal reconnues par l'OCR (point 39),
+  ajoutés pour la même raison — cette vérification n'était protégée
+  que par le corpus OCR jusqu'ici, pas par un test ciblé sur la
+  fonction elle-même.
+
+**Exécuté et confirmé** : les 13 cas passent
+(`python3 tests/test_ingredient_parsing.py`).
+
+**README des tests mis à jour** pour documenter ce nouveau fichier.
+
+**Non-régression** : toute la suite de tests existante et le corpus
+complet relancés après ce changement, aucune régression.
+
+**Version testée** : v186
+
+### 42 — 3 corrections issues du premier test réel avec PDF Samsung *(v187)*
+
+**Contexte** : premier test utilisant le **vrai PDF produit par
+l'application sur le Samsung** (pas une simulation), pour la recette
+Barramundi complète (couverture + ingrédients + préparation). Confirme
+que les corrections précédentes (abréviations de cuillères, v186)
+fonctionnent bien en conditions réelles — "Beurre : 1 cuillère à
+soupe" correctement reconnu sur l'appareil. Trois nouveaux défauts
+identifiés et corrigés.
+
+**Point 1 — catégorie "Petit-déjeuner" par défaut, corrigé** : cause
+trouvée — `CATEGORY_OPTIONS` liste "Petit-déjeuner" en premier, et le
+formulaire ne définissait jamais explicitement de catégorie par défaut
+pour une nouvelle recette importée par photo (`mergeMultiPhotoResults`
+ne renvoie aucun champ catégorie), laissant le navigateur choisir
+silencieusement le premier élément de la liste. Corrigé avec un repli
+explicite sur "Plat". **Testé** : import photo → "Plat" ; modification
+d'une recette existante avec sa propre catégorie → toujours respectée,
+aucune régression.
+
+**Point 2 — titre tronqué sur les couvertures à deux lignes, corrigé** :
+"Barramundi en croûte persillée" au lieu du titre complet avec
+sous-titre. La ligne suivant le titre est désormais fusionnée si elle
+ressemble à un sous-titre (courte, ne correspond à aucun marqueur de
+temps/personnes/section). **Testé avec le texte réel de la couverture**
+(titre complet récupéré) et 4 cas de non-régression (titre simple,
+titre suivi directement d'ingrédients/personnes/préparation) : tous
+corrects. Corpus mis à jour en conséquence.
+
+**Point 3 — "Lait 1 filet(s)" perdait sa quantité et mélangeait l'ordre
+des mots ("filet Lait"), corrigé** : cause trouvée — "filet" n'était
+reconnu comme unité nulle part, faisant échouer la ré-analyse du
+format inversé et produisant un nom scindé de façon incohérente.
+"filet" ajouté comme unité reconnue (`UNIT_OPTIONS`, chaîne de
+reconnaissance, traductions dans les 4 langues). **Testé avec
+précision contre la confusion redoutée** : "Filet de barramundi 2
+pièce(s)" continue de traiter "Filet de barramundi" comme le nom de
+l'ingrédient, jamais comme l'unité — le format inversé ne capture
+qu'un seul mot isolé en position d'unité, jamais un mot en tête de nom
+composé.
+
+**Non traité dans cette session, discussion nécessaire avant de
+lancer ce chantier** : la recommandation principale de l'audit — découper
+la photo de préparation en 6 images séparées (grille 3×2) et lancer un
+OCR indépendant sur chacune — représente un changement d'architecture
+substantiel (manipulation de canvas, 6 passages OCR au lieu d'un seul,
+temps de traitement nettement plus long) plutôt qu'un ajustement
+ciblé comme les 3 points ci-dessus.
+
+**Non-régression** : toute la suite de tests existante, le corpus
+complet et les tests unitaires d'ingrédients relancés après chaque
+changement, aucune régression.
+
+**Version testée** : v187
+
+### 43 — Découpage réel en 6 images avec OCR indépendant sur chacune *(v188)*
+
+**Contexte** : chantier substantiel convenu avec l'utilisateur avant de
+le lancer, vu son ampleur — la recommandation principale de l'audit
+sur le vrai PDF Samsung (point 42) : plutôt que de reconstruire le
+texte d'une seule passe OCR par coordonnées, découper réellement la
+photo en 6 images (2 rangées x 3 colonnes) et lancer un OCR
+indépendant sur chacune.
+
+**Analyse préalable sur la vraie photo, avant toute intégration** :
+examen direct des coordonnées de mots produites par un premier passage
+OCR pour déterminer les limites de chaque case. Difficulté trouvée et
+résolue en 3 itérations :
+1. Un simple regroupement par saut vertical (seuil 60px, réutilisant
+   la logique de l'ancienne reconstruction textuelle) donnait 5
+   groupes séparés (titre et contenu de chaque rangée scindés par le
+   petit espace dû à l'image entre les deux), pas les 2 vraies rangées
+   de grille attendues.
+2. Un seuil élargi (150px) fusionnait bien titre+contenu, mais
+   fusionnait aussi à tort le pied de page (astuces de fin) dans la
+   deuxième rangée.
+3. Corrigé avec un regroupement fin (seuil 60px) suivi d'une fusion
+   ciblée des 4 premiers groupes seulement (2 titres + 2 contenus,
+   structure connue d'une fiche à 6 étapes), excluant explicitement
+   tout ce qui suit — **vérifié sur la vraie photo** : exactement 2
+   rangées propres obtenues (y=259-627 et y=810-1272), pied de page
+   correctement exclu.
+
+**Résultat, testé directement contre la vraie photo avant
+intégration** : chaque case, une fois découpée et réanalysée
+séparément, produit un texte **parfaitement ordonné** correspondant
+exactement à la vraie recette — comparé à l'ancienne reconstruction
+par coordonnées sur un seul passage (qui séparait déjà correctement
+les 6 étapes, mais avec un ordre interne des mots encore imparfait à
+cause de l'imprécision des coordonnées Tesseract sur cette photo
+précise, un problème que le découpage en images résout à la racine en
+donnant à Tesseract une image bien plus simple à lire pour chaque
+passage). Temps mesuré : environ 7 à 8 secondes pour les 6 passages
+OCR supplémentaires sur cette photo — l'indicateur de chargement
+générique existant ("peut prendre une minute la première fois") reste
+suffisamment informatif, aucun ajustement d'interface nécessaire.
+
+**Implémenté** (`runOcrOnImage`) :
+- `detectGridRowBounds(allWords)` : détermine les limites verticales
+  des rangées de grille à partir des mots déjà obtenus lors du premier
+  passage OCR (pas de nouveau passage nécessaire pour cette étape).
+- `runGridCellOcr(worker, input, data, numColumns)` : découpe l'image
+  source en cases (rangées x colonnes, avec une marge de 10px pour ne
+  pas couper le texte aux bords) et relance l'OCR indépendamment sur
+  chacune, combinant les textes obtenus.
+- `gridText` n'est calculé que si une mise en page en grille est
+  effectivement détectée — aucun coût supplémentaire pour les photos
+  qui n'en ont pas besoin (ingrédients, listes simples type Marmiton).
+
+**Ancienne fonction retirée** : `reconstructGridColumns` (reconstruction
+textuelle par coordonnées sur un seul passage) devenue obsolète et
+retirée proprement, plus aucun appelant après ce changement.
+
+**Testé de bout en bout** : le pipeline complet
+(`runOcrOnImage` → `deriveSectionDataForPhoto`) confirmé produire la
+description améliorée sur la vraie photo. Corpus régénéré avec les
+vraies données actuelles (`rawText`, `layoutText`, `gridText`
+recalculés depuis la vraie photo avec le code v188), assertions
+renforcées (5 phrases-clés au lieu de 4, couvrant désormais aussi la
+dernière étape). Toute la suite de tests existante et le corpus complet
+relancés après chaque changement, y compris une vérification
+spécifique que les photos sans grille (Marmiton, ingrédients) ne
+déclenchent jamais ce traitement plus coûteux.
+
+**Version testée** : v188
+
+### 44 — Détection de rangées rendue robuste, limite nutritionnelle renforcée *(v189)*
+
+**Contexte** : nouveau test physique complet avec 3 nouvelles vraies
+photos (couverture, ingrédients, préparation) sur une recette
+Barramundi déjà connue, mais dans un cadrage différent (format paysage
+plutôt que portrait) et une netteté légèrement inférieure. A révélé
+une régression sérieuse sur la reconstruction en grille (v188), avec
+un diagnostic précis et exploitable.
+
+**Cause racine confirmée par examen direct des données réelles** :
+la détection de rangées par coordonnées de mots (v188) regroupait les
+mots par proximité verticale, mais sur cette nouvelle photo, du texte
+de **faible confiance** produit par les photos de plat au sein de la
+grille (mots comme "BE", "ONES", confiance 8 à 30) comblait
+artificiellement l'espace entre les deux vraies rangées. Un filtrage
+naïf par confiance a ensuite révélé un problème plus profond : du
+**vrai texte** de la deuxième rangée avait aussi, sur cette photo
+précise, une confiance individuelle par mot étonnamment basse
+(ex. "les tomates dans les" à confiance 91-95, mais d'autres mots
+adjacents de la même phrase à confiance 20-40) — un simple seuil de
+confiance ne pouvait donc pas distinguer fiablement bruit et vrai
+texte de façon généralisable à toute photo.
+
+**Corrigé en abandonnant la détection par texte au profit d'une
+division proportionnelle fixe** : `detectGridRowBounds` ne dépend plus
+des coordonnées de mots ni de leur confiance, mais divise simplement
+la hauteur de l'image en deux (moitié haute / moitié basse, léger
+chevauchement pour ne pas couper le texte à la frontière). **Testé
+directement sur les deux vraies photos disponibles, aux orientations
+différentes** (nouvelle photo 1600×1200 paysage, ancienne photo
+1200×1600 portrait) : les 6 étapes parfaitement séparées et dans le
+bon ordre dans les deux cas — une robustesse que l'ancienne approche
+par coordonnées n'atteignait pas de façon fiable d'une photo à
+l'autre. Temps de traitement inchangé (5 à 8 secondes selon la
+photo).
+
+**Limite de fin de liste d'ingrédients renforcée** : ajout d'une
+limite de secours reconnaissant le motif "nombre/nombre" (ex.
+"2745/656"), signature quasi certaine d'une valeur d'énergie kJ/kcal —
+robuste même quand le titre "Valeurs nutritionnelles" est si déformé
+par l'OCR qu'aucun mot-clé ne correspond (constaté sur la vraie photo :
+"(kifkeal)" au lieu de "kJ/kcal"). Sans changer le résultat observable
+sur cette photo précise (les filtres ligne par ligne existants
+rattrapaient déjà la plupart des lignes parasites), ce filet de
+sécurité supplémentaire reste une protection plus directe et robuste
+pour d'autres appareils ou photos où ces filtres seraient moins
+efficaces.
+
+**Test permanent ajouté** (`tests/test_full_merge_pipeline.py`),
+comme recommandé, vérifiant que le temps de préparation détecté sur la
+couverture survit jusqu'à la recette fusionnée finale, via le vrai
+texte OCR du corpus. **Non reproduit avec le code actuel** : le
+signalement d'un "35 min" disparu sur l'exécution physique réelle n'a
+pas pu être reproduit avec les mêmes photos dans cet environnement
+(la valeur survit correctement à chaque étape testée) — possible
+variabilité OCR propre à l'appareil, comme observée à plusieurs
+reprises pendant ce projet, plutôt qu'un défaut du code identifiable.
+Le nouveau test reste en place pour détecter toute régression future
+sur ce point précis, même sans avoir pu confirmer la cause exacte de
+cet incident particulier.
+
+**Non traité, confirmé comme limite de l'OCR plutôt que du code** :
+"Beurre" absent et "Lait" non reconnu sur les ingrédients de cette
+nouvelle photo — vérifié que ces deux mots n'apparaissent nulle part
+dans le texte OCR brut lui-même, confirmant une limite de
+reconnaissance de Tesseract sur cette photo précise (probablement liée
+à sa netteté), pas un défaut de l'analyseur.
+
+**Non-régression** : toute la suite de tests existante, le corpus
+complet et les tests unitaires d'ingrédients relancés après chaque
+changement, aucune régression — y compris une vérification spécifique
+que les photos sans grille (Marmiton, ingrédients seuls) ne
+déclenchent toujours pas ce traitement.
+
+**Version testée** : v189
+
+### 45 — Parenthèse fermante manquante corrigée, confirmation des corrections précédentes *(v190)*
+
+**Contexte** : nouveau test physique complet sur la v189, avec un
+cadrage encore différent des précédents. Confirme d'abord que
+plusieurs corrections antérieures tiennent bien en conditions
+réelles : **"Beurre" et "Lait" tous deux correctement reconnus avec
+leur quantité et leur unité** (corrections des points 40 et 42),
+"Pommes de terre" et "Filet de barramundi" toujours corrects.
+
+**Vrai bug trouvé et corrigé** : "Persil plat et ciboulette*"
+apparaissait sans aucune quantité ni unité dans le PDF réel. Isolé
+précisément : le retrait du marqueur de pluriel `"(s)"` n'acceptait
+que la forme AVEC la parenthèse fermante — or l'OCR l'omet
+fréquemment ("sachet(s" sans le ")" final, un motif déjà rencontré à
+plusieurs reprises dans ce projet). Sans cette parenthèse, le "("
+résiduel cassait la fin du format inversé "Nom Quantité Unité",
+faisant échouer toute reconnaissance de la ligne. Corrigé en rendant
+la parenthèse fermante optionnelle dans les deux endroits où ce motif
+était dupliqué (fonction interne et enveloppe de
+`parseIngredientString`). **Testé avec le cas réel exact** ("Persil
+plat et ciboulette* 1 sachet(s") et 2 cas de non-régression (même
+motif avec une autre unité, et le cas normal AVEC la parenthèse
+présente) : tous corrects. **Test permanent ajouté** à
+`test_ingredient_parsing.py`.
+
+**Limite honnête découverte en investiguant le séparateur "À ajouter
+vous-même"** : sur cette nouvelle photo, ce séparateur était
+tellement déformé ("LrrereP SiOiter vous-tree") qu'aucun motif textuel
+raisonnable ne peut le reconnaître — confirmé ne contenir aucune
+sous-chaîne "ajouter" reconnaissable. **Découverte complémentaire** en
+vérifiant si au moins le score de confiance le signalait "à
+vérifier" : non, car ses mots ont une longueur moyenne élevée malgré
+leur non-sens complet (le score actuel ne vérifie que la longueur des
+mots, pas leur plausibilité en tant que vrais mots) — un vrai angle
+mort du système de score, documenté ici honnêtement plutôt que
+corrigé dans l'urgence par une règle supplémentaire risquant, comme à
+plusieurs reprises dans ce projet, un sur-ajustement à ce seul
+exemple.
+
+**Non-régression** : toute la suite de tests existante, le corpus
+complet et les tests unitaires relancés après chaque changement,
+aucune régression.
+
+**Version testée** : v190
+
+### 46 — Fiabilité du déclenchement de grille et corrections issues d'une nouvelle recette réelle (Marmiton Cassoulet) *(v191)*
+
+**Contexte** : nouveau test physique avec une recette de type très
+différent (Marmiton "Cassoulet à l'ancienne", 8 personnes, liste
+d'ingrédients en 2 colonnes) en complément du Barramundi déjà connu.
+Confirme que la correction `sachet(s` (v190) fonctionne bien en
+conditions réelles. Révèle un problème critique de fiabilité et
+plusieurs nouveaux défauts précis sur ce type de recette.
+
+**Point 1 — déclenchement de la grille de préparation non fiable
+d'un appareil à l'autre, corrigé** : sur la nouvelle photo Barramundi
+(pourtant en grille), le découpage en 6 cases ne s'est pas déclenché
+sur le Samsung alors qu'il fonctionnait dans l'environnement de test —
+confirmant que le signal de chevauchement de mots
+(`looksLikeMergedGridLayout`), bien que fiable dans cet environnement,
+dépend trop de la reconnaissance OCR elle-même (variante WASM,
+netteté...) pour être fiable partout. Corrigé en **combinant** ce
+signal avec un critère géométrique simple et indépendant de
+l'appareil : l'orientation paysage de la photo (rapport largeur/hauteur
+> 1,15), qu'une photo de préparation HelloFresh présente presque
+toujours. Le coût d'un déclenchement superflu sur une photo qui
+n'est pas réellement en grille reste limité au temps de traitement
+(`gridText` n'étant utilisé que pour la section "preparation").
+Vérifié sans régression sur les photos existantes (portrait,
+signal de chevauchement toujours actif quand pertinent).
+
+**Point 2 — couverture Marmiton classée à tort "Ingrédients", corrigé** :
+la couverture affiche déjà les 3-4 premières lignes de la vraie liste
+d'ingrédients au bas du cadrage (avant que l'utilisateur ne fasse
+défiler), faisant basculer la classification à tort et perdant le nom,
+la durée et la difficulté. **Vérifié sur nos vraies données existantes**
+qu'aucune vraie photo d'ingrédients (Barramundi, salade) n'affiche
+jamais À LA FOIS les personnes ET une durée (la durée étant une
+information de couverture, presque jamais présente sur une photo
+recadrée sur les seuls ingrédients) — signal retenu pour distinguer
+les deux cas : personnes ET durée présentes ensemble, combiné à un
+petit nombre d'ingrédients trouvés (≤5), fait désormais préférer
+"Informations générales". **Testé avec le cas réel exact** et un cas
+de non-régression (vraie photo d'ingrédients sans durée, reste bien
+classée normalement).
+
+**Point 3 — durée isolée au format "6h10" non reconnue, corrigé** :
+Marmiton affiche souvent la durée sans aucun préfixe explicite
+("6h10 • Facile • Assez cher"), un format qu'aucun motif existant ne
+capturait (tous exigeaient un préfixe comme "Préparation :"). Ajoutée
+une reconnaissance de ce format isolé, limitée aux lignes courtes pour
+éviter un faux positif sur un motif "XhXX" apparaissant au milieu d'un
+texte plus long sans rapport. Testé avec le cas réel et un cas de
+non-régression.
+
+**Point 4 — titre pollué par la note et le nombre de commentaires,
+corrigé** : "Cassoulet à l'ancienne 4.7/5 3 commentaires" au lieu du
+titre seul — la note était déjà collée au titre par l'OCR lui-même, et
+la fusion de sous-titre (v187) absorbait en plus la ligne de
+durée/difficulté suivante. Corrigé à deux niveaux : retrait du motif
+note/commentaires du nom quelle que soit son origine, et nouvelle
+limite empêchant la fusion de sous-titre d'absorber une ligne de
+durée isolée ou de difficulté ("Facile", "Moyen", "Difficile", prix).
+Testé avec le cas réel et confirmé que la fusion de sous-titre
+HelloFresh (2 lignes légitimes) continue de fonctionner normalement.
+
+**4 tests permanents ajoutés** dans un nouveau fichier
+`tests/test_section_detection.py`, chacun avec un cas réel et au
+moins un cas de non-régression.
+
+**Non traité dans cette session, chantier séparé à discuter** :
+la liste d'ingrédients en 2 colonnes de cette recette Cassoulet
+(structurellement différente de la table quantité/unité HelloFresh —
+ici, 2 colonnes indépendantes d'ingrédients côte à côte) fait encore
+fusionner à tort les deux ingrédients d'une même rangée en une seule
+ligne. Ce chantier représente un nouveau type de mise en page à
+traiter, distinct de la grille de préparation déjà résolue, et
+mériterait sa propre analyse dédiée avant implémentation plutôt qu'un
+ajustement à la volée dans cette même session.
+
+**Non-régression** : toute la suite de tests existante, le corpus
+complet et tous les tests unitaires relancés après chaque changement,
+aucune régression.
+
+**Version testée** : v191
+
+### 47 — Découpage réel en 2 colonnes pour les listes d'ingrédients Marmiton *(v192)*
+
+**Contexte** : chantier convenu avec l'utilisateur, volontairement
+reporté au tour précédent (v191) pour analyse dédiée — la liste
+d'ingrédients de la recette Cassoulet (Marmiton, 2 colonnes de cases à
+cocher) faisait fusionner à tort les deux ingrédients d'une même
+rangée, produisant 32 lignes incohérentes pour 17 ingrédients réels.
+
+**Analyse préalable sur la vraie capture, avant toute intégration** :
+examen direct du texte OCR brut confirmant la structure exacte —
+chaque case à cocher affiche sa quantité sur une ligne et son nom sur
+la ligne suivante ("1\noignon"), et les DEUX colonnes se retrouvent
+mélangées sur la MÊME ligne reconnue par Tesseract ("[sel [ poivre",
+"oignon oignons"...), un phénomène structurellement analogue à celui
+déjà résolu pour la grille de préparation à 3 colonnes, mais avec une
+mise en page différente (2 colonnes seulement, nombre de rangées
+variable, chaque ingrédient sur 2 lignes plutôt qu'une seule).
+
+**Solution conçue et testée directement sur la vraie capture avant
+intégration** : découpage réel de l'image en 2 moitiés verticales
+(gauche/droite, pleine hauteur chacune, léger chevauchement pour ne
+pas couper le texte à la frontière) avec OCR indépendant sur chacune —
+**chaque colonne ressort parfaitement séparée**, quantité et nom
+correctement associés (validé avant tout code : "sel", "1 oignon",
+"2 clous de girofle"... pour la colonne gauche, "poivre", "2 oignons",
+"1 carotte"... pour la colonne droite, correspondant exactement à la
+vraie fiche). Temps mesuré : 2,9 secondes pour les 2 passages
+supplémentaires.
+
+**Bug latent découvert et corrigé au passage** : `runGridCellOcr` (le
+chantier précédent, v188) aurait échoué sur une entrée PNG — jamais
+testée avec ce cas précis jusqu'ici, l'entrée pouvant être un `File`
+brut non redimensionné (voir `resizeImageForOcr`) plutôt qu'un canvas,
+que `drawImage()` n'accepte pas directement. Corrigé avec une
+normalisation systématique en bitmap dessinable, appliquée aux deux
+fonctions de découpage d'image.
+
+**Analyseur dédié conçu et affiné en 2 itérations** — `parseStackedIngredientColumn`,
+pour le format "quantité sur une ligne, nom sur la suivante" :
+1. Une première version nettoyait trop agressivement les préfixes de
+   case à cocher parasites, mangeant parfois une vraie lettre de début
+   de mot ("el" au lieu de "sel").
+2. Corrigée avec une détection plus prudente (préfixe court suivi d'un
+   espace, uniquement si ce préfixe contient un symbole ou fait 1-2
+   caractères) et une reconnaissance de quantité plus permissive
+   (tolère un court préfixe générique parasite avant le chiffre,
+   plutôt qu'une liste fixe de symboles).
+
+**Intégration prudente, sans détection préalable devinée** : contrairement
+à la grille de préparation (où l'orientation paysage sert de signal
+géométrique fiable), aucun signal fiable n'a été trouvé pour détecter
+à l'avance une liste d'ingrédients en 2 colonnes — le signal de
+chevauchement de mots existant, testé directement sur cette capture,
+ne se déclenche pas pour ce type de mise en page. Le découpage en 2
+colonnes n'est donc tenté qu'**après confirmation** que la section a
+été classée "ingredients", évitant de deviner à l'avance et le coût de
+ce traitement sur des photos où il ne serait jamais utilisé. **Résultat
+retenu uniquement s'il produit plus d'ingrédients que l'extraction
+standard** — signe qu'une vraie mise en page à 2 colonnes a été
+démêlée avec succès, plutôt qu'une liste à une seule colonne où ce
+découpage n'aurait rien apporté. Mis en cache sur l'entrée pour être
+réutilisé sans recalcul si l'utilisateur change ensuite manuellement
+la section.
+
+**Résultat final, testé de bout en bout sur la vraie capture** :
+19 ingrédients correctement entrelacés dans l'ordre de lecture naturel
+(gauche puis droite, ligne par ligne) sur les 17 réels — contre 32
+lignes incohérentes initialement. **Limite honnête documentée** : 2
+ingrédients restent imparfaits ("1kg" lu "like", "3" lu "Os" par
+Tesseract lui-même) — le chiffre de quantité est mal reconnu comme des
+lettres, une limite de reconnaissance OCR que l'analyse en aval ne
+peut pas corriger ; ces lignes restent correctement signalées "à
+vérifier" ou visibles pour correction manuelle plutôt que
+silencieusement fausses.
+
+**Vérifié sans régression** sur les vraies photos à une seule colonne
+déjà validées (salade grecque toujours 12, Barramundi toujours 11).
+
+**Corpus enrichi** : nouveau cas `photo_cassoulet_ingredients_2colonnes.json`
+avec les vraies données de la capture, `twoColumnIngredients`
+pré-calculé, assertions sur 4 ingrédients-clés. `run_ocr_corpus.py` mis
+à jour pour propager ce nouveau champ optionnel.
+
+**Non-régression** : toute la suite de tests existante, le corpus
+complet (6 cas) et tous les tests unitaires relancés après chaque
+changement, aucune régression.
+
+**Version testée** : v192
+
+### 48 — Personnes non devinées silencieusement, nouveau variant de parenthèse isolée *(v193)*
+
+**Contexte** : nouveau test physique avec 2 recettes inédites (Marmiton
+"Retour des fameuses pâtes carbo à la française" et "La Chèvre Chaud :
+betterave & bacon"). Le PDF final de la recette Carbonara affichait
+"4 personnes" au lieu des 2 réelles — investigué directement.
+
+**Point 1 — cause trouvée : "4" deviné silencieusement, corrigé** :
+ni la couverture ni la photo d'ingrédients de cette recette précise ne
+contenaient de motif "N personnes" lisible par l'OCR (probablement un
+problème d'éclairage sur cette capture, signalé par l'utilisateur
+lui-même). Le formulaire retombait alors sur une valeur par défaut
+codée en dur ("4"), au lieu de laisser le champ vide comme le font déjà
+correctement les champs temps de préparation/cuisson dans la même
+situation — masquant ainsi le fait que la vraie valeur n'avait pas pu
+être détectée, plutôt que d'inviter l'utilisateur à la vérifier.
+Corrigé en alignant le champ personnes sur le même comportement :
+laissé vide en contexte d'import (photo ou URL) quand rien n'a été
+détecté, le "4" par défaut restant réservé à la création manuelle
+d'une toute nouvelle recette depuis zéro. **Testé avec 3 scénarios**
+(import sans détection → vide, import avec 2 détecté → conservé,
+nouvelle recette vierge → 4 inchangé) : tous corrects.
+
+**Point 2 — nouveau variant de parenthèse isolée sans "s)" du tout,
+corrigé** : "Persil* 1 sachet (" (juste "(" en fin de ligne, sans même
+un "s" résiduel) faisait complètement échouer la reconnaissance de la
+quantité — un variant encore plus dégradé que celui corrigé au point
+45 ("sachet(s" sans la fermeture). Corrigé en généralisant le motif de
+retrait en un seul motif ancré en fin de chaîne, couvrant les 3
+variantes observées à ce jour ("(s)" complet, "(s" sans fermeture, "("
+isolé). Testé avec le cas réel exact, sans régression sur les 3 cas
+déjà couverts.
+
+**Non reproduit avec le code actuel** : "Spaghetti 180" perdant son
+unité "g" dans le PDF final n'a pas pu être reproduit — testé
+directement avec le vrai texte OCR de cette photo (qui contient bien
+"180 g"), la quantité et l'unité sont correctement extraites à travers
+tout le pipeline. Cause exacte non déterminée (peut-être un état du
+code antérieur aux corrections déjà livrées, ou un artefact propre à
+l'export PDF plutôt qu'à l'analyse elle-même).
+
+**Autres lignes fortement dégradées observées sur cette recette**
+(noms tronqués à une lettre isolée, unités méconnaissables) **non
+investiguées individuellement** : probablement des limites de
+reconnaissance OCR liées à l'éclairage de la capture, comme
+l'utilisateur l'a lui-même anticipé, plutôt que des défauts de
+l'analyse — cohérent avec le principe déjà établi dans ce projet de ne
+pas sur-ajuster à des cas de dégradation extrême au cas par cas.
+
+**2 tests permanents ajoutés** (un dans `test_ingredient_parsing.py`
+pour le nouveau variant de parenthèse, un dans
+`test_section_detection.py` pour le champ personnes).
+
+**Non-régression** : toute la suite de tests existante, le corpus
+complet et tous les tests unitaires relancés après chaque changement,
+aucune régression.
+
+**Version testée** : v193
+
+### 49 — Vérification complète sur toutes les vraies photos du projet : 3 défauts sérieux trouvés et corrigés *(v194)*
+
+**Contexte** : à la demande de l'utilisateur, vérification systématique
+du code v193 en repassant **toutes** les vraies photos collectées
+depuis le début du projet (Salade grecque, 2 sessions Barramundi,
+Cassoulet, Carbonara, Chèvre Chaud) à travers le pipeline complet
+(OCR → détection de section → extraction → fusion), plutôt que de se
+limiter aux cas déjà couverts par le corpus. A révélé 3 défauts
+sérieux qu'aucun test individuel n'avait détectés.
+
+**Point 1 — régression critique du chantier 2 colonnes (v192),
+corrigée** : le découpage en 2 colonnes s'appliquait à tort à des
+photos d'ingrédients à une seule colonne, fragmentant chaque ligne en
+deux morceaux incohérents. Une vraie photo Barramundi (10 ingrédients
+réels) produisait 40 "ingrédients" absurdes ; une vraie photo Salade
+grecque (12 réels) en produisait 62. Cause : le critère de sélection
+"plus d'ingrédients = meilleur résultat" (v192) ne suffisait pas à
+distinguer une vraie mise en page à 2 colonnes correctement démêlée
+d'une liste à une seule colonne fragmentée à tort, qui produit
+mécaniquement PLUS de "lignes" mais de bien moins bonne qualité.
+Corrigé en ajoutant un garde-fou de qualité, calibré sur des données
+réelles : la proportion d'ingrédients avec une quantité reconnue est de
+68 % sur le vrai cas à 2 colonnes (Cassoulet) contre seulement 18 % sur
+le cas cassé (Barramundi) — 40 % retenu comme seuil de sécurité. Testé
+sur les vraies photos Barramundi (retour à 8-11 ingrédients raisonnables)
+et Cassoulet (toujours 19 ingrédients, aucune régression sur le corpus).
+
+**Point 2 — photo d'ingrédients sans ligne d'en-tête visible, corrigée** :
+une vraie photo Carbonara cadrée sans "Ingrédients pour N personnes"
+visible (probablement coupée hors du cadre) se retrouvait classée à
+tort "Préparation", avec zéro ingrédient extrait. Cause : la
+classification automatique (`detectPhotoSection`) dépend entièrement
+de `parseOcrRecipeText`, dont le comportement conservateur (délibéré
+et raisonnable pour son propre usage : "mieux vaut des ingrédients
+vides qu'un découpage hasardeux") laisse les ingrédients vides quand
+aucun marqueur n'est trouvé — mais cette prudence empêchait aussi la
+CLASSIFICATION de reconnaître une vraie photo d'ingrédients dans ce
+cas précis. Corrigé en ajoutant un signal de repli dédié,
+`looksLikeIngredientTableWithoutMarker`, qui estime la probabilité
+d'une table d'ingrédients à partir de la densité de lignes se
+terminant par une unité reconnue (`\d+\s*(g|kg|sachet|pièce...)`),
+utilisé uniquement pour la CLASSIFICATION (pas pour l'extraction
+elle-même, qui continue d'utiliser `extractIngredientsFromLines`,
+déjà capable de traiter tout le texte sans marqueur). Seuil calibré
+sur le cas réel (29,6 % de lignes correspondantes, seuil retenu à
+25 % avec une marge de sécurité). Testé sans aucun faux positif sur
+les 8 autres vraies photos de préparation et de couverture du projet.
+
+**Point 3 — division silencieuse des quantités par un nombre de
+personnes deviné, corrigée** : en investiguant le "4 personnes" déjà
+signalé (point 48, uniquement corrigé côté affichage du formulaire),
+découvert que `mergeMultiPhotoResults` divisait aussi silencieusement
+les quantités par 4 quand le nombre de personnes était réellement
+inconnu — un défaut plus grave que le simple affichage, puisqu'il
+fausse durablement les quantités STOCKÉES. Corrigé : les quantités
+restent désormais à leur valeur brute (non divisées) quand ni
+l'utilisateur ni aucune photo n'a permis de déterminer le nombre de
+personnes, cohérent avec le champ du formulaire déjà laissé vide dans
+ce cas plutôt que rempli d'une valeur inventée. **Vérifié explicitement
+sans régression** : la division normale par un nombre de personnes
+réellement connu continue de fonctionner correctement (testé avec 2
+personnes, quantité 500 g → 250 g par personne, inchangé).
+
+**5 tests permanents ajoutés** dans un nouveau fichier
+`tests/test_verification_complete.py`, couvrant les 3 points
+ci-dessus avec des cas réels et des vérifications de non-régression,
+dont un garde-fou testant explicitement qu'un faux résultat 2 colonnes
+de mauvaise qualité (30 fragments sans quantité) est bien rejeté.
+
+**Non-régression** : toute la suite de tests existante, le corpus
+complet et tous les tests unitaires relancés après chaque changement,
+aucune régression.
+
+**Version testée** : v194
+
+### 50 — Compatibilité des sauvegardes entre l'app mobile et l'app Windows *(v195, + modifications sur `main.py`)*
+
+**Contexte** : demande explicite de l'utilisateur — faire fonctionner
+les sauvegardes indifféremment entre l'application mobile (PWA, ce
+dépôt) et une application de bureau distincte ("MonLivreDeRecettes",
+Python/tkinter), avec des tailles de fichiers gérées de façon
+cohérente entre les deux.
+
+**Analyse préalable, avant tout code** : comparaison détaillée des deux
+architectures de sauvegarde. Différences trouvées :
+- Format : JSON plat unique (mobile, photos en base64 intégrées) contre
+  archive ZIP avec fichiers JSON séparés + dossier `images/` (Windows,
+  module Python `zipfile`).
+- **Aucun identifiant stable côté Windows** — les recettes y étaient
+  identifiées par leur nom uniquement.
+- **Aucune limite de taille côté Windows**, contre 50 Mo
+  (avertissement) / 100 Mo (refus) côté mobile.
+- Noms de champs différents (camelCase contre snake_case) mais très
+  proches conceptuellement pour la plupart.
+- Différences de conception plus profondes pour le planning
+  hebdomadaire (Windows : un seul créneau par jour référencé par nom de
+  recette ; mobile : trois créneaux par jour référencés par
+  identifiant), les menus et les listes de courses enregistrées.
+
+**Périmètre volontairement recentré en cours de route** : plutôt que de
+forcer une correspondance approximative pour le planning/menus/listes
+de courses (risquant de mélanger des données incohérentes entre les
+deux applications), le format partagé se limite aux données les plus
+utiles à faire circuler entre les deux appareils : **recettes (avec
+leurs photos), ingrédients connus, garde-manger, personnalisations**
+(allergènes, prix, substituts). Documenté clairement des deux côtés.
+
+**Bibliothèque ZIP maison, après un premier échec instructif** : une
+première tentative avec la bibliothèque JSZip (récupérée via le web,
+~100 Ko sur une seule ligne minifiée) a échoué — le fichier s'est
+corrompu pendant la sauvegarde locale (`Cannot find module
+'./stream/StreamHelper'` à l'exécution). Plutôt que de retenter le
+transfert, implémenté un lecteur/écrivain ZIP minimal en s'appuyant sur
+les API de compression natives du navigateur
+(`CompressionStream`/`DecompressionStream`, format "deflate-raw",
+disponibles depuis Chrome/Edge 80+, Firefox 113+, Safari 16.4+) —
+aucune dépendance externe, donc aucun risque de corruption au
+transfert. **Compatibilité avec le module Python `zipfile` (utilisé
+côté Windows) vérifiée dans les deux sens avec de vraies commandes** :
+un zip généré par le nouveau code JS s'ouvre et se vérifie
+correctement avec `zipfile.testzip()` côté Python ; un zip généré par
+Python (compression DEFLATE) se relit correctement côté JS.
+
+**Deux erreurs d'étourderie corrigées en cours de route** : lors de
+l'ajout du nouveau module ZIP puis des fonctions de conversion, la
+ligne de déclaration de la fonction/constante suivante a été
+accidentellement effacée à deux reprises par un remplacement de texte
+mal délimité (`BACKUP_STORES`, puis `buildBackupData`) — chaque fois
+repéré immédiatement par la vérification de syntaxe systématique après
+chaque modification, et corrigé sur-le-champ.
+
+**Identifiant stable ajouté côté Windows, avec migration automatique** :
+chaque recette reçoit désormais un identifiant (`uuid4`) à sa création.
+Une recette déjà existante sans identifiant (créée avant cette version)
+en reçoit un nouveau silencieusement au premier chargement, sauvegardé
+immédiatement pour que la migration ne s'exécute qu'une seule fois par
+recette. **Testé directement** (voir plus bas la méthode de test) :
+l'identifiant reste stable d'un chargement à l'autre après migration,
+et une recette ayant déjà un identifiant n'est jamais modifiée.
+
+**Méthode de test pour le code Windows, sans interface graphique
+disponible** : cet environnement ne dispose pas de tkinter ni d'écran,
+rendant impossible l'exécution normale de l'application Windows.
+Contournement mis en place : des modules `tkinter`/`tkinter.ttk` factices
+minimalistes (une classe générique répondant à n'importe quel attribut
+ou appel par un objet inerte) permettent d'importer le vrai fichier
+`main.py` et d'exécuter directement ses fonctions de couche de données
+(chargement/sauvegarde des recettes, ingrédients, garde-manger...) sans
+jamais déclencher de code d'interface graphique — la partie testée
+correspond exactement au code qui sera réellement exécuté par
+l'application, contrairement à une réécriture séparée à des fins de
+test.
+
+**Résultat le plus important, vérifié avec du vrai code des deux côtés,
+dans les deux sens** :
+- Une vraie archive produite par le vrai code JavaScript (recette avec
+  photo, ingrédients) importée avec succès par le vrai code Python —
+  tous les champs corrects, **photo vérifiée identique octet pour
+  octet**.
+- Une vraie archive produite par le vrai code Python importée avec
+  succès par le vrai code JavaScript — même vérification, résultat
+  identique.
+
+**Fonctions ajoutées côté application mobile** (`app.js`) :
+`buildZipFile`/`parseZipFile` (module ZIP générique), `crc32`,
+`deflateRawBytes`/`inflateRawBytes` (API natives), `recipeToSharedFormat`/
+`recipeFromSharedFormat`, `pantryToSharedFormat`/`pantryFromSharedFormat`,
+`buildSharedBackupZip`, `restoreFromSharedZip`. Interface ajoutée dans
+l'écran Sauvegarde (nouvelle section dédiée, avec sélecteur de mode
+fusion/remplacement identique à l'import classique).
+
+**Fonctions ajoutées côté application Windows** (`main.py`) :
+`build_shared_backup_zip`, `restore_from_shared_zip`, migration
+d'identifiant dans `load_recipes`. Interface ajoutée dans la fenêtre
+d'import/export existante (deux nouveaux boutons, sous un séparateur
+dédié) — **le câblage de l'interface elle-même (dialogues tkinter) n'a
+pas pu être testé visuellement**, faute d'environnement graphique
+disponible ; la logique sous-jacente (les deux fonctions ci-dessus) a
+en revanche été testée en profondeur comme décrit plus haut.
+
+**Limites de taille alignées** : 50 Mo (avertissement) / 100 Mo (refus)
+désormais appliquées des deux côtés, sur les deux fonctions de
+restauration Windows (format partagé et format complet existant) —
+totalement absentes côté Windows auparavant.
+
+**Test permanent ajouté** (`tests/test_shared_backup.py`), couvrant le
+module ZIP maison et l'aller-retour export/import complet côté
+application mobile. La compatibilité réelle avec l'application Windows,
+elle, a été vérifiée manuellement comme décrit ci-dessus mais ne peut
+pas être automatisée dans ce dépôt (tkinter indisponible dans cet
+environnement).
+
+**Non-régression** : toute la suite de tests existante côté application
+mobile relancée après chaque changement, aucune régression.
+
+**Version testée** : v195 (mobile), modifications non versionnées côté
+application Windows (pas de système de version dans ce projet distinct).
+
+### 51 — Bouton de partage pour l'export au format partagé *(v196)*
+
+**Contexte** : l'export au format partagé (voir point 50) ne
+proposait que le téléchargement direct dans le dossier Téléchargements
+— demande explicite de l'utilisateur d'ajouter aussi le partage natif
+(Drive, Gmail, Dropbox...), comme c'est déjà le cas pour l'export
+classique.
+
+**Corrigé en réutilisant le mécanisme déjà en place** : `shareBackupData`
+étant générique (accepte n'importe quel `File`, sans dépendre du
+format de sauvegarde), directement réutilisée pour le fichier ZIP
+partagé — même précaution que pour l'export classique (fichier
+entièrement préparé avant que le bouton ne devienne cliquable, pour
+qu'aucun `await` ne s'intercale entre le clic et l'appel à
+`navigator.share()`), même repli sur le téléchargement classique en
+cas d'échec du partage.
+
+**Testé** : rendu de l'interface sans capacité de partage (bouton de
+partage absent, téléchargement seul proposé, comportement inchangé) et
+avec capacité de partage simulée (bouton présent, désactivé puis
+activé une fois le fichier prêt, texte correct) — aucune erreur JS
+dans les deux cas.
+
+**Non-régression** : suite de tests existante et corpus complet
+relancés, aucune régression.
+
+**✅ Confirmé fonctionnel en conditions réelles par l'utilisateur** :
+export et import de sauvegarde testés dans les deux sens entre l'app
+mobile réelle et l'app Windows réelle — ça fonctionne. Il s'agit du
+premier test physique de tout le chantier de compatibilité (points 50
+et 51), jusqu'ici seulement vérifié par du code exécuté directement
+sans interface graphique (voir point 50) faute d'environnement adapté
+pour ce faire. Confirme que le câblage des boutons Windows
+(jusque-là jamais vu à l'écran) fonctionne correctement, en plus de la
+logique sous-jacente déjà testée en profondeur.
+
+**Version testée** : v196
+
+### 52 — Audit complet de l'application, corrections design/UI *(v197)*
+
+**Contexte** : audit complet demandé par l'utilisateur, couvrant
+fonctionnement et design/interface. Méthode : captures d'écran réelles
+de 17 écrans (mode clair, sombre, mobile et écran large), calcul des
+ratios de contraste WCAG sur toute la palette, vérification de code
+ciblée — pas de simulation, tout vu ou mesuré concrètement.
+
+**Piège méthodologique repéré et corrigé en cours d'audit** : chaque
+script Playwright démarre un navigateur neuf, donc IndexedDB ne
+persiste pas entre deux scripts séparés — les toutes premières captures
+montraient des écrans vides malgré des données insérées juste avant,
+et une bannière "restaurer une sauvegarde" affichée à tort. Corrigé en
+regroupant insertion des données et captures dans une seule session ;
+confirmé ensuite que le code lui-même était correct
+(`state.recipes.length === 0` avant correction, `4` après — la logique
+d'affichage de la bannière était juste, c'est la donnée de test qui
+manquait).
+
+**Fausse alerte écartée après vérification** : chevauchement apparent
+entre le bouton flottant "+" et les boutons de suppression en bas de
+liste. Vérifié par un vrai test de défilement jusqu'en bas d'une
+longue liste (700+ ingrédients) : le dernier élément reste pleinement
+atteignable, padding-bas correct. Comportement normal d'un bouton
+flottant, pas un bug.
+
+**Contraste des couleurs vérifié par calcul** (pas à l'œil) : les 10
+combinaisons principales de la palette (texte/fond, boutons, mode
+sombre) passent toutes WCAG AA (4,5:1 minimum) — de 4,64:1 à 14,5:1
+selon les paires.
+
+**3 corrections appliquées, chacune testée visuellement avant/après** :
+
+1. **Puces de filtre coupées sans indice de défilement** (écran
+   Recettes) : la 4ᵉ puce ("Envies") était coupée net, barre de
+   défilement volontairement masquée sans aucun signal alternatif.
+   Corrigé en enveloppant `.chip-row` dans un conteneur
+   `.chip-row-wrap` avec un dégradé sur le bord droit
+   (`pointer-events:none` pour ne jamais bloquer un appui sur la
+   dernière puce partiellement visible). Confirmé visuellement : la
+   puce se fond maintenant proprement au bord plutôt que d'être
+   coupée à l'aveugle.
+
+2. **Bouton "Choisir un fichier" non stylisé** (écran Sauvegarde, 2
+   emplacements : import classique et import au format partagé).
+   Corrigé avec le motif déjà utilisé pour la photo de recette (entrée
+   native rendue invisible, `<label>` stylisé en bouton à la place) —
+   plus l'ajout d'un affichage du nom de fichier choisi, absent du
+   nouveau style puisque le rendu natif du navigateur ne l'affiche
+   plus. **Conflit de spécificité CSS trouvé et corrigé en cours de
+   route** : la couleur du texte du bouton ne correspondait pas à
+   celle voulue (`.field label` existant, plus spécifique, l'emportait
+   sur la nouvelle classe) — détecté en vérifiant précisément la
+   couleur calculée (`rgb(121,110,94)` au lieu de `rgb(43,36,32)`
+   attendu), pas seulement à l'œil où la différence était trop subtile
+   pour être fiable. Corrigé en renforçant la spécificité du
+   sélecteur. Fonctionnalité de sélection de fichier retestée après
+   coup : toujours opérationnelle.
+
+3. **Cibles tactiles sous 44px** : boutons +/- personnes (32→44px),
+   crayon/poubelle de la gestion des ingrédients (34→44px), et un 3ᵉ
+   cas trouvé en vérifiant plus largement pendant la correction
+   (bouton de suppression d'ingrédient dans le formulaire de recette,
+   38→44px, non listé dans l'audit initial mais suivant le même motif).
+
+**Point 4 de l'audit initial (mise en page desktop non peaufinée)**
+volontairement laissé tel quel à la demande de l'utilisateur — l'app
+étant clairement conçue mobile-first (navigation du bas, import
+photo/QR), jugé non prioritaire.
+
+**Non-régression** : toute la suite de tests existante et le corpus
+complet relancés après chaque correction, aucune régression.
+
+**Version testée** : v197
+
+**✅ Confirmé fonctionnel en conditions réelles par l'utilisateur** —
+sur les deux appareils : bouton de partage de l'export partagé (menu
+de partage natif Android), les 3 corrections visuelles (dégradé sur
+les puces de filtre, bouton de fichier stylisé, cibles tactiles
+agrandies) côté mobile ; numéro de version dans le titre de fenêtre,
+position des 2 nouveaux boutons, comportement en conditions réelles
+côté Windows. Clôture la série de vérifications physiques ouverte
+depuis le chantier de compatibilité des sauvegardes (points 50 à 52).
+
+### 53 — Import des données de référence ingrédients depuis l'app Windows v56 *(v198)*
+
+**Contexte** : l'utilisateur a fourni la dernière version de
+l'application Windows (v56), dans laquelle un audit indépendant avait
+mis à jour les données de référence des 1 030 ingrédients — allergènes,
+valeurs nutritionnelles et traductions — avec une source officielle
+(ANSES, Table Ciqual 2025, licence ouverte Etalab 2.0) plutôt que des
+estimations. Demande : réutiliser ce travail déjà fait pour améliorer
+les mêmes données côté application mobile, sans repartir d'une
+recherche web.
+
+**Compatibilité de structure confirmée avant tout changement** :
+l'application mobile charge déjà, depuis son propre dossier `data/`,
+exactement les mêmes fichiers que l'application Windows (mêmes noms,
+même format JSON) — `ingredients_par_defaut.json`,
+`ingredient_allergenes.json`, `valeurs_nutritionnelles.json`,
+`ingredient_translations_{en,es,de}.json`. Un import direct par simple
+remplacement de fichier était donc possible, sans conversion.
+
+**Ampleur des changements vérifiée précisément avant l'import** (pas
+seulement en confiance sur l'annonce du fichier `AUDIT_INGREDIENTS_v56.md`
+fourni) :
+- Liste des 1 030 noms d'ingrédients : identique (aucun ajout ni
+  suppression), confirmé par comparaison d'ensembles.
+- **60 corrections d'allergènes** trouvées par comparaison ligne à
+  ligne — nombre exactement égal à celui annoncé dans l'audit fourni.
+  Exemples réels vérifiés : "Beurre" passe de `[]` à `["Lactose"]`
+  (allergène manquant, potentiellement dangereux à l'oubli) ; "Courge
+  spaghetti" perd à tort l'étiquette "Gluten" (faux positif retiré).
+- **289 fiches nutritionnelles avec des valeurs différentes** sur les
+  290 annoncées (écart d'une seule fiche, négligeable — sans doute une
+  estimation déjà correcte par coïncidence). 290 fiches disposent
+  désormais d'une provenance Ciqual explicite (code, nom précis de
+  l'aliment, URL source) dans un champ `_ciqual`, absent des fiches
+  encore estimées.
+- **26 corrections de traduction** au total sur les 3 langues (9 en
+  anglais, 7 en espagnol, 10 en allemand) — somme exactement égale à
+  celle annoncée dans l'audit fourni.
+- Substitutions d'ingrédients : confirmées identiques (non concernées
+  par cet audit), donc non touchées.
+
+**Compatibilité du nouveau champ `_ciqual` avec le code existant
+vérifiée avant l'import** : `getIngredientNutrition`/
+`computeRecipeNutrition` ne lisent que les champs `kcal`, `protein_g`,
+`carbs_g`, `fat_g` par accès direct — jamais d'itération sur toutes
+les clés d'un enregistrement. Le nouveau champ de provenance est donc
+ignoré sans risque par le code existant, aucune adaptation nécessaire.
+
+**Fichiers remplacés** dans `data/` : les 6 fichiers listés ci-dessus.
+**Sauvegarde de sécurité** des anciennes versions conservée
+séparément avant tout remplacement.
+
+**Testé de bout en bout après l'import** : `getIngredientAllergens`,
+`getIngredientNutrition`, `computeRecipeAllergens`,
+`computeRecipeNutrition` — tous confirmés fonctionner avec les
+nouvelles données, y compris le cas "Beurre" (allergène désormais
+détecté au niveau recette) et "Ail en poudre" (346 kcal, exemple cité
+tel quel dans l'audit fourni). Aucune erreur JS.
+
+**Service worker** : ces 6 fichiers étaient déjà dans la liste de
+préchargement (`FILES_TO_CACHE`) — la version a donc été incrémentée
+pour que les installations existantes récupèrent bien les fichiers mis
+à jour, plutôt que de continuer à servir indéfiniment les anciennes
+données déjà en cache.
+
+**Test permanent ajouté** (`tests/test_ingredient_reference_data.py`),
+avec un échantillon représentatif des corrections (pas une
+vérification exhaustive des 390 corrections) — protège contre une
+régression accidentelle qui effacerait ce travail déjà fait, sans
+revalider l'exactitude scientifique des valeurs elle-même (hors de
+portée d'un test automatisé).
+
+**Non-régression** : toute la suite de tests existante et le corpus
+complet relancés après le remplacement, aucune régression.
+
+**Limite honnête** : 740 fiches nutritionnelles restent des
+estimations non vérifiées côté source (précisé explicitement dans
+l'audit fourni) — cet import améliore la base existante, ne la
+certifie pas intégralement.
+
+**Version testée** : v198
+
+**✅ Confirmé fonctionnel en conditions réelles par l'utilisateur** —
+tous les points de vérification passés : mise à jour bien déclenchée,
+"Beurre" affiche désormais l'allergène Lactose, valeurs nutritionnelles
+changées comme attendu, aucun ingrédient manquant (toujours 1030).
+Temps de premier chargement mesuré à 2-3 secondes (fichier nutrition
++60% plus lourd), quasi instantané ensuite grâce à la mise en cache —
+jugé tout à fait acceptable par l'utilisateur.
+
+## Résumé — état au 06/09/2026 (v198)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
   (jsQR/jsPDF depuis la v141, Tesseract depuis la v165) — plus aucune

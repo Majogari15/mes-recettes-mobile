@@ -84,10 +84,10 @@ def run_case(page, entry):
 
     result = page.evaluate(
         """
-        ([rawText, layoutText, gridText]) => {
+        ([rawText, layoutText, gridText, twoColumnIngredients]) => {
             const parsed = parseOcrRecipeText(rawText);
             const detected = detectPhotoSection(parsed);
-            const sectionData = deriveSectionDataForPhoto(rawText, detected || 'other', layoutText, gridText);
+            const sectionData = deriveSectionDataForPhoto(rawText, detected || 'other', layoutText, gridText, twoColumnIngredients);
             return {
                 detected,
                 persons: sectionData.persons,
@@ -98,7 +98,7 @@ def run_case(page, entry):
             };
         }
         """,
-        [entry["rawText"], entry["layoutText"], entry.get("gridText")],
+        [entry["rawText"], entry["layoutText"], entry.get("gridText"), entry.get("twoColumnIngredients")],
     )
     ingredient_count = len(result["ingredients"])
     description_length = len(result["description"])

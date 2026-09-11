@@ -33,6 +33,11 @@ Depuis, la structure sépare strictement :
     pour les mises en page en grille (voir `reconstructGridColumns`
     dans `app.js`) — présent seulement sur les cas de préparation en
     grille à plusieurs colonnes (fiches HelloFresh notamment) ;
+  - `twoColumnIngredients` (optionnel) : liste d'ingrédients
+    pré-calculée par découpage réel en 2 images verticales avec OCR
+    indépendant sur chacune (voir `computeTwoColumnIngredients` dans
+    `app.js`) — présent seulement sur les cas de liste d'ingrédients en
+    2 colonnes (captures Marmiton à cases à cocher notamment) ;
   - `expected` : résultats attendus **actuels** — pas nécessairement
     "parfaits", mais l'état correct et connu tel qu'accepté après
     vérification (voir `notes` dans chaque fichier pour le contexte et
@@ -51,6 +56,41 @@ Depuis, la structure sépare strictement :
 - `run_ocr_corpus.py` — démarre lui-même un serveur local temporaire
   (port libre choisi automatiquement, arrêté à la fin), fait passer
   tous les cas par le vrai code de `app.js`, et compare aux attentes.
+- `test_ingredient_parsing.py` — tests unitaires ciblés sur
+  `parseIngredientString` (abréviations "c. à soupe", pourcentages non
+  confondus avec une quantité, détection des fractions mal reconnues
+  par l'OCR) — complémentaire au corpus, adapté à des règles de format
+  précises plutôt qu'à un texte de photo complet. Même fonctionnement
+  autonome (serveur démarré/arrêté automatiquement).
+- `test_full_merge_pipeline.py` — vérifie qu'une information de
+  couverture (temps de préparation) survit jusqu'à la recette
+  fusionnée finale, à travers `mergeMultiPhotoResults` — ajouté après
+  un test physique où cette information semblait perdue quelque part
+  entre l'OCR et le formulaire final.
+- `test_section_detection.py` — tests ciblés sur `detectPhotoSection`
+  et l'analyse du titre/durée dans `parseOcrRecipeText` (couverture ne
+  devant pas être classée "Ingrédients" à cause d'un début de liste
+  visible en bas du cadrage, durée isolée format "6h10", nettoyage du
+  titre pollué par une note/nombre de commentaires) — issus de vraies
+  photos Marmiton.
+- `test_verification_complete.py` — 3 défauts découverts lors d'une
+  vérification complète sur toutes les vraies photos du projet à la
+  fois (découpage en 2 colonnes appliqué à tort à une liste à une
+  seule colonne, photo d'ingrédients sans ligne d'en-tête visible,
+  division silencieuse des quantités par un nombre de personnes
+  deviné) — voir TESTS_NON_REGRESSION.md point 49.
+- `test_shared_backup.py` — module ZIP maison (lecture/écriture, sans
+  dépendance externe) et export/import au format de sauvegarde partagé
+  avec l'application Windows (recettes+photos, ingrédients,
+  garde-manger, personnalisations) — la compatibilité réelle avec
+  l'application Windows a été vérifiée manuellement (voir
+  TESTS_NON_REGRESSION.md), pas automatisable ici (tkinter indisponible
+  dans cet environnement).
+- `test_ingredient_reference_data.py` — protège la mise à jour des
+  données de référence ingrédients (allergènes, valeurs
+  nutritionnelles, traductions) importées depuis l'application Windows
+  v56 (source ANSES Ciqual 2025) — voir TESTS_NON_REGRESSION.md point
+  53.
 - `requirements.txt` — version verrouillée de Playwright.
 
 ## Utilisation

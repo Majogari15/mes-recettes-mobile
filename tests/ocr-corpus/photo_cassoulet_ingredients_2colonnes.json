@@ -1,0 +1,151 @@
+{
+  "id": "photo_cassoulet_ingredients_2colonnes",
+  "sourceDescription": "Texte OCR réel (Tesseract.js 7) d'une vraie capture d'écran Marmiton (recette Cassoulet à l'ancienne), liste d'ingrédients en 2 colonnes avec cases à cocher — chaque case affichant sa quantité au-dessus de son nom sur 2 lignes. twoColumnIngredients pré-calculé via le découpage réel en 2 images verticales avec OCR indépendant sur chacune (voir computeTwoColumnIngredients, TESTS_NON_REGRESSION.md).",
+  "rawText": "& Ingrédients -\n- 8 personnes +\n[sel [ poivre\nmy [2\noignon oignons\n[2 my\nclous de girofle carotte\nOs [711 boite\ncarottes de purée de tomate\n[750g [1\nde haricots blancs secs bouquet garni\n[[T100g [300g\nde couenne fraiches de lard de poitrine demi-sel\n[Tike [1\nd' épaule de mouton oie ou 1 canard\n[11 [200g\nsaucisson cru a l'ail de graisse d'oie ou de saindoux\nOd 2 gousses\nJ\" ail\n",
+  "layoutText": "& Ingrédients -\n- 8\n[sel [ poivre\nmy [2\noignon oignons\n[2 my\nclous de girofle carotte\nOs [711 boite\ncarottes de purée de tomate\n[750g [1\nde haricots blancs secs bouquet garni\n[[T100g [300g\nde couenne fraiches de lard de poitrine demi-sel\n[Tike [1\nd' épaule de mouton oie ou 1 canard\n[11 [200g\nsaucisson cru a l'ail de graisse d'oie ou de saindoux\nOd 2 gousses\nJ\" ail",
+  "twoColumnIngredients": [
+    {
+      "name": "sel",
+      "quantity": null,
+      "unit": "pièce",
+      "confidence": "uncertain"
+    },
+    {
+      "name": "poivre",
+      "quantity": null,
+      "unit": "pièce",
+      "confidence": "reliable"
+    },
+    {
+      "name": "oignon",
+      "quantity": 1,
+      "unit": "pièce",
+      "confidence": "reliable"
+    },
+    {
+      "name": "oignons",
+      "quantity": 2,
+      "unit": "pièce",
+      "confidence": "reliable"
+    },
+    {
+      "name": "clous de girofle",
+      "quantity": 2,
+      "unit": "pièce",
+      "confidence": "reliable"
+    },
+    {
+      "name": "carotte",
+      "quantity": 1,
+      "unit": "pièce",
+      "confidence": "reliable"
+    },
+    {
+      "name": "Os",
+      "quantity": null,
+      "unit": "pièce",
+      "confidence": "uncertain"
+    },
+    {
+      "name": "purée de tomate",
+      "quantity": 1,
+      "unit": "boîte",
+      "confidence": "reliable"
+    },
+    {
+      "name": "carottes",
+      "quantity": null,
+      "unit": "pièce",
+      "confidence": "reliable"
+    },
+    {
+      "name": "bouquet garni",
+      "quantity": 1,
+      "unit": "pièce",
+      "confidence": "reliable"
+    },
+    {
+      "name": "haricots blancs secs",
+      "quantity": 750,
+      "unit": "g",
+      "confidence": "reliable"
+    },
+    {
+      "name": "lard de poitrine demi-sel",
+      "quantity": 300,
+      "unit": "g",
+      "confidence": "reliable"
+    },
+    {
+      "name": "couenne fraiches",
+      "quantity": 100,
+      "unit": "g",
+      "confidence": "reliable"
+    },
+    {
+      "name": "oie ou canard",
+      "quantity": 1,
+      "unit": "pièce",
+      "confidence": "reliable"
+    },
+    {
+      "name": "like",
+      "quantity": null,
+      "unit": "pièce",
+      "confidence": "reliable"
+    },
+    {
+      "name": "graisse d'oie ou de saindoux",
+      "quantity": 200,
+      "unit": "g",
+      "confidence": "reliable"
+    },
+    {
+      "name": "d' épaule de mouton",
+      "quantity": null,
+      "unit": "pièce",
+      "confidence": "uncertain"
+    },
+    {
+      "name": "saucisson cru a l'ail",
+      "quantity": 1,
+      "unit": "pièce",
+      "confidence": "reliable"
+    },
+    {
+      "name": "J\" ail",
+      "quantity": 2,
+      "unit": "gousse",
+      "confidence": "uncertain"
+    }
+  ],
+  "expected": {
+    "detectedSection": "ingredients",
+    "persons": 8,
+    "ingredientCountMax": 22,
+    "keyIngredients": [
+      {
+        "nameContains": "sel",
+        "quantity": null,
+        "unit": "pièce",
+        "confidence": "uncertain"
+      },
+      {
+        "nameContains": "poivre",
+        "quantity": null,
+        "unit": "pièce"
+      },
+      {
+        "nameContains": "haricots blancs secs",
+        "quantity": 750,
+        "unit": "g"
+      },
+      {
+        "nameContains": "lard de poitrine",
+        "quantity": 300,
+        "unit": "g"
+      }
+    ],
+    "notes": "Vraie capture Marmiton, liste d'ingrédients en 2 colonnes — cas connu difficile résolu par découpage réel en 2 images verticales avec OCR indépendant sur chacune (voir TESTS_NON_REGRESSION.md point 47). Passé de 32 lignes incohérentes (bogue initial signalé) à 19 ingrédients correctement entrelacés sur les 17 réels. 2 ingrédients ('1kg épaule de mouton' devenu 'like', '3 carottes' devenu 'Os') ont leur chiffre de quantité lui-même mal lu par l'OCR comme des lettres — limite de reconnaissance, pas de l'analyse, ces lignes restant correctement signalées 'à vérifier' ou visibles pour correction manuelle."
+  }
+}

@@ -7,7 +7,7 @@
     "detectedSection": "ingredients",
     "persons": 2,
     "ingredientCount": 12,
-    "notes": "Fiche HelloFresh salade grecque, photo cadrée sur la zone ingrédients. 12 lignes réelles sur la fiche.",
+    "notes": "Fiche HelloFresh salade grecque, photo cadrée sur la zone ingrédients. 12 lignes réelles sur la fiche. Échalote et Origan ont leur fraction Unicode (½, ⅔) mal reconnue par l'OCR comme un symbole '%' — détecté et marqué 'à vérifier' plutôt que de deviner une valeur, ou de laisser passer silencieusement sans aucun indice (voir parseIngredientString, TESTS_NON_REGRESSION.md).",
     "keyIngredients": [
       {
         "nameContains": "Grenailles",
@@ -26,6 +26,18 @@
         "quantity": 1,
         "unit": "boîte",
         "confidence": "reliable"
+      },
+      {
+        "nameContains": "Echalote",
+        "quantity": null,
+        "unit": "pièce",
+        "confidence": "uncertain"
+      },
+      {
+        "nameContains": "Origan",
+        "quantity": null,
+        "unit": "pièce",
+        "confidence": "uncertain"
       }
     ]
   }
