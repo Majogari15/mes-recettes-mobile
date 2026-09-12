@@ -4114,6 +4114,63 @@ chaque changement, aucune régression.
 
 **Version testée** : v199
 
+### 55 — Préparation à la publication sur le Google Play Store
+
+**Contexte** : demande de l'utilisateur d'entamer le chantier de mise
+sur le Play Store, après avoir écarté iOS (pas dans le foyer, pas la
+cible visée).
+
+**Recherche préalable** : méthode confirmée toujours d'actualité en
+2026 — PWABuilder (gratuit, Microsoft), génère un paquet Android via
+Trusted Web Activity (TWA). Score Lighthouse ≥80 recommandé, Digital
+Asset Links requis pour prouver la propriété du domaine.
+
+**Manifeste amélioré** : ajout d'un champ `screenshots` (4 images,
+recommandé par PWABuilder pour une installation enrichie et une fiche
+Play Store plus complète) — uniquement sur le manifeste principal
+(français), pas sur les 3 manifestes de langue alternatifs (utilisés
+pour la localisation de l'invite d'installation dans le navigateur,
+sujet distinct de la soumission Play Store).
+
+**4 vraies captures d'écran générées** (1080×2400, résolution
+standard téléphone) avec de vraies données de démonstration
+réalistes (recette avec photo, allergènes, notes, liste de courses
+avec prix) — pas des captures vides ou avec des données de test
+minimales.
+
+**Point de vigilance identifié et documenté honnêtement** : le worker
+Cloudflare du développeur (`mes-recettes-proxy...workers.dev`, déjà en
+HTTPS, vérifié dans le code) traite l'URL saisie par l'utilisateur
+lors d'un import de recette par lien — la seule donnée quittant
+l'appareil dans toute l'application. Documenté précisément dans la
+politique de confidentialité et le guide de déclaration "Sécurité des
+données", pour une déclaration Play Console honnête plutôt qu'un
+"aucune donnée collectée" trop optimiste ou une déclaration excessive
+par excès de prudence.
+
+**4 documents rédigés** :
+- `GUIDE_PUBLICATION_PLAY_STORE.md` — guide principal étape par étape
+- `FICHE_PLAY_STORE.md` — textes prêts à l'emploi (titre, descriptions),
+  comptages de caractères vérifiés précisément par calcul plutôt
+  qu'estimés (deux erreurs d'estimation initiales corrigées après
+  vérification)
+- `POLITIQUE_CONFIDENTIALITE.md` — à héberger en ligne (obligatoire
+  pour toute application Play Store, même sans collecte de données)
+- `GUIDE_SECURITE_DONNEES_PLAY_STORE.md` — remplissage du formulaire
+  Play Console question par question
+
+**Non-régression** : toute la suite de tests existante relancée après
+l'ajout des captures au manifeste, aucune régression.
+
+**Ce qui reste à faire par l'utilisateur lui-même** (nécessite un
+compte Google et un paiement, hors de portée de cette session) :
+création du compte développeur Play Console, passage par PWABuilder
+pour générer le paquet signé, hébergement de la politique de
+confidentialité en ligne, remplissage final et soumission.
+
+**Version testée** : v199 (pas de changement de code applicatif,
+uniquement le manifeste — pas de bump de version nécessaire)
+
 ## Résumé — état au 06/09/2026 (v199)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
