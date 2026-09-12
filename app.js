@@ -6332,7 +6332,7 @@ function renderBackup() {
   });
   wrap.appendChild(sharedSection);
 
-  const diagLink = el(`<p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">v${APP_VERSION} · <a href="#" id="open-diagnostic" style="color:var(--accent);">${escapeHtml(t("nav_diagnostic"))}</a></p>`);
+  const diagLink = el(`<p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">v${APP_VERSION} · <a href="#" id="open-diagnostic" style="color:var(--accent);">${escapeHtml(t("nav_diagnostic"))}</a> · <a href="https://majogari15.github.io/mes-recettes-mobile/confidentialite.html" target="_blank" rel="noopener" style="color:var(--accent);">${escapeHtml(t("privacy_policy_link"))}</a></p>`);
   diagLink.querySelector("#open-diagnostic").addEventListener("click", (e) => {
     e.preventDefault();
     state.screen = "diagnostic";
@@ -9178,7 +9178,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 199;
+const APP_VERSION = 200;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

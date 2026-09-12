@@ -26,8 +26,20 @@ cette question précise, en précisant :
 - Finalité : fonctionnalité de l'application elle-même (aller chercher
   le contenu de la page), pas de la publicité, pas de l'analyse
   d'audience
-- Cette donnée n'est ni partagée avec un tiers, ni conservée après la
-  requête
+- **Quatre services distincts peuvent recevoir cette adresse**, utilisés
+  l'un après l'autre en cas d'échec du précédent : votre propre Worker
+  Cloudflare en premier, puis Jina AI Reader (r.jina.ai), puis les
+  services publics AllOrigins, CodeTabs et cors.lol en dernier recours.
+  Ne déclarez pas seulement votre Worker : les trois autres sont des
+  services tiers, à mentionner comme tels dans le formulaire (section
+  "des données sont-elles partagées avec des tiers ?" → oui, avec ces
+  trois noms)
+- Cette donnée n'est pas conservée après la requête par le Worker du
+  développeur ; les trois autres services étant exploités par des
+  tiers, leurs propres règles de conservation échappent au contrôle du
+  développeur — à mentionner honnêtement plutôt que d'affirmer une
+  absence de conservation que vous ne pouvez pas garantir pour ces
+  services-là
 - Cette action ne se produit que si l'utilisateur choisit
   explicitement d'importer une recette par lien — ce n'est pas un
   comportement automatique ou en arrière-plan

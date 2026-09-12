@@ -23,11 +23,25 @@ que vous n'ayez exporté une sauvegarde vous-même au préalable.
 ## Les seuls cas où une information transite par un serveur
 
 **Importer une recette depuis un lien internet** : l'adresse (URL) que
-vous saisissez est transmise à un serveur (Cloudflare Worker) exploité
-par le développeur, qui va chercher le contenu de cette page pour vous
-et vous le renvoie. Cette adresse n'est pas conservée après la
-requête, et n'est partagée avec aucun tiers. Aucune autre information
-vous concernant n'est transmise à cette occasion.
+vous saisissez est transmise à un service tiers pour aller chercher le
+contenu de cette page et vous le renvoyer. Plusieurs services sont
+utilisés l'un après l'autre en cas d'échec du premier, pour maximiser
+les chances de réussite de l'import :
+
+1. Un serveur (Cloudflare Worker) exploité par le développeur, en
+   premier
+2. Si celui-ci échoue : **Jina AI Reader** (r.jina.ai)
+3. Si celui-ci échoue aussi : l'un des trois services publics
+   **AllOrigins**, **CodeTabs** ou **cors.lol**, en dernier recours
+
+Dans tous les cas, seule l'adresse de la page que vous voulez importer
+est transmise — jamais vos recettes, votre garde-manger ou toute autre
+donnée personnelle. Ces services ne sont pas exploités par le
+développeur (à l'exception du premier) et peuvent avoir leurs propres
+règles de conservation, sur lesquelles le développeur n'a pas de
+contrôle direct. Cette action ne se produit que si vous choisissez
+explicitement d'importer une recette par lien — ce n'est jamais un
+comportement automatique ou en arrière-plan.
 
 **Polices de caractères** : l'application utilise des polices
 (Fraunces, Inter) chargées depuis Google Fonts. Google peut recevoir

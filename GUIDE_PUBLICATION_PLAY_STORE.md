@@ -49,15 +49,29 @@ L'outil **PWABuilder** (gratuit, par Microsoft, toujours d'actualité en
 
 ## Étape 2 — Prouver que vous possédez le site (Digital Asset Links)
 
+⚠️ **Point technique important, corrigé après un second avis** : ce
+fichier doit être placé à la **racine de votre domaine**
+(`majogari15.github.io`), pas dans le sous-dossier de ce projet
+(`mes-recettes-mobile/`) — c'est une exigence du format Digital Asset
+Links lui-même : la vérification se fait sur l'origine complète du
+domaine, pas sur un chemin particulier à l'intérieur.
+
 1. Dans le `.zip` téléchargé, trouvez le fichier `assetlinks.json`
-2. Placez-le sur votre site à l'adresse exacte :
-   `https://majogari15.github.io/mes-recettes-mobile/.well-known/assetlinks.json`
-   (créez le dossier `.well-known` à la racine du dépôt s'il n'existe
-   pas encore)
+2. Placez-le à l'adresse exacte :
+   `https://majogari15.github.io/.well-known/assetlinks.json`
+
+   Concrètement, cela signifie un **second dépôt GitHub**, séparé de
+   `mes-recettes-mobile` : un dépôt nommé exactement
+   `majogari15.github.io` (le dépôt "utilisateur" GitHub Pages,
+   different d'un dépôt "projet"). Si vous n'en avez pas encore un,
+   créez-en un avec ce nom exact, puis ajoutez-y juste un dossier
+   `.well-known/` contenant ce fichier `assetlinks.json` — il n'a pas
+   besoin de contenir quoi que ce soit d'autre.
 3. Vérifiez que ce fichier est bien accessible en ouvrant cette URL
    dans un navigateur après publication — sans ça, l'application
-   plantera au lancement une fois installée depuis le Play Store
-   (uniquement un écran de navigateur s'affichera à la place)
+   n'affichera pas d'erreur visible mais s'ouvrira avec une barre de
+   navigateur visible en haut de l'écran, au lieu de l'apparence plein
+   écran attendue d'une vraie application installée
 
 ## Étape 3 — Créer la fiche dans Play Console
 

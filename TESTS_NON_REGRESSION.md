@@ -4171,7 +4171,77 @@ confidentialité en ligne, remplissage final et soumission.
 **Version testée** : v199 (pas de changement de code applicatif,
 uniquement le manifeste — pas de bump de version nécessaire)
 
-## Résumé — état au 06/09/2026 (v199)
+### 56 — Corrections suite à un second audit externe, préparation Play Store *(v200)*
+
+**Contexte** : un second audit indépendant (autre assistant IA,
+vérification de la version réellement déployée sur GitHub) a trouvé
+plusieurs défauts avant la soumission au Play Store. Chaque point a
+été vérifié moi-même avant correction plutôt qu'accepté tel quel — un
+point s'est avéré incorrect dans l'audit lui-même (voir plus bas).
+
+**Confirmé et corrigé** :
+- **Icônes sans canal alpha** : les 3 icônes étaient en RGB, Google
+  Play exige un PNG 32 bits avec alpha pour l'icône 512×512 — converties
+  en RGBA (canal alpha entièrement opaque, aucun changement visuel).
+- **Ratio des captures d'écran invalide** : 1080×2400 donnait un ratio
+  de 2,22:1, au-dessus du maximum autorisé de 2:1 — régénérées à
+  1080×1920 (ratio 1,78:1).
+- **Image promotionnelle (feature graphic) manquante** : obligatoire
+  pour toute fiche Play Store, créée aux dimensions exactes (1024×500,
+  RGB sans alpha — exigence inverse de celle de l'icône).
+- **Digital Asset Links au mauvais endroit** : mon guide indiquait
+  `majogari15.github.io/mes-recettes-mobile/.well-known/`, alors que ce
+  fichier doit être à la racine du domaine
+  (`majogari15.github.io/.well-known/`) — la vérification se fait sur
+  l'origine complète, pas sur un chemin particulier. Nécessite un
+  second dépôt GitHub ("dépôt utilisateur", différent d'un "dépôt
+  projet"). Guide corrigé en conséquence.
+- **Politique de confidentialité et guide "Sécurité des données"
+  incomplets** : ne mentionnaient que le Worker Cloudflare du
+  développeur pour l'import de recette par lien, alors que le code
+  utilise aussi, en repli successif, Jina AI Reader puis trois services
+  publics (AllOrigins, CodeTabs, cors.lol) — vérifié directement dans
+  le code (`fetchViaJinaReader`, `fetchRecipeDataViaProxies`), confirmé
+  exact. Les deux documents corrigés pour mentionner les 4 services.
+- **Politique de confidentialité inaccessible depuis l'application** :
+  n'existait qu'en ligne (page GitHub Pages), jamais liée depuis
+  l'interface — pourtant exigée par Google Play. Lien ajouté dans le
+  pied de page de l'écran Sauvegarde, avec sa propre clé de traduction
+  dans les 4 langues.
+
+**Recherché puis considéré à tort par le premier audit** :
+- **`icone_application.ico`** (usage interne à l'app Windows, sans
+  rapport avec ce projet mobile) : non concerné.
+- **Vulnérabilité jsPDF 2.5.1** (CVSS 9,6, GHSA-wfv2-pwc8-crg5) :
+  recherche confirmant la vulnérabilité réelle, mais **vérifiée non
+  exploitable dans ce projet** — le code n'utilise jamais
+  `doc.output()` avec les surcharges concernées (`pdfobjectnewwindow`,
+  `pdfjsnewwindow`, `dataurlnewwindow`), uniquement `doc.save()`,
+  confirmé par recherche exhaustive dans `app.js` (`grep -n
+  "\.output("` : aucun résultat). **Tentative de mise à jour vers
+  4.2.1 abandonnée** après un problème de transfert de fichier
+  (nouvelle tentative accidentellement tronquée, non fonctionnelle) —
+  plutôt que de risquer de livrer une bibliothèque PDF cassée, la
+  version 2.5.1 fonctionnelle a été restaurée depuis une sauvegarde de
+  livraison antérieure, puis retestée avec succès (export PDF réel
+  confirmé). **Reste un point ouvert**, sans risque pratique avéré
+  compte tenu de l'usage réel du code, à reprendre dans une session
+  future avec un moyen de transfert de fichier plus fiable.
+
+**Non-régression** : toute la suite de tests existante relancée après
+chaque changement, aucune régression. Export PDF spécifiquement
+retesté après la restauration de la version 2.5.1.
+
+**Fichiers ajoutés/modifiés** : `icons/*.png` (canal alpha),
+`screenshots/*.png` (ratio corrigé), `feature-graphic.png` (nouveau),
+`confidentialite.html` et `POLITIQUE_CONFIDENTIALITE.md` (4 services
+mentionnés), `GUIDE_SECURITE_DONNEES_PLAY_STORE.md` (4 services),
+`GUIDE_PUBLICATION_PLAY_STORE.md` (emplacement Digital Asset Links
+corrigé), `app.js`/`i18n.js` (lien politique de confidentialité).
+
+**Version testée** : v200
+
+## Résumé — état au 06/09/2026 (v200)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
   (jsQR/jsPDF depuis la v141, Tesseract depuis la v165) — plus aucune

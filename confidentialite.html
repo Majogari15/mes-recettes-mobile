@@ -61,7 +61,7 @@
 <body>
 
 <h1>Politique de confidentialité</h1>
-<p class="updated">Mes Recettes, Mes Courses — dernière mise à jour : 12/09/2026</p>
+<p class="updated">Mes Recettes, Mes Courses — dernière mise à jour : [complétez la date]</p>
 
 <p class="summary">
   Cette application stocke toutes vos données uniquement sur votre téléphone ;
@@ -85,11 +85,25 @@
 <h2>Les seuls cas où une information transite par un serveur</h2>
 <p>
   <strong>Importer une recette depuis un lien internet</strong> : l'adresse
-  (URL) que vous saisissez est transmise à un serveur (Cloudflare Worker)
-  exploité par le développeur, qui va chercher le contenu de cette page pour
-  vous et vous le renvoie. Cette adresse n'est pas conservée après la
-  requête, et n'est partagée avec aucun tiers. Aucune autre information vous
-  concernant n'est transmise à cette occasion.
+  (URL) que vous saisissez est transmise à un service tiers pour aller
+  chercher le contenu de cette page et vous le renvoyer. Plusieurs services
+  sont utilisés l'un après l'autre en cas d'échec du premier, pour maximiser
+  les chances de réussite de l'import :
+</p>
+<ol>
+  <li>Un serveur (Cloudflare Worker) exploité par le développeur, en premier</li>
+  <li>Si celui-ci échoue : <strong>Jina AI Reader</strong> (r.jina.ai)</li>
+  <li>Si celui-ci échoue aussi : l'un des trois services publics <strong>AllOrigins</strong>, <strong>CodeTabs</strong> ou <strong>cors.lol</strong>, en dernier recours</li>
+</ol>
+<p>
+  Dans tous les cas, seule l'adresse de la page que vous voulez importer est
+  transmise — jamais vos recettes, votre garde-manger ou toute autre donnée
+  personnelle. Ces services ne sont pas exploités par le développeur (à
+  l'exception du premier) et peuvent avoir leurs propres règles de
+  conservation, sur lesquelles le développeur n'a pas de contrôle direct.
+  Cette action ne se produit que si vous choisissez explicitement d'importer
+  une recette par lien — ce n'est jamais un comportement automatique ou en
+  arrière-plan.
 </p>
 <p>
   <strong>Polices de caractères</strong> : l'application utilise des polices
@@ -125,7 +139,7 @@
 <h2>Contact</h2>
 <div class="contact-box">
   Pour toute question sur cette politique de confidentialité :<br>
-  <strong>fabrice.moritel15@gmail.com</strong>
+  <strong>[votre adresse email]</strong>
 </div>
 
 <h2>Modifications de cette politique</h2>
