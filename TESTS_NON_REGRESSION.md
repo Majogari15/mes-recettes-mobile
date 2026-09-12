@@ -4202,7 +4202,8 @@ point s'est avéré incorrect dans l'audit lui-même (voir plus bas).
   utilise aussi, en repli successif, Jina AI Reader puis trois services
   publics (AllOrigins, CodeTabs, cors.lol) — vérifié directement dans
   le code (`fetchViaJinaReader`, `fetchRecipeDataViaProxies`), confirmé
-  exact. Les deux documents corrigés pour mentionner les 4 services.
+  exact. Les deux documents corrigés pour mentionner les 5 services au
+  total (le Worker et les 4 autres).
 - **Politique de confidentialité inaccessible depuis l'application** :
   n'existait qu'en ligne (page GitHub Pages), jamais liée depuis
   l'interface — pourtant exigée par Google Play. Lien ajouté dans le
@@ -4234,8 +4235,8 @@ retesté après la restauration de la version 2.5.1.
 
 **Fichiers ajoutés/modifiés** : `icons/*.png` (canal alpha),
 `screenshots/*.png` (ratio corrigé), `feature-graphic.png` (nouveau),
-`confidentialite.html` et `POLITIQUE_CONFIDENTIALITE.md` (4 services
-mentionnés), `GUIDE_SECURITE_DONNEES_PLAY_STORE.md` (4 services),
+`confidentialite.html` et `POLITIQUE_CONFIDENTIALITE.md` (5 services
+mentionnés), `GUIDE_SECURITE_DONNEES_PLAY_STORE.md` (5 services),
 `GUIDE_PUBLICATION_PLAY_STORE.md` (emplacement Digital Asset Links
 corrigé), `app.js`/`i18n.js` (lien politique de confidentialité).
 
