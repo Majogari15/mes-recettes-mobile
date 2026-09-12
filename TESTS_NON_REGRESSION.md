@@ -4433,7 +4433,63 @@ régression.
 
 **Version testée** : v204
 
-## Résumé — état au 06/09/2026 (v204)
+### 61 — Rappel de sauvegarde amélioré : urgence progressive et partage en un clic *(v205)*
+
+**Contexte** : après une recherche approfondie sur la sauvegarde cloud
+(Google Drive, Dropbox, sauvegarde automatique Android — voir échanges
+avec l'utilisateur, aucune conclusion de code à ce stade, sujet mis de
+côté pour l'instant), l'utilisateur a demandé 3 améliorations concrètes
+du mécanisme de rappel existant plutôt qu'une nouvelle intégration
+cloud.
+
+**1. Urgence progressive** : le rappel de l'accueil reste neutre de 14
+à 30 jours (comportement inchangé), devient plus visible avec une
+bordure de 30 à 60 jours, puis franchement insistant (couleurs
+"danger", message différent) au-delà de 60 jours — sans jamais bloquer
+l'usage de l'app, juste une attention croissante. 6 nouvelles clés de
+traduction (2 nouveaux paliers × 4 langues... en réalité 2 clés × 4
+langues, le palier neutre réutilisant le texte déjà existant).
+
+**2. Partage en un clic depuis le rappel** : auparavant, cliquer sur le
+rappel menait seulement à l'écran Sauvegarde, d'où il fallait encore
+cliquer sur "Partager". Le fichier de sauvegarde est maintenant
+préparé en arrière-plan dès l'affichage du rappel (mis en cache 2
+minutes pour éviter de le reconstruire à chaque réaffichage de
+l'accueil) — le temps que l'utilisateur remarque le rappel et clique
+dessus suffit largement à cette préparation, permettant d'appeler
+`navigator.share()` directement au clic, sans `await` entre les deux
+(condition nécessaire pour que le geste soit reconnu comme "actif").
+Repli sur l'écran Sauvegarde classique si le partage natif n'est pas
+disponible sur l'appareil.
+
+**3. Vérification de la complétude du partage classique** : déjà
+satisfaite avant toute modification — `BACKUP_STORES` (utilisé par le
+bouton "Partager" existant, celui qui fonctionne réellement,
+contrairement à celui de la sauvegarde partagée en zip) inclut déjà
+`kv`, qui contient le planning actif de la semaine
+(`state.weeklyPlan`, stocké via `kvSet("weeklyPlan", ...)`) — confirmé
+en remontant la chaîne de chargement/sauvegarde dans le code. Le
+partage classique JSON est donc déjà plus complet que le format zip
+partagé (qui exclut volontairement planning/menus/listes enregistrées
+pour la compatibilité Windows) : aucune modification nécessaire pour
+ce point.
+
+**Testé** : les 3 paliers d'urgence (aucun rappel avant 14 jours, texte
+et bordure corrects à chaque palier) ; fichier bien préparé en
+arrière-plan avant tout clic ; clic avec `canShare` simulé absent
+(repli sur l'écran Sauvegarde, confirmé) et simulé présent (partage
+direct sans quitter l'accueil, fichier correctement transmis, date de
+dernière sauvegarde mise à jour) — testé dans les deux scénarios
+séparément pour bien isoler chaque chemin.
+
+**Test permanent ajouté** (`tests/test_backup_reminder.py`, 6 cas).
+
+**Non-régression** : toute la suite de tests existante relancée après
+chaque changement, aucune régression.
+
+**Version testée** : v205
+
+## Résumé — état au 06/09/2026 (v205)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
   (jsQR/jsPDF depuis la v141, Tesseract depuis la v165) — plus aucune

@@ -96,6 +96,11 @@ Depuis, la structure sépare strictement :
   minuteurs, persistance en arrière-plan après fermeture de la fenêtre,
   réaffichage correct du décompte à la réouverture — voir
   TESTS_NON_REGRESSION.md point 54.
+- `test_backup_reminder.py` — rappel de sauvegarde de l'accueil :
+  urgence progressive (3 paliers selon l'ancienneté), préparation en
+  arrière-plan du fichier, partage en un clic avec repli sur l'écran
+  Sauvegarde si le partage natif n'est pas disponible — voir
+  TESTS_NON_REGRESSION.md point 61.
 - `requirements.txt` — version verrouillée de Playwright.
 
 ## Utilisation

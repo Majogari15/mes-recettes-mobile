@@ -652,6 +652,9 @@ function renderBottomNav() {
 /* ======================================================================
    ÉCRAN : ACCUEIL
    ====================================================================== */
+// Cache du fichier de sauvegarde préparé pour le rappel de l'accueil —
+// voir son usage dans renderHome ci-dessous (partage en un clic).
+const reminderFileCache = { file: null, builtAt: 0 };
 function renderHome() {
   const wrap = el(`<div></div>`);
   const installBannerDismissed = !!localStorage.getItem("install_dismissed");
@@ -702,7 +705,10 @@ function renderHome() {
   // protéger (pas seulement des recettes — une personne n'ayant que des
   // courses, un garde-manger, des menus ou des plannings mérite aussi
   // le rappel), et si ça fait longtemps (ou jamais) qu'un export/partage
-  // a eu lieu.
+  // a eu lieu. Urgence progressive selon l'ancienneté : neutre à partir
+  // de 14 jours, plus visible à partir de 30, franchement insistant à
+  // partir de 60 — sans jamais bloquer l'usage de l'app, juste attirer
+  // l'attention de façon croissante.
   const hasImportantData = [
     state.recipes, state.shopping, state.pantry, state.menus,
     state.planTemplates, state.planHistory, state.savedShoppingLists,
@@ -710,10 +716,49 @@ function renderHome() {
   const lastBackupAt = localStorage.getItem("lastBackupAt");
   const daysSinceBackup = lastBackupAt ? (Date.now() - new Date(lastBackupAt).getTime()) / 86400000 : Infinity;
   if (hasImportantData && daysSinceBackup >= 14) {
-    const backupReminder = el(`<div style="background:var(--accent-light);color:var(--accent);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;">
-      ${escapeHtml(t("home_backup_reminder"))}
+    let reminderStyle, reminderText;
+    if (daysSinceBackup >= 60) {
+      reminderStyle = "background:var(--danger-light);color:var(--danger);border:1.5px solid var(--danger);";
+      reminderText = t("home_backup_reminder_critical");
+    } else if (daysSinceBackup >= 30) {
+      reminderStyle = "background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent);";
+      reminderText = t("home_backup_reminder_urgent");
+    } else {
+      reminderStyle = "background:var(--accent-light);color:var(--accent);";
+      reminderText = t("home_backup_reminder");
+    }
+    const backupReminder = el(`<div style="${reminderStyle}border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;">
+      ${escapeHtml(reminderText)}
     </div>`);
-    backupReminder.addEventListener("click", () => { state.screen = "backup"; render(); });
+    // Préparé en arrière-plan dès l'affichage du rappel plutôt qu'au
+    // moment du clic : le temps que l'utilisateur remarque le rappel et
+    // clique dessus (au moins quelques secondes, largement le temps
+    // qu'il faut pour construire ce fichier) suffit pour que le partage
+    // puisse s'ouvrir INSTANTANÉMENT au clic, sans await entre le clic
+    // et l'appel à navigator.share() — condition nécessaire pour que le
+    // navigateur reconnaisse encore le geste comme "actif" à cet instant
+    // (voir shareBackupData). Si la préparation n'est pas encore finie
+    // au moment du clic (cas rare), repli sur l'écran Sauvegarde
+    // classique plutôt qu'un clic qui ne ferait rien.
+    // Mis en cache au niveau du module (voir reminderFileCache un peu
+    // plus bas) pendant 2 minutes, pour éviter de reconstruire ce même
+    // fichier à chaque fois que l'accueil se réaffiche (navigation
+    // fréquente entre les écrans) tant que le rappel reste affiché.
+    if (!reminderFileCache.file || Date.now() - reminderFileCache.builtAt > 120000) {
+      reminderFileCache.file = null;
+      buildBackupFile().then((file) => { reminderFileCache.file = file; reminderFileCache.builtAt = Date.now(); });
+    }
+    backupReminder.addEventListener("click", () => {
+      const file = reminderFileCache.file;
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        shareBackupData(file).then((result) => {
+          if (result.ok) localStorage.setItem("lastBackupAt", new Date().toISOString());
+        });
+      } else {
+        state.screen = "backup";
+        render();
+      }
+    });
     wrap.appendChild(backupReminder);
   }
 
@@ -9235,7 +9280,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 204;
+const APP_VERSION = 205;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
