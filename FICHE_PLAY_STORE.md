@@ -71,6 +71,10 @@ Food & Drink (ou "Lifestyle" en alternative)
 *(obligatoire — votre email pour les questions des utilisateurs et de
 Google)*
 
+```
+fabrice.moritel15@gmail.com
+```
+
 ## Politique de confidentialité
 Voir `POLITIQUE_CONFIDENTIALITE.md` fourni séparément — à héberger en
 ligne (ex. une page sur votre dépôt GitHub Pages) et à renseigner comme

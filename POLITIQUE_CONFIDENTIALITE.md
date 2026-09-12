@@ -1,6 +1,6 @@
 # Politique de confidentialité — Mes Recettes, Mes Courses
 
-*Dernière mise à jour : [complétez la date de publication]*
+*Dernière mise à jour : 12 septembre 2026*
 
 ## Résumé en une phrase
 
@@ -78,7 +78,7 @@ votre appareil, à tout moment.
 ## Contact
 
 Pour toute question sur cette politique de confidentialité :
-[votre adresse email]
+fabrice.moritel15@gmail.com
 
 ## Modifications de cette politique
 

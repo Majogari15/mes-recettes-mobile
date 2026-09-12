@@ -4236,14 +4236,61 @@ function openCookingMode(recipe) {
 // minuteurs déjà en cours au moment de l'ouverture (ex. fenêtre
 // refermée puis rouverte) sont correctement réaffichés dans leur état
 // actuel plutôt que remis à zéro.
+// Identifiant de session pour le verrou d'écran de la fenêtre de
+// minuteurs autonome — séparé de activeCookingSessionId (mode
+// cuisine) pour éviter toute interférence si les deux étaient ouverts
+// en même temps (cas rare mais possible). Même logique de
+// "session active la plus récente" que pour le mode cuisine, voir ses
+// commentaires plus haut pour le raisonnement complet.
+let activeStandaloneTimersSessionId = null;
 function openStandaloneTimers() {
   const overlay = el(`<div class="cooking-overlay"></div>`);
   const header = el(`<div class="cooking-header">
     <h2 style="font-size:19px;">${t("standalone_timers_title")}</h2>
     <button class="icon-btn">${t("cooking_close")}</button>
   </div>`);
-  header.querySelector("button").addEventListener("click", () => overlay.remove());
   overlay.appendChild(header);
+
+  const sessionId = uid();
+  activeStandaloneTimersSessionId = sessionId;
+  const isActiveSession = () => activeStandaloneTimersSessionId === sessionId;
+  const handleVisibilityChange = () => {
+    if (isActiveSession() && document.visibilityState === "visible") {
+      requestWakeLock().then(() => {
+        if (activeStandaloneTimersSessionId === null) releaseWakeLock();
+      });
+    }
+  };
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+  // À la différence du mode cuisine, fermer cette fenêtre ne stoppe pas
+  // les minuteurs (voir commentaire au-dessus de la fonction) — mais le
+  // verrou d'écran, lui, N'A PLUS DE RAISON D'ÊTRE une fois la fenêtre
+  // fermée : son rôle est d'empêcher l'écran de s'éteindre PENDANT que
+  // l'utilisateur regarde le décompte, pas de le maintenir indéfiniment
+  // en arrière-plan après qu'il soit parti faire autre chose dans
+  // l'app — le minuteur sonnera de toute façon via la notification.
+  let cleaned = false;
+  function cleanupStandaloneTimers() {
+    if (cleaned) return;
+    cleaned = true;
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+    if (isActiveSession()) activeStandaloneTimersSessionId = null;
+    releaseWakeLock();
+  }
+  header.querySelector("button").addEventListener("click", () => {
+    cleanupStandaloneTimers();
+    overlay.remove();
+  });
+
+  const wakeLockStatus = el(`<p style="font-size:12px;color:var(--text-muted);margin:0 0 16px;"></p>`);
+  overlay.appendChild(wakeLockStatus);
+  requestWakeLock().then((success) => {
+    if (isActiveSession()) {
+      wakeLockStatus.textContent = success ? t("cooking_wake_lock_active") : t("cooking_wake_lock_unavailable");
+    } else if (activeStandaloneTimersSessionId === null) {
+      releaseWakeLock();
+    }
+  });
 
   overlay.appendChild(el(`<p class="prose" style="margin:0 0 16px;">${escapeHtml(t("standalone_timers_intro"))}</p>`));
 
@@ -4263,7 +4310,7 @@ function openStandaloneTimers() {
   overlay.appendChild(addTimerBtn);
 
   document.body.appendChild(overlay);
-  initModalA11y(overlay, overlay, {});
+  initModalA11y(overlay, overlay, { beforeClose: () => cleanupStandaloneTimers() });
 }
 
 /* ======================================================================
@@ -6074,6 +6121,16 @@ function renderBackup() {
   const wrap = el(`<div></div>`);
 
   const canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [new File([""], "test.txt", { type: "text/plain" })] }));
+  // Vérification séparée pour le zip de la sauvegarde partagée : les
+  // fichiers .zip échouent systématiquement ce test sur Chromium
+  // (restriction de sécurité documentée dans le code source du
+  // navigateur — liste blanche d'extensions autorisées qui n'a jamais
+  // inclus zip, pour éviter le partage de fichiers exécutables). Sans
+  // cette vérification séparée, le bouton "Partager" apparaîtrait à
+  // tort pour la sauvegarde partagée en se basant sur le test .txt
+  // ci-dessus, alors que le partage échouerait toujours pour ce
+  // fichier précis.
+  const canShareZip = !!(navigator.canShare && navigator.canShare({ files: [new File([""], "test.zip", { type: "application/zip" })] }));
 
   const exportSection = el(`<div class="section">
     <div class="section-label">${t("backup_export_title")}</div>
@@ -6231,7 +6288,7 @@ function renderBackup() {
     <div class="card" style="padding:16px;">
       <p class="prose" style="margin:0 0 14px;font-size:14px;">${escapeHtml(t("backup_shared_text"))}</p>
       <button class="btn btn-primary" id="shared-export-btn" style="margin-bottom:10px;">${t("backup_shared_export_button")}</button>
-      ${canShareFiles ? `<button class="btn btn-secondary" id="shared-share-btn" disabled style="margin-bottom:14px;">${t("backup_share_preparing")}</button>` : ""}
+      ${canShareZip ? `<button class="btn btn-secondary" id="shared-share-btn" disabled style="margin-bottom:14px;">${t("backup_share_preparing")}</button>` : ""}
       <div class="field">
         <label for="import-mode-shared">${t("backup_import_mode_title")}</label>
         <select id="import-mode-shared">
@@ -6261,7 +6318,7 @@ function renderBackup() {
     a.remove();
     URL.revokeObjectURL(url);
   });
-  if (canShareFiles) {
+  if (canShareZip) {
     const sharedShareBtn = sharedSection.querySelector("#shared-share-btn");
     // Même précaution que pour l'export classique : le fichier est
     // entièrement préparé AVANT que le bouton ne devienne cliquable,
@@ -9178,7 +9235,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 202;
+const APP_VERSION = 204;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

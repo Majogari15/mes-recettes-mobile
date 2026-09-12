@@ -4338,7 +4338,102 @@ chaque changement, aucune régression.
 
 **Version testée** : v202
 
-## Résumé — état au 06/09/2026 (v202)
+### 59 — Bouton "Partager" retiré pour la sauvegarde partagée (zip), signalement utilisateur *(v203)*
+
+**Contexte** : l'utilisateur signale que le bouton "Partager" de la
+sauvegarde (format compatible Windows, `.zip`) n'ouvre jamais le menu
+Android — le fichier part directement dans Téléchargements, sans
+passer par le choix d'application.
+
+**Cause confirmée par recherche officielle** : le Web Share API de
+Chromium n'autorise que certaines extensions de fichiers (audio,
+image, PDF, vidéo, texte) — **les fichiers `.zip` en sont
+explicitement exclus**, une restriction de sécurité volontaire
+documentée directement dans un commit du code source de Chromium
+("we allow only common audio, image, text and video file extensions
+[...] this blocks executable files from being shared"). Ce n'est pas
+spécifique à un appareil : `navigator.canShare({files:[zipFile]})`
+renvoie systématiquement `false` sur Chromium, quel que soit
+l'appareil.
+
+**Asymétrie découverte en creusant** : la sauvegarde **classique**
+(JSON) contourne déjà ce problème depuis une session précédente — le
+fichier est nommé `.txt` avec le type MIME `text/plain` plutôt que
+`.json`/`application/json`, `.txt` étant explicitement autorisé.
+Cette astuce ne peut pas s'appliquer à la sauvegarde **partagée**
+(zip) : un fichier zip ne peut pas être déguisé en texte brut sans
+perdre son sens.
+
+**Bug de conception trouvé en creusant** : les deux boutons
+"Partager" (classique et partagé) utilisaient la **même** vérification
+`canShareFiles`, basée sur un fichier `.txt` de test — jamais sur le
+véritable type de fichier partagé. Le bouton de la sauvegarde partagée
+s'affichait donc à tort, avec la promesse d'un partage qui échouait
+alors systématiquement.
+
+**Corrigé** : vérification séparée `canShareZip` (test avec un fichier
+`.zip` réel), utilisée uniquement pour le bouton de la sauvegarde
+partagée. Le bouton "Partager" classique reste inchangé (fonctionne
+correctement, aucune régression). Le bouton de la sauvegarde partagée
+**n'apparaît désormais plus du tout** puisqu'il échouerait toujours —
+plus honnête qu'un bouton visible mais systématiquement en échec.
+L'utilisateur garde le bouton "Exporter (.zip)" (téléchargement
+classique), qui fonctionne normalement.
+
+**Testé** : `navigator.canShare` simulé pour refléter le vrai
+comportement Android (accepte `.txt`, refuse `.zip`) — confirmé que le
+bouton classique reste affiché et que le bouton partagé disparaît
+correctement. Suite de tests existante relancée, aucune régression.
+
+**Version testée** : v203
+
+### 60 — Verrou d'écran (Wake Lock) pour la fenêtre de minuteurs autonome, demande utilisateur *(v204)*
+
+**Contexte** : l'utilisateur signale que le téléphone peut se mettre
+en veille et éteindre l'écran pendant qu'un minuteur autonome (Accueil
+→ Outils → Minuteur) est actif — contrairement au mode cuisine, qui
+empêche déjà ça avec un message d'avertissement.
+
+**Réutilisation complète du système existant** :
+`requestWakeLock()`/`releaseWakeLock()` étaient déjà des fonctions
+génériques au niveau du module (pas spécifiques au mode cuisine),
+directement réutilisables sans modification. Mêmes clés de traduction
+que le mode cuisine (`cooking_wake_lock_active`/
+`cooking_wake_lock_unavailable`) pour le message affiché — c'est
+littéralement la même fonctionnalité, pas la peine d'en dupliquer le
+texte.
+
+**Identifiant de session séparé** (`activeStandaloneTimersSessionId`,
+distinct de `activeCookingSessionId` du mode cuisine) — par
+prudence, pour éviter toute interférence si les deux étaient ouverts
+simultanément (cas rare), même mécanisme de "session la plus
+récente l'emporte" que le mode cuisine pour gérer les demandes
+asynchrones qui se chevauchent.
+
+**Différence assumée avec le mode cuisine** : fermer la fenêtre de
+minuteurs autonome continue de NE PAS arrêter les minuteurs (comportement
+existant, inchangé — voir point 54), mais **relâche bien le verrou
+d'écran**, contrairement aux minuteurs eux-mêmes qui continuent en
+arrière-plan. Raisonnement : le rôle du verrou est d'empêcher l'écran
+de s'éteindre PENDANT que l'utilisateur regarde activement le
+décompte, pas de le maintenir indéfiniment après qu'il soit parti
+faire autre chose dans l'app — le minuteur sonnera de toute façon via
+la notification, qui fonctionne écran éteint.
+
+**Testé** : ouverture (session activée), fermeture par le bouton
+(session désactivée, verrou relâché), réouverture propre (pas de
+blocage résiduel), fermeture par la touche Échap (même nettoyage que
+le bouton). Message "verrou indisponible" correctement affiché en
+environnement de test (l'implémentation native du navigateur refuse
+la permission en contexte automatisé — comportement attendu, pas une
+erreur du code testé, confirmé en isolant l'appel directement).
+
+**Non-régression** : suite de tests existante relancée, aucune
+régression.
+
+**Version testée** : v204
+
+## Résumé — état au 06/09/2026 (v204)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
   (jsQR/jsPDF depuis la v141, Tesseract depuis la v165) — plus aucune

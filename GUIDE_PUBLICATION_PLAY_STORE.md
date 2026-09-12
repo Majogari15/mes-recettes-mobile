@@ -30,22 +30,49 @@ L'outil **PWABuilder** (gratuit, par Microsoft, toujours d'actualité en
 2. Entrez l'adresse de votre application déployée, cliquez sur
    **Start**
 3. PWABuilder analyse votre manifeste et votre service worker, et
-   affiche un score. Avec les captures d'écran et le manifeste déjà
-   préparés dans cette livraison, le score devrait être bon — s'il
-   signale un point manquant, il vous dira lequel précisément
+   affiche un score — devrait maintenant afficher 0 erreur
+   obligatoire, 0 recommandation en échec (déjà confirmé sur la
+   version actuelle)
 4. Cliquez sur **Package for stores**, puis choisissez **Android**
-5. Laissez les options par défaut sauf :
-   - **Signing key** : choisissez "Generate new signing key" si
-     c'est votre première publication (⚠️ **gardez ce fichier de clé
-     et son mot de passe en lieu sûr** — vous en aurez besoin pour
-     chaque future mise à jour, sans lui vous ne pourrez plus jamais
-     mettre à jour l'application)
-   - **Package ID** : proposé automatiquement à partir de votre nom
-     de domaine (ex. `dev.fabricemoritel.mesrecettes`) — notez-le,
-     vous en aurez besoin plus tard
-6. Téléchargez le fichier `.zip` généré — il contient le fichier
+5. Dans les options qui s'affichent, réglez précisément :
+   - **Package ID** : proposé automatiquement (ex.
+     `io.github.majogari15.twa`) — **choisissez maintenant une valeur
+     définitive** plutôt que de garder cette proposition automatique,
+     par exemple `io.github.majogari15.mesrecettes`. ⚠️ **Cet
+     identifiant devient permanent après publication** — impossible
+     d'en changer pour une mise à jour future, il faudrait recréer une
+     toute nouvelle fiche Play Store. Prenez un moment pour choisir
+     une valeur dont vous serez satisfait durablement.
+   - **Signing key** : choisissez "Create new signing key" — c'est
+     votre première publication
+
+     ⚠️ **Le point le plus important de toute cette étape** : une fois
+     le paquet généré, vous allez recevoir un fichier de clé
+     (`.keystore` ou `.pem`) et un mot de passe. **Sauvegardez-les
+     immédiatement dans un endroit sûr** (gestionnaire de mots de
+     passe, ou au moins 2 copies différentes) — sans cette clé exacte,
+     vous ne pourrez plus jamais publier de mise à jour de
+     l'application, il faudrait recommencer avec une toute nouvelle
+     fiche Play Store.
+   - **Pays** (dans les informations de la clé de signature) :
+     renseignez `FR`, pas la valeur par défaut `US`
+   - Le reste des options par défaut (affichage "Standalone", repli
+     "Custom Tabs"...) peut rester tel quel
+6. Cliquez sur **Generate**, patientez le temps de la génération
+   (peut prendre 1 à 2 minutes)
+7. Téléchargez le fichier `.zip` généré — il contient le fichier
    `.aab` à soumettre, votre clé de signature, et un fichier
    `assetlinks.json`
+
+### Vérifier `targetSdkVersion 36` (exigence Google Play depuis fin août 2026)
+
+Vous n'avez pas besoin d'outil spécial pour vérifier ce point vous-même
+— **Play Console le vérifie automatiquement à l'étape de
+téléversement** (Étape 4 ci-dessous) et refusera clairement le fichier
+avec un message explicite si ce n'est pas le cas. Si ce message
+apparaît, la cause la plus probable est une version de PWABuilder pas
+encore à jour sur ce point précis — revenez me voir avec le message
+exact affiché, je regarderai la marche à suivre.
 
 ## Étape 2 — Prouver que vous possédez le site (Digital Asset Links)
 
