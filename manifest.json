@@ -17,10 +17,10 @@
     { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "screenshots": [
-    { "src": "screenshots/01_accueil.png", "sizes": "1080x2400", "type": "image/png", "form_factor": "narrow", "label": "Écran d'accueil" },
-    { "src": "screenshots/02_recettes.png", "sizes": "1080x2400", "type": "image/png", "form_factor": "narrow", "label": "Liste des recettes" },
-    { "src": "screenshots/03_fiche_recette.png", "sizes": "1080x2400", "type": "image/png", "form_factor": "narrow", "label": "Détail d'une recette" },
-    { "src": "screenshots/04_courses.png", "sizes": "1080x2400", "type": "image/png", "form_factor": "narrow", "label": "Liste de courses" }
+    { "src": "screenshots/01_accueil.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Écran d'accueil" },
+    { "src": "screenshots/02_recettes.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Liste des recettes" },
+    { "src": "screenshots/03_fiche_recette.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Détail d'une recette" },
+    { "src": "screenshots/04_courses.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Liste de courses" }
   ],
   "shortcuts": [
     {
