@@ -4288,7 +4288,57 @@ régression.
 
 **Version testée** : v201
 
-## Résumé — état au 06/09/2026 (v201)
+### 58 — Corrections suite au rapport PWABuilder complet (paquet Android testé) *(v202)*
+
+**Contexte** : un second audit a réellement testé la v201 déployée dans
+PWABuilder (pas seulement une analyse de manifeste) — "Your PWA is
+store ready" affiché, mais 2 points bloquants trouvés, plus 3 points
+annexes à ne pas négliger avant soumission réelle.
+
+**Confirmé et corrigé** :
+- **Dimensions des captures erronées dans le manifeste** : déclarées
+  `1080x2400` alors que les 4 fichiers réels font `1080x1920` depuis la
+  correction du ratio (point 55) — **oubli de synchronisation de ma
+  part**, confirmé en vérifiant les dimensions réelles des 4 fichiers
+  avant correction. Les 4 occurrences corrigées.
+- **Enregistrement du service worker rendu indépendant du reste de
+  l'initialisation** : jusqu'ici enregistré dans `init()` (app.js),
+  après `await loadPantryClaims()` — un délai qui, sur un premier
+  chargement sans base IndexedDB existante, pourrait dépasser la
+  fenêtre de détection d'un outil d'analyse automatisé. Nouveau
+  fichier dédié `sw-register-early.js`, chargé en tout premier dans
+  `index.html` (avant même le lien manifeste), qui n'enregistre le
+  service worker sans rien faire d'autre. La logique existante dans
+  `app.js` (détection de mise à jour, forçage de vérification) reste
+  inchangée : un second appel à `register()` avec la même URL renvoie
+  simplement l'enregistrement déjà en cours, sans conflit ni doublon —
+  testé explicitement (enregistrement détecté en 0,05s après
+  chargement, aucune erreur).
+- **Formulation trop absolue sur la collecte de données** : "elle ne
+  collecte aucune donnée personnelle" reformulé pour préciser que
+  l'adresse IP reste techniquement visible des services réseau
+  sollicités (import par lien, Google Fonts) — une nuance réelle,
+  distincte de la collecte active par le développeur.
+
+**Non applicable directement (nécessite une action de l'utilisateur,
+pas du code)** :
+- Politique de confidentialité déployée encore avec `[complétez la
+  date]` et `[votre adresse email]` non remplacés — rappelé à
+  l'utilisateur, hors de portée du code puisque ces informations lui
+  appartiennent.
+- Digital Asset Links toujours en 404 : attendu à ce stade, ce fichier
+  ne peut être généré qu'après avoir finalisé l'identifiant de paquet
+  Android et la clé de signature dans PWABuilder.
+- Réglages de l'assistant Android PWABuilder (pays de la clé, choix
+  définitif du Package ID) : réglages de l'outil externe, pas du
+  projet.
+
+**Non-régression** : toute la suite de tests existante relancée après
+chaque changement, aucune régression.
+
+**Version testée** : v202
+
+## Résumé — état au 06/09/2026 (v202)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
   (jsQR/jsPDF depuis la v141, Tesseract depuis la v165) — plus aucune

@@ -9178,7 +9178,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 201;
+const APP_VERSION = 202;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

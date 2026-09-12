@@ -50,7 +50,11 @@ service — voir la politique de confidentialité de Google.
 
 ## Ce que l'application NE fait PAS
 
-- Elle ne collecte aucune donnée personnelle (nom, email, localisation...)
+- Le développeur ne collecte aucune donnée personnelle (nom, email,
+  localisation...) — voir cependant la section précédente : votre
+  adresse IP est techniquement visible des quelques services réseau
+  sollicités (import par lien, polices), comme pour n'importe quelle
+  requête sur internet
 - Elle n'utilise aucun outil d'analyse d'audience ou de suivi publicitaire
 - Elle n'affiche aucune publicité
 - Elle ne partage, ne vend, ni ne transmet vos recettes ou vos données à qui que ce soit
