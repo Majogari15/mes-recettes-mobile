@@ -33,6 +33,16 @@
   base-uri 'self';
   form-action 'self';
 ">
+<!--
+  Lien manifeste statique, présent dès le HTML brut (utile aux outils
+  d'analyse qui ne lisent pas toujours le JavaScript exécuté, comme
+  PWABuilder) — pointe par défaut sur le manifeste français. Mis à
+  jour par manifest-loader.js ci-dessous si une autre langue est déjà
+  enregistrée, en modifiant CE MÊME lien (pas en créant un second),
+  pour rester compatible avec les navigateurs qui n'utilisent que le
+  premier lien manifeste rencontré.
+-->
+<link rel="manifest" id="app-manifest" href="manifest.json">
 <script src="manifest-loader.js"></script>
 <link rel="stylesheet" href="styles.css">
 </head>

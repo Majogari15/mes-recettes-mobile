@@ -4242,7 +4242,53 @@ corrigé), `app.js`/`i18n.js` (lien politique de confidentialité).
 
 **Version testée** : v200
 
-## Résumé — état au 06/09/2026 (v200)
+### 57 — Lien manifeste rendu visible dans le HTML statique, suite au vrai rapport PWABuilder *(v201)*
+
+**Contexte** : premier passage réel par PWABuilder (v200 déployée) —
+2 avertissements remontés : "Add a service worker" et "Add
+screenshots", alors que les deux existent bel et bien dans le projet.
+
+**Cause trouvée et corrigée** : le lien `<link rel="manifest">`
+n'existait jusqu'ici que créé dynamiquement en JavaScript
+(`manifest-loader.js`, pour choisir le bon fichier selon la langue déjà
+enregistrée) — absent du HTML brut. Un outil d'analyse qui ne lit pas
+le JavaScript exécuté (ou l'exécute trop rapidement) pouvait donc ne
+jamais voir de manifeste du tout, expliquant plausiblement pourquoi
+son contenu (dont le tableau `screenshots`) n'était pas détecté.
+
+**Corrigé sans casser le multilingue** : un lien manifeste statique
+(`id="app-manifest"`, pointant par défaut sur `manifest.json`) ajouté
+directement dans `index.html`. `manifest-loader.js` modifié pour
+**mettre à jour ce lien existant** plutôt que d'en créer un second —
+important, puisque les navigateurs n'utilisent que le premier lien
+manifeste rencontré ; en créer un second aurait laissé le lien
+statique (toujours en français) prendre le dessus, cassant le
+changement de manifeste selon la langue.
+
+**Testé** : lien manifeste bien présent dans le HTML brut avant toute
+exécution JS (récupéré directement, sans navigateur) ; un seul lien
+au total après exécution (jamais deux) ; mise à jour correcte selon la
+langue (français par défaut, anglais si `navigator.language` ou
+`localStorage` l'indique).
+
+**Second avertissement ("service worker) analysé mais non modifié** :
+code vérifié correct et rapide (enregistrement dès les toutes
+premières lignes de `init()`, appelée immédiatement à la fin de
+`app.js`, aucune attente longue avant). Recherche confirmant un
+problème de détection **documenté et connu** côté PWABuilder lui-même
+(plusieurs utilisateurs rapportent exactement ce comportement
+incohérent, y compris "fonctionne" puis "ne fonctionne plus" sur le
+même site sans changement). Aucune modification de code apportée pour
+ce second point — recommandé de relancer l'analyse PWABuilder après
+le correctif du manifeste, plutôt que de modifier un code déjà correct
+sans certitude que ça change quoi que ce soit.
+
+**Non-régression** : suite de tests existante relancée, aucune
+régression.
+
+**Version testée** : v201
+
+## Résumé — état au 06/09/2026 (v201)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
   (jsQR/jsPDF depuis la v141, Tesseract depuis la v165) — plus aucune

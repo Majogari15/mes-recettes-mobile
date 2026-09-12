@@ -15,8 +15,15 @@
   var lang = localStorage.getItem("lang") || (navigator.language || "fr").slice(0, 2);
   var supported = ["fr", "en", "es", "de"];
   var file = supported.indexOf(lang) !== -1 && lang !== "fr" ? "manifest-" + lang + ".json" : "manifest.json";
-  var link = document.createElement("link");
-  link.rel = "manifest";
-  link.href = file;
-  document.head.appendChild(link);
+  var link = document.getElementById("app-manifest");
+  if (link) {
+    link.href = file;
+  } else {
+    // Repli si le lien statique n'existe pas pour une raison quelconque
+    // (ne devrait pas arriver) — comportement d'origine.
+    link = document.createElement("link");
+    link.rel = "manifest";
+    link.href = file;
+    document.head.appendChild(link);
+  }
 })();
