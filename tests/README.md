@@ -101,6 +101,14 @@ Depuis, la structure sépare strictement :
   arrière-plan du fichier, partage en un clic avec repli sur l'écran
   Sauvegarde si le partage natif n'est pas disponible — voir
   TESTS_NON_REGRESSION.md point 61.
+- `test_pdf_allergens.py` — section allergènes dans l'export PDF de
+  recette, absente jusqu'ici bien que le champ existe et soit affiché
+  à l'écran — voir TESTS_NON_REGRESSION.md point 64.
+- `test_table_ingredients.py` — extraction d'ingrédients depuis un
+  vrai tableau à 2 colonnes visuelles (fiches HelloFresh), reconstruit
+  à partir des coordonnées réelles des mots plutôt que du texte déjà
+  linéarisé — données de coordonnées synthétiques (pas une vraie
+  image), voir TESTS_NON_REGRESSION.md point 65.
 - `requirements.txt` — version verrouillée de Playwright.
 
 ## Utilisation

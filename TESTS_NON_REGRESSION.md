@@ -4651,7 +4651,178 @@ aucune régression. 8 cas au total dans le corpus désormais.
 
 **Version testée** : v207
 
-## Résumé — état au 06/09/2026 (v207)
+### 64 — Section allergènes manquante dans l'export PDF de recette *(v208)*
+
+**Contexte** : après confirmation par l'utilisateur d'avoir bien
+réimporté la recette Financiers avec la v207 (extraction des
+allergènes fonctionnelle depuis le point 62), les allergènes
+n'apparaissaient toujours pas dans le PDF généré. Distinction
+importante trouvée : ce n'était pas un problème d'**extraction**
+(déjà corrigée), mais d'**export** — deux maillons séparés de la même
+chaîne.
+
+**Confirmé** : `drawRecipeContent` (fonction commune à
+`exportRecipePdf` et à l'export du livre de cuisine complet)
+n'affichait jamais `recipe.allergens`, quelle que soit son origine
+(import photo, import par lien, ou saisie manuelle dans le
+formulaire) — un champ pourtant déjà affiché à l'écran sur la fiche
+recette elle-même (badges colorés), simplement oublié lors de la
+construction du PDF. Vérifié par recherche exhaustive dans la
+fonction entière (aucune occurrence de "allerg" trouvée).
+
+**Corrigé** : section "Allergènes" ajoutée juste après les
+ingrédients (même ordre que sur la fiche recette à l'écran), avant la
+description — uniquement si la recette a au moins un allergène
+renseigné, pas de section vide sinon. Réutilise `translateAllergen`
+et la clé de traduction `recipe_allergens` déjà existantes.
+
+**Testé** : espionnage direct des appels à `doc.text()` (pas seulement
+"le PDF se génère sans erreur", qui ne prouve rien sur son contenu)
+pour confirmer que "Allergènes" et "Gluten, Lactose" apparaissent bien
+dans les commandes de dessin réelles ; confirmé aussi qu'une recette
+sans allergène n'affiche aucune section vide ou parasite.
+
+**Test permanent ajouté** (`tests/test_pdf_allergens.py`, 2 cas : avec
+et sans allergènes).
+
+**Non-régression** : toute la suite de tests existante relancée,
+aucune régression.
+
+**Version testée** : v208
+
+### 65 — Extraction d'ingrédients par coordonnées réelles pour les tableaux à 2 colonnes (fiches HelloFresh) *(v209)*
+
+**Contexte** : reprise du cas HelloFresh "Mijoté de dinde au curry"
+mis de côté au point précédent — ses ingrédients sont présentés dans
+un vrai **tableau à 2 colonnes visuelles** (nom à gauche, quantité à
+droite), pas une liste à puces, ce qu'aucune analyse existante ne
+savait interpréter correctement.
+
+**Première tentative, abandonnée après test** : séparer le texte
+linéarisé par l'OCR en deux blocs successifs (tous les noms, puis
+toutes les quantités) et les apparier par position. Fonctionnait sur
+un passage, échouait sur le suivant, **sur la même photo** — l'OCR
+perd parfois le chiffre en tête de quantité ("1 pièce(s)" devient
+"pièce(s)") de façon non reproductible, décalant alors tout
+l'appariement suivant. Retirée entièrement avant toute intégration
+(vérifié : aucun résidu, tout le corpus repassait comme avant) plutôt
+que de livrer quelque chose de fiable un coup sur deux.
+
+**Seconde approche, retenue** : reconstruction par les **coordonnées
+géométriques réelles** de chaque mot (`bbox.x0`/`x1`, déjà utilisées
+par `reconstructTextFromBlocks` pour un autre usage). Chaque ligne
+(regroupée verticalement par Tesseract lui-même) est traitée
+**indépendamment** — contrairement à la tentative précédente, un
+problème sur une ligne ne peut plus jamais décaler les autres.
+Principe : la dernière grande coupure horizontale d'une ligne sépare
+le nom (avant) de la quantité (après) — la dernière plutôt que la
+première, un résidu d'icône en tête de ligne créant parfois sa propre
+petite coupure avant le vrai nom.
+
+**Nouvelles fonctions** :
+- `reconstructTableRowsFromBlocks(data)` — produit un texte "nom |
+  quantité" par ligne, exposé comme nouveau champ `tableText` au même
+  niveau que `rawText`/`layoutText`/`gridText`
+- `parseTableRowsIngredients(tableText)` — transforme ce texte en
+  ingrédients ; la partie quantité est analysée isolément (réutilise
+  la reconnaissance d'unité déjà éprouvée de `parseIngredientString`
+  via un nom factice, plutôt que de la dupliquer) ; arrêt dès qu'une
+  ligne évoque nutrition/nutrition/allergènes (le tableau nutritionnel
+  suit toujours les ingrédients sur ce type de fiche — sans cet
+  arrêt, ses lignes seraient prises pour de faux ingrédients)
+
+**Intégration prudente dans `deriveSectionDataForPhoto`** : critère de
+comparaison différent de celui déjà existant pour `twoColumnIngredients`
+— cette extraction vise délibérément MOINS d'éléments mais bien plus
+propres (rejette le bruit plutôt que de le compter), un simple
+comptage brut la pénaliserait donc à tort face à une liste plus
+longue mais pleine de fragments incohérents. Comparaison basée sur le
+nombre d'éléments avec une quantité effectivement reconnue,
+préférée même à égalité si elle produit moins d'éléments au total
+(meilleure proportion, moins de bruit).
+
+**Résultat concret sur la vraie photo** : 11 ingrédients propres et
+correctement nommés (contre une liste de 14 entrées largement
+incohérentes auparavant — "0 pièce 7 VE VOS EE ER ORNE PE)" et
+similaires) ; nombre de personnes désormais correctement détecté (2,
+au lieu du repli par défaut à 4) grâce à l'en-tête "Ingrédients pour 2
+personnes" correctement isolé. Reste 2 ingrédients sur 14 non
+récupérés (Oignon, Gousse d'ail — perdus dans un chevauchement de
+bruit particulièrement mauvais en tout début de tableau) et quelques
+unités approximatives (sachet/paquet, pièce/cs) — imperfections
+mineures assumées plutôt qu'une régression vers l'ancien
+comportement pour les poursuivre.
+
+**Testé** : pipeline complet (OCR réel → détection de section
+→ dérivation → fusion multi-photos) sur la vraie photo fournie,
+confirmant les 11 ingrédients propres et persons=2 dans le résultat
+final fusionné. Tout le corpus OCR existant (8 cas) relancé après
+chaque étape, aucune régression. Nouveau test unitaire à données de
+coordonnées synthétiques (`tests/test_table_ingredients.py`, 4 cas) —
+cette extraction dépend de données géométriques qui ne peuvent pas
+être rejouées depuis du texte déjà extrait comme le fait le corpus
+OCR habituel, un test unitaire direct sur la structure de données est
+donc plus adapté ici.
+
+**Non-régression** : toute la suite de tests existante relancée,
+aucune régression.
+
+**Version testée** : v209
+
+### 66 — Vérification élargie sur photos réelles, régression trouvée et corrigée *(v210)*
+
+**Contexte** : demande explicite de l'utilisateur de vérifier plus
+largement qu'une amélioration pour un cas ne dégrade pas les autres,
+étant donné le nombre et la diversité des utilisateurs réels visés.
+Point de méthode important trouvé en y répondant : le corpus de test
+habituel (`tests/run_ocr_corpus.py`) rejoue du texte déjà extrait
+(`rawText`/`layoutText`), jamais de vraies coordonnées — il n'appelait
+donc **jamais** `deriveSectionDataForPhoto` avec un `tableText`, et ne
+pouvait donc pas exercer ni protéger le nouveau chemin ajouté au point
+65, même en "passant". Un corpus qui passe ne prouve rien sur du code
+qu'il n'exerce jamais.
+
+**Vérification menée** : comparaison automatisée, avec et sans le
+nouveau chemin d'extraction par tableau, sur les **15 vraies photos**
+encore accessibles dans cette session (bien au-delà des 8 cas du
+corpus officiel) — measurant précisément si le résultat change, pas
+seulement s'il "a l'air correct".
+
+**Régression réelle trouvée** : sur la photo Barramundi (déjà dans le
+corpus), une valeur du tableau nutritionnel ("(kifkeal) 2745 /656",
+lecture déformée de "(kJ/kcal)") remplaçait à tort un ingrédient réel
+en fin de liste — l'arrêt de sécurité ajouté au point 65 ne
+reconnaissait pas ce mot-clé nutrition trop déformé par l'OCR pour
+matcher littéralement. **Corrigée** en ajoutant la signature
+numérique "nombre/nombre" (ex. "2745/656") déjà éprouvée ailleurs dans
+le fichier (`extractIngredientsFromLines`, pour cette même raison)
+comme signal complémentaire, indépendant du texte de l'en-tête.
+
+**Différence restante, vérifiée comme une amélioration et non une
+régression** : sur cette même photo Barramundi, un fragment "1
+filet(s)" disparaît de la liste — inspection directe du texte source
+confirmant qu'il s'agit d'un résidu isolé n'ayant jamais formé de
+vraie paire nom/quantité dans le tableau (pas un ingrédient réel
+perdu), contrairement à l'ancienne extraction qui le comptait à tort
+comme un 8ᵉ ingrédient.
+
+**Résultat de la vérification élargie, après correction** : sur les 15
+photos testées, 14 montrent un résultat **rigoureusement identique**
+avec et sans le nouveau chemin (celui-ci ne s'active tout simplement
+pas pour elles, laissant le comportement existant totalement
+inchangé) ; la seule différence restante (Barramundi) est une
+amélioration confirmée, pas une dégradation.
+
+**Nouveau cas de test ajouté** à `tests/test_table_ingredients.py`
+(5 cas désormais) — protège spécifiquement cette régression précise
+(en-tête nutritionnel trop déformé pour être reconnu littéralement).
+
+**Non-régression** : tout le corpus officiel (8 cas) et le cas Mijoté
+du point 65 relancés après la correction, aucune régression.
+
+**Version testée** : v210
+
+## Résumé — état au 06/09/2026 (v210)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
   (jsQR/jsPDF depuis la v141, Tesseract depuis la v165) — plus aucune

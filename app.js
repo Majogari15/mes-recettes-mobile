@@ -2391,6 +2391,12 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, includePhoto)
   });
   y += 5;
 
+  if (recipe.allergens && recipe.allergens.length) {
+    heading(t("recipe_allergens"));
+    paragraph(recipe.allergens.map((a) => translateAllergen(a)).join(", "));
+    y += 5;
+  }
+
   if (recipe.description) {
     heading(t("pdf_description_label"));
     paragraph(recipe.description);
@@ -7547,7 +7553,7 @@ async function runOcrOnImage(file) {
   // jamais pour les ingrédients ou les informations générales.
   const isLandscape = (input.width || input.naturalWidth || 0) > (input.height || input.naturalHeight || 1) * 1.15;
   const gridText = (looksLikeMergedGridLayout(data) || isLandscape) ? await runGridCellOcr(worker, input, 3) : null;
-  return { rawText: data.text, layoutText: reconstructTextFromBlocks(data) || data.text, gridText };
+  return { rawText: data.text, layoutText: reconstructTextFromBlocks(data) || data.text, gridText, tableText: reconstructTableRowsFromBlocks(data) };
 }
 
 // Détermine les limites verticales des 2 rangées de la grille par une
@@ -7671,6 +7677,57 @@ async function runTwoColumnIngredientOcr(worker, input) {
 // de la colonne droite, plutôt que toute la colonne gauche suivie de
 // toute la colonne droite). Renvoie null en cas d'échec, pour que
 // l'appelant retombe sur l'extraction standard sans interruption.
+// Transforme le texte "nom | quantité" produit par
+// reconstructTableRowsFromBlocks en ingrédients exploitables. Chaque
+// partie est déjà connue avec certitude (coordonnées réelles, pas une
+// déduction) — inutile de la faire deviner à nouveau par
+// parseIngredientString sur la chaîne recombinée, qui échouait
+// souvent à retrouver la frontière déjà connue. La partie quantité
+// est analysée isolément (réutilise la reconnaissance d'unité déjà
+// éprouvée de parseIngredientString, via un nom factice, plutôt que
+// de la dupliquer) ; la partie nom, une fois nettoyée du bruit
+// résiduel, est conservée telle quelle. Le traitement s'arrête dès
+// qu'une ligne ressemble à un marqueur de fin de section (nutrition,
+// allergènes...) — sans cet arrêt, le tableau nutritionnel qui suit
+// toujours les ingrédients sur ce type de fiche produirait de fausses
+// lignes ("Protéines(g) 31" comme "quantité 4").
+function parseTableRowsIngredients(tableText) {
+  if (!tableText) return [];
+  function stripNoisePrefix(s) {
+    const m = s.match(/^(\S{1,3})\s+(.+)$/);
+    if (m && /^[a-zA-Z*.;:,"'‘’“”-]{1,3}$/.test(m[1])) return stripNoisePrefix(m[2]);
+    return s;
+  }
+  const results = [];
+  for (const rawLine of tableText.split("\n")) {
+    const sepIdx = rawLine.indexOf(" | ");
+    if (sepIdx < 0) continue;
+    const leftRaw = rawLine.slice(0, sepIdx).trim();
+    const rightRaw = rawLine.slice(sepIdx + 3).trim();
+    if (/nutrition|[ée]nergie|valeurs?\s+nutritionnelles?|allerg[eèé]nes?|conserver\s+au\s+r[ée]frig/i.test(leftRaw + " " + rightRaw)) break;
+    // Signature quasi certaine d'une valeur d'énergie kJ/kcal (ex.
+    // "2745 /656") même quand l'en-tête lui-même est trop déformé par
+    // l'OCR pour être reconnu littéralement ("(kifkeal)" au lieu de
+    // "(kJ/kcal)", constaté sur une vraie photo) — sans ce signal
+    // complémentaire, une valeur nutritionnelle pouvait remplacer à
+    // tort un ingrédient réel en fin de liste.
+    if (/\b\d{3,5}\s*\/\s*\d{2,4}\b/.test(rightRaw)) break;
+    const name = stripNoisePrefix(leftRaw);
+    if (!name || matchesIngredientTitle(name) || OCR_NON_INGREDIENT_KEYWORDS.test(name)) continue;
+    if (!/[a-zàâéèêëïîôùûüçœ]{3,}/i.test(name)) continue;
+    // Rejette une ligne dont le nom ressemble à une valeur de tableau
+    // nutritionnel (mot très court accolé à un chiffre entre
+    // parenthèses, ex. "Protéines(g)") plutôt qu'un vrai nom
+    // d'ingrédient — signal complémentaire à l'arrêt par marqueur
+    // ci-dessus, pour les lignes de ce même tableau qui ne
+    // contiennent pas elles-mêmes un mot-clé reconnu.
+    if (/^[A-Za-zÀ-ÿ]{2,15}\s*\([a-z%]{1,3}\)\s*\d*$/i.test(name)) continue;
+    const qtyParsed = parseIngredientString(`${rightRaw} x`);
+    results.push({ name, quantity: qtyParsed.quantity, unit: qtyParsed.unit });
+  }
+  return results.filter((r) => r.name).map((i) => ({ ...i, confidence: scoreIngredientConfidence(i) }));
+}
+
 async function computeTwoColumnIngredients(file) {
   try {
     const worker = await getSharedTesseractWorker();
@@ -7775,6 +7832,48 @@ function looksLikeMergedGridLayout(data) {
     });
   });
   return totalLines >= 4 && linesWithOverlap / totalLines >= 0.15;
+}
+
+// Reconstruit un tableau à 2 colonnes (nom à gauche, quantité à
+// droite) à partir des coordonnées réelles des mots reconnus par
+// Tesseract, ligne par ligne — plutôt que de deviner après coup, à
+// partir du texte déjà linéarisé, quelles lignes sont des noms et
+// lesquelles sont des quantités (approche tentée puis abandonnée :
+// l'OCR perd parfois le chiffre en tête de quantité de façon non
+// reproductible d'un passage à l'autre, décalant alors tout
+// l'appariement position par position). Ici, chaque LIGNE (regroupée
+// par Tesseract lui-même verticalement) est traitée indépendamment :
+// un problème sur une ligne ne peut jamais décaler les autres. Même
+// principe de "grand espace horizontal = frontière de colonne" que
+// reconstructTextFromBlocks ci-dessus, mais les deux côtés du premier
+// grand espace sont conservés (nom avant, quantité après) plutôt que
+// le second côté écarté. Renvoie un texte avec un séparateur "|" par
+// ligne ("nom | quantité"), au même niveau que rawText/layoutText —
+// vide si aucune ligne ne présente clairement cette coupure en deux
+// parties.
+function reconstructTableRowsFromBlocks(data) {
+  if (!data || !data.blocks || !data.blocks.length) return null;
+  const imgWidth = data.width || 1000;
+  const bigGapThreshold = imgWidth * 0.025;
+  const rows = [];
+  data.blocks.forEach((block) => {
+    (block.paragraphs || []).forEach((para) => {
+      (para.lines || []).forEach((line) => {
+        const words = (line.words || []).slice().sort((a, b) => a.bbox.x0 - b.bbox.x0);
+        if (words.length < 2) return;
+        let splitAt = -1;
+        for (let i = 1; i < words.length; i++) {
+          const gap = words[i].bbox.x0 - words[i - 1].bbox.x1;
+          if (gap > bigGapThreshold) splitAt = i;
+        }
+        if (splitAt < 0) return;
+        const left = words.slice(0, splitAt).map((w) => w.text).join(" ").trim();
+        const right = words.slice(splitAt).map((w) => w.text).join(" ").trim();
+        if (left && right) rows.push(`${left} | ${right}`);
+      });
+    });
+  });
+  return rows.length ? rows.join("\n") : null;
 }
 
 function reconstructTextFromBlocks(data) {
@@ -8121,7 +8220,7 @@ function extractIngredientsFromLines(text) {
   return { ingredients, persons, foundMarker: ingIdx >= 0 };
 }
 
-function deriveSectionDataForPhoto(rawText, section, layoutText, gridText, twoColumnIngredients) {
+function deriveSectionDataForPhoto(rawText, section, layoutText, gridText, twoColumnIngredients, tableText) {
   const empty = { name: "", ingredients: [], description: "", persons: null, prepTime: null, cookTime: null };
   // Toujours le texte BRUT pour ces deux sections — jamais le texte
   // reconstruit, qui ne doit dégrader ni le nom, ni les personnes, ni
@@ -8165,6 +8264,29 @@ function deriveSectionDataForPhoto(rawText, section, layoutText, gridText, twoCo
       : 0;
     if (twoColumnIngredients && twoColumnIngredients.length > best.ingredients.length && twoColumnHasQuantityRatio >= 0.4) {
       return { ...empty, ingredients: twoColumnIngredients, persons: fromRaw.persons };
+    }
+    // Même principe pour le tableau nom/quantité par coordonnées (voir
+    // parseTableRowsIngredients) — fiches HelloFresh où les ingrédients
+    // sont présentés dans un vrai tableau à 2 colonnes visuelles
+    // (nom à gauche, quantité à droite), pas une liste empilée.
+    // Comparaison différente du motif "2 colonnes" ci-dessus : cette
+    // extraction par coordonnées vise activement MOINS d'éléments mais
+    // bien plus propres (rejette le bruit plutôt que de le compter
+    // comme un faux ingrédient) — comparer le nombre brut d'éléments
+    // pénaliserait donc à tort ce résultat plus propre face à une
+    // liste plus longue mais pleine de fragments incohérents. Comparé
+    // au nombre d'éléments avec une quantité effectivement reconnue
+    // dans le résultat déjà retenu ci-dessus, pas son nombre brut
+    // d'éléments.
+    const tableIngredients = tableText ? parseTableRowsIngredients(tableText) : [];
+    const tableWithQty = tableIngredients.filter((i) => i.quantity != null).length;
+    const currentBest = (twoColumnIngredients && twoColumnIngredients.length > best.ingredients.length && twoColumnHasQuantityRatio >= 0.4)
+      ? twoColumnIngredients : best.ingredients;
+    const currentBestWithQty = currentBest.filter((i) => i.quantity != null).length;
+    const tableIsBetter = tableWithQty >= 3 && (tableWithQty > currentBestWithQty
+      || (tableWithQty === currentBestWithQty && tableIngredients.length < currentBest.length));
+    if (tableIngredients.length >= 4 && tableIsBetter) {
+      return { ...empty, ingredients: tableIngredients, persons: fromRaw.persons };
     }
     return { ...empty, ingredients: best.ingredients, persons: fromRaw.persons ?? (fromLayout && fromLayout.persons) };
   }
@@ -8321,7 +8443,7 @@ function renderImportPhoto() {
         select.addEventListener("change", () => {
           p.section = select.value;
           p.autoDetected = false;
-          p.sectionData = deriveSectionDataForPhoto(p.rawText, p.section, p.layoutText, p.gridText, p.twoColumnIngredients);
+          p.sectionData = deriveSectionDataForPhoto(p.rawText, p.section, p.layoutText, p.gridText, p.twoColumnIngredients, p.tableText);
           refreshUi();
         });
         info.appendChild(select);
@@ -8369,7 +8491,7 @@ function renderImportPhoto() {
     state.multiPhotoImport.push(entry);
     refreshUi();
     try {
-      const { rawText, layoutText, gridText } = await runOcrOnImage(file);
+      const { rawText, layoutText, gridText, tableText } = await runOcrOnImage(file);
       if (!rawText || !rawText.trim()) {
         entry.status = "error";
         entry.errorMessage = t("import_photo_no_text");
@@ -8377,6 +8499,7 @@ function renderImportPhoto() {
         entry.rawText = rawText;
         entry.layoutText = layoutText;
         entry.gridText = gridText;
+        entry.tableText = tableText;
         // Toujours le texte BRUT (jamais reconstruit) pour cette
         // analyse complète — nom, personnes, temps et détection de
         // section en dépendent, et doivent rester fiables même si la
@@ -8394,7 +8517,7 @@ function renderImportPhoto() {
         // des photos où il ne serait de toute façon jamais utilisé.
         const twoColumnIngredients = detected === "ingredients" ? await computeTwoColumnIngredients(file) : null;
         entry.twoColumnIngredients = twoColumnIngredients;
-        entry.sectionData = deriveSectionDataForPhoto(rawText, entry.section, layoutText, gridText, twoColumnIngredients);
+        entry.sectionData = deriveSectionDataForPhoto(rawText, entry.section, layoutText, gridText, twoColumnIngredients, tableText);
         entry.status = "done";
       }
     } catch (err) {
@@ -9333,7 +9456,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 207;
+const APP_VERSION = 210;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
