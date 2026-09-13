@@ -108,7 +108,9 @@ Depuis, la structure sépare strictement :
   vrai tableau à 2 colonnes visuelles (fiches HelloFresh), reconstruit
   à partir des coordonnées réelles des mots plutôt que du texte déjà
   linéarisé — données de coordonnées synthétiques (pas une vraie
-  image), voir TESTS_NON_REGRESSION.md point 65.
+  image) ; inclut aussi la fusion protégeant un ingrédient sans
+  quantité que le tableau ne peut structurellement pas capturer, voir
+  TESTS_NON_REGRESSION.md points 65 et 67.
 - `requirements.txt` — version verrouillée de Playwright.
 
 ## Utilisation

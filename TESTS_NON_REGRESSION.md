@@ -4822,7 +4822,141 @@ du point 65 relancés après la correction, aucune régression.
 
 **Version testée** : v210
 
-## Résumé — état au 06/09/2026 (v210)
+### 67 — Amélioration générale de la qualité d'extraction sur 19 vraies photos *(v211)*
+
+**Contexte** : demande explicite de rendre l'extraction aussi complète
+et correcte que possible (nom, description, ingrédients, quantités,
+personnes) sur les 19 vraies photos identifiées dans l'historique de
+la session — pas seulement corriger un cas isolé.
+
+**Filtrage des faux ingrédients "unité seule"** : nouveau filtre
+`isUnitOnlyOrTooShortName`, réutilisant la liste d'unités déjà
+officielle de l'app (`UNIT_KEYS`) — rejette un "ingrédient" dont le
+nom final n'est en réalité que le mot d'unité lui-même ("sachet",
+"piéce" seuls, avec ou sans chiffre isolé accolé comme "1 sachet"), ou
+un fragment de 1-2 lettres ("E", "ur"). Volontairement limité à ces
+cas précis et sans ambiguïté — un nom de 3 lettres reste accepté (riz,
+ail, sel, thé sont des ingrédients bien réels). Rejet aussi de "selon
+votre goût" isolé (reliquat récurrent de "Poivre et sel selon votre
+goût" scindé, jamais un vrai ingrédient à lui seul). Appliqué aux 3
+chemins d'extraction photo (`extractIngredientsFromLines`,
+`parseTableRowsIngredients`, `parseStackedIngredientColumn`).
+
+**Point-virgule ajouté au bruit toléré en début de ligne**
+(`OCR_LEADING_NOISE`) — trouvé sur une vraie photo ("; Par portion
+Pour 100g") où ce caractère, absent de la liste jusqu'ici, empêchait
+la reconnaissance de "Par portion" comme frontière de section, laissant
+une ligne de tableau nutritionnel se glisser parmi les ingrédients.
+
+**Régression trouvée et corrigée pendant ce travail lui-même** : le
+correctif du point-virgule ci-dessus, en changeant légèrement le
+résultat de l'extraction par tableau sur une autre vraie photo, a fait
+disparaître un ingrédient réel ("Gousse d'ail", sans quantité indiquée
+sur cette photo précise) — l'extraction par tableau ne peut
+structurellement jamais capturer un ingrédient "juste un nom, sans
+quantité", puisqu'elle exige une paire nom/quantité par ligne.
+Remplacer purement la liste par le résultat du tableau, comme c'était
+fait jusqu'ici, risquait donc de perdre silencieusement de vrais
+ingrédients dès que l'un d'eux n'a pas de quantité affichée. **Corrigé
+par une fusion plutôt qu'un remplacement** : les ingrédients propres
+du tableau sont complétés par les ingrédients sans quantité de
+l'extraction alternative, absents du tableau (déduplication par
+inclusion de sous-chaîne, pas seulement égalité stricte, pour
+reconnaître "Chapelure panko" et "Chapelure panko % sachet" comme le
+même ingrédient) et dont le nom a une longueur moyenne de mots
+plausible (signal déjà utilisé ailleurs dans ce fichier), pour ne pas
+réintroduire les fragments de bruit que le tableau avait justement
+correctement exclus.
+
+**Testé** : suite de tests existante relancée après chaque changement
+(y compris après la régression trouvée puis corrigée), aucune
+régression. Nouveau cas de test ajouté à `tests/test_table_ingredients.py`
+(6 cas désormais) protégeant spécifiquement ce comportement de
+fusion.
+
+**Limites restantes, assumées plutôt que poursuivies indéfiniment** :
+quelques fragments de bruit isolés subsistent sur certaines photos
+(ex. "nell", "portion" seul) — un filtrage plus agressif risquerait de
+rejeter à tort de vrais ingrédients courts sur d'autres recettes, un
+compromis jugé plus sûr que de chasser une perfection totale au prix
+de nouvelles régressions. Un format "2 ingrédients par ligne"
+(rencontré sur une nouvelle recette, "Butternut farcies") reste non
+géré — structurellement différent de tout ce qui est actuellement
+traité, à considérer comme un chantier séparé.
+
+**Non-régression** : toute la suite de tests existante et le corpus
+officiel (8 cas) relancés à plusieurs reprises au cours de ce travail,
+aucune régression au résultat final.
+
+**Version testée** : v211
+
+### 68 — Motif "2 ingrédients par ligne" résolu (photo Butternut) *(v212)*
+
+**Contexte** : reprise du cas mis de côté au point 67 — certaines
+fiches présentent 2 ingrédients complets (nom+quantité chacun) sur une
+même ligne visuelle (ex. "Persil 1/2 bouquet Pois chiches (conserve)
+200g"), un motif différent du tableau HelloFresh à 2 colonnes déjà
+géré (une seule paire nom/quantité par ligne).
+
+**Géométrie réelle vérifiée avant tout code** : récupération directe
+des coordonnées de mots (`bbox`) sur la vraie photo plutôt que
+deviner — confirmant 3 grandes coupures horizontales par ligne (pas
+1), donnant 4 segments qui s'apparient naturellement 2 à 2 (nom1,
+qté1, nom2, qté2).
+
+**`reconstructTableRowsFromBlocks` étendue** : un nombre IMPAIR de
+grandes coupures (≥3) donne un nombre PAIR de segments, appariés 2 à 2
+comme autant de lignes "nom | quantité" distinctes. Le comportement
+existant (1 coupure, ou coupures paires avec repli sur la dernière
+pour tolérer un résidu d'icône) reste rigoureusement inchangé —
+vérifié explicitement contre le corpus et le test Barramundi déjà en
+place avant de continuer.
+
+**Deux ajustements supplémentaires nécessaires, trouvés en testant
+contre la vraie photo (pas supposés à l'avance)** :
+
+1. **Arrêt par mot-clé transformé en simple saut de ligne** : cette
+   photo mentionne "Valeurs nutritionnelles pour 100g" dans son
+   **en-tête**, avant même les ingrédients (contrairement aux fiches
+   HelloFresh déjà gérées, où cette mention suit toujours les
+   ingrédients) — un arrêt complet à ce stade empêchait d'atteindre les
+   vrais ingrédients plus loin dans le texte. Remplacé par un simple
+   passage de cette ligne précise (`continue` plutôt que `break`),
+   sans arrêter la recherche des lignes suivantes. La signature
+   numérique précise (kJ/kcal, "2745/656") reste, elle, un arrêt
+   complet — sans ambiguïté possible, contrairement à une simple
+   mention de mot-clé.
+2. **Démarrage optionnel après un sélecteur de portions** (motif
+   "(- 4 personnes | (+)", courant sur les fiches avec réglage +/- du
+   nombre de personnes) : sans ce point de départ, les badges/temps de
+   préparation précédant les ingrédients étaient pris à tort pour des
+   "ingrédients" par l'extraction par tableau. Repli sur un traitement
+   dès le début si ce motif précis est absent, pour ne jamais bloquer
+   les fiches qui ne l'utilisent pas.
+
+**Résultat concret sur la vraie photo** : les 6 ingrédients désormais
+tous correctement extraits avec leurs bonnes quantités (Persil 1/2
+bouquet, Pois chiches 200g, Quinoa 100g, Huile d'olive 1 filet, Courge
+butternut 2, Cranberry séchée 1 poignée) et le nombre de personnes
+correctement détecté (4) — contre seulement 3 ingrédients
+incohérents auparavant.
+
+**Testé** : chaque modification vérifiée immédiatement contre le
+corpus officiel (8 cas) et le test Barramundi déjà en place avant de
+passer à la suivante — aucune étape appliquée à l'aveugle. Toutes les
+19 vraies photos de la session relancées après l'ensemble des
+changements : les 18 autres montrent un résultat rigoureusement
+identique à avant, seule la photo Butternut change (en bien). 3
+nouveaux cas de test ajoutés à `tests/test_table_ingredients.py`
+(8 cas désormais).
+
+**Non-régression** : toute la suite de tests existante et le corpus
+officiel relancés à plusieurs reprises au cours de ce travail, aucune
+régression au résultat final.
+
+**Version testée** : v212
+
+## Résumé — état au 06/09/2026 (v212)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
   (jsQR/jsPDF depuis la v141, Tesseract depuis la v165) — plus aucune

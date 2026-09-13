@@ -7199,7 +7199,7 @@ function parseIsoDurationToMinutes(duration) {
 // section ("= Ingrédients", "« Préparation", "• Étapes"...) — tolérés
 // en petit nombre avant le mot-clé, sans quoi la ponctuation à elle
 // seule suffisait à empêcher toute reconnaissance de la section.
-const OCR_LEADING_NOISE = "[\\s=#«»“”\"'’•/|+@©®\\-*]{0,6}";
+const OCR_LEADING_NOISE = "[\\s=#«»“”\"'’•/|+@©®\\-*;]{0,6}";
 // Recherche le mot n'importe où dans la ligne (pas seulement en tout
 // début), tant que la ligne reste raisonnablement courte — une photo
 // avec des ustensiles ou un fragment précédent le titre fait parfois
@@ -7698,19 +7698,39 @@ function parseTableRowsIngredients(tableText) {
     if (m && /^[a-zA-Z*.;:,"'‘’“”-]{1,3}$/.test(m[1])) return stripNoisePrefix(m[2]);
     return s;
   }
+  const lines = tableText.split("\n");
+  // Démarrage optionnel après un sélecteur de portions ("(- 4
+  // personnes | (+)", courant sur les fiches avec un réglage +/- du
+  // nombre de personnes) — quand ce motif est trouvé, tout ce qui
+  // précède (badges, temps de préparation, liens de référence...) est
+  // ignoré, évitant qu'il ne soit pris à tort pour des ingrédients.
+  // Repli sur un traitement dès le début si ce motif précis est
+  // absent, pour ne jamais bloquer les fiches qui ne l'utilisent pas.
+  const personsStepperIdx = lines.findIndex((l) => /\d+\s*personnes?/i.test(l));
+  const startLineIdx = personsStepperIdx >= 0 ? personsStepperIdx + 1 : 0;
   const results = [];
-  for (const rawLine of tableText.split("\n")) {
+  for (const rawLine of lines.slice(startLineIdx)) {
     const sepIdx = rawLine.indexOf(" | ");
     if (sepIdx < 0) continue;
     const leftRaw = rawLine.slice(0, sepIdx).trim();
     const rightRaw = rawLine.slice(sepIdx + 3).trim();
-    if (/nutrition|[ée]nergie|valeurs?\s+nutritionnelles?|allerg[eèé]nes?|conserver\s+au\s+r[ée]frig/i.test(leftRaw + " " + rightRaw)) break;
+    // Une simple mention isolée de ces mots-clés ne suffit pas à elle
+    // seule à arrêter tout le traitement — trouvé sur une vraie photo
+    // où "Valeurs nutritionnelles pour 100g" apparaît comme un lien de
+    // référence dans l'EN-TÊTE, avant même la liste d'ingrédients (pas
+    // après, comme sur les fiches HelloFresh déjà gérées) : un arrêt
+    // complet ici empêchait alors d'atteindre les vrais ingrédients
+    // plus loin dans le texte. Cette ligne précise est simplement
+    // ignorée, sans arrêter la recherche des lignes suivantes.
+    if (/nutrition|[ée]nergie|valeurs?\s+nutritionnelles?|allerg[eèé]nes?|conserver\s+au\s+r[ée]frig/i.test(leftRaw + " " + rightRaw)) continue;
     // Signature quasi certaine d'une valeur d'énergie kJ/kcal (ex.
     // "2745 /656") même quand l'en-tête lui-même est trop déformé par
     // l'OCR pour être reconnu littéralement ("(kifkeal)" au lieu de
     // "(kJ/kcal)", constaté sur une vraie photo) — sans ce signal
     // complémentaire, une valeur nutritionnelle pouvait remplacer à
-    // tort un ingrédient réel en fin de liste.
+    // tort un ingrédient réel en fin de liste. Contrairement au
+    // mot-clé ci-dessus, cette signature numérique précise est sans
+    // ambiguïté possible : un arrêt complet reste donc justifié ici.
     if (/\b\d{3,5}\s*\/\s*\d{2,4}\b/.test(rightRaw)) break;
     const name = stripNoisePrefix(leftRaw);
     if (!name || matchesIngredientTitle(name) || OCR_NON_INGREDIENT_KEYWORDS.test(name)) continue;
@@ -7725,7 +7745,7 @@ function parseTableRowsIngredients(tableText) {
     const qtyParsed = parseIngredientString(`${rightRaw} x`);
     results.push({ name, quantity: qtyParsed.quantity, unit: qtyParsed.unit });
   }
-  return results.filter((r) => r.name).map((i) => ({ ...i, confidence: scoreIngredientConfidence(i) }));
+  return results.filter((r) => r.name && !isUnitOnlyOrTooShortName(r.name)).map((i) => ({ ...i, confidence: scoreIngredientConfidence(i) }));
 }
 
 async function computeTwoColumnIngredients(file) {
@@ -7861,12 +7881,38 @@ function reconstructTableRowsFromBlocks(data) {
       (para.lines || []).forEach((line) => {
         const words = (line.words || []).slice().sort((a, b) => a.bbox.x0 - b.bbox.x0);
         if (words.length < 2) return;
-        let splitAt = -1;
+        const gapIndices = [];
         for (let i = 1; i < words.length; i++) {
           const gap = words[i].bbox.x0 - words[i - 1].bbox.x1;
-          if (gap > bigGapThreshold) splitAt = i;
+          if (gap > bigGapThreshold) gapIndices.push(i);
         }
-        if (splitAt < 0) return;
+        if (gapIndices.length === 0) return;
+        // Ligne avec plusieurs ingrédients côte à côte sur une même
+        // rangée visuelle (ex. "Persil 1/2 bouquet Pois chiches
+        // (conserve) 200g", trouvé sur une vraie photo) — un nombre
+        // IMPAIR de grandes coupures donne un nombre PAIR de segments,
+        // qui s'apparient proprement 2 à 2 (nom, quantité, nom,
+        // quantité...), chaque paire devenant sa propre ligne "nom |
+        // quantité". Un nombre pair de coupures (segments impairs)
+        // reste géré par le repli habituel juste après — trop
+        // ambigu pour être apparié de façon fiable de cette manière.
+        if (gapIndices.length % 2 === 1 && gapIndices.length >= 3) {
+          const boundaries = [0, ...gapIndices, words.length];
+          const segments = [];
+          for (let i = 0; i < boundaries.length - 1; i++) {
+            segments.push(words.slice(boundaries[i], boundaries[i + 1]).map((w) => w.text).join(" ").trim());
+          }
+          for (let i = 0; i + 1 < segments.length; i += 2) {
+            if (segments[i] && segments[i + 1]) rows.push(`${segments[i]} | ${segments[i + 1]}`);
+          }
+          return;
+        }
+        // Cas habituel (une seule vraie coupure, éventuellement
+        // précédée d'un résidu d'icône créant une coupure parasite plus
+        // tôt) : ne retenir que la DERNIÈRE coupure, qui isole le plus
+        // fiablement la quantité en fin de ligne — comportement
+        // rigoureusement inchangé par rapport à avant cette extension.
+        const splitAt = gapIndices[gapIndices.length - 1];
         const left = words.slice(0, splitAt).map((w) => w.text).join(" ").trim();
         const right = words.slice(splitAt).map((w) => w.text).join(" ").trim();
         if (left && right) rows.push(`${left} | ${right}`);
@@ -8015,6 +8061,37 @@ function looksLikeIngredientTableWithoutMarker(rawText) {
 // légitimes complexes ("Filet de poulet et crème de coco", "Herbes
 // fraîches"), fragments réels de grille Marmiton mal reconstruite
 // ("Nes Q L 3)", "de beurre de sucre semoule de farine").
+// Rejette un nom d'ingrédient qui n'est en réalité que le mot d'unité
+// lui-même (ex. "sachet", "piéce" seuls — l'unité déjà correctement
+// extraite séparément par ailleurs, il ne reste alors plus rien de
+// réel dans le nom) ou un fragment de 1-2 lettres seulement (ex. "E",
+// "ur") — jamais un vrai nom d'ingrédient, mais un résidu fréquent de
+// grille ou de tableau mal segmenté. Volontairement limité à ces deux
+// cas précis et sans ambiguïté : un nom de 3 lettres reste accepté
+// (riz, ail, sel, thé sont des ingrédients bien réels), pour ne
+// jamais rejeter à tort une vraie recette courte.
+const INGREDIENT_UNIT_ONLY_WORDS = new Set([
+  "sachet", "sachets", "piece", "pieces", "pièce", "pièces", "paquet", "paquets",
+  "boite", "boites", "boîte", "boîtes", "pot", "pots", "barquette", "barquettes",
+  "tranche", "tranches", "gousse", "gousses", "filet", "filets", "cs", "cc",
+  "cl", "ml", "kg", "l", "autre",
+]);
+function isUnitOnlyOrTooShortName(name) {
+  const normalized = normalize((name || "").trim());
+  if (!normalized) return true;
+  if (INGREDIENT_UNIT_ONLY_WORDS.has(normalized)) return true;
+  if (/^selon\s+votre\s+go[uû]t$/.test(normalized)) return true;
+  // Même rejet si un chiffre isolé précède/suit directement le mot
+  // d'unité (ex. "1 sachet") — la quantité étant déjà correctement
+  // extraite séparément ailleurs, il ne reste alors, là encore, rien
+  // de réel dans le nom.
+  const withoutLeadingDigits = normalized.replace(/^\d+(?:[.,]\d+)?\s*/, "").replace(/\s*\d+(?:[.,]\d+)?$/, "");
+  if (INGREDIENT_UNIT_ONLY_WORDS.has(withoutLeadingDigits)) return true;
+  const lettersOnly = normalized.replace(/[^a-z]/g, "");
+  if (lettersOnly.length > 0 && lettersOnly.length <= 2) return true;
+  return false;
+}
+
 function scoreIngredientConfidence(ingredient) {
   // Une fraction Unicode probablement mal reconnue par l'OCR (voir
   // parseIngredientString) force "uncertain" sans même calculer le
@@ -8140,7 +8217,7 @@ function parseStackedIngredientColumn(text) {
       i += 1;
     }
   }
-  return results.filter((r) => r.name);
+  return results.filter((r) => r.name && !isUnitOnlyOrTooShortName(r.name));
 }
 
 function extractIngredientsFromLines(text) {
@@ -8193,7 +8270,7 @@ function extractIngredientsFromLines(text) {
     })
     .filter(looksLikeIngredientLine)
     .map(parseIngredientString)
-    .filter((i) => i.name)
+    .filter((i) => i.name && !isUnitOnlyOrTooShortName(i.name))
     // Score de confiance ("reliable" ou "uncertain") plutôt qu'un rejet
     // binaire — voir scoreIngredientConfidence plus haut dans ce
     // fichier pour le détail et l'historique de cette décision. Un
@@ -8286,7 +8363,45 @@ function deriveSectionDataForPhoto(rawText, section, layoutText, gridText, twoCo
     const tableIsBetter = tableWithQty >= 3 && (tableWithQty > currentBestWithQty
       || (tableWithQty === currentBestWithQty && tableIngredients.length < currentBest.length));
     if (tableIngredients.length >= 4 && tableIsBetter) {
-      return { ...empty, ingredients: tableIngredients, persons: fromRaw.persons };
+      // Fusion plutôt que remplacement pur : un ingrédient "juste un
+      // nom, sans quantité" (ex. "Gousse d'ail" sur une photo où sa
+      // quantité n'est pas indiquée) ne peut structurellement JAMAIS
+      // être capturé par l'extraction par tableau, qui exige une paire
+      // nom/quantité par ligne — le perdre silencieusement serait une
+      // vraie régression (un ingrédient réel disparu), pas seulement
+      // un peu de bruit en moins. Complète donc la liste propre du
+      // tableau avec les ingrédients sans quantité du résultat
+      // alternatif, absents du tableau, trouvée en vérifiant une vraie
+      // photo où "Gousse d'ail" sans quantité disparaissait entièrement
+      // sans cette fusion.
+      //
+      // Déduplication par inclusion de sous-chaîne (pas seulement
+      // égalité stricte) : "Chapelure panko" (déjà dans le tableau) et
+      // "Chapelure panko % sachet" (variante bruitée du même ingrédient
+      // dans l'alternative) doivent être reconnus comme le même
+      // ingrédient, sans quoi la fusion les dupliquerait. Longueur
+      // moyenne des mots exigée (signal déjà utilisé ailleurs dans ce
+      // fichier pour distinguer du texte réel d'un fragment de bruit)
+      // pour ne réintégrer que des noms plausibles, pas des fragments
+      // isolés ("nell", "i lcs") que le tableau avait justement
+      // correctement exclus.
+      function alreadyInTable(name) {
+        const n = normalize(name);
+        return tableIngredients.some((t) => {
+          const tn = normalize(t.name);
+          return n === tn || n.includes(tn) || tn.includes(n);
+        });
+      }
+      function looksLikePlausibleName(name) {
+        const words = name.trim().split(/\s+/).filter(Boolean);
+        if (!words.length) return false;
+        const avgLen = words.join("").length / words.length;
+        return avgLen >= 3;
+      }
+      const missingNoQtyItems = currentBest.filter((i) =>
+        i.quantity == null && looksLikePlausibleName(i.name) && !alreadyInTable(i.name)
+      );
+      return { ...empty, ingredients: tableIngredients.concat(missingNoQtyItems), persons: fromRaw.persons };
     }
     return { ...empty, ingredients: best.ingredients, persons: fromRaw.persons ?? (fromLayout && fromLayout.persons) };
   }
@@ -9456,7 +9571,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 210;
+const APP_VERSION = 212;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

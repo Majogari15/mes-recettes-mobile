@@ -170,6 +170,78 @@ def main():
             all_ok = False
         print()
 
+        print("=== Fusion : un ingrédient sans quantité (ex. 'Gousse d'ail') n'est pas perdu ===\n")
+        raw_text_with_noqty_item = "Gousse d'ail\nOignon 1 pieces\nPersil 1 sachet\nSpaghetti 180 g\nNoix concassées 1 sachet\nLardons fumés 150g"
+        merge_result = page.evaluate(
+            """
+            ([rawText, data]) => {
+                const tableText = reconstructTableRowsFromBlocks(data);
+                const parsed = parseOcrRecipeText(rawText);
+                return deriveSectionDataForPhoto(rawText, "ingredients", rawText, null, null, tableText).ingredients.map(i => i.name);
+            }
+            """,
+            [raw_text_with_noqty_item, {
+                "width": 1000,
+                "blocks": [{"paragraphs": [{"lines": [
+                    make_row("Oignon", 50, 150, "1 pieces", 400, 490),
+                    make_row("Persil", 50, 150, "1 sachet", 400, 490),
+                    make_row("Spaghetti", 50, 150, "180 g", 400, 490),
+                    make_row("Noix concassées", 50, 180, "1 sachet", 400, 490),
+                    make_row("Lardons fumés", 50, 160, "150g", 400, 490),
+                ]}]}],
+            }],
+        )
+        ok = any("Gousse" in n for n in merge_result)
+        print(f"{'✅ OK' if ok else '❌ ÉCHEC'}  {merge_result}")
+        if not ok:
+            all_ok = False
+        print()
+
+        print("=== Motif '2 ingrédients par ligne' (ex. photo Butternut réelle) correctement séparé en 2 paires ===\n")
+        # Reproduit fidèlement la géométrie réelle trouvée sur une photo
+        # "Persil 1/2 bouquet Pois chiches (conserve) 200g" — un seul
+        # mot par "ligne" ici pour simplifier, mais avec les 3 grandes
+        # coupures caractéristiques de ce motif (nom1, qté1, nom2, qté2).
+        data_two_per_line = {
+            "width": 1400,
+            "blocks": [{"paragraphs": [{"lines": [
+                {"words": [
+                    {"text": "Persil", "bbox": {"x0": 105, "x1": 166}},
+                    {"text": "1/2", "bbox": {"x0": 556, "x1": 584}},
+                    {"text": "bouquet", "bbox": {"x0": 592, "x1": 676}},
+                    {"text": "Pois", "bbox": {"x0": 730, "x1": 777}},
+                    {"text": "chiches", "bbox": {"x0": 785, "x1": 871}},
+                    {"text": "200g", "bbox": {"x0": 1244, "x1": 1300}},
+                ]},
+            ]}]}],
+        }
+        two_per_line_result = page.evaluate(
+            "(data) => reconstructTableRowsFromBlocks(data)", data_two_per_line
+        )
+        expected_two = "Persil | 1/2 bouquet\nPois chiches | 200g"
+        ok = two_per_line_result == expected_two
+        print(f"{'✅ OK' if ok else '❌ ÉCHEC'}  {two_per_line_result!r}")
+        if not ok:
+            all_ok = False
+        print()
+
+        print("=== Démarrage après un sélecteur de portions, en-tête ignoré ===\n")
+        table_text_with_header = (
+            "Plat complet | badge\n"
+            "20 min | préparation\n"
+            "(- 4 personnes | (+)\n"
+            "Persil | 1/2 bouquet\n"
+            "Quinoa | 100g"
+        )
+        header_result = page.evaluate(
+            "(t) => parseTableRowsIngredients(t).map(i => i.name)", table_text_with_header
+        )
+        ok = header_result == ["Persil", "Quinoa"]
+        print(f"{'✅ OK' if ok else '❌ ÉCHEC'}  {header_result}")
+        if not ok:
+            all_ok = False
+        print()
+
         print("Erreurs JS sur tout le parcours:", errors if errors else "AUCUNE")
         if errors:
             all_ok = False
