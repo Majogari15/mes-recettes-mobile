@@ -7218,12 +7218,12 @@ function matchesIngredientTitle(line) {
   return !!match && match.index <= 15;
 }
 const OCR_INGREDIENT_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(ingr[ée]dients?|ingredients|ingredientes|zutaten)\\b", "i");
-const OCR_INSTRUCTION_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(pr[ée]paration|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\\b", "i");
+const OCR_INSTRUCTION_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(pr[ée]paration|description|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\\b", "i");
 // Toute section qui doit arrêter la liste des ingrédients, pas
 // seulement celle des étapes — "Ustensiles" par exemple, très courant
 // juste après les ingrédients et avant la vraie section de
 // préparation sur beaucoup de sites.
-const OCR_SECTION_BOUNDARY_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(pr[ée]paration|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensi[lt]es?|utensils?|mat[ée]riel|equipment|valeurs?\\s+nutritionnelles?|nutritional\\s+values?|valores?\\s+nutricionales?|n[äa]hrwerte?|allerg[èe]nes?|allergens?|al[ée]rgenos?|par\\s+portion|per\\s+serving|pour\\s+100\\s*g|per\\s+100\\s*g|conserver\\s+au\\s+r[ée]frig[ée]rateur|[ée]nergie|energy|kj\\s*\\/?\\s*kcal)\\b", "i");
+const OCR_SECTION_BOUNDARY_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(pr[ée]paration|description|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensi[lt]es?|utensils?|mat[ée]riel|equipment|nutrition\\s+estim[ée]e|valeurs?\\s+nutritionnelles?|nutritional\\s+values?|valores?\\s+nutricionales?|n[äa]hrwerte?|allerg[èeé]nes?|allergens?|al[ée]rgenos?|par\\s+portion|per\\s+serving|pour\\s+100\\s*g|per\\s+100\\s*g|conserver\\s+au\\s+r[ée]frig[ée]rateur|[ée]nergie|energy|kj\\s*\\/?\\s*kcal)\\b", "i");
 // Nombre de personnes indiqué juste après le mot-clé "Ingrédients" sur
 // la même ligne (ex. "Ingrédients pour 2 personnes", très courant sur
 // les fiches HelloFresh) — extrait avant de retirer la ligne, pour ne
@@ -7290,9 +7290,36 @@ function parseOcrRecipeText(rawText) {
   // retirés du nom, qu'ils proviennent de la fusion ci-dessus ou
   // qu'ils soient déjà présents sur la toute première ligne.
   name = name.replace(/\s*\d+([.,]\d+)?\s*\/\s*5\s*(\d+\s*)?(commentaires?|comments?|avis|reviews?)?\s*$/i, "").trim();
+  // Une vraie ligne d'en-tête ("Préparation :", "Description :",
+  // "Allergènes :"...) reste courte ET se termine par ":" ou rien du
+  // tout après le mot-clé — jamais par un point. Sans cette
+  // vérification, une phrase de description mentionnant naturellement
+  // l'un de ces mots ("Ajouter les zestes blanchis à la préparation.")
+  // et coupée par l'OCR de sorte que ce mot se retrouve seul sur sa
+  // propre ligne ("préparation.") était prise à tort pour un véritable
+  // en-tête de section — corrompant à la fois la liste d'ingrédients
+  // (étendue trop loin) et la description (démarrant trop tard,
+  // amputée de ses premières étapes). Même principe que
+  // matchesIngredientTitle ci-dessus (ligne courte), avec en plus la
+  // distinction point/deux-points qui différencie ici une fin de
+  // phrase d'un en-tête.
+  function looksLikeGenuineSectionMarker(line) {
+    const trimmed = line.trim();
+    // Cas particulier : une ligne de valeurs nutritionnelles contient
+    // souvent ses propres données sur la même ligne que l'en-tête (ex.
+    // "Nutrition estimée (partiel, 3/7) : 461 kcal..."), contrairement
+    // aux en-têtes purs ("Description :") — la présence de "kcal" est
+    // un signal fort et spécifique suffisant à lui seul, sans exiger
+    // une ligne courte se terminant par ":" comme pour les autres
+    // marqueurs.
+    if (/\bkcal\b/i.test(trimmed)) return true;
+    if (/\.\s*$/.test(trimmed)) return false;
+    const words = trimmed.split(/\s+/).filter(Boolean);
+    return words.length <= 6;
+  }
   const ingIdx = lines.findIndex((l) => matchesIngredientTitle(l));
-  const boundaryIdx = lines.findIndex((l, i) => (ingIdx < 0 || i > ingIdx) && sectionBoundaryMarker.test(l));
-  const instrIdx = lines.findIndex((l, i) => (ingIdx < 0 || i > ingIdx) && instructionMarker.test(l));
+  const boundaryIdx = lines.findIndex((l, i) => (ingIdx < 0 || i > ingIdx) && sectionBoundaryMarker.test(l) && looksLikeGenuineSectionMarker(l));
+  const instrIdx = lines.findIndex((l, i) => (ingIdx < 0 || i > ingIdx) && instructionMarker.test(l) && looksLikeGenuineSectionMarker(l));
 
   let ingredientLines = [];
   let descriptionLines = [];
@@ -7333,7 +7360,7 @@ function parseOcrRecipeText(rawText) {
   let persons = null;
   lines.forEach((line) => {
     if (persons != null) return;
-    const personsMatch = line.match(/\b(\d+)\s*(?:personnes?|convives?|parts?|servings?|portions?|personas?|raciones?|personen|portionen)\b/i);
+    const personsMatch = line.match(/\b(\d+)(?:[.,]\d+)?\s*(?:personnes?|convives?|parts?|servings?|portions?|personas?|raciones?|personen|portionen)\b/i);
     if (personsMatch) persons = Math.max(1, parseInt(personsMatch[1], 10));
   });
 
@@ -7351,6 +7378,28 @@ function parseOcrRecipeText(rawText) {
     if (hourOnlyMatch) return parseInt(hourOnlyMatch[1], 10) * 60;
     const minMatch = s.match(/(\d+)/);
     return minMatch ? parseInt(minMatch[1], 10) : null;
+  }
+  // Allergènes mentionnés explicitement dans le texte source (ex.
+  // "Allergènes : Gluten, Lait (dont lactose)") — correspondance par
+  // inclusion plutôt qu'égalité stricte : "Lait (dont lactose)" doit
+  // reconnaître l'option "Lactose" de l'application (libellé parfois
+  // différent selon la source d'origine de la recette), pas seulement
+  // une correspondance exacte du libellé complet.
+  const allergens = [];
+  const allergensLineMatch = lines.find((l) => {
+    const m = l.match(/allerg[èeé]nes?\s*:/i);
+    return !!m && m.index <= 10;
+  });
+  if (allergensLineMatch) {
+    const afterColon = allergensLineMatch.replace(/^[^:]*:\s*/, "");
+    afterColon.split(/[,;]/).map((s) => s.trim()).filter(Boolean).forEach((token) => {
+      const normToken = normalize(token);
+      const match = ALLERGEN_OPTIONS.find((opt) => {
+        const normOpt = normalize(opt);
+        return normToken.includes(normOpt) || normOpt.includes(normToken);
+      });
+      if (match && !allergens.includes(match)) allergens.push(match);
+    });
   }
   // Les temps de préparation/cuisson apparaissent souvent après les
   // ingrédients (pas avant) — recherche sur tout le texte plutôt que
@@ -7384,7 +7433,7 @@ function parseOcrRecipeText(rawText) {
     }
   });
 
-  return { name, ingredients, description: descriptionLines.join("\n"), prepTime, cookTime, persons };
+  return { name, ingredients, description: descriptionLines.join("\n"), prepTime, cookTime, persons, allergens };
 }
 
 let tesseractLibPromise = null;
@@ -7907,7 +7956,7 @@ function scoreIngredientConfidence(ingredient) {
 // d'ingrédients sans être eux-mêmes une vraie limite de section
 // détectée (OCR imparfait, limite mal placée...) — filet de sécurité
 // en plus du découpage aux limites, jamais son seul rempart.
-const OCR_NON_INGREDIENT_KEYWORDS = /^(mes ustensiles|ustensiles|par portion|pour\s+100\s*g|[àa]\s*ajouter\s*vous[\s-]?m[êe]me|[ée]nergie|lipides?|glucides?|prot[ée]ines?|fibres?|sel\s*\(g\)|dont\s+(satur[ée]s?|sucres?)|kj\s*\/\s*kcal|valeurs?\s+nutritionnelles?|allerg[èe]nes?|attention|conserver au r[ée]frig[ée]rateur|en cliquant sur les liens|d['’]?autres pages de notre site)/i;
+const OCR_NON_INGREDIENT_KEYWORDS = /^(mes ustensiles|ustensiles|par portion|pour\s+100\s*g|[àa]\s*ajouter\s*vous[\s-]?m[êe]me|[ée]nergie|lipides?|glucides?|prot[ée]ines?|fibres?|sel\s*\(g\)|dont\s+(satur[ée]s?|sucres?)|kj\s*\/\s*kcal|valeurs?\s+nutritionnelles?|allerg[èeé]nes?|attention|conserver au r[ée]frig[ée]rateur|en cliquant sur les liens|d['’]?autres pages de notre site)/i;
 // Une vraie ligne d'ingrédient reste courte (nom + quantité) — une
 // phrase complète de plusieurs propositions (souvent une consigne
 // d'étape ou d'astuce égarée) ne doit pas devenir un "ingrédient" à
@@ -8161,12 +8210,16 @@ function mergeMultiPhotoResults(photos, confirmedPersons) {
   let name = "";
   let ingredients = [];
   let descriptionParts = [];
+  let allergens = [];
   let persons = null, prepTime = null, cookTime = null;
   photos.forEach((p) => {
     const data = p.sectionData;
     if (!data) return;
     if (data.ingredients && data.ingredients.length) ingredients = ingredients.concat(data.ingredients);
     if (data.description && data.description.trim()) descriptionParts.push(data.description.trim());
+    if (data.allergens && data.allergens.length) {
+      data.allergens.forEach((a) => { if (!allergens.includes(a)) allergens.push(a); });
+    }
     if (!name && data.name) name = data.name;
     if (persons == null && data.persons) persons = data.persons;
     if (prepTime == null && data.prepTime) prepTime = data.prepTime;
@@ -8191,7 +8244,7 @@ function mergeMultiPhotoResults(photos, confirmedPersons) {
   // plutôt que rempli d'une valeur inventée.
   const finalPersons = confirmedPersons || persons || null;
   const dividedIngredients = ingredients.map((i) => ({ ...i, quantity: i.quantity != null && finalPersons ? i.quantity / finalPersons : i.quantity }));
-  return { name, ingredients: dividedIngredients, description: descriptionParts.join("\n\n"), persons: finalPersons, prepTime, cookTime };
+  return { name, ingredients: dividedIngredients, description: descriptionParts.join("\n\n"), persons: finalPersons, prepTime, cookTime, allergens };
 }
 
 const MAX_IMPORT_PHOTOS = 8;
@@ -9280,7 +9333,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 205;
+const APP_VERSION = 206;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

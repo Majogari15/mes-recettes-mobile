@@ -19,6 +19,9 @@ Chaque fichier du corpus contient :
   contexte et les limites connues). Peut inclure :
     - detectedSection, persons, prepTime, nameContains : vérifications
       simples (égalité ou sous-chaîne) ;
+    - hasAllergen : vérifie qu'un allergène donné (libellé exact de
+      l'application, ex. "Lactose") figure bien dans la liste
+      détectée ;
     - ingredientCount / ingredientCountMax : nombre de lignes ;
     - keyIngredients : liste d'ingrédients dont la présence (nom
       contenant une sous-chaîne donnée, avec quantité et unité exactes)
@@ -86,7 +89,7 @@ def run_case(page, entry):
         """
         ([rawText, layoutText, gridText, twoColumnIngredients]) => {
             const parsed = parseOcrRecipeText(rawText);
-            const detected = detectPhotoSection(parsed);
+            const detected = detectPhotoSection(parsed, rawText);
             const sectionData = deriveSectionDataForPhoto(rawText, detected || 'other', layoutText, gridText, twoColumnIngredients);
             return {
                 detected,
@@ -95,6 +98,7 @@ def run_case(page, entry):
                 description: sectionData.description || '',
                 name: sectionData.name || parsed.name,
                 prepTime: sectionData.prepTime,
+                allergens: sectionData.allergens || [],
             };
         }
         """,
@@ -110,6 +114,10 @@ def run_case(page, entry):
     if "persons" in exp and result["persons"] != exp["persons"]:
         ok = False
         details.append(f"personnes attendues {exp['persons']!r}, obtenues {result['persons']!r}")
+
+    if "hasAllergen" in exp and exp["hasAllergen"] not in result["allergens"]:
+        ok = False
+        details.append(f"allergène attendu {exp['hasAllergen']!r} absent, obtenu {result['allergens']!r}")
 
     if "ingredientCount" in exp and ingredient_count != exp["ingredientCount"]:
         ok = False

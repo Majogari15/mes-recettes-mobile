@@ -4489,7 +4489,106 @@ chaque changement, aucune régression.
 
 **Version testée** : v205
 
-## Résumé — état au 06/09/2026 (v205)
+### 62 — Quatre corrections OCR, signalées avec preuve à l'appui (photo + PDF généré) *(v206)*
+
+**Contexte** : l'utilisateur a fourni à la fois la photo prise (fiche
+recette imprimée, issue d'un précédent export PDF de l'app elle-même)
+ET le PDF regénéré après import — permettant de comparer exactement
+attendu contre obtenu, plutôt que de deviner. Reproduit fidèlement en
+faisant tourner le vrai pipeline OCR (`runOcrOnImage` puis
+`parseOcrRecipeText`) sur la photo réelle fournie, pas une simulation.
+
+**1. Nombre de personnes incorrect (1 au lieu de 2)** : la regex de
+détection ne gérait pas les nombres décimaux — "2.0 personne(s)"
+faisait matcher le "0" isolé après le point plutôt que le "2" avant,
+donnant `Math.max(1, 0)` = 1. Corrigée pour capturer la partie entière
+avant un éventuel point/virgule décimal.
+
+**2. Contamination de la liste d'ingrédients + description amputée de
+ses 2 premières étapes** — la cause la plus subtile trouvée dans cette
+session : le mot "préparation" apparaît naturellement au milieu de
+l'étape 2 ("Ajouter les zestes blanchis à la préparation."), et l'OCR
+l'a isolé sur sa propre ligne à cause d'un retour à la ligne. Ce mot
+isolé, se terminant par un point, était pris à tort pour un véritable
+en-tête de section ("Préparation :"), au même titre qu'un authentique
+en-tête. Conséquence en cascade : la liste d'ingrédients continuait
+jusqu'à cette fausse frontière (avalant la ligne de nutrition,
+l'en-tête "Description :" et les 2 premières étapes), tandis que la
+description ne démarrait qu'après ce même point (amputée des mêmes 2
+étapes). Nouvelle fonction `looksLikeGenuineSectionMarker` : une ligne
+ne compte comme véritable en-tête que si elle est courte (≤6 mots,
+même principe déjà éprouvé par `matchesIngredientTitle`) ET se termine
+par ":" plutôt que par un point — sauf exception pour les lignes
+contenant "kcal" (valeurs nutritionnelles avec leurs propres données
+sur la même ligne que l'en-tête, cas structurellement différent).
+"description" et "nutrition estimée" ajoutés aux marqueurs reconnus
+(absents jusqu'ici, alors qu'il s'agit précisément du format utilisé
+par les propres PDF générés par cette application — donc pertinent
+pour la réimportation par photo de ses propres exports).
+
+**3. Allergènes jamais extraits en import photo** : fonctionnalité
+manquante (pas un bug) — `parseOcrRecipeText` ne renvoyait aucun champ
+`allergens`, contrairement à la fonction équivalente déjà existante
+pour l'import par lien (`allerg(?:[eè]ne|en)s?`, dans une fonction
+séparée). Ajoutée : recherche d'une ligne "Allergènes :", découpage
+par virgule, correspondance par inclusion (normalisée, sans
+accents/casse) contre `ALLERGEN_OPTIONS` — "Lait (dont lactose)"
+reconnu comme correspondant à l'option "Lactose" de l'application, pas
+seulement une égalité stricte du libellé complet. Propagée à travers
+`deriveSectionDataForPhoto` (déjà correcte pour le cas "mixed" via
+`parseOcrRecipeText` directement) et surtout `mergeMultiPhotoResults`,
+qui ne la propageait pas du tout jusqu'ici.
+
+**Piège rencontré en testant ce point précis** : l'OCR a lu
+"Allerg**é**nes" (accent aigu) au lieu de "Allerg**è**nes" (accent
+grave, orthographe correcte) — ma première regex `[èe]` n'incluait pas
+la variante é, laissant passer silencieusement aucun allergène détecté
+sur cette relecture précise, alors qu'un test antérieur (OCR non
+déterministe d'un run à l'autre) avait fonctionné. Élargie à `[èeé]` —
+même correction appliquée aux 2 autres occurrences du même motif
+limité trouvées dans le fichier (`OCR_SECTION_BOUNDARY_MARKER`,
+`OCR_NON_INGREDIENT_KEYWORDS`), pour cohérence. Un motif similaire mais
+symétrique (`[eè]` sans é) existe dans la fonction d'import par URL,
+non concerné par ce risque précis (texte web propre, jamais issu d'une
+reconnaissance optique) — volontairement laissé inchangé.
+
+**Défaut du script de test lui-même trouvé en cours de route** :
+`tests/run_ocr_corpus.py` appelait `detectPhotoSection(parsed)` avec un
+seul argument, alors que l'usage réel de l'application en passe
+toujours deux (`detectPhotoSection(parsed, rawText)`, voir
+`handleNewPhoto`) — écart qui aurait pu masquer d'autres régressions
+que celle des allergènes, pas seulement l'affecter elle. Corrigé pour
+refléter fidèlement l'usage réel.
+
+**Point non corrigé, expliqué** : la valeur nutritionnelle affichée
+tantôt "16g prot.", tantôt "169 prot." selon les essais — confusion
+possible entre "g" et "9" par l'OCR lui-même (paire de caractères
+connue pour se ressembler), pas un problème de l'analyse de texte.
+Sans conséquence pratique désormais : cette ligne entière est
+maintenant exclue des ingrédients (voir point 2 ci-dessus), son
+contenu n'étant jamais stocké ni réaffiché nulle part dans la recette
+finale.
+
+**Nouveau cas de corpus ajouté**
+(`tests/ocr-corpus/photo_financiers_recette_complete.json`) — vraie
+photo (pas de donnée personnelle, simple fiche recette imprimée),
+directement dans le corpus public. Nouveau champ `hasAllergen` ajouté
+au lanceur de tests (`run_ocr_corpus.py`) pour vérifier spécifiquement
+la détection d'un allergène donné — absent jusqu'ici de ce qui était
+vérifiable.
+
+**Testé** : le pipeline complet (OCR réel → analyse → détection de
+section → dérivation → fusion multi-photos) sur la vraie photo
+fournie, confirmant les 4 corrections ensemble. Tout le corpus OCR
+existant (7 cas au total désormais) relancé, aucune régression — y
+compris après la correction du défaut du script de test lui-même.
+
+**Non-régression** : toute la suite de tests existante relancée après
+chaque changement, aucune régression.
+
+**Version testée** : v206
+
+## Résumé — état au 06/09/2026 (v206)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
   (jsQR/jsPDF depuis la v141, Tesseract depuis la v165) — plus aucune
