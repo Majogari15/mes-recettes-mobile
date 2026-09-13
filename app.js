@@ -7218,12 +7218,12 @@ function matchesIngredientTitle(line) {
   return !!match && match.index <= 15;
 }
 const OCR_INGREDIENT_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(ingr[ée]dients?|ingredients|ingredientes|zutaten)\\b", "i");
-const OCR_INSTRUCTION_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(pr[ée]paration|description|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\\b", "i");
+const OCR_INSTRUCTION_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(pr[ée]paration|description|recette|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\\b", "i");
 // Toute section qui doit arrêter la liste des ingrédients, pas
 // seulement celle des étapes — "Ustensiles" par exemple, très courant
 // juste après les ingrédients et avant la vraie section de
 // préparation sur beaucoup de sites.
-const OCR_SECTION_BOUNDARY_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(pr[ée]paration|description|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensi[lt]es?|utensils?|mat[ée]riel|equipment|nutrition\\s+estim[ée]e|valeurs?\\s+nutritionnelles?|nutritional\\s+values?|valores?\\s+nutricionales?|n[äa]hrwerte?|allerg[èeé]nes?|allergens?|al[ée]rgenos?|par\\s+portion|per\\s+serving|pour\\s+100\\s*g|per\\s+100\\s*g|conserver\\s+au\\s+r[ée]frig[ée]rateur|[ée]nergie|energy|kj\\s*\\/?\\s*kcal)\\b", "i");
+const OCR_SECTION_BOUNDARY_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(pr[ée]paration|description|recette|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensi[lt]es?|utensils?|mat[ée]riel|equipment|nutrition\\s+estim[ée]e|valeurs?\\s+nutritionnelles?|nutritional\\s+values?|valores?\\s+nutricionales?|n[äa]hrwerte?|allerg[èeé]nes?|allergens?|al[ée]rgenos?|par\\s+portion|per\\s+serving|pour\\s+100\\s*g|per\\s+100\\s*g|conserver\\s+au\\s+r[ée]frig[ée]rateur|[ée]nergie|energy|kj\\s*\\/?\\s*kcal)\\b", "i");
 // Nombre de personnes indiqué juste après le mot-clé "Ingrédients" sur
 // la même ligne (ex. "Ingrédients pour 2 personnes", très courant sur
 // les fiches HelloFresh) — extrait avant de retirer la ligne, pour ne
@@ -7433,7 +7433,7 @@ function parseOcrRecipeText(rawText) {
     }
   });
 
-  return { name, ingredients, description: descriptionLines.join("\n"), prepTime, cookTime, persons, allergens };
+  return { name, ingredients, description: descriptionLines.join("\n"), prepTime, cookTime, persons, allergens, hasExplicitInstructionMarker: instrIdx >= 0 };
 }
 
 let tesseractLibPromise = null;
@@ -7848,7 +7848,7 @@ function detectPhotoSection(parsed, rawText) {
   });
   const descriptionLineCount = plausibleLines.length;
   const hasNumberedSteps = /(?:^|\n)\s*(?:[ée]tape\s*\d+|\d+[.)])/i.test(description);
-  const looksLikeRealSteps = hasNumberedSteps || descriptionLineCount > 6;
+  const looksLikeRealSteps = hasNumberedSteps || descriptionLineCount > 6 || (parsed.hasExplicitInstructionMarker && descriptionLineCount >= 3);
   const hasGeneralInfo = !!(parsed.persons || parsed.prepTime || parsed.cookTime);
   // Une couverture affiche parfois déjà le tout début de la vraie
   // liste d'ingrédients au bas du cadrage (ex. Marmiton : titre, note,
@@ -9333,7 +9333,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 206;
+const APP_VERSION = 207;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

@@ -4588,7 +4588,70 @@ chaque changement, aucune régression.
 
 **Version testée** : v206
 
-## Résumé — état au 06/09/2026 (v206)
+### 63 — Second test approfondi (4 recettes), en-tête "Recette :" et seuil de détection *(v207)*
+
+**Contexte** : l'utilisateur signale que la v206 n'était pas encore
+redéployée (toujours v205 affichée dans l'app) au moment de tester —
+le PDF "Financiers" fourni montre donc encore les anciens symptômes
+déjà corrigés au point 62, pas une régression. Fournit en plus 3
+nouvelles recettes réelles (Riz cantonnais, Pâtes à la carbonara,
+Mijoté de dinde au curry HelloFresh), certaines testées deux fois
+(détection automatique, puis sélection manuelle de section).
+
+**1. En-tête "Recette :" jamais reconnu, confirmé et corrigé** :
+courant sur les fiches du site "de simples recettes" (Riz cantonnais,
+Pâtes à la carbonara) — absent de `OCR_INSTRUCTION_MARKER` et
+`OCR_SECTION_BOUNDARY_MARKER`, qui ne reconnaissaient que
+"préparation/description/étapes/instructions...". Toute la
+préparation se retrouvait donc avalée dans la liste d'ingrédients (le
+même mécanisme de contamination déjà résolu au point 62, mais
+déclenché ici par un mot-clé manquant plutôt que par un faux
+positif), la description restant entièrement vide. "recette" ajouté
+aux deux marqueurs.
+
+**2. Seuil de détection de section trop strict pour une préparation
+courte** — trouvé en testant : même après la correction ci-dessus, la
+recette Pâtes carbonara restait classée "ingredients" plutôt que
+"mixed" (recette complète), sa préparation ne comptant que 6 lignes
+sans étapes numérotées ("1.", "2."...), sous l'ancien seuil de
+détection (`> 6 lignes`). **Tentative risquée évitée** : abaisser
+directement ce seuil (essayé à titre de test à `> 4`) casse un cas
+déjà validé du corpus (`photo3_barramundi_couverture`, dont le bruit
+de couverture dépasse alors à tort ce seuil plus bas) — confirmé
+empiriquement en relançant tout le corpus avant de considérer ce
+changement, pas supposé. **Solution retenue** : nouveau champ
+`hasExplicitInstructionMarker` exposé par `parseOcrRecipeText`
+(`instrIdx >= 0`), utilisé comme signal supplémentaire et
+indépendant — un marqueur explicitement trouvé (pas une simple
+estimation par comptage) l'emporte dès 3 lignes de préparation,
+sans toucher au seuil existant pour les cas où aucun marqueur n'a
+été trouvé.
+
+**3. Cas plus complexe non résolu dans cette session, honnêtement
+signalé** : la recette HelloFresh "Mijoté de dinde au curry" (mise en
+page à colonnes multiples pour les ingrédients, préparation répartie
+sur une grille 2×2 de sous-recettes avec leurs propres sous-titres)
+reste mal analysée y compris avec sélection manuelle de section —
+nécessite une investigation séparée, plus approfondie, que le temps de
+cette session ne permettait pas de mener correctement plutôt que de
+risquer une correction précipitée.
+
+**Testé** : les 2 corrections confirmées sur les vraies photos
+fournies (Riz cantonnais, Pâtes carbonara) — ingrédients et
+description désormais exacts et complets pour les deux, section
+correctement détectée "mixed" pour les deux. Tout le corpus existant
+(7 cas) relancé après CHAQUE changement, y compris la tentative de
+seuil abandonnée — aucune régression sur la version finale retenue.
+
+**Nouveau cas de corpus ajouté**
+(`tests/ocr-corpus/photo_riz_cantonnais_recette_header.json`).
+
+**Non-régression** : toute la suite de tests existante relancée,
+aucune régression. 8 cas au total dans le corpus désormais.
+
+**Version testée** : v207
+
+## Résumé — état au 06/09/2026 (v207)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
   (jsQR/jsPDF depuis la v141, Tesseract depuis la v165) — plus aucune
