@@ -3088,10 +3088,6 @@ function parseRecipeFromQrText(text) {
   return { name, ingredients, prepTime, cookTime, difficulty, allergens, description, notes, persons };
 }
 
-// Retire des articles (depuis la fin) jusqu'à ce que le contenu tienne
-// dans la capacité d'un QR code, plutôt que de couper au milieu d'une
-// ligne et casser le format.
-
 async function openShoppingQrCodeModal() {
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">

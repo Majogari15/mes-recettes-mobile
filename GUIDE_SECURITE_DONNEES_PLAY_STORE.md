@@ -58,6 +58,22 @@ utilisée dans le code est bien en HTTPS).
   n'est collectée par le développeur (tout est déjà sous le contrôle
   direct de l'utilisateur, sur son propre appareil)
 
+## Section "Autorisations" (permissions de l'appareil)
+
+L'application demande l'accès à la **caméra**, dans deux cas bien
+distincts à décrire si le formulaire le demande :
+- **Scan de QR code** : flux vidéo en direct, analysé entièrement sur
+  l'appareil pour y détecter un QR code — aucune image n'est
+  enregistrée ni transmise
+- **Photo d'une recette, du journal de cuisine, ou import de recette
+  depuis une photo** : ouvre l'appareil photo natif du téléphone (ou la
+  galerie), la photo obtenue restant stockée uniquement en local
+
+Dans les deux cas : aucune image n'est envoyée à un serveur ni
+partagée avec un tiers. L'application demande aussi l'autorisation
+d'envoyer des **notifications**, uniquement pour prévenir qu'un
+minuteur de cuisine est terminé.
+
 ## Politique de confidentialité à renseigner
 
 L'URL de la politique de confidentialité fournie séparément
