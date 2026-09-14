@@ -22,6 +22,11 @@
     { "src": "screenshots/03_fiche_recette.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Détail d'une recette" },
     { "src": "screenshots/04_courses.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Liste de courses" }
   ],
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  },
   "shortcuts": [
     {
       "name": "Nouvelle recette",

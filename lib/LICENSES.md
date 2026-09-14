@@ -68,4 +68,4 @@ externe. Chacune conserve sa licence d'origine.
 
 Aucune de ces bibliothèques ne collecte ni ne transmet de données —
 elles s'exécutent entièrement sur l'appareil de l'utilisateur. Voir
-`POLITIQUE_DE_CONFIDENTIALITE.md` pour le détail.
+`POLITIQUE_CONFIDENTIALITE.md` pour le détail.

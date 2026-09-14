@@ -43,12 +43,34 @@ const MAX_REDIRECTS = 5;
 const USER_AGENT = "Mozilla/5.0 (compatible; MesRecettesBot/1.0; +https://majogari15.github.io/mes-recettes-mobile/)";
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
+// Une adresse IPv6 "mappée IPv4" (::ffff:a.b.c.d, ou le préfixe NAT64
+// 64:ff9b::a.b.c.d) désigne en réalité l'adresse IPv4 qu'elle contient
+// — URL().hostname la normalise souvent en deux groupes hexadécimaux
+// (ex. "::ffff:7f00:1" pour 127.0.0.1) plutôt qu'en notation décimale.
+// Sans ce déballage, ces adresses ne correspondaient à aucune des
+// vérifications ci-dessous et contournaient donc le filtre anti-SSRF.
+function extractIPv4MappedAddress(lower) {
+  const mappedMatch = lower.match(/^(?:::ffff:|64:ff9b::)(.+)$/);
+  if (!mappedMatch) return null;
+  const rest = mappedMatch[1];
+  if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(rest)) return rest;
+  const hexMatch = rest.match(/^([0-9a-f]{1,4}):([0-9a-f]{1,4})$/);
+  if (hexMatch) {
+    const high = parseInt(hexMatch[1], 16);
+    const low = parseInt(hexMatch[2], 16);
+    return `${(high >> 8) & 0xff}.${high & 0xff}.${(low >> 8) & 0xff}.${low & 0xff}`;
+  }
+  return null;
+}
+
 function isPrivateOrLocalHost(hostname) {
   // Une adresse IPv6 issue de URL().hostname garde ses crochets
   // (ex. "[::1]") : sans les retirer d'abord, aucune des comparaisons
   // ci-dessous ne pouvait jamais correspondre, laissant passer les
   // adresses IPv6 locales/privées sans être bloquées.
   const lower = hostname.toLowerCase().replace(/^\[|\]$/g, "");
+  const mappedIPv4 = extractIPv4MappedAddress(lower);
+  if (mappedIPv4) return isPrivateOrLocalHost(mappedIPv4);
   if (lower === "localhost" || lower.endsWith(".local")) return true;
   const ipv4Match = lower.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
   if (ipv4Match) {

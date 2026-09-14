@@ -188,6 +188,10 @@ const state = {
   whatCanICookIngredients: null,
   _importPrefill: null,
   multiPhotoImport: [], // import par plusieurs photos, en cours de traitement
+  // Adresse reçue via le menu de partage natif d'une autre application
+  // (voir share_target dans manifest.json et le traitement au démarrage
+  // dans init()) — préremplit l'écran d'import par lien dès l'ouverture.
+  pendingSharedUrl: null,
 };
 
 const CATEGORY_OPTIONS = ["Petit-déjeuner", "Entrée", "Plat", "Dessert", "Apéro", "Boisson", "Sauce", "Autre"];
@@ -380,10 +384,23 @@ function normalize(str) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 }
+// Isole la première adresse http(s) trouvée dans une chaîne — utilisé
+// pour le partage natif (share_target), où le lien partagé peut arriver
+// seul dans "url" ou noyé dans un peu de texte libre dans "text" selon
+// l'application source.
+function extractFirstUrl(str) {
+  if (!str) return null;
+  const match = str.match(/https?:\/\/[^\s]+/i);
+  return match ? match[0] : null;
+}
 function parseQtyOrNull(value) {
   if (value === "" || value == null) return null;
   const n = Number(value);
-  return Number.isNaN(n) ? null : n;
+  // Un champ vide reste `null` (quantité volontairement non précisée,
+  // ex. "sel" ou "poivre") et 0 reste 0 — seules les valeurs réellement
+  // négatives sont ramenées à `null`, comme si rien n'avait été saisi.
+  if (Number.isNaN(n) || n < 0) return null;
+  return n;
 }
 
 /* ======================================================================
@@ -986,7 +1003,10 @@ function renderRecipeView() {
   const ingSection = el(`<div class="section"><div class="section-label">${t("recipe_ingredients")}</div></div>`);
   const ingCard = el(`<div class="card" style="padding: 4px 16px;"></div>`);
   (r.ingredients || []).forEach((ing) => {
-    const scaled = ing.quantity ? (Number(ing.quantity) * state.viewPersons) : null;
+    // ing.quantity != null (pas une simple vérité) : une quantité à 0
+    // saisie volontairement doit rester affichée comme "0 <unité>",
+    // pas disparaître comme si aucune quantité n'avait été indiquée.
+    const scaled = ing.quantity != null ? (Number(ing.quantity) * state.viewPersons) : null;
     ingCard.appendChild(el(`<div class="ingredient-item">
       <span>${escapeHtml(translateIngredientName(ing.name))}</span>
       <span class="ingredient-qty">${scaled != null ? fmtQty(scaled) + " " + escapeHtml(translateUnit(ing.unit)) : ""}</span>
@@ -1447,7 +1467,7 @@ function renderIngredientRows(holder) {
     const row = el(`<div class="ing-form-row${ing.confidence === "uncertain" ? " ing-form-row-uncertain" : ""}">
       ${uncertainBadge}
       <div class="autocomplete-wrap"><input type="text" class="ing-name" placeholder="${t("form_ingredient_name")}" aria-label="${escapeHtml(t("form_ingredient_name"))}" value="${escapeHtml(translateIngredientName(ing.name))}"></div>
-      <input type="number" step="any" class="qty ing-qty" placeholder="${t("form_ingredient_qty")}" aria-label="${escapeHtml(t("form_ingredient_qty"))}" value="${ing.quantity || ""}">
+      <input type="number" step="any" min="0" class="qty ing-qty" placeholder="${t("form_ingredient_qty")}" aria-label="${escapeHtml(t("form_ingredient_qty"))}" value="${ing.quantity != null ? ing.quantity : ""}">
       <select class="ing-unit" aria-label="${escapeHtml(t("form_ingredient_unit"))}"></select>
       <button type="button" class="remove-ing" aria-label="${t("common_delete")}">${t("form_remove")}</button>
     </div>`);
@@ -1513,7 +1533,7 @@ async function saveRecipeForm(wrap, existing) {
     name,
     category: wrap.querySelector("#f-category").value,
     difficulty: wrap.querySelector("#f-difficulty").value,
-    defaultPersons: Number(wrap.querySelector("#f-persons").value) || 4,
+    defaultPersons: Math.max(1, Number(wrap.querySelector("#f-persons").value) || 4),
     prepTime: wrap.querySelector("#f-prep").value ? Number(wrap.querySelector("#f-prep").value) : null,
     cookTime: wrap.querySelector("#f-cook").value ? Number(wrap.querySelector("#f-cook").value) : null,
     favorite: wrap.querySelector("#f-favorite").checked,
@@ -1543,7 +1563,7 @@ async function saveRecipeForm(wrap, existing) {
   await clearRecipeFormDraft();
 
   state.currentRecipeId = recipe.id;
-  state.viewPersons = recipe.defaultPersons;
+  state.viewPersons = recipe.defaultPersons || 4;
   state.screen = "recipe";
   render();
 }
@@ -1825,12 +1845,12 @@ function openAddItemModal(storeName, existingItem) {
       <div class="autocomplete-wrap"><input type="text" id="modal-ing-name" placeholder="${t("form_ingredient_name")}"></div>
     </div>
     <div class="field-row">
-      <div class="field"><label for="modal-ing-qty">${t("form_ingredient_qty")}</label><input type="number" step="any" id="modal-ing-qty"></div>
+      <div class="field"><label for="modal-ing-qty">${t("form_ingredient_qty")}</label><input type="number" step="any" min="0" id="modal-ing-qty"></div>
       <div class="field"><label for="modal-ing-unit">${t("form_ingredient_unit")}</label><select id="modal-ing-unit"></select></div>
     </div>
     ${isPantry ? `<div class="field">
       <label for="modal-ing-threshold">${t("pantry_threshold_label")}</label>
-      <input type="number" step="any" id="modal-ing-threshold">
+      <input type="number" step="any" min="0" id="modal-ing-threshold">
       <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0;">${escapeHtml(t("pantry_threshold_hint"))}</p>
     </div>` : ""}
     <div class="modal-actions">
@@ -2027,14 +2047,24 @@ function renderIngredientManage() {
   const listHolder = el(`<div id="ingredient-list-holder"></div>`);
   wrap.appendChild(listHolder);
 
+  // Sans recherche, la liste complète (~1000 ingrédients pour la base
+  // fournie par défaut) était entièrement rendue dans le DOM d'un
+  // coup. Elle reste triée alphabétiquement (state.ingredientNames),
+  // donc tronquer cet affichage initial à un nombre raisonnable
+  // n'enlève rien à la recherche elle-même (toujours menée sur la
+  // liste complète) — seul l'écran vide de toute saisie en montre
+  // moins au départ, avec une invite à chercher pour voir le reste.
+  const DEFAULT_LIST_LIMIT = 200;
   function fillList(query) {
     listHolder.innerHTML = "";
     const key = normalize(query || "");
-    const names = state.ingredientNames.filter((n) => !key || normalize(n).includes(key));
-    if (!names.length) {
+    const allMatches = state.ingredientNames.filter((n) => !key || normalize(n).includes(key));
+    if (!allMatches.length) {
       listHolder.appendChild(el(`<div class="empty-state"><div class="emoji">🥕</div><p>${escapeHtml(t("ingredient_no_results"))}</p></div>`));
       return;
     }
+    const truncated = !key && allMatches.length > DEFAULT_LIST_LIMIT;
+    const names = truncated ? allMatches.slice(0, DEFAULT_LIST_LIMIT) : allMatches;
     const card = el(`<div class="card" style="padding:2px 14px;"></div>`);
     names.forEach((name) => {
       const row = el(`<div class="ingredient-manage-row">
@@ -2054,6 +2084,9 @@ function renderIngredientManage() {
       card.appendChild(row);
     });
     listHolder.appendChild(card);
+    if (truncated) {
+      listHolder.appendChild(el(`<p style="font-size:12px;color:var(--text-muted);text-align:center;margin:12px 0 0;">${escapeHtml(t("ingredient_list_truncated_hint", { shown: String(names.length), total: String(allMatches.length) }))}</p>`));
+    }
   }
   searchBar.querySelector("input").addEventListener("input", (e) => fillList(e.target.value));
   fillList("");
@@ -4261,6 +4294,12 @@ function openCookingMode(recipe) {
   }
 
   overlay.appendChild(el(`<div class="section-label">${t("cooking_timer")}</div>`));
+  // Un minuteur autonome (voir openStandaloneTimers) peut déjà tourner
+  // dans state.cookingTimers à cet instant — le vider directement sans
+  // l'arrêter l'orphelinait : son setInterval continuait indéfiniment
+  // en arrière-plan, sans plus aucune ligne dans l'interface pour
+  // l'arrêter. On applique donc le même nettoyage que cleanupCookingMode.
+  state.cookingTimers.forEach((tm) => { stopCookingTimer(tm); closeTimerNotification(tm); });
   state.cookingTimers = [];
   const timersHolder = el(`<div id="timers-holder"></div>`);
   overlay.appendChild(timersHolder);
@@ -4649,22 +4688,28 @@ async function renameIngredientName(oldName, newName) {
   // ingrédient renommé continuait à apparaître sous son ancien nom dans
   // la liste de courses, le garde-manger et les listes enregistrées,
   // créant des doublons de fait entre l'ancien et le nouveau nom.
+  // Comparaison normalisée (insensible à la casse/aux accents), comme
+  // dans mergeIngredientNames — une comparaison stricte manquait un nom
+  // stocké avec une casse ou des accents différents du nom canonique
+  // (ex. après un import QR/lien/OCR mal résolu, ou une ancienne
+  // sauvegarde), là où une fusion de doublons l'aurait retrouvé.
+  const oldKey = normalize(oldName);
   let touched = false;
   state.recipes.forEach((r) => {
     (r.ingredients || []).forEach((ing) => {
-      if (ing.name === oldName) { ing.name = trimmed; touched = true; }
+      if (normalize(ing.name) === oldKey) { ing.name = trimmed; touched = true; }
     });
   });
   if (touched) for (const r of state.recipes) await storePut("recipes", r);
 
   for (const item of state.shopping) {
-    if (item.name === oldName) {
+    if (normalize(item.name) === oldKey) {
       item.name = trimmed;
       await storePut("shopping", item);
     }
   }
   for (const item of state.pantry) {
-    if (item.name === oldName) {
+    if (normalize(item.name) === oldKey) {
       item.name = trimmed;
       await storePut("pantry", item);
     }
@@ -4672,7 +4717,7 @@ async function renameIngredientName(oldName, newName) {
   let savedListsTouched = false;
   state.savedShoppingLists.forEach((list) => {
     (list.items || []).forEach((item) => {
-      if (item.name === oldName) { item.name = trimmed; savedListsTouched = true; }
+      if (normalize(item.name) === oldKey) { item.name = trimmed; savedListsTouched = true; }
     });
   });
   if (savedListsTouched) {
@@ -7468,33 +7513,47 @@ const TESSERACT_LANG_MAP = { fr: "fra", en: "eng", es: "spa", de: "deu" };
 // mémoire sur les appareils d'entrée de gamme.
 let sharedTesseractWorker = null;
 let sharedTesseractWorkerLang = null;
+// Empêche deux appels concurrents de créer chacun leur propre Worker
+// Tesseract avant que le premier n'ait fini de s'initialiser (le
+// second écraserait alors la référence du premier, orphelin jusqu'à la
+// fermeture de l'onglet) — même principe que wakeLockRequestInFlight
+// ci-dessus pour requestWakeLock().
+let sharedTesseractWorkerRequestInFlight = null;
 async function getSharedTesseractWorker() {
-  await loadTesseractLib();
-  const lang = TESSERACT_LANG_MAP[CURRENT_LANG] || "eng";
-  if (sharedTesseractWorker && sharedTesseractWorkerLang === lang) return sharedTesseractWorker;
-  if (sharedTesseractWorker) await sharedTesseractWorker.terminate();
-  sharedTesseractWorker = await window.Tesseract.createWorker(lang, 1, {
-    // Fichier précis (verrouillé en version) — comportement inchangé
-    // par rapport à un unique fichier worker, contrairement à corePath.
-    workerPath: "./lib/tesseract/worker.min.js",
-    // Dossier (pas un fichier précis) contenant les variantes du
-    // moteur WASM — Tesseract choisit lui-même celle compatible avec
-    // l'appareil (SIMD ou non, legacy ou non). Pointer vers un seul
-    // fichier fixe est déconseillé par la documentation officielle :
-    // cela empêcherait l'OCR de fonctionner sur un appareil plus
-    // ancien ne supportant pas SIMD.
-    corePath: "./lib/tesseract/core",
-    // Dossier local des données de langue — téléchargées à la demande
-    // au premier import photo dans cette langue (pas préchargées à
-    // l'installation, pour ne pas alourdir le premier chargement de
-    // l'application avec des langues que l'utilisateur n'utilisera
-    // peut-être jamais). Une fois téléchargées, le service worker les
-    // conserve en cache pour les imports suivants, y compris hors
-    // connexion.
-    langPath: "./lib/tesseract/lang",
-  });
-  sharedTesseractWorkerLang = lang;
-  return sharedTesseractWorker;
+  if (sharedTesseractWorkerRequestInFlight) return sharedTesseractWorkerRequestInFlight;
+  sharedTesseractWorkerRequestInFlight = (async () => {
+    try {
+      await loadTesseractLib();
+      const lang = TESSERACT_LANG_MAP[CURRENT_LANG] || "eng";
+      if (sharedTesseractWorker && sharedTesseractWorkerLang === lang) return sharedTesseractWorker;
+      if (sharedTesseractWorker) await sharedTesseractWorker.terminate();
+      sharedTesseractWorker = await window.Tesseract.createWorker(lang, 1, {
+        // Fichier précis (verrouillé en version) — comportement inchangé
+        // par rapport à un unique fichier worker, contrairement à corePath.
+        workerPath: "./lib/tesseract/worker.min.js",
+        // Dossier (pas un fichier précis) contenant les variantes du
+        // moteur WASM — Tesseract choisit lui-même celle compatible avec
+        // l'appareil (SIMD ou non, legacy ou non). Pointer vers un seul
+        // fichier fixe est déconseillé par la documentation officielle :
+        // cela empêcherait l'OCR de fonctionner sur un appareil plus
+        // ancien ne supportant pas SIMD.
+        corePath: "./lib/tesseract/core",
+        // Dossier local des données de langue — téléchargées à la demande
+        // au premier import photo dans cette langue (pas préchargées à
+        // l'installation, pour ne pas alourdir le premier chargement de
+        // l'application avec des langues que l'utilisateur n'utilisera
+        // peut-être jamais). Une fois téléchargées, le service worker les
+        // conserve en cache pour les imports suivants, y compris hors
+        // connexion.
+        langPath: "./lib/tesseract/lang",
+      });
+      sharedTesseractWorkerLang = lang;
+      return sharedTesseractWorker;
+    } finally {
+      sharedTesseractWorkerRequestInFlight = null;
+    }
+  })();
+  return sharedTesseractWorkerRequestInFlight;
 }
 async function terminateSharedTesseractWorker() {
   if (sharedTesseractWorker) {
@@ -9114,10 +9173,15 @@ async function fetchRecipeFromUrl(url, onAttempt) {
 function renderImportUrl() {
   const wrap = el(`<div></div>`);
   wrap.appendChild(el(`<p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;line-height:1.5;">${escapeHtml(t("import_url_disclaimer"))}</p>`));
+  // Préremplie si on arrive ici via le menu de partage natif d'une
+  // autre application (voir pendingSharedUrl, consommée une seule fois
+  // pour ne pas la réappliquer sur un simple retour à cet écran).
+  const sharedUrlValue = state.pendingSharedUrl || "";
+  state.pendingSharedUrl = null;
   wrap.appendChild(el(`<div class="field">
     <label for="import-url-input">${t("import_url_label")}</label>
     <div style="display:flex;gap:8px;">
-      <input type="url" id="import-url-input" placeholder="${t("import_url_placeholder")}" style="flex:1;">
+      <input type="url" id="import-url-input" placeholder="${t("import_url_placeholder")}" value="${escapeHtml(sharedUrlValue)}" style="flex:1;">
       <button type="button" id="import-url-clear" class="btn btn-outline btn-sm" style="width:auto;flex-shrink:0;">${t("import_url_clear_button")}</button>
     </div>
   </div>`));
@@ -9571,7 +9635,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 212;
+const APP_VERSION = 213;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
@@ -9639,11 +9703,24 @@ async function init() {
   // l'application n'était déjà ouverte (voir notificationclick dans
   // sw.js) : ouvre directement le mode cuisine de la recette concernée.
   const requestedRecipeId = new URLSearchParams(location.search).get("openRecipe");
-  if (requestedScreen || requestedRecipeId) {
+  // Reçu via le menu de partage natif d'une autre application (voir
+  // share_target dans manifest.json) : la plupart des apps placent le
+  // lien partagé dans "url", certaines (Android, selon la source) ne
+  // remplissent que "text" avec le lien tel quel ou noyé dans un peu de
+  // texte — d'où la recherche d'une adresse http(s) dans les deux.
+  const sharedParams = new URLSearchParams(location.search);
+  const sharedUrl = extractFirstUrl(sharedParams.get("url")) || extractFirstUrl(sharedParams.get("text"));
+  if (requestedScreen || requestedRecipeId || sharedUrl) {
     // Retire le paramètre de l'adresse une fois lu — sinon, une simple
     // actualisation de la page rouvrait indéfiniment le même écran au
     // lieu de respecter la navigation normale de l'utilisateur.
     history.replaceState(null, "", location.pathname);
+  }
+  if (sharedUrl) {
+    state.pendingSharedUrl = sharedUrl;
+    state.screen = "importUrl";
+    render();
+    return;
   }
   if (requestedScreen === "form") {
     await openRecipeForm(null); // gère déjà son propre appel à render()

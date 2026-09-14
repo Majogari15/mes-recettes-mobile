@@ -39,7 +39,7 @@
     font-weight: 600;
     margin-bottom: 8px;
   }
-  ul { padding-left: 22px; }
+  ul, ol { padding-left: 22px; }
   li { margin-bottom: 6px; }
   a { color: #2F5233; }
   .contact-box {
@@ -61,20 +61,21 @@
 <body>
 
 <h1>Politique de confidentialité</h1>
-<p class="updated">Mes Recettes, Mes Courses — dernière mise à jour : 12 septembre 2026</p>
+<p class="updated">Mes Recettes, Mes Courses — dernière mise à jour : 14 septembre 2026</p>
 
 <p class="summary">
   Cette application stocke toutes vos données uniquement sur votre téléphone ;
   rien n'est envoyé à un serveur, sauf lorsque vous choisissez vous-même
-  d'importer une recette depuis un lien internet.
+  d'importer une recette depuis un lien internet (à l'exception du chargement
+  des polices de caractères, automatique dès le premier chargement — voir plus bas).
 </p>
 
 <h2>Quelles données sont stockées, et où</h2>
 <p>
   Vos recettes, votre garde-manger, vos listes de courses, votre planning et
   vos préférences sont enregistrés <strong>uniquement sur votre appareil</strong>
-  (stockage local du navigateur). Aucun compte n'est requis. Personne d'autre
-  que vous — ni le développeur, ni un tiers — n'a accès à ces données.
+  (stockage local du navigateur, technologie IndexedDB). Aucun compte n'est requis.
+  Personne d'autre que vous — ni le développeur, ni un tiers — n'a accès à ces données.
 </p>
 <p>
   Si vous désinstallez l'application ou effacez les données de votre
@@ -82,36 +83,69 @@
   vous n'ayez exporté une sauvegarde vous-même au préalable.
 </p>
 
-<h2>Les seuls cas où une information transite par un serveur</h2>
+<h2>Accès à la caméra</h2>
+<p>L'application utilise la caméra de deux façons différentes :</p>
+<ul>
+  <li><strong>Scan de QR code</strong> (pour importer une recette ou une liste de courses partagée depuis un autre appareil) : l'application ouvre un flux vidéo en direct de la caméra, analysé <strong>entièrement sur votre appareil</strong> pour y détecter un QR code. Aucune image n'est enregistrée ni transmise où que ce soit. Vous pouvez refuser cette autorisation sans que le reste de l'application soit affecté ; une solution de repli (coller le texte manuellement) reste disponible.</li>
+  <li><strong>Photo d'une recette, du journal de cuisine, ou import de recette depuis une photo</strong> : l'application ouvre l'appareil photo natif de votre téléphone (comme le ferait n'importe quelle autre application) pour prendre un cliché, ou vous laisse en choisir un déjà existant dans votre galerie. La photo obtenue reste stockée uniquement dans le stockage local de l'application.</li>
+</ul>
+
+<h2>Connexions à internet effectuées par l'application</h2>
 <p>
-  <strong>Importer une recette depuis un lien internet</strong> : l'adresse
-  (URL) que vous saisissez est transmise à un service tiers pour aller
-  chercher le contenu de cette page et vous le renvoyer. Plusieurs services
-  sont utilisés l'un après l'autre en cas d'échec du premier, pour maximiser
-  les chances de réussite de l'import :
+  L'application fonctionne hors connexion pour l'immense majorité de ses
+  fonctionnalités. Voici les connexions qu'elle effectue, la plupart à votre
+  initiative explicite — sauf une exception clairement indiquée ci-dessous :
 </p>
-<ol>
-  <li>Un serveur (Cloudflare Worker) exploité par le développeur, en premier</li>
-  <li>Si celui-ci échoue : <strong>Jina AI Reader</strong> (r.jina.ai)</li>
-  <li>Si celui-ci échoue aussi : l'un des trois services publics <strong>AllOrigins</strong>, <strong>CodeTabs</strong> ou <strong>cors.lol</strong>, en dernier recours</li>
-</ol>
-<p>
-  Dans tous les cas, seule l'adresse de la page que vous voulez importer est
-  transmise — jamais vos recettes, votre garde-manger ou toute autre donnée
-  personnelle. Ces services ne sont pas exploités par le développeur (à
-  l'exception du premier) et peuvent avoir leurs propres règles de
-  conservation, sur lesquelles le développeur n'a pas de contrôle direct.
-  Cette action ne se produit que si vous choisissez explicitement d'importer
-  une recette par lien — ce n'est jamais un comportement automatique ou en
-  arrière-plan.
-</p>
-<p>
-  <strong>Polices de caractères</strong> : l'application utilise des polices
-  (Fraunces, Inter) chargées depuis Google Fonts. Google peut recevoir votre
-  adresse IP à cette occasion, comme pour tout site utilisant ce service —
-  voir la
-  <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">politique de confidentialité de Google</a>.
-</p>
+<ul>
+  <li>
+    <strong>Polices de caractères (Google Fonts)</strong> : contrairement aux
+    autres éléments listés ici, cette connexion est <strong>automatique</strong>,
+    dès le premier chargement de l'application, sans action de votre part.
+    L'application charge deux polices (Fraunces et Inter) directement depuis
+    les serveurs de Google (<code>fonts.googleapis.com</code>). Cette requête
+    transmet à Google les informations techniques habituelles de toute requête
+    web (adresse IP, type de navigateur) — voir la
+    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">politique de confidentialité de Google</a>.
+    Aucune donnée de l'application elle-même (recettes, listes, photos) n'est concernée.
+  </li>
+  <li>
+    <strong>Import d'une recette depuis un lien internet</strong> : les
+    navigateurs empêchant une application web de récupérer directement le
+    contenu d'un autre site, cette fonctionnalité transmet l'adresse que vous
+    collez à l'un des services intermédiaires suivants (essayés automatiquement
+    l'un après l'autre en cas d'échec) pour contourner cette restriction technique :
+    <ol>
+      <li>Un serveur (Cloudflare Worker) exploité par le développeur, en premier — il ne fait que transmettre la page (et sa photo) sans en garder de copie</li>
+      <li>Si celui-ci échoue : <strong>Jina AI Reader</strong> (r.jina.ai)</li>
+      <li>Si celui-ci échoue aussi : l'un des trois services publics <strong>AllOrigins</strong> (allorigins.win), <strong>CodeTabs</strong> (codetabs.com) ou <strong>cors.lol</strong>, en dernier recours</li>
+    </ol>
+    Dans tous les cas, seule l'adresse de la page que vous voulez importer (et,
+    séparément, l'adresse de la photo de la recette qui en est extraite) est
+    transmise — jamais vos recettes, votre garde-manger ou toute autre donnée
+    personnelle. Ces services ne sont pas exploités par le développeur (à
+    l'exception du premier) et peuvent avoir leurs propres règles de
+    conservation, sur lesquelles le développeur n'a pas de contrôle direct.
+    Cette action ne se produit que si vous choisissez explicitement d'importer
+    une recette par lien — ce n'est jamais un comportement automatique ou en
+    arrière-plan.
+  </li>
+  <li>
+    <strong>Import de recette par photo (reconnaissance de texte)</strong> :
+    cette fonctionnalité utilise une bibliothèque technique (Tesseract.js),
+    incluse directement dans l'application elle-même, comme la génération de
+    QR code et l'export PDF — aucun serveur externe pour cette partie.
+    Reconnaître le texte d'une photo nécessite en revanche un fichier de
+    données propre à chaque langue (français, anglais, espagnol, allemand),
+    téléchargé une seule fois lors du tout premier import photo dans cette
+    langue précise, puis mis en cache pour un usage hors connexion ensuite.
+    Aucune photo, aucun texte ni aucune donnée personnelle n'est envoyé où que
+    ce soit. La <strong>génération et la lecture de QR code</strong>, ainsi que
+    l'<strong>export PDF</strong>, fonctionnent entièrement à partir de fichiers
+    inclus dans l'application elle-même, sans aucun téléchargement externe.
+  </li>
+  <li><strong>Bouton « Faire un don »</strong> : ouvre, uniquement si vous cliquez dessus, la page <a href="https://buymeacoffee.com/majogari" target="_blank" rel="noopener">buymeacoffee.com/majogari</a> dans votre navigateur.</li>
+  <li><strong>Partager la sauvegarde</strong> (fonctionnalité optionnelle) : le bouton « Partager la sauvegarde » ouvre le menu de partage natif de votre téléphone, vous laissant choisir vous-même une application (Google Drive, Dropbox, email...) vers laquelle envoyer votre fichier de sauvegarde. L'application ne communique directement avec aucun de ces services : c'est l'application que vous choisissez dans ce menu qui reçoit le fichier, selon sa propre politique de confidentialité.</li>
+</ul>
 
 <h2>Ce que l'application ne fait pas</h2>
 <ul>
@@ -124,30 +158,52 @@
 
 <h2>Permissions de l'appareil utilisées</h2>
 <ul>
-  <li><strong>Appareil photo</strong> : uniquement lorsque vous choisissez d'importer une recette depuis une photo, ou d'ajouter une photo à une recette ou à votre journal de cuisine. Les photos restent stockées localement.</li>
+  <li><strong>Appareil photo</strong> : voir la section « Accès à la caméra » ci-dessus — utilisée uniquement lorsque vous ouvrez vous-même le scan de QR code, l'ajout d'une photo à une recette/au journal de cuisine, ou l'import de recette depuis une photo.</li>
   <li><strong>Notifications</strong> : uniquement pour vous prévenir qu'un minuteur de cuisine est terminé.</li>
 </ul>
 
-<h2>Vos droits</h2>
+<h2>Vos photos et vos recettes</h2>
+<p>
+  Les photos que vous ajoutez à vos recettes ou à votre journal de cuisine
+  sont stockées uniquement dans le stockage local de votre navigateur. Elles
+  ne sont jamais transmises ailleurs, sauf si vous utilisez vous-même une
+  fonctionnalité d'export ou de partage (PDF, QR code, sauvegarde) et
+  choisissez de partager le résultat de votre propre initiative.
+</p>
+
+<h2>Vos droits / maîtrise de vos données</h2>
 <p>
   Puisqu'aucune donnée n'est collectée par le développeur, il n'y a rien à
   demander de supprimer, corriger ou exporter auprès de lui — vos données
   vous appartiennent et restent sous votre contrôle direct sur votre
-  appareil, à tout moment.
+  appareil, à tout moment :
+</p>
+<ul>
+  <li>vous pouvez consulter, modifier ou supprimer vos données à tout moment directement dans l'application ;</li>
+  <li>vous pouvez exporter l'ensemble de vos données à tout moment via la fonction de sauvegarde, pour les conserver ou les transférer vous-même où vous le souhaitez ;</li>
+  <li>désinstaller l'application ou vider les données du site depuis les paramètres de votre navigateur efface l'intégralité de vos données locales, puisqu'aucune copie n'existe ailleurs.</li>
+</ul>
+
+<h2>Enfants</h2>
+<p>
+  L'application ne s'adresse pas spécifiquement aux enfants et ne collecte,
+  comme indiqué ci-dessus, aucune donnée personnelle identifiable, quel que
+  soit l'âge de la personne qui l'utilise.
+</p>
+
+<h2>Modifications de cette politique</h2>
+<p>
+  Cette politique pourra être mise à jour si de nouvelles fonctionnalités
+  impliquant un traitement de données étaient ajoutées à l'application. La
+  date de mise à jour en haut de ce document sera modifiée en conséquence.
 </p>
 
 <h2>Contact</h2>
 <div class="contact-box">
   Pour toute question sur cette politique de confidentialité :<br>
-  <strong>fabrice.moritel15@gmail.com</strong>
+  <strong>fabrice.moritel15@gmail.com</strong><br>
+  (vous pouvez aussi ouvrir une discussion « Issue » sur le dépôt GitHub du projet)
 </div>
-
-<h2>Modifications de cette politique</h2>
-<p>
-  Si cette politique venait à changer (par exemple en cas d'ajout d'une
-  nouvelle fonctionnalité impliquant un serveur), la date de mise à jour en
-  haut de ce document sera modifiée en conséquence.
-</p>
 
 <footer>
   Mes Recettes, Mes Courses

@@ -64,7 +64,10 @@ toutes les données restent sur l'appareil.
   format "microdonnées" en plus du format JSON-LD le plus courant, et
   qui rattache les ingrédients importés à ceux déjà connus (variantes
   plurielles, fautes de frappe) plutôt que de systématiquement en créer
-  de nouveaux
+  de nouveaux. Une fois l'application installée, ce lien peut aussi être
+  envoyé directement depuis le navigateur ou une autre application via
+  leur propre menu de partage (« Partager » → « Mes Recettes ») : l'écran
+  d'import s'ouvre alors automatiquement avec l'adresse déjà préremplie
 - **Gestion des ingrédients** : ajouter, renommer ou supprimer un
   ingrédient, et corriger/compléter ses allergènes, valeurs
   nutritionnelles et **prix** individuellement (accessible depuis
@@ -207,4 +210,6 @@ déjà un dépôt GitHub pour ce projet.
   uniquement, jamais modifiées par l'application)
 - `TESTS_NON_REGRESSION.md` — liste des tests à rejouer avant chaque
   nouvelle version
-- `POLITIQUE_DE_CONFIDENTIALITE.md` — politique de confidentialité
+- `POLITIQUE_CONFIDENTIALITE.md` — politique de confidentialité (même
+  contenu que `confidentialite.html`, la page réellement hébergée en
+  ligne)
