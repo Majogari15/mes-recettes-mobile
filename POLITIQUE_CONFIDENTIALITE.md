@@ -6,9 +6,7 @@
 
 Cette application stocke toutes vos données uniquement sur votre
 téléphone ; rien n'est envoyé à un serveur, sauf lorsque vous
-choisissez vous-même d'importer une recette depuis un lien internet
-(à l'exception du chargement des polices de caractères, automatique
-dès le premier chargement — voir plus bas).
+choisissez vous-même d'importer une recette depuis un lien internet.
 
 ## Quelles données sont stockées, et où
 
@@ -43,20 +41,11 @@ L'application utilise la caméra de deux façons différentes :
 ## Connexions à internet effectuées par l'application
 
 L'application fonctionne hors connexion pour l'immense majorité de ses
-fonctionnalités. Voici les connexions qu'elle effectue, la plupart à
-votre initiative explicite — sauf une exception clairement indiquée
-ci-dessous :
+fonctionnalités — y compris les polices de caractères utilisées pour
+son apparence (Fraunces et Inter), incluses directement dans
+l'application plutôt que chargées depuis un service externe. Voici les
+connexions qu'elle effectue, toutes à votre initiative explicite :
 
-- **Polices de caractères (Google Fonts)** : contrairement aux autres
-  éléments listés ici, cette connexion est **automatique**, dès le
-  premier chargement de l'application, sans action de votre part.
-  L'application charge deux polices (Fraunces et Inter) directement
-  depuis les serveurs de Google (`fonts.googleapis.com`). Cette requête
-  transmet à Google les informations techniques habituelles de toute
-  requête web (adresse IP, type de navigateur) — consultez la
-  [politique de confidentialité de Google](https://policies.google.com/privacy)
-  pour plus de détails. Aucune donnée de l'application elle-même
-  (recettes, listes, photos) n'est concernée.
 - **Import d'une recette depuis un lien internet** : les navigateurs
   empêchant une application web de récupérer directement le contenu
   d'un autre site, cette fonctionnalité transmet l'adresse que vous
@@ -111,7 +100,7 @@ ci-dessous :
 - Le développeur ne collecte aucune donnée personnelle (nom, email,
   localisation...) — voir cependant la section précédente : votre
   adresse IP est techniquement visible des quelques services réseau
-  sollicités (import par lien, polices), comme pour n'importe quelle
+  sollicités lors d'un import par lien, comme pour n'importe quelle
   requête sur internet
 - Elle n'utilise aucun outil d'analyse d'audience ou de suivi
   publicitaire

@@ -66,8 +66,7 @@
 <p class="summary">
   Cette application stocke toutes vos données uniquement sur votre téléphone ;
   rien n'est envoyé à un serveur, sauf lorsque vous choisissez vous-même
-  d'importer une recette depuis un lien internet (à l'exception du chargement
-  des polices de caractères, automatique dès le premier chargement — voir plus bas).
+  d'importer une recette depuis un lien internet.
 </p>
 
 <h2>Quelles données sont stockées, et où</h2>
@@ -93,21 +92,12 @@
 <h2>Connexions à internet effectuées par l'application</h2>
 <p>
   L'application fonctionne hors connexion pour l'immense majorité de ses
-  fonctionnalités. Voici les connexions qu'elle effectue, la plupart à votre
-  initiative explicite — sauf une exception clairement indiquée ci-dessous :
+  fonctionnalités — y compris les polices de caractères utilisées pour son
+  apparence (Fraunces et Inter), incluses directement dans l'application
+  plutôt que chargées depuis un service externe. Voici les connexions
+  qu'elle effectue, toutes à votre initiative explicite :
 </p>
 <ul>
-  <li>
-    <strong>Polices de caractères (Google Fonts)</strong> : contrairement aux
-    autres éléments listés ici, cette connexion est <strong>automatique</strong>,
-    dès le premier chargement de l'application, sans action de votre part.
-    L'application charge deux polices (Fraunces et Inter) directement depuis
-    les serveurs de Google (<code>fonts.googleapis.com</code>). Cette requête
-    transmet à Google les informations techniques habituelles de toute requête
-    web (adresse IP, type de navigateur) — voir la
-    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">politique de confidentialité de Google</a>.
-    Aucune donnée de l'application elle-même (recettes, listes, photos) n'est concernée.
-  </li>
   <li>
     <strong>Import d'une recette depuis un lien internet</strong> : les
     navigateurs empêchant une application web de récupérer directement le
@@ -149,7 +139,7 @@
 
 <h2>Ce que l'application ne fait pas</h2>
 <ul>
-  <li>Le développeur ne collecte aucune donnée personnelle (nom, email, localisation...) — voir cependant la section précédente : votre adresse IP est techniquement visible des quelques services réseau sollicités (import par lien, polices), comme pour n'importe quelle requête sur internet</li>
+  <li>Le développeur ne collecte aucune donnée personnelle (nom, email, localisation...) — voir cependant la section précédente : votre adresse IP est techniquement visible des services réseau sollicités lors d'un import par lien, comme pour n'importe quelle requête sur internet</li>
   <li>Elle n'utilise aucun outil d'analyse d'audience ou de suivi publicitaire</li>
   <li>Elle n'affiche aucune publicité</li>
   <li>Elle ne partage, ne vend, ni ne transmet vos recettes ou vos données à qui que ce soit</li>

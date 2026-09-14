@@ -64,6 +64,24 @@ externe. Chacune conserve sa licence d'origine.
   téléchargé qu'au premier import photo dans cette langue précise, puis
   mis en cache pour les usages suivants, y compris hors connexion
 
+## Polices Fraunces et Inter (`fonts/`)
+
+- Fraunces : police de titre variable, par Undercase Type
+  (https://github.com/undercasetype/Fraunces)
+- Inter : police de texte variable, par Rasmus Andersson
+  (https://github.com/rsms/inter)
+- Licence : SIL Open Font License 1.1 (les deux), autorisant l'usage,
+  la modification et la redistribution, y compris embarquée dans une
+  application
+- Fichiers récupérés depuis Google Fonts (https://fonts.google.com),
+  au format woff2, sous-ensembles "latin" et "latin-ext" uniquement
+  (suffisants pour le français, l'anglais, l'espagnol et l'allemand —
+  le sous-ensemble "vietnamese" fourni par Google Fonts a été omis)
+- Utilisation dans l'application : apparence générale (titres et
+  texte) — auparavant chargées depuis les serveurs de Google à chaque
+  premier lancement, désormais entièrement locales, ce qui supprime la
+  dernière dépendance réseau externe de l'application
+
 ---
 
 Aucune de ces bibliothèques ne collecte ni ne transmet de données —

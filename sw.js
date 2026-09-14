@@ -3,7 +3,7 @@
 // ensuite (les données elles-mêmes sont stockées séparément, dans IndexedDB,
 // géré directement par app.js).
 
-const CACHE_NAME = "mes-recettes-cache-v213";
+const CACHE_NAME = "mes-recettes-cache-v214";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -11,6 +11,10 @@ const FILES_TO_CACHE = [
   "./app.js",
   "./i18n.js",
   "./confidentialite.html",
+  "./lib/fonts/fraunces-latin.woff2",
+  "./lib/fonts/fraunces-latin-ext.woff2",
+  "./lib/fonts/inter-latin.woff2",
+  "./lib/fonts/inter-latin-ext.woff2",
   "./manifest.json",
   "./sw-register-early.js",
   "./manifest-loader.js",
@@ -81,37 +85,7 @@ self.addEventListener("fetch", (event) => {
   // requêtes de mutation n'ont pas à être mises en cache.
   if (event.request.method !== "GET") return;
 
-  // Cas particulier : polices Google Fonts. Contrairement aux
-  // bibliothèques JS/JSON/WASM (Tesseract, jsPDF, jsQR), impossible de
-  // les embarquer directement dans ce projet au moment de sa
-  // construction — leurs fichiers binaires ne peuvent pas être
-  // transférés de façon fiable dans l'environnement utilisé pour
-  // développer cette application (risque de corruption). Repli
-  // pragmatique : mise en cache à l'exécution — après un premier
-  // chargement réussi (connecté), la police reste disponible hors
-  // connexion pour toutes les fois suivantes. Un tout premier lancement
-  // hors connexion, lui, affichera la police système par défaut le
-  // temps d'une future connexion réussie.
-  const isGoogleFonts = requestOrigin === "https://fonts.googleapis.com" || requestOrigin === "https://fonts.gstatic.com";
-  if (isGoogleFonts) {
-    event.respondWith(
-      caches.match(event.request).then((cached) => {
-        if (cached) return cached;
-        return fetch(event.request)
-          .then((res) => {
-            if (res.ok) {
-              const resClone = res.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
-            }
-            return res;
-          })
-          .catch(() => Response.error());
-      })
-    );
-    return;
-  }
-
-  // Ne jamais intercepter les autres requêtes vers un domaine externe :
+  // Ne jamais intercepter les requêtes vers un domaine externe :
   // elles suivent leur cours normalement, échec inclus, sans être
   // remplacées par une page de l'application. Tesseract étant
   // désormais entièrement local, plus aucune autre requête cross-origin
