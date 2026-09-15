@@ -7614,7 +7614,99 @@ async function terminateSharedTesseractWorker() {
     sharedTesseractWorkerLang = null;
     await w.terminate();
   }
+  await terminateSharedOsdWorker();
 }
+
+// Worker Tesseract séparé, dédié à la détection d'orientation (OSD —
+// Orientation and Script Detection), utilisé pour corriger automatiquement
+// une photo prise à l'envers ou de côté avant l'OCR principal. Toujours le
+// même petit modèle "osd" quelle que soit la langue de l'interface (la
+// détection d'orientation ne dépend pas de la langue du texte), donc jamais
+// besoin de le recréer comme pour sharedTesseractWorker ci-dessus. Mode
+// moteur 0 (Legacy) : l'OSD n'existe que dans ce moteur, jamais en LSTM
+// seul (utilisé pour le worker principal) — les deux fichiers de données
+// (osd.traineddata et fra/eng/etc.traineddata) restent totalement
+// indépendants, ce choix n'alourdit donc jamais le worker principal.
+let sharedOsdWorker = null;
+let sharedOsdWorkerRequestInFlight = null;
+async function getSharedOsdWorker() {
+  if (sharedOsdWorker) return sharedOsdWorker;
+  if (sharedOsdWorkerRequestInFlight) return sharedOsdWorkerRequestInFlight;
+  sharedOsdWorkerRequestInFlight = (async () => {
+    try {
+      await loadTesseractLib();
+      sharedOsdWorker = await window.Tesseract.createWorker("osd", 0, {
+        workerPath: "./lib/tesseract/worker.min.js",
+        corePath: "./lib/tesseract/core",
+        // Même dossier local que les autres langues — osd.traineddata.gz y
+        // est téléchargé à la demande au premier import photo, exactement
+        // comme fra/eng/etc., puis mis en cache par le service worker.
+        langPath: "./lib/tesseract/lang",
+      });
+      return sharedOsdWorker;
+    } finally {
+      sharedOsdWorkerRequestInFlight = null;
+    }
+  })();
+  return sharedOsdWorkerRequestInFlight;
+}
+async function terminateSharedOsdWorker() {
+  if (sharedOsdWorker) {
+    const w = sharedOsdWorker;
+    sharedOsdWorker = null;
+    await w.terminate();
+  }
+}
+
+// Fait pivoter une image (File, Blob ou canvas déjà en mémoire) dans le
+// sens horaire du nombre de degrés donné (0/90/180/270 uniquement, la
+// seule granularité que l'OSD sait détecter). Inverse largeur et hauteur
+// pour les rotations à 90°/270°, sans quoi l'image pivotée serait
+// recadrée à tort sur les anciennes dimensions.
+async function rotateImageClockwise(input, degrees) {
+  if (!degrees) return input;
+  const bitmap = input instanceof HTMLCanvasElement ? input : await createImageBitmap(input);
+  const swap = degrees === 90 || degrees === 270;
+  const canvas = document.createElement("canvas");
+  canvas.width = swap ? bitmap.height : bitmap.width;
+  canvas.height = swap ? bitmap.width : bitmap.height;
+  const ctx = canvas.getContext("2d");
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate((degrees * Math.PI) / 180);
+  ctx.drawImage(bitmap, -bitmap.width / 2, -bitmap.height / 2);
+  if (bitmap !== input && bitmap.close) bitmap.close();
+  return canvas;
+}
+
+// Seuil de confiance minimal (échelle Tesseract, sans unité fixe — validée
+// empiriquement à environ 4,7-5 sur une photo nette, largement au-dessus
+// de ce seuil volontairement prudent) en dessous duquel la rotation
+// suggérée par l'OSD est ignorée plutôt qu'appliquée à tort sur un signal
+// trop incertain (texte flou, trop court, photo à dominante d'image plutôt
+// que de texte) — dans ce cas, l'image reste inchangée et l'OCR principal
+// se comporte exactement comme avant cet ajout.
+const OSD_MIN_CONFIDENCE = 1;
+async function detectAndCorrectOrientation(input) {
+  try {
+    const osdWorker = await getSharedOsdWorker();
+    const { data } = await osdWorker.detect(input);
+    // orientation_degrees est directement l'angle de correction à
+    // appliquer dans le sens horaire (vérifié empiriquement : une image
+    // pivotée de 90° dans un sens donne 270° en retour, et inversement) —
+    // pas l'angle de rotation détecté lui-même, qu'il faudrait alors
+    // inverser avant de corriger.
+    if (data.orientation_degrees && data.orientation_confidence >= OSD_MIN_CONFIDENCE) {
+      return await rotateImageClockwise(input, data.orientation_degrees);
+    }
+  } catch (e) {
+    // OSD indisponible (hors connexion sans le fichier encore téléchargé,
+    // navigateur incompatible...) ou échec de la détection elle-même :
+    // jamais bloquant, l'image reste inchangée et l'import continue
+    // exactement comme avant cet ajout.
+  }
+  return input;
+}
+
 async function runOcrOnImage(file) {
   const worker = await getSharedTesseractWorker();
   // Redimensionne avant reconnaissance — une photo de smartphone moderne
@@ -7624,7 +7716,11 @@ async function runOcrOnImage(file) {
   // lecture différent, parfois même perte du titre), en plus d'un
   // traitement nettement plus lent. Une taille maximale raisonnable
   // donne des résultats plus fiables, sans perte de lisibilité du texte.
-  const input = await resizeImageForOcr(file);
+  // Correction d'orientation (photo à l'envers ou de côté) juste après —
+  // sur l'image déjà redimensionnée, jamais avant : cohérent avec
+  // worker.recognize() ci-dessous, qui travaille lui aussi sur cette
+  // même taille.
+  const input = await detectAndCorrectOrientation(await resizeImageForOcr(file));
   // "blocks: true" — depuis Tesseract.js v7, les blocs/lignes/mots (et
   // leurs coordonnées) ne sont plus renvoyés par défaut, contrairement
   // aux versions précédentes ; sans cette option, reconstructTextFromBlocks
@@ -7664,7 +7760,14 @@ async function runOcrOnImage(file) {
   // jamais pour les ingrédients ou les informations générales.
   const isLandscape = (input.width || input.naturalWidth || 0) > (input.height || input.naturalHeight || 1) * 1.15;
   const gridText = (looksLikeMergedGridLayout(data) || isLandscape) ? await runGridCellOcr(worker, input, 3) : null;
-  return { rawText: data.text, layoutText: reconstructTextFromBlocks(data) || data.text, gridText, tableText: reconstructTableRowsFromBlocks(data) };
+  // correctedImage : l'image telle qu'effectivement analysée ci-dessus
+  // (redimensionnée, et pivotée si l'OSD a détecté une rotation) —
+  // renvoyée pour que l'appelant (handleNewPhoto) puisse la réutiliser
+  // pour computeTwoColumnIngredients plutôt que de repartir du fichier
+  // original, qui resterait sinon à l'envers/de travers pour cette
+  // analyse complémentaire alors que rawText/layoutText/gridText ont
+  // déjà été corrigés ici.
+  return { rawText: data.text, layoutText: reconstructTextFromBlocks(data) || data.text, gridText, tableText: reconstructTableRowsFromBlocks(data), correctedImage: input };
 }
 
 // Détermine les limites verticales des 2 rangées de la grille par une
@@ -8717,7 +8820,7 @@ function renderImportPhoto() {
     state.multiPhotoImport.push(entry);
     refreshUi();
     try {
-      const { rawText, layoutText, gridText, tableText } = await runOcrOnImage(file);
+      const { rawText, layoutText, gridText, tableText, correctedImage } = await runOcrOnImage(file);
       if (!rawText || !rawText.trim()) {
         entry.status = "error";
         entry.errorMessage = t("import_photo_no_text");
@@ -8741,7 +8844,12 @@ function renderImportPhoto() {
         // de mise en page avant l'OCR, contrairement à la grille de
         // préparation) et le coût de ce traitement supplémentaire sur
         // des photos où il ne serait de toute façon jamais utilisé.
-        const twoColumnIngredients = detected === "ingredients" ? await computeTwoColumnIngredients(file) : null;
+        // correctedImage (voir runOcrOnImage) plutôt que file : si l'OSD a
+        // détecté et corrigé une photo à l'envers/de côté, rawText et
+        // gridText en ont déjà profité ci-dessus — repartir du fichier
+        // original ici referait tourner cette analyse complémentaire sur
+        // l'image encore mal orientée.
+        const twoColumnIngredients = detected === "ingredients" ? await computeTwoColumnIngredients(correctedImage || file) : null;
         entry.twoColumnIngredients = twoColumnIngredients;
         entry.sectionData = deriveSectionDataForPhoto(rawText, entry.section, layoutText, gridText, twoColumnIngredients, tableText);
         entry.status = "done";
@@ -9687,7 +9795,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 215;
+const APP_VERSION = 216;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

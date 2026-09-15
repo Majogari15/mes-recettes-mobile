@@ -64,6 +64,20 @@ externe. Chacune conserve sa licence d'origine.
   téléchargé qu'au premier import photo dans cette langue précise, puis
   mis en cache pour les usages suivants, y compris hors connexion
 
+### Données de détection d'orientation (`tesseract/lang/osd.traineddata.gz`)
+
+- Fichier séparé des langues ci-dessus, utilisé uniquement pour détecter
+  automatiquement une photo prise à l'envers ou de côté (90°/180°/270°)
+  et la corriger avant l'OCR principal (voir `detectAndCorrectOrientation`
+  dans `app.js`) — ne sert jamais à reconnaître le texte lui-même
+- Source : projet Tesseract OCR, dépôt `tessdata` (même palier "standard"
+  que les langues ci-dessus, pour rester cohérent avec elles)
+  (https://github.com/tesseract-ocr/tessdata)
+- Licence : Apache License 2.0
+- Même politique de téléchargement à la demande que les langues
+  ci-dessus (pas préchargé, mis en cache par le service worker après le
+  premier import photo)
+
 ## Polices Fraunces et Inter (`fonts/`)
 
 - Fraunces : police de titre variable, par Undercase Type

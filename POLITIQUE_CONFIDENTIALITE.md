@@ -75,9 +75,11 @@ connexions qu'elle effectue, toutes à votre initiative explicite :
   génération de QR code et l'export PDF — aucun serveur externe pour
   cette partie. Reconnaître le texte d'une photo nécessite en revanche
   un fichier de données propre à chaque langue (français, anglais,
-  espagnol, allemand), téléchargé une seule fois lors du tout premier
-  import photo dans cette langue précise, puis mis en cache pour un
-  usage hors connexion ensuite. Aucune photo, aucun texte ni aucune
+  espagnol, allemand), ainsi qu'un petit fichier supplémentaire servant
+  uniquement à détecter et corriger automatiquement une photo prise à
+  l'envers ou de côté, chacun téléchargé une seule fois lors du tout
+  premier import photo concerné, puis mis en cache pour un usage hors
+  connexion ensuite. Aucune photo, aucun texte ni aucune
   donnée personnelle n'est envoyé où que ce soit : le fichier
   téléchargé contient uniquement les données nécessaires à la
   reconnaissance de texte, indépendamment de vos photos. La
