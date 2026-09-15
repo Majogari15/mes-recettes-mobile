@@ -7001,7 +7001,7 @@ function normalizeUnicodeFractions(str) {
     return String(Math.round((wholeNum + UNICODE_FRACTIONS[frac]) * 100) / 100);
   });
 }
-function parseIngredientStringInner(str) {
+function parseIngredientStringInner(str, fromReversedOrder) {
   let text = String(str || "").trim();
   text = normalizeUnicodeFractions(text);
   // "(s)" est un simple marqueur de pluriel optionnel sur certaines
@@ -7049,9 +7049,34 @@ function parseIngredientStringInner(str) {
     // qu'au début.
     const reversedMatch = text.match(/^(.+?)\s+([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([a-zA-Zéèàêûîôçñü]+)\.?\s*$/i);
     if (reversedMatch) {
-      const [, namePart, qtyStr, unitWordRaw] = reversedMatch;
-      const reversedResult = parseIngredientStringInner(`${qtyStr} ${unitWordRaw} ${namePart}`);
+      const [, namePartRaw, qtyStr, unitWordRaw] = reversedMatch;
+      // Un ":" séparateur ("Beurre : 40.0 Gr") reste sinon capturé dans
+      // le groupe "nom" (rien dans le motif ci-dessus ne l'exclut) et
+      // se retrouvait collé en fin de nom une fois reconstruit.
+      const namePart = namePartRaw.replace(/\s*:\s*$/, "").trim();
+      const reversedResult = parseIngredientStringInner(`${qtyStr} ${unitWordRaw} ${namePart}`, true);
       if (reversedResult.name) return reversedResult;
+    }
+    // Nom suivi d'un simple compte sans aucun mot d'unité (ex. "Courge
+    // butternut 2") : le motif ci-dessus exige un mot après le nombre et
+    // ne matche donc pas ce cas — sans ce repli, le nombre restait
+    // collé au nom et la quantité (pourtant connue) se perdait en null.
+    // Rien à désambiguïser ici (pas de mot d'unité à interpréter), donc
+    // pas besoin de repasser par la reconstruction ci-dessus : le nom et
+    // la quantité sont déjà complets, tels quels.
+    const bareNumberMatch = text.match(/^(.+?)\s+([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*$/);
+    if (bareNumberMatch) {
+      const [, namePartRaw, qtyStr] = bareNumberMatch;
+      const namePart = namePartRaw.replace(/\s*:\s*$/, "").trim();
+      let bareQuantity;
+      if (qtyStr.includes("/")) {
+        const [num, den] = qtyStr.split("/").map((s) => parseFloat(s.trim().replace(",", ".")));
+        bareQuantity = den ? num / den : null;
+      } else {
+        bareQuantity = parseFloat(qtyStr.replace(",", "."));
+      }
+      if (Number.isNaN(bareQuantity)) bareQuantity = null;
+      if (namePart) return { name: namePart, quantity: bareQuantity, unit: "pièce" };
     }
     return { name: text, quantity: null, unit: "pièce" };
   }
@@ -7106,7 +7131,16 @@ function parseIngredientStringInner(str) {
     name = rest.trim().replace(/^(?:de\s+|d['’])/i, "");
   } else {
     unit = "pièce";
-    name = (unitWordRaw + " " + rest).trim();
+    // Ici, unitWordRaw est le premier mot suivant un nombre en tête de
+    // ligne (ex. "2 oignons" → il fait partie du nom, doit rester
+    // devant) — SAUF quand cet appel vient de la reconstruction
+    // "ordre inversé" ci-dessus (fromReversedOrder) : là, unitWordRaw
+    // est en réalité le DERNIER mot d'un texte "Nom Quantité Unité"
+    // (ex. "Persil 1/2 bouquet", "Gingembre frais* 1 cm") — un mot
+    // d'unité non reconnue, jamais le début du nom. Le coller devant
+    // produisait "bouquet Persil" / "cm Gingembre frais*" au lieu du
+    // nom réel seul.
+    name = fromReversedOrder ? rest.trim() : (unitWordRaw + " " + rest).trim();
   }
   // Ingrédients alternatifs ("oie ou canard") : le nombre indiqué avant
   // la seconde option répète souvent exactement la quantité déjà
@@ -7453,10 +7487,32 @@ function parseOcrRecipeText(rawText) {
   // sur une zone précise.
   let prepTime = null, cookTime = null;
   lines.forEach((line) => {
-    const prepMatch = line.match(/pr[eé]paration\s*:\s*([^\n]+)/i) || line.match(/prep(?:aration)?\s*time\s*:\s*([^\n]+)/i);
-    if (prepMatch) { const t = parseTimeExpression(prepMatch[1]); if (t != null) prepTime = t; }
-    const cookMatch = line.match(/cuisson\s*:\s*([^\n]+)/i) || line.match(/cook\s*time\s*:\s*([^\n]+)/i);
-    if (cookMatch) { const t = parseTimeExpression(cookMatch[1]); if (t != null) cookTime = t; }
+    // Temps combiné unique ("Temps de préparation / Temps de cuisson :
+    // 20 mn") : "préparation" n'y est jamais suivi directement de ":"
+    // (le motif prepMatch ci-dessous ne matche donc pas), et seul
+    // cookMatch ci-dessous matchait auparavant sur "cuisson : 20 mn" —
+    // attribuant à tort la totalité du temps à la seule cuisson, avec
+    // une préparation laissée vide alors que cette valeur unique couvre
+    // en réalité les deux. Reconnu explicitement en premier pour
+    // affecter la même valeur aux deux champs.
+    const combinedMatch = line.match(/pr[eé]paration\s*\/\s*(?:temps\s+de\s+)?cuisson\s*:\s*([^\n]+)/i);
+    if (combinedMatch) {
+      const t = parseTimeExpression(combinedMatch[1]);
+      if (t != null) { prepTime = t; cookTime = t; }
+    } else {
+      const prepMatch = line.match(/pr[eé]paration\s*:\s*([^\n]+)/i) || line.match(/prep(?:aration)?\s*time\s*:\s*([^\n]+)/i);
+      if (prepMatch) { const t = parseTimeExpression(prepMatch[1]); if (t != null) prepTime = t; }
+      const cookMatch = line.match(/cuisson\s*:\s*([^\n]+)/i) || line.match(/cook\s*time\s*:\s*([^\n]+)/i);
+      if (cookMatch) { const t = parseTimeExpression(cookMatch[1]); if (t != null) cookTime = t; }
+    }
+    // Badge de préparation autonome au format "15 min de prépa" (nombre
+    // avant le mot, abréviation "prépa" sans ":") — présent sur
+    // certaines fiches HelloFresh à côté d'un temps total vague ("À
+    // table dans : 45-55 Min" ci-dessous) qui ne doit jamais l'écraser :
+    // reconnu ici, avant le repli sur le temps total, pour que le garde
+    // "prepTime == null" de ce repli le voie déjà rempli.
+    const prepaBadgeMatch = line.match(/\b(\d+)\s*min(?:ute)?s?\s*de\s*pr[ée]pa(?:ration)?\b/i);
+    if (prepaBadgeMatch) prepTime = parseInt(prepaBadgeMatch[1], 10);
     // Temps total unique, sans distinction préparation/cuisson — format
     // de couverture courant chez HelloFresh ("À table dans : 35-45
     // Min") ou générique ("Ready in 30 min", "Total time: 25 min").
@@ -9631,7 +9687,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 214;
+const APP_VERSION = 215;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
