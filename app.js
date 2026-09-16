@@ -188,6 +188,7 @@ const state = {
   savedShoppingLists: [],
   whatCanICookIngredients: null,
   _importPrefill: null,
+  _importSourcePhotos: null, // miniatures des photos sources d'un import photo, pour comparaison dans le formulaire (consommé une seule fois)
   multiPhotoImport: [], // import par plusieurs photos, en cours de traitement
   // Adresse reçue via le menu de partage natif d'une autre application
   // (voir share_target dans manifest.json et le traitement au démarrage
@@ -1292,11 +1293,43 @@ function renderRecipeForm() {
   // "r" : il représente un état plus récent, pas encore sauvegardé.
   const draftPrefill = state._formDraftToApply || null;
   const importPrefill = !r ? state._importPrefill || null : null;
+  const importSourcePhotos = !r ? (state._importSourcePhotos || []) : [];
   const prefill = draftPrefill || importPrefill;
   const isRealImport = !!importPrefill;
   state._importPrefill = null;
+  state._importSourcePhotos = null;
   state._formDraftToApply = null;
   const wrap = el(`<form id="recipe-form"></form>`);
+
+  // Bande de miniatures des photos d'origine, uniquement pour une
+  // recette qui vient juste d'être importée par photo — permet de
+  // comparer directement le résultat extrait ci-dessous avec la vraie
+  // photo, notamment pour les ingrédients marqués "⚠️ à vérifier", sans
+  // devoir tout recommencer l'import. Ne survit jamais à un second
+  // rendu de cet écran (state._importSourcePhotos consommé une seule
+  // fois ci-dessus, comme le reste du pré-remplissage) : rouvrir ce
+  // même formulaire plus tard (modification ultérieure) ne réaffiche
+  // donc plus ces photos.
+  if (isRealImport && importSourcePhotos.length) {
+    const sourcePhotosSection = el(`<div class="section" style="margin-bottom:4px;">
+      <div class="section-label">${escapeHtml(t("form_import_source_photos_label"))}</div>
+    </div>`);
+    // Construit à part plutôt que ciblé par un sélecteur CSS depuis
+    // sourcePhotosSection : "div > div" matchait à tort le label
+    // lui-même (lui aussi un div enfant direct d'un div), les
+    // miniatures se retrouvant alors ajoutées dans le texte du label
+    // au lieu de cette bande dédiée.
+    const stripHolder = el(`<div style="display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;"></div>`);
+    sourcePhotosSection.appendChild(stripHolder);
+    importSourcePhotos.forEach((photo) => {
+      const thumbBtn = el(`<button type="button" style="flex-shrink:0;width:72px;height:72px;padding:0;border-radius:10px;border:1px solid var(--border);overflow:hidden;background:none;">
+        <img src="${photo}" alt="${escapeHtml(t("form_import_source_photo_alt"))}" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </button>`);
+      thumbBtn.addEventListener("click", () => openPhotoLightbox(photo));
+      stripHolder.appendChild(thumbBtn);
+    });
+    wrap.appendChild(sourcePhotosSection);
+  }
 
   const photoBox = el(`<div class="photo-upload">
     ${state.formPhoto ? `<img src="${state.formPhoto}" alt="">` : `<div>${t("form_photo")}</div>`}
@@ -3786,6 +3819,24 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
   if (!isEdit) sheet.querySelector("#cooklog-skip").addEventListener("click", () => saveEntry(false));
   sheet.querySelector("#cooklog-save").addEventListener("click", () => saveEntry(true));
 
+  overlay.appendChild(sheet);
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
+}
+
+// Visionneuse plein écran basique, réutilisée pour comparer une photo
+// source d'import avec le résultat extrait (voir renderRecipeForm) —
+// même structure modale que les autres fenêtres de l'app (overlay +
+// sheet, fermeture par bouton ou clic en dehors).
+function openPhotoLightbox(photoDataUrl) {
+  const overlay = el(`<div class="modal-overlay"></div>`);
+  const sheet = el(`<div class="modal-sheet" style="padding:12px;text-align:center;">
+    <img src="${photoDataUrl}" alt="" style="max-width:100%;max-height:70vh;border-radius:10px;display:block;margin:0 auto 12px;">
+  </div>`);
+  const closeBtn = el(`<button type="button" class="btn btn-outline">${t("cooking_close")}</button>`);
+  closeBtn.addEventListener("click", () => overlay.remove());
+  sheet.appendChild(closeBtn);
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
@@ -8950,6 +9001,11 @@ function renderImportPhoto() {
     const usable = state.multiPhotoImport.filter((p) => p.status === "done");
     const confirmedPersons = Math.max(1, parseInt(personsInput.value, 10) || 4);
     const merged = mergeMultiPhotoResults(usable, confirmedPersons);
+    // Miniatures conservées pour le formulaire suivant (voir
+    // renderRecipeForm) — permet de comparer le résultat avec la vraie
+    // photo. Capturées ici, avant que multiPhotoImport ci-dessous ne
+    // les efface.
+    state._importSourcePhotos = usable.map((p) => p.thumbnail);
     state.multiPhotoImport = [];
     try {
       await terminateSharedTesseractWorker();
@@ -9877,7 +9933,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 217;
+const APP_VERSION = 218;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
