@@ -177,6 +177,13 @@ const state = {
   formAllergens: [],
   ingredientNames: [],
   formPhoto: null,
+  // Miniatures des photos sources d'un import photo, pour comparaison
+  // dans le formulaire — contrairement à _importSourcePhotos (plus
+  // bas, consommé une seule fois pour ALIMENTER ce champ), celui-ci
+  // persiste tel quel entre deux rendus du même formulaire (ex. un
+  // changement de langue), pour ne pas perdre les miniatures avant que
+  // l'utilisateur ait fini de comparer et enregistré la recette.
+  formImportSourcePhotos: [],
   cookingTimers: [],
   shoppingSortByRayon: false,
   currentMenuId: null,
@@ -199,6 +206,16 @@ const state = {
 const CATEGORY_OPTIONS = ["Petit-déjeuner", "Entrée", "Plat", "Dessert", "Apéro", "Boisson", "Sauce", "Autre"];
 const DIFFICULTY_OPTIONS = ["Facile", "Moyen", "Difficile"];
 const UNIT_OPTIONS = ["pièce", "g", "kg", "cl", "L", "c. à soupe", "c. à café", "boîte", "barquette", "tranche", "gousse", "filet", "autre"];
+
+// "sachet" et "pot" ont été fusionnés dans l'unité "boîte" (affichée
+// "boîte/pot/sachet" — les trois désignaient déjà le même type de
+// contenant). Convertit une unité isolée si elle vient de l'une des
+// anciennes valeurs séparées, utilisé partout où une unité peut venir
+// de données créées avant cette fusion : recette déjà enregistrée,
+// sauvegarde restaurée, import partagé (QR/lien) ou brouillon repris.
+function migrateLegacyUnit(unit) {
+  return unit === "sachet" || unit === "pot" ? "boîte" : unit;
+}
 
 /* ======================================================================
    UTILITAIRES
@@ -1244,7 +1261,22 @@ async function clearRecipeFormDraft() {
 async function openRecipeForm(recipeId) {
   state.editingRecipeId = recipeId;
   state._formDraftToApply = null;
+  // Jamais atteint par le flux d'import photo (qui ouvre le formulaire
+  // directement, sans passer par ici) : sûr à vider systématiquement,
+  // pour ne jamais laisser resurgir les miniatures d'un import photo
+  // précédent dans un contexte qui n'a rien à voir (modification d'une
+  // autre recette, nouvelle recette vierge...).
+  state.formImportSourcePhotos = [];
   const draft = await getRecipeFormDraft();
+  // Un brouillon peut avoir été enregistré avant la fusion des unités
+  // "sachet"/"pot" dans "boîte" (voir migrateLegacyUnit) — sans cette
+  // conversion, le reprendre affichait un menu déroulant d'unité vide
+  // pour ces ingrédients (valeur ne correspondant plus à aucune
+  // option). La migration au démarrage ne le couvre pas : un brouillon
+  // vit dans l'entrepôt générique "kv", pas dans "recipes".
+  if (draft && Array.isArray(draft.ingredients)) {
+    draft.ingredients = draft.ingredients.map((i) => (i && typeof i === "object" ? { ...i, unit: migrateLegacyUnit(i.unit) } : i));
+  }
   // Un brouillon n'est proposé que s'il correspond exactement au
   // contexte actuel : soit les deux concernent une nouvelle recette
   // (recipeId absent des deux côtés), soit les deux concernent la
@@ -1293,9 +1325,20 @@ function renderRecipeForm() {
   // "r" : il représente un état plus récent, pas encore sauvegardé.
   const draftPrefill = state._formDraftToApply || null;
   const importPrefill = !r ? state._importPrefill || null : null;
-  const importSourcePhotos = !r ? (state._importSourcePhotos || []) : [];
-  const prefill = draftPrefill || importPrefill;
   const isRealImport = !!importPrefill;
+  // Contrairement à importPrefill (consommé une seule fois : sa valeur
+  // est déjà copiée dans state.formIngredients/formPhoto/formAllergens
+  // dès le tout premier rendu par le code qui ouvre ce formulaire), les
+  // miniatures sources n'ont pas d'équivalent "déjà copié" ailleurs —
+  // il faut donc les recopier nous-mêmes dans un champ qui, lui,
+  // survit aux rendus suivants du même formulaire (un changement de
+  // langue en cours d'édition, par exemple, appelle render() et donc
+  // ce même renderRecipeForm() une seconde fois avant tout enregistrement).
+  if (!r && state._importSourcePhotos && state._importSourcePhotos.length) {
+    state.formImportSourcePhotos = state._importSourcePhotos;
+  }
+  const importSourcePhotos = !r ? (state.formImportSourcePhotos || []) : [];
+  const prefill = draftPrefill || importPrefill;
   state._importPrefill = null;
   state._importSourcePhotos = null;
   state._formDraftToApply = null;
@@ -1305,12 +1348,11 @@ function renderRecipeForm() {
   // recette qui vient juste d'être importée par photo — permet de
   // comparer directement le résultat extrait ci-dessous avec la vraie
   // photo, notamment pour les ingrédients marqués "⚠️ à vérifier", sans
-  // devoir tout recommencer l'import. Ne survit jamais à un second
-  // rendu de cet écran (state._importSourcePhotos consommé une seule
-  // fois ci-dessus, comme le reste du pré-remplissage) : rouvrir ce
-  // même formulaire plus tard (modification ultérieure) ne réaffiche
-  // donc plus ces photos.
-  if (isRealImport && importSourcePhotos.length) {
+  // devoir tout recommencer l'import. Survit à un changement de langue
+  // ou tout autre second rendu de ce même formulaire (voir plus haut) ;
+  // vidée par openRecipeForm (ou les autres points d'entrée du
+  // formulaire) dès qu'un contexte différent est ouvert.
+  if (importSourcePhotos.length) {
     const sourcePhotosSection = el(`<div class="section" style="margin-bottom:4px;">
       <div class="section-label">${escapeHtml(t("form_import_source_photos_label"))}</div>
     </div>`);
@@ -1512,6 +1554,7 @@ function renderRecipeForm() {
   const cancelBtn = el(`<button type="button" class="btn btn-outline">${t("form_cancel")}</button>`);
   cancelBtn.addEventListener("click", async () => {
     await clearRecipeFormDraft();
+    state.formImportSourcePhotos = [];
     state.screen = r ? "recipe" : "recipes";
     render();
   });
@@ -1633,6 +1676,7 @@ async function saveRecipeForm(wrap, existing) {
   const idx = state.recipes.findIndex((x) => x.id === recipe.id);
   if (idx >= 0) state.recipes[idx] = recipe; else state.recipes.push(recipe);
   await clearRecipeFormDraft();
+  state.formImportSourcePhotos = [];
 
   state.currentRecipeId = recipe.id;
   state.viewPersons = recipe.defaultPersons || 4;
@@ -3036,7 +3080,7 @@ function decodeShoppingListFromQr(text) {
       id: uid(),
       name: name || "",
       quantity: qty !== "" && qty != null ? parseFloat(qty) : null,
-      unit: unit || "pièce",
+      unit: migrateLegacyUnit(unit || "pièce"),
       checked: checked === "1",
     };
   }).filter((i) => i.name);
@@ -3053,7 +3097,7 @@ function parseQrIngredientLine(line) {
     return {
       name: colonMatch[1].trim(),
       quantity: parseFloat(colonMatch[2].replace(",", ".")),
-      unit: colonMatch[3] || "pièce",
+      unit: migrateLegacyUnit(colonMatch[3] || "pièce"),
     };
   }
   return parseIngredientString(cleaned);
@@ -3077,7 +3121,7 @@ function tryParseCompactRecipeQr(text) {
   }
   const ingredients = data.i
     .filter((tuple) => Array.isArray(tuple) && typeof tuple[0] === "string" && tuple[0].trim())
-    .map((tuple) => ({ name: resolveImportedIngredientName(tuple[0]), quantity: tuple[1] != null ? Number(tuple[1]) : null, unit: tuple[2] || "pièce" }));
+    .map((tuple) => ({ name: resolveImportedIngredientName(tuple[0]), quantity: tuple[1] != null ? Number(tuple[1]) : null, unit: migrateLegacyUnit(tuple[2] || "pièce") }));
   const persons = Number(data.p) > 0 ? Number(data.p) : 4;
   return {
     name: data.n,
@@ -3676,10 +3720,11 @@ function openQrPasteModal() {
 async function confirmImportScannedRecipe(parsed) {
   if (!await customConfirm(t("qrscan_recipe_import_confirm", { name: parsed.name }))) return;
   state.editingRecipeId = null;
+  state.formImportSourcePhotos = [];
   state.formIngredients = parsed.ingredients.map((i) => ({
     name: resolveImportedIngredientName(i.name),
     quantity: i.quantity,
-    unit: i.unit,
+    unit: migrateLegacyUnit(i.unit),
   }));
   // Fait correspondre les allergènes lus (potentiellement traduits) à
   // la liste interne (toujours en français) — ignore silencieusement
@@ -3844,13 +3889,15 @@ function openPhotoLightbox(photoDataUrl) {
 }
 
 // Fenêtre de recadrage manuel (voir le bouton "✂️ Recadrer" de
-// renderImportPhoto) : rectangle à 4 coins, glissables au doigt ou à la
-// souris (événements "pointer", communs aux deux). Le cadre est
-// toujours exprimé en coordonnées "relatives à l'image affichée"
-// (0,0 = coin haut-gauche de l'image), converties en pixels réels de
-// l'image seulement au moment de valider — jamais avant, pour ne
-// dépendre d'aucune hypothèse sur la taille d'affichage pendant le
-// glisser lui-même.
+// renderImportPhoto) : rectangle à 4 coins, glissables au doigt, à la
+// souris (événements "pointer", communs aux deux) ou déplaçables au
+// clavier une fois focalisés (Tab). Le cadre est toujours exprimé en
+// FRACTIONS (0 à 1) de l'image affichée, jamais en pixels absolus :
+// reconverti en pixels réels à chaque affichage à partir de la taille
+// ACTUELLE de l'image — sans quoi une rotation d'écran (ou tout autre
+// redimensionnement) pendant le recadrage aurait laissé le cadre
+// calibré pour l'ancienne taille, produisant une zone découpée
+// différente de celle réellement sélectionnée par l'utilisateur.
 const CROP_MIN_SIZE = 40;
 function openCropModal(photoDataUrl, onConfirm) {
   const overlay = el(`<div class="modal-overlay" style="padding:0;align-items:stretch;"></div>`);
@@ -3860,17 +3907,23 @@ function openCropModal(photoDataUrl, onConfirm) {
   const img = el(`<img src="${photoDataUrl}" alt="" style="max-width:100%;max-height:100%;display:block;user-select:none;-webkit-user-select:none;">`);
   const rectEl = el(`<div style="position:absolute;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,0.55);touch-action:none;"></div>`);
   const HANDLE_POS = { tl: "left:-14px;top:-14px;", tr: "right:-14px;top:-14px;", bl: "left:-14px;bottom:-14px;", br: "right:-14px;bottom:-14px;" };
+  const HANDLE_LABEL_KEYS = { tl: "import_photo_crop_handle_tl", tr: "import_photo_crop_handle_tr", bl: "import_photo_crop_handle_bl", br: "import_photo_crop_handle_br" };
   const handles = {};
   Object.keys(HANDLE_POS).forEach((corner) => {
-    const handle = el(`<div style="position:absolute;width:28px;height:28px;${HANDLE_POS[corner]}background:#fff;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.4);touch-action:none;"></div>`);
+    // role/tabindex : rend chaque poignée atteignable et utilisable au
+    // clavier (voir le "keydown" plus bas) — jusque là, seules la
+    // souris et le toucher pouvaient recadrer une photo.
+    const handle = el(`<div role="button" tabindex="0" aria-label="${escapeHtml(t(HANDLE_LABEL_KEYS[corner]))}" style="position:absolute;width:28px;height:28px;${HANDLE_POS[corner]}background:#fff;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.4);touch-action:none;"></div>`);
     handles[corner] = handle;
     rectEl.appendChild(handle);
   });
   stage.appendChild(img);
   stage.appendChild(rectEl);
   const actionsRow = el(`<div style="display:flex;gap:10px;padding:12px;"></div>`);
+  const resetBtn = el(`<button type="button" class="btn btn-outline" style="flex:1;">${escapeHtml(t("import_photo_crop_reset"))}</button>`);
   const cancelBtn = el(`<button type="button" class="btn btn-outline" style="flex:1;">${escapeHtml(t("import_photo_crop_cancel"))}</button>`);
   const confirmBtn = el(`<button type="button" class="btn btn-primary" style="flex:1;">${escapeHtml(t("import_photo_crop_confirm"))}</button>`);
+  actionsRow.appendChild(resetBtn);
   actionsRow.appendChild(cancelBtn);
   actionsRow.appendChild(confirmBtn);
   panel.appendChild(hint);
@@ -3879,33 +3932,45 @@ function openCropModal(photoDataUrl, onConfirm) {
   overlay.appendChild(panel);
   document.body.appendChild(overlay);
 
-  // Coordonnées du cadre relatives au coin haut-gauche de l'IMAGE
-  // affichée (pas de "stage", qui la centre avec un espace variable
-  // autour) — initialisées à l'image entière une fois celle-ci chargée
-  // et mise en page, jamais avant (naturalWidth et les dimensions
-  // affichées ne sont fiables qu'à ce moment-là). imgOffsetLeft/Top
-  // (position de l'image DANS stage, son offsetParent puisque "stage"
-  // est en position:relative) sont capturés une seule fois : l'image
-  // ne se déplace jamais pendant tout le recadrage, recalculer à
-  // chaque frame serait superflu.
-  let rect = { left: 0, top: 0, right: 0, bottom: 0 };
+  let rectFrac = { left: 0, top: 0, right: 1, bottom: 1 };
+  // Position de l'image DANS stage (son offsetParent, en position:relative) —
+  // recalculée à chaque redimensionnement (voir onViewportResize), pas
+  // seulement à l'ouverture.
   let imgOffsetLeft = 0, imgOffsetTop = 0;
 
   function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+  function currentImgSize() { return { w: img.clientWidth, h: img.clientHeight }; }
 
   function updateRectStyle() {
-    rectEl.style.left = (imgOffsetLeft + rect.left) + "px";
-    rectEl.style.top = (imgOffsetTop + rect.top) + "px";
-    rectEl.style.width = (rect.right - rect.left) + "px";
-    rectEl.style.height = (rect.bottom - rect.top) + "px";
+    const { w: imgW, h: imgH } = currentImgSize();
+    rectEl.style.left = (imgOffsetLeft + rectFrac.left * imgW) + "px";
+    rectEl.style.top = (imgOffsetTop + rectFrac.top * imgH) + "px";
+    rectEl.style.width = ((rectFrac.right - rectFrac.left) * imgW) + "px";
+    rectEl.style.height = ((rectFrac.bottom - rectFrac.top) * imgH) + "px";
+  }
+
+  function resetRect() {
+    rectFrac = { left: 0, top: 0, right: 1, bottom: 1 };
+    updateRectStyle();
   }
 
   function initRect() {
     imgOffsetLeft = img.offsetLeft;
     imgOffsetTop = img.offsetTop;
-    rect = { left: 0, top: 0, right: img.clientWidth, bottom: img.clientHeight };
+    resetRect();
+  }
+
+  // Ne recalcule jamais rectFrac lui-même ici, seulement sa
+  // conversion en pixels affichés : la portion de l'image
+  // sélectionnée par l'utilisateur doit rester la même avant et après
+  // le redimensionnement (rotation de l'écran, notamment).
+  function onViewportResize() {
+    imgOffsetLeft = img.offsetLeft;
+    imgOffsetTop = img.offsetTop;
     updateRectStyle();
   }
+  window.addEventListener("resize", onViewportResize);
+  window.addEventListener("orientationchange", onViewportResize);
 
   function startDrag(onMove) {
     function move(ev) { onMove(ev); }
@@ -3917,23 +3982,41 @@ function openCropModal(photoDataUrl, onConfirm) {
     window.addEventListener("pointerup", up);
   }
 
+  // Déplace un coin de "dxPx"/"dyPx" pixels (glisser au pointeur, ou
+  // pas fixe pour une flèche du clavier) à partir de "baseFrac" —
+  // toujours reconverti en fractions de la taille ACTUELLE de l'image
+  // avant d'être stocké, jamais gardé en pixels bruts.
+  function moveCorner(corner, dxPx, dyPx, baseFrac) {
+    const { w: imgW, h: imgH } = currentImgSize();
+    const minFracW = CROP_MIN_SIZE / imgW, minFracH = CROP_MIN_SIZE / imgH;
+    let { left, top, right, bottom } = baseFrac;
+    if (corner.includes("l")) left = clamp(baseFrac.left + dxPx / imgW, 0, right - minFracW);
+    if (corner.includes("r")) right = clamp(baseFrac.right + dxPx / imgW, left + minFracW, 1);
+    if (corner.includes("t")) top = clamp(baseFrac.top + dyPx / imgH, 0, bottom - minFracH);
+    if (corner.includes("b")) bottom = clamp(baseFrac.bottom + dyPx / imgH, top + minFracH, 1);
+    rectFrac = { left, top, right, bottom };
+    updateRectStyle();
+  }
+
   Object.keys(handles).forEach((corner) => {
     handles[corner].addEventListener("pointerdown", (e) => {
       e.preventDefault();
       e.stopPropagation();
       const startX = e.clientX, startY = e.clientY;
-      const startRect = { ...rect };
-      const imgW = img.clientWidth, imgH = img.clientHeight;
-      startDrag((ev) => {
-        const dx = ev.clientX - startX, dy = ev.clientY - startY;
-        let { left, top, right, bottom } = startRect;
-        if (corner.includes("l")) left = clamp(startRect.left + dx, 0, right - CROP_MIN_SIZE);
-        if (corner.includes("r")) right = clamp(startRect.right + dx, left + CROP_MIN_SIZE, imgW);
-        if (corner.includes("t")) top = clamp(startRect.top + dy, 0, bottom - CROP_MIN_SIZE);
-        if (corner.includes("b")) bottom = clamp(startRect.bottom + dy, top + CROP_MIN_SIZE, imgH);
-        rect = { left, top, right, bottom };
-        updateRectStyle();
-      });
+      const baseFrac = { ...rectFrac };
+      startDrag((ev) => moveCorner(corner, ev.clientX - startX, ev.clientY - startY, baseFrac));
+    });
+    // Flèches pour un déplacement fin (2% de l'image), Maj+flèche pour
+    // un déplacement plus large (8%) — seul moyen d'opérer ce cadre
+    // sans souris ni écran tactile.
+    handles[corner].addEventListener("keydown", (e) => {
+      const arrowDeltas = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+      const delta = arrowDeltas[e.key];
+      if (!delta) return;
+      e.preventDefault();
+      const { w: imgW, h: imgH } = currentImgSize();
+      const step = e.shiftKey ? 0.08 : 0.02;
+      moveCorner(corner, delta[0] * step * imgW, delta[1] * step * imgH, { ...rectFrac });
     });
   });
   // Glisser directement le cadre (pas un coin) le déplace en entier
@@ -3942,14 +4025,14 @@ function openCropModal(photoDataUrl, onConfirm) {
   rectEl.addEventListener("pointerdown", (e) => {
     if (e.target !== rectEl) return;
     const startX = e.clientX, startY = e.clientY;
-    const startRect = { ...rect };
-    const imgW = img.clientWidth, imgH = img.clientHeight;
-    const w = startRect.right - startRect.left, h = startRect.bottom - startRect.top;
+    const baseFrac = { ...rectFrac };
+    const w = baseFrac.right - baseFrac.left, h = baseFrac.bottom - baseFrac.top;
     startDrag((ev) => {
-      const dx = ev.clientX - startX, dy = ev.clientY - startY;
-      const left = clamp(startRect.left + dx, 0, imgW - w);
-      const top = clamp(startRect.top + dy, 0, imgH - h);
-      rect = { left, top, right: left + w, bottom: top + h };
+      const { w: imgW, h: imgH } = currentImgSize();
+      const dx = (ev.clientX - startX) / imgW, dy = (ev.clientY - startY) / imgH;
+      const left = clamp(baseFrac.left + dx, 0, 1 - w);
+      const top = clamp(baseFrac.top + dy, 0, 1 - h);
+      rectFrac = { left, top, right: left + w, bottom: top + h };
       updateRectStyle();
     });
   });
@@ -3957,18 +4040,31 @@ function openCropModal(photoDataUrl, onConfirm) {
   if (img.complete && img.naturalWidth) initRect();
   else img.addEventListener("load", initRect, { once: true });
 
+  resetBtn.addEventListener("click", resetRect);
   cancelBtn.addEventListener("click", () => overlay.remove());
   confirmBtn.addEventListener("click", () => {
     const scaleX = img.naturalWidth / img.clientWidth;
     const scaleY = img.naturalHeight / img.clientHeight;
-    const sx = rect.left * scaleX, sy = rect.top * scaleY;
-    const sw = (rect.right - rect.left) * scaleX, sh = (rect.bottom - rect.top) * scaleY;
+    const { w: imgW, h: imgH } = currentImgSize();
+    const sx = rectFrac.left * imgW * scaleX, sy = rectFrac.top * imgH * scaleY;
+    const sw = (rectFrac.right - rectFrac.left) * imgW * scaleX, sh = (rectFrac.bottom - rectFrac.top) * imgH * scaleY;
     const canvas = document.createElement("canvas");
     canvas.width = Math.max(1, Math.round(sw));
     canvas.height = Math.max(1, Math.round(sh));
     canvas.getContext("2d").drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
     overlay.remove();
     onConfirm(canvas);
+  });
+
+  // Même mécanisme d'accessibilité que les autres fenêtres modales de
+  // l'application (rôle "dialog", touche Échap, piège du focus) —
+  // absent jusqu'ici, cette fenêtre plein écran n'en héritait pas
+  // automatiquement puisqu'elle ne réutilise pas la classe ".modal-sheet".
+  initModalA11y(overlay, panel, {
+    beforeClose: () => {
+      window.removeEventListener("resize", onViewportResize);
+      window.removeEventListener("orientationchange", onViewportResize);
+    },
   });
 }
 
@@ -5090,20 +5186,61 @@ async function mergeIngredientNames(keep, remove) {
   if (savedListsTouched) for (const saved of state.savedShoppingLists) await storePut("savedShoppingLists", saved);
 }
 
+// Fusionne dans une liste d'articles à quantité (courses, garde-manger)
+// les lignes qui, une fois migrateLegacyUnit appliqué, se retrouvent
+// avec le même nom ET la même unité (ex. "Yaourt / pot" et "Yaourt /
+// sachet" deviennent toutes les deux "Yaourt / boîte") : sans cette
+// fusion, la migration laissait deux lignes séparées côte à côte au
+// lieu d'une seule, quantités additionnées, but affiché de la fusion
+// des unités. Modifie "list" en place et répercute les changements
+// dans l'entrepôt IndexedDB correspondant (mise à jour des lignes
+// conservées, suppression des lignes fusionnées).
+async function dedupeQuantityListAfterUnitMigration(list, storeName) {
+  const groups = new Map();
+  list.forEach((item) => {
+    const key = normalize(item.name || "") + "␟" + (item.unit || "");
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(item);
+  });
+  const survivors = [];
+  const removed = [];
+  groups.forEach((group) => {
+    const [keep, ...rest] = group;
+    if (rest.length) {
+      keep.quantity = rest.reduce((sum, it) => sum + (it.quantity || 0), keep.quantity || 0);
+      // Une case cochée seulement si toutes les lignes fusionnées
+      // l'étaient déjà, pour ne jamais décocher à tort un article que
+      // l'utilisateur avait déjà réglé sous son ancienne unité.
+      if ("checked" in keep) keep.checked = keep.checked && rest.every((it) => it.checked);
+      removed.push(...rest);
+    }
+    survivors.push(keep);
+  });
+  if (!removed.length) return;
+  list.length = 0;
+  list.push(...survivors);
+  for (const item of survivors) await storePut(storeName, item);
+  for (const item of removed) await storeDelete(storeName, item.id);
+}
+
 // "sachet" et "pot" ont été fusionnés dans l'unité "boîte" (affichée
 // "boîte/pot/sachet" — les trois désignaient déjà le même type de
 // contenant). Convertit les données déjà enregistrées avant ce
 // changement, pour qu'elles ne se retrouvent pas avec une unité
 // disparue de UNIT_OPTIONS (et donc silencieusement réduites à
-// "pièce" par les autres garde-fous de l'application). Sans effet,
-// et donc sûr à ré-exécuter à chaque démarrage, une fois la migration
-// déjà faite.
+// "pièce" par les autres garde-fous de l'application), fusionne les
+// doublons que cette conversion peut faire apparaître, et convertit
+// aussi les prix personnalisés par ingrédient (sans quoi leur unité
+// ne correspondrait plus à celle des articles, et le coût calculé
+// deviendrait "inconnu" pour ces ingrédients). Sans effet, et donc sûr
+// à ré-exécuter à chaque démarrage ou après une restauration de
+// sauvegarde, une fois la migration déjà faite.
 async function migrateMergedContainerUnits() {
-  const OLD_UNITS = ["sachet", "pot"];
   let recipesTouched = false;
   state.recipes.forEach((r) => {
     (r.ingredients || []).forEach((ing) => {
-      if (OLD_UNITS.includes(ing.unit)) { ing.unit = "boîte"; recipesTouched = true; }
+      const migrated = migrateLegacyUnit(ing.unit);
+      if (migrated !== ing.unit) { ing.unit = migrated; recipesTouched = true; }
     });
   });
   if (recipesTouched) for (const r of state.recipes) await storePut("recipes", r);
@@ -5111,24 +5248,77 @@ async function migrateMergedContainerUnits() {
   let trashTouched = false;
   state.trash.forEach((entry) => {
     (entry.ingredients || []).forEach((ing) => {
-      if (OLD_UNITS.includes(ing.unit)) { ing.unit = "boîte"; trashTouched = true; }
+      const migrated = migrateLegacyUnit(ing.unit);
+      if (migrated !== ing.unit) { ing.unit = migrated; trashTouched = true; }
     });
   });
   if (trashTouched) for (const entry of state.trash) await storePut("trash", entry);
 
-  for (const item of state.shopping) {
-    if (OLD_UNITS.includes(item.unit)) { item.unit = "boîte"; await storePut("shopping", item); }
+  let shoppingTouched = false;
+  state.shopping.forEach((item) => {
+    const migrated = migrateLegacyUnit(item.unit);
+    if (migrated !== item.unit) { item.unit = migrated; shoppingTouched = true; }
+  });
+  if (shoppingTouched) {
+    for (const item of state.shopping) await storePut("shopping", item);
+    await dedupeQuantityListAfterUnitMigration(state.shopping, "shopping");
   }
-  for (const item of state.pantry) {
-    if (OLD_UNITS.includes(item.unit)) { item.unit = "boîte"; await storePut("pantry", item); }
+
+  let pantryTouched = false;
+  state.pantry.forEach((item) => {
+    const migrated = migrateLegacyUnit(item.unit);
+    if (migrated !== item.unit) { item.unit = migrated; pantryTouched = true; }
+  });
+  if (pantryTouched) {
+    for (const item of state.pantry) await storePut("pantry", item);
+    await dedupeQuantityListAfterUnitMigration(state.pantry, "pantry");
   }
+
   let savedListsTouched = false;
   state.savedShoppingLists.forEach((saved) => {
-    (saved.items || []).forEach((item) => {
-      if (OLD_UNITS.includes(item.unit)) { item.unit = "boîte"; savedListsTouched = true; }
+    const items = saved.items || [];
+    let touched = false;
+    items.forEach((item) => {
+      const migrated = migrateLegacyUnit(item.unit);
+      if (migrated !== item.unit) { item.unit = migrated; touched = true; }
     });
+    if (touched) {
+      // Même fusion des doublons que pour les courses/garde-manger,
+      // mais sans entrepôt séparé à mettre à jour : ces articles ne
+      // sont que des champs à l'intérieur de la liste enregistrée
+      // elle-même, réécrite en un bloc juste après.
+      const groups = new Map();
+      items.forEach((item) => {
+        const key = normalize(item.name || "") + "␟" + (item.unit || "");
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(item);
+      });
+      const merged = [];
+      groups.forEach((group) => {
+        const [keep, ...rest] = group;
+        if (rest.length) keep.quantity = rest.reduce((sum, it) => sum + (it.quantity || 0), keep.quantity || 0);
+        merged.push(keep);
+      });
+      saved.items = merged;
+      savedListsTouched = true;
+    }
   });
   if (savedListsTouched) for (const saved of state.savedShoppingLists) await storePut("savedShoppingLists", saved);
+
+  // Prix personnalisés par ingrédient (ingredientOverrides) : le prix
+  // "pour 1 [unité]" doit suivre la même conversion, sinon son unité
+  // ("pot"/"sachet") ne correspond plus à celle des articles qui
+  // l'utilisent ("boîte") et le coût redevient "inconnu" pour eux.
+  const overrides = await storeAll("ingredientOverrides");
+  for (const o of overrides) {
+    if (!o.price) continue;
+    const migrated = migrateLegacyUnit(o.price.unit);
+    if (migrated !== o.price.unit) {
+      o.price = { ...o.price, unit: migrated };
+      await storePut("ingredientOverrides", o);
+      if (INGREDIENT_OVERRIDES[o.name]) INGREDIENT_OVERRIDES[o.name] = o;
+    }
+  }
 }
 
 /* ======================================================================
@@ -5882,7 +6072,14 @@ function recipeFromSharedFormat(json, imageBytesByFilename) {
     favorite: !!json.favorite,
     vegetarian: !!json.vegetarian,
     wishlist: !!json.wishlist,
-    ingredients: Array.isArray(json.ingredients) ? json.ingredients : [],
+    // migrateLegacyUnit : une recette partagée depuis un appareil (ou
+    // une version de l'app de bureau) qui n'a pas encore la fusion des
+    // unités peut encore contenir "sachet"/"pot" — sans cette
+    // conversion, l'ingrédient importé se retrouvait avec une unité
+    // disparue de UNIT_OPTIONS (menu déroulant vide dans le formulaire).
+    ingredients: Array.isArray(json.ingredients)
+      ? json.ingredients.map((i) => (i && typeof i === "object" ? { ...i, unit: migrateLegacyUnit(i.unit) } : i))
+      : [],
     allergens: Array.isArray(json.allergens) ? json.allergens : [],
     description: json.description || "",
     notes: json.personal_notes || "",
@@ -5910,7 +6107,7 @@ function pantryToSharedFormat(items) {
 }
 function pantryFromSharedFormat(dict) {
   if (!dict || typeof dict !== "object") return [];
-  return Object.values(dict).map((v) => ({ id: uid(), name: v.name, quantity: v.quantity, unit: v.unit, threshold: v.threshold ?? null }));
+  return Object.values(dict).map((v) => ({ id: uid(), name: v.name, quantity: v.quantity, unit: migrateLegacyUnit(v.unit), threshold: v.threshold ?? null }));
 }
 
 async function buildBackupData() {
@@ -6180,6 +6377,25 @@ function sanitizeNonNegativeNumber(value) {
 // incohérentes sans rejeter l'enregistrement entier pour autant (un
 // champ isolé invalide ne doit pas faire perdre le reste d'une
 // recette par ailleurs valide).
+// Corrige les unités d'un tableau d'ingrédients (recette ou entrée de
+// corbeille, même forme) : migre "sachet"/"pot" vers "boîte" (voir
+// migrateLegacyUnit), puis retombe sur "pièce" si la valeur ne
+// correspond toujours à aucune option connue (donnée corrompue ou
+// trop ancienne pour une autre raison).
+function fixIngredientsArrayUnits(ingredients, report) {
+  return ingredients
+    .filter((i) => i && typeof i === "object" && !Array.isArray(i))
+    .map((i) => {
+      const fixedName = typeof i.name === "string" ? i.name : "";
+      if (fixedName !== i.name) report.structuralFixes += 1;
+      const migratedUnit = migrateLegacyUnit(i.unit);
+      const fixedUnit = migratedUnit && !UNIT_OPTIONS.includes(migratedUnit) ? "pièce" : migratedUnit;
+      if (fixedUnit !== i.unit) report.structuralFixes += 1;
+      const sanitized = i.quantity != null ? sanitizeNonNegativeNumber(i.quantity) : i.quantity;
+      if (sanitized !== i.quantity) report.numbersFixed += 1;
+      return { ...i, name: fixedName, unit: fixedUnit, quantity: sanitized };
+    });
+}
 function sanitizeBackupItem(item, storeName, report) {
   const cleaned = { ...item };
   if ("photo" in cleaned && cleaned.photo != null && !isValidPhotoField(cleaned.photo)) {
@@ -6226,26 +6442,11 @@ function sanitizeBackupItem(item, storeName, report) {
     if ("timesCooked" in cleaned) cleaned.timesCooked = sanitizeNonNegativeNumber(cleaned.timesCooked) || 0;
     if (Array.isArray(cleaned.ingredients)) {
       const beforeCount = cleaned.ingredients.length;
-      cleaned.ingredients = cleaned.ingredients
-        // Un ingrédient qui n'est même pas un objet ne peut pas être
-        // réparé — retiré plutôt que conservé tel quel, ce qui
-        // provoquerait des erreurs partout où le code s'attend à un
-        // vrai objet ingrédient (affichage, calculs, export...).
-        .filter((i) => i && typeof i === "object" && !Array.isArray(i))
-        .map((i) => {
-          const fixedName = typeof i.name === "string" ? i.name : "";
-          if (fixedName !== i.name) report.structuralFixes += 1;
-          // "sachet"/"pot" existaient encore comme unités séparées dans
-          // les sauvegardes créées avant leur fusion avec "boîte" — sans
-          // cette conversion, une restauration de sauvegarde les
-          // ferait tomber à tort sous "pièce" via le test ci-dessous.
-          const migratedUnit = i.unit === "sachet" || i.unit === "pot" ? "boîte" : i.unit;
-          const fixedUnit = migratedUnit && !UNIT_OPTIONS.includes(migratedUnit) ? "pièce" : migratedUnit;
-          if (fixedUnit !== i.unit) report.structuralFixes += 1;
-          const sanitized = i.quantity != null ? sanitizeNonNegativeNumber(i.quantity) : i.quantity;
-          if (sanitized !== i.quantity) report.numbersFixed += 1;
-          return { ...i, name: fixedName, unit: fixedUnit, quantity: sanitized };
-        });
+      // Un ingrédient qui n'est même pas un objet ne peut pas être
+      // réparé — retiré plutôt que conservé tel quel, ce qui
+      // provoquerait des erreurs partout où le code s'attend à un
+      // vrai objet ingrédient (affichage, calculs, export...).
+      cleaned.ingredients = fixIngredientsArrayUnits(cleaned.ingredients, report);
       if (cleaned.ingredients.length !== beforeCount) report.structuralFixes += 1;
     } else if ("ingredients" in cleaned) {
       cleaned.ingredients = [];
@@ -6275,6 +6476,34 @@ function sanitizeBackupItem(item, storeName, report) {
         if (sanitized !== cleaned[field]) report.numbersFixed += 1;
         cleaned[field] = sanitized;
       }
+    });
+    if ("unit" in cleaned && cleaned.unit != null) {
+      const migratedUnit = migrateLegacyUnit(cleaned.unit);
+      if (migratedUnit !== cleaned.unit) report.structuralFixes += 1;
+      cleaned.unit = migratedUnit;
+    }
+  }
+  // La corbeille contient des recettes supprimées, de même forme que
+  // l'entrepôt "recipes" pour leurs ingrédients — sans ce bloc dédié,
+  // une recette restaurée dans la corbeille avec "sachet"/"pot" restait
+  // sur ces anciennes unités tant qu'elle n'était pas remise en
+  // circulation (le bloc "recipes" ci-dessus ne s'applique jamais ici,
+  // storeName valant "trash" et non "recipes").
+  if (storeName === "trash" && Array.isArray(cleaned.ingredients)) {
+    const beforeCount = cleaned.ingredients.length;
+    cleaned.ingredients = fixIngredientsArrayUnits(cleaned.ingredients, report);
+    if (cleaned.ingredients.length !== beforeCount) report.structuralFixes += 1;
+  }
+  // Une liste de courses enregistrée est un simple tableau d'articles
+  // {name, unit, quantity} — même besoin de migration que les courses
+  // actuelles, mais jamais couvert avant puisqu'aucun bloc dédié
+  // n'existait pour cet entrepôt.
+  if (storeName === "savedShoppingLists" && Array.isArray(cleaned.items)) {
+    cleaned.items = cleaned.items.map((it) => {
+      if (!it || typeof it !== "object" || Array.isArray(it)) return it;
+      const migratedUnit = migrateLegacyUnit(it.unit);
+      if (migratedUnit !== it.unit) report.structuralFixes += 1;
+      return { ...it, unit: migratedUnit };
     });
   }
   return cleaned;
@@ -6674,6 +6903,14 @@ function renderBackup() {
     }
     try {
       await importAllData(data, mode);
+      // Filet de sécurité en plus de la migration déjà faite par
+      // sanitizeBackupItem plus haut (avant l'écriture) : fusionne
+      // aussi les doublons que la conversion peut faire apparaître
+      // (ex. "Yaourt/pot" + "Yaourt/sachet" -> une seule ligne
+      // "Yaourt/boîte") et corrige les prix personnalisés déjà
+      // enregistrés — sans quoi ces derniers resteraient sur une unité
+      // disparue jusqu'au prochain démarrage de l'application.
+      await migrateMergedContainerUnits();
       await customAlert(t(didSafetyBackup ? "backup_import_success_with_safety" : "backup_import_success"));
       state.screen = "home";
       render();
@@ -6779,6 +7016,7 @@ function renderBackup() {
       state.pantry = await storeAll("pantry");
       await ensureIngredientListLoaded();
       await loadIngredientOverrides();
+      await migrateMergedContainerUnits();
       await customAlert(t("backup_shared_import_success", { imported: report.recipesImported, updated: report.recipesUpdated }));
       state.screen = "home";
       render();
@@ -9093,7 +9331,12 @@ function renderImportPhoto() {
       }
       if (p.status !== "processing") {
         const cropBtn = el(`<button type="button" class="btn btn-outline" style="margin-top:8px;padding:6px 10px;font-size:12px;width:auto;">${escapeHtml(t("import_photo_crop_button"))}</button>`);
-        cropBtn.addEventListener("click", () => openCropModal(p.thumbnail, (croppedCanvas) => handleCropConfirmed(p, croppedCanvas)));
+        // Toujours à partir de la photo ORIGINALE (jamais p.thumbnail,
+        // potentiellement déjà recadrée) : rouvrir "Recadrer" permet
+        // ainsi de repartir de zéro si la zone choisie la première
+        // fois s'avère trop (ou pas assez) restrictive, sans avoir à
+        // réimporter la photo.
+        cropBtn.addEventListener("click", () => openCropModal(p.originalThumbnail || p.thumbnail, (croppedCanvas) => handleCropConfirmed(p, croppedCanvas)));
         info.appendChild(cropBtn);
       }
       card.appendChild(info);
@@ -9181,7 +9424,12 @@ function renderImportPhoto() {
       reader.onload = () => resolve(reader.result);
       reader.readAsDataURL(file);
     });
-    const entry = { id: uid(), thumbnail, status: "processing", rawText: null, layoutText: null, gridText: null, twoColumnIngredients: null, parsed: null, sectionData: null, section: null, autoDetected: false, errorMessage: null };
+    // originalThumbnail : jamais réécrite par un recadrage (voir
+    // handleCropConfirmed) — sans elle, recadrer une seconde fois
+    // recadrait la version DÉJÀ recadrée au lieu de la vraie photo
+    // d'origine, rendant impossible de récupérer une zone coupée par
+    // erreur autrement qu'en réimportant complètement la photo.
+    const entry = { id: uid(), thumbnail, originalThumbnail: thumbnail, status: "processing", rawText: null, layoutText: null, gridText: null, twoColumnIngredients: null, parsed: null, sectionData: null, section: null, autoDetected: false, errorMessage: null };
     state.multiPhotoImport.push(entry);
     refreshUi();
     await processPhotoIntoEntry(entry, file);
@@ -9192,10 +9440,31 @@ function renderImportPhoto() {
   // LA MÊME carte (jamais une carte en plus), pour rester cohérent
   // avec le nombre de photos réellement fusionnées ensuite.
   async function handleCropConfirmed(entry, croppedCanvas) {
+    // Conserve le dernier résultat correct avant de tenter le nouveau
+    // recadrage : si la nouvelle analyse OCR échoue, la carte retombe
+    // sur ce résultat au lieu de rester bloquée en erreur alors
+    // qu'elle fonctionnait très bien juste avant.
+    const previousGoodState = entry.status === "done"
+      ? {
+          thumbnail: entry.thumbnail, rawText: entry.rawText, layoutText: entry.layoutText,
+          gridText: entry.gridText, tableText: entry.tableText, parsed: entry.parsed,
+          section: entry.section, autoDetected: entry.autoDetected,
+          twoColumnIngredients: entry.twoColumnIngredients, sectionData: entry.sectionData, status: entry.status,
+        }
+      : null;
     entry.thumbnail = croppedCanvas.toDataURL("image/jpeg", 0.9);
     entry.section = null;
     entry.autoDetected = false;
     await processPhotoIntoEntry(entry, croppedCanvas);
+    // p.errorMessage n'est affiché que pour status === "error" (voir
+    // refreshUi) : puisque le statut est justement remis à "done" ici,
+    // une alerte ponctuelle est le seul moyen de prévenir que ce
+    // recadrage précis a échoué, malgré la carte qui reste correcte.
+    if (entry.status === "error" && previousGoodState) {
+      Object.assign(entry, previousGoodState);
+      refreshUi();
+      await customAlert(t("import_photo_crop_failed_reverted"));
+    }
   }
 
   cameraInput.addEventListener("change", (e) => { handleNewPhoto(e.target.files[0]); e.target.value = ""; });
@@ -9715,6 +9984,7 @@ function renderImportUrl() {
           : t("import_url_fetching");
       });
       state.editingRecipeId = null;
+      state.formImportSourcePhotos = [];
       state.formIngredients = result.ingredients.length ? result.ingredients : [{ name: "", quantity: "", unit: "pièce" }];
       state.formAllergens = [];
       state.formPhoto = result.photo || null;
@@ -10137,7 +10407,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 220;
+const APP_VERSION = 221;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
