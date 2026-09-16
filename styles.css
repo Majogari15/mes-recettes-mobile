@@ -442,9 +442,13 @@ a { color: inherit; }
 
 /* ---------- Ingrédients du formulaire ---------- */
 .ing-form-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
-.ing-form-row input { flex: 2; }
-.ing-form-row input.qty { flex: 1; }
-.ing-form-row select { flex: 1.2; }
+/* min-width: 0 : sans lui, un <select> refuse de rétrécir sous la largeur
+   de son contenu (le libellé le plus long, "boîte/pot/sachet") même en
+   flex-basis 0 — la ligne débordait alors largement sur un écran de
+   téléphone étroit (~390px), rendant le bouton de suppression hors champ. */
+.ing-form-row input { flex: 2; min-width: 0; }
+.ing-form-row input.qty { flex: 1; min-width: 0; }
+.ing-form-row select { flex: 1.2; min-width: 0; }
 .ing-form-row-uncertain { background: var(--accent-light); border-radius: 10px; padding: 4px 6px; margin: -4px -6px 6px; }
 .ing-uncertain-badge { flex-shrink: 0; font-size: 15px; cursor: help; }
 .ing-form-row .remove-ing {

@@ -217,6 +217,22 @@ function migrateLegacyUnit(unit) {
   return unit === "sachet" || unit === "pot" ? "boîte" : unit;
 }
 
+// La fusion ci-dessus regroupe "boîte"/"sachet"/"pot" en une seule
+// valeur d'unité, mais perdrait laquelle des trois une recette
+// indiquait vraiment à l'origine si rien ne la conservait à part.
+// containerLabel (sur chaque ingrédient d'une RECETTE uniquement —
+// jamais sur un article de courses/garde-manger, qui décrit un achat
+// courant, pas un fait historique figé) garde ce mot précis, à titre
+// purement informatif : il n'intervient jamais dans l'affichage
+// principal, le menu déroulant ni aucun calcul, qui continuent tous
+// de traiter "boîte" comme une seule et même unité.
+function legacyContainerLabel(rawUnit) {
+  const uw = (rawUnit || "").toLowerCase();
+  if (uw === "sachet" || uw === "pot") return uw;
+  if (uw === "boîte" || uw === "boite") return "boîte";
+  return null;
+}
+
 /* ======================================================================
    UTILITAIRES
    ====================================================================== */
@@ -1275,7 +1291,7 @@ async function openRecipeForm(recipeId) {
   // option). La migration au démarrage ne le couvre pas : un brouillon
   // vit dans l'entrepôt générique "kv", pas dans "recipes".
   if (draft && Array.isArray(draft.ingredients)) {
-    draft.ingredients = draft.ingredients.map((i) => (i && typeof i === "object" ? { ...i, unit: migrateLegacyUnit(i.unit) } : i));
+    draft.ingredients = draft.ingredients.map((i) => (i && typeof i === "object" ? { ...i, unit: migrateLegacyUnit(i.unit), containerLabel: i.containerLabel || legacyContainerLabel(i.unit) } : i));
   }
   // Un brouillon n'est proposé que s'il correspond exactement au
   // contexte actuel : soit les deux concernent une nouvelle recette
@@ -1593,7 +1609,15 @@ function renderIngredientRows(holder) {
     const nameInput = row.querySelector(".ing-name");
     attachIngredientAutocomplete(nameInput, (value) => (ing.name = value));
     row.querySelector(".ing-qty").addEventListener("input", (e) => (ing.quantity = e.target.value));
-    unitSelect.addEventListener("change", (e) => (ing.unit = e.target.value));
+    unitSelect.addEventListener("change", (e) => {
+      ing.unit = e.target.value;
+      // Un choix explicite dans ce menu n'est plus "l'unité d'origine
+      // ambiguë d'un import" mais une décision actuelle assumée — le
+      // conserver aurait pu laisser croire à tort que la recette
+      // employait encore un mot précis (sachet/pot) après une
+      // modification manuelle qui n'a plus rien à voir.
+      ing.containerLabel = null;
+    });
     row.querySelector(".remove-ing").addEventListener("click", () => {
       state.formIngredients.splice(idx, 1);
       if (!state.formIngredients.length) state.formIngredients.push({ name: "", quantity: "", unit: "pièce" });
@@ -1627,7 +1651,11 @@ async function saveRecipeForm(wrap, existing) {
   const name = wrap.querySelector("#f-name").value.trim();
   if (!name) { await customAlert(t("form_error_name")); return; }
   const validIngredients = state.formIngredients
-    .map((i) => ({ name: resolveIngredientInput((i.name || "").trim()), quantity: parseQtyOrNull(i.quantity), unit: i.unit }))
+    // containerLabel : voir legacyContainerLabel — conserve, à titre
+    // purement informatif, lequel des trois mots fusionnés
+    // ("boîte"/"sachet"/"pot") la recette employait vraiment, sans
+    // influencer l'unité elle-même (toujours "boîte" pour les trois).
+    .map((i) => ({ name: resolveIngredientInput((i.name || "").trim()), quantity: parseQtyOrNull(i.quantity), unit: i.unit, containerLabel: i.containerLabel || null }))
     .filter((i) => i.name);
   if (!validIngredients.length) { await customAlert(t("form_error_ingredient")); return; }
 
@@ -3098,6 +3126,7 @@ function parseQrIngredientLine(line) {
       name: colonMatch[1].trim(),
       quantity: parseFloat(colonMatch[2].replace(",", ".")),
       unit: migrateLegacyUnit(colonMatch[3] || "pièce"),
+      containerLabel: legacyContainerLabel(colonMatch[3]),
     };
   }
   return parseIngredientString(cleaned);
@@ -3121,7 +3150,7 @@ function tryParseCompactRecipeQr(text) {
   }
   const ingredients = data.i
     .filter((tuple) => Array.isArray(tuple) && typeof tuple[0] === "string" && tuple[0].trim())
-    .map((tuple) => ({ name: resolveImportedIngredientName(tuple[0]), quantity: tuple[1] != null ? Number(tuple[1]) : null, unit: migrateLegacyUnit(tuple[2] || "pièce") }));
+    .map((tuple) => ({ name: resolveImportedIngredientName(tuple[0]), quantity: tuple[1] != null ? Number(tuple[1]) : null, unit: migrateLegacyUnit(tuple[2] || "pièce"), containerLabel: legacyContainerLabel(tuple[2]) }));
   const persons = Number(data.p) > 0 ? Number(data.p) : 4;
   return {
     name: data.n,
@@ -3725,6 +3754,7 @@ async function confirmImportScannedRecipe(parsed) {
     name: resolveImportedIngredientName(i.name),
     quantity: i.quantity,
     unit: migrateLegacyUnit(i.unit),
+    containerLabel: i.containerLabel || legacyContainerLabel(i.unit),
   }));
   // Fait correspondre les allergènes lus (potentiellement traduits) à
   // la liste interne (toujours en français) — ignore silencieusement
@@ -5240,7 +5270,14 @@ async function migrateMergedContainerUnits() {
   state.recipes.forEach((r) => {
     (r.ingredients || []).forEach((ing) => {
       const migrated = migrateLegacyUnit(ing.unit);
-      if (migrated !== ing.unit) { ing.unit = migrated; recipesTouched = true; }
+      if (migrated !== ing.unit) {
+        // Garde le mot exact d'origine (voir legacyContainerLabel)
+        // avant de l'écraser — seule chance de le faire, cette
+        // valeur brute ("sachet"/"pot") disparaît juste après.
+        if (!ing.containerLabel) ing.containerLabel = legacyContainerLabel(ing.unit);
+        ing.unit = migrated;
+        recipesTouched = true;
+      }
     });
   });
   if (recipesTouched) for (const r of state.recipes) await storePut("recipes", r);
@@ -5249,7 +5286,11 @@ async function migrateMergedContainerUnits() {
   state.trash.forEach((entry) => {
     (entry.ingredients || []).forEach((ing) => {
       const migrated = migrateLegacyUnit(ing.unit);
-      if (migrated !== ing.unit) { ing.unit = migrated; trashTouched = true; }
+      if (migrated !== ing.unit) {
+        if (!ing.containerLabel) ing.containerLabel = legacyContainerLabel(ing.unit);
+        ing.unit = migrated;
+        trashTouched = true;
+      }
     });
   });
   if (trashTouched) for (const entry of state.trash) await storePut("trash", entry);
@@ -6078,7 +6119,7 @@ function recipeFromSharedFormat(json, imageBytesByFilename) {
     // conversion, l'ingrédient importé se retrouvait avec une unité
     // disparue de UNIT_OPTIONS (menu déroulant vide dans le formulaire).
     ingredients: Array.isArray(json.ingredients)
-      ? json.ingredients.map((i) => (i && typeof i === "object" ? { ...i, unit: migrateLegacyUnit(i.unit) } : i))
+      ? json.ingredients.map((i) => (i && typeof i === "object" ? { ...i, unit: migrateLegacyUnit(i.unit), containerLabel: i.containerLabel || legacyContainerLabel(i.unit) } : i))
       : [],
     allergens: Array.isArray(json.allergens) ? json.allergens : [],
     description: json.description || "",
@@ -6393,7 +6434,8 @@ function fixIngredientsArrayUnits(ingredients, report) {
       if (fixedUnit !== i.unit) report.structuralFixes += 1;
       const sanitized = i.quantity != null ? sanitizeNonNegativeNumber(i.quantity) : i.quantity;
       if (sanitized !== i.quantity) report.numbersFixed += 1;
-      return { ...i, name: fixedName, unit: fixedUnit, quantity: sanitized };
+      const containerLabel = i.containerLabel || (fixedUnit !== i.unit ? legacyContainerLabel(i.unit) : null);
+      return { ...i, name: fixedName, unit: fixedUnit, quantity: sanitized, containerLabel };
     });
 }
 function sanitizeBackupItem(item, storeName, report) {
@@ -6607,7 +6649,7 @@ async function importAllData(data, mode) {
 
 async function renderDiagnostic() {
   const wrap = el(`<div></div>`);
-  wrap.appendChild(el(`<button type="button" class="btn btn-outline" id="diag-back" style="margin-bottom:16px;">← ${escapeHtml(t("cooking_close"))}</button>`));
+  wrap.appendChild(el(`<button type="button" class="btn btn-outline" id="diag-back" style="margin-bottom:16px;">← ${escapeHtml(t("common_back"))}</button>`));
   wrap.querySelector("#diag-back").addEventListener("click", () => { state.screen = "backup"; render(); });
 
   wrap.appendChild(el(`<h2>${escapeHtml(t("diagnostic_title"))}</h2>`));
@@ -7640,6 +7682,10 @@ function parseIngredientStringInner(str, fromReversedOrder) {
   const uw = uwRaw.replace(/s$/, "");
   let unit = null;
   let factor = 1;
+  // Uniquement renseigné pour "boîte"/"sachet"/"pot" (voir
+  // legacyContainerLabel) — conserve lequel des trois le texte source
+  // employait vraiment, purement informatif (voir plus haut).
+  let containerLabel = null;
   // "cs"/"cc" (abréviations HelloFresh) sont vérifiées sur le mot brut,
   // avant le retrait du "s" final ci-dessus qui transformerait sinon à
   // tort "cs" en "c" (perdu, jamais reconnu comme cuillère à soupe).
@@ -7666,7 +7712,7 @@ function parseIngredientStringInner(str, fromReversedOrder) {
   // (juste un mot différent selon la recette/langue source) : toutes
   // leurs variantes pointent donc vers la même unité fusionnée "boîte",
   // affichée comme "boîte/pot/sachet" (voir UNIT_KEYS/translateUnit).
-  else if (["boîte", "boite", "conserve", "lata", "latas", "dose", "dosen", "sachet", "pot", "paquet", "paquete", "paquetes", "packung", "packungen"].includes(uw)) unit = "boîte";
+  else if (["boîte", "boite", "conserve", "lata", "latas", "dose", "dosen", "sachet", "pot", "paquet", "paquete", "paquetes", "packung", "packungen"].includes(uw)) { unit = "boîte"; containerLabel = legacyContainerLabel(uw); }
   else if (uw === "barquette") unit = "barquette";
   else if (uw === "filet") unit = "filet";
   else if (["tranche", "tranches"].includes(uw)) unit = "tranche";
@@ -7697,7 +7743,7 @@ function parseIngredientStringInner(str, fromReversedOrder) {
     const redundantNumberRegex = new RegExp("(\\bou\\s+)" + quantity.toString().replace(".", "[.,]") + "\\s+", "i");
     name = name.replace(redundantNumberRegex, "$1");
   }
-  return { name: name || text, quantity, unit };
+  return { name: name || text, quantity, unit, containerLabel };
 }
 
 // Enveloppe autour de parseIngredientStringInner — attache le signal
@@ -10407,7 +10453,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 221;
+const APP_VERSION = 222;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

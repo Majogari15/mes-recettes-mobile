@@ -4956,6 +4956,165 @@ régression au résultat final.
 
 **Version testée** : v212
 
+### 69 — Sécurité, bugs de quantités, et import par partage *(v213)*
+
+- Faille SSRF corrigée dans le Worker Cloudflare (adresses IPv4
+  mappées IPv6 non filtrées par le contrôle anti-réseau-local).
+- Les deux fichiers de politique de confidentialité, jusque-là
+  divergents, unifiés en un seul, fidèle au code réel.
+- Quantités négatives bloquées partout (ingrédients, garde-manger,
+  seuils, nutrition, prix), en préservant explicitement le champ vide
+  et le 0 (ex. sel/poivre sans quantité précise) — corrige aussi
+  l'affichage d'une quantité à 0 sur la fiche recette, jusque-là
+  traité comme "aucune quantité".
+- `defaultPersons` ne peut plus tomber à 0/négatif.
+- Minuteur autonome qui pouvait sonner indéfiniment sans bouton pour
+  l'arrêter après ouverture du Mode cuisine, corrigé.
+- Renommage/fusion d'ingrédients harmonisés (comparaison normalisée
+  dans les deux cas).
+- Ajout du Web Share Target : partager un lien de recette depuis une
+  autre application ouvre directement l'import, adresse préremplie.
+
+**Vérifié** : les 10 scripts de tests + les 8 cas du corpus OCR (tous
+verts), et par des tests manuels en navigateur mobile.
+
+**Version testée** : v213
+
+### 70 — Auto-hébergement des polices Fraunces/Inter *(v214)*
+
+Dernière dépendance réseau externe de l'application supprimée :
+Fraunces et Inter (licence SIL OFL) téléchargées et incluses
+localement (`lib/fonts/`), remplaçant l'appel à fonts.googleapis.com.
+CSP resserrée en conséquence, politique de confidentialité mise à
+jour (plus aucune connexion automatique au chargement).
+
+**Vérifié** : zéro requête externe au chargement, rendu visuel
+identique, suite de tests complète toujours verte (10 scripts +
+corpus OCR).
+
+**Version testée** : v214
+
+### 71 — 5 bugs corrigés dans l'analyseur d'import photo *(v215)*
+
+Trouvés via test réel de l'import photo sur 5 vraies recettes
+(Butternut farcies quinoa, Mijoté dinde au curry, Financiers, Pâtes
+carbonara, Riz cantonnais) : unités françaises absentes de la liste
+reconnue (bouquet, poignée, cm) ; format "Nom Quantité" sans mot
+d'unité perdant la quantité ; ":" resté collé en fin de nom
+d'ingrédient ; temps combiné "préparation / cuisson" attribué en
+entier à la cuisson ; badge de préparation précis écrasé par un temps
+total vague de couverture.
+
+**Vérifié sans régression** : les 8 cas du corpus OCR et les 13
+suites de tests du projet.
+
+**Version testée** : v215
+
+### 72 — Correction automatique d'orientation pour l'import par photo *(v216)*
+
+Une photo prise à l'envers ou de côté (90°/180°/270°) était jusque-là
+illisible par l'OCR. Détection d'orientation dédiée ajoutée (OSD
+Tesseract, worker et fichier de données séparés de la reconnaissance
+de texte) : la rotation détectée est appliquée avant l'analyse
+principale, sans jamais bloquer l'import si la détection échoue.
+Mapping degrés vérifié empiriquement avant implémentation, puis testé
+de bout en bout sur 4 photos synthétiques à 0/90/180/270°.
+
+**Vérifié sans régression** : corpus OCR et 13 suites de tests.
+
+**Version testée** : v216
+
+### 73 — Tri des recettes + bouton "Signaler un problème" *(v217)*
+
+Tri de la liste de recettes (alphabétique, plus récentes, temps de
+préparation, favoris d'abord) — une recette sans temps renseigné
+n'est jamais confondue avec "0 minute", poussée en fin de liste sur
+le tri par temps. Bouton "Signaler un problème" sur l'écran
+Diagnostic : la description saisie est jointe aux informations
+techniques puis envoyée via `navigator.share()` (repli sur la copie
+presse-papiers si indisponible).
+
+**Vérifié sans régression** : corpus OCR et 13 suites de tests.
+
+**Version testée** : v217
+
+### 74 — Comparaison photo source / résultat après import photo *(v218)*
+
+Bande de miniatures des photos sources en haut du formulaire, visible
+juste après un import photo — chaque miniature ouvre une visionneuse
+plein écran pour comparer avec le résultat extrait. Bug trouvé et
+corrigé pendant le test réel : un sélecteur CSS ambigu plaçait la
+miniature dans le texte du label au lieu de la bande dédiée.
+
+**Vérifié sans régression** : corpus OCR et 13 suites de tests.
+
+**Version testée** : v218
+
+### 75 — Recadrage manuel optionnel avant l'OCR (import photo) *(v219)*
+
+Bouton "✂️ Recadrer" optionnel sur chaque carte de la liste de review
+d'import photo : cadre à 4 coins glissables, puis nouvelle analyse
+OCR sur la zone recadrée, sur la même carte. Vérifié de bout en bout
+avec une vraie image à deux zones de texte distinctes et un vrai
+glisser-déposer simulé : le texte de la zone exclue disparaît du
+résultat, celui de la zone gardée reste.
+
+**Vérifié sans régression** : corpus OCR, 13 suites de tests,
+détection d'orientation et comparaison photo source/résultat.
+
+**Version testée** : v219
+
+### 76 — Fusion des unités "sachet"/"pot" dans "boîte" *(v220)*
+
+Ces trois unités-contenants désignaient déjà la même chose en
+pratique. Fusionnées en une seule, affichée "boîte/pot/sachet" dans
+le menu déroulant et à l'affichage — les variantes reconnues à
+l'import (sachet, pot, boîte, conserve, paquet, dose/dosen, lata...)
+restent inchangées, seule l'unité résultante change. Migration
+automatique des recettes, du garde-manger, de la liste de courses et
+des listes enregistrées déjà sauvegardées avec les anciennes unités
+séparées.
+
+**Version testée** : v220
+
+### 77 — 9 défauts corrigés suite à un second avis sur la v220 *(v221)*
+
+Un second avis détaillé (autre IA), ayant testé la v220 sur une copie
+isolée du dépôt, a trouvé 9 défauts réels dans la fusion des unités
+et le recadrage manuel — chacun vérifié ici par exécution réelle
+avant correction, pas seulement à la lecture du rapport :
+
+1. Prix personnalisés par ingrédient (`ingredientOverrides`) non
+   migrés : le coût redevenait "inconnu" après la fusion des unités.
+2. Restauration de sauvegarde incomplète : seules les recettes
+   étaient migrées, pas le garde-manger/courses/corbeille/listes
+   enregistrées, et seulement au prochain démarrage.
+3. Import partagé (QR recette/courses, lien ZIP bureau) conservant
+   encore les anciennes unités — menu déroulant d'unité vide dans le
+   formulaire pour ces ingrédients.
+4. Brouillon de recette non migré à la reprise (même symptôme).
+5. Doublons non fusionnés après la conversion des unités (ex.
+   "Yaourt/pot" + "Yaourt/sachet" restaient deux lignes séparées au
+   lieu d'une seule, quantités additionnées).
+6. Miniatures de comparaison photo disparaissant dès le second rendu
+   du formulaire (ex. changement de langue en cours d'édition).
+7. Cadre de recadrage figé en pixels absolus, ne suivant pas une
+   rotation d'écran pendant le recadrage (zone réellement découpée
+   différente de la sélection visuelle).
+8. Photo originale écrasée par un recadrage, sans retour possible, et
+   un échec de la nouvelle analyse OCR bloquait la carte en erreur
+   sans conserver le résultat précédent.
+9. Fenêtre de recadrage sans les mécanismes d'accessibilité des
+   autres fenêtres de l'application (rôle dialogue, touche Échap,
+   focus piégé, poignées inutilisables au clavier).
+
+**Vérifié** : chacun des 9 points reproduit puis corrigé
+individuellement, avec un script de test dédié par point (avant/après
+correction). Suite de régression complète repassée au vert (10
+scripts + corpus OCR) après chaque lot de corrections.
+
+**Version testée** : v221
+
 ## Résumé — état au 06/09/2026 (v212)
 
 - **jsQR, jsPDF et Tesseract.js désormais tous embarqués localement**
@@ -5022,3 +5181,94 @@ contraire. Tous les autres défauts trouvés au fil de cette longue
 campagne ont été corrigés puis reconfirmés fonctionnels, jamais de perte
 de données. L'application est dans un état solide, largement testée en
 conditions réelles sur deux appareils, à l'exception des 3 points cités.
+
+## Résumé — état au 16/09/2026 (v222)
+
+Suite directe du résumé v212 ci-dessus (toujours valable pour tout ce
+qui précède) — dix versions plus loin (points 69 à 78) :
+
+- **Sécurité et robustesse** : faille SSRF corrigée, quantités
+  négatives bloquées partout, dernière dépendance réseau externe
+  supprimée (polices auto-hébergées).
+- **Import photo nettement amélioré** : 5 bugs d'extraction corrigés
+  sur des cas réels, correction automatique d'orientation (photo à
+  l'envers/de côté), comparaison photo source/résultat, et recadrage
+  manuel optionnel avant l'OCR.
+- **Fusion des unités "sachet"/"pot"/"boîte"** en une seule unité
+  affichée "boîte/pot/sachet" (v220), suivie de 9 défauts trouvés par
+  un second avis externe et corrigés (v221) — voir point 77 pour le
+  détail : prix personnalisés, restauration de sauvegarde, import
+  partagé, brouillons, fusion des doublons, durée de vie des
+  miniatures de comparaison, suivi de rotation d'écran pendant le
+  recadrage, préservation de la photo originale, accessibilité de la
+  fenêtre de recadrage.
+- **Tri des recettes** et **bouton "Signaler un problème"** ajoutés.
+
+**Mise à jour (v222, correctifs supplémentaires)** — voir point 78
+ci-dessous : débordement horizontal du formulaire de recette, libellé
+erroné du bouton retour du Diagnostic, tests permanents ajoutés pour
+la fusion des unités et le recadrage, préservation de l'unité
+d'origine (`containerLabel`), hygiène du dépôt (`.gitignore`).
+
+**Réserves encore ouvertes, honnêtement signalées** :
+- Les 3 points physiques du résumé v212 (OCR réel par photo, import
+  QR par caméra/galerie, notification en arrière-plan) n'ont pas été
+  réévalués depuis — ce résumé ne prétend pas qu'ils sont résolus,
+  seulement que les points 69-78 ci-dessous ont bien été vérifiés.
+- Les captures d'écran de la fiche Play Store (`screenshots/`,
+  `feature-graphic.png`) datent de la v200 et n'ont pas été
+  régénérées — laissé de côté à la demande explicite.
+
+### 78 — 6 correctifs supplémentaires suite au propre audit du projet *(v222)*
+
+En plus des 9 défauts du point 77 (trouvés par un second avis externe),
+un audit du projet lui-même (résidus de code, cohérence i18n, fichiers
+de données, écrans testés en direct) avait trouvé 6 autres points,
+corrigés ici :
+
+1. **Débordement horizontal du formulaire de recette** : sur un écran
+   de téléphone réaliste (390px), la ligne nom/quantité/unité/bouton-
+   suppression d'un ingrédient dépassait la largeur de l'écran d'environ 280px
+   (`docWidth: 715` vs `viewport: 390`), rendant le bouton de
+   suppression hors champ. Cause : un `<select>` refuse de rétrécir
+   sous la largeur de son contenu même en `flex-basis: 0`, sans
+   `min-width: 0` explicite. Préexistait déjà avant la fusion des
+   unités (`docWidth: 669` en v219), seulement aggravé par le nouveau
+   libellé plus long ("boîte/pot/sachet").
+2. **Libellé erroné du bouton retour du Diagnostic** : affichait
+   "← ✕ Fermer" (clé i18n `cooking_close`, prévue pour le mode
+   cuisine, réutilisée par erreur) au lieu de "← Retour"
+   (`common_back`).
+3. **Tests permanents ajoutés** : `test_units_migration.py` (fusion
+   des unités, migration des prix/garde-manger/courses/recettes/
+   import partagé, fusion des doublons) et
+   `test_photo_crop_and_comparison.py` (accessibilité et suivi de
+   redimensionnement du recadrage, préservation de l'original,
+   conservation du résultat précédent en cas d'échec OCR, durée de
+   vie des miniatures de comparaison) — comblent la réserve du point
+   77.
+4. **Préservation de l'unité d'origine** : un nouveau champ
+   `containerLabel` (sur les ingrédients de RECETTE uniquement, pas
+   sur les articles de courses/garde-manger) conserve lequel des
+   trois mots fusionnés ("boîte"/"sachet"/"pot") était réellement
+   utilisé à l'origine — purement informatif, sans influence sur
+   l'unité affichée, le menu déroulant ni aucun calcul. Effacé si
+   l'utilisateur choisit ensuite une autre unité manuellement (ce
+   n'est alors plus "l'unité d'origine ambiguë" mais une décision
+   actuelle assumée).
+5. **`.gitignore`** complété (`__pycache__/`, `*.pyc`,
+   `.pytest_cache/`) — un risque réel constaté : ces fichiers ont
+   presque été commités par erreur en lançant les tests Python
+   pendant l'audit.
+6. **Ce document mis à jour** (points 69 à 78) — s'arrêtait jusqu'ici
+   à la v212, huit versions non consignées.
+
+**Vérifié** : chaque point testé en direct (débordement mesuré avant/
+après via `getBoundingClientRect`, libellé du bouton lu dans le DOM,
+`containerLabel` vérifié sur la reconnaissance à l'import, la
+migration de données existantes, l'enregistrement réel via le
+formulaire, et l'effacement après changement manuel de l'unité).
+Suite de régression complète repassée au vert (12 scripts + corpus
+OCR, les 2 nouveaux inclus).
+
+**Version testée** : v222

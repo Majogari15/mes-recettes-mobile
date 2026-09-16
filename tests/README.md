@@ -111,6 +111,20 @@ Depuis, la structure sépare strictement :
   image) ; inclut aussi la fusion protégeant un ingrédient sans
   quantité que le tableau ne peut structurellement pas capturer, voir
   TESTS_NON_REGRESSION.md points 65 et 67.
+- `test_units_migration.py` — fusion des unités "sachet"/"pot" dans
+  "boîte" (reconnaissance à l'import, `containerLabel` conservant le
+  mot d'origine) et migration des données déjà enregistrées (prix
+  personnalisés, garde-manger, courses avec fusion des doublons,
+  recette, import partagé) — voir TESTS_NON_REGRESSION.md points 76
+  et 77.
+- `test_photo_crop_and_comparison.py` — recadrage manuel (accessibilité,
+  suivi d'un redimensionnement d'écran, préservation de la photo
+  originale, conservation du résultat précédent si la ré-analyse OCR
+  échoue) et durée de vie des miniatures de comparaison photo
+  source/résultat — voir TESTS_NON_REGRESSION.md point 77.
+  L'analyse OCR y est simulée (fonction remplacée) plutôt que réelle :
+  ce test vérifie la mécanique, pas la qualité de reconnaissance,
+  déjà couverte par le corpus OCR.
 - `requirements.txt` — version verrouillée de Playwright.
 
 ## Utilisation

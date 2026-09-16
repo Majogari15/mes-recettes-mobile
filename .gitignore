@@ -3,3 +3,9 @@
 # (onglets ouverts, favoris, historique contextuel). Jamais destiné à
 # être publié. Voir tests/README.md pour le détail et la procédure.
 tests/private-ocr-corpus/
+
+# Artefacts générés en lançant les tests Python localement (pytest,
+# cache de bytecode) — jamais destinés à être commités.
+__pycache__/
+*.pyc
+.pytest_cache/
