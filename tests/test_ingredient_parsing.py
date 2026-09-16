@@ -90,10 +90,13 @@ FRACTION_MISREAD_CASES = [
 # complètement sur ces lignes, constaté sur une vraie photo réelle
 # ("Persil plat et ciboulette* 1 sachet(s", sans le ")" final).
 MISSING_CLOSING_PAREN_CASES = [
-    ("Persil plat et ciboulette* 1 sachet(s", 1, "sachet", "cas réel, parenthèse manquante"),
+    # "sachet" est désormais fusionné avec "pot"/"boîte" dans une seule
+    # unité "boîte" (affichée "boîte/pot/sachet") — voir la fusion des
+    # unités-contenants dans app.js (UNIT_OPTIONS / parseIngredientStringInner).
+    ("Persil plat et ciboulette* 1 sachet(s", 1, "boîte", "cas réel, parenthèse manquante"),
     ("Tomates cerises 1 barquette(s", 1, "barquette", "même motif, autre unité"),
     ("Filet de barramundi 2 piece(s)", 2, "pièce", "avec la parenthèse présente, doit rester correct"),
-    ("Persil* 1 sachet (", 1, "sachet", "variant encore plus incomplet, cas réel Carbonara — voir point 48"),
+    ("Persil* 1 sachet (", 1, "boîte", "variant encore plus incomplet, cas réel Carbonara — voir point 48"),
 ]
 
 

@@ -198,7 +198,7 @@ const state = {
 
 const CATEGORY_OPTIONS = ["Petit-déjeuner", "Entrée", "Plat", "Dessert", "Apéro", "Boisson", "Sauce", "Autre"];
 const DIFFICULTY_OPTIONS = ["Facile", "Moyen", "Difficile"];
-const UNIT_OPTIONS = ["pièce", "g", "kg", "cl", "L", "c. à soupe", "c. à café", "boîte", "sachet", "pot", "barquette", "tranche", "gousse", "filet", "autre"];
+const UNIT_OPTIONS = ["pièce", "g", "kg", "cl", "L", "c. à soupe", "c. à café", "boîte", "barquette", "tranche", "gousse", "filet", "autre"];
 
 /* ======================================================================
    UTILITAIRES
@@ -5090,6 +5090,47 @@ async function mergeIngredientNames(keep, remove) {
   if (savedListsTouched) for (const saved of state.savedShoppingLists) await storePut("savedShoppingLists", saved);
 }
 
+// "sachet" et "pot" ont été fusionnés dans l'unité "boîte" (affichée
+// "boîte/pot/sachet" — les trois désignaient déjà le même type de
+// contenant). Convertit les données déjà enregistrées avant ce
+// changement, pour qu'elles ne se retrouvent pas avec une unité
+// disparue de UNIT_OPTIONS (et donc silencieusement réduites à
+// "pièce" par les autres garde-fous de l'application). Sans effet,
+// et donc sûr à ré-exécuter à chaque démarrage, une fois la migration
+// déjà faite.
+async function migrateMergedContainerUnits() {
+  const OLD_UNITS = ["sachet", "pot"];
+  let recipesTouched = false;
+  state.recipes.forEach((r) => {
+    (r.ingredients || []).forEach((ing) => {
+      if (OLD_UNITS.includes(ing.unit)) { ing.unit = "boîte"; recipesTouched = true; }
+    });
+  });
+  if (recipesTouched) for (const r of state.recipes) await storePut("recipes", r);
+
+  let trashTouched = false;
+  state.trash.forEach((entry) => {
+    (entry.ingredients || []).forEach((ing) => {
+      if (OLD_UNITS.includes(ing.unit)) { ing.unit = "boîte"; trashTouched = true; }
+    });
+  });
+  if (trashTouched) for (const entry of state.trash) await storePut("trash", entry);
+
+  for (const item of state.shopping) {
+    if (OLD_UNITS.includes(item.unit)) { item.unit = "boîte"; await storePut("shopping", item); }
+  }
+  for (const item of state.pantry) {
+    if (OLD_UNITS.includes(item.unit)) { item.unit = "boîte"; await storePut("pantry", item); }
+  }
+  let savedListsTouched = false;
+  state.savedShoppingLists.forEach((saved) => {
+    (saved.items || []).forEach((item) => {
+      if (OLD_UNITS.includes(item.unit)) { item.unit = "boîte"; savedListsTouched = true; }
+    });
+  });
+  if (savedListsTouched) for (const saved of state.savedShoppingLists) await storePut("savedShoppingLists", saved);
+}
+
 /* ======================================================================
    AUTOCOMPLÉTION D'INGRÉDIENT (composant réutilisable)
    Attache à un champ texte une liste déroulante filtrée au fur et à
@@ -6194,7 +6235,12 @@ function sanitizeBackupItem(item, storeName, report) {
         .map((i) => {
           const fixedName = typeof i.name === "string" ? i.name : "";
           if (fixedName !== i.name) report.structuralFixes += 1;
-          const fixedUnit = i.unit && !UNIT_OPTIONS.includes(i.unit) ? "pièce" : i.unit;
+          // "sachet"/"pot" existaient encore comme unités séparées dans
+          // les sauvegardes créées avant leur fusion avec "boîte" — sans
+          // cette conversion, une restauration de sauvegarde les
+          // ferait tomber à tort sous "pièce" via le test ci-dessous.
+          const migratedUnit = i.unit === "sachet" || i.unit === "pot" ? "boîte" : i.unit;
+          const fixedUnit = migratedUnit && !UNIT_OPTIONS.includes(migratedUnit) ? "pièce" : migratedUnit;
           if (fixedUnit !== i.unit) report.structuralFixes += 1;
           const sanitized = i.quantity != null ? sanitizeNonNegativeNumber(i.quantity) : i.quantity;
           if (sanitized !== i.quantity) report.numbersFixed += 1;
@@ -7377,13 +7423,14 @@ function parseIngredientStringInner(str, fromReversedOrder) {
   // Unités-contenants françaises courantes : gardées comme unité à part
   // entière (comptage simple, sans conversion de poids/volume — une
   // "boîte" n'a pas de taille standard), plutôt que de tomber dans le
-  // nom de l'ingrédient sous l'unité générique "pièce".
-  else if (["boîte", "boite", "conserve", "lata", "latas", "dose", "dosen"].includes(uw)) unit = "boîte";
-  else if (uw === "sachet") unit = "sachet";
-  else if (uw === "pot") unit = "pot";
+  // nom de l'ingrédient sous l'unité générique "pièce". "boîte",
+  // "sachet" et "pot" désignent en pratique le même type de contenant
+  // (juste un mot différent selon la recette/langue source) : toutes
+  // leurs variantes pointent donc vers la même unité fusionnée "boîte",
+  // affichée comme "boîte/pot/sachet" (voir UNIT_KEYS/translateUnit).
+  else if (["boîte", "boite", "conserve", "lata", "latas", "dose", "dosen", "sachet", "pot", "paquet", "paquete", "paquetes", "packung", "packungen"].includes(uw)) unit = "boîte";
   else if (uw === "barquette") unit = "barquette";
   else if (uw === "filet") unit = "filet";
-  else if (["paquet", "paquete", "paquetes", "packung", "packungen"].includes(uw)) unit = "sachet";
   else if (["tranche", "tranches"].includes(uw)) unit = "tranche";
   else if (["gousse", "gousses"].includes(uw)) unit = "gousse";
 
@@ -10090,7 +10137,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 219;
+const APP_VERSION = 220;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
@@ -10146,6 +10193,7 @@ async function init() {
   state.savedShoppingLists = await storeAll("savedShoppingLists");
   const savedPlan = await kvGet("weeklyPlan");
   state.weeklyPlan = savedPlan || {};
+  await migrateMergedContainerUnits();
   await ensureIngredientListLoaded();
   await loadIngredientOverrides();
   await loadDismissedPairs();
