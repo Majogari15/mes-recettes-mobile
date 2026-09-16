@@ -3843,6 +3843,135 @@ function openPhotoLightbox(photoDataUrl) {
   initModalA11y(overlay, sheet);
 }
 
+// Fenêtre de recadrage manuel (voir le bouton "✂️ Recadrer" de
+// renderImportPhoto) : rectangle à 4 coins, glissables au doigt ou à la
+// souris (événements "pointer", communs aux deux). Le cadre est
+// toujours exprimé en coordonnées "relatives à l'image affichée"
+// (0,0 = coin haut-gauche de l'image), converties en pixels réels de
+// l'image seulement au moment de valider — jamais avant, pour ne
+// dépendre d'aucune hypothèse sur la taille d'affichage pendant le
+// glisser lui-même.
+const CROP_MIN_SIZE = 40;
+function openCropModal(photoDataUrl, onConfirm) {
+  const overlay = el(`<div class="modal-overlay" style="padding:0;align-items:stretch;"></div>`);
+  const panel = el(`<div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#000;"></div>`);
+  const hint = el(`<p style="color:#fff;font-size:13px;text-align:center;padding:10px 16px 0;margin:0;">${escapeHtml(t("import_photo_crop_hint"))}</p>`);
+  const stage = el(`<div style="flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;touch-action:none;"></div>`);
+  const img = el(`<img src="${photoDataUrl}" alt="" style="max-width:100%;max-height:100%;display:block;user-select:none;-webkit-user-select:none;">`);
+  const rectEl = el(`<div style="position:absolute;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,0.55);touch-action:none;"></div>`);
+  const HANDLE_POS = { tl: "left:-14px;top:-14px;", tr: "right:-14px;top:-14px;", bl: "left:-14px;bottom:-14px;", br: "right:-14px;bottom:-14px;" };
+  const handles = {};
+  Object.keys(HANDLE_POS).forEach((corner) => {
+    const handle = el(`<div style="position:absolute;width:28px;height:28px;${HANDLE_POS[corner]}background:#fff;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.4);touch-action:none;"></div>`);
+    handles[corner] = handle;
+    rectEl.appendChild(handle);
+  });
+  stage.appendChild(img);
+  stage.appendChild(rectEl);
+  const actionsRow = el(`<div style="display:flex;gap:10px;padding:12px;"></div>`);
+  const cancelBtn = el(`<button type="button" class="btn btn-outline" style="flex:1;">${escapeHtml(t("import_photo_crop_cancel"))}</button>`);
+  const confirmBtn = el(`<button type="button" class="btn btn-primary" style="flex:1;">${escapeHtml(t("import_photo_crop_confirm"))}</button>`);
+  actionsRow.appendChild(cancelBtn);
+  actionsRow.appendChild(confirmBtn);
+  panel.appendChild(hint);
+  panel.appendChild(stage);
+  panel.appendChild(actionsRow);
+  overlay.appendChild(panel);
+  document.body.appendChild(overlay);
+
+  // Coordonnées du cadre relatives au coin haut-gauche de l'IMAGE
+  // affichée (pas de "stage", qui la centre avec un espace variable
+  // autour) — initialisées à l'image entière une fois celle-ci chargée
+  // et mise en page, jamais avant (naturalWidth et les dimensions
+  // affichées ne sont fiables qu'à ce moment-là). imgOffsetLeft/Top
+  // (position de l'image DANS stage, son offsetParent puisque "stage"
+  // est en position:relative) sont capturés une seule fois : l'image
+  // ne se déplace jamais pendant tout le recadrage, recalculer à
+  // chaque frame serait superflu.
+  let rect = { left: 0, top: 0, right: 0, bottom: 0 };
+  let imgOffsetLeft = 0, imgOffsetTop = 0;
+
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+  function updateRectStyle() {
+    rectEl.style.left = (imgOffsetLeft + rect.left) + "px";
+    rectEl.style.top = (imgOffsetTop + rect.top) + "px";
+    rectEl.style.width = (rect.right - rect.left) + "px";
+    rectEl.style.height = (rect.bottom - rect.top) + "px";
+  }
+
+  function initRect() {
+    imgOffsetLeft = img.offsetLeft;
+    imgOffsetTop = img.offsetTop;
+    rect = { left: 0, top: 0, right: img.clientWidth, bottom: img.clientHeight };
+    updateRectStyle();
+  }
+
+  function startDrag(onMove) {
+    function move(ev) { onMove(ev); }
+    function up() {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    }
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  }
+
+  Object.keys(handles).forEach((corner) => {
+    handles[corner].addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const startX = e.clientX, startY = e.clientY;
+      const startRect = { ...rect };
+      const imgW = img.clientWidth, imgH = img.clientHeight;
+      startDrag((ev) => {
+        const dx = ev.clientX - startX, dy = ev.clientY - startY;
+        let { left, top, right, bottom } = startRect;
+        if (corner.includes("l")) left = clamp(startRect.left + dx, 0, right - CROP_MIN_SIZE);
+        if (corner.includes("r")) right = clamp(startRect.right + dx, left + CROP_MIN_SIZE, imgW);
+        if (corner.includes("t")) top = clamp(startRect.top + dy, 0, bottom - CROP_MIN_SIZE);
+        if (corner.includes("b")) bottom = clamp(startRect.bottom + dy, top + CROP_MIN_SIZE, imgH);
+        rect = { left, top, right, bottom };
+        updateRectStyle();
+      });
+    });
+  });
+  // Glisser directement le cadre (pas un coin) le déplace en entier
+  // sans changer sa taille — pratique une fois la zone bien
+  // dimensionnée, pour juste la repositionner.
+  rectEl.addEventListener("pointerdown", (e) => {
+    if (e.target !== rectEl) return;
+    const startX = e.clientX, startY = e.clientY;
+    const startRect = { ...rect };
+    const imgW = img.clientWidth, imgH = img.clientHeight;
+    const w = startRect.right - startRect.left, h = startRect.bottom - startRect.top;
+    startDrag((ev) => {
+      const dx = ev.clientX - startX, dy = ev.clientY - startY;
+      const left = clamp(startRect.left + dx, 0, imgW - w);
+      const top = clamp(startRect.top + dy, 0, imgH - h);
+      rect = { left, top, right: left + w, bottom: top + h };
+      updateRectStyle();
+    });
+  });
+
+  if (img.complete && img.naturalWidth) initRect();
+  else img.addEventListener("load", initRect, { once: true });
+
+  cancelBtn.addEventListener("click", () => overlay.remove());
+  confirmBtn.addEventListener("click", () => {
+    const scaleX = img.naturalWidth / img.clientWidth;
+    const scaleY = img.naturalHeight / img.clientHeight;
+    const sx = rect.left * scaleX, sy = rect.top * scaleY;
+    const sw = (rect.right - rect.left) * scaleX, sh = (rect.bottom - rect.top) * scaleY;
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(sw));
+    canvas.height = Math.max(1, Math.round(sh));
+    canvas.getContext("2d").drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+    overlay.remove();
+    onConfirm(canvas);
+  });
+}
+
 function openCookLogViewModal(recipe) {
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
@@ -8915,6 +9044,11 @@ function renderImportPhoto() {
           info.appendChild(el(`<div style="font-size:11px;color:var(--accent);margin-top:2px;">${escapeHtml(t("import_photo_manual_needed"))}</div>`));
         }
       }
+      if (p.status !== "processing") {
+        const cropBtn = el(`<button type="button" class="btn btn-outline" style="margin-top:8px;padding:6px 10px;font-size:12px;width:auto;">${escapeHtml(t("import_photo_crop_button"))}</button>`);
+        cropBtn.addEventListener("click", () => openCropModal(p.thumbnail, (croppedCanvas) => handleCropConfirmed(p, croppedCanvas)));
+        info.appendChild(cropBtn);
+      }
       card.appendChild(info);
       const removeBtn = el(`<button type="button" aria-label="${escapeHtml(t("import_photo_remove"))}" style="background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:4px;flex-shrink:0;">×</button>`);
       removeBtn.addEventListener("click", () => {
@@ -8941,16 +9075,14 @@ function renderImportPhoto() {
     }
   }
 
-  async function handleNewPhoto(file) {
-    if (!file) return;
-    if (state.multiPhotoImport.length >= MAX_IMPORT_PHOTOS) return;
-    const thumbnail = await new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.readAsDataURL(file);
-    });
-    const entry = { id: uid(), thumbnail, status: "processing", rawText: null, layoutText: null, gridText: null, twoColumnIngredients: null, parsed: null, sectionData: null, section: null, autoDetected: false, errorMessage: null };
-    state.multiPhotoImport.push(entry);
+  // Analyse OCR d'une photo pour une carte donnée — factorisé pour être
+  // utilisé aussi bien pour une toute nouvelle photo (handleNewPhoto)
+  // que pour une photo déjà présente qu'on vient de recadrer (voir le
+  // bouton "Recadrer" ci-dessous) : ce second cas doit relancer
+  // exactement la même analyse, sans dupliquer la carte.
+  async function processPhotoIntoEntry(entry, file) {
+    entry.status = "processing";
+    entry.errorMessage = null;
     refreshUi();
     try {
       const { rawText, layoutText, gridText, tableText, correctedImage } = await runOcrOnImage(file);
@@ -8992,6 +9124,31 @@ function renderImportPhoto() {
       entry.errorMessage = formatCaughtError(err);
     }
     refreshUi();
+  }
+
+  async function handleNewPhoto(file) {
+    if (!file) return;
+    if (state.multiPhotoImport.length >= MAX_IMPORT_PHOTOS) return;
+    const thumbnail = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(file);
+    });
+    const entry = { id: uid(), thumbnail, status: "processing", rawText: null, layoutText: null, gridText: null, twoColumnIngredients: null, parsed: null, sectionData: null, section: null, autoDetected: false, errorMessage: null };
+    state.multiPhotoImport.push(entry);
+    refreshUi();
+    await processPhotoIntoEntry(entry, file);
+  }
+
+  // Recadrage manuel d'une photo déjà ajoutée : remplace sa miniature
+  // par la version recadrée, puis relance l'analyse OCR dessus — sur
+  // LA MÊME carte (jamais une carte en plus), pour rester cohérent
+  // avec le nombre de photos réellement fusionnées ensuite.
+  async function handleCropConfirmed(entry, croppedCanvas) {
+    entry.thumbnail = croppedCanvas.toDataURL("image/jpeg", 0.9);
+    entry.section = null;
+    entry.autoDetected = false;
+    await processPhotoIntoEntry(entry, croppedCanvas);
   }
 
   cameraInput.addEventListener("change", (e) => { handleNewPhoto(e.target.files[0]); e.target.value = ""; });
@@ -9933,7 +10090,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 218;
+const APP_VERSION = 219;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
