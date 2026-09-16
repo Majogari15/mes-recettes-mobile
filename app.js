@@ -171,6 +171,7 @@ const state = {
   editingRecipeId: null,
   search: "",
   activeFilter: null, // 'favorite' | 'quick' | 'vegetarian' | 'wishlist'
+  recipeSortBy: "name", // 'name' | 'recent' | 'prepTime' | 'favoriteFirst'
   viewPersons: 4,
   formIngredients: [],
   formAllergens: [],
@@ -659,6 +660,7 @@ function renderBottomNav() {
     btn.addEventListener("click", () => {
       state.screen = item.key;
       state.activeFilter = null;
+      state.recipeSortBy = "name";
       render();
     });
     nav.appendChild(btn);
@@ -903,7 +905,29 @@ function filteredRecipes() {
   if (state.activeFilter === "quick") list = list.filter((r) => (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0) > 0 && (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0) <= 30);
   if (state.activeFilter === "vegetarian") list = list.filter((r) => r.vegetarian);
   if (state.activeFilter === "wishlist") list = list.filter((r) => r.wishlist);
-  return list.sort((a, b) => a.name.localeCompare(b.name));
+  const byName = (a, b) => a.name.localeCompare(b.name);
+  if (state.recipeSortBy === "recent") {
+    // Chaînes ISO 8601 : comparables directement par ordre lexical, sans
+    // avoir besoin de les convertir en Date. Manquante (vieille recette
+    // créée avant l'ajout de ce champ) traitée comme la plus ancienne
+    // possible, plutôt que de faire planter le tri.
+    return list.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || "") || byName(a, b));
+  }
+  if (state.recipeSortBy === "prepTime") {
+    // Temps total inconnu (aucun des deux champs renseigné) renvoyé à la
+    // fin de la liste plutôt que confondu avec un vrai "0 minute" — sans
+    // quoi une recette sans temps indiqué semblerait à tort la plus
+    // rapide de toutes.
+    const totalTime = (r) => {
+      const t = (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0);
+      return t > 0 ? t : Infinity;
+    };
+    return list.sort((a, b) => totalTime(a) - totalTime(b) || byName(a, b));
+  }
+  if (state.recipeSortBy === "favoriteFirst") {
+    return list.sort((a, b) => (b.favorite === true) - (a.favorite === true) || byName(a, b));
+  }
+  return list.sort(byName);
 }
 
 function renderRecipeList() {
@@ -938,6 +962,21 @@ function renderRecipeList() {
   const chipsWrap = el(`<div class="chip-row-wrap"></div>`);
   chipsWrap.appendChild(chips);
   wrap.appendChild(chipsWrap);
+
+  const sortRow = el(`<div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:4px 0 12px;">
+    <label for="recipe-sort-select" style="font-size:13px;color:var(--text-muted);">${escapeHtml(t("sort_label"))}</label>
+    <select id="recipe-sort-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);font-size:13px;">
+      <option value="name" ${state.recipeSortBy === "name" ? "selected" : ""}>${escapeHtml(t("sort_name"))}</option>
+      <option value="recent" ${state.recipeSortBy === "recent" ? "selected" : ""}>${escapeHtml(t("sort_recent"))}</option>
+      <option value="prepTime" ${state.recipeSortBy === "prepTime" ? "selected" : ""}>${escapeHtml(t("sort_prep_time"))}</option>
+      <option value="favoriteFirst" ${state.recipeSortBy === "favoriteFirst" ? "selected" : ""}>${escapeHtml(t("sort_favorite_first"))}</option>
+    </select>
+  </div>`);
+  sortRow.querySelector("select").addEventListener("change", (e) => {
+    state.recipeSortBy = e.target.value;
+    renderRecipeListInto(wrap);
+  });
+  wrap.appendChild(sortRow);
 
   const listHolder = el(`<div id="recipe-list-holder"></div>`);
   wrap.appendChild(listHolder);
@@ -6206,6 +6245,49 @@ async function renderDiagnostic() {
   });
   wrap.appendChild(copyBtn);
 
+  // Signalement d'un problème : l'utilisateur décrit ce qui s'est passé
+  // dans ses propres mots, les informations techniques déjà collectées
+  // ci-dessus sont jointes automatiquement (mêmes lignes que le bouton
+  // "Copier" ci-dessus) — jamais envoyé automatiquement en arrière-plan.
+  // navigator.share() est privilégié : il ouvre le sélecteur natif du
+  // téléphone (email, messagerie...), où le texte reste visible et
+  // modifiable avant tout envoi réel, exactement comme "Partager la
+  // sauvegarde" ailleurs dans l'app. Sans cette API (navigateur de
+  // bureau notamment), le texte est simplement copié, avec une adresse
+  // de contact suggérée en repli.
+  const reportSection = el(`<div class="section" style="margin-top:24px;">
+    <div class="section-label">${escapeHtml(t("diagnostic_report_title"))}</div>
+    <div class="card" style="padding:16px;">
+      <p style="font-size:13px;color:var(--text-muted);margin:0 0 12px;line-height:1.5;">${escapeHtml(t("diagnostic_report_hint"))}</p>
+      <textarea id="diag-report-text" rows="4" placeholder="${escapeHtml(t("diagnostic_report_placeholder"))}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);font-size:14px;font-family:inherit;resize:vertical;"></textarea>
+      <button type="button" class="btn btn-primary" id="diag-report-btn" style="margin-top:10px;">${escapeHtml(t("diagnostic_report_button"))}</button>
+    </div>
+  </div>`);
+  reportSection.querySelector("#diag-report-btn").addEventListener("click", async () => {
+    const description = reportSection.querySelector("#diag-report-text").value.trim();
+    if (!description) { await customAlert(t("diagnostic_report_empty")); return; }
+    const diagLines = Array.from(rowsHolder.children).map((row) => {
+      const spans = row.querySelectorAll("span");
+      return `${spans[0].textContent} : ${spans[1].textContent}`;
+    });
+    const fullText = `${description}\n\n---\n${diagLines.join("\n")}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: t("diagnostic_report_share_title"), text: fullText });
+        return;
+      } catch (e) {
+        // Annulé par l'utilisateur ou échec du partage : on retombe sur
+        // la copie ci-dessous plutôt que de laisser le signalement sans
+        // aucune suite possible.
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(fullText);
+    } catch (e) { /* sans conséquence, le message ci-dessous reste utile de toute façon */ }
+    await customAlert(t("diagnostic_report_fallback"));
+  });
+  wrap.appendChild(reportSection);
+
   return wrap;
 }
 
@@ -9795,7 +9877,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 216;
+const APP_VERSION = 217;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
