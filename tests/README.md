@@ -199,6 +199,11 @@ Depuis, la structure sépare strictement :
   (`getUserMedia`, caméra factice Chromium) pour le scanner de QR code,
   permission accordée et refusée — voir TESTS_NON_REGRESSION.md
   point 92.
+- `test_regex_dos_resilience.py` — résistance des fonctions d'analyse
+  de texte maison (ingrédients, OCR) à des entrées pathologiques
+  (longues répétitions ambiguës) susceptibles de provoquer un blocage
+  catastrophique dans une expression régulière — voir
+  TESTS_NON_REGRESSION.md point 93.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

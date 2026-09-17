@@ -810,7 +810,10 @@ function renderTopbar() {
 
     const donateBtn = el(`<button class="icon-btn" aria-label="${t("home_donate_button")}">☕</button>`);
     donateBtn.addEventListener("click", () => {
-      window.open("https://buymeacoffee.com/majogari", "_blank");
+      // "noopener,noreferrer" : sans ça, la page ouverte pourrait accéder
+      // à window.opener et rediriger cet onglet-ci à notre insu
+      // ("reverse tabnabbing").
+      window.open("https://buymeacoffee.com/majogari", "_blank", "noopener,noreferrer");
     });
     actions.appendChild(donateBtn);
 
@@ -7976,7 +7979,16 @@ function renderPlanningHistory() {
 // lieu d'un nombre classique, ce que l'analyse ne reconnaissait pas du
 // tout jusqu'ici.
 const UNICODE_FRACTIONS = { "½": 0.5, "⅓": 0.33, "⅔": 0.67, "¼": 0.25, "¾": 0.75, "⅕": 0.2, "⅖": 0.4, "⅗": 0.6, "⅘": 0.8, "⅙": 0.17, "⅚": 0.83, "⅛": 0.125, "⅜": 0.375, "⅝": 0.625, "⅞": 0.875 };
+const UNICODE_FRACTION_CHARS = /[½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞]/;
 function normalizeUnicodeFractions(str) {
+  // Sort avant le remplacement coûteux ci-dessous : sur une chaîne SANS
+  // aucune fraction unicode (l'immense majorité des cas réels, et tout
+  // texte non fiable long — OCR bruité, QR corrompu...), le groupe
+  // optionnel non ancré "(\d+\s*)?" scanné globalement sur toute la
+  // chaîne devient quadratique (retour arrière testé à chaque position
+  // de départ). Repéré par un test de résistance ReDoS sur les
+  // fonctions d'analyse maison — voir TESTS_NON_REGRESSION.md point 93.
+  if (!UNICODE_FRACTION_CHARS.test(str)) return str;
   return str.replace(/(\d+\s*)?([½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞])/g, (match, whole, frac) => {
     const wholeNum = whole ? parseFloat(whole) : 0;
     return String(Math.round((wholeNum + UNICODE_FRACTIONS[frac]) * 100) / 100);
@@ -10862,7 +10874,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 235;
+const APP_VERSION = 236;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

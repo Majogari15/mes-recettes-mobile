@@ -6108,3 +6108,87 @@ au vert après le passage en chargement différé de jsPDF, y compris
 charger explicitement la bibliothèque avant de l'utiliser directement.
 
 **Version testée** : v235
+
+### 93 — Suite au référentiel PWA étendu de l'utilisateur (45 rubriques) : 2 corrections ciblées à coût faible, 1 vrai bug de performance trouvé et corrigé dans les regex maison
+
+Après comparaison de ce référentiel très complet (fourni par l'utilisateur, construit en partie à partir des points 90-92 puis largement enrichi) aux audits déjà menés, 2 corrections immédiates à coût quasi nul ont été appliquées, et une vérification ciblée sur un risque jusque-là jamais testé a révélé un vrai bug de performance :
+
+**1. `rel="noopener noreferrer"` sur le lien externe** (bouton ☕,
+`app.js`) : sans ce paramètre, la page ouverte (buymeacoffee.com)
+pourrait théoriquement accéder à `window.opener` et rediriger l'onglet
+d'origine à l'insu de l'utilisateur ("reverse tabnabbing"). Risque réel
+faible ici (destination connue et de confiance) mais corrigé par
+principe.
+
+**2. Balise `<noscript>`** ajoutée à `index.html` : filet de sécurité
+minimal si un déploiement défectueux venait à casser complètement le
+JavaScript avant même l'enregistrement du service worker — message
+bilingue (fr/en) explicite plutôt qu'une page blanche silencieuse.
+
+**3. Résistance des fonctions d'analyse de texte MAISON à des entrées
+pathologiques (ReDoS)** — jamais testée jusqu'ici, distincte de
+l'audit des bibliothèques tierces (point 90/92). Nouveau test boîte
+noire (`tests/test_regex_dos_resilience.py`) : plusieurs fonctions
+d'analyse (`parseIngredientString`, `parseOcrRecipeText`,
+`parseIsoDurationToMinutes`, `parseRecipeFromQrText`,
+`parseTableRowsIngredients`, `parseStackedIngredientColumn`) reçoivent
+des textes de forme classique pour provoquer un retour arrière
+catastrophique (longues répétitions ambiguës suivies d'un caractère ne
+correspondant à rien).
+
+**Un vrai bug confirmé et corrigé** : `normalizeUnicodeFractions`
+(appelée en tout premier dans `parseIngredientStringInner`, donc à
+chaque analyse d'ingrédient) faisait un remplacement global
+(`/(\d+\s*)?([½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞])/g`) avec un groupe de chiffres
+optionnel NON ANCRÉ scanné à chaque position de la chaîne — sur un
+texte long sans aucune fraction unicode (ex. une longue suite de
+chiffres, plausible depuis un OCR bruité ou un QR corrompu), ce motif
+devient quadratique : 20 000 caractères prenaient 3,5 secondes
+(mesuré), un temps qui aurait continué à croître avec le carré de la
+longueur. Corrigé en ajoutant un test de présence rapide
+(`UNICODE_FRACTION_CHARS.test(str)`) avant de lancer le remplacement
+coûteux — strictement aucune fraction unicode dans l'immense majorité
+des textes réels, donc gain de performance général, pas seulement une
+protection contre un cas pathologique. Effet mesuré : 20 000 caractères
+adversariaux, 3543ms → 0-1ms sur `parseIngredientString`.
+
+**Amélioration partielle, non totalement corrigée** :
+`parseStackedIngredientColumn` reste quadratique sur le même type
+d'entrée (4067ms → 530ms à 20 000 caractères après la correction
+ci-dessus, qui bénéficie indirectement à son appel interne de
+`parseIngredientString` — mais un second motif non ancré,
+`/\d+\s*(personnes?|people|persons?|personas?|personen)/i`, répété à
+l'identique à plusieurs autres endroits du fichier (détection du
+nombre de personnes), reste quadratique sur ce même type d'entrée
+pathologique. Reste sous le budget de test (2000ms) à 20 000
+caractères et resterait acceptable pour toute taille de texte
+réaliste (une ligne de texte OCR ou un fragment de QR n'atteint
+jamais cette longueur en usage normal) — corrigé partiellement plutôt
+que réécrit intégralement, le gain marginal de traiter chaque
+occurrence ne justifiant pas, à ce stade, de revoir une bonne
+douzaine d'endroits du fichier pour un vecteur d'entrée aussi extrême.
+À revisiter si un jour une vraie voie d'entrée légitime pouvait
+produire un texte de cette taille sans retour à la ligne.
+
+**Décision explicite de l'utilisateur, sur ma recommandation** : ne
+pas poursuivre l'élargissement du référentiel PWA lui-même (déjà à 45
+rubriques, largement suffisant pour la nature de ce projet) ni chasser
+les points restants qui nécessitent un vrai appareil iOS, de vrais
+utilisateurs non familiers, ou plusieurs semaines d'observation réelle
+— ces limites sont déjà documentées aux points 90 et 92 et ne seront
+plus reformulées à chaque audit futur. Les points suivants restent
+volontairement non testés dans cet environnement, marqués [NA] au sens
+du référentiel plutôt que poursuivis artificiellement :
+- Glisser-déposer un fichier sur la fenêtre (absent du code, jamais
+  demandé, l'app utilise uniquement des boutons de sélection).
+- Auto-limitation des appels vers les services tiers publics
+  (Jina/proxys CORS) pour éviter un bannissement de l'app elle-même.
+- Combinaison précise "même origine ouverte en PWA installée ET en
+  onglet navigateur classique simultanément".
+- Safari/iOS, appareils physiques, utilisateurs réels non familiers
+  (déjà documentés aux points 90/92).
+
+**Vérifié** : suite de régression complète (28 scripts + corpus OCR)
+au vert.
+
+**Version testée** : v236
