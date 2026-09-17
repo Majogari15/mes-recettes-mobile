@@ -222,6 +222,16 @@ Depuis, la structure sépare strictement :
   une sauvegarde locale — voir TESTS_NON_REGRESSION.md points 95-96.
   Utilise `tests/fixtures/tiny_blank.png` (image minimale, son contenu
   réel n'a aucune importance puisque le détecteur est simulé).
+- `test_drag_reorder.py` — glisser-déposer manuel (liste de courses,
+  garde-manger, ingrédients d'un formulaire de recette), simulé via de
+  vrais événements souris que Chromium traduit en Pointer Events :
+  réordonnancement effectif sur les 3 écrans, persistance de l'ordre
+  manuel (rechargement de page ET aller-retour de sauvegarde locale),
+  non-régression des tris existants (alphabétique/rayon/péremption,
+  jamais impactés par le tri manuel), absence de bug d'index périmé
+  après un glisser-déposer dans le formulaire de recette, absence de
+  débordement horizontal introduit par la nouvelle poignée — voir
+  TESTS_NON_REGRESSION.md point 99.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

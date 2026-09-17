@@ -7,7 +7,8 @@ toutes les données restent sur l'appareil.
 ## Fonctionnalités
 
 - Ajouter / modifier / supprimer une recette (avec photo prise depuis le
-  téléphone ou choisie depuis la galerie)
+  téléphone ou choisie depuis la galerie), avec **glisser-déposer** pour
+  réordonner la liste des ingrédients pendant la saisie
 - Recherche, filtre par catégorie et filtres rapides (Favoris, Rapide,
   Végétarien, Envies)
 - Fiche recette avec ajustement du nombre de personnes en temps réel
@@ -111,8 +112,11 @@ toutes les données restent sur l'appareil.
   presque
 - Ajout d'une recette à la liste de courses (quantités fusionnées
   automatiquement)
-- Mode courses avec cases à cocher
-- Garde-manger (ajout/modification/suppression d'articles), avec **seuil
+- Mode courses avec cases à cocher, triable par nom, par rayon ou
+  **manuellement par glisser-déposer** (par exemple dans l'ordre du
+  magasin)
+- Garde-manger (ajout/modification/suppression d'articles), triable
+  aussi manuellement par glisser-déposer, avec **seuil
   d'alerte optionnel** par article : un rappel apparaît sur l'accueil
   dès que la quantité passe en dessous, touchez-le pour ajouter
   directement ces articles à la liste de courses (avec le seuil comme

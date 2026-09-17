@@ -106,7 +106,7 @@ def main():
                     { name: 'Tomate', quantity: 3, unit: 'pièce', checked: false },
                     { name: 'Lait', quantity: 1, unit: 'L', checked: true },
                 ];
-                state.shoppingSortByRayon = true;
+                state.shoppingSortMode = "rayon";
             }
             """
         )

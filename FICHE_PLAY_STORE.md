@@ -21,7 +21,7 @@ Recettes, courses et planning de repas — tout sur votre téléphone
 *(65 caractères)*
 
 ## Description complète
-*(4000 caractères maximum — le texte ci-dessous fait environ 1750
+*(4000 caractères maximum — le texte ci-dessous fait environ 1840
 caractères, vous pouvez l'enrichir librement)*
 
 ```
@@ -41,7 +41,9 @@ RECETTES
 
 LISTE DE COURSES
 • Construite automatiquement à partir de vos recettes
-• Regroupée par rayon de magasin, cochez au fur et à mesure
+• Regroupée par rayon de magasin, ou réordonnée à la main par
+  glisser-déposer (par exemple dans l'ordre du magasin), cochez au fur
+  et à mesure
 • Enregistrez une liste pour plus tard, exportez-la en PDF ou
   partagez-la par QR code
 

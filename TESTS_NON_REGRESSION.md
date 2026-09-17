@@ -6454,3 +6454,65 @@ qui utilisaient déjà le même message générique avant ce changement.
 Suite de régression complète (30 scripts + corpus OCR) au vert.
 
 **Version testée** : v241
+
+### 99 — Glisser-déposer manuel : liste de courses, garde-manger, ingrédients d'une recette
+
+Demande explicite de l'utilisateur, après l'avoir évoquée comme piste
+d'amélioration possible : pouvoir réordonner soi-même une liste (par
+exemple dans l'ordre du magasin) plutôt que de dépendre uniquement des
+tris automatiques existants (alphabétique, rayon, péremption).
+
+Mécanisme partagé (`attachDragReorder` dans app.js) plutôt qu'une
+implémentation distincte par écran : une poignée dédiée (☰) déclenche
+le geste via les Pointer Events (jamais l'API HTML5
+`dragstart`/`dragover`, non prise en charge du tout au toucher par
+Safari iOS sans polyfill) — un clone visuel suit le doigt en position
+fixe pendant le glissement, tandis que la vraie ligne, simplement
+estompée, n'est déplacée dans le DOM qu'au moment où ce clone franchit
+le milieu d'une ligne voisine.
+
+- **Liste de courses** : le bouton de bascule "Trier par rayon/nom"
+  est remplacé par un sélecteur à 3 choix (Alphabétique / Rayon /
+  Manuel), cohérent avec celui déjà existant du garde-manger. Le tri
+  manuel n'impose jamais les articles cochés en fin de liste,
+  contrairement aux deux autres tris — c'est justement le seul mode où
+  la disposition entière reste à la main de l'utilisateur.
+- **Garde-manger** : nouvelle option "Manuel" ajoutée au sélecteur de
+  tri existant (Alphabétique / Péremption).
+- **Ingrédients d'un formulaire de recette** : toujours disponible
+  (pas de sélecteur de mode ici, la liste éditée n'ayant pas d'autre
+  tri) ; réordonne le tableau `state.formIngredients` en mémoire, pas
+  encore de persistance IndexedDB à ce stade.
+
+Pour les deux premiers, un nouveau champ `order` sur chaque article est
+introduit ; les articles créés avant ce changement (ou depuis, dans un
+autre tri) reçoivent une valeur de départ dès le premier passage en
+tri manuel, calculée à partir de l'ordre d'affichage habituel plutôt
+que d'un ordre arbitraire, pour ne pas mélanger la liste sans raison.
+
+**Vérifié** :
+- Glisser-déposer effectif sur les 3 écrans (l'ordre affiché change
+  bien après le geste).
+- Ordre manuel persistant (courses, garde-manger) : survit à un
+  rechargement complet de la page ET à un aller-retour de sauvegarde
+  locale (export puis import).
+- Les tris existants (alphabétique, rayon, péremption) restent
+  inchangés par l'introduction du tri manuel — aucune régression sur
+  leur comportement propre (notamment les articles cochés toujours en
+  fin de liste pour ces tris-là).
+- Formulaire de recette : le glisser-déposer réordonne bien à la fois
+  l'affichage ET le tableau en mémoire, l'ordre obtenu est celui
+  réellement enregistré dans la recette après sauvegarde, et le bouton
+  "supprimer" d'une ligne cible toujours le bon ingrédient après un
+  glisser-déposer (non-régression d'un bug d'index périmé identifié
+  pendant le développement : l'ancien code capturait l'index de
+  création de la ligne dans une fermeture jamais mise à jour).
+- Aucun débordement horizontal introduit par la nouvelle poignée, à
+  320px de large comme à 390px.
+- Aucune régression sur l'export PDF de la liste de courses (le mode
+  de tri utilisé pour le regroupement par rayon a changé de variable
+  interne, sans changement de comportement).
+
+Suite de régression complète (31 scripts + corpus OCR) au vert.
+
+**Version testée** : v242

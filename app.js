@@ -365,7 +365,7 @@ const state = {
   // l'utilisateur ait fini de comparer et enregistré la recette.
   formImportSourcePhotos: [],
   cookingTimers: [],
-  shoppingSortByRayon: false,
+  shoppingSortMode: "name",
   currentMenuId: null,
   weeklyPlan: {},
   menus: [],
@@ -651,6 +651,100 @@ function parseQtyOrNull(value) {
   // négatives sont ramenées à `null`, comme si rien n'avait été saisi.
   if (Number.isNaN(n) || n < 0) return null;
   return n;
+}
+
+// Active le glisser-déposer tactile d'une liste de lignes, via une
+// poignée dédiée à l'intérieur de chacune (demande explicite de
+// l'utilisateur, pour réordonner manuellement la liste de courses, le
+// garde-manger et les ingrédients d'une recette) — utilise les Pointer
+// Events plutôt que l'API HTML5 native (dragstart/dragover), peu
+// fiable au toucher sur mobile (non prise en charge du tout par Safari
+// iOS sans polyfill), pour un comportement identique au doigt et à la
+// souris.
+//
+// Plutôt que de déplacer la vraie ligne pendant le geste (ce qui
+// nécessiterait de recalculer sa position à chaque permutation avec
+// une voisine pour éviter un saut visuel), un simple clone visuel
+// ("ghost", position fixe, ignoré des clics) suit le doigt : la vraie
+// ligne reste dans le flux normal, seulement estompée, et n'est
+// déplacée dans le DOM qu'au moment où le ghost franchit le milieu
+// d'une voisine — beaucoup plus simple à faire juste, sans aucun
+// calcul de compensation.
+//
+// "container" : élément parent direct des lignes réordonnables.
+// "rowSelector" : sélecteur d'une ligne réordonnable.
+// "handleSelector" : sélecteur de la poignée à l'intérieur d'une ligne
+// qui déclenche le glissement — jamais la ligne entière, pour ne pas
+// gêner le défilement normal de la page ni le clic sur la ligne.
+// "onReorder(rows)" : appelé une seule fois au relâchement, avec les
+// lignes dans leur ordre final (jamais pendant le geste).
+function attachDragReorder(container, rowSelector, handleSelector, onReorder) {
+  container.addEventListener("pointerdown", (e) => {
+    const handle = e.target.closest(handleSelector);
+    if (!handle || !container.contains(handle)) return;
+    const row = handle.closest(rowSelector);
+    if (!row || row.parentElement !== container) return;
+    e.preventDefault();
+
+    const startRect = row.getBoundingClientRect();
+    const ghost = row.cloneNode(true);
+    ghost.style.position = "fixed";
+    ghost.style.left = `${startRect.left}px`;
+    ghost.style.top = `${startRect.top}px`;
+    ghost.style.width = `${startRect.width}px`;
+    ghost.style.margin = "0";
+    ghost.style.pointerEvents = "none";
+    ghost.style.zIndex = "9999";
+    ghost.style.background = "var(--card)";
+    ghost.style.boxShadow = "0 6px 16px rgba(0,0,0,0.28)";
+    ghost.style.borderRadius = "10px";
+    document.body.appendChild(ghost);
+    row.style.opacity = "0.3";
+
+    const offsetY = e.clientY - startRect.top;
+
+    function onMove(ev) {
+      const top = ev.clientY - offsetY;
+      ghost.style.top = `${top}px`;
+      const ghostMid = top + startRect.height / 2;
+      const siblings = Array.from(container.querySelectorAll(rowSelector)).filter((r) => r !== row);
+      for (const sib of siblings) {
+        const rect = sib.getBoundingClientRect();
+        const mid = rect.top + rect.height / 2;
+        const rowIsAfterSib = !!(sib.compareDocumentPosition(row) & Node.DOCUMENT_POSITION_FOLLOWING);
+        if (ghostMid < mid && rowIsAfterSib) { container.insertBefore(row, sib); break; }
+        if (ghostMid > mid && !rowIsAfterSib) { container.insertBefore(row, sib.nextSibling); break; }
+      }
+    }
+    function onUp() {
+      document.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerup", onUp);
+      document.removeEventListener("pointercancel", onUp);
+      ghost.remove();
+      row.style.opacity = "";
+      onReorder(Array.from(container.querySelectorAll(rowSelector)));
+    }
+    document.addEventListener("pointermove", onMove);
+    document.addEventListener("pointerup", onUp);
+    document.addEventListener("pointercancel", onUp);
+  });
+}
+
+// Complète, avant un affichage en tri manuel, toute valeur "order"
+// manquante (articles créés avant l'introduction de ce tri, ou ajoutés
+// depuis) — conserve l'ordre d'affichage transmis (déjà trié selon le
+// critère habituel) comme point de départ plutôt qu'un ordre
+// arbitraire, la première fois qu'on bascule en tri manuel. Assigne en
+// mémoire immédiatement (nécessaire pour trier tout de suite) et
+// persiste en tâche de fond, sans bloquer l'affichage.
+function ensureManualOrder(itemsInDisplayOrder, storeName) {
+  let maxOrder = -1;
+  itemsInDisplayOrder.forEach((i) => { if (typeof i.order === "number" && i.order > maxOrder) maxOrder = i.order; });
+  itemsInDisplayOrder.forEach((item) => {
+    if (typeof item.order === "number") return;
+    item.order = ++maxOrder;
+    storePut(storeName, item).catch(() => { /* sans conséquence, juste un confort perdu */ });
+  });
 }
 
 /* ======================================================================
@@ -1874,12 +1968,14 @@ function renderIngredientRows(holder) {
       ? `<span class="ing-uncertain-badge" title="${escapeHtml(t("ingredient_uncertain_tooltip"))}" aria-label="${escapeHtml(t("ingredient_uncertain_tooltip"))}">⚠️</span>`
       : "";
     const row = el(`<div class="ing-form-row${ing.confidence === "uncertain" ? " ing-form-row-uncertain" : ""}">
+      <span class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</span>
       ${uncertainBadge}
       <div class="autocomplete-wrap"><input type="text" class="ing-name" placeholder="${t("form_ingredient_name")}" aria-label="${escapeHtml(t("form_ingredient_name"))}" value="${escapeHtml(translateIngredientName(ing.name))}"></div>
       <input type="number" step="any" min="0" class="qty ing-qty" placeholder="${t("form_ingredient_qty")}" aria-label="${escapeHtml(t("form_ingredient_qty"))}" value="${ing.quantity != null ? roundQtyForInput(ing.quantity) : ""}">
       <select class="ing-unit" aria-label="${escapeHtml(t("form_ingredient_unit"))}"></select>
       <button type="button" class="remove-ing" aria-label="${t("common_delete")}">${t("form_remove")}</button>
     </div>`);
+    row._ing = ing;
     const unitSelect = row.querySelector(".ing-unit");
     UNIT_OPTIONS.forEach((u) => unitSelect.appendChild(el(`<option value="${u}">${escapeHtml(translateUnit(u))}</option>`)));
     unitSelect.value = ing.unit || "pièce";
@@ -1903,6 +1999,18 @@ function renderIngredientRows(holder) {
     });
     holder.appendChild(row);
   });
+  // N'attache le glisser-déposer qu'une seule fois par formulaire —
+  // "holder" reste le même nœud DOM d'un ajout/suppression à l'autre
+  // (seul son contenu est vidé et reconstruit à chaque appel), donc le
+  // réattacher à chaque rendu empilerait un nouvel écouteur en plus des
+  // précédents, déclenchant plusieurs fois le même réordonnancement.
+  if (!holder._dragReorderAttached) {
+    holder._dragReorderAttached = true;
+    attachDragReorder(holder, ".ing-form-row", ".drag-handle", (rows) => {
+      state.formIngredients = rows.map((r) => r._ing);
+      renderIngredientRows(holder);
+    });
+  }
 }
 
 function renderAllergenCheckboxes(holder) {
@@ -2117,12 +2225,20 @@ function renderShopping() {
   </div>`);
   wrap.appendChild(totalRow);
 
-  const sortBtn = el(`<button class="btn btn-secondary btn-sm" style="margin-bottom:14px;">${state.shoppingSortByRayon ? t("shopping_sort_by_name") : t("shopping_sort_by_rayon")}</button>`);
-  sortBtn.addEventListener("click", () => {
-    state.shoppingSortByRayon = !state.shoppingSortByRayon;
+  const selectEllipsis = "min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;";
+  const sortRow = el(`<div style="display:flex;align-items:center;gap:6px;margin-bottom:14px;">
+    <label for="shopping-sort-select" style="font-size:13px;color:var(--text-muted);flex-shrink:0;">${escapeHtml(t("sort_label"))}</label>
+    <select id="shopping-sort-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;${selectEllipsis}">
+      <option value="name" ${state.shoppingSortMode === "name" ? "selected" : ""}>${escapeHtml(t("sort_name"))}</option>
+      <option value="rayon" ${state.shoppingSortMode === "rayon" ? "selected" : ""}>${escapeHtml(t("sort_rayon"))}</option>
+      <option value="manual" ${state.shoppingSortMode === "manual" ? "selected" : ""}>${escapeHtml(t("sort_manual"))}</option>
+    </select>
+  </div>`);
+  sortRow.querySelector("#shopping-sort-select").addEventListener("change", (e) => {
+    state.shoppingSortMode = e.target.value;
     renderShoppingInto(wrap);
   });
-  wrap.appendChild(sortBtn);
+  wrap.appendChild(sortRow);
 
   const listHolder = el(`<div id="shopping-list-holder"></div>`);
   wrap.appendChild(listHolder);
@@ -2199,12 +2315,18 @@ function renderSavedShoppingLists() {
   return wrap;
 }
 
-function shoppingItemRow(item, wrap) {
+function shoppingItemRow(item, wrap, manualMode) {
   const row = el(`<div class="shopping-item ${item.checked ? "checked" : ""}">
+    ${manualMode ? `<span class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</span>` : ""}
     <input type="checkbox" ${item.checked ? "checked" : ""}>
     <span class="label" style="flex:1;cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}</span>
     <button type="button" class="shopping-item-delete" aria-label="${escapeHtml(t("common_delete"))}" style="background:none;border:none;color:var(--text-muted);font-size:18px;padding:4px 8px;cursor:pointer;line-height:1;">×</button>
   </div>`);
+  // Utilisé par attachDragReorder (voir fillShoppingList) pour
+  // retrouver, au relâchement, quel article correspond à chaque ligne
+  // dans son nouvel ordre — une simple propriété JS, jamais lue ni
+  // sérialisée par ailleurs.
+  row._item = item;
   row.querySelector("input").addEventListener("change", async (e) => {
     item.checked = e.target.checked;
     await storePut("shopping", item);
@@ -2227,7 +2349,7 @@ function shoppingItemRow(item, wrap) {
 
 function fillShoppingList(listHolder, wrap) {
   listHolder.innerHTML = "";
-  if (state.shoppingSortByRayon) {
+  if (state.shoppingSortMode === "rayon") {
     const byRayon = {};
     state.shopping.forEach((item) => {
       const rayon = getIngredientRayon(item.name);
@@ -2244,6 +2366,24 @@ function fillShoppingList(listHolder, wrap) {
         .forEach((item) => card.appendChild(shoppingItemRow(item, wrap)));
       group.appendChild(card);
       listHolder.appendChild(group);
+    });
+  } else if (state.shoppingSortMode === "manual") {
+    // Contrairement aux deux autres tris, l'ordre manuel n'impose
+    // jamais les articles cochés en fin de liste : c'est justement le
+    // seul mode où l'utilisateur décide entièrement de la disposition
+    // (ex. dans l'ordre du magasin), donc rien d'autre ne doit la
+    // perturber.
+    const ordered = state.shopping.slice().sort((a, b) => (a.checked === b.checked ? a.name.localeCompare(b.name) : a.checked ? 1 : -1));
+    ensureManualOrder(ordered, "shopping");
+    ordered.sort((a, b) => a.order - b.order);
+    const list = el(`<div class="card" style="padding:4px 16px;"></div>`);
+    ordered.forEach((item) => list.appendChild(shoppingItemRow(item, wrap, true)));
+    listHolder.appendChild(list);
+    attachDragReorder(list, ".shopping-item", ".drag-handle", (rows) => {
+      rows.forEach((row, index) => {
+        row._item.order = index;
+        storePut("shopping", row._item).catch(() => {});
+      });
     });
   } else {
     const list = el(`<div class="card" style="padding:4px 16px;"></div>`);
@@ -2777,6 +2917,7 @@ function renderPantry() {
       <select id="pantry-sort-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;${selectEllipsis}">
         <option value="name" ${state.pantrySortBy === "name" ? "selected" : ""}>${escapeHtml(t("sort_name"))}</option>
         <option value="expiration" ${state.pantrySortBy === "expiration" ? "selected" : ""}>${escapeHtml(t("sort_expiration"))}</option>
+        <option value="manual" ${state.pantrySortBy === "manual" ? "selected" : ""}>${escapeHtml(t("sort_manual"))}</option>
       </select>
     </div>`);
     sortRow.querySelector("#pantry-sort-select").addEventListener("change", (e) => {
@@ -2785,25 +2926,31 @@ function renderPantry() {
     });
     wrap.appendChild(sortRow);
 
+    const manualMode = state.pantrySortBy === "manual";
+    let orderedPantry = state.pantry.slice().sort((a, b) => {
+      if (state.pantrySortBy === "expiration") {
+        // Sans date, toujours en fin de liste (peu importe le nom) —
+        // seuls les articles à surveiller doivent ressortir en tête.
+        if (!a.expirationDate && !b.expirationDate) return a.name.localeCompare(b.name);
+        if (!a.expirationDate) return 1;
+        if (!b.expirationDate) return -1;
+        return a.expirationDate.localeCompare(b.expirationDate) || a.name.localeCompare(b.name);
+      }
+      return a.name.localeCompare(b.name);
+    });
+    if (manualMode) {
+      ensureManualOrder(orderedPantry, "pantry");
+      orderedPantry = orderedPantry.slice().sort((a, b) => a.order - b.order);
+    }
+
     const list = el(`<div class="card" style="padding:4px 16px;margin-bottom:20px;"></div>`);
-    state.pantry
-      .slice()
-      .sort((a, b) => {
-        if (state.pantrySortBy === "expiration") {
-          // Sans date, toujours en fin de liste (peu importe le nom) —
-          // seuls les articles à surveiller doivent ressortir en tête.
-          if (!a.expirationDate && !b.expirationDate) return a.name.localeCompare(b.name);
-          if (!a.expirationDate) return 1;
-          if (!b.expirationDate) return -1;
-          return a.expirationDate.localeCompare(b.expirationDate) || a.name.localeCompare(b.name);
-        }
-        return a.name.localeCompare(b.name);
-      })
-      .forEach((item) => {
+    orderedPantry.forEach((item) => {
         const row = el(`<div class="shopping-item">
+          ${manualMode ? `<span class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</span>` : ""}
           <span class="label" style="cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}${item.threshold != null ? escapeHtml(t("pantry_threshold_suffix", { threshold: fmtQty(item.threshold) })) : ""}${pantryExpirationSuffixHtml(item)}</span>
           <button class="remove-ing" style="width:32px;height:32px;" aria-label="${t("common_delete")}">🗑</button>
         </div>`);
+        row._item = item;
         row.querySelector(".label").addEventListener("click", () => openAddItemModal("pantry", item));
         row.querySelector("button").addEventListener("click", async () => {
           await storeDelete("pantry", item.id);
@@ -2814,6 +2961,14 @@ function renderPantry() {
         list.appendChild(row);
       });
     wrap.appendChild(list);
+    if (manualMode) {
+      attachDragReorder(list, ".shopping-item", ".drag-handle", (rows) => {
+        rows.forEach((row, index) => {
+          row._item.order = index;
+          storePut("pantry", row._item).catch(() => {});
+        });
+      });
+    }
   }
 
   // Section des réservations — affichée même si le garde-manger est
@@ -3368,7 +3523,7 @@ async function exportShoppingListPdf() {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11);
 
-  if (state.shoppingSortByRayon) {
+  if (state.shoppingSortMode === "rayon") {
     const byRayon = {};
     state.shopping.forEach((item) => {
       const rayon = getIngredientRayon(item.name);
@@ -11346,7 +11501,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 241;
+const APP_VERSION = 242;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

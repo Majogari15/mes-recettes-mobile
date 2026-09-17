@@ -562,6 +562,21 @@ a { color: inherit; }
 }
 .shopping-item .label { flex: 1; font-size: 15px; }
 .shopping-item.checked .label { text-decoration: line-through; color: var(--text-muted); }
+
+/* Poignée de glisser-déposer (tri manuel) — touch-action: none empêche
+   le navigateur de faire défiler la page au doigt tant qu'on la
+   maintient, sans gêner le défilement normal ailleurs sur la ligne. */
+.drag-handle {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.drag-handle:active { cursor: grabbing; }
 .progress-bar-track {
   height: 8px;
   background: var(--border);
