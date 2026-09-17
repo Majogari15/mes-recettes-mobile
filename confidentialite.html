@@ -61,12 +61,13 @@
 <body>
 
 <h1>Politique de confidentialité</h1>
-<p class="updated">Mes Recettes, Mes Courses — dernière mise à jour : 14 septembre 2026</p>
+<p class="updated">Mes Recettes, Mes Courses — dernière mise à jour : 17 septembre 2026</p>
 
 <p class="summary">
   Cette application stocke toutes vos données uniquement sur votre téléphone ;
   rien n'est envoyé à un serveur, sauf lorsque vous choisissez vous-même
-  d'importer une recette depuis un lien internet.
+  d'importer une recette depuis un lien internet, ou de rechercher un produit
+  à partir d'un code-barres scanné.
 </p>
 
 <h2>Quelles données sont stockées, et où</h2>
@@ -83,9 +84,10 @@
 </p>
 
 <h2>Accès à la caméra</h2>
-<p>L'application utilise la caméra de deux façons différentes :</p>
+<p>L'application utilise la caméra de plusieurs façons différentes :</p>
 <ul>
   <li><strong>Scan de QR code</strong> (pour importer une recette ou une liste de courses partagée depuis un autre appareil) : l'application ouvre un flux vidéo en direct de la caméra, analysé <strong>entièrement sur votre appareil</strong> pour y détecter un QR code. Aucune image n'est enregistrée ni transmise où que ce soit. Vous pouvez refuser cette autorisation sans que le reste de l'application soit affecté ; une solution de repli (coller le texte manuellement) reste disponible.</li>
+  <li><strong>Scan de code-barres</strong> (pour ajouter un article au garde-manger) : comme le scan de QR code, l'application analyse le flux vidéo <strong>entièrement sur votre appareil</strong> pour y détecter un code-barres — aucune image n'est enregistrée ni transmise où que ce soit. Le numéro du code-barres détecté (jamais l'image) est ensuite envoyé à Open Food Facts pour retrouver le nom du produit — voir la section suivante. Vous pouvez refuser cette autorisation ou taper le code-barres vous-même ; le reste de l'application n'est pas affecté.</li>
   <li><strong>Photo d'une recette, du journal de cuisine, ou import de recette depuis une photo</strong> : l'application ouvre l'appareil photo natif de votre téléphone (comme le ferait n'importe quelle autre application) pour prendre un cliché, ou vous laisse en choisir un déjà existant dans votre galerie. La photo obtenue reste stockée uniquement dans le stockage local de l'application.</li>
 </ul>
 
@@ -135,6 +137,21 @@
     l'<strong>export PDF</strong>, fonctionnent entièrement à partir de fichiers
     inclus dans l'application elle-même, sans aucun téléchargement externe.
   </li>
+  <li>
+    <strong>Scan de code-barres (garde-manger)</strong> : le numéro détecté
+    (ou tapé manuellement) est envoyé à <strong>Open Food Facts</strong>
+    (world.openfoodfacts.org), une base de données ouverte et gratuite, pour
+    retrouver le nom du produit et son poids/volume net si disponibles.
+    Aucune autre donnée n'est transmise avec cette requête — ni vos
+    recettes, ni votre garde-manger, ni aucune information personnelle. Le
+    nom trouvé est toujours à confirmer ou modifier avant d'être ajouté ; il
+    n'est jamais appliqué automatiquement, et si le produit n'est pas trouvé
+    (ou en l'absence de réseau), vous pouvez toujours continuer en tapant le
+    nom vous-même. Cette action ne se produit que si vous scannez ou saisissez
+    vous-même un code-barres — jamais en arrière-plan. Ce service n'est pas
+    exploité par le développeur et peut avoir ses propres règles de
+    conservation, sur lesquelles le développeur n'a pas de contrôle direct.
+  </li>
   <li><strong>Bouton « Faire un don »</strong> : ouvre, uniquement si vous cliquez dessus, la page <a href="https://buymeacoffee.com/majogari" target="_blank" rel="noopener">buymeacoffee.com/majogari</a> dans votre navigateur.</li>
   <li><strong>Partager la sauvegarde</strong> (fonctionnalité optionnelle) : le bouton « Partager la sauvegarde » ouvre le menu de partage natif de votre téléphone, vous laissant choisir vous-même une application (Google Drive, Dropbox, email...) vers laquelle envoyer votre fichier de sauvegarde. L'application ne communique directement avec aucun de ces services : c'est l'application que vous choisissez dans ce menu qui reçoit le fichier, selon sa propre politique de confidentialité.</li>
 </ul>
@@ -150,7 +167,7 @@
 
 <h2>Permissions de l'appareil utilisées</h2>
 <ul>
-  <li><strong>Appareil photo</strong> : voir la section « Accès à la caméra » ci-dessus — utilisée uniquement lorsque vous ouvrez vous-même le scan de QR code, l'ajout d'une photo à une recette/au journal de cuisine, ou l'import de recette depuis une photo.</li>
+  <li><strong>Appareil photo</strong> : voir la section « Accès à la caméra » ci-dessus — utilisée uniquement lorsque vous ouvrez vous-même le scan de QR code ou de code-barres, l'ajout d'une photo à une recette/au journal de cuisine, ou l'import de recette depuis une photo.</li>
   <li><strong>Notifications</strong> : uniquement pour vous prévenir qu'un minuteur de cuisine est terminé.</li>
 </ul>
 

@@ -201,6 +201,33 @@ def main():
             )
             check(f"Bandeau d'installation ({theme}) : pas de violation critique/sérieuse", not install_result, str(install_result))
 
+            # Scan de code-barres (garde-manger, voir point 95) : sans
+            # BarcodeDetector pour rester déterministe (pas de caméra
+            # factice nécessaire ici, seul le rendu de la modale compte).
+            page.evaluate("() => { delete window.BarcodeDetector; openBarcodeScanModal(); }")
+            page.wait_for_timeout(150)
+            barcode_scan_result = page.evaluate(
+                """
+                async () => {
+                    const r = await axe.run(document, { resultTypes: ['violations'] });
+                    return r.violations.filter(v => v.impact === 'critical' || v.impact === 'serious').map(v => v.id);
+                }
+                """
+            )
+            check(f"Modale de scan code-barres ({theme}) : pas de violation critique/sérieuse", not barcode_scan_result, str(barcode_scan_result))
+            page.evaluate("() => { const o = document.querySelector('.modal-overlay'); if (o) o.remove(); openBarcodePasteModal(); }")
+            page.wait_for_timeout(150)
+            barcode_paste_result = page.evaluate(
+                """
+                async () => {
+                    const r = await axe.run(document, { resultTypes: ['violations'] });
+                    return r.violations.filter(v => v.impact === 'critical' || v.impact === 'serious').map(v => v.id);
+                }
+                """
+            )
+            check(f"Modale de saisie manuelle de code-barres ({theme}) : pas de violation critique/sérieuse", not barcode_paste_result, str(barcode_paste_result))
+            page.evaluate("() => { const o = document.querySelector('.modal-overlay'); if (o) o.remove(); }")
+
         print(f"\nTotaux toutes gravités confondues (informatif) : {totals}")
 
         check("Aucune erreur JS pendant tout le parcours", not errors, "; ".join(errors))

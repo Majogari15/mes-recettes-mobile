@@ -1,12 +1,13 @@
 # Politique de confidentialité — Mes Recettes, Mes Courses
 
-*Dernière mise à jour : 14 septembre 2026*
+*Dernière mise à jour : 17 septembre 2026*
 
 ## Résumé en une phrase
 
 Cette application stocke toutes vos données uniquement sur votre
 téléphone ; rien n'est envoyé à un serveur, sauf lorsque vous
-choisissez vous-même d'importer une recette depuis un lien internet.
+choisissez vous-même d'importer une recette depuis un lien internet,
+ou de rechercher un produit à partir d'un code-barres scanné.
 
 ## Quelles données sont stockées, et où
 
@@ -31,6 +32,14 @@ L'application utilise la caméra de deux façons différentes :
   enregistrée ni transmise où que ce soit. Vous pouvez refuser cette
   autorisation sans que le reste de l'application soit affecté ; une
   solution de repli (coller le texte manuellement) reste disponible.
+- **Scan de code-barres** (pour ajouter un article au garde-manger) :
+  comme le scan de QR code, l'application analyse le flux vidéo
+  **entièrement sur votre appareil** pour y détecter un code-barres —
+  aucune image n'est enregistrée ni transmise où que ce soit. Le
+  numéro du code-barres détecté (jamais l'image) est ensuite envoyé à
+  Open Food Facts pour retrouver le nom du produit — voir la section
+  suivante. Vous pouvez refuser cette autorisation ou taper le
+  code-barres vous-même ; le reste de l'application n'est pas affecté.
 - **Photo d'une recette, du journal de cuisine, ou import de recette
   depuis une photo** : l'application ouvre l'appareil photo natif de
   votre téléphone (comme le ferait n'importe quelle autre application)
@@ -86,6 +95,20 @@ connexions qu'elle effectue, toutes à votre initiative explicite :
   **génération et la lecture de QR code**, ainsi que l'**export PDF**,
   fonctionnent entièrement à partir de fichiers inclus dans
   l'application elle-même, sans aucun téléchargement externe.
+- **Scan de code-barres (garde-manger)** : le numéro détecté (ou tapé
+  manuellement) est envoyé à **Open Food Facts**
+  (world.openfoodfacts.org), une base de données ouverte et gratuite,
+  pour retrouver le nom du produit et son poids/volume net si
+  disponibles. Aucune autre donnée n'est transmise avec cette requête
+  — ni vos recettes, ni votre garde-manger, ni aucune information
+  personnelle. Le nom trouvé est toujours à confirmer ou modifier
+  avant d'être ajouté ; il n'est jamais appliqué automatiquement, et si
+  le produit n'est pas trouvé (ou en l'absence de réseau), vous pouvez
+  toujours continuer en tapant le nom vous-même. Cette action ne se
+  produit que si vous scannez ou saisissez vous-même un code-barres —
+  jamais en arrière-plan. Ce service n'est pas exploité par le
+  développeur et peut avoir ses propres règles de conservation, sur
+  lesquelles le développeur n'a pas de contrôle direct.
 - **Bouton « Faire un don »** : ouvre, uniquement si vous cliquez
   dessus, la page https://buymeacoffee.com/majogari dans votre
   navigateur.
@@ -115,8 +138,9 @@ connexions qu'elle effectue, toutes à votre initiative explicite :
 
 - **Appareil photo** : voir la section « Accès à la caméra »
   ci-dessus — utilisée uniquement lorsque vous ouvrez vous-même le
-  scan de QR code, l'ajout d'une photo à une recette/au journal de
-  cuisine, ou l'import de recette depuis une photo.
+  scan de QR code ou de code-barres, l'ajout d'une photo à une
+  recette/au journal de cuisine, ou l'import de recette depuis une
+  photo.
 - **Notifications** : uniquement pour vous prévenir qu'un minuteur de
   cuisine est terminé.
 

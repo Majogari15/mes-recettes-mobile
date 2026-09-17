@@ -297,6 +297,11 @@ const state = {
   // opération globale (vider toute la liste, en charger une autre,
   // restaurer une sauvegarde) ; libéré précisément par source sinon.
   pantryClaimedThisSession: [],
+  // {code-barres: nom d'ingrédient} — mémorisé une fois que
+  // l'utilisateur a choisi/confirmé quel ingrédient correspond à ce
+  // code-barres précis (voir openBarcodeResultModal), pour que les
+  // scans suivants du même produit n'aient plus jamais à redemander.
+  barcodeIngredientMap: {},
   currentRecipeId: null,
   editingRecipeId: null,
   search: "",
@@ -2237,7 +2242,232 @@ function getExpiringPantryItems() {
   return state.pantry.filter((item) => getPantryExpirationStatus(item) != null);
 }
 
-function openAddItemModal(storeName, existingItem) {
+/* ======================================================================
+   SCAN DE CODE-BARRES (ajout au garde-manger)
+   ====================================================================== */
+async function loadBarcodeIngredientMap() {
+  try {
+    const raw = await kvGet("barcodeIngredientMap");
+    state.barcodeIngredientMap = raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
+  } catch (e) {
+    state.barcodeIngredientMap = {};
+  }
+}
+// Mémorise le NOM ET L'UNITÉ choisis — pas seulement le nom : sans
+// l'unité, un produit ajouté une première fois avec une autre unité
+// que "boîte" (ex. "kg" pour un sac de riz) referait correspondre les
+// scans suivants sur une fausse ligne "boîte", créant exactement le
+// doublon que cette mémorisation est censée éviter.
+function saveBarcodeIngredientMapping(barcode, name, unit) {
+  state.barcodeIngredientMap[barcode] = { name, unit };
+  return kvSet("barcodeIngredientMap", state.barcodeIngredientMap).catch(() => { /* sans conséquence, juste un confort perdu */ });
+}
+
+// Interroge Open Food Facts (base ouverte et gratuite, aucune clé
+// requise) à partir du code-barres scanné, pour proposer un nom de
+// produit et son poids/volume net — jamais appliqués tels quels : le
+// nom reste à confirmer/choisir via l'autocomplétion habituelle (voir
+// openBarcodeResultModal), et le poids net n'est qu'indicatif. Ne
+// renvoie jamais d'erreur : un échec réseau ou un produit inconnu
+// donne simplement {name: null, quantityHint: null}, laissant la
+// saisie manuelle prendre le relais.
+async function lookupProductByBarcode(barcode) {
+  try {
+    const res = await fetchWithTimeout(
+      `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json?fields=product_name,product_name_fr,quantity,status`,
+      8000
+    );
+    if (!res.ok) return { name: null, quantityHint: null };
+    const data = await res.json();
+    if (!data || data.status !== 1 || !data.product) return { name: null, quantityHint: null };
+    const name = (CURRENT_LANG === "fr" && data.product.product_name_fr) || data.product.product_name || null;
+    return { name: name ? name.trim() : null, quantityHint: data.product.quantity ? String(data.product.quantity).trim() : null };
+  } catch (e) {
+    return { name: null, quantityHint: null };
+  }
+}
+
+// Ajoute un article au garde-manger, ou augmente sa quantité de 1 s'il
+// existe déjà (même nom normalisé et même unité) — évite d'ouvrir le
+// formulaire à chaque fois qu'on rescanne un produit déjà présent
+// (typiquement plusieurs boîtes identiques rapportées des courses).
+async function addOrIncrementPantryItem(name, unit) {
+  const key = normalize(name);
+  const existing = state.pantry.find((i) => normalize(i.name) === key && i.unit === unit);
+  if (existing) {
+    existing.quantity = (existing.quantity || 0) + 1;
+    await storePut("pantry", existing);
+    return existing;
+  }
+  const item = { id: uid(), name, quantity: 1, unit };
+  await storePut("pantry", item);
+  state.pantry.push(item);
+  return item;
+}
+
+function openBarcodeResultModal(barcode, lookup) {
+  const hint = lookup && lookup.quantityHint ? t("barcode_net_quantity_hint", { quantity: lookup.quantityHint }) : (lookup && !lookup.name ? t("barcode_product_not_found") : "");
+  openAddItemModal(
+    "pantry",
+    null,
+    { name: lookup && lookup.name ? lookup.name : "", quantity: 1, unit: "boîte", hint },
+    (item) => { saveBarcodeIngredientMapping(barcode, item.name, item.unit); }
+  );
+}
+
+async function handleScannedBarcode(barcode) {
+  const known = state.barcodeIngredientMap[barcode];
+  if (known && known.name && known.unit) {
+    const item = await addOrIncrementPantryItem(known.name, known.unit);
+    render();
+    await customAlert(t("barcode_added_known", { name: translateIngredientName(item.name), quantity: fmtQty(item.quantity), unit: translateUnit(item.unit) }));
+    return;
+  }
+  const lookup = await lookupProductByBarcode(barcode);
+  openBarcodeResultModal(barcode, lookup);
+}
+
+function openBarcodePasteModal() {
+  const overlay = el(`<div class="modal-overlay"></div>`);
+  const sheet = el(`<div class="modal-sheet">
+    <h2>${t("barcode_manual_title")}</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;">${escapeHtml(t("barcode_manual_hint"))}</p>
+    <div class="field">
+      <label for="barcode-manual-input">${t("barcode_manual_label")}</label>
+      <input type="text" inputmode="numeric" id="barcode-manual-input" placeholder="3560071175221">
+    </div>
+    <div id="barcode-manual-status" style="font-size:12px;color:var(--danger);margin-bottom:12px;min-height:16px;"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-outline" id="barcode-manual-close">${t("form_cancel")}</button>
+      <button type="button" class="btn btn-primary" id="barcode-manual-submit">${t("barcode_manual_submit_button")}</button>
+    </div>
+  </div>`);
+  overlay.appendChild(sheet);
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
+  sheet.querySelector("#barcode-manual-close").addEventListener("click", () => overlay.remove());
+  sheet.querySelector("#barcode-manual-submit").addEventListener("click", async () => {
+    const digits = sheet.querySelector("#barcode-manual-input").value.replace(/\D/g, "");
+    if (digits.length < 8) {
+      sheet.querySelector("#barcode-manual-status").textContent = t("barcode_manual_invalid");
+      return;
+    }
+    overlay.remove();
+    await handleScannedBarcode(digits);
+  });
+}
+
+async function openBarcodeScanModal() {
+  const overlay = el(`<div class="modal-overlay"></div>`);
+  const sheet = el(`<div class="modal-sheet">
+    <h2>${t("barcode_scan_title")}</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;">${escapeHtml(t("barcode_scan_hint"))}</p>
+    <div id="barcode-holder" style="position:relative;width:100%;aspect-ratio:1;background:#000;border-radius:12px;overflow:hidden;margin-bottom:12px;display:flex;align-items:center;justify-content:center;">
+      <span id="barcode-camera-status" style="color:#fff;font-size:13px;text-align:center;padding:20px;"></span>
+    </div>
+    <button type="button" id="barcode-manual-fallback" style="background:none;border:none;color:var(--text-muted);font-size:12px;text-decoration:underline;cursor:pointer;display:block;margin:0 auto 10px;padding:4px;">${escapeHtml(t("barcode_manual_fallback_link"))}</button>
+    <button type="button" class="btn btn-outline" id="barcode-close">${t("cooking_close")}</button>
+  </div>`);
+  overlay.appendChild(sheet);
+  document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet, { beforeClose: () => cleanup() });
+
+  const holder = sheet.querySelector("#barcode-holder");
+  const cameraStatusEl = sheet.querySelector("#barcode-camera-status");
+  sheet.querySelector("#barcode-manual-fallback").addEventListener("click", () => {
+    cleanup();
+    overlay.remove();
+    openBarcodePasteModal();
+  });
+  let stream = null;
+  let stopped = false;
+  function cleanup() {
+    if (stopped) return;
+    stopped = true;
+    if (stream) stream.getTracks().forEach((tr) => tr.stop());
+  }
+  sheet.querySelector("#barcode-close").addEventListener("click", () => { cleanup(); overlay.remove(); });
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) { cleanup(); overlay.remove(); } });
+
+  // Contrairement au scan de QR code, il n'existe pas de bibliothèque
+  // JavaScript pure déjà embarquée dans l'app capable de décoder un
+  // code-barres EAN/UPC (jsQR ne lit QUE des QR codes, symbologie
+  // différente) — seul le détecteur natif du navigateur (Chrome
+  // Android notamment) permet le scan par caméra ici. Sans lui, seule
+  // la saisie manuelle du code-barres (lien ci-dessus) reste possible.
+  let nativeBarcodeDetector = null;
+  if ("BarcodeDetector" in window) {
+    try {
+      nativeBarcodeDetector = new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e"] });
+    } catch (e) {
+      nativeBarcodeDetector = null;
+    }
+  }
+  if (!nativeBarcodeDetector) {
+    cameraStatusEl.textContent = t("barcode_native_unavailable");
+    return;
+  }
+  if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    cameraStatusEl.textContent = t("qrscan_camera_https_hint");
+    return;
+  }
+
+  cameraStatusEl.textContent = t("qrcode_loading");
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } },
+    });
+  } catch (e) {
+    cameraStatusEl.textContent = t("qrscan_camera_denied");
+    return;
+  }
+  if (stopped) { stream.getTracks().forEach((tr) => tr.stop()); return; }
+
+  const video = document.createElement("video");
+  video.setAttribute("playsinline", "true");
+  video.muted = true;
+  video.srcObject = stream;
+  video.style.cssText = "width:100%;height:100%;object-fit:cover;";
+  holder.innerHTML = "";
+  holder.appendChild(video);
+  await video.play();
+
+  async function processFrame() {
+    if (stopped) return false;
+    try {
+      const barcodes = await nativeBarcodeDetector.detect(video);
+      if (barcodes && barcodes.length) {
+        cleanup();
+        overlay.remove();
+        await handleScannedBarcode(barcodes[0].rawValue);
+        return true;
+      }
+    } catch (e) {
+      // Repli silencieux : la boucle continue, la saisie manuelle reste
+      // disponible de toute façon via le lien.
+    }
+    return false;
+  }
+  (async function loop() {
+    while (!stopped) {
+      const found = await processFrame();
+      if (found) return;
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+  })();
+}
+
+// "prefill" (utilisé par le scan de code-barres, voir
+// openBarcodeResultModal) : {name, quantity, unit, hint} pour un
+// NOUVEL article seulement (jamais en modification, où les champs
+// viennent déjà de existingItem) — "hint" affiche une ligne
+// d'information supplémentaire sous le nom (ex. le poids net trouvé),
+// purement indicative, jamais stockée. "onSaved(item)" est appelé
+// juste après l'enregistrement réel, pour permettre à l'appelant de
+// réagir (ex. mémoriser quel ingrédient a été choisi pour ce
+// code-barres) sans dupliquer toute la logique de ce formulaire.
+function openAddItemModal(storeName, existingItem, prefill, onSaved) {
   const isEdit = !!existingItem;
   const isPantry = storeName === "pantry";
   const overlay = el(`<div class="modal-overlay"></div>`);
@@ -2246,6 +2476,7 @@ function openAddItemModal(storeName, existingItem) {
     <div class="field">
       <label for="modal-ing-name">${t("form_ingredient_name")}</label>
       <div class="autocomplete-wrap"><input type="text" id="modal-ing-name" placeholder="${t("form_ingredient_name")}"></div>
+      ${!isEdit && prefill && prefill.hint ? `<p style="font-size:12px;color:var(--text-muted);margin:4px 0 0;">${escapeHtml(prefill.hint)}</p>` : ""}
     </div>
     <div class="field-row">
       <div class="field"><label for="modal-ing-qty">${t("form_ingredient_qty")}</label><input type="number" step="any" min="0" id="modal-ing-qty"></div>
@@ -2268,15 +2499,18 @@ function openAddItemModal(storeName, existingItem) {
   </div>`);
   const unitSelect = sheet.querySelector("#modal-ing-unit");
   UNIT_OPTIONS.forEach((u) => unitSelect.appendChild(el(`<option value="${u}">${escapeHtml(translateUnit(u))}</option>`)));
-  unitSelect.value = isEdit ? (existingItem.unit || "pièce") : "pièce";
+  unitSelect.value = isEdit ? (existingItem.unit || "pièce") : (prefill && prefill.unit) || "pièce";
 
-  let typedName = isEdit ? existingItem.name : "";
+  let typedName = isEdit ? existingItem.name : (prefill && prefill.name) || "";
   const nameInput = sheet.querySelector("#modal-ing-name");
   if (isEdit) {
     nameInput.value = translateIngredientName(existingItem.name);
     if (existingItem.quantity != null) sheet.querySelector("#modal-ing-qty").value = existingItem.quantity;
     if (isPantry && existingItem.threshold != null) sheet.querySelector("#modal-ing-threshold").value = existingItem.threshold;
     if (isPantry && existingItem.expirationDate) sheet.querySelector("#modal-ing-expiration").value = existingItem.expirationDate;
+  } else if (prefill) {
+    if (prefill.name) nameInput.value = prefill.name;
+    if (prefill.quantity != null) sheet.querySelector("#modal-ing-qty").value = prefill.quantity;
   }
   attachIngredientAutocomplete(nameInput, (value) => (typedName = value));
 
@@ -2349,6 +2583,7 @@ function openAddItemModal(storeName, existingItem) {
     }
     overlay.remove();
     render();
+    if (onSaved) onSaved(item);
   });
   document.body.appendChild(overlay);
   initModalA11y(overlay, sheet);
@@ -2375,6 +2610,9 @@ function renderPantryInto(oldWrap) {
 }
 function renderPantry() {
   const wrap = el(`<div></div>`);
+  const scanBtn = el(`<button class="btn btn-outline btn-sm" style="margin-bottom:14px;">${t("barcode_scan_button")}</button>`);
+  scanBtn.addEventListener("click", () => openBarcodeScanModal());
+  wrap.appendChild(scanBtn);
   if (!state.pantry.length) {
     wrap.appendChild(el(`<div class="empty-state"><div class="emoji">📦</div><p>${escapeHtml(t("pantry_empty"))}</p></div>`));
   } else {
@@ -7114,6 +7352,7 @@ async function importAllData(data, mode) {
   // donc depuis ce qui vient d'être restauré, plutôt que de toujours
   // les remettre à zéro comme avant leur inclusion dans les sauvegardes.
   await loadPantryClaims();
+  await loadBarcodeIngredientMap();
   await ensureIngredientListLoaded();
   await loadIngredientOverrides();
 }
@@ -10949,7 +11188,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 237;
+const APP_VERSION = 238;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
@@ -10989,6 +11228,7 @@ async function init() {
 async function initInner() {
   applyTheme(localStorage.getItem("theme") || "light");
   await loadPantryClaims();
+  await loadBarcodeIngredientMap();
 
   // Capture un brouillon de la recette en cours de création si
   // l'application passe en arrière-plan ou se ferme — plus fiable que

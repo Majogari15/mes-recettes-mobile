@@ -116,11 +116,18 @@ toutes les données restent sur l'appareil.
   d'alerte optionnel** par article : un rappel apparaît sur l'accueil
   dès que la quantité passe en dessous, touchez-le pour ajouter
   directement ces articles à la liste de courses (avec le seuil comme
-  quantité suggérée), et **date de péremption optionnelle** : un
+  quantité suggérée), **date de péremption optionnelle** : un
   rappel séparé apparaît sur l'accueil dès qu'un article approche de sa
   date ou l'a dépassée (touchez-le pour aller les voir dans le
   garde-manger), avec un tri dédié pour faire remonter en premier les
-  articles à surveiller
+  articles à surveiller, et **ajout par scan de code-barres** : le nom
+  du produit (et son poids/volume net, à titre indicatif) est recherché
+  automatiquement via Open Food Facts, mais reste toujours à
+  confirmer — notamment en le rattachant à un ingrédient déjà connu
+  plutôt que de systématiquement en créer un nouveau — et l'app se
+  souvient ensuite de ce choix pour ne plus jamais le redemander au
+  même code-barres, incrémentant directement la quantité à chaque
+  nouveau scan
 - Mode cuisine avec **plusieurs minuteurs** réglables (décompte,
   sonnerie **et vibration**, clignotement à zéro)
 - Multilingue : français, anglais, espagnol, allemand

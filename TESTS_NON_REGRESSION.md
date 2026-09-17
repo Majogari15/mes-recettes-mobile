@@ -6252,3 +6252,89 @@ modification/effacement de la date, aller-retour de sauvegarde) +
 suite de régression complète (29 scripts + corpus OCR) au vert.
 
 **Version testée** : v237
+
+### 95 — Nouvelle fonctionnalité : ajout au garde-manger par scan de code-barres
+
+Étape 3 de la demande utilisateur (après la date de péremption,
+étape 1) : scanner le code-barres d'un produit pour l'ajouter au
+garde-manger, sans créer de doublon avec un ingrédient déjà connu.
+
+**Conception retenue, discutée et validée avec l'utilisateur avant
+codage** :
+- Le nom trouvé n'est **jamais appliqué automatiquement** : il
+  pré-remplit le champ nom du formulaire d'ajout habituel, avec
+  l'autocomplétion déjà existante permettant de le rattacher à un
+  ingrédient déjà connu plutôt que d'en créer un nouveau.
+- Le poids/volume net (si trouvé) est affiché à titre indicatif
+  seulement — la quantité réellement suivie reste un nombre de boîtes
+  (ou l'unité choisie), cohérent avec le reste de l'app.
+- Une fois le nom (et l'unité) choisis pour un code-barres donné,
+  l'app s'en souvient localement (`state.barcodeIngredientMap`, dans
+  le store `kv` déjà existant) : rescanner le même code-barres
+  incrémente directement la quantité de 1, sans jamais rouvrir le
+  formulaire.
+
+**Ce qui a été implémenté** :
+- `lookupProductByBarcode(barcode)` : interroge Open Food Facts (base
+  ouverte et gratuite, aucune clé requise), ne renvoie jamais
+  d'erreur — un échec réseau ou un produit inconnu retombe simplement
+  sur une saisie manuelle, comme le reste de l'application avec les
+  services externes déjà utilisés.
+- `openBarcodeScanModal()` : lecture caméra via le détecteur natif du
+  navigateur (`BarcodeDetector`, formats `ean_13`/`ean_8`/`upc_a`/
+  `upc_e`) — **jsQR (déjà embarqué) ne peut PAS décoder ce type de
+  code-barres**, symbologie différente d'un QR code ; sans détecteur
+  natif disponible (Safari/iOS notamment), un message explicite
+  l'indique et seule la saisie manuelle du code-barres reste possible
+  (`openBarcodePasteModal`), plutôt que d'ajouter une nouvelle
+  bibliothèque tierce pour ce seul cas.
+- `openAddItemModal` étendu avec un paramètre `prefill` (nom/quantité/
+  unité/indication, uniquement pour un nouvel article) et un callback
+  `onSaved` — réutilise entièrement le formulaire et la logique déjà
+  validés plutôt que d'écrire une modale parallèle.
+- Bouton d'entrée sur l'écran garde-manger ("📷 Scanner un
+  code-barres"), toujours visible (même garde-manger vide).
+- 4 langues (fr/en/es/de).
+
+**Un vrai bug trouvé et corrigé pendant l'écriture** (avant tout test,
+en relisant la logique) : la mémorisation par code-barres ne retenait
+initialement que le NOM choisi, pas l'unité — un produit ajouté une
+première fois avec une autre unité que "boîte" (ex. "kg" pour un sac
+de riz) aurait fait correspondre les scans suivants sur une fausse
+ligne "boîte" plutôt que d'incrémenter la bonne, recréant exactement
+le doublon que cette fonctionnalité doit éviter. Corrigé en mémorisant
+`{name, unit}` plutôt que le nom seul — couvert par un cas de test
+dédié.
+
+**Confidentialité** : nouvel appel réseau externe (Open Food Facts),
+documenté dans `POLITIQUE_CONFIDENTIALITE.md`/`confidentialite.html`
+(gardés identiques) et `GUIDE_SECURITE_DONNEES_PLAY_STORE.md`, sur le
+même modèle que les services déjà utilisés pour l'import de recette
+par lien — seul le numéro de code-barres est transmis, jamais l'image
+de la caméra ni aucune autre donnée.
+
+**Vérifié** (`tests/test_barcode_pantry.py`, réseau réel jamais
+utilisé — requêtes vers Open Food Facts interceptées et remplacées par
+des réponses contrôlées) :
+- Vrai chemin caméra de bout en bout (caméra factice Chromium +
+  détecteur simulé) jusqu'à l'ajout réel au garde-manger.
+- Caméra/détecteur indisponible → message clair, repli manuel
+  fonctionnel.
+- Code-barres manuel trop court refusé.
+- Produit trouvé → nom et poids net pré-remplis ; produit non trouvé
+  et panne réseau → repli propre sur la saisie manuelle, sans
+  plantage.
+- Confirmation avec un nom d'ingrédient déjà existant → aucun doublon
+  créé.
+- Rescan du même code-barres → incrémentation directe (confirmation
+  affichée), toujours un seul article.
+- Unité différente de "boîte" correctement mémorisée (cas du bug
+  ci-dessus) → toujours un seul article après un second scan.
+- Mémorisation par code-barres vérifiée sans violation de contraste
+  en thème sombre (modale de scan + saisie manuelle), désormais
+  couverte à chaque exécution de `test_accessibility_audit.py`.
+- Survit à un aller-retour de sauvegarde locale (JSON).
+
+Suite de régression complète (30 scripts + corpus OCR) au vert.
+
+**Version testée** : v238

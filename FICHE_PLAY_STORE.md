@@ -21,7 +21,7 @@ Recettes, courses et planning de repas — tout sur votre téléphone
 *(65 caractères)*
 
 ## Description complète
-*(4000 caractères maximum — le texte ci-dessous fait environ 1540
+*(4000 caractères maximum — le texte ci-dessous fait environ 1750
 caractères, vous pouvez l'enrichir librement)*
 
 ```
@@ -46,7 +46,10 @@ LISTE DE COURSES
   partagez-la par QR code
 
 GARDE-MANGER ET SUGGESTIONS
-• Suivez ce que vous avez chez vous
+• Suivez ce que vous avez chez vous, avec date de péremption
+  optionnelle et rappel avant qu'un article n'expire
+• Ajoutez un article en scannant son code-barres : nom du produit
+  retrouvé automatiquement (à confirmer), sans jamais créer de doublon
 • "Que puis-je cuisiner ?" à partir de votre garde-manger
 
 PLANNING

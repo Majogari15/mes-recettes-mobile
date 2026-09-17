@@ -50,6 +50,24 @@ transit", cochez-la si votre worker Cloudflare utilise HTTPS (à
 vérifier — l'adresse `https://mes-recettes-proxy.fabricemoritel.workers.dev`
 utilisée dans le code est bien en HTTPS).
 
+## Cas particulier à connaître : le scan de code-barres (garde-manger)
+
+Même logique que ci-dessus, avec un seul service concerné : le numéro
+de code-barres scanné (ou tapé manuellement) est envoyé à **Open Food
+Facts** (world.openfoodfacts.org, HTTPS), un tiers, pour retrouver le
+nom du produit et son poids/volume net si disponibles. À déclarer
+"oui" à la même question ("communique avec un serveur"), avec :
+- Donnée concernée : le numéro de code-barres, saisi ou détecté par
+  caméra à l'initiative de l'utilisateur — jamais l'image de la
+  caméra elle-même
+- Finalité : fonctionnalité de l'application (retrouver le nom d'un
+  produit pour l'ajouter au garde-manger), pas de la publicité, pas de
+  l'analyse d'audience
+- Ce service tiers n'est pas exploité par le développeur ; ses propres
+  règles de conservation échappent à son contrôle
+- Cette action ne se produit que si l'utilisateur scanne ou saisit
+  lui-même un code-barres — jamais en arrière-plan
+
 ## Section "Pratiques de sécurité"
 
 - "Les données sont-elles chiffrées en transit ?" → Oui (HTTPS partout)
@@ -60,16 +78,20 @@ utilisée dans le code est bien en HTTPS).
 
 ## Section "Autorisations" (permissions de l'appareil)
 
-L'application demande l'accès à la **caméra**, dans deux cas bien
+L'application demande l'accès à la **caméra**, dans plusieurs cas bien
 distincts à décrire si le formulaire le demande :
 - **Scan de QR code** : flux vidéo en direct, analysé entièrement sur
   l'appareil pour y détecter un QR code — aucune image n'est
   enregistrée ni transmise
+- **Scan de code-barres** (garde-manger) : flux vidéo en direct,
+  analysé entièrement sur l'appareil pour y détecter un code-barres —
+  aucune image n'est enregistrée ni transmise ; seul le numéro détecté
+  est ensuite envoyé à Open Food Facts (voir plus haut)
 - **Photo d'une recette, du journal de cuisine, ou import de recette
   depuis une photo** : ouvre l'appareil photo natif du téléphone (ou la
   galerie), la photo obtenue restant stockée uniquement en local
 
-Dans les deux cas : aucune image n'est envoyée à un serveur ni
+Dans tous les cas : aucune image n'est envoyée à un serveur ni
 partagée avec un tiers. L'application demande aussi l'autorisation
 d'envoyer des **notifications**, uniquement pour prévenir qu'un
 minuteur de cuisine est terminé.
