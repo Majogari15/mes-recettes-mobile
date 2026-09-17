@@ -156,6 +156,27 @@ Depuis, la structure sépare strictement :
   d'en prendre une nouvelle avec l'appareil photo, et le champ associé
   se réinitialise bien après lecture pour permettre de resélectionner
   la même photo — voir TESTS_NON_REGRESSION.md points 86 et 87.
+- `test_accessibility_audit.py` — audit automatisé (axe-core, fourni
+  uniquement pour les tests dans `vendor/`, jamais chargé par
+  l'application) des écrans principaux en thèmes clair et sombre :
+  contraste des couleurs, landmarks (`<main>`/`<header>`/`<nav>`),
+  titre de niveau 1 par écran — voir TESTS_NON_REGRESSION.md point 90.
+- `test_performance_basic.py` — démarrage à froid, rendu et filtrage
+  avec un grand volume de données (300 recettes, 500 ingrédients),
+  mémoire JS utilisée — seuils larges destinés à détecter une
+  régression franche, pas une certification de performance absolue —
+  voir TESTS_NON_REGRESSION.md point 90.
+- `test_responsive_large_screens.py` — absence de débordement
+  horizontal sur des écrans plus grands qu'un téléphone (tablette
+  portrait/paysage, pliable dépliée) — complète les tests existants
+  limités à 390px/320px — voir TESTS_NON_REGRESSION.md point 90.
+- `test_network_interruption.py` — coupure réseau simulée en cours
+  d'import de recette par lien : message d'échec clair en temps
+  raisonnable, pas de blocage ni d'erreur JS, application réutilisable
+  après le retour du réseau — voir TESTS_NON_REGRESSION.md point 90.
+- `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
+  utilisée uniquement par `test_accessibility_audit.py` — jamais
+  chargée par l'application elle-même.
 - `requirements.txt` — version verrouillée de Playwright.
 
 ## Utilisation

@@ -45,6 +45,10 @@
   --border: #E8DCC8;
   --primary: #2F5233;
   --primary-light: #E4EEE3;
+  /* Fond des boutons/puces pleins à texte blanc : identique à
+     --primary en thème clair (déjà assez sombre pour du texte blanc),
+     mais distinct en thème sombre — voir plus bas. */
+  --primary-strong: var(--primary);
   --accent: #886120;
   --accent-light: #F6E8CE;
   --text: #2B2420;
@@ -62,6 +66,12 @@
   --card: #26231E;
   --border: #3A362E;
   --primary: #7BB489;
+  /* --primary est ici volontairement clair, pour rester lisible comme
+     COULEUR DE TEXTE sur fond sombre (onglet actif, liens...). Sur fond
+     (bouton plein/puce active à texte blanc), il ne passait plus le
+     contraste WCAG AA (2,4:1 mesuré par un audit axe-core, minimum
+     4,5:1) — --primary-strong lui est réservé, plus sombre. */
+  --primary-strong: #3F7A4C;
   --primary-light: #26332A;
   --accent: #D6A84E;
   --accent-light: #33291A;
@@ -227,7 +237,7 @@ a { color: inherit; }
   width: 100%;
 }
 .btn:active { transform: scale(0.98); }
-.btn-primary { background: var(--primary); color: #FFFFFF; }
+.btn-primary { background: var(--primary-strong); color: #FFFFFF; }
 .btn-secondary { background: var(--primary-light); color: var(--primary); }
 .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
 .btn-danger { background: var(--danger-light); color: var(--danger); }
@@ -333,7 +343,7 @@ a { color: inherit; }
   color: var(--text-muted);
   white-space: nowrap;
 }
-.chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.chip.active { background: var(--primary-strong); border-color: var(--primary-strong); color: #fff; }
 
 /* ---------- Liste de recettes ---------- */
 .recipe-list { display: flex; flex-direction: column; gap: 10px; }
@@ -640,7 +650,7 @@ a { color: inherit; }
   width: 58px; height: 58px;
   border-radius: 999px;
   border: none;
-  background: var(--primary);
+  background: var(--primary-strong);
   color: #fff;
   font-size: 26px;
   box-shadow: 0 4px 14px rgba(47, 82, 51, 0.35);
@@ -654,7 +664,7 @@ a { color: inherit; }
   left: 12px; right: 12px;
   bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 12px);
   z-index: 40;
-  background: var(--primary);
+  background: var(--primary-strong);
   color: #fff;
   border-radius: 14px;
   padding: 14px 16px;

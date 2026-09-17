@@ -5822,3 +5822,125 @@ habituellement sur plusieurs onglets/appareils simultanément sur les
 mêmes données.
 
 **Version testée** : v232 (non modifiée par ce point)
+
+### 90 — Audit étendu : manques identifiés par rapport à une checklist QA générique (accessibilité, performance, compatibilité, réseau, dépendances)
+
+Suite au point 88 (audit complet code+i18n+docs), l'utilisateur a fourni
+une checklist QA générique en 6 catégories (fonctionnel ; interface et
+utilisabilité ; technique et compatibilité ; performance et charge ;
+sécurité et conformité ; bêta/stores) et demandé une comparaison
+honnête avec ce qui avait réellement été couvert. Les manques
+identifiés ont ensuite été traités, dans la mesure du possible dans cet
+environnement (pas d'appareil réel, pas de vrai lecteur d'écran, pas
+d'accès aux stores) :
+
+**1. Accessibilité — jamais testée jusqu'ici.** Audit automatisé avec
+axe-core (bibliothèque tierce, ajoutée uniquement pour les tests dans
+`tests/vendor/axe.min.js`, jamais chargée par l'application) sur 13
+écrans principaux, en thèmes clair et sombre. Deux défauts réels
+confirmés et corrigés :
+- **Contraste insuffisant en thème sombre** sur tous les boutons/puces
+  à texte blanc (`.btn-primary`, `.chip.active`, bouton flottant, bandeau
+  d'installation) : 2,4:1 mesuré, minimum WCAG AA 4,5:1. `--primary` en
+  thème sombre (`#7BB489`) est volontairement clair pour rester lisible
+  comme COULEUR DE TEXTE sur fond sombre (onglet actif...), mais ne
+  passait plus le contraste utilisé comme fond avec du texte blanc par-
+  dessus. Corrigé en séparant les deux usages : nouvelle variable
+  `--primary-strong` (`#3F7A4C` en sombre, identique à `--primary` en
+  clair où le problème ne se posait pas) réservée aux fonds à texte
+  blanc, `--primary` restant pour le texte (`styles.css`).
+- **Contraste limite (4,45:1, sous le seuil 4,5:1) sur les `<select>`
+  de filtre/tri de l'écran Recettes** : ces deux `<select>` (ajoutés au
+  point 84) n'ont, contrairement à tous les autres champs de
+  formulaire, ni `background` ni `color` explicites — ils héritaient
+  donc du rendu natif sombre du navigateur (`color-scheme: dark`,
+  fond gris ~`#6b6b6b`) au lieu du couple `var(--card)`/`var(--text)`
+  déjà utilisé par tous les autres `<select>` de l'application (règle
+  `.field select`). Corrigé en ajoutant les mêmes `background`/`color`
+  explicites (`app.js`).
+- Deux manques structurels supplémentaires (gravité "moderate", sous le
+  seuil WCAG AA mais réels) : aucun `<main>`/`<header>` (tout le
+  contenu était dans de simples `<div>`, hors de tout repère de
+  structure — 292 occurrences relevées par axe-core sur l'ensemble des
+  écrans) et 7 écrans secondaires sans titre de niveau 1 (le titre
+  était un `<span>`, jamais un `<h1>`, sauf sur l'écran de détail
+  recette). Corrigés : le conteneur d'écran (`screenEl`) devient un
+  `<main>`, la barre du haut un `<header>`, et le `<span class="subtitle">`
+  du titre des écrans secondaires devient un `<h1 class="subtitle">`
+  (classe conservée, donc aucun changement visuel — seulement la
+  balise). La barre de navigation du bas était déjà un `<nav>`.
+- Après ces deux séries de corrections : 0 violation critique/sérieuse
+  ni modérée sur les 13 écrans × 2 thèmes ; il reste 2 constats
+  "minor" (bruit de fond fréquent avec axe-core sur des composants
+  dynamiques, non identifiés précisément, non bloquants).
+- **Non fait, limite reconnue** : ceci reste un test AUTOMATISÉ, pas un
+  vrai passage avec VoiceOver/TalkBack sur un appareil réel — seul un
+  test physique peut confirmer l'expérience réelle au clavier/lecteur
+  d'écran. Test permanent : `tests/test_accessibility_audit.py`.
+
+**2. Performance/charge — jamais testée jusqu'ici.** Démarrage à froid
+mesuré (~1s), rendu de la liste de recettes avec 300 recettes et 500
+ingrédients (~10 ms), filtrage par catégorie sur ce volume (~4 ms),
+mémoire JS utilisée (~4 Mo) : aucun problème constaté, seuils larges
+volontairement choisis pour détecter une régression franche (ex. un
+rendu devenu accidentellement O(n²)), pas pour certifier une
+performance absolue. **Non fait, limite reconnue** : pas de mesure
+réelle de batterie/RAM sur un vrai appareil, pas de test de charge
+"utilisateurs multiples" (non applicable ici, aucun serveur/backend
+partagé). Test permanent : `tests/test_performance_basic.py`.
+
+**3. Compatibilité multi-appareils — partiellement testée (390px/320px
+téléphone uniquement jusqu'ici).** Ajout de 3 tailles d'écran plus
+grandes (tablette portrait 768×1024, tablette paysage 1024×768,
+pliable dépliée 673×841) : aucun débordement horizontal ni élément hors
+champ constaté (le conteneur `.screen` est déjà centré avec une largeur
+maximale de 640px, absorbant naturellement les écrans plus grands).
+**Non fait, limite reconnue** : seul le moteur Chromium est disponible
+dans cet environnement de test (ni Firefox ni la vraie moteur Safari/
+WebKit d'iOS) — la compatibilité multi-navigateurs réelle repose
+toujours sur les tests physiques déjà faits par l'utilisateur sur son
+smartphone. Test permanent : `tests/test_responsive_large_screens.py`.
+
+**4. Réseau/interruption — jamais testée jusqu'ici.** Coupure réseau
+simulée pendant un import de recette par lien (`page.context.
+set_offline`) : l'application affiche en quelques secondes un message
+d'échec clair et spécifique ("internet semble indisponible..."), sans
+rester bloquée sur "en cours" ni lever d'erreur JS, et reste
+utilisable normalement une fois le réseau revenu — aucun défaut
+trouvé, comportement déjà correct. Test permanent :
+`tests/test_network_interruption.py`.
+
+**5. Sécurité/dépendances — audit des bibliothèques tierces embarquées,
+jamais fait jusqu'ici.** Recherche de CVE connues sur les 4
+bibliothèques vendues localement (`lib/`) :
+- **jsPDF 2.5.1 → 4.2.1** : plusieurs CVE réelles affectent 2.5.1,
+  notamment CVE-2025-29907 (déni de service par expression régulière
+  dans le parsing d'URL de données de `addImage`). Vérifié que
+  l'application n'appelle `addImage` qu'avec une image toujours
+  regénérée par son propre canvas (`resizeBlobToDataUrl`/
+  `canvas.toDataURL`), jamais avec une donnée brute externe : la faille
+  n'était donc pas concrètement exploitable ici. Mise à jour effectuée
+  quand même par hygiène (aucune API utilisée par l'application —
+  `addImage`, `addPage`, `text`, `setFont(Size)`, `setPage`,
+  `setTextColor`, `splitTextToSize`, `getImageProperties` — n'a changé
+  de comportement ; suite de tests PDF repassée au vert).
+- **tesseract.js 7.0.0** : aucune vulnérabilité connue trouvée (à ne
+  pas confondre avec le paquet distinct `node-tesseract-ocr`, non
+  utilisé ici, concerné par CVE-2026-26832).
+- **jsQR** et **qrcode-generator 1.0.3** : aucune CVE connue trouvée.
+- **Non fait, limite reconnue** : ceci n'est pas un scan automatisé
+  reproductible (pas d'outil `npm audit` utilisable, ces bibliothèques
+  étant vendues en fichiers statiques plutôt que via un
+  gestionnaire de paquets) — recherche ponctuelle à refaire
+  manuellement en cas de doute futur.
+
+**6. Bêta/stores — non fait, hors de portée de cet environnement.**
+Aucun accès à TestFlight/Play Console/soumission réelle en store
+possible depuis ici. Les captures d'écran Play Store restent, comme
+déjà décidé par l'utilisateur, sous sa propre responsabilité.
+
+**Vérifié** : suite de régression complète (22 scripts) au vert après
+chaque changement de code, y compris après le remplacement de jsPDF et
+les changements de balises (`<main>`/`<header>`/`<h1>`).
+
+**Version testée** : v233

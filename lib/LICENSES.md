@@ -14,9 +14,9 @@ externe. Chacune conserve sa licence d'origine.
 
 ## jsPDF (`jspdf.umd.min.js`)
 
-- Version : 2.5.1
+- Version : 4.2.1
 - Licence : MIT
-- Copyright (c) 2010-2021 James Hall et contributeurs (voir l'en-tête du
+- Copyright (c) 2010-2025 James Hall et contributeurs (voir l'en-tête du
   fichier lui-même pour la liste complète)
 - Site du projet : https://github.com/parallax/jsPDF
 - Utilisation dans l'application : export de recettes et de listes de

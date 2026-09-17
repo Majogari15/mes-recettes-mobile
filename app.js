@@ -617,7 +617,7 @@ function render() {
   _previousScreen = state.screen;
   app.innerHTML = "";
   const topbar = renderTopbar();
-  const screenEl = document.createElement("div");
+  const screenEl = document.createElement("main");
   screenEl.className = "screen";
 
   switch (state.screen) {
@@ -766,7 +766,7 @@ function renderTopbar() {
     importPhoto: t("import_photo_title"),
   };
   const showBack = ["recipe", "form", "ingredients", "ingredientDuplicates", "backup", "compare", "menus", "menu", "planning", "planningHistory", "importUrl", "unitConverter", "trash", "savedShoppingLists", "whatCanICook", "cookbookExport", "manageSubstitutions", "statistics", "importPhoto"].includes(state.screen);
-  const bar = el(`<div class="topbar"></div>`);
+  const bar = el(`<header class="topbar"></header>`);
 
   if (showBack) {
     const back = el(`<button class="back-btn" aria-label="${t("common_back")}">←</button>`);
@@ -781,8 +781,8 @@ function renderTopbar() {
       render();
     });
     bar.appendChild(back);
-    const titleWrap = el(`<div class="topbar-title"><span class="subtitle"></span></div>`);
-    titleWrap.querySelector("span").textContent = titles[state.screen] || "";
+    const titleWrap = el(`<div class="topbar-title"><h1 class="subtitle"></h1></div>`);
+    titleWrap.querySelector("h1").textContent = titles[state.screen] || "";
     if (state.screen === "recipe") {
       const r = state.recipes.find((x) => x.id === state.currentRecipeId);
       const h = el(`<h1 style="font-size:18px;">${escapeHtml(r ? r.name : "")}</h1>`);
@@ -1172,14 +1172,14 @@ function renderRecipeList() {
   const sortRow = el(`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 0 12px;flex-wrap:wrap;">
     <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto;max-width:48%;">
       <label for="recipe-category-select" style="font-size:13px;color:var(--text-muted);flex-shrink:0;">${escapeHtml(t("category_filter_label"))}</label>
-      <select id="recipe-category-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);font-size:13px;${selectEllipsis}">
+      <select id="recipe-category-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;${selectEllipsis}">
         <option value="">${escapeHtml(t("category_filter_all"))}</option>
         ${CATEGORY_OPTIONS.map((cat) => `<option value="${escapeHtml(cat)}" ${state.recipeCategoryFilter === cat ? "selected" : ""}>${escapeHtml(translateCategory(cat))}</option>`).join("")}
       </select>
     </div>
     <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto;max-width:48%;">
       <label for="recipe-sort-select" style="font-size:13px;color:var(--text-muted);flex-shrink:0;">${escapeHtml(t("sort_label"))}</label>
-      <select id="recipe-sort-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);font-size:13px;${selectEllipsis}">
+      <select id="recipe-sort-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;${selectEllipsis}">
         <option value="name" ${state.recipeSortBy === "name" ? "selected" : ""}>${escapeHtml(t("sort_name"))}</option>
         <option value="recent" ${state.recipeSortBy === "recent" ? "selected" : ""}>${escapeHtml(t("sort_recent"))}</option>
         <option value="prepTime" ${state.recipeSortBy === "prepTime" ? "selected" : ""}>${escapeHtml(t("sort_prep_time"))}</option>
@@ -10838,7 +10838,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 232;
+const APP_VERSION = 233;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
