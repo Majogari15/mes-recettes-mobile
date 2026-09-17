@@ -5687,3 +5687,32 @@ résolvent/rejettent désormais normalement. Cas ajoutés à
 vert (18 scripts + corpus OCR).
 
 **Version testée** : v229
+
+### 86 — Le formulaire de recette ne permettait pas d'importer une photo depuis la galerie *(v230)*
+
+Demande explicite de l'utilisateur : le champ photo du formulaire de
+recette n'avait qu'un seul champ de fichier portant l'attribut
+`capture="environment"`, qui force les navigateurs mobiles à ouvrir
+directement l'appareil photo — impossible de choisir une image déjà
+présente sur le téléphone. L'écran d'import photo (OCR) avait déjà
+résolu ce même problème avec deux boutons distincts.
+
+Corrigé en appliquant le même motif au formulaire de recette : la zone
+d'aperçu (`.photo-upload`) ne contient plus de champ de fichier, deux
+boutons apparaissent juste en dessous — "Prendre une photo" (avec
+`capture`) et "Choisir depuis la galerie" (sans `capture`, réutilise
+les clés i18n déjà existantes `import_photo_add_camera`/
+`import_photo_add_gallery`). Les deux déclenchent le même traitement
+qu'avant (redimensionnement via canvas, max 800px de large). Les deux
+boutons restent disponibles après un premier choix, pour changer la
+photo à tout moment.
+
+**Vérifié** : structure du DOM (aucun champ de fichier dans la zone
+d'aperçu, exactement 2 champs — un avec `capture`, un sans), sélection
+réelle d'un fichier via le bouton Galerie confirmée (`state.formPhoto`
+mis à jour, aperçu affiché), boutons toujours visibles après un
+premier choix. Nouveau fichier de test permanent
+`test_recipe_form_photo_gallery.py`. Suite de régression complète
+repassée au vert (19 scripts + corpus OCR).
+
+**Version testée** : v230

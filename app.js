@@ -1581,10 +1581,27 @@ function renderRecipeForm() {
 
   const photoBox = el(`<div class="photo-upload">
     ${state.formPhoto ? `<img src="${escapeHtml(state.formPhoto)}" alt="">` : `<div>${t("form_photo")}</div>`}
-    <input type="file" accept="image/*" capture="environment" id="photo-input">
   </div>`);
-  photoBox.querySelector("#photo-input").addEventListener("change", (e) => {
-    const file = e.target.files[0];
+  wrap.appendChild(photoBox);
+
+  // Deux boutons distincts (appareil photo / galerie) plutôt qu'un
+  // unique champ avec capture="environment" : sur mobile, cet attribut
+  // ouvre directement l'appareil photo et empêche de choisir une image
+  // déjà présente sur le téléphone — demande explicite pour pouvoir
+  // importer une photo existante, pas seulement en prendre une
+  // nouvelle. Même motif déjà utilisé par l'import photo (OCR).
+  const photoButtons = el(`<div style="display:flex;gap:10px;margin:-10px 0 20px;">
+    <button type="button" class="btn btn-outline" style="flex:1;">${t("import_photo_add_camera")}</button>
+    <button type="button" class="btn btn-outline" style="flex:1;">${t("import_photo_add_gallery")}</button>
+  </div>`);
+  const [photoCameraBtn, photoGalleryBtn] = photoButtons.querySelectorAll("button");
+  const photoCameraInput = el(`<input type="file" accept="image/*" capture="environment" style="display:none;">`);
+  const photoGalleryInput = el(`<input type="file" accept="image/*" style="display:none;">`);
+  photoCameraBtn.addEventListener("click", () => photoCameraInput.click());
+  photoGalleryBtn.addEventListener("click", () => photoGalleryInput.click());
+  photoButtons.appendChild(photoCameraInput);
+  photoButtons.appendChild(photoGalleryInput);
+  function handleFormPhotoFile(file) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
@@ -1603,8 +1620,10 @@ function renderRecipeForm() {
       img.src = reader.result;
     };
     reader.readAsDataURL(file);
-  });
-  wrap.appendChild(photoBox);
+  }
+  photoCameraInput.addEventListener("change", (e) => handleFormPhotoFile(e.target.files[0]));
+  photoGalleryInput.addEventListener("change", (e) => handleFormPhotoFile(e.target.files[0]));
+  wrap.appendChild(photoButtons);
 
   wrap.appendChild(el(`<div class="field">
     <label for="f-name">${t("form_name")}</label>
@@ -10797,7 +10816,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 229;
+const APP_VERSION = 230;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
