@@ -5737,3 +5737,54 @@ bouton Galerie confirmée (aperçu mis à jour). Cas ajoutés à
 repassée au vert (19 scripts + corpus OCR).
 
 **Version testée** : v231
+
+### 88 — Audit complet (code depuis v226, i18n, fichiers .md/.txt) : 1 bug corrigé, 3 fichiers documentaires mis à jour *(v232)*
+
+Audit complet explicitement demandé, portant cette fois aussi sur les
+fichiers `.md`/`.txt` du dépôt (jamais passés en revue jusqu'ici), en
+plus du code (points 83-87) et de l'i18n. Trois volets menés en
+parallèle et vérifiés avant d'être retenus :
+
+**Code** : un bug réel confirmé — les 4 champs de fichier du nouveau
+sélecteur photo (formulaire de recette + journal de cuisine, points
+86-87) ne remettaient jamais leur valeur à vide après lecture,
+contrairement à l'écran d'import photo/OCR dont ils sont la copie
+(`app.js:9886-9887`). Un navigateur ne redéclenche "change" que si la
+valeur du champ change réellement : sélectionner de nouveau EXACTEMENT
+la même photo via le même bouton ne faisait donc plus rien,
+silencieusement. Vérifié en direct (y compris que Playwright reproduit
+fidèlement ce comportement natif, permettant un vrai test de
+non-régression) puis corrigé en ajoutant `e.target.value = "";` aux 4
+gestionnaires. Un second point, théorique (fenêtre de course très
+étroite sur `renameIngredientName`/`mergeIngredientNames` si une
+action concurrente sur la même recette survient pendant la transaction
+en cours), a été signalé mais laissé de côté — la probabilité de le
+déclencher via l'interface réelle (modale, donc actions
+nécessairement sérialisées) est jugée trop faible pour justifier une
+refonte sans décision explicite.
+
+**i18n** : entièrement propre (566/566 clés dans les 4 langues, 680
+appels `t()` tous résolus, 8 nouvelles clés bien traduites).
+
+**Fichiers `.md`/`.txt`** (premier audit de ce type sur ce projet) :
+`tests/README.md` ne mentionnait aucun des 6 fichiers de test les plus
+récents (`test_data_integrity.py`, `test_security_hardening.py`,
+`test_ingredient_row_layout.py`, `test_ingredient_autocomplete.py`,
+`test_recipe_category_filter.py`, `test_recipe_form_photo_gallery.py`)
+— corrigé, une entrée ajoutée pour chacun. `LISEZ-MOI.md` et
+`FICHE_PLAY_STORE.md` ne mentionnaient ni l'import de photo depuis la
+galerie (v230/v231) ni le filtre par catégorie (v228), et la
+description de l'autocomplétion ne mentionnait pas l'ouverture au
+clic (v227) — les trois mis à jour. Rien à corriger sur
+`POLITIQUE_CONFIDENTIALITE.md`/`confidentialite.html` (identiques et
+fidèles aux 5 services externes réellement contactés),
+`GUIDE_SECURITE_DONNEES_PLAY_STORE.md`, `lib/LICENSES.md`,
+`worker/README.md`, ni sur la cohérence interne de ce présent fichier.
+
+**Vérifié** : le bug du sélecteur photo reproduit puis corrigé (cas
+ajouté à `test_recipe_form_photo_gallery.py`, confirmé que Playwright
+reproduit fidèlement le comportement natif des navigateurs sur ce
+point précis). Suite de régression complète repassée au vert (19
+scripts + corpus OCR).
+
+**Version testée** : v232

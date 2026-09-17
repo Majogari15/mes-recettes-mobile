@@ -11,6 +11,13 @@ dans la galerie. Corrigé avec deux boutons distincts (comme le fait déjà
 l'écran d'import photo/OCR) : un pour prendre une photo, un pour en
 choisir une depuis la galerie (sans `capture`).
 
+Couvre aussi un second défaut trouvé lors d'un audit complet ultérieur :
+les 4 nouveaux champs ne remettaient jamais leur valeur à vide après
+lecture du fichier (contrairement à l'écran d'import photo/OCR dont ils
+sont la copie) — un navigateur ne redéclenche "change" que si la valeur
+du champ change réellement, donc resélectionner exactement la même
+photo via le même bouton ne faisait plus rien, silencieusement.
+
 Utilisation (démarre et arrête lui-même un serveur local temporaire) :
 
     cd /chemin/vers/recipe_pwa
@@ -126,6 +133,25 @@ def main():
                 "l'aperçu affiche bien l'image choisie",
                 after_gallery["previewHasImg"] is True,
                 str(after_gallery),
+            )
+            print()
+
+            print("=== Choisir de nouveau EXACTEMENT le même fichier redéclenche bien la mise à jour ===\n")
+            # Un navigateur ne redéclenche "change" que si la valeur du champ
+            # a réellement changé — sans remettre cette valeur à vide après
+            # lecture, ressélectionner exactement le même fichier ne fait
+            # rien, silencieusement. Efface d'abord la photo pour pouvoir
+            # constater sans ambiguïté qu'elle revient bien après cette
+            # seconde sélection du même fichier.
+            page.evaluate("() => { state.formPhoto = null; render(); }")
+            page.wait_for_timeout(200)
+            page.locator("input[type=file]:not([capture])").set_input_files(tmp_photo_path)
+            page.wait_for_timeout(300)
+            after_second_same_file = page.evaluate("() => !!state.formPhoto")
+            check(
+                "resélectionner exactement le même fichier redéclenche bien le traitement (le champ a été réinitialisé après la 1ère lecture)",
+                after_second_same_file is True,
+                str(after_second_same_file),
             )
             print()
 

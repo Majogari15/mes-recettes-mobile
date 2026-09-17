@@ -7,8 +7,9 @@ toutes les données restent sur l'appareil.
 ## Fonctionnalités
 
 - Ajouter / modifier / supprimer une recette (avec photo prise depuis le
-  téléphone)
-- Recherche et filtres rapides (Favoris, Rapide, Végétarien, Envies)
+  téléphone ou choisie depuis la galerie)
+- Recherche, filtre par catégorie et filtres rapides (Favoris, Rapide,
+  Végétarien, Envies)
 - Fiche recette avec ajustement du nombre de personnes en temps réel
 - **Allergènes** : détection automatique à partir des ~1000 ingrédients
   courants (même base que la version bureau), modifiable manuellement,
@@ -16,8 +17,10 @@ toutes les données restent sur l'appareil.
 - **Valeurs nutritionnelles** : estimation automatique (calories,
   protéines, glucides, lipides) par personne, à partir des mêmes
   ingrédients reconnus
-- **Recherche/autocomplétion d'ingrédient** : en tapant les premières
-  lettres, en français ou dans la langue actuellement affichée, dans le
+- **Recherche/autocomplétion d'ingrédient** : un menu de suggestions
+  s'affiche dès qu'on clique dans le champ (les premiers noms connus,
+  par ordre alphabétique), et se filtre en tapant les premières lettres,
+  en français ou dans la langue actuellement affichée, dans le
   formulaire de recette comme dans l'ajout à la liste de courses ou au
   garde-manger — les noms d'ingrédients (recettes, courses, garde-manger,
   mode cuisine) s'affichent également traduits. Tout ingrédient vraiment

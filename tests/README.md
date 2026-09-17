@@ -125,6 +125,37 @@ Depuis, la structure sépare strictement :
   L'analyse OCR y est simulée (fonction remplacée) plutôt que réelle :
   ce test vérifie la mécanique, pas la qualité de reconnaissance,
   déjà couverte par le corpus OCR.
+- `test_security_hardening.py` — `escapeHtml` échappant aussi les
+  guillemets (pas seulement `&`/`<`/`>`) et `isValidPhotoField`
+  vérifiant tout le format base64 jusqu'au bout, pas seulement le
+  préfixe — voir TESTS_NON_REGRESSION.md point 82.
+- `test_data_integrity.py` — écran de secours si IndexedDB échoue au
+  démarrage, atomicité de `moveRecipeToTrash`/`restoreRecipeFromTrash`
+  et de `renameIngredientName`/`mergeIngredientNames` (transaction
+  unique à travers tous les entrepôts concernés, aucune mutation en
+  mémoire avant confirmation de la persistance), `saveRecipeForm`
+  signalant un échec d'enregistrement au lieu de le masquer, et
+  `storePut`/`storeDelete` gérant `tx.onabort` — voir
+  TESTS_NON_REGRESSION.md points 82 et 85.
+- `test_ingredient_row_layout.py` — largeur des champs quantité/unité
+  de la ligne d'ingrédient (ne devenaient plus lisibles sur un écran
+  étroit), puis réduction supplémentaire de la case quantité à ~5
+  caractères, arrondi à 3 décimales pour l'affichage, icône de
+  suppression réduite de 30 % — voir TESTS_NON_REGRESSION.md points 82
+  et 84.
+- `test_ingredient_autocomplete.py` — le menu de suggestions d'un champ
+  ingrédient s'affiche dès le clic dans un champ vide, pas seulement
+  après avoir tapé une première lettre — voir TESTS_NON_REGRESSION.md
+  point 83.
+- `test_recipe_category_filter.py` — filtre par catégorie sur l'écran
+  Recettes, à gauche du contrôle de tri — voir TESTS_NON_REGRESSION.md
+  point 84.
+- `test_recipe_form_photo_gallery.py` — le formulaire de recette et le
+  journal de cuisine ("J'ai cuisiné ça !") permettent d'importer une
+  photo déjà présente sur le téléphone (bouton Galerie), pas seulement
+  d'en prendre une nouvelle avec l'appareil photo, et le champ associé
+  se réinitialise bien après lecture pour permettre de resélectionner
+  la même photo — voir TESTS_NON_REGRESSION.md points 86 et 87.
 - `requirements.txt` — version verrouillée de Playwright.
 
 ## Utilisation

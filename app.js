@@ -1621,8 +1621,14 @@ function renderRecipeForm() {
     };
     reader.readAsDataURL(file);
   }
-  photoCameraInput.addEventListener("change", (e) => handleFormPhotoFile(e.target.files[0]));
-  photoGalleryInput.addEventListener("change", (e) => handleFormPhotoFile(e.target.files[0]));
+  // Réinitialise la valeur du champ après lecture : sans ça, choisir de
+  // nouveau EXACTEMENT le même fichier (même bouton, même photo) ne
+  // redéclenche jamais "change" (le navigateur ne le fait que si la
+  // valeur change réellement) — silencieusement sans effet. Même motif
+  // déjà utilisé par l'écran d'import photo (OCR), dont ce sélecteur est
+  // la copie.
+  photoCameraInput.addEventListener("change", (e) => { handleFormPhotoFile(e.target.files[0]); e.target.value = ""; });
+  photoGalleryInput.addEventListener("change", (e) => { handleFormPhotoFile(e.target.files[0]); e.target.value = ""; });
   wrap.appendChild(photoButtons);
 
   wrap.appendChild(el(`<div class="field">
@@ -4115,8 +4121,11 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
     };
     reader.readAsDataURL(file);
   }
-  sheet.querySelector("#cooklog-photo-camera-input").addEventListener("change", (e) => handleCookLogPhotoFile(e.target.files[0]));
-  sheet.querySelector("#cooklog-photo-gallery-input").addEventListener("change", (e) => handleCookLogPhotoFile(e.target.files[0]));
+  // Voir le même correctif sur le formulaire de recette : sans remettre
+  // la valeur à vide, choisir de nouveau exactement le même fichier ne
+  // redéclenche jamais "change".
+  sheet.querySelector("#cooklog-photo-camera-input").addEventListener("change", (e) => { handleCookLogPhotoFile(e.target.files[0]); e.target.value = ""; });
+  sheet.querySelector("#cooklog-photo-gallery-input").addEventListener("change", (e) => { handleCookLogPhotoFile(e.target.files[0]); e.target.value = ""; });
   if (isEdit) {
     sheet.querySelector("#cooklog-remove-photo").addEventListener("click", () => {
       photoData = null;
@@ -10829,7 +10838,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 231;
+const APP_VERSION = 232;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

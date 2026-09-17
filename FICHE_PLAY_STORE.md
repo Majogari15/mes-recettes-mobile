@@ -21,7 +21,7 @@ Recettes, courses et planning de repas — tout sur votre téléphone
 *(65 caractères)*
 
 ## Description complète
-*(4000 caractères maximum — le texte ci-dessous fait environ 1400
+*(4000 caractères maximum — le texte ci-dessous fait environ 1540
 caractères, vous pouvez l'enrichir librement)*
 
 ```
@@ -30,10 +30,12 @@ sur votre téléphone — vos données restent sur votre appareil, sans
 compte à créer.
 
 RECETTES
-• Ajoutez vos recettes avec photos, ingrédients, temps de préparation,
-  difficulté, allergènes et notes personnelles
+• Ajoutez vos recettes avec photos (prises sur le moment ou choisies
+  depuis votre galerie), ingrédients, temps de préparation, difficulté,
+  allergènes et notes personnelles
 • Importez une recette depuis un lien internet ou une photo (texte
   reconnu automatiquement)
+• Filtrez par catégorie (apéro, dessert, plat...) et vos favoris
 • Comparez deux recettes côte à côte
 • Marquez vos favoris et votre liste d'envies
 
