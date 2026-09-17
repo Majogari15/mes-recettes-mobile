@@ -5349,3 +5349,78 @@ une réserve explicitement signalée). Suite de régression complète
 repassée au vert (12 scripts + corpus OCR).
 
 **Version testée** : v223
+
+### 80 — Atomicité réservations, mutation différée, `tx.onabort`, tests réels, capture fraîche de "boîte" *(v224)*
+
+Un troisième avis externe, portant cette fois sur la v223 elle-même
+(les 5 défauts du point 79 confirmés corrigés), a identifié 5 défauts
+plus profonds dans le même mécanisme de fusion :
+
+1. **Réservations encore orphelines en cas d'échec isolé** : la
+   réattribution des réservations (`persistPantryClaims()`) était un
+   appel séparé de la transaction de fusion des courses — un échec du
+   second sans échec du premier laissait la fusion des courses
+   appliquée mais les réservations non réattribuées. Corrigé :
+   nouvelle fonction `persistShoppingMergeWithClaims`, une seule
+   transaction IndexedDB couvrant à la fois l'entrepôt "shopping" et
+   l'entrepôt "kv" (où vivent les réservations) — les deux réussissent
+   ou échouent ensemble, jamais l'un sans l'autre.
+2. **Mutation en mémoire avant confirmation de la persistance** :
+   `mergeQuantityGroups` modifiait directement les objets de la liste
+   fournie, et `dedupeQuantityListAfterUnitMigration` mettait à jour
+   `state.pantryClaimedThisSession` avant même d'avoir écrit en base —
+   un échec de persistance laissait alors l'état en mémoire
+   désynchronisé de ce qui est réellement stocké. Corrigé :
+   `mergeQuantityGroups` retourne désormais des copies (jamais les
+   objets d'origine modifiés en place) et `list` /
+   `state.pantryClaimedThisSession` ne sont mutés qu'après confirmation
+   que la transaction a bien réussi.
+3. **`storePutAndDeleteMany` ignorait `tx.onabort`** : si la
+   transaction était abandonnée après que toutes ses requêtes aient
+   déjà individuellement réussi (aucune erreur de requête à faire
+   remonter à `onerror`), ni `oncomplete` ni `onerror` ne se
+   déclenchaient — la promesse restait bloquée pour toujours. Reproduit
+   précisément (abandon déclenché depuis l'intérieur du gestionnaire
+   `onsuccess` d'une requête déjà réussie, pour n'activer QUE
+   `onabort`) puis corrigé en ajoutant ce gestionnaire manquant.
+4. **Tests ne couvrant pas les fonctions réelles** : le test
+   d'atomicité construisait sa propre transaction manuelle au lieu
+   d'appeler `storePutAndDeleteMany`, et le test d'aller-retour QR
+   reconstruisait lui-même le format compact au lieu d'appeler le code
+   d'export réel de l'application — les deux pouvaient donc rester au
+   vert même si le vrai code de production régressait. Corrigé : le
+   test d'atomicité appelle maintenant `storePutAndDeleteMany` (en
+   interceptant temporairement `IDBTransaction.prototype.objectStore`
+   pour provoquer un abandon après succès de la requête, sans avoir
+   besoin d'une référence à la transaction interne) ; le contenu QR est
+   désormais construit par la nouvelle fonction extraite
+   `buildCompactRecipeQrPayload` (utilisée aussi bien par
+   `openQrCodeModal` que par le test), jamais reconstruit séparément.
+5. **"boîte" plus conservé pour un texte source frais** : le correctif
+   du point 79 (item 6), en rendant `legacyContainerLabel` plus
+   prudent, avait par erreur aussi supprimé la capture de
+   `containerLabel="boîte"` lors de l'analyse d'un texte source qui dit
+   littéralement "boîte" (ex. "1 boîte de tomates") — un fait observé
+   directement dans le texte en cours d'analyse, jamais reconstruit à
+   partir d'une valeur déjà stockée et potentiellement déjà fusionnée.
+   Corrigé : `parseIngredientStringInner` capture de nouveau
+   directement "boîte"/"sachet"/"pot" comme `containerLabel` dans sa
+   branche d'analyse de texte frais, tandis que `legacyContainerLabel`
+   reste volontairement plus conservateur pour l'autre cas, réellement
+   ambigu, de reconstruction depuis une donnée déjà stockée.
+
+**Vérifié** : chacun des 5 défauts reproduit puis corrigé
+individuellement, y compris par interception de
+`IDBTransaction.prototype.objectStore` pour provoquer un abandon de
+transaction précisément après le succès d'une requête (le seul
+scénario où `onabort` se déclenche sans jamais déclencher `onerror`),
+et par vérification explicite qu'aucune mutation de `state.shopping` /
+`state.pantryClaimedThisSession` ne survient avant confirmation de la
+persistance. Les 2 tests visés par le point 4 ont été réécrits pour
+appeler le code de production réel plutôt que de le reconstruire, et 3
+nouveaux cas ont été ajoutés à `test_units_migration.py` (fusion +
+réservation avec échec simulé, atomicité réelle de
+`storePutAndDeleteMany`, aller-retour QR via le vrai encodeur). Suite
+de régression complète repassée au vert (12 scripts + corpus OCR).
+
+**Version testée** : v224

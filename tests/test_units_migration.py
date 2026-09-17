@@ -311,29 +311,155 @@ def main():
         )
         print()
 
-        print("=== Fusion : la mise à jour et la suppression sont une seule transaction atomique ===\n")
+        print("=== Fusion + réassignation de réservation : une seule transaction (shopping+kv), rien n'est modifié en mémoire avant confirmation ===\n")
+        result_cross_store_atomic = page.evaluate(
+            """
+            async () => {
+                await storePut('shopping', { id: 'pm-1', name: 'Test Fusion Claims', unit: 'boîte', quantity: 1, checked: false });
+                await storePut('shopping', { id: 'pm-2', name: 'Test Fusion Claims', unit: 'boîte', quantity: 1, checked: false });
+                state.shopping = await storeAll('shopping');
+                await commitPantryClaim('Test Fusion Claims', 0.5, 'shopping', 'pm-2', 'weight');
+                const shoppingSnapshotBefore = JSON.stringify(state.shopping);
+                const claimsSnapshotBefore = JSON.stringify(state.pantryClaimedThisSession);
+
+                // Force l'échec de persistShoppingMergeWithClaims (transaction
+                // couvrant "shopping" ET "kv" ensemble) après que son premier
+                // put ait déjà réussi -- même technique que pour
+                // storePutAndDeleteMany plus haut -- pour vérifier (a) que
+                // "list" (state.shopping) et state.pantryClaimedThisSession
+                // ne sont mutés qu'après confirmation de la persistance, et
+                // (b) que les deux entrepôts sont bien annulés ensemble.
+                const originalObjectStore = IDBTransaction.prototype.objectStore;
+                let aborted = false;
+                IDBTransaction.prototype.objectStore = function (name) {
+                    const store = originalObjectStore.call(this, name);
+                    if (name === 'shopping' && !aborted) {
+                        aborted = true;
+                        const originalPut = store.put.bind(store);
+                        store.put = function (value) {
+                            const req = originalPut(value);
+                            req.onsuccess = () => this.transaction.abort();
+                            return req;
+                        }.bind(store);
+                    }
+                    return store;
+                };
+                let threw = false;
+                try {
+                    await dedupeQuantityListAfterUnitMigration(state.shopping, 'shopping');
+                } catch (e) {
+                    threw = true;
+                } finally {
+                    IDBTransaction.prototype.objectStore = originalObjectStore;
+                }
+
+                const dbRows = (await storeAll('shopping')).filter((s) => s.name === 'Test Fusion Claims');
+                const kvClaims = (await kvGet('pantryClaimedThisSession')) || [];
+                const claimStillOnPm2 = kvClaims.some((c) => c.ingredientKey === 'Test Fusion Claims' && c.sourceId === 'pm-2');
+
+                return {
+                    threw,
+                    shoppingUnchangedInMemory: JSON.stringify(state.shopping) === shoppingSnapshotBefore,
+                    claimsUnchangedInMemory: JSON.stringify(state.pantryClaimedThisSession) === claimsSnapshotBefore,
+                    dbRowCount: dbRows.length,
+                    dbQuantitiesUnmerged: dbRows.every((r) => r.quantity === 1),
+                    claimStillOnPm2,
+                };
+            }
+            """
+        )
+        check(
+            "dedupeQuantityListAfterUnitMigration rejette bien quand la persistance échoue (jamais résolu silencieusement)",
+            result_cross_store_atomic["threw"] is True,
+            str(result_cross_store_atomic),
+        )
+        check(
+            "aucune mutation en mémoire de state.shopping / state.pantryClaimedThisSession avant confirmation de la persistance",
+            result_cross_store_atomic["shoppingUnchangedInMemory"] and result_cross_store_atomic["claimsUnchangedInMemory"],
+            str(result_cross_store_atomic),
+        )
+        check(
+            "shopping ET kv sont annulés ensemble (aucune fusion partielle, aucune réservation orpheline)",
+            result_cross_store_atomic["dbRowCount"] == 2
+            and result_cross_store_atomic["dbQuantitiesUnmerged"]
+            and result_cross_store_atomic["claimStillOnPm2"],
+            str(result_cross_store_atomic),
+        )
+        page.evaluate(
+            """
+            async () => {
+                for (const s of state.shopping.filter((s) => s.name === 'Test Fusion Claims')) await storeDelete('shopping', s.id);
+                state.pantryClaimedThisSession = state.pantryClaimedThisSession.filter((c) => c.ingredientKey !== 'Test Fusion Claims');
+                await persistPantryClaims();
+            }
+            """
+        )
+        print()
+
+        print("=== Fusion : storePutAndDeleteMany() est bien une seule transaction atomique ===\n")
         result_atomic = page.evaluate(
             """
             async () => {
                 await storePut('shopping', { id: 'at-1', name: 'Test Atomique', unit: 'boîte', quantity: 1, checked: false });
                 await storePut('shopping', { id: 'at-2', name: 'Test Atomique', unit: 'boîte', quantity: 1, checked: false });
-                const db = await openDB();
-                await new Promise((resolve) => {
-                    const tx = db.transaction('shopping', 'readwrite');
-                    const store = tx.objectStore('shopping');
-                    store.put({ id: 'at-1', name: 'Test Atomique', unit: 'boîte', quantity: 2, checked: false });
-                    store.delete('at-2');
-                    tx.abort();
-                    tx.onabort = () => resolve();
-                    tx.oncomplete = () => resolve();
-                });
-                return (await storeAll('shopping')).filter((s) => s.name === 'Test Atomique');
+                // Appelle la VRAIE fonction de production utilisée par
+                // dedupeQuantityListAfterUnitMigration, plutôt qu'une
+                // transaction reconstruite à la main : on veut vérifier le
+                // comportement réel du code exécuté par l'application, pas
+                // un motif similaire écrit séparément dans le test.
+                //
+                // On force l'abandon depuis l'INTÉRIEUR d'une des requêtes
+                // (via IDBObjectStore.getAll, injecté juste avant) plutôt que
+                // depuis l'extérieur : on ne peut pas obtenir de référence à
+                // "tx" hors de la fonction, donc on intercepte temporairement
+                // IDBTransaction.prototype.objectStore pour abandonner la
+                // transaction juste après que la requête put ait réussi
+                // (aucune requête en erreur : seul onabort doit alors régir
+                // le résultat), exactement le scénario du bug d'origine.
+                const originalObjectStore = IDBTransaction.prototype.objectStore;
+                let aborted = false;
+                IDBTransaction.prototype.objectStore = function (name) {
+                    const store = originalObjectStore.call(this, name);
+                    if (!aborted) {
+                        aborted = true;
+                        const originalPut = store.put.bind(store);
+                        store.put = function (value) {
+                            const req = originalPut(value);
+                            req.onsuccess = () => this.transaction.abort();
+                            return req;
+                        }.bind(store);
+                    }
+                    return store;
+                };
+                let settled = false;
+                let outcome = null;
+                try {
+                    await storePutAndDeleteMany(
+                        'shopping',
+                        [{ id: 'at-1', name: 'Test Atomique', unit: 'boîte', quantity: 2, checked: false }],
+                        ['at-2']
+                    );
+                    settled = true;
+                    outcome = 'resolved';
+                } catch (e) {
+                    settled = true;
+                    outcome = 'rejected';
+                } finally {
+                    IDBTransaction.prototype.objectStore = originalObjectStore;
+                }
+                const rows = (await storeAll('shopping')).filter((s) => s.name === 'Test Atomique');
+                return { settled, outcome, rows };
             }
             """
         )
         check(
-            "une transaction avortée annule le put ET le delete ensemble (aucun comptage double possible)",
-            len(result_atomic) == 2 and all(i["quantity"] == 1 for i in result_atomic),
+            "storePutAndDeleteMany() se résout/rejette (jamais bloqué pour toujours) même quand la transaction est abandonnée après un put réussi",
+            result_atomic["settled"] is True and result_atomic["outcome"] == "rejected",
+            str(result_atomic),
+        )
+        check(
+            "la transaction avortée annule le put ET le delete ensemble (aucun comptage double possible)",
+            len(result_atomic["rows"]) == 2 and all(i["quantity"] == 1 for i in result_atomic["rows"]),
             str(result_atomic),
         )
         page.evaluate("async () => { for (const s of state.shopping.filter((s) => s.name === 'Test Atomique')) await storeDelete('shopping', s.id); }")
@@ -359,10 +485,14 @@ def main():
         result_qr_roundtrip = page.evaluate(
             """
             () => {
+                // Utilise les VRAIES fonctions d'encodage/décodage de
+                // l'application (celles réellement appelées par
+                // openQrCodeModal et par la lecture d'un QR scanné), plutôt
+                // qu'une reconstruction séparée du format qui pourrait
+                // diverger silencieusement du code de production.
                 const recipe = { id: 'qr1', name: 'Recette QR', ingredients: [{ name: 'Levure', unit: 'boîte', quantity: 1, containerLabel: 'sachet' }], persons: 4 };
-                const compact = { v: 1, n: recipe.name, p: 4 };
-                compact.i = recipe.ingredients.map((ing) => (ing.containerLabel ? [ing.name, ing.quantity, ing.unit, ing.containerLabel] : [ing.name, ing.quantity, ing.unit]));
-                const reparsed = parseRecipeFromQrText(JSON.stringify(compact));
+                const payload = buildCompactRecipeQrPayload(recipe, 4);
+                const reparsed = parseRecipeFromQrText(JSON.stringify(payload));
                 return reparsed.ingredients[0];
             }
             """

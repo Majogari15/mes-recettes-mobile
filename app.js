@@ -113,6 +113,35 @@ function storePutAndDeleteMany(storeName, itemsToPut, keysToDelete) {
         keysToDelete.forEach((key) => store.delete(key));
         tx.oncomplete = () => resolve();
         tx.onerror = () => reject(tx.error);
+        // Si la transaction est abandonnée (tx.abort(), quota dépassé...)
+        // APRÈS que ses requêtes ont déjà toutes réussi, aucune d'elles
+        // n'émet plus jamais d'erreur à faire remonter à tx.onerror —
+        // seul "onabort" se déclenche alors. Sans ce gestionnaire, la
+        // promesse restait bloquée pour toujours dans ce cas précis.
+        tx.onabort = () => reject(tx.error || new Error("transaction_aborted"));
+      })
+  );
+}
+// Même besoin d'atomicité que storePutAndDeleteMany, mais entre DEUX
+// entrepôts à la fois : la fusion de doublons de courses ("shopping")
+// et la réattribution des réservations de garde-manger qui en découle
+// (pantryClaimedThisSession, rangé dans l'entrepôt générique "kv").
+// Écrire ces deux entrepôts dans deux transactions séparées aurait
+// laissé la porte ouverte à une réservation orpheline si seule la
+// seconde écriture échouait, malgré la fusion des courses déjà
+// réussie — d'où cette transaction unique couvrant les deux.
+function persistShoppingMergeWithClaims(survivors, removedIds, updatedClaims) {
+  return openDB().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(["shopping", "kv"], "readwrite");
+        const shoppingStore = tx.objectStore("shopping");
+        survivors.forEach((item) => shoppingStore.put(item));
+        removedIds.forEach((id) => shoppingStore.delete(id));
+        tx.objectStore("kv").put({ key: "pantryClaimedThisSession", value: updatedClaims });
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error || new Error("transaction_aborted"));
       })
   );
 }
@@ -2998,6 +3027,26 @@ function tryParseMultiPartQrFragment(text) {
   return { batchId, partIndex, totalParts, checksum, chunk };
 }
 
+// Construit le contenu compact et indépendant de la langue encodé dans le
+// QR code d'une recette (voir openQrCodeModal) : extrait dans une fonction
+// à part pour que ce soit exactement le même code qui produit le QR réel
+// et celui que les tests permanents vérifient (jamais une reconstruction
+// séparée qui pourrait diverger silencieusement de l'app).
+function buildCompactRecipeQrPayload(recipe, persons) {
+  const compact = { v: 1, n: recipe.name, p: persons };
+  if (recipe.difficulty) compact.d = recipe.difficulty;
+  if (recipe.prepTime) compact.pt = recipe.prepTime;
+  if (recipe.cookTime) compact.ct = recipe.cookTime;
+  if (recipe.allergens && recipe.allergens.length) compact.a = recipe.allergens;
+  if (recipe.description) compact.de = recipe.description;
+  if (recipe.notes) compact.no = recipe.notes;
+  compact.i = (recipe.ingredients || []).map((ing) => {
+    const scaled = ing.quantity != null ? Math.round(ing.quantity * persons * 100) / 100 : null;
+    return ing.containerLabel ? [ing.name, scaled, ing.unit, ing.containerLabel] : [ing.name, scaled, ing.unit];
+  });
+  return compact;
+}
+
 async function openQrCodeModal(recipe, persons) {
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
@@ -3019,30 +3068,16 @@ async function openQrCodeModal(recipe, persons) {
   document.body.appendChild(overlay);
   initModalA11y(overlay, sheet);
 
-  // Format compact et indépendant de la langue : utilise les noms
-  // internes canoniques (français) directement, sans jamais passer par
-  // la traduction ni par une analyse de texte — évite à la fois la
+  // Format compact et indépendant de la langue (voir
+  // buildCompactRecipeQrPayload) : utilise les noms internes
+  // canoniques (français) directement, sans jamais passer par la
+  // traduction ni par une analyse de texte — évite à la fois la
   // densité inutile des libellés écrits en toutes lettres et les
   // problèmes de reconnaissance (unités composées, allergènes en
   // anglais...) qui ne peuvent plus se produire puisqu'aucune
   // traduction n'intervient à aucun moment entre la génération et la
   // lecture.
-  const compact = { v: 1, n: recipe.name, p: persons };
-  if (recipe.difficulty) compact.d = recipe.difficulty;
-  if (recipe.prepTime) compact.pt = recipe.prepTime;
-  if (recipe.cookTime) compact.ct = recipe.cookTime;
-  if (recipe.allergens && recipe.allergens.length) compact.a = recipe.allergens;
-  if (recipe.description) compact.de = recipe.description;
-  if (recipe.notes) compact.no = recipe.notes;
-  compact.i = (recipe.ingredients || []).map((ing) => {
-    const scaled = ing.quantity != null ? Math.round(ing.quantity * persons * 100) / 100 : null;
-    // 4e élément optionnel (containerLabel) : sans lui, régénérer un QR
-    // pour une recette réimportée gardant le souvenir "sachet"/"pot"
-    // (voir legacyContainerLabel) le perdrait à nouveau dès ce nouveau
-    // partage, alors que rien n'empêche de le transmettre.
-    return ing.containerLabel ? [ing.name, scaled, ing.unit, ing.containerLabel] : [ing.name, scaled, ing.unit];
-  });
-  const content = JSON.stringify(compact);
+  const content = JSON.stringify(buildCompactRecipeQrPayload(recipe, persons));
   // Au-delà de cette taille, un seul QR devient trop dense pour être
   // scanné de façon fiable — la recette est alors répartie sur
   // plusieurs QR à scanner successivement, plutôt que de raccourcir ou
@@ -5265,6 +5300,14 @@ async function mergeIngredientNames(keep, remove) {
 // aussi, pour chaque article supprimé par la fusion, l'id de
 // l'article conservé qui le remplace (nécessaire pour réattribuer
 // les réservations de garde-manger qui le référençaient encore).
+// Ne mute JAMAIS "items" ni ses éléments : produit une PROPOSITION de
+// fusion (des copies), jamais appliquée nulle part avant que
+// l'appelant ait confirmé la persistance réussie (voir
+// dedupeQuantityListAfterUnitMigration) — sinon, un échec de
+// l'écriture laisserait l'état en mémoire déjà fusionné alors que les
+// données réellement stockées ne le seraient pas, et un prochain
+// passage de la migration ne détecterait alors plus aucun doublon à
+// corriger (l'état en mémoire semblant déjà propre).
 function mergeQuantityGroups(items, { trackChecked } = {}) {
   const groups = new Map();
   items.forEach((item) => {
@@ -5276,15 +5319,15 @@ function mergeQuantityGroups(items, { trackChecked } = {}) {
   const removed = [];
   const reassignments = [];
   groups.forEach((group) => {
-    const [keep, ...rest] = group;
-    if (rest.length) {
-      const allQuantities = [keep, ...rest].map((it) => it.quantity);
-      keep.quantity = allQuantities.some((q) => q == null) ? null : allQuantities.reduce((sum, q) => sum + q, 0);
-      rest.forEach((it) => {
-        removed.push(it);
-        if (it.id != null && keep.id != null) reassignments.push({ fromId: it.id, toId: keep.id });
-      });
-    }
+    const [first, ...rest] = group;
+    if (!rest.length) { survivors.push(first); return; }
+    const keep = { ...first };
+    const allQuantities = [first, ...rest].map((it) => it.quantity);
+    keep.quantity = allQuantities.some((q) => q == null) ? null : allQuantities.reduce((sum, q) => sum + q, 0);
+    rest.forEach((it) => {
+      removed.push(it);
+      if (it.id != null && keep.id != null) reassignments.push({ fromId: it.id, toId: keep.id });
+    });
     survivors.push(keep);
   });
   return { survivors, removed, reassignments };
@@ -5299,39 +5342,43 @@ function mergeQuantityGroups(items, { trackChecked } = {}) {
 // changement d'unité détecté dans CET appel précis : si les unités
 // avaient déjà été converties ailleurs (sanitizeBackupItem, avant
 // l'écriture d'une sauvegarde restaurée, par exemple), les doublons
-// qui en résultent doivent tout de même être repérés et fusionnés ici
-// — sans quoi ils restaient définitivement séparés, la conversion
-// déjà faite ne se reproduisant jamais. Modifie "list" en place et
-// répercute les changements dans l'entrepôt IndexedDB correspondant,
-// en une seule transaction (mise à jour des lignes conservées ET
-// suppression des lignes fusionnées ensemble, jamais l'une sans
-// l'autre — voir storePutAndDeleteMany).
+// qui en résultent doivent tout de même être repérés et fusionnés ici.
+// "list" et les réservations de garde-manger (pantryClaimedThisSession)
+// ne sont modifiés qu'une fois la persistance confirmée — jamais avant
+// (voir mergeQuantityGroups) — et la fusion des courses ET la
+// réattribution des réservations qui en découle sont écrites dans une
+// SEULE transaction IndexedDB (courses + kv) quand les deux sont
+// concernées : sans ça, la seconde écriture pourrait échouer seule et
+// laisser une réservation orpheline malgré une fusion des courses
+// déjà réussie.
 async function dedupeQuantityListAfterUnitMigration(list, storeName) {
   const trackChecked = list.some((it) => "checked" in it);
   const { survivors, removed, reassignments } = mergeQuantityGroups(list, { trackChecked });
   if (!removed.length) return;
+
+  let updatedClaims = null;
+  if (storeName === "shopping" && reassignments.length) {
+    const toIdByFromId = new Map(reassignments.map((r) => [r.fromId, r.toId]));
+    let claimsTouched = false;
+    const candidate = state.pantryClaimedThisSession.map((claim) => {
+      if (claim.sourceType === "shopping" && toIdByFromId.has(claim.sourceId)) {
+        claimsTouched = true;
+        return { ...claim, sourceId: toIdByFromId.get(claim.sourceId) };
+      }
+      return claim;
+    });
+    if (claimsTouched) updatedClaims = candidate;
+  }
+
+  if (updatedClaims) {
+    await persistShoppingMergeWithClaims(survivors, removed.map((item) => item.id), updatedClaims);
+  } else {
+    await storePutAndDeleteMany(storeName, survivors, removed.map((item) => item.id));
+  }
+
   list.length = 0;
   list.push(...survivors);
-  await storePutAndDeleteMany(storeName, survivors, removed.map((item) => item.id));
-  // Les réservations de garde-manger issues des courses (voir
-  // commitPantryClaim, sourceType "shopping") référencent l'id précis
-  // de la ligne de courses qui les a créées — sans ce transfert vers
-  // l'id de la ligne conservée, une réservation liée à une ligne que
-  // la fusion vient de supprimer resterait "orpheline", continuant à
-  // réduire à tort le stock de garde-manger considéré disponible pour
-  // un article qui n'existe plus.
-  if (storeName === "shopping" && reassignments.length) {
-    let claimsTouched = false;
-    reassignments.forEach(({ fromId, toId }) => {
-      state.pantryClaimedThisSession.forEach((claim) => {
-        if (claim.sourceType === "shopping" && claim.sourceId === fromId) {
-          claim.sourceId = toId;
-          claimsTouched = true;
-        }
-      });
-    });
-    if (claimsTouched) await persistPantryClaims();
-  }
+  if (updatedClaims) state.pantryClaimedThisSession = updatedClaims;
 }
 
 // "sachet" et "pot" ont été fusionnés dans l'unité "boîte" (affichée
@@ -7782,7 +7829,17 @@ function parseIngredientStringInner(str, fromReversedOrder) {
   // (juste un mot différent selon la recette/langue source) : toutes
   // leurs variantes pointent donc vers la même unité fusionnée "boîte",
   // affichée comme "boîte/pot/sachet" (voir UNIT_KEYS/translateUnit).
-  else if (["boîte", "boite", "conserve", "lata", "latas", "dose", "dosen", "sachet", "pot", "paquet", "paquete", "paquetes", "packung", "packungen"].includes(uw)) { unit = "boîte"; containerLabel = legacyContainerLabel(uw); }
+  else if (["boîte", "boite", "conserve", "lata", "latas", "dose", "dosen", "sachet", "pot", "paquet", "paquete", "paquetes", "packung", "packungen"].includes(uw)) {
+    unit = "boîte";
+    // "boîte" est ici un fait observé DIRECTEMENT dans le texte source
+    // en cours d'analyse, jamais reconstitué à partir d'une valeur
+    // déjà stockée qui pourrait provenir d'une fusion antérieure sans
+    // mémoire de l'original — l'enregistrer est donc toujours sûr,
+    // contrairement à legacyContainerLabel (volontairement plus
+    // conservateur, utilisé lui pour ce second cas ambigu).
+    if (uw === "sachet" || uw === "pot") containerLabel = uw;
+    else if (uw === "boîte" || uw === "boite") containerLabel = "boîte";
+  }
   else if (uw === "barquette") unit = "barquette";
   else if (uw === "filet") unit = "filet";
   else if (["tranche", "tranches"].includes(uw)) unit = "tranche";
@@ -10523,7 +10580,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 223;
+const APP_VERSION = 224;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
