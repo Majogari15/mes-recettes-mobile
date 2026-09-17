@@ -109,8 +109,6 @@ function storePutAndDeleteMany(storeName, itemsToPut, keysToDelete) {
       new Promise((resolve, reject) => {
         const tx = db.transaction(storeName, "readwrite");
         const store = tx.objectStore(storeName);
-        itemsToPut.forEach((item) => store.put(item));
-        keysToDelete.forEach((key) => store.delete(key));
         tx.oncomplete = () => resolve();
         tx.onerror = () => reject(tx.error);
         // Si la transaction est abandonnée (tx.abort(), quota dépassé...)
@@ -119,6 +117,18 @@ function storePutAndDeleteMany(storeName, itemsToPut, keysToDelete) {
         // seul "onabort" se déclenche alors. Sans ce gestionnaire, la
         // promesse restait bloquée pour toujours dans ce cas précis.
         tx.onabort = () => reject(tx.error || new Error("transaction_aborted"));
+        try {
+          itemsToPut.forEach((item) => store.put(item));
+          keysToDelete.forEach((key) => store.delete(key));
+        } catch (e) {
+          // Une erreur SYNCHRONE en préparant une requête (ex. DataError
+          // pour un enregistrement sans identifiant) n'annule pas d'elle-
+          // même les requêtes déjà mises en file avant elle : sans cet
+          // abandon explicite, celles-ci continueraient à s'exécuter et à
+          // s'appliquer réellement, rompant le tout-ou-rien attendu.
+          tx.abort();
+          reject(e);
+        }
       })
   );
 }
@@ -135,13 +145,20 @@ function persistShoppingMergeWithClaims(survivors, removedIds, updatedClaims) {
     (db) =>
       new Promise((resolve, reject) => {
         const tx = db.transaction(["shopping", "kv"], "readwrite");
-        const shoppingStore = tx.objectStore("shopping");
-        survivors.forEach((item) => shoppingStore.put(item));
-        removedIds.forEach((id) => shoppingStore.delete(id));
-        tx.objectStore("kv").put({ key: "pantryClaimedThisSession", value: updatedClaims });
         tx.oncomplete = () => resolve();
         tx.onerror = () => reject(tx.error);
         tx.onabort = () => reject(tx.error || new Error("transaction_aborted"));
+        try {
+          const shoppingStore = tx.objectStore("shopping");
+          survivors.forEach((item) => shoppingStore.put(item));
+          removedIds.forEach((id) => shoppingStore.delete(id));
+          tx.objectStore("kv").put({ key: "pantryClaimedThisSession", value: updatedClaims });
+        } catch (e) {
+          // Voir storePutAndDeleteMany : une erreur synchrone en préparant
+          // une requête n'annule pas d'elle-même celles déjà en file.
+          tx.abort();
+          reject(e);
+        }
       })
   );
 }
@@ -10580,7 +10597,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 224;
+const APP_VERSION = 225;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");

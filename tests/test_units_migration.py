@@ -465,6 +465,89 @@ def main():
         page.evaluate("async () => { for (const s of state.shopping.filter((s) => s.name === 'Test Atomique')) await storeDelete('shopping', s.id); }")
         print()
 
+        print("=== storePutAndDeleteMany() : une erreur SYNCHRONE (enregistrement malformé) n'applique aucune écriture partielle ===\n")
+        result_sync_error = page.evaluate(
+            """
+            async () => {
+                await storeDelete('shopping', 'se-1');
+                let outcome = null;
+                try {
+                    // Le 2e élément n'a pas d'id -> put() lève une DataError
+                    // SYNCHRONE (le store 'shopping' n'a ni keyPath ni
+                    // autoIncrement) avant même d'atteindre le delete.
+                    await storePutAndDeleteMany('shopping', [
+                        { id: 'se-1', name: 'Ecriture Valide', unit: 'boîte', quantity: 1, checked: false },
+                        { name: 'Sans Id', unit: 'boîte', quantity: 1, checked: false },
+                    ], []);
+                    outcome = 'resolved';
+                } catch (e) {
+                    outcome = 'rejected';
+                }
+                const rows = await storeAll('shopping');
+                return { outcome, se1Present: !!rows.find((r) => r.id === 'se-1') };
+            }
+            """
+        )
+        check(
+            "storePutAndDeleteMany() rejette bien sur une erreur synchrone de préparation",
+            result_sync_error["outcome"] == "rejected",
+            str(result_sync_error),
+        )
+        check(
+            "aucune écriture partielle : la requête déjà mise en file avant l'erreur n'est PAS appliquée",
+            result_sync_error["se1Present"] is False,
+            str(result_sync_error),
+        )
+        page.evaluate("async () => { await storeDelete('shopping', 'se-1'); }")
+        print()
+
+        print("=== persistShoppingMergeWithClaims() : même protection, entre shopping ET kv ===\n")
+        result_sync_error_cross = page.evaluate(
+            """
+            async () => {
+                await storeDelete('shopping', 'cse-1');
+                const kvBefore = JSON.stringify((await kvGet('pantryClaimedThisSession')) || []);
+                let outcome = null;
+                try {
+                    // Même défaut (2e survivor sans id) déclenché AVANT
+                    // d'atteindre le put sur l'entrepôt 'kv' : les deux
+                    // entrepôts doivent rester intacts, pas seulement le
+                    // premier touché.
+                    await persistShoppingMergeWithClaims(
+                        [
+                            { id: 'cse-1', name: 'Ecriture Valide Croisee', unit: 'boîte', quantity: 1, checked: false },
+                            { name: 'Sans Id', unit: 'boîte', quantity: 1, checked: false },
+                        ],
+                        [],
+                        [{ id: 'fake-claim', ingredientKey: 'X', amount: 1, sourceType: 'shopping', sourceId: 'cse-1', kind: 'weight' }]
+                    );
+                    outcome = 'resolved';
+                } catch (e) {
+                    outcome = 'rejected';
+                }
+                const rows = await storeAll('shopping');
+                const kvAfter = JSON.stringify((await kvGet('pantryClaimedThisSession')) || []);
+                return {
+                    outcome,
+                    cse1Present: !!rows.find((r) => r.id === 'cse-1'),
+                    kvUnchanged: kvAfter === kvBefore,
+                };
+            }
+            """
+        )
+        check(
+            "persistShoppingMergeWithClaims() rejette bien sur une erreur synchrone de préparation",
+            result_sync_error_cross["outcome"] == "rejected",
+            str(result_sync_error_cross),
+        )
+        check(
+            "aucune écriture partielle sur shopping NI sur kv (les deux entrepôts restent intacts)",
+            result_sync_error_cross["cse1Present"] is False and result_sync_error_cross["kvUnchanged"] is True,
+            str(result_sync_error_cross),
+        )
+        page.evaluate("async () => { await storeDelete('shopping', 'cse-1'); }")
+        print()
+
         print("=== containerLabel : jamais fabriqué depuis une unité déjà \"boîte\" ===\n")
         result_no_fabrication = page.evaluate(
             """

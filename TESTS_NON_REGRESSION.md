@@ -5424,3 +5424,41 @@ réservation avec échec simulé, atomicité réelle de
 de régression complète repassée au vert (12 scripts + corpus OCR).
 
 **Version testée** : v224
+
+### 81 — Écriture partielle possible sur une erreur SYNCHRONE de préparation de requête *(v225)*
+
+Un quatrième avis externe, portant sur `storePutAndDeleteMany` et
+`persistShoppingMergeWithClaims` livrées en v224, a signalé qu'aucune
+des deux ne protège ses appels `put()`/`delete()` par un `try/catch`
+annulant explicitement la transaction. Une erreur SYNCHRONE pendant la
+mise en file d'une requête (ex. `put()` sur un enregistrement sans
+identifiant, qui lève immédiatement une `DataError` avant même
+qu'IndexedDB ne traite quoi que ce soit) survient avant que
+`tx.oncomplete` / `tx.onerror` / `tx.onabort` ne puissent l'annuler :
+les requêtes déjà mises en file avant l'erreur n'étaient pas
+abandonnées automatiquement et continuaient à s'appliquer normalement,
+alors même que la promesse de la fonction rejetait — un « tout ou
+rien » rompu sur ce chemin d'erreur précis, distinct du cas déjà
+couvert par `tx.onabort` (point 80, item 3).
+
+Reproduit en direct : `storePutAndDeleteMany('shopping', [{id:
+'se-1', ...valide}, {...sans id}], [])` rejetait bien avec la
+`DataError` attendue, mais l'enregistrement valide `se-1`, mis en file
+juste avant l'élément malformé, se retrouvait quand même écrit en
+base. Même constat pour `persistShoppingMergeWithClaims` entre les
+entrepôts "shopping" et "kv".
+
+Corrigé dans les deux fonctions : les gestionnaires de transaction
+(`oncomplete`/`onerror`/`onabort`) sont désormais installés AVANT les
+appels `put()`/`delete()`, qui sont eux-mêmes entourés d'un
+`try/catch` appelant explicitement `tx.abort()` puis rejetant avec
+l'erreur d'origine dès qu'une exception synchrone survient — empêchant
+les requêtes déjà en file de s'appliquer malgré tout.
+
+**Vérifié** : les deux fonctions rejettent toujours avec la même
+erreur qu'avant le correctif, mais plus aucune écriture partielle
+n'est appliquée ni sur l'entrepôt "shopping" ni sur "kv". 4 nouveaux
+cas ajoutés à `test_units_migration.py`. Suite de régression complète
+repassée au vert (12 scripts + corpus OCR).
+
+**Version testée** : v225
