@@ -5462,3 +5462,116 @@ cas ajoutés à `test_units_migration.py`. Suite de régression complète
 repassée au vert (12 scripts + corpus OCR).
 
 **Version testée** : v225
+
+### 82 — Audit complet (code, fonctionnalités, interface, i18n) : 9 défauts corrigés *(v226)*
+
+Un audit complet demandé explicitement (code, fonctionnalités,
+interface, erreurs, améliorations), croisant lecture directe du code,
+exécution réelle (Playwright) et deux revues indépendantes vérifiées
+avant d'être retenues. 9 défauts confirmés et corrigés :
+
+1. **Injection HTML via le champ photo (XSS), atténuée par la CSP** :
+   `isValidPhotoField` ne vérifiait que le PRÉFIXE d'une data URL
+   ("data:image/...;base64,"), laissant passer n'importe quelle suite
+   de caractères ensuite. Combiné à `escapeHtml` (voir point 2), une
+   photo de recette (sauvegarde restaurée, import « format partagé »,
+   recette reçue) pouvait injecter un attribut HTML arbitraire
+   (`onload="..."`) dans `<img src="${recipe.photo}">`, affiché sans
+   échappement à 9 endroits. Vérifié en direct : l'attribut injecté
+   apparaît bien comme un attribut DOM distinct contrôlé par
+   l'attaquant — mais la CSP déclarée dans `index.html`
+   (`script-src 'self' 'wasm-unsafe-eval'`, sans `unsafe-inline`)
+   bloque déjà son exécution (confirmé par le message d'erreur CSP dans
+   la console). Corrigé quand même en profondeur (défense en couches,
+   la CSP n'étant qu'une des deux protections) : le regex de
+   `isValidPhotoField` est maintenant ancré jusqu'à la fin et limité à
+   l'alphabet base64 ; les 9 interpolations de `recipe.photo`/`r.photo`/
+   `entry.photo`/`state.formPhoto`/`photoData`/`photoDataUrl` passent
+   maintenant par `escapeHtml`.
+2. **`escapeHtml` n'échappait jamais les guillemets** : l'ancienne
+   implémentation (`div.textContent` → `div.innerHTML`) échappe
+   correctement `&`, `<` et `>`, mais PAS les guillemets — alors que
+   cette fonction est très souvent appelée À L'INTÉRIEUR d'attributs
+   HTML entre guillemets dans tout le fichier (217 appels). Un texte
+   contenant un guillemet double (nom de recette, d'ingrédient,
+   note...) pouvait donc terminer prématurément l'attribut et injecter
+   du HTML arbitraire juste après — vérifié en direct avec un nom
+   contenant `" onmouseover="..."`. Corrigé en réécrivant `escapeHtml`
+   avec un échappement explicite de `&`, `<`, `>`, `"` et `'`, sûr dans
+   les deux contextes (texte ou attribut) et sans effet visible à
+   l'affichage (le navigateur les dé-échappe de façon transparente).
+3. **`init()` sans aucun `try/catch`** : si `openDB()`/toute opération
+   IndexedDB échoue au démarrage (navigation privée stricte, quota
+   dépassé, juste après une mise à jour de navigateur), l'écran restait
+   totalement blanc, sans texte ni bouton — vérifié en direct en
+   simulant cet échec. Corrigé : `init()` délègue maintenant tout son
+   travail à `initInner()` sous un `try/catch`, avec un écran de
+   secours minimal (`renderStartupError`, volontairement indépendant du
+   reste de l'app) affichant un message clair, un bouton "Réessayer" et
+   les détails techniques dépliables.
+4. **`moveRecipeToTrash`/`restoreRecipeFromTrash` non atomiques** :
+   deux écritures séparées (deux transactions distinctes) sans lien —
+   un échec entre les deux pouvait dupliquer une recette dans
+   "recipes" ET "trash", ou la faire disparaître des deux. Corrigé avec
+   une nouvelle fonction générique `moveRecordBetweenStores` (transaction
+   unique couvrant les deux entrepôts), sur le même principe que
+   `persistShoppingMergeWithClaims` (point 80).
+5. **`renameIngredientName`/`mergeIngredientNames` non atomiques et
+   mutation prématurée** : propagation d'un renommage à travers jusqu'à
+   6 entrepôts (ingredients, recipes, shopping, pantry,
+   savedShoppingLists, ingredientOverrides) par écritures séquentielles
+   sans lien, avec mutation de `state`/`INGREDIENT_OVERRIDES` avant même
+   la persistance. Corrigé avec une nouvelle fonction générique
+   `storeWriteManyAcrossStores` (transaction unique quel que soit le
+   nombre d'entrepôts) ; les deux fonctions calculent maintenant tous
+   les changements SANS toucher à `state`, les écrivent en une seule
+   transaction, et ne mutent l'état en mémoire qu'après confirmation.
+6. **`saveRecipeForm` sans `try/catch`** : un échec d'écriture (quota
+   IndexedDB dépassé, plausible avec une photo en base64) laissait
+   croire à tort que la recette avait été enregistrée, l'écran
+   naviguant quand même vers la fiche recette. Corrigé : un échec
+   affiche maintenant un message d'erreur clair et n'avance ni l'état
+   ni l'écran.
+7. **Champs quantité/unité illisibles dans le formulaire de recette** :
+   sur la ligne d'ingrédient (`.ing-form-row`), le champ nom prenait
+   242px sur 358px disponibles (67 %) alors que quantité et unité se
+   retrouvaient à 25px et 23px — juste assez pour la flèche du menu
+   déroulant, la valeur et l'unité choisies devenant invisibles (bien
+   qu'effectivement enregistrées). Cause : `.autocomplete-wrap` (qui
+   enveloppe le champ nom) n'avait pas `min-width: 0` contrairement aux
+   autres champs de la ligne (corrigés au point 7 initial, v222) — son
+   minimum automatique, piloté par la taille intrinsèque du `<input>`
+   qu'il contient, écrasait les voisins. Corrigé (`min-width: 0` +
+   `width: 100%` sur l'input à l'intérieur) ; vérifié à 390px ET 320px.
+8. **"Mo" figé dans l'écran Diagnostic** : `${usedMb} Mo` toujours en
+   français quelle que soit la langue affichée. Corrigé avec une
+   nouvelle clé `diagnostic_storage_used_value` traduite ("Mo"/"MB").
+9. **Tri des recettes par nom incohérent selon l'écran** : 5 endroits
+   triaient par nom avec `.localeCompare(b.name, "fr")` figé ou sans
+   aucun paramètre de locale, contrairement au tri des ingrédients
+   (déjà corrigé pour suivre `CURRENT_LANG`). Corrigé : les 5 sites
+   suivent maintenant `CURRENT_LANG`.
+
+Deux pistes signalées mais NON retenues, avec justification : la
+traduction espagnole `nav_planning: "Planning"` a été examinée en
+détail (16 occurrences de "planning" dans le bloc es, contre une seule
+de "planificación" dans un contexte différent) — c'est un choix
+délibéré et cohérent dans tout le bloc, pas un oubli, donc laissé tel
+quel. Les messages d'erreur d'import bruts en français
+(`diagnostic_last_import_error` et apparentés) sont un journal
+technique de diagnostic destiné au signalement de bug (mélangé à des
+messages d'erreur JS eux-mêmes non traduits, ex. `TypeError:` en
+anglais), pas du texte d'interface traduit par conception — laissés
+tels quels pour ne pas casser cette cohérence interne.
+
+**Vérifié** : chacun des 9 défauts reproduit puis corrigé
+individuellement, y compris par interception de
+`IDBTransaction.prototype.objectStore` pour provoquer un abandon de
+transaction précis (mêmes techniques que les points 80-81), par
+simulation d'un `openDB()` en échec pour le point 3, et par mesure
+directe des largeurs de champs pour le point 7. 3 nouveaux fichiers de
+test permanents ajoutés (`test_security_hardening.py`,
+`test_data_integrity.py`, `test_ingredient_row_layout.py`). Suite de
+régression complète repassée au vert (16 scripts + corpus OCR).
+
+**Version testée** : v226

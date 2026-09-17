@@ -671,7 +671,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 /* ---------- Autocomplétion d'ingrédient ---------- */
-.autocomplete-wrap { position: relative; flex: 2; }
+.autocomplete-wrap { position: relative; flex: 2; min-width: 0; }
+/* Sans width:100%, l'<input> à l'intérieur garde sa largeur intrinsèque
+   par défaut du navigateur au lieu de suivre celle, désormais correcte,
+   de son enveloppe flex .autocomplete-wrap — il déborderait sinon de
+   cette dernière une fois celle-ci rétrécie par min-width: 0 ci-dessus. */
+.autocomplete-wrap input { width: 100%; box-sizing: border-box; }
 .autocomplete-dropdown {
   position: absolute;
   top: calc(100% + 4px);

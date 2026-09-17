@@ -162,6 +162,61 @@ function persistShoppingMergeWithClaims(survivors, removedIds, updatedClaims) {
       })
   );
 }
+// Écrit un enregistrement dans un entrepôt ET en supprime un autre dans
+// un second (potentiellement différent) en une seule transaction — même
+// principe que storePutAndDeleteMany/persistShoppingMergeWithClaims,
+// généralisé ici pour déplacer un enregistrement entre deux entrepôts
+// (ex. recette ↔ corbeille) : sans cette atomicité, un échec entre les
+// deux écritures pouvait dupliquer l'enregistrement dans les deux
+// entrepôts à la fois, ou le faire disparaître des deux.
+function moveRecordBetweenStores(putStoreName, putValue, deleteStoreName, deleteKey) {
+  return openDB().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const tx = db.transaction([putStoreName, deleteStoreName], "readwrite");
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error || new Error("transaction_aborted"));
+        try {
+          tx.objectStore(putStoreName).put(putValue);
+          tx.objectStore(deleteStoreName).delete(deleteKey);
+        } catch (e) {
+          tx.abort();
+          reject(e);
+        }
+      })
+  );
+}
+// Généralisation à un nombre arbitraire d'entrepôts : pour les
+// opérations globales (renommage/fusion d'un nom d'ingrédient) qui
+// doivent mettre à jour recettes, courses, garde-manger, listes
+// enregistrées et personnalisations ensemble — sans cette atomicité, un
+// échec en cours de route pouvait renommer l'ingrédient à certains
+// endroits et laisser l'ancien nom ailleurs. `operations` : tableau de
+// { store, puts?: [...], deletes?: [...] }, au plus une entrée par nom
+// d'entrepôt (jamais le même nom listé deux fois dans un même appel).
+function storeWriteManyAcrossStores(operations) {
+  const storeNames = operations.map((op) => op.store);
+  return openDB().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(storeNames, "readwrite");
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error || new Error("transaction_aborted"));
+        try {
+          operations.forEach((op) => {
+            const store = tx.objectStore(op.store);
+            (op.puts || []).forEach((item) => store.put(item));
+            (op.deletes || []).forEach((key) => store.delete(key));
+          });
+        } catch (e) {
+          tx.abort();
+          reject(e);
+        }
+      })
+  );
+}
 function storeClear(storeName) {
   return openDB().then(
     (db) =>
@@ -320,10 +375,23 @@ function el(html) {
   tpl.innerHTML = html.trim();
   return tpl.content.firstElementChild;
 }
+// Utilisée aussi bien dans du contenu texte que — très souvent dans ce
+// fichier — À L'INTÉRIEUR d'attributs HTML entre guillemets (ex.
+// value="${escapeHtml(...)}"). L'astuce textContent → innerHTML (ancienne
+// implémentation) échappe correctement &, < et > mais PAS le guillemet
+// double : un texte contenant `"` (nom de recette, d'ingrédient, note...)
+// pouvait alors se terminer prématurément l'attribut et injecter du HTML
+// arbitraire juste après — d'où l'échappement explicite des deux types de
+// guillemets ci-dessous, sûr dans les deux contextes (le navigateur les
+// dé-échappe de façon transparente à l'affichage).
 function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str == null ? "" : String(str);
-  return div.innerHTML;
+  if (str == null) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 // Remplace window.alert()/window.confirm() par des fenêtres propres à
 // l'application — les fenêtres natives du navigateur affichent toujours
@@ -990,7 +1058,7 @@ function renderRecipeRow(recipe) {
   const row = el(`<button class="card recipe-row"></button>`);
   const thumb = el(`<div class="recipe-thumb"></div>`);
   if (recipe.photo) {
-    thumb.innerHTML = `<img src="${recipe.photo}" alt="">`;
+    thumb.innerHTML = `<img src="${escapeHtml(recipe.photo)}" alt="">`;
   } else {
     thumb.textContent = "🍽️";
   }
@@ -1018,7 +1086,7 @@ function filteredRecipes() {
   if (state.activeFilter === "quick") list = list.filter((r) => (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0) > 0 && (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0) <= 30);
   if (state.activeFilter === "vegetarian") list = list.filter((r) => r.vegetarian);
   if (state.activeFilter === "wishlist") list = list.filter((r) => r.wishlist);
-  const byName = (a, b) => a.name.localeCompare(b.name);
+  const byName = (a, b) => a.name.localeCompare(b.name, CURRENT_LANG);
   if (state.recipeSortBy === "recent") {
     // Chaînes ISO 8601 : comparables directement par ordre lexical, sans
     // avoir besoin de les convertir en Date. Manquante (vieille recette
@@ -1127,7 +1195,7 @@ function renderRecipeView() {
   }
   const wrap = el(`<div></div>`);
   const hero = el(`<div class="recipe-hero"></div>`);
-  hero.innerHTML = r.photo ? `<img src="${r.photo}" alt="">` : "🍽️";
+  hero.innerHTML = r.photo ? `<img src="${escapeHtml(r.photo)}" alt="">` : "🍽️";
   wrap.appendChild(hero);
 
   const stats = el(`<div class="stat-row"></div>`);
@@ -1278,7 +1346,12 @@ function renderRecipeView() {
   const delBtn = el(`<button class="btn btn-danger">${t("recipe_delete")}</button>`);
   delBtn.addEventListener("click", async () => {
     if (await customConfirm(t("recipe_delete_confirm"))) {
-      await moveRecipeToTrash(r);
+      try {
+        await moveRecipeToTrash(r);
+      } catch (e) {
+        await customAlert(t("storage_write_error"));
+        return;
+      }
       state.screen = "recipes";
       render();
     }
@@ -1469,7 +1542,7 @@ function renderRecipeForm() {
   }
 
   const photoBox = el(`<div class="photo-upload">
-    ${state.formPhoto ? `<img src="${state.formPhoto}" alt="">` : `<div>${t("form_photo")}</div>`}
+    ${state.formPhoto ? `<img src="${escapeHtml(state.formPhoto)}" alt="">` : `<div>${t("form_photo")}</div>`}
     <input type="file" accept="image/*" capture="environment" id="photo-input">
   </div>`);
   photoBox.querySelector("#photo-input").addEventListener("change", (e) => {
@@ -1779,7 +1852,16 @@ async function saveRecipeForm(wrap, existing) {
     cookLog: existing ? existing.cookLog || [] : [],
     timesCooked: existing ? existing.timesCooked || 0 : 0,
   };
-  await storePut("recipes", recipe);
+  try {
+    await storePut("recipes", recipe);
+  } catch (e) {
+    // state n'est mis à jour et l'écran ne change QU'après confirmation
+    // de la persistance — sans ça, un échec (quota IndexedDB dépassé,
+    // plausible ici avec une photo en base64) laissait croire à tort que
+    // la recette avait bien été enregistrée.
+    await customAlert(t("storage_write_error"));
+    return;
+  }
   const idx = state.recipes.findIndex((x) => x.id === recipe.id);
   if (idx >= 0) state.recipes[idx] = recipe; else state.recipes.push(recipe);
   await clearRecipeFormDraft();
@@ -2405,7 +2487,12 @@ function openMergeChoiceModal(nameA, nameB, onDone) {
     const remove = keep === nameA ? nameB : nameA;
     const btn = el(`<button type="button" class="btn btn-outline" style="margin-bottom:10px;">${escapeHtml(translateIngredientName(keep))}</button>`);
     btn.addEventListener("click", async () => {
-      await mergeIngredientNames(keep, remove);
+      try {
+        await mergeIngredientNames(keep, remove);
+      } catch (e) {
+        await customAlert(t("storage_write_error"));
+        return;
+      }
       overlay.remove();
       onDone();
     });
@@ -2527,7 +2614,14 @@ function openIngredientNameModal(existingName) {
         await customAlert(t("ingredient_already_exists"));
         return;
       }
-      if (value !== existingName) await renameIngredientName(existingName, value);
+      if (value !== existingName) {
+        try {
+          await renameIngredientName(existingName, value);
+        } catch (e) {
+          await customAlert(t("storage_write_error"));
+          return;
+        }
+      }
     } else {
       if (state.ingredientNames.some((n) => normalize(n) === normalize(value))) {
         await customAlert(t("ingredient_already_exists"));
@@ -2838,7 +2932,7 @@ function renderCookbookExport() {
   const wrap = el(`<div></div>`);
   wrap.appendChild(el(`<p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;line-height:1.5;">${escapeHtml(t("cookbook_export_hint"))}</p>`));
 
-  const sortedRecipes = state.recipes.slice().sort((a, b) => a.name.localeCompare(b.name, "fr"));
+  const sortedRecipes = state.recipes.slice().sort((a, b) => a.name.localeCompare(b.name, CURRENT_LANG));
   const selected = new Set();
 
   const toggleRow = el(`<div class="action-row" style="margin-bottom:14px;"></div>`);
@@ -3947,7 +4041,7 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
         photoData = canvas.toDataURL("image/jpeg", 0.8);
         // Retour visuel immédiat : sans ça, rien n'indique que la photo a
         // bien été prise avant l'enregistrement de l'entrée.
-        photoPreview.innerHTML = `<img src="${photoData}" alt="" style="width:100%;border-radius:10px;display:block;">`;
+        photoPreview.innerHTML = `<img src="${escapeHtml(photoData)}" alt="" style="width:100%;border-radius:10px;display:block;">`;
       };
       img.src = reader.result;
     };
@@ -3996,7 +4090,7 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
 function openPhotoLightbox(photoDataUrl) {
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet" style="padding:12px;text-align:center;">
-    <img src="${photoDataUrl}" alt="" style="max-width:100%;max-height:70vh;border-radius:10px;display:block;margin:0 auto 12px;">
+    <img src="${escapeHtml(photoDataUrl)}" alt="" style="max-width:100%;max-height:70vh;border-radius:10px;display:block;margin:0 auto 12px;">
   </div>`);
   const closeBtn = el(`<button type="button" class="btn btn-outline">${t("cooking_close")}</button>`);
   closeBtn.addEventListener("click", () => overlay.remove());
@@ -4023,7 +4117,7 @@ function openCropModal(photoDataUrl, onConfirm) {
   const panel = el(`<div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#000;"></div>`);
   const hint = el(`<p style="color:#fff;font-size:13px;text-align:center;padding:10px 16px 0;margin:0;">${escapeHtml(t("import_photo_crop_hint"))}</p>`);
   const stage = el(`<div style="flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;touch-action:none;"></div>`);
-  const img = el(`<img src="${photoDataUrl}" alt="" style="max-width:100%;max-height:100%;display:block;user-select:none;-webkit-user-select:none;">`);
+  const img = el(`<img src="${escapeHtml(photoDataUrl)}" alt="" style="max-width:100%;max-height:100%;display:block;user-select:none;-webkit-user-select:none;">`);
   const rectEl = el(`<div style="position:absolute;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,0.55);touch-action:none;"></div>`);
   const HANDLE_POS = { tl: "left:-14px;top:-14px;", tr: "right:-14px;top:-14px;", bl: "left:-14px;bottom:-14px;", br: "right:-14px;bottom:-14px;" };
   const HANDLE_LABEL_KEYS = { tl: "import_photo_crop_handle_tl", tr: "import_photo_crop_handle_tr", bl: "import_photo_crop_handle_bl", br: "import_photo_crop_handle_br" };
@@ -4225,7 +4319,7 @@ function openCookLogViewModal(recipe) {
         fillEntries();
       });
       card.appendChild(headerRow);
-      if (entry.photo) card.appendChild(el(`<img src="${entry.photo}" style="width:100%;border-radius:10px;margin-bottom:8px;" alt="">`));
+      if (entry.photo) card.appendChild(el(`<img src="${escapeHtml(entry.photo)}" style="width:100%;border-radius:10px;margin-bottom:8px;" alt="">`));
       if (entry.note) card.appendChild(el(`<p class="prose" style="margin:0;">${escapeHtml(entry.note)}</p>`));
       entriesHolder.appendChild(card);
     });
@@ -5107,12 +5201,6 @@ async function addIngredientName(name) {
 async function renameIngredientName(oldName, newName) {
   const trimmed = (newName || "").trim();
   if (!trimmed || trimmed === oldName) return false;
-  await storeDelete("ingredients", oldName);
-  await storePut("ingredients", { name: trimmed });
-  state.ingredientNames = state.ingredientNames.filter((n) => n !== oldName);
-  state.ingredientNames.push(trimmed);
-  state.ingredientNames.sort(compareIngredientNamesForDisplay);
-  await moveIngredientOverride(oldName, trimmed);
   // Met aussi à jour ce nom partout où il est déjà utilisé, pour ne pas
   // casser les recettes/listes existantes — sans cette propagation, un
   // ingrédient renommé continuait à apparaître sous son ancien nom dans
@@ -5123,35 +5211,63 @@ async function renameIngredientName(oldName, newName) {
   // stocké avec une casse ou des accents différents du nom canonique
   // (ex. après un import QR/lien/OCR mal résolu, ou une ancienne
   // sauvegarde), là où une fusion de doublons l'aurait retrouvé.
+  //
+  // Tout est d'abord calculé SANS toucher à state ni à INGREDIENT_OVERRIDES,
+  // puis écrit en une seule transaction couvrant tous les entrepôts
+  // concernés (voir storeWriteManyAcrossStores) — sans cette atomicité,
+  // un échec en cours de route pouvait renommer l'ingrédient à certains
+  // endroits et laisser l'ancien nom ailleurs, avec l'état en mémoire
+  // déjà à moitié modifié.
   const oldKey = normalize(oldName);
-  let touched = false;
-  state.recipes.forEach((r) => {
-    (r.ingredients || []).forEach((ing) => {
-      if (normalize(ing.name) === oldKey) { ing.name = trimmed; touched = true; }
-    });
-  });
-  if (touched) for (const r of state.recipes) await storePut("recipes", r);
+  const touchedRecipes = state.recipes.filter((r) => (r.ingredients || []).some((ing) => normalize(ing.name) === oldKey));
+  const renamedRecipes = touchedRecipes.map((r) => ({
+    ...r,
+    ingredients: (r.ingredients || []).map((ing) => (normalize(ing.name) === oldKey ? { ...ing, name: trimmed } : ing)),
+  }));
+  const renamedShopping = state.shopping.filter((item) => normalize(item.name) === oldKey).map((item) => ({ ...item, name: trimmed }));
+  const renamedPantry = state.pantry.filter((item) => normalize(item.name) === oldKey).map((item) => ({ ...item, name: trimmed }));
+  const touchedSavedLists = state.savedShoppingLists.filter((list) => (list.items || []).some((item) => normalize(item.name) === oldKey));
+  const renamedSavedLists = touchedSavedLists.map((list) => ({
+    ...list,
+    items: (list.items || []).map((item) => (normalize(item.name) === oldKey ? { ...item, name: trimmed } : item)),
+  }));
 
-  for (const item of state.shopping) {
-    if (normalize(item.name) === oldKey) {
-      item.name = trimmed;
-      await storePut("shopping", item);
-    }
-  }
-  for (const item of state.pantry) {
-    if (normalize(item.name) === oldKey) {
-      item.name = trimmed;
-      await storePut("pantry", item);
-    }
-  }
-  let savedListsTouched = false;
-  state.savedShoppingLists.forEach((list) => {
-    (list.items || []).forEach((item) => {
-      if (normalize(item.name) === oldKey) { item.name = trimmed; savedListsTouched = true; }
-    });
+  const hasOverride = !!INGREDIENT_OVERRIDES[oldName];
+  const overrideRecord = hasOverride ? { ...INGREDIENT_OVERRIDES[oldName], name: trimmed } : null;
+
+  const operations = [{ store: "ingredients", puts: [{ name: trimmed }], deletes: [oldName] }];
+  if (renamedRecipes.length) operations.push({ store: "recipes", puts: renamedRecipes });
+  if (renamedShopping.length) operations.push({ store: "shopping", puts: renamedShopping });
+  if (renamedPantry.length) operations.push({ store: "pantry", puts: renamedPantry });
+  if (renamedSavedLists.length) operations.push({ store: "savedShoppingLists", puts: renamedSavedLists });
+  if (hasOverride) operations.push({ store: "ingredientOverrides", puts: [overrideRecord], deletes: [oldName] });
+
+  await storeWriteManyAcrossStores(operations);
+
+  // La persistance est confirmée : applique maintenant les mêmes
+  // changements à l'état en mémoire.
+  state.ingredientNames = state.ingredientNames.filter((n) => n !== oldName);
+  state.ingredientNames.push(trimmed);
+  state.ingredientNames.sort(compareIngredientNamesForDisplay);
+  renamedRecipes.forEach((updated) => {
+    const idx = state.recipes.findIndex((r) => r.id === updated.id);
+    if (idx >= 0) state.recipes[idx] = updated;
   });
-  if (savedListsTouched) {
-    for (const list of state.savedShoppingLists) await storePut("savedShoppingLists", list);
+  renamedShopping.forEach((updated) => {
+    const idx = state.shopping.findIndex((it) => it.id === updated.id);
+    if (idx >= 0) state.shopping[idx] = updated;
+  });
+  renamedPantry.forEach((updated) => {
+    const idx = state.pantry.findIndex((it) => it.id === updated.id);
+    if (idx >= 0) state.pantry[idx] = updated;
+  });
+  renamedSavedLists.forEach((updated) => {
+    const idx = state.savedShoppingLists.findIndex((l) => l.id === updated.id);
+    if (idx >= 0) state.savedShoppingLists[idx] = updated;
+  });
+  if (hasOverride) {
+    delete INGREDIENT_OVERRIDES[oldName];
+    INGREDIENT_OVERRIDES[trimmed] = overrideRecord;
   }
   return true;
 }
@@ -5268,41 +5384,67 @@ function isPairDismissed(a, b) {
 // (allergènes/nutrition/prix) et que "keep" n'en a pas encore, elles sont
 // conservées ; sinon celles de "keep" priment.
 async function mergeIngredientNames(keep, remove) {
-  await storeDelete("ingredients", remove);
-  state.ingredientNames = state.ingredientNames.filter((n) => n !== remove);
-  if (!INGREDIENT_OVERRIDES[keep] && INGREDIENT_OVERRIDES[remove]) {
-    await moveIngredientOverride(remove, keep);
-  } else if (INGREDIENT_OVERRIDES[remove]) {
-    await deleteIngredientOverrideFor(remove);
-  }
-  let touched = false;
-  state.recipes.forEach((r) => {
-    (r.ingredients || []).forEach((ing) => {
-      if (normalize(ing.name) === normalize(remove)) { ing.name = keep; touched = true; }
-    });
-  });
-  if (touched) for (const r of state.recipes) await storePut("recipes", r);
   // La fusion doit aussi se propager à la liste de courses, au
   // garde-manger et aux listes de courses enregistrées — sans ça,
   // l'ancien nom pouvait rester visible à ces endroits après une
   // fusion, comme s'il s'agissait encore d'un ingrédient différent.
-  let shoppingTouched = false;
-  state.shopping.forEach((item) => {
-    if (normalize(item.name) === normalize(remove)) { item.name = keep; shoppingTouched = true; }
+  //
+  // Même principe que renameIngredientName : tout est calculé sans
+  // toucher à state ni à INGREDIENT_OVERRIDES, puis écrit en une seule
+  // transaction couvrant tous les entrepôts concernés (voir
+  // storeWriteManyAcrossStores), et state n'est muté qu'après
+  // confirmation de la persistance.
+  const removeKey = normalize(remove);
+  const touchedRecipes = state.recipes.filter((r) => (r.ingredients || []).some((ing) => normalize(ing.name) === removeKey));
+  const renamedRecipes = touchedRecipes.map((r) => ({
+    ...r,
+    ingredients: (r.ingredients || []).map((ing) => (normalize(ing.name) === removeKey ? { ...ing, name: keep } : ing)),
+  }));
+  const renamedShopping = state.shopping.filter((item) => normalize(item.name) === removeKey).map((item) => ({ ...item, name: keep }));
+  const renamedPantry = state.pantry.filter((item) => normalize(item.name) === removeKey).map((item) => ({ ...item, name: keep }));
+  const touchedSavedLists = state.savedShoppingLists.filter((saved) => (saved.items || []).some((item) => normalize(item.name) === removeKey));
+  const renamedSavedLists = touchedSavedLists.map((saved) => ({
+    ...saved,
+    items: (saved.items || []).map((item) => (normalize(item.name) === removeKey ? { ...item, name: keep } : item)),
+  }));
+
+  const moveOverride = !INGREDIENT_OVERRIDES[keep] && !!INGREDIENT_OVERRIDES[remove];
+  const deleteOverride = !moveOverride && !!INGREDIENT_OVERRIDES[remove];
+  const overrideRecord = moveOverride ? { ...INGREDIENT_OVERRIDES[remove], name: keep } : null;
+
+  const operations = [{ store: "ingredients", deletes: [remove] }];
+  if (renamedRecipes.length) operations.push({ store: "recipes", puts: renamedRecipes });
+  if (renamedShopping.length) operations.push({ store: "shopping", puts: renamedShopping });
+  if (renamedPantry.length) operations.push({ store: "pantry", puts: renamedPantry });
+  if (renamedSavedLists.length) operations.push({ store: "savedShoppingLists", puts: renamedSavedLists });
+  if (moveOverride) operations.push({ store: "ingredientOverrides", puts: [overrideRecord], deletes: [remove] });
+  else if (deleteOverride) operations.push({ store: "ingredientOverrides", deletes: [remove] });
+
+  await storeWriteManyAcrossStores(operations);
+
+  state.ingredientNames = state.ingredientNames.filter((n) => n !== remove);
+  renamedRecipes.forEach((updated) => {
+    const idx = state.recipes.findIndex((r) => r.id === updated.id);
+    if (idx >= 0) state.recipes[idx] = updated;
   });
-  if (shoppingTouched) for (const item of state.shopping) await storePut("shopping", item);
-  let pantryTouched = false;
-  state.pantry.forEach((item) => {
-    if (normalize(item.name) === normalize(remove)) { item.name = keep; pantryTouched = true; }
+  renamedShopping.forEach((updated) => {
+    const idx = state.shopping.findIndex((it) => it.id === updated.id);
+    if (idx >= 0) state.shopping[idx] = updated;
   });
-  if (pantryTouched) for (const item of state.pantry) await storePut("pantry", item);
-  let savedListsTouched = false;
-  state.savedShoppingLists.forEach((saved) => {
-    (saved.items || []).forEach((item) => {
-      if (normalize(item.name) === normalize(remove)) { item.name = keep; savedListsTouched = true; }
-    });
+  renamedPantry.forEach((updated) => {
+    const idx = state.pantry.findIndex((it) => it.id === updated.id);
+    if (idx >= 0) state.pantry[idx] = updated;
   });
-  if (savedListsTouched) for (const saved of state.savedShoppingLists) await storePut("savedShoppingLists", saved);
+  renamedSavedLists.forEach((updated) => {
+    const idx = state.savedShoppingLists.findIndex((l) => l.id === updated.id);
+    if (idx >= 0) state.savedShoppingLists[idx] = updated;
+  });
+  if (moveOverride) {
+    delete INGREDIENT_OVERRIDES[remove];
+    INGREDIENT_OVERRIDES[keep] = overrideRecord;
+  } else if (deleteOverride) {
+    delete INGREDIENT_OVERRIDES[remove];
+  }
 }
 
 // Regroupe une liste d'articles à quantité (courses, garde-manger, ou
@@ -6518,7 +6660,15 @@ const MAX_BACKUP_FILE_SIZE = 100 * 1024 * 1024; // 100 Mo — refus définitif
 // fabriquée dans un fichier de sauvegarde modifié ne se retrouve
 // utilisée telle quelle comme adresse d'image ailleurs dans l'app.
 function isValidPhotoField(photo) {
-  return photo == null || (typeof photo === "string" && /^data:image\/(png|jpe?g|webp|gif);base64,/i.test(photo));
+  // Ancrée jusqu'à la fin (le "$" final) et limitée à l'alphabet base64 :
+  // sans ça, seul le PRÉFIXE était vérifié, laissant passer n'importe
+  // quelle suite de caractères après "base64," — y compris un guillemet
+  // suivi d'un nouvel attribut HTML, permettant de sortir de l'attribut
+  // src="..." où cette valeur est ensuite injectée (voir escapeHtml, qui
+  // ferme ce trou indépendamment, mais cette validation doit rester
+  // stricte de son côté : un champ photo n'est jamais un vecteur de
+  // texte libre).
+  return photo == null || (typeof photo === "string" && /^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+/]*={0,2}$/i.test(photo));
 }
 
 // Un identifiant valide est une chaîne non vide — tous les entrepôts de
@@ -6840,7 +6990,7 @@ async function renderDiagnostic() {
     try {
       const estimate = await navigator.storage.estimate();
       const usedMb = estimate.usage != null ? (estimate.usage / (1024 * 1024)).toFixed(1) : "?";
-      addRow(t("diagnostic_storage_used"), `${usedMb} Mo`);
+      addRow(t("diagnostic_storage_used"), t("diagnostic_storage_used_value", { size: usedMb }));
     } catch (e) { /* estimation indisponible, on n'affiche simplement pas cette ligne */ }
   }
 
@@ -7219,7 +7369,7 @@ function renderBackup() {
    ====================================================================== */
 function renderCompare() {
   const wrap = el(`<div></div>`);
-  const sortedRecipes = state.recipes.slice().sort((a, b) => a.name.localeCompare(b.name, "fr"));
+  const sortedRecipes = state.recipes.slice().sort((a, b) => a.name.localeCompare(b.name, CURRENT_LANG));
 
   const pickerRow = el(`<div class="field-row"></div>`);
   const fieldA = el(`<div class="field"><label for="compare-a">${t("compare_recipe_a")}</label><select id="compare-a"></select></div>`);
@@ -7354,14 +7504,14 @@ function openRecipePickerModal(onPick) {
     const key = normalize(query || "");
     const list = state.recipes
       .filter((r) => !key || normalize(r.name).includes(key))
-      .sort((a, b) => a.name.localeCompare(b.name, "fr"));
+      .sort((a, b) => a.name.localeCompare(b.name, CURRENT_LANG));
     if (!list.length) {
       listHolder.appendChild(el(`<div class="empty-state" style="padding:20px 0;"><p>${escapeHtml(t("no_recipes_found"))}</p></div>`));
       return;
     }
     list.forEach((r) => {
       const row = el(`<button class="recipe-row" style="width:100%;margin-bottom:8px;">
-        <div class="recipe-thumb">${r.photo ? `<img src="${r.photo}" alt="">` : "🍽️"}</div>
+        <div class="recipe-thumb">${r.photo ? `<img src="${escapeHtml(r.photo)}" alt="">` : "🍽️"}</div>
         <div class="recipe-info"><div class="recipe-name">${escapeHtml(r.name)}</div></div>
       </button>`);
       row.addEventListener("click", () => {
@@ -7398,7 +7548,7 @@ function renderMenuList() {
   const list = el(`<div class="recipe-list"></div>`);
   state.menus
     .slice()
-    .sort((a, b) => a.name.localeCompare(b.name, "fr"))
+    .sort((a, b) => a.name.localeCompare(b.name, CURRENT_LANG))
     .forEach((menu) => {
       const row = el(`<button class="card recipe-row">
         <div class="recipe-thumb">📋</div>
@@ -10228,15 +10378,16 @@ const CONVERTER_UNIT_KEYS = [
    ====================================================================== */
 async function moveRecipeToTrash(recipe) {
   const entry = { ...recipe, deletedAt: new Date().toISOString() };
-  await storePut("trash", entry);
-  await storeDelete("recipes", recipe.id);
+  // state n'est muté qu'après confirmation de la persistance (voir
+  // moveRecordBetweenStores) : sans ça, un échec laissait déjà l'écran
+  // croire la recette supprimée alors qu'elle restait bien réelle.
+  await moveRecordBetweenStores("trash", entry, "recipes", recipe.id);
   state.trash.unshift(entry);
   state.recipes = state.recipes.filter((r) => r.id !== recipe.id);
 }
 async function restoreRecipeFromTrash(entry) {
   const { deletedAt, ...recipe } = entry;
-  await storePut("recipes", recipe);
-  await storeDelete("trash", entry.id);
+  await moveRecordBetweenStores("recipes", recipe, "trash", entry.id);
   state.recipes.push(recipe);
   state.trash = state.trash.filter((x) => x.id !== entry.id);
 }
@@ -10262,7 +10413,12 @@ function renderTrash() {
       </div>
     </div>`);
     card.querySelector(".restore").addEventListener("click", async () => {
-      await restoreRecipeFromTrash(entry);
+      try {
+        await restoreRecipeFromTrash(entry);
+      } catch (e) {
+        await customAlert(t("storage_write_error"));
+        return;
+      }
       render();
     });
     card.querySelector(".del-forever").addEventListener("click", async () => {
@@ -10415,7 +10571,7 @@ function renderWhatCanICook() {
     scored.forEach(({ recipe, total, have, missing }) => {
       const isFeasible = have === total;
       const row = el(`<button class="card recipe-row" style="margin-bottom:10px;">
-        <div class="recipe-thumb">${recipe.photo ? `<img src="${recipe.photo}" alt="">` : "🍽️"}</div>
+        <div class="recipe-thumb">${recipe.photo ? `<img src="${escapeHtml(recipe.photo)}" alt="">` : "🍽️"}</div>
         <div class="recipe-info">
           <div class="recipe-name">${escapeHtml(recipe.name)}</div>
           <div class="recipe-meta">${isFeasible ? escapeHtml(t("whatcancook_feasible")) : escapeHtml(t("whatcancook_almost", { have: String(have), total: String(total) }))}</div>
@@ -10597,9 +10753,44 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 225;
+const APP_VERSION = 226;
+
+// Affiche un état de secours minimal quand init() échoue avant son
+// premier render() — sans lui, un IndexedDB indisponible (navigation
+// privée stricte, quota dépassé, mise à jour de navigateur en cours...)
+// laissait l'écran totalement blanc, sans aucun texte ni bouton, avec
+// pour seule trace une exception non gérée dans la console : rien
+// qu'une personne utilisant l'app ne puisse jamais voir ni comprendre.
+// Volontairement indépendant du reste de l'app (n'utilise ni state, ni
+// render(), ni aucune fonction pouvant elle-même dépendre du stockage) —
+// seuls t()/escapeHtml() sont nécessaires, et les deux ne touchent
+// jamais IndexedDB.
+function renderStartupError(error) {
+  document.body.innerHTML = `
+    <div style="max-width:420px;margin:15vh auto 0;padding:24px;text-align:center;font-family:inherit;">
+      <div style="font-size:40px;margin-bottom:12px;">⚠️</div>
+      <h1 style="font-size:20px;margin:0 0 12px;">${escapeHtml(t("startup_error_title"))}</h1>
+      <p style="font-size:14px;line-height:1.5;color:var(--text-muted, #666);margin:0 0 20px;">${escapeHtml(t("startup_error_message"))}</p>
+      <button type="button" id="startup-error-reload" style="font-size:15px;font-weight:600;padding:12px 24px;border-radius:10px;border:none;background:var(--accent, #2f6b3c);color:#fff;cursor:pointer;">${escapeHtml(t("startup_error_reload"))}</button>
+      <details style="margin-top:20px;text-align:left;font-size:12px;color:var(--text-muted, #666);">
+        <summary style="cursor:pointer;">${escapeHtml(t("startup_error_details"))}</summary>
+        <pre style="white-space:pre-wrap;word-break:break-word;margin-top:8px;">${escapeHtml(formatCaughtError(error))}</pre>
+      </details>
+    </div>
+  `;
+  const reloadBtn = document.getElementById("startup-error-reload");
+  if (reloadBtn) reloadBtn.addEventListener("click", () => location.reload());
+}
 
 async function init() {
+  try {
+    await initInner();
+  } catch (error) {
+    renderStartupError(error);
+  }
+}
+
+async function initInner() {
   applyTheme(localStorage.getItem("theme") || "light");
   await loadPantryClaims();
 
