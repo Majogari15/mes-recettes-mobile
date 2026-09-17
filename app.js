@@ -2850,7 +2850,7 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, includePhoto)
 }
 
 async function exportRecipePdf(recipe, persons) {
-  if (!window.jspdf) {
+  try { await loadJsPdfLib(); } catch (e) {
     await customAlert(t("backup_import_error"));
     return;
   }
@@ -2867,7 +2867,7 @@ async function exportRecipePdf(recipe, persons) {
 }
 
 async function exportShoppingListPdf() {
-  if (!window.jspdf) {
+  try { await loadJsPdfLib(); } catch (e) {
     await customAlert(t("backup_import_error"));
     return;
   }
@@ -2930,7 +2930,7 @@ async function exportShoppingListPdf() {
 // la vraie page de chaque recette est connue (chaque recette démarre
 // toujours sur une page neuve, ce qui rend ce numéro prévisible).
 async function exportCookbookPdf(recipes, includePhotos) {
-  if (!window.jspdf) {
+  try { await loadJsPdfLib(); } catch (e) {
     await customAlert(t("backup_import_error"));
     return;
   }
@@ -3551,6 +3551,30 @@ function loadJsQrLib() {
     document.head.appendChild(script);
   });
   return jsQrLibPromise;
+}
+
+// Charge jsPDF à la demande, uniquement quand un export PDF est
+// réellement lancé (recette, liste de courses ou livre de cuisine) —
+// même logique que loadJsQrLib ci-dessus. Ce fichier pesant plus de
+// 400 Ko, le charger sans condition au démarrage (comme c'était le cas
+// jusqu'ici, via une balise <script> statique dans index.html)
+// ralentissait l'affichage de CHAQUE écran, y compris ceux qui
+// n'exportent jamais de PDF — repéré par un audit Lighthouse (voir
+// TESTS_NON_REGRESSION.md point 92). Reste mis en cache par le service
+// worker (voir FILES_TO_CACHE dans sw.js), donc toujours disponible
+// hors connexion dès le premier export.
+let jsPdfLibPromise = null;
+function loadJsPdfLib() {
+  if (window.jspdf) return Promise.resolve();
+  if (jsPdfLibPromise) return jsPdfLibPromise;
+  jsPdfLibPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "./lib/jspdf.umd.min.js";
+    script.onload = () => resolve();
+    script.onerror = () => { jsPdfLibPromise = null; reject(new Error("jspdf_lib_load_failed")); };
+    document.head.appendChild(script);
+  });
+  return jsPdfLibPromise;
 }
 
 async function confirmImportScannedShoppingList(items) {
@@ -10838,7 +10862,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 234;
+const APP_VERSION = 235;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

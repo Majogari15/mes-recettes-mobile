@@ -67,7 +67,8 @@ def main():
         )
         result = page.evaluate(
             """
-            () => {
+            async () => {
+                await loadJsPdfLib();
                 const recipe = state.recipes[0];
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF({ unit: "mm", format: "a4" });
@@ -99,7 +100,8 @@ def main():
         )
         result2 = page.evaluate(
             """
-            () => {
+            async () => {
+                await loadJsPdfLib();
                 const recipe = state.recipes.find(r => r.id === 'r2');
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF({ unit: "mm", format: "a4" });

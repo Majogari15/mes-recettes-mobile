@@ -180,6 +180,25 @@ Depuis, la structure sépare strictement :
   "dessiné" (déjà couvert par `test_pdf_allergens.py` pour la recette
   seule) — ajouté lors de l'audit de régression suivant la mise à jour
   de jsPDF, voir TESTS_NON_REGRESSION.md points 90-91.
+- `test_pwa_manifest.py` — validité des 4 manifestes (fr/en/es/de) :
+  icônes existantes aux bonnes dimensions, `display:"standalone"`,
+  cohérence de la couleur de thème entre les manifestes et
+  `index.html`, sélection du bon fichier par `manifest-loader.js` —
+  voir TESTS_NON_REGRESSION.md point 92.
+- `test_pwa_install_flow.py` — logique JS du bandeau d'installation
+  (événement `beforeinstallprompt` simulé, clic Installer appelant
+  `prompt()`, clic Non merci mémorisé et jamais réaffiché, détection du
+  mode déjà installé) — voir TESTS_NON_REGRESSION.md point 92.
+- `test_pwa_cold_offline.py` — vraie navigation hors-ligne "à froid"
+  (service worker + cache déjà en place, puis rechargement complet
+  hors connexion, y compris vers une URL avec paramètre jamais visitée
+  avant), au-delà de la coupure réseau en cours d'action déjà couverte
+  par `test_network_interruption.py` — voir TESTS_NON_REGRESSION.md
+  point 92.
+- `test_pwa_camera_permission.py` — accès réel à la caméra
+  (`getUserMedia`, caméra factice Chromium) pour le scanner de QR code,
+  permission accordée et refusée — voir TESTS_NON_REGRESSION.md
+  point 92.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

@@ -6004,3 +6004,107 @@ ingrédient nommé" avant enregistrement) fonctionne toujours normalement.
 vert.
 
 **Version testée** : v234
+
+### 92 — Checklist PWA spécifique : vérification des points jamais couverts jusqu'ici (installation, hors-ligne à froid, caméra, Lighthouse) — 1 vraie régression de performance trouvée et corrigée
+
+Demande explicite de l'utilisateur : une checklist PWA spécifique (5
+catégories : installation/intégration, hors-ligne/service worker,
+cross-browser, accès aux fonctionnalités du téléphone, performance
+Lighthouse) a été comparée point par point à ce qui avait déjà été
+vérifié. Les manques réellement testables dans cet environnement ont
+ensuite été vérifiés :
+
+**1. Manifeste PWA** (`tests/test_pwa_manifest.py`) : les 4 manifestes
+(fr/en/es/de) sont valides, `display:"standalone"` partout, les 3
+icônes existent et font bien les dimensions déclarées (192×192,
+512×512, 512×512 maskable), la couleur de thème est identique entre
+les 4 manifestes et `index.html`, `manifest-loader.js` sélectionne
+bien le fichier selon la langue. Aucun défaut trouvé.
+
+**2. Logique de l'invite d'installation** (`tests/
+test_pwa_install_flow.py`) : le vrai événement natif
+`beforeinstallprompt` ne se déclenche jamais dans un navigateur
+headless (heuristiques d'engagement hors de notre contrôle) — simulé
+en le dispatchant nous-mêmes. Vérifié : le bandeau s'affiche à la
+réception de l'événement, le clic "Installer" appelle bien `prompt()`
+sur l'événement différé, le clic "Non merci" est mémorisé dans
+`localStorage` et empêche le bandeau de revenir même après un
+rechargement avec un nouvel événement, `isRunningStandalone()` détecte
+correctement le mode déjà installé. Aucun défaut trouvé.
+
+**3. Navigation hors-ligne "à froid"** (`tests/
+test_pwa_cold_offline.py`) : au-delà de la coupure réseau EN COURS
+d'action déjà testée au point 90, ce test attend que le service worker
+soit actif et que le cache contienne bien `app.js`, puis coupe le
+réseau et **recharge complètement la page** (simulant une fermeture/
+réouverture) — y compris via une URL avec un paramètre jamais visitée
+avant (proche d'un lien profond ouvert hors-ligne). Vérifié : l'app se
+recharge depuis le cache (pas d'erreur navigateur), les données
+IndexedDB créées avant la coupure sont toujours là. Aucun défaut
+trouvé.
+
+**4. Accès réel à la caméra** (`tests/test_pwa_camera_permission.py`) :
+seul `openQrScanModal` (scanner de QR code) appelle vraiment
+`getUserMedia` — le sélecteur de photo de recette utilise un simple
+`<input type="file" capture>` qui délègue à l'application caméra du
+système, sans permission navigateur à tester. Avec une caméra factice
+Chromium (`--use-fake-device-for-media-stream`) et la permission
+accordée : un vrai flux vidéo s'affiche et débloque la saisie manuelle.
+Permission refusée (simulée via un rejet `NotAllowedError`) : message
+d'erreur clair affiché, repli "choisir une image" toujours disponible,
+pas de plantage. Aucun défaut trouvé.
+
+**5. Audit Lighthouse** : Google a retiré la catégorie notée "PWA" de
+Lighthouse à partir de la version 12 (les audits dédiés — manifeste,
+service worker, écran de démarrage, icône maskable — n'existent même
+plus dans le rapport de la version 13.4.1 installée ici ; seule une
+vérification générique de viewport mobile subsiste). Catégories encore
+notées vérifiées : **accessibilité 100/100**, **bonnes pratiques
+100/100** (cohérent avec l'audit axe-core du point 90).
+**Performance : 58/100 — 1 régression de performance réelle trouvée et
+corrigée.** `lib/jspdf.umd.min.js` (420 Ko depuis la mise à jour du
+point 90, 364 Ko avant) était chargé sans condition via une balise
+`<script>` statique dans `index.html`, sur CHAQUE écran de
+l'application — y compris tous ceux qui n'exportent jamais de PDF.
+Corrigé en le chargeant à la demande (nouvelle fonction
+`loadJsPdfLib()`, `app.js`, appelée par les 3 fonctions d'export PDF
+avant leur premier usage), exactement sur le modèle déjà utilisé par
+`loadJsQrLib()` pour la bibliothèque de scan de QR code. Toujours mis
+en cache par le service worker pour un usage hors connexion (inchangé
+dans `FILES_TO_CACHE`, `sw.js`). Effet mesuré : premier affichage
+utile 7,3s → 5,2s, plus grand affichage de contenu 9,7s → 8,0s,
+JavaScript inutilisé au premier chargement 775 Ko → 427 Ko (sous
+throttling Lighthouse mobile — ces temps ne reflètent pas les
+conditions réelles d'usage, seule l'AMÉLIORATION relative entre avant/
+après est significative). Score final : 62/100 — le reste (JS non
+minifié, JS inutilisé restant) reflète un choix d'architecture
+délibéré et assumé depuis le début du projet (un seul fichier
+`app.js` lisible, sans étape de build/minification) plutôt qu'un
+défaut ; non modifié sans décision explicite de l'utilisateur.
+
+**Non fait, reste impossible dans cet environnement** (aucune
+tentative de simulation trompeuse) :
+- **Safari/iOS** : seul le moteur Chromium est disponible ici (déjà
+  documenté au point 90) — aucune plateforme Apple n'a jamais été
+  testée, ni par moi ni, à ma connaissance, par l'utilisateur.
+- **Persistance du stockage après inactivité prolongée sur iOS** :
+  comportement réel du système sur plusieurs semaines, impossible à
+  simuler fidèlement.
+- **Rendu visuel réel une fois l'app installée** (icône sur l'écran
+  d'accueil, écran de démarrage) : les DONNÉES qui le déterminent sont
+  validées (point 1 ci-dessus), mais le rendu final dépend du système
+  d'exploitation réel, jamais vérifié visuellement dans cet
+  environnement.
+- **Notifications Push** (au sens strict, serveur → navigateur) :
+  l'application n'en a pas — seulement des notifications locales
+  (minuteurs de cuisine), déjà testées bien avant cette session. Non
+  applicable.
+- **Background Sync** : aucune action distante à synchroniser dans
+  cette architecture 100% locale (IndexedDB). Non applicable.
+
+**Vérifié** : suite de régression complète (27 scripts + corpus OCR)
+au vert après le passage en chargement différé de jsPDF, y compris
+`test_pdf_allergens.py` et `test_pdf_exports_full.py` adaptés pour
+charger explicitement la bibliothèque avant de l'utiliser directement.
+
+**Version testée** : v235
