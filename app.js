@@ -2466,6 +2466,22 @@ function openBarcodePasteModal() {
   });
 }
 
+// Traduit l'erreur brute de getUserMedia en un message adapté à sa
+// cause réelle, plutôt qu'un même texte générique pour tous les cas
+// (demandé explicitement par l'utilisateur après avoir découvert que
+// l'autorisation caméra était désactivée sur son téléphone, sans que
+// le message d'origine ne le précise) — utilisé par le scan de
+// code-barres et le scan de QR code, qui partagent la même caméra.
+function describeCameraError(e) {
+  const name = e && e.name;
+  if (name === "NotAllowedError" || name === "PermissionDeniedError" || name === "SecurityError") {
+    return t("qrscan_camera_denied_permission");
+  }
+  if (name === "NotFoundError" || name === "DevicesNotFoundError") return t("qrscan_camera_denied_notfound");
+  if (name === "NotReadableError" || name === "TrackStartError") return t("qrscan_camera_denied_busy");
+  return t("qrscan_camera_denied");
+}
+
 async function openBarcodeScanModal() {
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
@@ -2527,7 +2543,7 @@ async function openBarcodeScanModal() {
       video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } },
     });
   } catch (e) {
-    cameraStatusEl.textContent = t("qrscan_camera_denied");
+    cameraStatusEl.textContent = describeCameraError(e);
     return;
   }
   if (stopped) { stream.getTracks().forEach((tr) => tr.stop()); return; }
@@ -4359,7 +4375,7 @@ async function openQrScanModal() {
       },
     });
   } catch (e) {
-    cameraStatusEl.textContent = t("qrscan_camera_denied");
+    cameraStatusEl.textContent = describeCameraError(e);
     return;
   }
   if (stopped) { stream.getTracks().forEach((tr) => tr.stop()); return; }
@@ -11330,7 +11346,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 240;
+const APP_VERSION = 241;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

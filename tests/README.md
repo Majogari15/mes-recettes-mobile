@@ -196,9 +196,11 @@ Depuis, la structure sépare strictement :
   par `test_network_interruption.py` — voir TESTS_NON_REGRESSION.md
   point 92.
 - `test_pwa_camera_permission.py` — accès réel à la caméra
-  (`getUserMedia`, caméra factice Chromium) pour le scanner de QR code,
-  permission accordée et refusée — voir TESTS_NON_REGRESSION.md
-  point 92.
+  (`getUserMedia`, caméra factice Chromium) pour le scanner de QR code
+  et le scan de code-barres, permission accordée et refusée, ainsi que
+  le message d'erreur spécifique à chaque cause réelle (permission
+  désactivée / aucune caméra / caméra occupée par une autre
+  application) — voir TESTS_NON_REGRESSION.md points 92 et 98.
 - `test_regex_dos_resilience.py` — résistance des fonctions d'analyse
   de texte maison (ingrédients, OCR) à des entrées pathologiques
   (longues répétitions ambiguës) susceptibles de provoquer un blocage

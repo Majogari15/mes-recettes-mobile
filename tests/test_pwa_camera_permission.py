@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
 """Test permanent : accès matériel réel à la caméra pour le scanner de
-QR code (`openQrScanModal`, seul endroit de l'application appelant
-`getUserMedia` — le sélecteur de photo de recette utilise lui un simple
-`<input type="file" capture>`, qui délègue entièrement à l'application
-caméra du système et n'a donc pas de permission navigateur à tester) —
-voir TESTS_NON_REGRESSION.md point 92.
+QR code et le scan de code-barres (`openQrScanModal` et
+`openBarcodeScanModal`, les deux seuls endroits de l'application
+appelant `getUserMedia` — le sélecteur de photo de recette utilise lui
+un simple `<input type="file" capture>`, qui délègue entièrement à
+l'application caméra du système et n'a donc pas de permission
+navigateur à tester) — voir TESTS_NON_REGRESSION.md points 92 et 98.
+
+Couvre aussi le message d'erreur spécifique à la cause réelle de
+l'échec (`describeCameraError` dans app.js, demandé explicitement par
+l'utilisateur après avoir découvert que l'autorisation caméra était
+désactivée sur son téléphone sans que le message d'origine, générique,
+ne le précise) : permission refusée/désactivée, aucune caméra détectée,
+caméra déjà utilisée par une autre application.
 
 Utilise une caméra factice fournie par Chromium
 (--use-fake-device-for-media-stream) plutôt qu'un vrai capteur : dans
@@ -114,14 +122,91 @@ def main():
         page2.evaluate("() => { openQrScanModal(); }")
         page2.wait_for_timeout(500)
         denied_message = page2.evaluate("() => document.getElementById('qrscan-camera-status').textContent.trim()")
+        expected_permission_msg = page2.evaluate("() => t('qrscan_camera_denied_permission')")
         check(
-            "Un message clair (pas un plantage) s'affiche quand la permission caméra est refusée",
-            bool(denied_message),
+            "Le message spécifique 'autorisation désactivée' (pas le message générique) s'affiche quand la permission caméra est refusée",
+            denied_message == expected_permission_msg,
             denied_message,
         )
         fallback_visible = page2.is_visible("#qrscan-choose-image")
         check("Le repli \"choisir une image\" reste disponible malgré le refus de permission", fallback_visible)
         browser2.close()
+
+        print("\n=== Aucune caméra détectée sur l'appareil ===\n")
+        browser3 = p.chromium.launch()
+        context3 = browser3.new_context(viewport={"width": 390, "height": 844})
+        page3 = context3.new_page()
+        page3.on("pageerror", lambda exc: errors.append(str(exc)))
+        page3.add_init_script(
+            """
+            navigator.mediaDevices.getUserMedia = () => Promise.reject(new DOMException('No camera', 'NotFoundError'));
+            """
+        )
+        page3.goto(base_url, timeout=8000)
+        page3.wait_for_timeout(1000)
+        page3.evaluate("() => setLang('fr')")
+        page3.evaluate("() => { openQrScanModal(); }")
+        page3.wait_for_timeout(500)
+        notfound_message = page3.evaluate("() => document.getElementById('qrscan-camera-status').textContent.trim()")
+        expected_notfound_msg = page3.evaluate("() => t('qrscan_camera_denied_notfound')")
+        check(
+            "Le message spécifique 'aucune caméra détectée' s'affiche pour une NotFoundError",
+            notfound_message == expected_notfound_msg,
+            notfound_message,
+        )
+        browser3.close()
+
+        print("\n=== Caméra déjà utilisée par une autre application ===\n")
+        browser4 = p.chromium.launch()
+        context4 = browser4.new_context(viewport={"width": 390, "height": 844})
+        page4 = context4.new_page()
+        page4.on("pageerror", lambda exc: errors.append(str(exc)))
+        page4.add_init_script(
+            """
+            navigator.mediaDevices.getUserMedia = () => Promise.reject(new DOMException('Camera busy', 'NotReadableError'));
+            """
+        )
+        page4.goto(base_url, timeout=8000)
+        page4.wait_for_timeout(1000)
+        page4.evaluate("() => setLang('fr')")
+        page4.evaluate("() => { openQrScanModal(); }")
+        page4.wait_for_timeout(500)
+        busy_message = page4.evaluate("() => document.getElementById('qrscan-camera-status').textContent.trim()")
+        expected_busy_msg = page4.evaluate("() => t('qrscan_camera_denied_busy')")
+        check(
+            "Le message spécifique 'caméra déjà utilisée' s'affiche pour une NotReadableError",
+            busy_message == expected_busy_msg,
+            busy_message,
+        )
+        browser4.close()
+
+        print("\n=== Le scan de code-barres partage le même message spécifique (permission refusée) ===\n")
+        browser5 = p.chromium.launch()
+        context5 = browser5.new_context(viewport={"width": 390, "height": 844})
+        page5 = context5.new_page()
+        page5.on("pageerror", lambda exc: errors.append(str(exc)))
+        page5.add_init_script(
+            """
+            navigator.mediaDevices.getUserMedia = () => Promise.reject(new DOMException('Permission denied', 'NotAllowedError'));
+            window.BarcodeDetector = class {
+                constructor() {}
+                async detect() { return []; }
+            };
+            """
+        )
+        page5.goto(base_url, timeout=8000)
+        page5.wait_for_timeout(1000)
+        page5.evaluate("() => setLang('fr')")
+        page5.evaluate("() => { state.screen = 'pantry'; render(); openBarcodeScanModal(); }")
+        page5.wait_for_timeout(500)
+        barcode_denied_message = page5.evaluate("() => document.getElementById('barcode-camera-status').textContent.trim()")
+        expected_barcode_msg = page5.evaluate("() => t('qrscan_camera_denied_permission')")
+        check(
+            "Le scan de code-barres affiche aussi le message spécifique 'autorisation désactivée'",
+            barcode_denied_message == expected_barcode_msg,
+            barcode_denied_message,
+        )
+        browser5.close()
 
         check("Aucune erreur JS pendant tout le parcours", not errors, "; ".join(errors))
     httpd.shutdown()

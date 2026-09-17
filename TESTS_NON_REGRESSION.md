@@ -6415,3 +6415,42 @@ sauvegarde locale.
 Suite de régression complète (30 scripts + corpus OCR) au vert.
 
 **Version testée** : v240
+
+### 98 — Message d'erreur caméra spécifique à la cause réelle (permission désactivée / aucune caméra / caméra occupée)
+
+Demande explicite de l'utilisateur : après avoir découvert sur son
+téléphone que l'autorisation caméra était désactivée, il a signalé que
+le message affiché ("Accès à la caméra refusé ou indisponible.
+Vérifiez les autorisations...") ne l'aidait pas à comprendre qu'il
+fallait précisément aller réactiver cette autorisation, ni comment s'y
+prendre.
+
+`getUserMedia` rejette avec un nom d'erreur distinct selon la cause
+réelle (`NotAllowedError` : permission refusée ou désactivée,
+`NotFoundError` : aucune caméra sur l'appareil, `NotReadableError` :
+caméra déjà utilisée par une autre application) — jusqu'ici, les trois
+cas (et tout autre) affichaient exactement le même texte générique.
+Une nouvelle fonction `describeCameraError(e)` distingue maintenant
+ces trois cas avec un message dédié à chacun, dont un qui explique
+précisément le chemin à suivre dans les réglages du téléphone pour
+réactiver la permission (`Réglages → Applications → (nom de
+l'application) → Autorisations → Appareil photo → Autoriser`) — et
+retombe sur le message générique d'origine pour toute autre erreur
+inattendue. Partagée par le scan de QR code et le scan de code-barres,
+qui utilisaient déjà le même message générique avant ce changement.
+
+**Vérifié** (permission simulée via un remplacement direct de
+`getUserMedia`, sans dépendre d'une vraie invite navigateur) :
+- `NotAllowedError` → message spécifique "autorisation désactivée",
+  avec les étapes pour la réactiver, à la fois pour le scan de QR code
+  et le scan de code-barres.
+- `NotFoundError` → message spécifique "aucune caméra détectée".
+- `NotReadableError` → message spécifique "caméra utilisée par une
+  autre application".
+- Le repli "choisir une image" reste disponible dans tous les cas.
+- Cas normal (permission accordée, caméra factice) toujours
+  fonctionnel, sans régression.
+
+Suite de régression complète (30 scripts + corpus OCR) au vert.
+
+**Version testée** : v241
