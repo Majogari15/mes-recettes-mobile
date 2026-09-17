@@ -447,18 +447,35 @@ a { color: inherit; }
    flex-basis 0 — la ligne débordait alors largement sur un écran de
    téléphone étroit (~390px), rendant le bouton de suppression hors champ. */
 .ing-form-row input { flex: 2; min-width: 0; }
-.ing-form-row input.qty { flex: 1; min-width: 0; }
-.ing-form-row select { flex: 1.2; min-width: 0; }
+/* Largeur volontairement réduite à ~5 caractères (au lieu de ~7
+   auparavant) : la quantité n'a pas besoin de plus de place, et l'espace
+   ainsi gagné revient au champ nom ci-dessous, seul élément de la ligne
+   qui grossit encore (flex-grow) — qty et select gardent désormais une
+   largeur fixe (flex-grow: 0), qu'ils peuvent seulement réduire un peu
+   sur un écran vraiment très étroit (flex-shrink: 1). */
+.ing-form-row input.qty { flex: 0 1 calc(5ch + 10px); min-width: 40px; -moz-appearance: textfield; }
+/* Les flèches natives d'incrémentation d'un <input type="number"> réservent
+   leur propre espace à l'intérieur du champ, indépendamment de sa largeur
+   CSS — sur une case déjà réduite à ~5 caractères, cela suffisait à
+   tronquer visuellement le dernier chiffre malgré une largeur par ailleurs
+   suffisante. Ces flèches ne servent de toute façon à rien sur un écran
+   tactile (aucun clic de souris possible dessus). */
+.ing-form-row input.qty::-webkit-inner-spin-button,
+.ing-form-row input.qty::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.ing-form-row select { flex: 0 1 82px; min-width: 50px; }
 .ing-form-row-uncertain { background: var(--accent-light); border-radius: 10px; padding: 4px 6px; margin: -4px -6px 6px; }
 .ing-uncertain-badge { flex-shrink: 0; font-size: 15px; cursor: help; }
 .ing-form-row .remove-ing {
   flex-shrink: 0;
-  width: 44px; height: 44px;
+  width: 31px; height: 31px;
   border-radius: 10px;
   border: none;
   background: var(--danger-light);
   color: var(--danger);
-  font-size: 17px;
+  font-size: 12px;
 }
 .photo-upload {
   border: 2px dashed var(--border);
@@ -671,7 +688,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 /* ---------- Autocomplétion d'ingrédient ---------- */
-.autocomplete-wrap { position: relative; flex: 2; min-width: 0; }
+/* flex: 1 (et non plus 2) : qty et select ayant maintenant une largeur
+   fixe (flex-grow: 0, voir plus haut), le champ nom est désormais seul à
+   grossir dans la ligne — il capte donc automatiquement tout l'espace
+   libéré par leur réduction, sans qu'aucun ratio précis n'ait plus
+   d'importance puisqu'il est seul dans ce cas. */
+.autocomplete-wrap { position: relative; flex: 1; min-width: 0; }
 /* Sans width:100%, l'<input> à l'intérieur garde sa largeur intrinsèque
    par défaut du navigateur au lieu de suivre celle, désormais correcte,
    de son enveloppe flex .autocomplete-wrap — il déborderait sinon de

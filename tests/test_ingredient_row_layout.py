@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Test permanent pour la largeur des champs quantité/unité dans la ligne
 d'ingrédient du formulaire de recette (voir audit complet, TESTS_NON_REGRESSION.md
-point 82) : sur un écran de téléphone étroit, ces deux champs se
+points 82 et 84).
+
+Point 82 : sur un écran de téléphone étroit, ces deux champs se
 retrouvaient réduits à ~23px (juste la flèche du menu déroulant), rendant
 la quantité et l'unité choisies invisibles à l'écran, alors même que les
 valeurs étaient correctement enregistrées. Cause : `.autocomplete-wrap`
@@ -9,6 +11,11 @@ valeurs étaient correctement enregistrées. Cause : `.autocomplete-wrap`
 `min-width: 0`, contrairement aux autres champs de la ligne — son minimum
 automatique, piloté par la taille intrinsèque du <input> qu'il contient,
 écrasait les voisins malgré leurs propres `min-width: 0`.
+
+Point 84 (demande explicite) : la case quantité pouvait afficher ~7
+caractères, plus que nécessaire — réduite à ~5, les décimales limitées à
+3 pour l'affichage, l'icône de suppression réduite de 30 %, et l'espace
+ainsi libéré donné au champ nom pour le rendre plus lisible.
 
 Utilisation (démarre et arrête lui-même un serveur local temporaire) :
 
@@ -29,14 +36,17 @@ from playwright.sync_api import sync_playwright
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Largeur minimale pour rester lisible : assez pour afficher au moins 3
-# chiffres pour la quantité, et le début du libellé le plus long
+# Largeur minimale pour rester lisible : assez pour afficher les ~5
+# caractères visés pour la quantité, et le début du libellé le plus long
 # ("boîte"/"pièce"/etc., voir UNIT_OPTIONS) pour l'unité — pas besoin
 # d'afficher le mot en entier (le <select> le tronque proprement), mais
 # une largeur réduite à celle de la seule flèche (~20-25px, la régression
-# observée) ne permet plus de distinguer la valeur choisie du tout.
+# du point 82) ne permet plus de distinguer la valeur choisie du tout.
 MIN_QTY_WIDTH = 40
 MIN_UNIT_WIDTH = 50
+# Le bouton de suppression faisait 44px avant le point 84 (réduction de
+# 30 % demandée) : 44 * 0.7 ≈ 31px. Marge de tolérance pour l'arrondi.
+MAX_REMOVE_BUTTON_WIDTH = 32
 
 
 def find_free_port():
@@ -83,8 +93,11 @@ def main():
             page.evaluate(
                 """
                 async () => {
+                    // Quantité à décimales longues : exerce à la fois la
+                    // largeur réduite ET l'arrondi à 3 décimales pour
+                    // l'affichage (point 84) dans le même cas de test.
                     const recipe = { id: 'layout-1', name: 'Test Layout', persons: 4, ingredients: [
-                        { name: 'Farine de blé complet bio', quantity: 200, unit: 'c. à soupe' },
+                        { name: 'Farine de blé complet bio', quantity: 0.333333333, unit: 'c. à soupe' },
                     ] };
                     await storePut('recipes', recipe);
                     state.recipes = await storeAll('recipes');
@@ -104,13 +117,21 @@ def main():
                     const nameInput = wrap.querySelector('input');
                     const qty = row.querySelector('.ing-qty');
                     const unit = row.querySelector('.ing-unit');
+                    const remove = row.querySelector('.remove-ing');
+                    const qtyStyle = getComputedStyle(qty);
+                    const ctx = document.createElement('canvas').getContext('2d');
+                    ctx.font = `${qtyStyle.fontSize} ${qtyStyle.fontFamily}`;
+                    const textWidth = ctx.measureText(qty.value).width;
                     return {
                         rowWidth: row.getBoundingClientRect().width,
                         rowScrollWidth: row.scrollWidth,
                         nameInputWidth: nameInput.getBoundingClientRect().width,
                         wrapWidth: wrap.getBoundingClientRect().width,
                         qtyWidth: qty.getBoundingClientRect().width,
+                        qtyClientWidth: qty.clientWidth,
+                        qtyTextWidth: textWidth,
                         unitWidth: unit.getBoundingClientRect().width,
+                        removeWidth: remove.getBoundingClientRect().width,
                         qtyValue: qty.value,
                         unitValue: unit.value,
                     };
@@ -138,8 +159,23 @@ def main():
                 str(info),
             )
             check(
-                "les valeurs quantité/unité restent correctement enregistrées (pas seulement invisibles)",
-                info["qtyValue"] == "200" and info["unitValue"] == "c. à soupe",
+                "la quantité affichée est bien arrondie à 3 décimales (0.333333333 -> 0.333)",
+                info["qtyValue"] == "0.333",
+                str(info),
+            )
+            check(
+                "le texte affiché dans la case quantité n'est pas tronqué (les flèches natives ne volent plus de place)",
+                info["qtyTextWidth"] <= info["qtyClientWidth"],
+                str(info),
+            )
+            check(
+                f"l'icône de suppression est bien réduite d'environ 30 % (<= {MAX_REMOVE_BUTTON_WIDTH}px, contre 44px avant)",
+                info["removeWidth"] <= MAX_REMOVE_BUTTON_WIDTH,
+                str(info),
+            )
+            check(
+                "l'unité choisie reste correctement enregistrée (pas seulement invisible)",
+                info["unitValue"] == "c. à soupe",
                 str(info),
             )
             print()

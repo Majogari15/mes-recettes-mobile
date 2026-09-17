@@ -5601,3 +5601,61 @@ lieu de rester bloqué sur un menu vide. Suite de régression complète
 repassée au vert (17 scripts + corpus OCR).
 
 **Version testée** : v227
+
+### 84 — Ligne d'ingrédient réorganisée + filtre par catégorie sur l'écran Recettes *(v228)*
+
+Deux demandes explicites de l'utilisateur.
+
+**1. Ligne d'ingrédient du formulaire de recette** : la case quantité
+pouvait afficher ~7 caractères, l'icône de suppression faisait 44px.
+Demandé : réduire la quantité à ~5 caractères, limiter l'affichage à 3
+décimales, réduire l'icône de suppression de 30 %, et donner l'espace
+ainsi libéré au champ nom.
+
+- `.ing-form-row input.qty` : largeur fixée à `calc(5ch + 10px)`
+  (`flex-grow: 0` désormais, ne vole plus d'espace au champ nom) plutôt
+  que `flex: 1`.
+- Nouvelle fonction `roundQtyForInput` (distincte de `fmtQty`, qui
+  utilise la virgule française invalide pour un `<input type="number">`)
+  appliquée à la valeur affichée dans ce champ : `0.333333333` devient
+  `0.333`.
+- `.ing-form-row .remove-ing` : 44px → 31px (icône : 17px → 12px),
+  soit -30 % comme demandé.
+- `.ing-form-row select` (unité) : passe aussi en largeur fixe
+  (`flex: 0 1 82px`, sa taille actuelle) plutôt que `flex: 1.2`, pour
+  qu'il ne capte plus une part de l'espace libéré.
+- `.autocomplete-wrap` (champ nom) : `flex: 2` → `flex: 1`, devenant le
+  seul élément encore extensible de la ligne — il capte donc
+  automatiquement 100 % de l'espace libéré par les trois réductions
+  ci-dessus.
+- Effet de bord découvert et corrigé en vérifiant en direct : les
+  flèches natives d'incrémentation d'un `<input type="number">`
+  réservent leur propre espace indépendamment de la largeur CSS —
+  sur une case déjà réduite à 5 caractères, elles tronquaient
+  visuellement le dernier chiffre malgré une largeur par ailleurs
+  suffisante (confirmé par mesure : largeur du texte 45px pour une
+  case de 56px de contenu, pourtant coupée à l'écran). Corrigé en
+  masquant ces flèches sur ce champ précis (`::-webkit-inner/outer-spin-button`),
+  inutiles sur un écran tactile.
+
+**2. Filtre par catégorie sur l'écran Recettes**, à gauche du contrôle
+de tri existant : nouveau `<select>` (`recipe-category-select`)
+listant `CATEGORY_OPTIONS` ("Apéro", "Dessert", "Plat"...) plus une
+option "Toutes". Nouvel état `state.recipeCategoryFilter`, appliqué
+dans `filteredRecipes()` (une recette sans catégorie renseignée est
+traitée comme "Autre", jamais exclue silencieusement — même
+convention que l'écran Statistiques) et réinitialisé au changement
+d'onglet dans la barre de navigation, comme les autres filtres.
+
+**Vérifié** : mesures directes des largeurs/valeurs à 390px ET 320px
+en français ET en allemand (langue la plus longue) — aucun
+débordement, aucun retour à la ligne intempestif, arrondi à 3
+décimales confirmé, réduction de l'icône confirmée (≤32px), filtre par
+catégorie confirmé (y compris le cas "sans catégorie" → "Autre") et sa
+réinitialisation au changement d'onglet. 2 nouveaux fichiers de test
+permanents (les cas de largeur ont été ajoutés à
+`test_ingredient_row_layout.py` existant, plus un nouveau
+`test_recipe_category_filter.py`). Suite de régression complète
+repassée au vert (18 scripts + corpus OCR).
+
+**Version testée** : v228

@@ -295,6 +295,7 @@ const state = {
   editingRecipeId: null,
   search: "",
   activeFilter: null, // 'favorite' | 'quick' | 'vegetarian' | 'wishlist'
+  recipeCategoryFilter: null, // null (toutes) ou une valeur de CATEGORY_OPTIONS
   recipeSortBy: "name", // 'name' | 'recent' | 'prepTime' | 'favoriteFirst'
   viewPersons: 4,
   formIngredients: [],
@@ -559,6 +560,18 @@ function fmtQty(qty) {
   }
   const factor = Math.pow(10, decimals);
   return String(Math.round(n * factor) / factor).replace(".", ",");
+}
+// Arrondit à au plus 3 décimales pour l'affichage dans le champ
+// quantité ÉDITABLE du formulaire (contrairement à fmtQty ci-dessus,
+// réservé à du texte d'affichage simple) : contrairement à fmtQty, la
+// virgule française n'est jamais utilisée ici, un <input type="number">
+// n'acceptant qu'un point comme séparateur décimal, quelle que soit la
+// langue affichée.
+function roundQtyForInput(qty) {
+  if (qty == null || qty === "") return "";
+  const n = Number(qty);
+  if (Number.isNaN(n)) return qty;
+  return String(Math.round(n * 1000) / 1000);
 }
 function normalize(str) {
   return (str || "")
@@ -841,6 +854,7 @@ function renderBottomNav() {
     btn.addEventListener("click", () => {
       state.screen = item.key;
       state.activeFilter = null;
+      state.recipeCategoryFilter = null;
       state.recipeSortBy = "name";
       render();
     });
@@ -1086,6 +1100,10 @@ function filteredRecipes() {
   if (state.activeFilter === "quick") list = list.filter((r) => (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0) > 0 && (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0) <= 30);
   if (state.activeFilter === "vegetarian") list = list.filter((r) => r.vegetarian);
   if (state.activeFilter === "wishlist") list = list.filter((r) => r.wishlist);
+  // Comme dans l'écran Statistiques : une recette sans catégorie
+  // renseignée est traitée comme "Autre", jamais exclue silencieusement
+  // d'un filtre par catégorie.
+  if (state.recipeCategoryFilter) list = list.filter((r) => (r.category || "Autre") === state.recipeCategoryFilter);
   const byName = (a, b) => a.name.localeCompare(b.name, CURRENT_LANG);
   if (state.recipeSortBy === "recent") {
     // Chaînes ISO 8601 : comparables directement par ordre lexical, sans
@@ -1144,16 +1162,30 @@ function renderRecipeList() {
   chipsWrap.appendChild(chips);
   wrap.appendChild(chipsWrap);
 
-  const sortRow = el(`<div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:4px 0 12px;">
-    <label for="recipe-sort-select" style="font-size:13px;color:var(--text-muted);">${escapeHtml(t("sort_label"))}</label>
-    <select id="recipe-sort-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);font-size:13px;">
-      <option value="name" ${state.recipeSortBy === "name" ? "selected" : ""}>${escapeHtml(t("sort_name"))}</option>
-      <option value="recent" ${state.recipeSortBy === "recent" ? "selected" : ""}>${escapeHtml(t("sort_recent"))}</option>
-      <option value="prepTime" ${state.recipeSortBy === "prepTime" ? "selected" : ""}>${escapeHtml(t("sort_prep_time"))}</option>
-      <option value="favoriteFirst" ${state.recipeSortBy === "favoriteFirst" ? "selected" : ""}>${escapeHtml(t("sort_favorite_first"))}</option>
-    </select>
+  const selectEllipsis = "min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;";
+  const sortRow = el(`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 0 12px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto;max-width:48%;">
+      <label for="recipe-category-select" style="font-size:13px;color:var(--text-muted);flex-shrink:0;">${escapeHtml(t("category_filter_label"))}</label>
+      <select id="recipe-category-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);font-size:13px;${selectEllipsis}">
+        <option value="">${escapeHtml(t("category_filter_all"))}</option>
+        ${CATEGORY_OPTIONS.map((cat) => `<option value="${escapeHtml(cat)}" ${state.recipeCategoryFilter === cat ? "selected" : ""}>${escapeHtml(translateCategory(cat))}</option>`).join("")}
+      </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto;max-width:48%;">
+      <label for="recipe-sort-select" style="font-size:13px;color:var(--text-muted);flex-shrink:0;">${escapeHtml(t("sort_label"))}</label>
+      <select id="recipe-sort-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);font-size:13px;${selectEllipsis}">
+        <option value="name" ${state.recipeSortBy === "name" ? "selected" : ""}>${escapeHtml(t("sort_name"))}</option>
+        <option value="recent" ${state.recipeSortBy === "recent" ? "selected" : ""}>${escapeHtml(t("sort_recent"))}</option>
+        <option value="prepTime" ${state.recipeSortBy === "prepTime" ? "selected" : ""}>${escapeHtml(t("sort_prep_time"))}</option>
+        <option value="favoriteFirst" ${state.recipeSortBy === "favoriteFirst" ? "selected" : ""}>${escapeHtml(t("sort_favorite_first"))}</option>
+      </select>
+    </div>
   </div>`);
-  sortRow.querySelector("select").addEventListener("change", (e) => {
+  sortRow.querySelector("#recipe-category-select").addEventListener("change", (e) => {
+    state.recipeCategoryFilter = e.target.value || null;
+    renderRecipeListInto(wrap);
+  });
+  sortRow.querySelector("#recipe-sort-select").addEventListener("change", (e) => {
     state.recipeSortBy = e.target.value;
     renderRecipeListInto(wrap);
   });
@@ -1750,7 +1782,7 @@ function renderIngredientRows(holder) {
     const row = el(`<div class="ing-form-row${ing.confidence === "uncertain" ? " ing-form-row-uncertain" : ""}">
       ${uncertainBadge}
       <div class="autocomplete-wrap"><input type="text" class="ing-name" placeholder="${t("form_ingredient_name")}" aria-label="${escapeHtml(t("form_ingredient_name"))}" value="${escapeHtml(translateIngredientName(ing.name))}"></div>
-      <input type="number" step="any" min="0" class="qty ing-qty" placeholder="${t("form_ingredient_qty")}" aria-label="${escapeHtml(t("form_ingredient_qty"))}" value="${ing.quantity != null ? ing.quantity : ""}">
+      <input type="number" step="any" min="0" class="qty ing-qty" placeholder="${t("form_ingredient_qty")}" aria-label="${escapeHtml(t("form_ingredient_qty"))}" value="${ing.quantity != null ? roundQtyForInput(ing.quantity) : ""}">
       <select class="ing-unit" aria-label="${escapeHtml(t("form_ingredient_unit"))}"></select>
       <button type="button" class="remove-ing" aria-label="${t("common_delete")}">${t("form_remove")}</button>
     </div>`);
@@ -10759,7 +10791,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 227;
+const APP_VERSION = 228;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
