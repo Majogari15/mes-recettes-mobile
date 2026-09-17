@@ -264,6 +264,49 @@ function localeDateTimeStr(date) {
   return new Date(date).toLocaleString(CURRENT_LANG);
 }
 
+// Saisie de date "JJ/MM/AA" (6 chiffres, / auto-insérés) pour la date
+// de péremption du garde-manger — demandée explicitement à la place
+// du calendrier natif <input type="date">, trop lent à remplir sur
+// mobile (plusieurs écrans/clics pour une seule date). Reformate à
+// chaque frappe : les chiffres tapés sont extraits puis réinjectés
+// avec les séparateurs, quelle que soit leur position d'origine —
+// plus simple et plus robuste qu'un suivi précis de la position du
+// curseur pour un champ aussi court.
+function formatShortDateInput(rawValue) {
+  const digits = (rawValue || "").replace(/\D/g, "").slice(0, 6);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+}
+// Convertit "JJ/MM/AA" vers le format ISO déjà utilisé partout
+// ailleurs (item.expirationDate) — une année à 2 chiffres est toujours
+// comprise comme 20XX, largement suffisant pour une date de
+// péremption (jamais dans le passé lointain ni au-delà de 2099).
+// error : null (date valide ou champ vide, les deux permis puisque la
+// date reste optionnelle), "incomplete" (moins de 6 chiffres saisis)
+// ou "invalid" (6 chiffres, mais qui ne forment pas une vraie date —
+// jour hors bornes du mois, mois > 12...).
+function parseShortDateToIso(value) {
+  const digits = (value || "").replace(/\D/g, "");
+  if (!digits) return { iso: null, error: null };
+  if (digits.length !== 6) return { iso: null, error: "incomplete" };
+  const day = parseInt(digits.slice(0, 2), 10);
+  const month = parseInt(digits.slice(2, 4), 10);
+  const year = 2000 + parseInt(digits.slice(4, 6), 10);
+  if (month < 1 || month > 12) return { iso: null, error: "invalid" };
+  const daysInMonth = new Date(year, month, 0).getDate();
+  if (day < 1 || day > daysInMonth) return { iso: null, error: "invalid" };
+  const iso = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  return { iso, error: null };
+}
+// Sens inverse, pour pré-remplir le champ à l'édition d'un article
+// dont la date est déjà enregistrée au format ISO.
+function isoDateToShortInput(iso) {
+  if (!iso) return "";
+  const [year, month, day] = iso.split("-");
+  return `${day}/${month}/${year.slice(2)}`;
+}
+
 // Formate une erreur interceptée en texte lisible, quelle que soit sa
 // forme réelle — un rejet de promesse n'est pas toujours un vrai objet
 // Error (Tesseract, par exemple, peut rejeter sans aucune valeur), et
@@ -2554,8 +2597,9 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved) {
     </div>
     <div class="field">
       <label for="modal-ing-expiration">${t("pantry_expiration_label")}</label>
-      <input type="date" id="modal-ing-expiration">
+      <input type="text" inputmode="numeric" maxlength="8" placeholder="${t("pantry_expiration_placeholder")}" id="modal-ing-expiration">
       <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0;">${escapeHtml(t("pantry_expiration_hint"))}</p>
+      <p id="modal-ing-expiration-error" style="font-size:12px;color:var(--danger);margin:4px 0 0;display:none;"></p>
     </div>` : ""}
     <div class="modal-actions">
       <button type="button" class="btn btn-outline" id="modal-cancel">${t("form_cancel")}</button>
@@ -2572,12 +2616,20 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved) {
     nameInput.value = translateIngredientName(existingItem.name);
     if (existingItem.quantity != null) sheet.querySelector("#modal-ing-qty").value = existingItem.quantity;
     if (isPantry && existingItem.threshold != null) sheet.querySelector("#modal-ing-threshold").value = existingItem.threshold;
-    if (isPantry && existingItem.expirationDate) sheet.querySelector("#modal-ing-expiration").value = existingItem.expirationDate;
+    if (isPantry && existingItem.expirationDate) sheet.querySelector("#modal-ing-expiration").value = isoDateToShortInput(existingItem.expirationDate);
   } else if (prefill) {
     if (prefill.name) nameInput.value = prefill.name;
     if (prefill.quantity != null) sheet.querySelector("#modal-ing-qty").value = prefill.quantity;
   }
   attachIngredientAutocomplete(nameInput, (value) => (typedName = value));
+  const expirationInput = isPantry ? sheet.querySelector("#modal-ing-expiration") : null;
+  const expirationErrorEl = isPantry ? sheet.querySelector("#modal-ing-expiration-error") : null;
+  if (expirationInput) {
+    expirationInput.addEventListener("input", () => {
+      expirationInput.value = formatShortDateInput(expirationInput.value);
+      expirationErrorEl.style.display = "none";
+    });
+  }
 
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
@@ -2585,6 +2637,17 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved) {
   sheet.querySelector("#modal-confirm").addEventListener("click", async () => {
     const name = resolveIngredientInput((typedName || nameInput.value).trim());
     if (!name) { nameInput.focus(); return; }
+    let expirationDate = null;
+    if (isPantry) {
+      const parsed = parseShortDateToIso(expirationInput.value);
+      if (parsed.error) {
+        expirationErrorEl.textContent = parsed.error === "incomplete" ? t("pantry_expiration_incomplete") : t("pantry_expiration_invalid");
+        expirationErrorEl.style.display = "block";
+        expirationInput.focus();
+        return;
+      }
+      expirationDate = parsed.iso;
+    }
     let quantity = parseQtyOrNull(sheet.querySelector("#modal-ing-qty").value);
     const unit = unitSelect.value;
     // Déterminé maintenant (avant toute réservation), pour pouvoir
@@ -2621,7 +2684,7 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved) {
     };
     if (storeName === "shopping") item.checked = isEdit ? existingItem.checked : false;
     if (isPantry) item.threshold = parseQtyOrNull(sheet.querySelector("#modal-ing-threshold").value);
-    if (isPantry) item.expirationDate = sheet.querySelector("#modal-ing-expiration").value || null;
+    if (isPantry) item.expirationDate = expirationDate;
     await storePut(storeName, item);
     if (storeName === "shopping" && isEdit) {
       // Modifier un article de courses existant rend sa réservation
@@ -11267,7 +11330,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 239;
+const APP_VERSION = 240;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

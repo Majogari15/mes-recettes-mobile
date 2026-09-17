@@ -205,10 +205,12 @@ Depuis, la structure sépare strictement :
   catastrophique dans une expression régulière — voir
   TESTS_NON_REGRESSION.md point 93.
 - `test_pantry_expiration.py` — date de péremption sur les articles du
-  garde-manger : ajout/modification via le vrai formulaire, statuts
-  expiré/bientôt/lointain/sans date, bandeau de rappel sur l'accueil,
-  tri par date, survie à un aller-retour de sauvegarde locale — voir
-  TESTS_NON_REGRESSION.md point 94.
+  garde-manger : ajout/modification via le vrai formulaire, saisie 6
+  chiffres avec "/" automatiques et validation (date incomplète ou
+  calendairement invalide), statuts expiré/bientôt/lointain/sans
+  date, bandeau de rappel sur l'accueil, tri par date, survie à un
+  aller-retour de sauvegarde locale — voir TESTS_NON_REGRESSION.md
+  points 94 et 97.
 - `test_barcode_pantry.py` — ajout au garde-manger par code-barres :
   vrai chemin caméra (détection simulée), import depuis une photo déjà
   prise (détection simulée, y compris aucun code reconnu et détecteur

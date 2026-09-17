@@ -6378,3 +6378,40 @@ réseau Open Food Facts intercepté) :
 Suite de régression complète (30 scripts + corpus OCR) au vert.
 
 **Version testée** : v239
+
+### 97 — Date de péremption : saisie 6 chiffres avec "/" automatiques (remplace le calendrier)
+
+Demande explicite de l'utilisateur : le calendrier natif
+(`<input type="date">`) demandait trop de clics sur mobile pour
+remplir une seule date. Remplacé par un champ texte (`inputmode`
+numérique, clavier numérique direct sur téléphone) où seuls les
+chiffres sont retenus (`formatShortDateInput`) — les deux "/" du
+format JJ/MM/AA s'insèrent automatiquement après le 2ᵉ et le 4ᵉ
+chiffre tapé, sans action de l'utilisateur.
+
+La validation (`parseShortDateToIso`) distingue deux erreurs, chacune
+avec un message dédié affiché sous le champ : date incomplète (moins
+de 6 chiffres) et date invalide (6 chiffres, mais jour ou mois hors
+bornes réelles — ex. "31/02", qui n'existe dans aucun mois). Le
+stockage interne (`item.expirationDate`) reste inchangé, au format
+ISO habituel — seule la saisie change, pas la donnée mémorisée ni la
+sauvegarde locale.
+
+**Vérifié** :
+- Les "/" s'insèrent automatiquement après 2 puis 4 chiffres tapés,
+  sans que l'utilisateur les tape lui-même.
+- Date incomplète (moins de 6 chiffres) → message d'erreur dédié,
+  article non enregistré.
+- Date calendaire impossible (ex. 31 février) → message d'erreur
+  dédié, article non enregistré.
+- Date valide → toujours enregistrée correctement au format ISO
+  habituel (`item.expirationDate`), comme avant ce changement.
+- Pré-remplissage à l'édition toujours correct, désormais au format
+  JJ/MM/AA affiché plutôt qu'au format du calendrier natif.
+- Champ effaçable (repasse à `null`), comportement inchangé.
+- Survit à un aller-retour de sauvegarde locale (JSON), comportement
+  inchangé (le format de stockage n'a pas changé).
+
+Suite de régression complète (30 scripts + corpus OCR) au vert.
+
+**Version testée** : v240

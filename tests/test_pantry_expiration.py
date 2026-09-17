@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Test permanent : date de péremption sur les articles du garde-manger
 (demande explicite de l'utilisateur) — voir TESTS_NON_REGRESSION.md
-point 94.
+points 94 et 97.
 
-Couvre : ajout/modification via le vrai formulaire, affichage
-coloré selon l'urgence (expiré / bientôt / lointain / sans date),
-bandeau de rappel sur l'accueil, tri par date de péremption, et
-survie du champ à un aller-retour de sauvegarde locale (JSON).
+Couvre : ajout/modification via le vrai formulaire, saisie 6 chiffres
+avec "/" automatiques et validation (incomplète / calendaire
+invalide), affichage coloré selon l'urgence (expiré / bientôt /
+lointain / sans date), bandeau de rappel sur l'accueil, tri par date
+de péremption, et survie du champ à un aller-retour de sauvegarde
+locale (JSON).
 
 Utilisation (démarre et arrête lui-même un serveur local temporaire) :
 
@@ -49,6 +51,23 @@ def iso_date(days_from_today):
     return (datetime.date.today() + datetime.timedelta(days=days_from_today)).isoformat()
 
 
+def short_date(days_from_today):
+    # Format "JJMMAA" attendu par le champ de saisie (6 chiffres, les
+    # "/" sont insérés automatiquement par l'app à la frappe — voir
+    # formatShortDateInput dans app.js) — tapé ici sans séparateur,
+    # exactement comme le ferait un vrai clavier numérique.
+    d = datetime.date.today() + datetime.timedelta(days=days_from_today)
+    return f"{d.day:02d}{d.month:02d}{d.year % 100:02d}"
+
+
+def short_date_slashed(days_from_today):
+    # Même date, mais avec les "/" déjà insérés — c'est ce que le champ
+    # affiche réellement une fois la saisie reformatée (ou pré-rempli à
+    # l'édition), jamais la forme sans séparateur ci-dessus.
+    raw = short_date(days_from_today)
+    return f"{raw[0:2]}/{raw[2:4]}/{raw[4:6]}"
+
+
 def main():
     port = find_free_port()
     httpd = start_local_server(port)
@@ -77,11 +96,62 @@ def main():
         page.evaluate("() => openPantryAddPrompt()")
         page.wait_for_timeout(200)
         page.fill("#modal-ing-name", "Thon en boîte")
-        page.fill("#modal-ing-expiration", iso_date(-2))
+        page.fill("#modal-ing-expiration", short_date(-2))
         page.click("#modal-confirm")
         page.wait_for_timeout(300)
         saved = page.evaluate("() => state.pantry.find(i => i.name === 'Thon en boîte')")
         check("L'article est enregistré avec la date de péremption saisie", saved is not None and saved.get("expirationDate") == iso_date(-2), str(saved))
+
+        print("\n=== Formatage automatique du champ date (JJ/MM/AA, sans calendrier) ===\n")
+        page.evaluate("() => openPantryAddPrompt()")
+        page.wait_for_timeout(200)
+        page.fill("#modal-ing-name", "Format auto")
+        page.fill("#modal-ing-expiration", "010225")
+        formatted = page.evaluate("() => document.getElementById('modal-ing-expiration').value")
+        check("Les '/' sont insérés automatiquement après 2 et 4 chiffres tapés", formatted == "01/02/25", formatted)
+        page.fill("#modal-ing-expiration", "0102")
+        formatted_partial = page.evaluate("() => document.getElementById('modal-ing-expiration').value")
+        check("Un seul '/' inséré tant que moins de 4 chiffres sont saisis", formatted_partial == "01/02", formatted_partial)
+
+        print("\n=== Date incomplète refusée avec un message clair ===\n")
+        page.fill("#modal-ing-expiration", "0102")
+        page.click("#modal-confirm")
+        page.wait_for_timeout(200)
+        incomplete_error = page.evaluate(
+            """
+            () => {
+                const el = document.getElementById('modal-ing-expiration-error');
+                return el && el.style.display !== 'none' ? el.textContent : null;
+            }
+            """
+        )
+        check(
+            "Le message d'erreur 'date incomplète' s'affiche et l'article n'est pas enregistré",
+            incomplete_error == "Date incomplète — 6 chiffres attendus (JJ/MM/AA)."
+            and page.evaluate("() => state.pantry.some(i => i.name === 'Format auto')") is False,
+            incomplete_error,
+        )
+
+        print("\n=== Date calendaire invalide refusée (31 février n'existe pas) ===\n")
+        page.fill("#modal-ing-expiration", "310226")
+        page.click("#modal-confirm")
+        page.wait_for_timeout(200)
+        invalid_error = page.evaluate(
+            """
+            () => {
+                const el = document.getElementById('modal-ing-expiration-error');
+                return el && el.style.display !== 'none' ? el.textContent : null;
+            }
+            """
+        )
+        check(
+            "Le message d'erreur 'date invalide' s'affiche et l'article n'est pas enregistré",
+            invalid_error == "Cette date n'existe pas (jour ou mois invalide)."
+            and page.evaluate("() => state.pantry.some(i => i.name === 'Format auto')") is False,
+            invalid_error,
+        )
+        page.click("#modal-cancel")
+        page.wait_for_timeout(200)
 
         print("\n=== Statuts : expiré / bientôt / lointain / sans date ===\n")
         page.evaluate(
@@ -176,7 +246,7 @@ def main():
         page.evaluate("() => openAddItemModal('pantry', state.pantry.find(i => i.id === 'exp-soon'))")
         page.wait_for_timeout(200)
         prefill = page.evaluate("() => document.getElementById('modal-ing-expiration').value")
-        check("Le champ date se pré-remplit avec la date déjà enregistrée", prefill == iso_date(2), prefill)
+        check("Le champ date se pré-remplit avec la date déjà enregistrée (JJ/MM/AA)", prefill == short_date_slashed(2), prefill)
         page.fill("#modal-ing-expiration", "")
         page.click("#modal-confirm")
         page.wait_for_timeout(300)
