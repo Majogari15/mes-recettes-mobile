@@ -5659,3 +5659,31 @@ permanents (les cas de largeur ont été ajoutés à
 repassée au vert (18 scripts + corpus OCR).
 
 **Version testée** : v228
+
+### 85 — `storePut`/`storeDelete` ignoraient aussi `tx.onabort` *(v229)*
+
+Dernier point identifié lors de l'audit complet (point 82) mais
+volontairement laissé de côté à l'époque comme pré-existant et de
+priorité moindre : `storePut`/`storeDelete`, les deux fonctions de base
+utilisées à des dizaines d'endroits dans tout le fichier, n'écoutaient
+que `oncomplete`/`onerror` — exactement le même défaut déjà corrigé sur
+`storePutAndDeleteMany` et les autres fonctions d'écriture multi-entrepôt
+(points 80-81, 82). Si la transaction est abandonnée APRÈS que sa seule
+requête (le `put`/`delete` unique) a déjà réussi, aucun des deux
+gestionnaires ne se déclenche — la promesse restait bloquée pour
+toujours dans ce cas précis.
+
+Corrigé en ajoutant `tx.onabort = () => reject(tx.error || new
+Error("transaction_aborted"));` aux deux fonctions, à l'identique des
+fonctions déjà corrigées.
+
+**Vérifié** : reproduit le même scénario qu'aux points 80-81
+(interception de `IDBTransaction.prototype.objectStore` pour abandonner
+la transaction depuis l'intérieur du gestionnaire `onsuccess` d'une
+requête déjà réussie) sur `storePut` ET `storeDelete` séparément — les
+deux promesses restaient bloquées avant le correctif, se
+résolvent/rejettent désormais normalement. Cas ajoutés à
+`test_data_integrity.py`. Suite de régression complète repassée au
+vert (18 scripts + corpus OCR).
+
+**Version testée** : v229

@@ -79,6 +79,11 @@ function storePut(storeName, value) {
         tx.objectStore(storeName).put(value);
         tx.oncomplete = () => resolve(value);
         tx.onerror = () => reject(tx.error);
+        // Voir storePutAndDeleteMany : si la transaction est abandonnée
+        // APRÈS que sa seule requête a déjà réussi, ni oncomplete ni
+        // onerror ne se déclenchent — sans ce gestionnaire, la promesse
+        // restait bloquée pour toujours dans ce cas précis.
+        tx.onabort = () => reject(tx.error || new Error("transaction_aborted"));
       })
   );
 }
@@ -90,6 +95,7 @@ function storeDelete(storeName, key) {
         tx.objectStore(storeName).delete(key);
         tx.oncomplete = () => resolve();
         tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error || new Error("transaction_aborted"));
       })
   );
 }
@@ -10791,7 +10797,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 228;
+const APP_VERSION = 229;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

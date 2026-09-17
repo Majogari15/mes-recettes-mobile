@@ -15,6 +15,11 @@ complet (voir TESTS_NON_REGRESSION.md point 82) :
    avant confirmation de la persistance.
 4. `saveRecipeForm` n'avait aucun `try/catch` autour de son écriture :
    un échec laissait croire à tort que la recette avait été enregistrée.
+5. `storePut`/`storeDelete` (les fonctions de base utilisées à des
+   dizaines d'endroits dans tout le fichier) n'écoutaient que
+   `oncomplete`/`onerror` — sans `onabort`, une transaction abandonnée
+   après le succès de sa seule requête laissait leur promesse bloquée
+   pour toujours (voir TESTS_NON_REGRESSION.md point 85).
 
 Utilisation (démarre et arrête lui-même un serveur local temporaire) :
 
@@ -323,6 +328,77 @@ def main():
             occurrences_current_lang >= 5,
             f"occurrences trouvées: {occurrences_current_lang}",
         )
+        print()
+
+        print("=== storePut / storeDelete : ne restent plus bloquées pour toujours si la transaction est abandonnée après succès ===\n")
+        result_base_onabort = page.evaluate(
+            """
+            async () => {
+                await storeDelete('shopping', 'sp-abort-1');
+                const originalObjectStore = IDBTransaction.prototype.objectStore;
+
+                let aborted = false;
+                IDBTransaction.prototype.objectStore = function (name) {
+                    const store = originalObjectStore.call(this, name);
+                    if (!aborted) {
+                        aborted = true;
+                        const originalPut = store.put.bind(store);
+                        store.put = function (value) {
+                            const req = originalPut(value);
+                            req.onsuccess = () => this.transaction.abort();
+                            return req;
+                        }.bind(store);
+                    }
+                    return store;
+                };
+                let putSettled = false;
+                try {
+                    await storePut('shopping', { id: 'sp-abort-1', name: 'Test', unit: 'boîte', quantity: 1, checked: false });
+                } catch (e) {
+                    putSettled = true;
+                } finally {
+                    IDBTransaction.prototype.objectStore = originalObjectStore;
+                }
+
+                await storePut('shopping', { id: 'sp-abort-2', name: 'Test2', unit: 'boîte', quantity: 1, checked: false });
+                let aborted2 = false;
+                IDBTransaction.prototype.objectStore = function (name) {
+                    const store = originalObjectStore.call(this, name);
+                    if (!aborted2) {
+                        aborted2 = true;
+                        const originalDelete = store.delete.bind(store);
+                        store.delete = function (key) {
+                            const req = originalDelete(key);
+                            req.onsuccess = () => this.transaction.abort();
+                            return req;
+                        }.bind(store);
+                    }
+                    return store;
+                };
+                let delSettled = false;
+                try {
+                    await storeDelete('shopping', 'sp-abort-2');
+                } catch (e) {
+                    delSettled = true;
+                } finally {
+                    IDBTransaction.prototype.objectStore = originalObjectStore;
+                }
+
+                return { putSettled, delSettled };
+            }
+            """
+        )
+        check(
+            "storePut() se résout/rejette (jamais bloquée) même abandonnée après succès de sa requête",
+            result_base_onabort["putSettled"] is True,
+            str(result_base_onabort),
+        )
+        check(
+            "storeDelete() se résout/rejette (jamais bloquée) même abandonnée après succès de sa requête",
+            result_base_onabort["delSettled"] is True,
+            str(result_base_onabort),
+        )
+        page.evaluate("async () => { await storeDelete('shopping', 'sp-abort-1'); await storeDelete('shopping', 'sp-abort-2'); }")
         print()
 
         print("Erreurs JS sur tout le parcours:", "AUCUNE" if not errors else "; ".join(errors))
