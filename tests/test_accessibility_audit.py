@@ -91,6 +91,16 @@ def main():
                 state.recipes = await storeAll('recipes');
                 state.viewingRecipeId = 'a11y-1';
                 state.editingRecipeId = 'a11y-1';
+
+                // Articles de garde-manger avec une date de péremption
+                // proche/dépassée : sans ça, ni l'écran 'pantry' ni le
+                // bandeau de rappel de l'accueil ne sont jamais exercés
+                // avec de vraies données par cette boucle (voir point 94 —
+                // un premier passage sur écran vide avait déjà laissé
+                // passer un vrai défaut de contraste ailleurs, point 91).
+                await storePut('pantry', { id: 'a11y-pantry-1', name: 'Lait', quantity: 1, unit: 'L', expirationDate: '2020-01-01' });
+                await storePut('pantry', { id: 'a11y-pantry-2', name: 'Riz', quantity: 1, unit: 'kg', expirationDate: '2030-01-01' });
+                state.pantry = await storeAll('pantry');
             }
             """
         )

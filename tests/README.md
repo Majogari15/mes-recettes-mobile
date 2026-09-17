@@ -204,6 +204,11 @@ Depuis, la structure sépare strictement :
   (longues répétitions ambiguës) susceptibles de provoquer un blocage
   catastrophique dans une expression régulière — voir
   TESTS_NON_REGRESSION.md point 93.
+- `test_pantry_expiration.py` — date de péremption sur les articles du
+  garde-manger : ajout/modification via le vrai formulaire, statuts
+  expiré/bientôt/lointain/sans date, bandeau de rappel sur l'accueil,
+  tri par date, survie à un aller-retour de sauvegarde locale — voir
+  TESTS_NON_REGRESSION.md point 94.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

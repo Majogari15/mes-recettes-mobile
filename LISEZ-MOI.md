@@ -116,7 +116,11 @@ toutes les données restent sur l'appareil.
   d'alerte optionnel** par article : un rappel apparaît sur l'accueil
   dès que la quantité passe en dessous, touchez-le pour ajouter
   directement ces articles à la liste de courses (avec le seuil comme
-  quantité suggérée)
+  quantité suggérée), et **date de péremption optionnelle** : un
+  rappel séparé apparaît sur l'accueil dès qu'un article approche de sa
+  date ou l'a dépassée (touchez-le pour aller les voir dans le
+  garde-manger), avec un tri dédié pour faire remonter en premier les
+  articles à surveiller
 - Mode cuisine avec **plusieurs minuteurs** réglables (décompte,
   sonnerie **et vibration**, clignotement à zéro)
 - Multilingue : français, anglais, espagnol, allemand

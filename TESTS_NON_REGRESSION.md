@@ -6192,3 +6192,63 @@ du référentiel plutôt que poursuivis artificiellement :
 au vert.
 
 **Version testée** : v236
+
+### 94 — Nouvelle fonctionnalité : date de péremption sur le garde-manger
+
+Demande explicite de l'utilisateur (première des 3 étapes proposées —
+les deux autres, import par photo et lecture de code-barres, restent
+à étudier séparément, non commencées) :
+
+- Champ date de péremption optionnel sur chaque article du
+  garde-manger (`item.expirationDate`, format ISO `YYYY-MM-DD`,
+  `<input type="date">` dans le formulaire d'ajout/modification déjà
+  existant — même endroit que le seuil d'alerte).
+- Statut calculé (`getPantryExpirationStatus`) : "expired" (date
+  dépassée), "soon" (dans les `PANTRY_EXPIRATION_WARNING_DAYS` = 3
+  prochains jours, inclut les expirés), ou aucun (date lointaine ou
+  absente).
+- Bandeau de rappel sur l'accueil (`getExpiringPantryItems`), même
+  principe que le rappel de seuil de stock bas déjà existant mais
+  distinct (couleur danger plutôt qu'accent, clic → écran garde-manger
+  plutôt qu'ajout direct à la liste de courses, puisqu'ici l'action
+  utile est de vérifier/utiliser l'article, pas d'en racheter).
+- Affichage dans la liste du garde-manger : suffixe coloré selon
+  l'urgence (rouge "expiré le...", orange "expire le...", neutre "à
+  consommer avant le..."), rien si aucune date renseignée.
+- Nouveau tri "Date de péremption" (sélecteur ajouté sur l'écran
+  garde-manger, absent jusqu'ici — seul le tri alphabétique existait) :
+  articles les plus urgents en tête, ceux sans date toujours en
+  dernier.
+- Sauvegarde locale (JSON) : le champ survit automatiquement à un
+  export/import, `BACKUP_STORES` copiant chaque entrepôt IndexedDB
+  intégralement plutôt que champ par champ — vérifié par un aller-retour
+  réel dans le test.
+- **Exclusion volontaire, documentée** : le format de partage compatible
+  avec l'application Windows (`pantryToSharedFormat`/
+  `pantryFromSharedFormat`, utilisé pour le QR code et la sauvegarde
+  partagée) ne transporte PAS ce champ — l'application Windows n'a pas
+  cette fonctionnalité et ne saurait pas quoi en faire. Un aller-retour
+  mobile → partage → bureau → mobile perd donc la date de péremption
+  (mais rien d'autre) ; seule la sauvegarde locale (.json, propre à
+  l'app mobile) la conserve. Non corrigé sans décision explicite de
+  l'utilisateur, puisque cela nécessiterait de faire évoluer aussi
+  l'application Windows. Décision volontairement laissée de côté ici.
+- Vérifié via axe-core que ni le nouveau bandeau ni le nouveau
+  sélecteur de tri n'introduisent de défaut de contraste en thème
+  sombre (repéré une fois déjà aux points 90-91 sur des éléments
+  similaires) — corrigé d'emblée en reprenant le motif déjà
+  contrasté (`background:var(--card);color:var(--text)`) plutôt que
+  de le découvrir après coup. Les deux nouveaux écrans/bandeaux sont
+  désormais aussi seedés avec de vraies données dans
+  `test_accessibility_audit.py`, pas seulement testés vides.
+
+**Non fait dans cette étape** (explicitement reporté par l'utilisateur
+à plus tard, après étude d'autres idées) : ajout d'un article et de sa
+date par photo (OCR), lecture de code-barres.
+
+**Vérifié** : nouveau test `tests/test_pantry_expiration.py` (ajout
+réel via formulaire, 4 statuts, bandeau, clic, affichage coloré, tri,
+modification/effacement de la date, aller-retour de sauvegarde) +
+suite de régression complète (29 scripts + corpus OCR) au vert.
+
+**Version testée** : v237

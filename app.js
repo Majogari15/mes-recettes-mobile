@@ -303,6 +303,7 @@ const state = {
   activeFilter: null, // 'favorite' | 'quick' | 'vegetarian' | 'wishlist'
   recipeCategoryFilter: null, // null (toutes) ou une valeur de CATEGORY_OPTIONS
   recipeSortBy: "name", // 'name' | 'recent' | 'prepTime' | 'favoriteFirst'
+  pantrySortBy: "name", // 'name' | 'expiration'
   viewPersons: 4,
   formIngredients: [],
   formAllergens: [],
@@ -865,6 +866,7 @@ function renderBottomNav() {
       state.activeFilter = null;
       state.recipeCategoryFilter = null;
       state.recipeSortBy = "name";
+      state.pantrySortBy = "name";
       render();
     });
     nav.appendChild(btn);
@@ -922,6 +924,16 @@ function renderHome() {
       render();
     });
     wrap.appendChild(reminder);
+  }
+
+  const expiring = getExpiringPantryItems();
+  if (expiring.length) {
+    const names = expiring.map((i) => translateIngredientName(i.name)).sort().join(", ");
+    const expiringReminder = el(`<div style="background:var(--danger-light);color:var(--danger);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;">
+      ${escapeHtml(t("home_expiring_reminder", { count: String(expiring.length), names }))}
+    </div>`);
+    expiringReminder.addEventListener("click", () => { state.screen = "pantry"; render(); });
+    wrap.appendChild(expiringReminder);
   }
 
   // Rappel de sauvegarde : dès qu'il y a une donnée importante à
@@ -2205,6 +2217,26 @@ function getLowStockPantryItems() {
   return state.pantry.filter((item) => item.threshold != null && (item.quantity || 0) < item.threshold);
 }
 
+// Nombre de jours avant l'échéance à partir duquel un article est
+// considéré "bientôt périmé" — inclut aussi tout article déjà expiré.
+const PANTRY_EXPIRATION_WARNING_DAYS = 3;
+// "expired" (déjà dépassée) / "soon" (dans la fenêtre d'alerte) / null
+// (aucune date, ou date encore lointaine).
+function getPantryExpirationStatus(item) {
+  if (!item.expirationDate) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const expiration = new Date(item.expirationDate);
+  if (Number.isNaN(expiration.getTime())) return null;
+  if (expiration < today) return "expired";
+  const limit = new Date(today);
+  limit.setDate(limit.getDate() + PANTRY_EXPIRATION_WARNING_DAYS);
+  return expiration <= limit ? "soon" : null;
+}
+function getExpiringPantryItems() {
+  return state.pantry.filter((item) => getPantryExpirationStatus(item) != null);
+}
+
 function openAddItemModal(storeName, existingItem) {
   const isEdit = !!existingItem;
   const isPantry = storeName === "pantry";
@@ -2223,6 +2255,11 @@ function openAddItemModal(storeName, existingItem) {
       <label for="modal-ing-threshold">${t("pantry_threshold_label")}</label>
       <input type="number" step="any" min="0" id="modal-ing-threshold">
       <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0;">${escapeHtml(t("pantry_threshold_hint"))}</p>
+    </div>
+    <div class="field">
+      <label for="modal-ing-expiration">${t("pantry_expiration_label")}</label>
+      <input type="date" id="modal-ing-expiration">
+      <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0;">${escapeHtml(t("pantry_expiration_hint"))}</p>
     </div>` : ""}
     <div class="modal-actions">
       <button type="button" class="btn btn-outline" id="modal-cancel">${t("form_cancel")}</button>
@@ -2239,6 +2276,7 @@ function openAddItemModal(storeName, existingItem) {
     nameInput.value = translateIngredientName(existingItem.name);
     if (existingItem.quantity != null) sheet.querySelector("#modal-ing-qty").value = existingItem.quantity;
     if (isPantry && existingItem.threshold != null) sheet.querySelector("#modal-ing-threshold").value = existingItem.threshold;
+    if (isPantry && existingItem.expirationDate) sheet.querySelector("#modal-ing-expiration").value = existingItem.expirationDate;
   }
   attachIngredientAutocomplete(nameInput, (value) => (typedName = value));
 
@@ -2284,6 +2322,7 @@ function openAddItemModal(storeName, existingItem) {
     };
     if (storeName === "shopping") item.checked = isEdit ? existingItem.checked : false;
     if (isPantry) item.threshold = parseQtyOrNull(sheet.querySelector("#modal-ing-threshold").value);
+    if (isPantry) item.expirationDate = sheet.querySelector("#modal-ing-expiration").value || null;
     await storePut(storeName, item);
     if (storeName === "shopping" && isEdit) {
       // Modifier un article de courses existant rend sa réservation
@@ -2322,18 +2361,54 @@ function openShoppingAddPrompt() {
 /* ======================================================================
    GARDE-MANGER (version simple)
    ====================================================================== */
+function pantryExpirationSuffixHtml(item) {
+  if (!item.expirationDate) return "";
+  const status = getPantryExpirationStatus(item);
+  const dateStr = localeDateStr(item.expirationDate);
+  const key = status === "expired" ? "pantry_expiration_expired_suffix" : status === "soon" ? "pantry_expiration_soon_suffix" : "pantry_expiration_future_suffix";
+  const color = status === "expired" ? "var(--danger)" : status === "soon" ? "var(--accent)" : "var(--text-muted)";
+  return `<span style="color:${color};font-weight:${status ? 600 : 400};">${escapeHtml(t(key, { date: dateStr }))}</span>`;
+}
+function renderPantryInto(oldWrap) {
+  const fresh = renderPantry();
+  oldWrap.replaceWith(fresh);
+}
 function renderPantry() {
   const wrap = el(`<div></div>`);
   if (!state.pantry.length) {
     wrap.appendChild(el(`<div class="empty-state"><div class="emoji">📦</div><p>${escapeHtml(t("pantry_empty"))}</p></div>`));
   } else {
+    const selectEllipsis = "min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;";
+    const sortRow = el(`<div style="display:flex;align-items:center;gap:6px;margin:4px 0 12px;">
+      <label for="pantry-sort-select" style="font-size:13px;color:var(--text-muted);flex-shrink:0;">${escapeHtml(t("sort_label"))}</label>
+      <select id="pantry-sort-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;${selectEllipsis}">
+        <option value="name" ${state.pantrySortBy === "name" ? "selected" : ""}>${escapeHtml(t("sort_name"))}</option>
+        <option value="expiration" ${state.pantrySortBy === "expiration" ? "selected" : ""}>${escapeHtml(t("sort_expiration"))}</option>
+      </select>
+    </div>`);
+    sortRow.querySelector("#pantry-sort-select").addEventListener("change", (e) => {
+      state.pantrySortBy = e.target.value;
+      renderPantryInto(wrap);
+    });
+    wrap.appendChild(sortRow);
+
     const list = el(`<div class="card" style="padding:4px 16px;margin-bottom:20px;"></div>`);
     state.pantry
       .slice()
-      .sort((a, b) => a.name.localeCompare(b.name))
+      .sort((a, b) => {
+        if (state.pantrySortBy === "expiration") {
+          // Sans date, toujours en fin de liste (peu importe le nom) —
+          // seuls les articles à surveiller doivent ressortir en tête.
+          if (!a.expirationDate && !b.expirationDate) return a.name.localeCompare(b.name);
+          if (!a.expirationDate) return 1;
+          if (!b.expirationDate) return -1;
+          return a.expirationDate.localeCompare(b.expirationDate) || a.name.localeCompare(b.name);
+        }
+        return a.name.localeCompare(b.name);
+      })
       .forEach((item) => {
         const row = el(`<div class="shopping-item">
-          <span class="label" style="cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}${item.threshold != null ? escapeHtml(t("pantry_threshold_suffix", { threshold: fmtQty(item.threshold) })) : ""}</span>
+          <span class="label" style="cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}${item.threshold != null ? escapeHtml(t("pantry_threshold_suffix", { threshold: fmtQty(item.threshold) })) : ""}${pantryExpirationSuffixHtml(item)}</span>
           <button class="remove-ing" style="width:32px;height:32px;" aria-label="${t("common_delete")}">🗑</button>
         </div>`);
         row.querySelector(".label").addEventListener("click", () => openAddItemModal("pantry", item));
@@ -10874,7 +10949,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 236;
+const APP_VERSION = 237;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
