@@ -209,12 +209,15 @@ Depuis, la structure sépare strictement :
   expiré/bientôt/lointain/sans date, bandeau de rappel sur l'accueil,
   tri par date, survie à un aller-retour de sauvegarde locale — voir
   TESTS_NON_REGRESSION.md point 94.
-- `test_barcode_pantry.py` — ajout au garde-manger par scan de
-  code-barres : vrai chemin caméra (détection simulée), repli manuel,
-  recherche du produit (Open Food Facts simulée, jamais le vrai
-  réseau), aucun doublon créé grâce à la mémorisation du nom ET de
-  l'unité choisis, survie de cette mémoire à une sauvegarde locale —
-  voir TESTS_NON_REGRESSION.md point 95.
+- `test_barcode_pantry.py` — ajout au garde-manger par code-barres :
+  vrai chemin caméra (détection simulée), import depuis une photo déjà
+  prise (détection simulée, y compris aucun code reconnu et détecteur
+  natif indisponible), repli manuel, recherche du produit (Open Food
+  Facts simulée, jamais le vrai réseau), aucun doublon créé grâce à la
+  mémorisation du nom ET de l'unité choisis, survie de cette mémoire à
+  une sauvegarde locale — voir TESTS_NON_REGRESSION.md points 95-96.
+  Utilise `tests/fixtures/tiny_blank.png` (image minimale, son contenu
+  réel n'a aucune importance puisque le détecteur est simulé).
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

@@ -6338,3 +6338,43 @@ des réponses contrôlées) :
 Suite de régression complète (30 scripts + corpus OCR) au vert.
 
 **Version testée** : v238
+
+### 96 — Ajout par code-barres : import depuis une photo (en plus du scan caméra en direct)
+
+Demande explicite de l'utilisateur, à côté du bouton "Scanner un
+code-barres" (point 95) : un second bouton pour importer depuis une
+photo déjà prise plutôt que d'ouvrir systématiquement la caméra en
+direct — utile quand le produit est déjà rangé et difficile à
+réatteindre, ou quand une photo existe déjà.
+
+Reprend exactement le motif déjà utilisé pour le scan de QR code
+("choisir une image", `decodeQrImageFile`) plutôt que d'inventer une
+nouvelle mécanique : chargement du fichier en `data:` URL (technique
+déjà en place, plus fiable que `URL.createObjectURL` sur certains
+appareils), dessin dans un `<canvas>`, puis le même détecteur natif
+que le scan en direct (`BarcodeDetector`, formats EAN/UPC — jsQR ne
+peut toujours pas décoder ce type de code). `detectImageMimeType`
+(auparavant une fonction interne à `openQrScanModal`) a été hissée au
+niveau du module pour être réutilisée par les deux chemins plutôt que
+dupliquée.
+
+Résultat identique au scan caméra ensuite (recherche Open Food Facts,
+formulaire à confirmer, mémorisation par code-barres) : les deux
+boutons alimentent la même fonction `handleScannedBarcode`.
+
+**Vérifié** (mêmes principes que le point 95 — détection simulée,
+réseau Open Food Facts intercepté) :
+- Code-barres détecté sur une photo → déclenche bien la recherche du
+  produit, jusqu'au formulaire pré-rempli.
+- Aucun code-barres reconnu sur la photo → message clair, pas de
+  plantage.
+- Détecteur natif indisponible → message explicite au lieu de tenter
+  un décodage impossible.
+- Aucun débordement des deux boutons côte à côte à 320px ni 390px de
+  large (repassent l'un sous l'autre si nécessaire).
+- Aucune violation de contraste critique/sérieuse introduite (thème
+  sombre).
+
+Suite de régression complète (30 scripts + corpus OCR) au vert.
+
+**Version testée** : v239

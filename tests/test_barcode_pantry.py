@@ -33,6 +33,11 @@ import threading
 from playwright.sync_api import sync_playwright
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Image minimale valide (1x1 px) — le contenu réel n'a aucune
+# importance pour les tests d'import depuis une photo : le détecteur
+# de code-barres est simulé (voir plus bas), seul le fait qu'un
+# VRAI fichier image se charge correctement dans un <canvas> compte.
+FIXTURE_PNG = os.path.join(PROJECT_ROOT, "tests", "fixtures", "tiny_blank.png")
 
 
 def find_free_port():
@@ -131,6 +136,55 @@ def main():
 
         print("\n=== Bouton d'entrée présent sur l'écran garde-manger ===\n")
         check("Le bouton 'Scanner un code-barres' est visible", page.is_visible("text=Scanner un code-barres"))
+        check("Le bouton 'Importer depuis une photo' est visible à côté", page.is_visible("text=Importer depuis une photo"))
+
+        print("\n=== Import depuis une photo : code-barres détecté (détection simulée) ===\n")
+        page.route(
+            "**/world.openfoodfacts.org/**",
+            lambda route: mock_off_route(route, {"status": 1, "product": {"product_name_fr": "Compote de Pommes", "quantity": "4x100g"}}),
+        )
+        page.evaluate(
+            """
+            () => {
+                window.BarcodeDetector = class {
+                    constructor() {}
+                    async detect() { return [{ rawValue: '3033710065912' }]; }
+                };
+            }
+            """
+        )
+        page.set_input_files("#barcode-import-photo-input", str(FIXTURE_PNG))
+        page.wait_for_timeout(500)
+        photo_prefilled = page.evaluate("() => { const el = document.getElementById('modal-ing-name'); return el ? el.value : null; }")
+        check("Le code-barres détecté sur la photo déclenche bien la recherche du produit", photo_prefilled == "Compote de Pommes", photo_prefilled)
+        page.click("#modal-cancel")
+        page.wait_for_timeout(200)
+        page.unroute("**/world.openfoodfacts.org/**")
+
+        print("\n=== Import depuis une photo : aucun code-barres reconnu ===\n")
+        page.evaluate(
+            """
+            () => {
+                window.BarcodeDetector = class {
+                    constructor() {}
+                    async detect() { return []; }
+                };
+            }
+            """
+        )
+        page.set_input_files("#barcode-import-photo-input", str(FIXTURE_PNG))
+        page.wait_for_timeout(500)
+        check("Message clair quand aucun code-barres n'est reconnu sur la photo", page.is_visible("text=Aucun code-barres reconnu"))
+        page.click("#custom-alert-ok")
+        page.wait_for_timeout(200)
+
+        print("\n=== Import depuis une photo : détecteur natif indisponible ===\n")
+        page.evaluate("() => { delete window.BarcodeDetector; }")
+        page.set_input_files("#barcode-import-photo-input", str(FIXTURE_PNG))
+        page.wait_for_timeout(300)
+        check("Message 'non pris en charge' affiché (pas de plantage)", page.is_visible("text=n'est pas prise en charge"))
+        page.click("#custom-alert-ok")
+        page.wait_for_timeout(200)
 
         print("\n=== Caméra indisponible (pas de BarcodeDetector) : repli manuel proposé ===\n")
         page.evaluate("() => { delete window.BarcodeDetector; }")

@@ -2327,6 +2327,71 @@ async function handleScannedBarcode(barcode) {
   openBarcodeResultModal(barcode, lookup);
 }
 
+// Lit le code-barres depuis une image déjà existante (galerie ou
+// nouvelle photo, au choix du système — même sélecteur natif que
+// "choisir une image" pour le QR code) plutôt que depuis un flux
+// caméra en direct : utile quand la caméra en direct est peu pratique
+// (produit déjà rangé et difficile à réatteindre, lumière insuffisante
+// pour un scan en direct...) ou quand une photo du produit a déjà été
+// prise. Même détecteur natif que le scan en direct — jsQR ne
+// peut pas décoder ce type de code-barres, voir openBarcodeScanModal.
+async function decodeBarcodeImageFile(file) {
+  if (!("BarcodeDetector" in window)) return null;
+  let detector;
+  try {
+    detector = new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e"] });
+  } catch (e) {
+    return null;
+  }
+  // Même technique de chargement que decodeQrImageFile (data: URL
+  // construite depuis les octets réels plutôt qu'un Blob avec
+  // URL.createObjectURL) — plus fiable en pratique sur certains
+  // appareils, voir son commentaire pour le détail.
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const mimeType = detectImageMimeType(bytes) || file.type || "image/jpeg";
+  let binary = "";
+  const chunkSize = 8192;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  const dataUrl = `data:${mimeType};base64,${btoa(binary)}`;
+  const img = new Image();
+  await new Promise((resolve, reject) => {
+    img.onload = resolve;
+    img.onerror = () => reject(new Error(t("qrscan_image_load_error")));
+    img.src = dataUrl;
+  });
+  const canvas = document.createElement("canvas");
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  canvas.getContext("2d").drawImage(img, 0, 0);
+  try {
+    const barcodes = await detector.detect(canvas);
+    return barcodes && barcodes.length ? barcodes[0].rawValue : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function importBarcodeFromPhotoFile(file) {
+  if (!("BarcodeDetector" in window)) {
+    await customAlert(t("barcode_native_unavailable"));
+    return;
+  }
+  let barcode;
+  try {
+    barcode = await decodeBarcodeImageFile(file);
+  } catch (e) {
+    await customAlert(formatCaughtError(e));
+    return;
+  }
+  if (!barcode) {
+    await customAlert(t("barcode_photo_not_found"));
+    return;
+  }
+  await handleScannedBarcode(barcode);
+}
+
 function openBarcodePasteModal() {
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
@@ -2610,9 +2675,20 @@ function renderPantryInto(oldWrap) {
 }
 function renderPantry() {
   const wrap = el(`<div></div>`);
-  const scanBtn = el(`<button class="btn btn-outline btn-sm" style="margin-bottom:14px;">${t("barcode_scan_button")}</button>`);
-  scanBtn.addEventListener("click", () => openBarcodeScanModal());
-  wrap.appendChild(scanBtn);
+  const barcodeActions = el(`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+    <button type="button" class="btn btn-outline btn-sm" id="barcode-scan-btn" style="width:auto;flex:1 1 auto;">${t("barcode_scan_button")}</button>
+    <button type="button" class="btn btn-outline btn-sm" id="barcode-import-photo-btn" style="width:auto;flex:1 1 auto;">${t("barcode_import_photo_button")}</button>
+    <input type="file" accept="image/*" id="barcode-import-photo-input" style="display:none;">
+  </div>`);
+  barcodeActions.querySelector("#barcode-scan-btn").addEventListener("click", () => openBarcodeScanModal());
+  const barcodePhotoInput = barcodeActions.querySelector("#barcode-import-photo-input");
+  barcodeActions.querySelector("#barcode-import-photo-btn").addEventListener("click", () => barcodePhotoInput.click());
+  barcodePhotoInput.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    e.target.value = "";
+    if (file) await importBarcodeFromPhotoFile(file);
+  });
+  wrap.appendChild(barcodeActions);
   if (!state.pantry.length) {
     wrap.appendChild(el(`<div class="empty-state"><div class="emoji">📦</div><p>${escapeHtml(t("pantry_empty"))}</p></div>`));
   } else {
@@ -3852,6 +3928,21 @@ async function openShoppingQrCodeModal() {
   await renderCurrentPart();
 }
 
+// Détecte le vrai format d'une image à partir de sa signature d'octets
+// plutôt que de se fier à l'extension du fichier ou à son type MIME
+// déclaré (potentiellement incorrect, notamment pour d'anciens QR
+// enregistrés sous l'extension .png mais contenant en réalité un GIF)
+// — utilisée par le décodage d'image QR ci-dessous et par l'import de
+// code-barres depuis une photo (voir openBarcodeScanModal).
+function detectImageMimeType(bytes) {
+  const sig = Array.from(bytes.slice(0, 8));
+  if (sig[0] === 0x89 && sig[1] === 0x50 && sig[2] === 0x4e && sig[3] === 0x47) return "image/png";
+  if (sig[0] === 0x47 && sig[1] === 0x49 && sig[2] === 0x46) return "image/gif";
+  if (sig[0] === 0xff && sig[1] === 0xd8 && sig[2] === 0xff) return "image/jpeg";
+  if (sig[0] === 0x52 && sig[1] === 0x49 && sig[2] === 0x46 && sig[3] === 0x46) return "image/webp";
+  return null;
+}
+
 // Charge le lecteur de QR code (jsQR) à la demande, uniquement quand le
 // scan est réellement utilisé. Fichier local (lib/jsQR.js) : plus
 // besoin d'une connexion au CDN, ni au premier chargement ni ensuite.
@@ -4114,18 +4205,6 @@ async function openQrScanModal() {
   // fois de vraie fonctionnalité (recevoir un QR reçu par message) et
   // de test de diagnostic pour savoir si un souci vient de la caméra
   // ou du décodage lui-même.
-  // Détecte le vrai format d'une image à partir de sa signature d'octets
-  // plutôt que de se fier à l'extension du fichier ou à son type MIME
-  // déclaré (potentiellement incorrect, notamment pour d'anciens QR
-  // enregistrés sous l'extension .png mais contenant en réalité un GIF).
-  function detectImageMimeType(bytes) {
-    const sig = Array.from(bytes.slice(0, 8));
-    if (sig[0] === 0x89 && sig[1] === 0x50 && sig[2] === 0x4e && sig[3] === 0x47) return "image/png";
-    if (sig[0] === 0x47 && sig[1] === 0x49 && sig[2] === 0x46) return "image/gif";
-    if (sig[0] === 0xff && sig[1] === 0xd8 && sig[2] === 0xff) return "image/jpeg";
-    if (sig[0] === 0x52 && sig[1] === 0x49 && sig[2] === 0x46 && sig[3] === 0x46) return "image/webp";
-    return null;
-  }
   async function decodeQrImageFile(file) {
     const img = new Image();
     try {
@@ -11188,7 +11267,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 238;
+const APP_VERSION = 239;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
