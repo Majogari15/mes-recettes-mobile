@@ -174,6 +174,12 @@ Depuis, la structure sépare strictement :
   d'import de recette par lien : message d'échec clair en temps
   raisonnable, pas de blocage ni d'erreur JS, application réutilisable
   après le retour du réseau — voir TESTS_NON_REGRESSION.md point 90.
+- `test_pdf_exports_full.py` — les 3 exports PDF (recette seule, liste
+  de courses, livre de cuisine multi-recettes) aboutissent vraiment à
+  un fichier PDF valide via `doc.save()`, pas seulement au bon texte
+  "dessiné" (déjà couvert par `test_pdf_allergens.py` pour la recette
+  seule) — ajouté lors de l'audit de régression suivant la mise à jour
+  de jsPDF, voir TESTS_NON_REGRESSION.md points 90-91.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

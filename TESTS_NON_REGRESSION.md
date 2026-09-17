@@ -5944,3 +5944,63 @@ chaque changement de code, y compris après le remplacement de jsPDF et
 les changements de balises (`<main>`/`<header>`/`<h1>`).
 
 **Version testée** : v233
+
+### 91 — Audit de régression fonctionnelle suite au point 90 : 2 bugs de contraste supplémentaires trouvés et corrigés, exports PDF vérifiés de bout en bout
+
+Demande explicite de l'utilisateur après le point 90 : vérifier que les
+changements venant d'être faits n'ont pas fait régresser une
+fonctionnalité existante. Deux volets :
+
+**1. Deux bugs de contraste réels, de la même famille que ceux du point
+90, avaient été manqués** — parce qu'ils n'apparaissent que dans des
+états transitoires que le premier audit (13 écrans, mais toujours en
+régime "normal") ne déclenchait jamais :
+- **Bandeau "mise à jour disponible"** (`state.updateAvailable`,
+  affiché quand une nouvelle version est détectée) : son bouton
+  utilisait encore `background:#fff; color:var(--primary)`, avec le
+  même défaut que `.btn-install` ci-dessous. Corrigé en même temps que
+  le fond du bandeau (`var(--primary)` → `var(--primary-strong)`,
+  `app.js`).
+- **Bandeau d'installation** (proposition d'ajout à l'écran d'accueil,
+  déclenché par l'événement natif `beforeinstallprompt`, donc invisible
+  dans l'environnement de test automatisé sans le simuler
+  explicitement) : deux défauts distincts sur `.install-banner` dans
+  `styles.css` —
+  - `.btn-install` utilisait `background:#fff; color:var(--primary)`,
+    exactement le même problème que ci-dessus (le fond blanc de ce
+    bouton est volontairement fixe, indépendant du thème — le texte
+    doit donc aussi l'être plutôt que suivre `--primary`, devenu trop
+    clair sur blanc en thème sombre). Corrigé en fixant sa couleur à
+    `#2F5233` (la valeur de `--primary` en thème clair, jamais
+    concernée par le défaut).
+  - Le sous-titre (`.text span`) et `.btn-dismiss` atténuaient le blanc
+    à 85 % d'opacité pour un effet visuel plus discret — sur le
+    nouveau fond `--primary-strong` (thème sombre), ce blanc atténué
+    retombait à 4,2:1, sous le minimum 4,5:1. Corrigé en repassant à
+    pleine opacité (perte cosmétique minime, contraste garanti).
+  - Ces deux bandeaux sont maintenant déclenchés et vérifiés à chaque
+    exécution de `tests/test_accessibility_audit.py` (précédemment
+    absents de sa boucle d'écrans), pour ne plus jamais les manquer.
+
+**2. Vérification de bout en bout des 3 exports PDF** (recette seule,
+liste de courses, livre de cuisine multi-recettes) suite à la mise à
+jour de jsPDF au point 90 : jusqu'ici, seul le contenu texte "dessiné"
+de la recette seule était vérifié (`test_pdf_allergens.py`) — jamais le
+résultat réel de `doc.save()` pour aucun des 3 exports. Nouveau test
+`tests/test_pdf_exports_full.py` : les 3 génèrent chacun un vrai
+fichier PDF valide (en-tête `%PDF-`, taille non nulle), et le livre de
+cuisine (page de garde + sommaire + 3 recettes) est bien nettement plus
+gros qu'une recette seule. Aucune régression trouvée.
+
+**Non refait dans ce point** (déjà couvert par les vérifications
+existantes, grep de code confirmant qu'aucun autre endroit ne dépend
+des anciennes balises `div.screen`/`div.topbar`/`span.subtitle`
+remplacées au point 90) : parcours clic réel (thème, création de
+recette, navigation) — fait une fois manuellement pendant l'audit,
+aucune anomalie, confirmé que la validation existante ("au moins un
+ingrédient nommé" avant enregistrement) fonctionne toujours normalement.
+
+**Vérifié** : suite de régression complète (23 scripts + corpus OCR) au
+vert.
+
+**Version testée** : v234

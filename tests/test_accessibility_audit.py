@@ -146,6 +146,51 @@ def main():
                 detail = "; ".join(f"{v['id']} ({v['impact']}, {v['nodes']} nœud(s))" for v in blocking)
                 check(f"Écran '{screen}' ({theme}) : pas de violation critique/sérieuse", not blocking, detail)
 
+            # Bandeaux transitoires (mise à jour disponible, proposition
+            # d'installation) : n'apparaissent que dans des conditions
+            # précises (nouvelle version détectée, événement natif
+            # beforeinstallprompt) — absents du parcours écran par écran
+            # ci-dessus, ce qui a permis à un vrai défaut de contraste de
+            # rester invisible une première fois (voir point 90). Rendu
+            # forcé ici pour ne plus jamais les manquer.
+            page.evaluate("(s) => { state.screen = s; state.updateAvailable = true; render(); }", "home")
+            page.wait_for_timeout(150)
+            banner_result = page.evaluate(
+                """
+                async () => {
+                    const r = await axe.run(document, { resultTypes: ['violations'] });
+                    return r.violations.filter(v => v.impact === 'critical' || v.impact === 'serious')
+                        .map(v => v.id);
+                }
+                """
+            )
+            check(f"Bandeau 'mise à jour disponible' ({theme}) : pas de violation critique/sérieuse", not banner_result, str(banner_result))
+            page.evaluate("() => { state.updateAvailable = false; render(); }")
+
+            page.evaluate(
+                """
+                () => {
+                    const banner = document.createElement('div');
+                    banner.className = 'install-banner';
+                    banner.innerHTML = '<div class="text"><strong>Test</strong><span>desc</span></div>'
+                        + '<button class="btn-install">Installer</button>'
+                        + '<button class="btn-dismiss">Non merci</button>';
+                    document.getElementById('app').appendChild(banner);
+                }
+                """
+            )
+            page.wait_for_timeout(150)
+            install_result = page.evaluate(
+                """
+                async () => {
+                    const r = await axe.run(document, { resultTypes: ['violations'] });
+                    return r.violations.filter(v => v.impact === 'critical' || v.impact === 'serious')
+                        .map(v => v.id);
+                }
+                """
+            )
+            check(f"Bandeau d'installation ({theme}) : pas de violation critique/sérieuse", not install_result, str(install_result))
+
         print(f"\nTotaux toutes gravités confondues (informatif) : {totals}")
 
         check("Aucune erreur JS pendant tout le parcours", not errors, "; ".join(errors))

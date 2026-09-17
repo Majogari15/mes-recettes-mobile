@@ -703,9 +703,9 @@ function render() {
   app.appendChild(topbar);
 
   if (state.updateAvailable) {
-    const updateBanner = el(`<div style="background:var(--primary);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;font-weight:600;">
+    const updateBanner = el(`<div style="background:var(--primary-strong);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;font-weight:600;">
       <span>${escapeHtml(t("update_available_banner"))}</span>
-      <button type="button" style="background:#fff;color:var(--primary);border:none;border-radius:999px;padding:6px 14px;font-weight:700;font-size:12px;">${t("update_available_button")}</button>
+      <button type="button" style="background:#fff;color:#2F5233;border:none;border-radius:999px;padding:6px 14px;font-weight:700;font-size:12px;">${t("update_available_button")}</button>
     </div>`);
     updateBanner.querySelector("button").addEventListener("click", () => location.reload());
     app.appendChild(updateBanner);
@@ -10838,7 +10838,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 233;
+const APP_VERSION = 234;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

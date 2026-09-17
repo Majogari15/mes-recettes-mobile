@@ -675,7 +675,10 @@ a { color: inherit; }
 }
 .install-banner .text { flex: 1; }
 .install-banner .text strong { display: block; font-size: 14px; margin-bottom: 2px; }
-.install-banner .text span { font-size: 12px; opacity: 0.85; }
+/* Pleine opacité plutôt que 0.85 : sur --primary-strong (thème
+   sombre), le blanc atténué à 85% tombe à 4,2:1, sous le minimum WCAG
+   AA 4,5:1 (voir TESTS_NON_REGRESSION.md point 90). */
+.install-banner .text span { font-size: 12px; }
 .install-banner button {
   border: none;
   border-radius: 999px;
@@ -684,8 +687,12 @@ a { color: inherit; }
   font-size: 13px;
   flex-shrink: 0;
 }
-.install-banner .btn-install { background: #fff; color: var(--primary); }
-.install-banner .btn-dismiss { background: transparent; color: rgba(255,255,255,0.85); }
+/* Fond blanc volontairement fixe (indépendant du thème) : le texte
+   doit donc aussi rester fixe plutôt que suivre --primary, qui devient
+   trop clair sur blanc en thème sombre (contraste insuffisant, voir
+   TESTS_NON_REGRESSION.md point 90). */
+.install-banner .btn-install { background: #fff; color: #2F5233; }
+.install-banner .btn-dismiss { background: transparent; color: #fff; }
 
 /* ---------- Accessibilité clavier ---------- */
 button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
