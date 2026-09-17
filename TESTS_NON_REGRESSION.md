@@ -5788,3 +5788,37 @@ point précis). Suite de régression complète repassée au vert (19
 scripts + corpus OCR).
 
 **Version testée** : v232
+
+### 89 — Limite connue et acceptée : fenêtre de course sur renommage/fusion d'ingrédient *(non corrigée, décision explicite)*
+
+Signalé lors de l'audit du point 88 : `renameIngredientName` et
+`mergeIngredientNames` calculent d'abord tous les changements à partir
+de l'état en mémoire, puis écrivent en une seule transaction
+atomique, et ne mettent à jour l'état en mémoire qu'après confirmation
+(voir point 82). Entre le calcul et la confirmation, un `await` cède
+la main à la boucle d'événements : si une AUTRE opération (mise à la
+corbeille, modification d'une personnalisation d'ingrédient...) touche
+exactement la même recette/le même ingrédient pendant cette fenêtre,
+la transaction du renommage/de la fusion peut réécrire en base une
+version désormais périmée — l'état en mémoire de la session en cours
+reste correct (grâce aux vérifications `findIndex(...) >= 0`), mais
+IndexedDB peut se retrouver avec un enregistrement orphelin ou
+resurgi, qui réapparaîtrait au prochain rechargement complet.
+
+**Décision explicite de l'utilisateur : ne pas corriger.** Le vrai
+correctif demanderait un verrou global sérialisant toutes les
+opérations multi-entrepôt de l'application entre elles (renommage,
+fusion, corbeille, courses...) — une refonte touchant 4-5 fonctions
+différentes. Le scénario n'est concrètement déclenchable que si
+**deux onglets du même navigateur, sur le même appareil**, modifient
+la même donnée à la milliseconde près (IndexedDB n'est jamais partagé
+entre appareils différents) — quasiment inatteignable en usage normal
+d'une application personnelle utilisée sur un seul téléphone. La
+complexité et le risque d'un tel verrou dépassent largement le
+bénéfice pour ce cas précis.
+
+À reconsidérer seulement si l'application venait à être utilisée
+habituellement sur plusieurs onglets/appareils simultanément sur les
+mêmes données.
+
+**Version testée** : v232 (non modifiée par ce point)
