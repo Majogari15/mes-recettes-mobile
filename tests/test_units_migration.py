@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
 Test permanent pour la fusion des unités "sachet"/"pot" dans "boîte"
-(v220) et les 9 correctifs qui ont suivi (v221) — voir
-TESTS_NON_REGRESSION.md, points 76 et 77.
+(v220), les 9 correctifs qui ont suivi (v221), et les 5 défauts de la
+fusion des doublons + la préservation de containerLabel trouvés par un
+second avis externe sur la v221/v222 — voir TESTS_NON_REGRESSION.md,
+points 76, 77 et 79.
 
 Utilisation (démarre et arrête lui-même un serveur local temporaire) :
 
@@ -203,6 +205,172 @@ def main():
             "menu déroulant d'unité non vide après import partagé",
             select_info is not None and select_info["selectedIndex"] != -1 and select_info["value"] == "boîte",
             str(select_info),
+        )
+        print()
+
+        print("=== Dédup après restauration : unités déjà converties par sanitizeBackupItem ===\n")
+        result_dedup_restore = page.evaluate(
+            """
+            async () => {
+                const backupData = {
+                    exportedAt: new Date().toISOString(),
+                    recipes: [], pantry: [], trash: [], savedShoppingLists: [], ingredients: [], ingredientOverrides: [], menus: [], planTemplates: [], planHistory: [], kv: [],
+                    shopping: [
+                        { id: 'dr-1', name: 'Compote de pommes', unit: 'pot', quantity: 1, checked: false },
+                        { id: 'dr-2', name: 'Compote de pommes', unit: 'sachet', quantity: 1, checked: false },
+                    ],
+                };
+                const report = { validCount: 0, ignoredCount: 0, photosRemoved: 0, numbersFixed: 0, structuralFixes: 0 };
+                const cleanedData = { ...backupData };
+                BACKUP_STORES.forEach((storeName) => {
+                    if (!Array.isArray(backupData[storeName])) return;
+                    cleanedData[storeName] = backupData[storeName].map((item) => sanitizeBackupItem(item, storeName, report));
+                });
+                await importAllData(cleanedData, 'merge');
+                await migrateMergedContainerUnits();
+                return state.shopping.filter((s) => s.name === 'Compote de pommes');
+            }
+            """
+        )
+        check(
+            "une seule ligne après restauration + migration (pas 2 doublons)",
+            len(result_dedup_restore) == 1 and result_dedup_restore[0]["quantity"] == 2,
+            str(result_dedup_restore),
+        )
+        page.evaluate("async () => { for (const s of state.shopping.filter((s) => s.name === 'Fromage blanc')) await storeDelete('shopping', s.id); }")
+        print()
+
+        print("=== Fusion : ne mélange jamais un article coché avec un non coché ===\n")
+        result_checked = page.evaluate(
+            """
+            async () => {
+                await storePut('shopping', { id: 'ck-1', name: 'Yaourt nature', unit: 'pot', quantity: 1, checked: true });
+                await storePut('shopping', { id: 'ck-2', name: 'Yaourt nature', unit: 'sachet', quantity: 1, checked: false });
+                state.shopping = await storeAll('shopping');
+                await migrateMergedContainerUnits();
+                return state.shopping.filter((s) => s.name === 'Yaourt nature');
+            }
+            """
+        )
+        check(
+            "2 lignes distinctes conservées (une cochée, une non)",
+            len(result_checked) == 2 and {i["checked"] for i in result_checked} == {True, False},
+            str(result_checked),
+        )
+        page.evaluate("async () => { for (const s of state.shopping.filter((s) => s.name === 'Yaourt nature')) await storeDelete('shopping', s.id); }")
+        print()
+
+        print("=== Fusion : une quantité inconnue (null) ne devient jamais 0 ===\n")
+        result_null_qty = page.evaluate(
+            """
+            async () => {
+                await storePut('shopping', { id: 'nq-1', name: 'Poivre', unit: 'pot', quantity: null, checked: false });
+                await storePut('shopping', { id: 'nq-2', name: 'Poivre', unit: 'sachet', quantity: null, checked: false });
+                state.shopping = await storeAll('shopping');
+                await migrateMergedContainerUnits();
+                return state.shopping.filter((s) => s.name === 'Poivre');
+            }
+            """
+        )
+        check(
+            "quantité fusionnée reste null (jamais 0)",
+            len(result_null_qty) == 1 and result_null_qty[0]["quantity"] is None,
+            str(result_null_qty),
+        )
+        page.evaluate("async () => { for (const s of state.shopping.filter((s) => s.name === 'Poivre')) await storeDelete('shopping', s.id); }")
+        print()
+
+        print("=== Fusion : les réservations de garde-manger suivent la ligne conservée ===\n")
+        result_claims = page.evaluate(
+            """
+            async () => {
+                await storePut('shopping', { id: 'cl-1', name: 'Beurre demi-sel', unit: 'pot', quantity: 1, checked: false });
+                await storePut('shopping', { id: 'cl-2', name: 'Beurre demi-sel', unit: 'sachet', quantity: 1, checked: false });
+                state.shopping = await storeAll('shopping');
+                await commitPantryClaim('Beurre demi-sel', 0.5, 'shopping', 'cl-2', 'weight');
+                await migrateMergedContainerUnits();
+                const survivor = state.shopping.find((s) => s.name === 'Beurre demi-sel');
+                const claims = state.pantryClaimedThisSession.filter((c) => c.ingredientKey === 'Beurre demi-sel');
+                return { survivorId: survivor ? survivor.id : null, claims };
+            }
+            """
+        )
+        check(
+            "la réservation référence l'id de la ligne survivante, aucune orpheline",
+            len(result_claims["claims"]) == 1 and result_claims["claims"][0]["sourceId"] == result_claims["survivorId"],
+            str(result_claims),
+        )
+        page.evaluate(
+            """
+            async () => {
+                for (const s of state.shopping.filter((s) => s.name === 'Beurre demi-sel')) await storeDelete('shopping', s.id);
+                state.pantryClaimedThisSession = state.pantryClaimedThisSession.filter((c) => c.ingredientKey !== 'Beurre demi-sel');
+                await persistPantryClaims();
+            }
+            """
+        )
+        print()
+
+        print("=== Fusion : la mise à jour et la suppression sont une seule transaction atomique ===\n")
+        result_atomic = page.evaluate(
+            """
+            async () => {
+                await storePut('shopping', { id: 'at-1', name: 'Test Atomique', unit: 'boîte', quantity: 1, checked: false });
+                await storePut('shopping', { id: 'at-2', name: 'Test Atomique', unit: 'boîte', quantity: 1, checked: false });
+                const db = await openDB();
+                await new Promise((resolve) => {
+                    const tx = db.transaction('shopping', 'readwrite');
+                    const store = tx.objectStore('shopping');
+                    store.put({ id: 'at-1', name: 'Test Atomique', unit: 'boîte', quantity: 2, checked: false });
+                    store.delete('at-2');
+                    tx.abort();
+                    tx.onabort = () => resolve();
+                    tx.oncomplete = () => resolve();
+                });
+                return (await storeAll('shopping')).filter((s) => s.name === 'Test Atomique');
+            }
+            """
+        )
+        check(
+            "une transaction avortée annule le put ET le delete ensemble (aucun comptage double possible)",
+            len(result_atomic) == 2 and all(i["quantity"] == 1 for i in result_atomic),
+            str(result_atomic),
+        )
+        page.evaluate("async () => { for (const s of state.shopping.filter((s) => s.name === 'Test Atomique')) await storeDelete('shopping', s.id); }")
+        print()
+
+        print("=== containerLabel : jamais fabriqué depuis une unité déjà \"boîte\" ===\n")
+        result_no_fabrication = page.evaluate(
+            """
+            () => {
+                const json = { id: 'nf-1', name: 'Test', ingredients: [{ name: 'Sucre', unit: 'boîte', quantity: 1 }] };
+                return recipeFromSharedFormat(json, new Map()).ingredients[0];
+            }
+            """
+        )
+        check(
+            'containerLabel reste absent (null) pour un ingrédient déjà "boîte" sans information d\'origine',
+            result_no_fabrication.get("containerLabel") is None,
+            str(result_no_fabrication),
+        )
+        print()
+
+        print('=== containerLabel : survit à un export QR puis réimport ===\n')
+        result_qr_roundtrip = page.evaluate(
+            """
+            () => {
+                const recipe = { id: 'qr1', name: 'Recette QR', ingredients: [{ name: 'Levure', unit: 'boîte', quantity: 1, containerLabel: 'sachet' }], persons: 4 };
+                const compact = { v: 1, n: recipe.name, p: 4 };
+                compact.i = recipe.ingredients.map((ing) => (ing.containerLabel ? [ing.name, ing.quantity, ing.unit, ing.containerLabel] : [ing.name, ing.quantity, ing.unit]));
+                const reparsed = parseRecipeFromQrText(JSON.stringify(compact));
+                return reparsed.ingredients[0];
+            }
+            """
+        )
+        check(
+            "containerLabel présent après un aller-retour complet par QR",
+            result_qr_roundtrip.get("containerLabel") == "sachet",
+            str(result_qr_roundtrip),
         )
         print()
 

@@ -5272,3 +5272,80 @@ Suite de régression complète repassée au vert (12 scripts + corpus
 OCR, les 2 nouveaux inclus).
 
 **Version testée** : v222
+
+### 79 — 5 défauts de la fusion des doublons + fabrication évitée sur containerLabel *(v223)*
+
+Un second avis externe, faute d'accès à jour à GitHub, a listé 5
+défauts déjà signalés sur la v221 comme "à retester" sur la v222, et a
+soulevé deux points supplémentaires sur `containerLabel` (ajouté au
+point 78). Les 5 défauts de fusion, vérifiés ici sur le code réel de
+la v222 (pas seulement sur le compte rendu), étaient bien encore
+présents :
+
+1. **Doublons non fusionnés après restauration** : `sanitizeBackupItem`
+   convertit déjà l'unité avant l'écriture — `migrateMergedContainerUnits`
+   ne détectait alors plus aucun changement d'unité et sautait la
+   fusion, qui était conditionnée à tort à "une unité vient d'être
+   convertie DANS CET APPEL". Corrigé : la fusion est désormais
+   toujours tentée, jamais conditionnée à ce déclencheur précis.
+2. **Fusion mélangeant articles cochés et non cochés** : deux lignes
+   "Yaourt/pot coché" et "Yaourt/sachet non coché" fusionnaient en une
+   seule ligne, faisant redevenir "à acheter" un article déjà acheté
+   (ou l'inverse). Corrigé : le regroupement se fait maintenant aussi
+   par état coché/non coché — jamais mélangés.
+3. **Quantité inconnue devenant 0** : deux lignes sans quantité
+   renseignée (`null`) fusionnaient en une ligne à quantité 0, une
+   information fausse ("quantité inconnue" ≠ "aucun besoin"). Corrigé :
+   si au moins une des lignes fusionnées a une quantité inconnue, le
+   résultat reste `null`, jamais une somme partielle ou 0.
+4. **Réservations de garde-manger orphelines** : la fusion supprimait
+   des lignes de courses sans réattribuer les réservations
+   (`pantryClaimedThisSession`) qui les référençaient encore par leur
+   id — une réservation liée à une ligne supprimée continuait à
+   réduire à tort le stock disponible pour un article qui n'existait
+   plus. Corrigé : chaque réservation est réattribuée à l'id de la
+   ligne conservée au moment de la fusion.
+5. **Double comptage possible en cas d'interruption** : la mise à jour
+   de la ligne conservée et la suppression des doublons se faisaient
+   en appels séparés (`storePut` puis `storeDelete`), chacun sa propre
+   transaction IndexedDB — une interruption entre les deux pouvait
+   laisser la quantité déjà additionnée ET l'original pas encore
+   supprimé coexister. Corrigé : nouvelle fonction
+   `storePutAndDeleteMany`, une seule transaction IndexedDB pour
+   l'ensemble de la fusion (mise à jour et suppressions ensemble,
+   jamais l'une sans l'autre).
+
+Deux points supplémentaires sur `containerLabel` (ajouté au point 78),
+également corrigés :
+
+6. **Fabrication d'une origine inconnue** : plusieurs points d'entrée
+   (import partagé, reprise de brouillon, QR) déduisaient
+   `containerLabel` à partir de l'unité courante même quand celle-ci
+   était déjà "boîte" — incapable de distinguer un ingrédient qui a
+   toujours dit "boîte" d'un autre dont l'origine ("sachet"/"pot") a
+   été perdue par une migration antérieure (v220/v221, avant
+   l'existence de ce champ). `legacyContainerLabel` ne retourne
+   désormais plus jamais "boîte" : seuls "sachet"/"pot" sont des faits
+   sûrs (l'unité ne peut valoir l'un des deux QUE s'il s'agit
+   réellement, à l'instant de l'appel, de la valeur d'origine pas
+   encore convertie) ; une origine réellement irrécupérable reste
+   `null`, jamais devinée.
+7. **Perte au réexport QR** : le format QR compact n'encodait que
+   `[nom, quantité, unité]`, sans `containerLabel` — le réexporter
+   vers un autre appareil perdait le souvenir "sachet"/"pot" à
+   nouveau. Un 4e élément optionnel transporte maintenant
+   `containerLabel` ; les QR déjà en circulation (sans ce 4e élément)
+   restent lisibles normalement.
+
+**Vérifié** : chacun des 5 défauts de fusion reproduit puis corrigé
+individuellement (dédup après restauration, mélange coché/non coché,
+quantité null, réservation orpheline, transaction atomique — cette
+dernière en avortant délibérément une transaction pour confirmer que
+IndexedDB annule bien la totalité, pas seulement une partie), ainsi
+que l'absence de fabrication de `containerLabel` et sa survie à un
+aller-retour QR complet. Les 7 cas ont été ajoutés à
+`test_units_migration.py` (permanent, pas seulement ponctuel — comblait
+une réserve explicitement signalée). Suite de régression complète
+repassée au vert (12 scripts + corpus OCR).
+
+**Version testée** : v223

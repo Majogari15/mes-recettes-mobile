@@ -93,6 +93,29 @@ function storeDelete(storeName, key) {
       })
   );
 }
+// Écrit et supprime plusieurs enregistrements du MÊME entrepôt dans
+// une seule transaction IndexedDB — contrairement à autant d'appels
+// séparés à storePut/storeDelete (chacun sa propre transaction), une
+// interruption (fermeture de l'app, plantage) entre deux opérations
+// annule alors la totalité au lieu de laisser une partie déjà
+// appliquée : indispensable pour une fusion de doublons (écrire la
+// ligne conservée avec la quantité additionnée ET supprimer les
+// lignes fusionnées doivent réussir ou échouer ensemble, sinon la
+// quantité additionnée resterait comptée en double avec l'original
+// pas encore supprimé).
+function storePutAndDeleteMany(storeName, itemsToPut, keysToDelete) {
+  return openDB().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, "readwrite");
+        const store = tx.objectStore(storeName);
+        itemsToPut.forEach((item) => store.put(item));
+        keysToDelete.forEach((key) => store.delete(key));
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      })
+  );
+}
 function storeClear(storeName) {
   return openDB().then(
     (db) =>
@@ -226,11 +249,21 @@ function migrateLegacyUnit(unit) {
 // purement informatif : il n'intervient jamais dans l'affichage
 // principal, le menu déroulant ni aucun calcul, qui continuent tous
 // de traiter "boîte" comme une seule et même unité.
+//
+// Volontairement JAMAIS "boîte" en sortie, même si rawUnit vaut déjà
+// "boîte" : à ce stade, impossible de distinguer un ingrédient qui a
+// toujours dit "boîte" d'un autre qui disait "sachet"/"pot" mais a
+// déjà été fusionné par une version antérieure (v220/v221) sans que
+// cette distinction ait été conservée — l'information est alors
+// perdue pour de bon. Prétendre "boîte" dans ce cas inventerait une
+// origine précise là où la vraie réponse est "inconnue", ce qui est
+// pire que de n'avoir aucune réponse. "sachet"/"pot" restent en
+// revanche toujours des faits sûrs : rawUnit ne peut valoir l'un des
+// deux QUE s'il s'agit bien, à l'instant de l'appel, de la valeur
+// d'origine non encore convertie.
 function legacyContainerLabel(rawUnit) {
   const uw = (rawUnit || "").toLowerCase();
-  if (uw === "sachet" || uw === "pot") return uw;
-  if (uw === "boîte" || uw === "boite") return "boîte";
-  return null;
+  return uw === "sachet" || uw === "pot" ? uw : null;
 }
 
 /* ======================================================================
@@ -3003,7 +3036,11 @@ async function openQrCodeModal(recipe, persons) {
   if (recipe.notes) compact.no = recipe.notes;
   compact.i = (recipe.ingredients || []).map((ing) => {
     const scaled = ing.quantity != null ? Math.round(ing.quantity * persons * 100) / 100 : null;
-    return [ing.name, scaled, ing.unit];
+    // 4e élément optionnel (containerLabel) : sans lui, régénérer un QR
+    // pour une recette réimportée gardant le souvenir "sachet"/"pot"
+    // (voir legacyContainerLabel) le perdrait à nouveau dès ce nouveau
+    // partage, alors que rien n'empêche de le transmettre.
+    return ing.containerLabel ? [ing.name, scaled, ing.unit, ing.containerLabel] : [ing.name, scaled, ing.unit];
   });
   const content = JSON.stringify(compact);
   // Au-delà de cette taille, un seul QR devient trop dense pour être
@@ -3150,7 +3187,7 @@ function tryParseCompactRecipeQr(text) {
   }
   const ingredients = data.i
     .filter((tuple) => Array.isArray(tuple) && typeof tuple[0] === "string" && tuple[0].trim())
-    .map((tuple) => ({ name: resolveImportedIngredientName(tuple[0]), quantity: tuple[1] != null ? Number(tuple[1]) : null, unit: migrateLegacyUnit(tuple[2] || "pièce"), containerLabel: legacyContainerLabel(tuple[2]) }));
+    .map((tuple) => ({ name: resolveImportedIngredientName(tuple[0]), quantity: tuple[1] != null ? Number(tuple[1]) : null, unit: migrateLegacyUnit(tuple[2] || "pièce"), containerLabel: tuple[3] || legacyContainerLabel(tuple[2]) }));
   const persons = Number(data.p) > 0 ? Number(data.p) : 4;
   return {
     name: data.n,
@@ -5216,41 +5253,85 @@ async function mergeIngredientNames(keep, remove) {
   if (savedListsTouched) for (const saved of state.savedShoppingLists) await storePut("savedShoppingLists", saved);
 }
 
-// Fusionne dans une liste d'articles à quantité (courses, garde-manger)
-// les lignes qui, une fois migrateLegacyUnit appliqué, se retrouvent
-// avec le même nom ET la même unité (ex. "Yaourt / pot" et "Yaourt /
-// sachet" deviennent toutes les deux "Yaourt / boîte") : sans cette
-// fusion, la migration laissait deux lignes séparées côte à côte au
-// lieu d'une seule, quantités additionnées, but affiché de la fusion
-// des unités. Modifie "list" en place et répercute les changements
-// dans l'entrepôt IndexedDB correspondant (mise à jour des lignes
-// conservées, suppression des lignes fusionnées).
-async function dedupeQuantityListAfterUnitMigration(list, storeName) {
+// Regroupe une liste d'articles à quantité (courses, garde-manger, ou
+// les articles d'une liste enregistrée) par nom normalisé + unité —
+// et, si trackChecked, par état coché séparément : un article déjà
+// acheté (coché) ne doit JAMAIS être fusionné avec un autre encore à
+// acheter (non coché), sinon la quantité déjà réglée se retrouverait
+// comptée comme "encore à acheter" (ou l'inverse). Une quantité non
+// renseignée (null) sur au moins un des articles fusionnés rend le
+// résultat null lui aussi plutôt que de le remplacer par 0 :
+// "quantité inconnue" n'a jamais voulu dire "aucun besoin". Retourne
+// aussi, pour chaque article supprimé par la fusion, l'id de
+// l'article conservé qui le remplace (nécessaire pour réattribuer
+// les réservations de garde-manger qui le référençaient encore).
+function mergeQuantityGroups(items, { trackChecked } = {}) {
   const groups = new Map();
-  list.forEach((item) => {
-    const key = normalize(item.name || "") + "␟" + (item.unit || "");
+  items.forEach((item) => {
+    const key = normalize(item.name || "") + "␟" + (item.unit || "") + (trackChecked ? "␟" + (item.checked ? "1" : "0") : "");
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(item);
   });
   const survivors = [];
   const removed = [];
+  const reassignments = [];
   groups.forEach((group) => {
     const [keep, ...rest] = group;
     if (rest.length) {
-      keep.quantity = rest.reduce((sum, it) => sum + (it.quantity || 0), keep.quantity || 0);
-      // Une case cochée seulement si toutes les lignes fusionnées
-      // l'étaient déjà, pour ne jamais décocher à tort un article que
-      // l'utilisateur avait déjà réglé sous son ancienne unité.
-      if ("checked" in keep) keep.checked = keep.checked && rest.every((it) => it.checked);
-      removed.push(...rest);
+      const allQuantities = [keep, ...rest].map((it) => it.quantity);
+      keep.quantity = allQuantities.some((q) => q == null) ? null : allQuantities.reduce((sum, q) => sum + q, 0);
+      rest.forEach((it) => {
+        removed.push(it);
+        if (it.id != null && keep.id != null) reassignments.push({ fromId: it.id, toId: keep.id });
+      });
     }
     survivors.push(keep);
   });
+  return { survivors, removed, reassignments };
+}
+
+// Fusionne dans une liste d'articles à quantité (courses, garde-manger)
+// les lignes qui, une fois migrateLegacyUnit appliqué, se retrouvent
+// avec le même nom ET la même unité (ex. "Yaourt / pot" et "Yaourt /
+// sachet" deviennent toutes les deux "Yaourt / boîte") : sans cette
+// fusion, ces lignes restaient séparées côte à côte au lieu d'une
+// seule, quantités additionnées. Volontairement PAS conditionné à un
+// changement d'unité détecté dans CET appel précis : si les unités
+// avaient déjà été converties ailleurs (sanitizeBackupItem, avant
+// l'écriture d'une sauvegarde restaurée, par exemple), les doublons
+// qui en résultent doivent tout de même être repérés et fusionnés ici
+// — sans quoi ils restaient définitivement séparés, la conversion
+// déjà faite ne se reproduisant jamais. Modifie "list" en place et
+// répercute les changements dans l'entrepôt IndexedDB correspondant,
+// en une seule transaction (mise à jour des lignes conservées ET
+// suppression des lignes fusionnées ensemble, jamais l'une sans
+// l'autre — voir storePutAndDeleteMany).
+async function dedupeQuantityListAfterUnitMigration(list, storeName) {
+  const trackChecked = list.some((it) => "checked" in it);
+  const { survivors, removed, reassignments } = mergeQuantityGroups(list, { trackChecked });
   if (!removed.length) return;
   list.length = 0;
   list.push(...survivors);
-  for (const item of survivors) await storePut(storeName, item);
-  for (const item of removed) await storeDelete(storeName, item.id);
+  await storePutAndDeleteMany(storeName, survivors, removed.map((item) => item.id));
+  // Les réservations de garde-manger issues des courses (voir
+  // commitPantryClaim, sourceType "shopping") référencent l'id précis
+  // de la ligne de courses qui les a créées — sans ce transfert vers
+  // l'id de la ligne conservée, une réservation liée à une ligne que
+  // la fusion vient de supprimer resterait "orpheline", continuant à
+  // réduire à tort le stock de garde-manger considéré disponible pour
+  // un article qui n'existe plus.
+  if (storeName === "shopping" && reassignments.length) {
+    let claimsTouched = false;
+    reassignments.forEach(({ fromId, toId }) => {
+      state.pantryClaimedThisSession.forEach((claim) => {
+        if (claim.sourceType === "shopping" && claim.sourceId === fromId) {
+          claim.sourceId = toId;
+          claimsTouched = true;
+        }
+      });
+    });
+    if (claimsTouched) await persistPantryClaims();
+  }
 }
 
 // "sachet" et "pot" ont été fusionnés dans l'unité "boîte" (affichée
@@ -5300,47 +5381,36 @@ async function migrateMergedContainerUnits() {
     const migrated = migrateLegacyUnit(item.unit);
     if (migrated !== item.unit) { item.unit = migrated; shoppingTouched = true; }
   });
-  if (shoppingTouched) {
-    for (const item of state.shopping) await storePut("shopping", item);
-    await dedupeQuantityListAfterUnitMigration(state.shopping, "shopping");
-  }
+  if (shoppingTouched) for (const item of state.shopping) await storePut("shopping", item);
+  // Toujours tentée, même si aucune unité n'a été convertie cette
+  // fois-ci (voir le commentaire de la fonction) : ni "shoppingTouched"
+  // ni aucune autre condition ne doit la conditionner.
+  await dedupeQuantityListAfterUnitMigration(state.shopping, "shopping");
 
   let pantryTouched = false;
   state.pantry.forEach((item) => {
     const migrated = migrateLegacyUnit(item.unit);
     if (migrated !== item.unit) { item.unit = migrated; pantryTouched = true; }
   });
-  if (pantryTouched) {
-    for (const item of state.pantry) await storePut("pantry", item);
-    await dedupeQuantityListAfterUnitMigration(state.pantry, "pantry");
-  }
+  if (pantryTouched) for (const item of state.pantry) await storePut("pantry", item);
+  await dedupeQuantityListAfterUnitMigration(state.pantry, "pantry");
 
   let savedListsTouched = false;
   state.savedShoppingLists.forEach((saved) => {
     const items = saved.items || [];
-    let touched = false;
+    let unitsChanged = false;
     items.forEach((item) => {
       const migrated = migrateLegacyUnit(item.unit);
-      if (migrated !== item.unit) { item.unit = migrated; touched = true; }
+      if (migrated !== item.unit) { item.unit = migrated; unitsChanged = true; }
     });
-    if (touched) {
-      // Même fusion des doublons que pour les courses/garde-manger,
-      // mais sans entrepôt séparé à mettre à jour : ces articles ne
-      // sont que des champs à l'intérieur de la liste enregistrée
-      // elle-même, réécrite en un bloc juste après.
-      const groups = new Map();
-      items.forEach((item) => {
-        const key = normalize(item.name || "") + "␟" + (item.unit || "");
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key).push(item);
-      });
-      const merged = [];
-      groups.forEach((group) => {
-        const [keep, ...rest] = group;
-        if (rest.length) keep.quantity = rest.reduce((sum, it) => sum + (it.quantity || 0), keep.quantity || 0);
-        merged.push(keep);
-      });
-      saved.items = merged;
+    // Même fusion des doublons que pour les courses/garde-manger, mais
+    // sans entrepôt séparé à mettre à jour : ces articles ne sont que
+    // des champs à l'intérieur de la liste enregistrée elle-même,
+    // réécrite en un bloc juste après. Là aussi toujours tentée, pas
+    // seulement quand une unité vient d'être convertie.
+    const { survivors, removed } = mergeQuantityGroups(items, { trackChecked: items.some((it) => "checked" in it) });
+    if (unitsChanged || removed.length) {
+      saved.items = survivors;
       savedListsTouched = true;
     }
   });
@@ -10453,7 +10523,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 222;
+const APP_VERSION = 223;
 
 async function init() {
   applyTheme(localStorage.getItem("theme") || "light");
