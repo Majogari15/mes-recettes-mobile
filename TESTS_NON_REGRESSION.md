@@ -5575,3 +5575,29 @@ test permanents ajoutés (`test_security_hardening.py`,
 régression complète repassée au vert (16 scripts + corpus OCR).
 
 **Version testée** : v226
+
+### 83 — Le menu d'autocomplétion d'ingrédient n'apparaissait qu'après la première lettre tapée *(v227)*
+
+Demande explicite de l'utilisateur : dans le formulaire de recette, le
+menu de suggestions d'un champ ingrédient (nom) ne s'affichait qu'après
+avoir tapé au moins un caractère, alors qu'un simple clic dans le champ
+appelait déjà `open()` (géré depuis longtemps via l'événement
+"focus"). Cause : `searchIngredientNames("")` renvoie toujours un
+tableau vide par construction (une recherche vide n'a pas de sens), donc
+`open()` n'avait rien à afficher tant que le champ était vide.
+
+Corrigé dans `attachIngredientAutocomplete` : quand le champ est vide,
+`open()` affiche maintenant les 8 premiers noms d'ingrédients connus
+(`state.ingredientNames`, déjà maintenu trié par ordre alphabétique
+d'affichage partout ailleurs dans l'app) au lieu d'appeler
+`searchIngredientNames`. Dès qu'un caractère est tapé, la recherche
+normale reprend le relais sans changement de comportement.
+
+**Vérifié** : un clic dans un champ vide affiche désormais 8
+suggestions triées alphabétiquement ; taper un texte filtre toujours
+correctement (`test_ingredient_autocomplete.py`, nouveau fichier
+permanent) ; effacer le texte fait revenir à la liste par défaut au
+lieu de rester bloqué sur un menu vide. Suite de régression complète
+repassée au vert (17 scripts + corpus OCR).
+
+**Version testée** : v227

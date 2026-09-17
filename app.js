@@ -5701,7 +5701,13 @@ function attachIngredientAutocomplete(input, onChange) {
   }
   function open() {
     close();
-    const results = searchIngredientNames(input.value, 8);
+    // Tant que rien n'est encore tapé, searchIngredientNames() ne renvoie
+    // jamais rien (une recherche vide n'a pas de sens) — sans ce cas
+    // particulier, la liste ne s'affichait qu'après la première lettre,
+    // alors qu'un simple clic dans le champ doit déjà montrer un point de
+    // départ (les premiers noms connus, dans l'ordre alphabétique déjà
+    // utilisé partout ailleurs pour cette liste).
+    const results = input.value.trim() ? searchIngredientNames(input.value, 8) : state.ingredientNames.slice(0, 8);
     const closest = findClosestIngredientMatch(input.value);
     const showSuggestion = closest && !results.some((r) => normalize(r) === normalize(closest.name));
     if (!results.length && !showSuggestion) return;
@@ -10753,7 +10759,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 226;
+const APP_VERSION = 227;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
