@@ -4070,10 +4070,15 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
       <label for="cooklog-note">${t("cooklog_add_note_label")}</label>
       <textarea id="cooklog-note">${escapeHtml(isEdit ? existingEntry.note || "" : "")}</textarea>
     </div>
-    <div class="photo-upload" style="margin-bottom:20px;">
+    <div class="photo-upload" style="margin-bottom:10px;">
       <div id="cooklog-photo-preview">${isEdit && existingEntry.photo ? `<img src="${existingEntry.photo}" alt="" style="width:100%;border-radius:10px;display:block;">` : escapeHtml(t("cooklog_add_photo_label"))}</div>
-      <input type="file" accept="image/*" capture="environment" id="cooklog-photo-input">
     </div>
+    <div style="display:flex;gap:10px;margin-bottom:20px;">
+      <button type="button" class="btn btn-outline" style="flex:1;" id="cooklog-photo-camera-btn">${t("import_photo_add_camera")}</button>
+      <button type="button" class="btn btn-outline" style="flex:1;" id="cooklog-photo-gallery-btn">${t("import_photo_add_gallery")}</button>
+    </div>
+    <input type="file" accept="image/*" capture="environment" id="cooklog-photo-camera-input" style="display:none;">
+    <input type="file" accept="image/*" id="cooklog-photo-gallery-input" style="display:none;">
     <div class="modal-actions">
       ${isEdit ? `<button type="button" class="btn btn-outline" id="cooklog-remove-photo">${t("cooklog_remove_photo_button")}</button>` : `<button type="button" class="btn btn-outline" id="cooklog-skip">${t("cooklog_skip_button")}</button>`}
       <button type="button" class="btn btn-primary" id="cooklog-save">${t("cooklog_save_button")}</button>
@@ -4082,8 +4087,14 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
 
   const photoPreview = sheet.querySelector("#cooklog-photo-preview");
   let photoData = isEdit ? (existingEntry.photo || null) : null;
-  sheet.querySelector("#cooklog-photo-input").addEventListener("change", (e) => {
-    const file = e.target.files[0];
+  // Deux boutons distincts (appareil photo / galerie) plutôt qu'un
+  // unique champ avec capture="environment" — même correctif que le
+  // formulaire de recette (voir TESTS_NON_REGRESSION.md) : cet
+  // attribut ouvre directement l'appareil photo sur mobile et empêche
+  // de choisir une image déjà présente sur le téléphone.
+  sheet.querySelector("#cooklog-photo-camera-btn").addEventListener("click", () => sheet.querySelector("#cooklog-photo-camera-input").click());
+  sheet.querySelector("#cooklog-photo-gallery-btn").addEventListener("click", () => sheet.querySelector("#cooklog-photo-gallery-input").click());
+  function handleCookLogPhotoFile(file) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
@@ -4103,7 +4114,9 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
       img.src = reader.result;
     };
     reader.readAsDataURL(file);
-  });
+  }
+  sheet.querySelector("#cooklog-photo-camera-input").addEventListener("change", (e) => handleCookLogPhotoFile(e.target.files[0]));
+  sheet.querySelector("#cooklog-photo-gallery-input").addEventListener("change", (e) => handleCookLogPhotoFile(e.target.files[0]));
   if (isEdit) {
     sheet.querySelector("#cooklog-remove-photo").addEventListener("click", () => {
       photoData = null;
@@ -10816,7 +10829,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 230;
+const APP_VERSION = 231;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

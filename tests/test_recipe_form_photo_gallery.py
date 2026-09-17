@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Test permanent : le formulaire de recette permet d'importer une photo
-déjà présente sur le téléphone, pas seulement d'en prendre une nouvelle.
-Demande explicite de l'utilisateur — voir TESTS_NON_REGRESSION.md.
+"""Test permanent : le formulaire de recette ET le journal de cuisine
+("J'ai cuisiné ça !") permettent d'importer une photo déjà présente sur
+le téléphone, pas seulement d'en prendre une nouvelle. Demande explicite
+de l'utilisateur — voir TESTS_NON_REGRESSION.md.
 
 Avant ce correctif, le seul champ disponible portait l'attribut
 `capture="environment"`, qui force les navigateurs mobiles à ouvrir
@@ -142,6 +143,61 @@ def main():
                 still_available["cameraButtonExists"] and still_available["galleryButtonExists"],
                 str(still_available),
             )
+            print()
+
+            print("=== Même correctif appliqué au journal de cuisine (\"J'ai cuisiné ça !\") ===\n")
+            page.evaluate(
+                """
+                async () => {
+                    const recipe = { id: 'photo-gallery-cooklog-1', name: 'Test CookLog', ingredients: [], cookLog: [], timesCooked: 0 };
+                    await storePut('recipes', recipe);
+                    state.recipes = await storeAll('recipes');
+                    openCookLogAddModal(recipe);
+                }
+                """
+            )
+            page.wait_for_timeout(300)
+            cooklog_structure = page.evaluate(
+                """
+                () => {
+                    const sheet = document.getElementById('cooklog-photo-preview').closest('.modal-sheet');
+                    const box = sheet.querySelector('.photo-upload');
+                    const inputs = Array.from(sheet.querySelectorAll('input[type=file]'));
+                    const buttons = Array.from(sheet.querySelectorAll('button')).map((b) => b.textContent.trim());
+                    return {
+                        noInputInsideBox: box.querySelectorAll('input[type=file]').length === 0,
+                        inputCount: inputs.length,
+                        captures: inputs.map((i) => i.getAttribute('capture')),
+                        cameraButtonExists: buttons.some((t) => t.includes('Prendre une photo')),
+                        galleryButtonExists: buttons.some((t) => t.includes('galerie')),
+                    };
+                }
+                """
+            )
+            check(
+                "la zone d'aperçu du journal de cuisine n'a plus de champ de fichier à l'intérieur",
+                cooklog_structure["noInputInsideBox"] is True,
+                str(cooklog_structure),
+            )
+            check(
+                "le journal de cuisine a aussi exactement 2 champs de fichier (appareil photo + galerie)",
+                cooklog_structure["inputCount"] == 2 and "environment" in cooklog_structure["captures"] and None in cooklog_structure["captures"],
+                str(cooklog_structure),
+            )
+            check(
+                "les deux boutons existent aussi dans le journal de cuisine",
+                cooklog_structure["cameraButtonExists"] and cooklog_structure["galleryButtonExists"],
+                str(cooklog_structure),
+            )
+            page.locator("#cooklog-photo-gallery-input").set_input_files(tmp_photo_path)
+            page.wait_for_timeout(300)
+            cooklog_after_gallery = page.evaluate("() => !!document.querySelector('#cooklog-photo-preview img')")
+            check(
+                "l'aperçu du journal de cuisine affiche bien l'image choisie depuis la galerie",
+                cooklog_after_gallery is True,
+                str(cooklog_after_gallery),
+            )
+            page.evaluate("async () => { await storeDelete('recipes', 'photo-gallery-cooklog-1'); }")
             print()
 
             print("Erreurs JS sur tout le parcours:", "AUCUNE" if not errors else "; ".join(errors))

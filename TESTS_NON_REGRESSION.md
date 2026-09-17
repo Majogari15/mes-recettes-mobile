@@ -5716,3 +5716,24 @@ premier choix. Nouveau fichier de test permanent
 repassée au vert (19 scripts + corpus OCR).
 
 **Version testée** : v230
+
+### 87 — Même correctif étendu au journal de cuisine ("J'ai cuisiné ça !") *(v231)*
+
+Suite au point 86 : la photo du journal de cuisine avait exactement le
+même défaut (`capture="environment"` empêchant l'accès à la galerie),
+repéré en même temps mais volontairement laissé de côté (hors du
+périmètre demandé), puis confirmé à corriger aussi. Même correctif
+appliqué : la zone d'aperçu (`.photo-upload`, `#cooklog-photo-preview`)
+ne contient plus de champ de fichier, deux boutons "Prendre une photo"/
+"Choisir depuis la galerie" apparaissent juste en dessous, réutilisant
+les mêmes clés i18n et le même traitement (redimensionnement canvas,
+max 800px) qu'avant.
+
+**Vérifié** : structure du DOM scopée à la fenêtre modale du journal de
+cuisine (2 champs de fichier — un avec `capture`, un sans —, aucun à
+l'intérieur de la zone d'aperçu), sélection réelle d'un fichier via le
+bouton Galerie confirmée (aperçu mis à jour). Cas ajoutés à
+`test_recipe_form_photo_gallery.py`. Suite de régression complète
+repassée au vert (19 scripts + corpus OCR).
+
+**Version testée** : v231
