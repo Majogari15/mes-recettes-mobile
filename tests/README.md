@@ -99,6 +99,17 @@ Depuis, la structure sépare strictement :
   date de péremption, stock non augmenté après un échec d'écriture,
   glisser-déposer accessible au clavier, libellé nutrition "par
   personne" — voir TESTS_NON_REGRESSION.md point 101.
+- `test_external_audit_fixes_round3.py` — troisième audit externe
+  (deux autres IA) : vraie atomicité de l'import ZIP (une seule
+  transaction IndexedDB multi-entrepôts couvrant toutes les sections,
+  protège aussi contre un échec pendant l'écriture elle-même, pas
+  seulement une donnée invalide détectée à l'avance), validation de
+  forme complète (ingredients.json/personnalisations rejetés s'ils
+  n'ont pas la forme attendue, même si le JSON est syntaxiquement
+  valide), date de péremption restaurée invalide (ne plante plus
+  l'affichage, nettoyée à l'import), date calendaire impossible (31
+  février) qui ne bascule plus silencieusement sur une autre date —
+  voir TESTS_NON_REGRESSION.md point 102.
 - `test_ingredient_reference_data.py` — protège la mise à jour des
   données de référence ingrédients (allergènes, valeurs
   nutritionnelles, traductions) importées depuis l'application Windows

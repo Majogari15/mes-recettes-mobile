@@ -6760,3 +6760,90 @@ et `tests/test_shared_backup.py`, réécrit) :
 Suite de régression complète (33 scripts + corpus OCR) au vert.
 
 **Version testée** : v244
+
+### 102 — Corrections suite à un troisième audit externe (deux autres IA), atomicité réelle du ZIP et dates invalides
+
+L'utilisateur a fait tester la v244 par deux autres IA. La première a
+confirmé l'ensemble des corrections du point 101 sans rien trouver de
+nouveau. La seconde a démontré, par exécution directe des fonctions
+réelles (stockage et réseau simulés), que la protection "tout-ou-rien"
+ajoutée au point 101 restait incomplète dans deux scénarios précis
+qu'elle ne couvrait pas encore. Chaque point vérifié moi-même dans le
+code avant correction.
+
+**Confirmé et corrigé** :
+1. **Import ZIP toujours non atomique face à un échec d'ÉCRITURE** —
+   confirmé : le point 101 empêchait bien une donnée invalide
+   *détectée à l'avance* de déclencher une écriture partielle, mais
+   les différentes sections (recettes, ingrédients, garde-manger,
+   personnalisations) continuaient à s'écrire dans des transactions
+   IndexedDB séparées. Un échec survenant PENDANT l'écriture
+   elle-même (quota dépassé, panne...) — pas seulement une donnée
+   invalide — pouvait donc encore laisser l'import à moitié appliqué
+   (scénario reproduit : ancienne recette supprimée, une seule des
+   deux nouvelles recettes écrite avant l'échec). Corrigé en
+   réutilisant `storeWriteManyAcrossStores()` (déjà présente dans le
+   code, utilisée ailleurs pour le même besoin — ex. fusion de
+   doublons de courses) : toutes les écritures de toutes les
+   sections sont désormais regroupées dans UNE SEULE transaction
+   IndexedDB multi-entrepôts, calculée entièrement en mémoire avant
+   la moindre écriture réelle.
+2. **Validation de forme encore incomplète** — confirmé : un JSON
+   syntaxiquement valide mais de mauvaise forme (ex.
+   `ingredients.json` = `{"bad": 1}` au lieu d'un tableau) ne fait
+   pas échouer `JSON.parse`, donc passait la validation du point 101
+   (qui ne vérifiait que la syntaxe JSON et la forme des recettes) —
+   l'erreur (`... is not iterable`) ne survenait que pendant
+   l'écriture de cette section, après que les sections précédentes
+   (ex. les recettes) avaient déjà été appliquées. Une vérification
+   de forme explicite (tableau pour les ingrédients, objet simple
+   pour les personnalisations) a été ajoutée, dans la même phase de
+   validation qui précède désormais toute écriture.
+3. **Date de péremption restaurée invalide : plantage de
+   l'affichage** — confirmé : `parseCalendarDateLocal()` (ajoutée au
+   point 100 pour corriger le bug de fuseau horaire) renvoie
+   correctement `null` pour une chaîne qui n'est pas une date, mais
+   `pantryExpirationSuffixHtml()` appelait `.toLocaleDateString()`
+   directement sur ce résultat sans jamais vérifier qu'il n'était pas
+   `null` — plantage total de l'écran garde-manger dès qu'un seul
+   article restauré avait une date corrompue. Corrigé (ne montre
+   simplement aucune mention de péremption pour cet article plutôt
+   que de planter). Une date de péremption invalide est en plus
+   désormais nettoyée à `null` dès l'import (`sanitizeBackupItem`),
+   pour ne jamais entrer dans la base une donnée qui aurait pu
+   déclencher ce même problème ailleurs.
+4. **Date calendaire impossible acceptée silencieusement** —
+   confirmé : `new Date(année, mois, jour)` ne valide jamais les
+   bornes du mois lui-même — `2026-02-31` "roulait" silencieusement
+   sur le 3 mars au lieu d'être signalée comme invalide.
+   `parseCalendarDateLocal()` valide maintenant explicitement le
+   nombre de jours du mois (même technique que `parseShortDateToIso`,
+   déjà utilisée pour la saisie manuelle), cohérent quelle que soit
+   l'origine de la donnée.
+
+**Corrigé par la même occasion (risque signalé au point 101, jamais
+reproduit, maintenant confirmé et corrigé)** :
+- **`waitUntil()` du rafraîchissement en arrière-plan (SWR) ne
+  couvrait pas `cache.put()`** — confirmé : `cache.put(...)` était
+  appelé sans que sa promesse soit renvoyée dans la chaîne, donc
+  `networkUpdate` (protégée par `event.waitUntil()`) se résolvait dès
+  la réponse réseau reçue, pas une fois l'écriture dans le cache
+  vraiment terminée. Corrigé (`return cache.put(...).then(() =>
+  res)`).
+
+**Vérifié** (voir `tests/test_external_audit_fixes_round3.py`,
+nouveau) :
+- Un échec simulé PENDANT l'écriture (pas une donnée invalide) ne
+  laisse aucune trace : ni les anciennes données supprimées, ni la
+  moindre nouvelle donnée écrite.
+- `ingredients.json` de mauvaise forme est rejeté avant toute
+  écriture, y compris pour une recette par ailleurs valide de la même
+  archive.
+- Une date de péremption restaurée invalide ("not-a-date" ou
+  "2026-02-31") ne fait plus planter l'affichage, et est bien
+  nettoyée à `null` avec un rapport de correction structurelle.
+- `parseCalendarDateLocal("2026-02-31")` renvoie bien `null`.
+
+Suite de régression complète (34 scripts + corpus OCR) au vert.
+
+**Version testée** : v245

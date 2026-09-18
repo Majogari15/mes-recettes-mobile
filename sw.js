@@ -11,7 +11,7 @@
 // application, donc caches.keys() y voit potentiellement les caches
 // de tout le monde sur ce domaine.
 const CACHE_PREFIX = "mes-recettes-cache-";
-const CACHE_NAME = `${CACHE_PREFIX}v244`;
+const CACHE_NAME = `${CACHE_PREFIX}v245`;
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -160,7 +160,14 @@ self.addEventListener("fetch", (event) => {
         const cached = await cache.match(event.request);
         const networkUpdate = fetch(event.request)
           .then((res) => {
-            if (res.ok) cache.put(event.request, res.clone());
+            // "return cache.put(...).then(() => res)" — pas seulement
+            // "cache.put(...); return res" — sinon la promesse
+            // networkUpdate se résout dès la réponse réseau reçue,
+            // SANS attendre que l'écriture dans le cache soit
+            // vraiment terminée : event.waitUntil(networkUpdate)
+            // juste en dessous ne protégerait alors que la moitié du
+            // travail qu'il est censé garder en vie.
+            if (res.ok) return cache.put(event.request, res.clone()).then(() => res);
             return res;
           })
           .catch(() => null);

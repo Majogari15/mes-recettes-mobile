@@ -2457,6 +2457,16 @@ function parseCalendarDateLocal(dateStr) {
   const parts = String(dateStr).split("-").map(Number);
   if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) return null;
   const [year, month, day] = parts;
+  if (month < 1 || month > 12) return null;
+  // new Date(année, mois, jour) ne valide jamais les bornes du mois de
+  // lui-même (day: 31 pour février "roule" silencieusement sur le 3
+  // mars) — une donnée restaurée depuis une sauvegarde corrompue ou
+  // modifiée à la main pourrait ainsi afficher une date calendaire qui
+  // n'existe pas sans qu'aucune erreur ne le signale. Même vérification
+  // que parseShortDateToIso (saisie manuelle), pour un comportement
+  // cohérent quelle que soit l'origine de la donnée.
+  const daysInMonth = new Date(year, month, 0).getDate();
+  if (day < 1 || day > daysInMonth) return null;
   return new Date(year, month - 1, day);
 }
 // Nombre de jours avant l'échéance à partir duquel un article est
@@ -2946,7 +2956,15 @@ function pantryExpirationSuffixHtml(item) {
   // localeDateStr(item.expirationDate) interpréterait "YYYY-MM-DD"
   // comme minuit UTC (voir parseCalendarDateLocal) — décalant
   // l'affichage d'un jour dans les fuseaux à l'ouest de l'UTC.
-  const dateStr = parseCalendarDateLocal(item.expirationDate).toLocaleDateString(CURRENT_LANG);
+  const parsedExpiration = parseCalendarDateLocal(item.expirationDate);
+  // Une donnée restaurée depuis une sauvegarde corrompue ou modifiée à
+  // la main peut contenir une valeur qui n'est pas une vraie date
+  // (ex. "not-a-date") — jamais saisissable via le formulaire normal,
+  // qui valide déjà, mais atteignable par une restauration. Sans ce
+  // repli, l'écran plantait entièrement (impossible d'afficher le
+  // garde-manger) au lieu de simplement ignorer cette seule mention.
+  if (!parsedExpiration) return "";
+  const dateStr = parsedExpiration.toLocaleDateString(CURRENT_LANG);
   const key = status === "expired" ? "pantry_expiration_expired_suffix" : status === "soon" ? "pantry_expiration_soon_suffix" : "pantry_expiration_future_suffix";
   const color = status === "expired" ? "var(--danger)" : status === "soon" ? "var(--accent)" : "var(--text-muted)";
   return `<span style="color:${color};font-weight:${status ? 600 : 400};">${escapeHtml(t(key, { date: dateStr }))}</span>`;
@@ -7396,100 +7414,114 @@ async function restoreFromSharedZip(file, merge) {
     throw new Error("shared_zip_no_known_files");
   }
 
-  // Analyse et convertit D'ABORD l'intégralité de l'archive, sans
-  // écrire quoi que ce soit dans IndexedDB — une entrée invalide plus
-  // loin dans le fichier (JSON malformé, recette mal formée...) doit
-  // faire échouer l'import EN ENTIER plutôt que de laisser les
-  // premières écritures déjà faites (ex. recettes déjà importées,
-  // puis plus rien après l'erreur) : un import raté doit se comporter
-  // comme s'il n'avait jamais eu lieu, jamais moitié appliqué.
+  // Analyse, VALIDE LA FORME (pas seulement la syntaxe JSON) et
+  // convertit D'ABORD l'intégralité de l'archive, sans écrire quoi que
+  // ce soit dans IndexedDB — une entrée invalide plus loin dans le
+  // fichier (JSON malformé, recette mal formée, ingredients.json qui
+  // n'est pas un tableau...) doit faire échouer l'import EN ENTIER
+  // plutôt que de laisser les premières écritures déjà faites : un
+  // import raté doit se comporter comme s'il n'avait jamais eu lieu.
+  // Un JSON syntaxiquement valide mais de la MAUVAISE FORME (ex.
+  // ingredients.json = {"bad":1} au lieu d'un tableau) ne fait pas
+  // échouer JSON.parse — sans cette vérification explicite, l'erreur
+  // n'apparaissait que plus tard, PENDANT l'écriture d'une section
+  // suivante, après que des sections précédentes avaient déjà été
+  // appliquées.
   const parsedRecipes = filesByName.has("recipes.json")
     ? JSON.parse(utf8Decode(filesByName.get("recipes.json").data)).map((json) => recipeFromSharedFormat(json, imageBytesByFilename))
     : null;
   const parsedIngredientNames = filesByName.has("ingredients.json")
     ? JSON.parse(utf8Decode(filesByName.get("ingredients.json").data))
     : null;
+  if (parsedIngredientNames !== null && !Array.isArray(parsedIngredientNames)) {
+    throw new Error("shared_zip_invalid_ingredients");
+  }
   const parsedPantry = filesByName.has("pantry.json")
     ? pantryFromSharedFormat(JSON.parse(utf8Decode(filesByName.get("pantry.json").data)))
     : null;
   const parsedOverridesDict = filesByName.has("ingredient_custom_data.json")
     ? JSON.parse(utf8Decode(filesByName.get("ingredient_custom_data.json").data))
     : null;
+  if (parsedOverridesDict !== null && (typeof parsedOverridesDict !== "object" || Array.isArray(parsedOverridesDict))) {
+    throw new Error("shared_zip_invalid_overrides");
+  }
 
-  // Plus aucun risque d'échec de lecture/conversion après ce point :
-  // les écritures ci-dessous peuvent commencer.
+  // Prépare ensuite, TOUJOURS sans rien écrire, la liste exacte des
+  // opérations à effectuer pour chaque entrepôt concerné — lire l'état
+  // existant (storeAll) ne modifie rien. La dernière étape ci-dessous
+  // (storeWriteManyAcrossStores) applique alors TOUTES les opérations
+  // de TOUS les entrepôts dans une seule et même transaction
+  // IndexedDB : soit l'import entier s'applique, soit rien, même si
+  // l'échec survient pendant l'écriture elle-même (quota dépassé...)
+  // et pas seulement en cas de donnée invalide détectée à l'avance —
+  // exactement comme persistShoppingMergeWithClaims ou
+  // moveRecordBetweenStores le font déjà ailleurs dans l'app pour la
+  // même raison.
   const report = { recipesImported: 0, recipesUpdated: 0, ingredientsImported: 0 };
+  const ops = [];
 
   if (parsedRecipes) {
     const existing = await storeAll("recipes");
     const existingById = new Map(existing.map((r) => [r.id, r]));
-    if (!merge) {
-      for (const r of existing) await storeDelete("recipes", r.id);
-    }
     for (const recipe of parsedRecipes) {
       // Une recette important un identifiant déjà connu localement est mise
       // à jour plutôt que dupliquée — comportement voulu pour resynchroniser
       // la même recette entre les deux appareils, contrairement à l'import
       // classique (fichier JSON de l'app mobile uniquement) qui duplique
       // toujours par prudence.
-      if (merge && existingById.has(recipe.id)) {
-        report.recipesUpdated += 1;
-      } else {
-        report.recipesImported += 1;
-      }
-      await storePut("recipes", recipe);
+      if (merge && existingById.has(recipe.id)) report.recipesUpdated += 1;
+      else report.recipesImported += 1;
     }
+    ops.push({ store: "recipes", puts: parsedRecipes, deletes: merge ? [] : existing.map((r) => r.id) });
   }
 
   if (parsedIngredientNames) {
-    if (!merge) {
-      const existing = await storeAll("ingredients");
-      for (const i of existing) await storeDelete("ingredients", i.name);
-    }
-    const existingNames = new Set((await storeAll("ingredients")).map((i) => i.name.toLowerCase()));
+    const existing = await storeAll("ingredients");
+    const existingNames = new Set(merge ? existing.map((i) => i.name.toLowerCase()) : []);
+    const toPut = [];
     for (const name of parsedIngredientNames) {
       if (typeof name !== "string" || !name.trim()) continue;
       if (!existingNames.has(name.toLowerCase())) {
-        await storePut("ingredients", { name });
+        toPut.push({ name });
         existingNames.add(name.toLowerCase());
         report.ingredientsImported += 1;
       }
     }
+    ops.push({ store: "ingredients", puts: toPut, deletes: merge ? [] : existing.map((i) => i.name) });
   }
 
   if (parsedPantry) {
+    const existing = await storeAll("pantry");
     if (!merge) {
-      const existing = await storeAll("pantry");
-      for (const p of existing) await storeDelete("pantry", p.id);
-      for (const p of parsedPantry) await storePut("pantry", p);
+      ops.push({ store: "pantry", puts: parsedPantry, deletes: existing.map((p) => p.id) });
     } else {
       // Fusionne par nom ET unité (comme le fait déjà
       // addOrIncrementPantryItem ailleurs dans l'app) — associer par
       // le seul nom écraserait un article "Farine (500 g)" déjà
       // présent localement par un import "Farine (1 kg)", au lieu de
       // créer une seconde ligne distincte pour cette unité différente.
-      const existing = await storeAll("pantry");
       const byNameUnit = new Map(existing.map((p) => [`${(p.name || "").toLowerCase().trim()}|${p.unit || ""}`, p]));
+      const toPut = [];
       for (const p of parsedPantry) {
         const key = `${(p.name || "").toLowerCase().trim()}|${p.unit || ""}`;
         const match = byNameUnit.get(key);
         const toStore = match ? { ...p, id: match.id } : p;
-        await storePut("pantry", toStore);
+        toPut.push(toStore);
         byNameUnit.set(key, toStore);
       }
+      ops.push({ store: "pantry", puts: toPut, deletes: [] });
     }
   }
 
   if (parsedOverridesDict) {
-    if (!merge) {
-      const existing = await storeAll("ingredientOverrides");
-      for (const o of existing) await storeDelete("ingredientOverrides", o.name);
-    }
-    for (const [name, record] of Object.entries(parsedOverridesDict)) {
-      if (record && typeof record === "object") await storePut("ingredientOverrides", { ...record, name: record.name || name });
-    }
+    const existing = await storeAll("ingredientOverrides");
+    const toPut = Object.entries(parsedOverridesDict)
+      .filter(([, record]) => record && typeof record === "object")
+      .map(([name, record]) => ({ ...record, name: record.name || name }));
+    ops.push({ store: "ingredientOverrides", puts: toPut, deletes: merge ? [] : existing.map((o) => o.name) });
   }
 
+  if (ops.length) await storeWriteManyAcrossStores(ops);
   return report;
 }
 
@@ -7692,6 +7724,15 @@ function sanitizeBackupItem(item, storeName, report) {
         cleaned[field] = sanitized;
       }
     });
+    // Une date de péremption qui n'est pas une vraie date calendaire
+    // (chaîne quelconque, ou "2026-02-31" qui n'existe pas) faisait
+    // planter l'affichage du garde-manger — voir parseCalendarDateLocal
+    // et pantryExpirationSuffixHtml. Ramenée à null ici, à l'import,
+    // plutôt que de laisser une donnée corrompue entrer dans la base.
+    if ("expirationDate" in cleaned && cleaned.expirationDate != null && !parseCalendarDateLocal(cleaned.expirationDate)) {
+      cleaned.expirationDate = null;
+      report.structuralFixes += 1;
+    }
     if ("unit" in cleaned && cleaned.unit != null) {
       const migratedUnit = migrateLegacyUnit(cleaned.unit);
       if (migratedUnit !== cleaned.unit) report.structuralFixes += 1;
@@ -11686,7 +11727,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 244;
+const APP_VERSION = 245;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
