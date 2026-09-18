@@ -370,6 +370,21 @@ Depuis, la structure sépare strictement :
   que les emoji de CONTENU (favoris, illustrations d'écran vide) ne
   sont PAS touchés, et que chaque icône est `aria-hidden="true"` avec
   l'`aria-label`/texte du bouton conservé (lecteur d'écran inchangé).
+- `test_visual_wave_1.py` — "vague visuelle 1" (voir TESTS_NON_REGRESSION.md
+  point 111) : cartes de recette à grande photo 16/9 + titre Fraunces,
+  barres du haut/du bas translucides (`backdrop-filter`), pastille de
+  fond sur l'onglet actif, photo de fiche recette agrandie avec
+  statistiques superposées en chevauchement, cercle coloré derrière
+  l'emoji des écrans vides. Vérifie aussi les 2 écarts corrigés par
+  rapport aux instructions transmises (voir le point pour le détail) :
+  la fenêtre de sélection de recette n'est PAS transformée en carte
+  photo (bug réel trouvé en testant : `.recipe-row` seul confondait
+  cette fenêtre — sans `.card` — avec les vraies listes en carte,
+  rescopé en `.card.recipe-row`), et le `.stat-row` de la nutrition
+  (hors fiche recette) n'a pas de marge négative. Vérifie enfin l'audit
+  d'accessibilité sur l'écran diagnostic, scénario exact qui avait
+  révélé une chute de contraste sous le seuil AA à cause de la
+  transparence des barres (corrigée en relevant leur opacité à 95%).
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

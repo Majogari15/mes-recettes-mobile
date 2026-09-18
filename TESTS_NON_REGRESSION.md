@@ -7410,4 +7410,108 @@ détail recette + fenêtre de recherche) :
 
 Suite de régression complète (39 scripts + corpus OCR) au vert.
 
-**Version testée** : v252
+**Version testée** : v253
+
+### 111 — "Vague visuelle 1" : cartes photo, barres translucides, superposition héro/pills
+
+Retour direct de l'utilisateur sur le point 110 : "seules 4 [icônes] ont
+atterri, et 3 d'entre elles sont quasi invisibles sur un téléphone" —
+constat exact (grille tablette à 720px, chiffres tabulaires et
+animation de modale sont en effet peu visibles sur téléphone). L'utilisateur
+a alors transmis 7 transformations CSS concrètes, vérifiées dans le vrai
+`styles.css`/`app.js` avant application (contrairement au paquet "ui-kit"
+du point 109, chaque classe citée — `.recipe-row`, `.recipe-thumb`,
+`.topbar`, `.bottom-nav`, `.nav-item`, `.recipe-hero`, `.stat-row`,
+`.stat-pill`, `.empty-state .emoji`, `.chip`, `.autocomplete-item` —
+existe réellement et correspond à l'usage décrit).
+
+**2 écarts corrigés par rapport aux instructions transmises, trouvés en
+vérifiant puis en testant** :
+1. **Bug réel introduit puis corrigé avant même le premier commit** : les
+   instructions scopaient déjà certaines surcharges à `.recipe-row`
+   (`.recipe-row .recipe-thumb`, etc.) en pensant éviter tout effet sur
+   la fenêtre de sélection de recette (`openRecipePickerModal`) et la
+   liste des menus, qui réutilisent les mêmes classes. Mais la fenêtre
+   de sélection utilise EXACTEMENT `class="recipe-row"` (sans `.card`),
+   alors que la liste de recettes, la liste des menus et "Que puis-je
+   cuisiner ?" utilisent toutes `class="card recipe-row"` — `.recipe-row`
+   seul les confondait donc toutes. Un premier essai a bien reproduit le
+   bug (fenêtre de sélection transformée en grandes cartes photo, testé
+   et vu avant correction) puis corrigé en rescopant tout sur
+   `.card.recipe-row` (les deux classes ensemble), qui ne cible plus que
+   les listes en carte, jamais la fenêtre de sélection compacte.
+2. **Étoile de favori** : la mise en page en colonne (photo pleine
+   largeur au-dessus du texte) aurait autrement repoussé l'étoile, 3e
+   élément du flex avant ce changement, sous le texte au lieu de rester
+   un repère visuel sur la carte — non traité par les instructions
+   transmises. Repensée en badge rond superposé en haut à droite de la
+   photo (`position: absolute`).
+3. **Marge négative du chevauchement héro/statistiques** : les
+   instructions proposaient `.stat-row { margin-top: -26px; ... }` sans
+   scoping, mais cette même classe sert aussi au bloc de valeurs
+   nutritionnelles plus bas sur la fiche recette (hors de toute photo) —
+   une marge négative non scopée y aurait fait remonter les pastilles
+   sur le texte au-dessus. Restreint à `.recipe-hero + .stat-row`
+   (sélecteur de frère adjacent), qui ne correspond qu'au bloc juste
+   après la photo.
+
+**Vrai bug de contraste trouvé en testant (pas une supposition)** : les
+premières valeurs de transparence proposées (`.topbar` à 82%, `.bottom-nav`
+à 86%) faisaient chuter le contraste des libellés de navigation sous le
+seuil AA (3,98 au lieu de 4,5 minimum) sur l'écran diagnostic — un vrai
+bouton `.btn-primary` de couleur foncée s'y trouve juste derrière la
+navigation translucide au moment du test, et `color-mix()` composé avec
+cette couleur assombrit trop l'arrière-plan effectif du texte. Diagnostiqué
+précisément via `document.elementsFromPoint()` (identification de
+l'élément réel derrière chaque pixel) et un calcul manuel de contraste
+WCAG, confirmant que le blocage venait de ce bouton spécifique. Corrigé en
+relevant l'opacité à 95% pour les deux barres — calculé pour rester ≥4,5:1
+même dans ce cas le plus défavorable (bouton `--primary-strong` foncé
+derrière), tout en gardant un effet de flou (`backdrop-filter`) visible.
+
+**Appliqué** (les 7 points, une fois les 2 écarts et le bug de contraste
+corrigés) :
+1. Cartes de recette à grande photo 16/9 (au lieu d'une miniature 56px),
+   titre en police Fraunces — rend la grille 2 colonnes à 720px enfin
+   nettement visible.
+2. Barres du haut et du bas translucides (`backdrop-filter: blur(12px)
+   saturate(1.4)`, repli `@supports` sans flou).
+3. Pastille de fond (`--primary-light`) derrière l'icône de l'onglet actif.
+4. Photo de fiche recette agrandie (220px), dégradé sombre en bas, pastilles
+   de statistiques (préparation/cuisson/difficulté) superposées en
+   chevauchement, translucides avec flou.
+5. Cercle `--primary-light` derrière l'emoji des écrans vides.
+6. `scale(.97)` au clic sur les puces de filtre, onglets et suggestions
+   d'autocomplétion.
+7. Photos légèrement adoucies (`brightness(.92) saturate(1.05)`) en thème
+   sombre uniquement.
+
+**Vérifié** (voir `tests/test_visual_wave_1.py`, nouveau, et captures
+d'écran manuelles clair/sombre + largeur tablette) :
+- Les cartes de recette ont bien une photo 16/9 pleine largeur et un
+  titre Fraunces ; la grille 2 colonnes à 720px fonctionne toujours.
+- Le badge de favori reste visible et dans les limites de la carte.
+- La fenêtre de sélection de recette (et elle seule) n'est PAS transformée
+  — miniature et police inchangées, confirmant la correction du bug de
+  scoping.
+- Barres translucides confirmées (couleur avec canal alpha, flou visible
+  sur une capture d'écran avec contenu défilé dessous).
+- Onglet actif : pastille de fond confirmée.
+- Le `.stat-row` de la nutrition (hors fiche recette) n'a PAS de marge
+  négative — seul celui juste après `.recipe-hero` chevauche la photo.
+- Écrans vides : cercle coloré confirmé derrière l'emoji.
+- Audit d'accessibilité (axe-core) au vert dans les deux thèmes sur
+  l'écran diagnostic (scénario exact qui avait révélé le bug de
+  contraste) — 3 exécutions consécutives sans échec après le correctif.
+- **Captures d'écran de manifeste régénérées** (`screenshots/01_accueil.png`,
+  `02_recettes.png`, `03_fiche_recette.png`, `04_courses.png`,
+  `wide_01_accueil.png`, `wide_02_recettes.png`) avec les mêmes données de
+  démonstration qu'avant (mêmes recettes, mêmes quantités, même liste de
+  courses — reconstituées à l'identique à partir des anciennes captures),
+  pour refléter le nouveau design plutôt que de laisser les captures du
+  manifeste PWA (visibles dans l'invite d'installation) montrer l'ancienne
+  interface.
+
+Suite de régression complète (40 scripts + corpus OCR) au vert.
+
+**Version testée** : v254
