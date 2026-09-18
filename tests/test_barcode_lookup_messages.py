@@ -158,15 +158,35 @@ def main():
         page.wait_for_timeout(200)
         page.unroute("**/world.openfoodfacts.org/**")
 
-        print("\n=== Erreur HTTP (ex. 500) traitée comme une panne réseau, pas comme un produit inconnu ===\n")
+        print("\n=== Erreur HTTP SANS corps JSON exploitable (ex. 500, page d'erreur générique) traitée comme une panne réseau ===\n")
         page.route("**/world.openfoodfacts.org/**", lambda route: mock_off_route(route, {}, status=500))
         scan("1000000000055")
         name5, hint5 = modal_texts()
         check("Le formulaire s'ouvre malgré l'erreur HTTP (pas de plantage)", name5 == "", repr(name5))
         check(
-            "Le message de panne réseau est affiché pour une erreur HTTP 500 aussi",
+            "Le message de panne réseau est affiché pour une erreur HTTP 500 sans corps 'status' exploitable",
             bool(hint5) and "non trouvé automatiquement" not in hint5 and ("connexion" in hint5.lower() or "inaccessible" in hint5.lower()),
             repr(hint5),
+        )
+        page.click("#modal-cancel")
+        page.wait_for_timeout(200)
+        page.unroute("**/world.openfoodfacts.org/**")
+
+        print("\n=== Bug confirmé n°3 (2e audit) : un vrai 404 Open Food Facts pour un code-barres absent n'est PAS une panne réseau ===\n")
+        # L'API v2 d'Open Food Facts répond parfois par un statut HTTP
+        # 404 pour un code-barres simplement absent de la base, tout en
+        # renvoyant malgré tout un corps JSON exploitable ({status:0,
+        # ...}) — un premier correctif vérifiait `res.ok` AVANT de lire
+        # ce corps, classant donc à tort ce cas précis comme une panne
+        # réseau plutôt qu'un produit inconnu ordinaire.
+        page.route("**/world.openfoodfacts.org/**", lambda route: mock_off_route(route, {"status": 0, "status_verbose": "product not found"}, status=404))
+        scan("1000000000031")
+        name6, hint6 = modal_texts()
+        check("Le formulaire s'ouvre (pas de plantage)", name6 == "", repr(name6))
+        check(
+            "Un vrai 404 avec un corps JSON exploitable est traité comme un produit inconnu, PAS comme une panne réseau",
+            bool(hint6) and "non trouvé automatiquement" in hint6 and "inaccessible" not in hint6.lower() and "connexion" not in hint6.lower(),
+            repr(hint6),
         )
         page.click("#modal-cancel")
         page.wait_for_timeout(200)

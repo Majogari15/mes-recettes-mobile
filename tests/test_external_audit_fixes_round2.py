@@ -312,6 +312,13 @@ def main():
         context7.close()
 
         print("\n=== Garde-manger : le stock en mémoire n'augmente plus si l'écriture échoue ===\n")
+        # Depuis TESTS_NON_REGRESSION.md point 106, un rescan d'un
+        # code-barres déjà connu ouvre le formulaire (pré-rempli, quantité
+        # suggérée à +1) au lieu d'incrémenter silencieusement via une
+        # fonction dédiée (supprimée) — ce test suit donc désormais ce
+        # même chemin réel plutôt que d'appeler une fonction qui n'existe
+        # plus, tout en vérifiant la même garantie : rien ne doit changer,
+        # ni en mémoire ni en base, si l'écriture échoue.
         context8 = browser.new_context()
         page8 = context8.new_page()
         page8.on("pageerror", lambda exc: errors.append(str(exc)))
@@ -322,27 +329,33 @@ def main():
             async () => {
                 await storePut('pantry', { id: 'stock-1', name: 'Riz', quantity: 2, unit: 'kg' });
                 state.pantry = await storeAll('pantry');
+                state.barcodeIngredientMap = { '9999999999999': { name: 'Riz', unit: 'kg' } };
+                state.screen = 'pantry';
+                render();
+                const capturedRejections = [];
+                const onRejection = (e) => { capturedRejections.push(String(e.reason)); e.preventDefault(); };
+                window.addEventListener('unhandledrejection', onRejection);
+                await handleScannedBarcode('9999999999999');
                 const originalStorePut = window.storePut;
                 window.storePut = () => Promise.reject(new Error('simulated write failure'));
-                let errorCaught = null;
-                try {
-                    await addOrIncrementPantryItem('Riz', 'kg');
-                } catch (e) {
-                    errorCaught = String(e);
-                }
+                document.getElementById('modal-confirm').click();
+                await new Promise((r) => setTimeout(r, 400));
                 window.storePut = originalStorePut;
+                window.removeEventListener('unhandledrejection', onRejection);
                 const memoryItem = state.pantry.find((i) => i.id === 'stock-1');
                 const dbItem = (await storeAll('pantry')).find((i) => i.id === 'stock-1');
-                return { errorCaught, memoryQty: memoryItem.quantity, dbQty: dbItem.quantity };
+                const modalStillOpen = !!document.getElementById('modal-confirm');
+                return { capturedRejections, memoryQty: memoryItem.quantity, dbQty: dbItem.quantity, modalStillOpen };
             }
             """
         )
-        check("L'échec d'écriture se propage bien (pas avalé silencieusement)", bool(result8["errorCaught"]), str(result8))
+        check("L'échec d'écriture n'est pas avalé silencieusement (rejet remonté)", len(result8["capturedRejections"]) > 0, str(result8))
         check(
             "La quantité en mémoire ET en base reste à 2 (pas augmentée malgré l'échec)",
             result8["memoryQty"] == 2 and result8["dbQty"] == 2,
             str(result8),
         )
+        check("Le formulaire reste ouvert (pas fermé comme si la sauvegarde avait réussi)", result8["modalStillOpen"], str(result8))
         context8.close()
 
         print("\n=== Glisser-déposer : poignée focalisable, réordonnable au clavier (flèches) ===\n")

@@ -248,8 +248,12 @@ Depuis, la structure sépare strictement :
   Facts simulée, jamais le vrai réseau), aucun doublon créé grâce à la
   mémorisation du nom ET de l'unité choisis, survie de cette mémoire à
   une sauvegarde locale — voir TESTS_NON_REGRESSION.md points 95-96.
-  Utilise `tests/fixtures/tiny_blank.png` (image minimale, son contenu
-  réel n'a aucune importance puisque le détecteur est simulé).
+  Depuis le point 106, un rescan d'un code-barres connu ouvre bien le
+  formulaire pré-rempli (nom/unité/quantité+1, modifiable, avec la
+  date de péremption saisissable) au lieu d'ajouter directement et
+  silencieusement comme avant. Utilise `tests/fixtures/tiny_blank.png`
+  (image minimale, son contenu réel n'a aucune importance puisque le
+  détecteur est simulé).
 - `test_barcode_rotation_retry.py` — import de code-barres depuis une
   photo qui n'est pas droite (signalé par l'utilisateur avec 4 vraies
   photos toutes prises de travers) : `decodeBarcodeImageFile()` essaie
@@ -272,7 +276,10 @@ Depuis, la structure sépare strictement :
   deux s'appliquent) ; une panne réseau et un produit vraiment absent
   de la base étaient indiscernables (message dédié désormais pour la
   panne réseau, y compris une erreur HTTP) — voir
-  TESTS_NON_REGRESSION.md point 105.
+  TESTS_NON_REGRESSION.md point 105. Étendu au point 106 avec le cas
+  d'un vrai 404 Open Food Facts (corps JSON `{status:0}` exploitable
+  malgré le statut HTTP d'erreur) : bien traité comme un produit
+  inconnu, pas comme une panne réseau.
 - `test_drag_reorder.py` — glisser-déposer manuel (liste de courses,
   garde-manger, ingrédients d'un formulaire de recette), simulé via de
   vrais événements souris que Chromium traduit en Pointer Events :

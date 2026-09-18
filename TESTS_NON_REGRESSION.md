@@ -7063,3 +7063,76 @@ plus bas.
 Suite de régression complète (37 scripts + corpus OCR) au vert.
 
 **Version testée** : v248
+
+### 106 — Retour terrain réel + 3e audit externe : rescan sans contrôle et un vrai 404 Open Food Facts mal classé
+
+Retour terrain direct de l'utilisateur après déploiement du point 104
+(rotation) : **3 des 4 photos d'origine décodent désormais
+correctement** (confirmation réelle sur son Samsung, jamais vérifiable
+depuis cet environnement de test) ; la 4e (jambon 300 g) ouvre bien le
+formulaire avec le champ nom vide à compléter, comportement attendu
+depuis le point 105 (fiche trouvée sans nom). Un vrai bug d'usage a en
+revanche été signalé sur le chemin "code-barres déjà connu", et un
+troisième audit externe (une autre IA, ayant testé l'app après le point
+105) a confirmé une régression introduite par le correctif du point
+105 lui-même.
+
+**Confirmé et corrigé** :
+1. **Rescanner un code-barres déjà connu n'offrait aucun moyen de
+   saisir une quantité ou une date de péremption** — confirmé par
+   l'utilisateur : `handleScannedBarcode()` incrémentait directement
+   la quantité de 1 et affichait une simple alerte de confirmation,
+   sans jamais rouvrir le formulaire. Un nouvel achat correspond
+   pourtant souvent à une quantité différente ET à une nouvelle date
+   de péremption imprimée sur cet exemplaire précis. Corrigé : le
+   formulaire s'ouvre désormais aussi pour un code-barres déjà connu,
+   pré-rempli avec le nom, l'unité et une quantité déjà suggérée
+   (l'ancienne + 1, modifiable), permettant de tout ajuster — quantité
+   réelle, date de péremption — avant de valider. La fonction dédiée
+   à l'ancien raccourci (`addOrIncrementPantryItem`), devenue inutile,
+   a été supprimée avec la clé i18n `barcode_added_known` associée.
+2. **Un vrai 404 d'Open Food Facts pour un code-barres absent classé
+   comme panne réseau** — confirmé : le correctif du point 105
+   vérifiait `res.ok` AVANT de lire le corps de la réponse ; or l'API
+   v2 d'Open Food Facts répond parfois par un statut HTTP 404 pour un
+   code-barres simplement absent de la base, tout en renvoyant malgré
+   tout un corps JSON exploitable (`{status: 0, ...}`) — ce cas précis
+   affichait donc à tort "impossible de vérifier ce produit en ligne"
+   au lieu du message générique "produit non trouvé automatiquement".
+   Corrigé : le corps de la réponse est maintenant toujours examiné en
+   premier ; seule l'absence totale de corps JSON exploitable (page
+   d'erreur générique, coupure...) compte désormais comme une vraie
+   panne réseau.
+
+**Vérifié** :
+- `tests/test_barcode_pantry.py` (mis à jour) : un rescan d'un
+  code-barres connu ouvre bien le formulaire (jamais une alerte
+  directe), pré-rempli avec nom/unité/quantité+1 ; la quantité et la
+  date de péremption saisies à la main sont bien prises en compte
+  (pas figées à l'incrément suggéré) ; le cas d'une unité différente
+  de "boîte" mémorisée se comporte pareillement.
+- `tests/test_barcode_lookup_messages.py` (étendu) : un vrai 404 avec
+  un corps JSON `{status:0}` exploitable est bien traité comme un
+  produit inconnu, jamais comme une panne réseau ; une erreur HTTP
+  sans corps exploitable reste bien classée comme une panne.
+- `tests/test_external_audit_fixes_round2.py` (adapté) : la garantie
+  "le stock en mémoire n'augmente pas si l'écriture échoue" (point 63)
+  est revérifiée via le nouveau chemin réel (rescan -> formulaire ->
+  confirmation), la fonction supprimée n'existant plus.
+
+**Constats du 3e audit externe non repris ici** (améliorations
+identifiées, jugées trop conséquentes pour ce point précis — liste
+communiquée à l'utilisateur, à discuter avant d'entreprendre l'une
+d'elles) : décodeur JS de secours pour les navigateurs sans
+`BarcodeDetector` (iOS/Safari, Firefox), validation du checksum EAN en
+saisie manuelle avant de requêter Open Food Facts pour rien,
+redimensionnement de l'image avant `detect()` (photos réelles pouvant
+dépasser 2000 px de large), torche/zoom/vibration en scan caméra live,
+mode de scan continu pour ranger plusieurs articles d'un coup, gestion
+de plusieurs codes-barres détectés dans une même image, mise en cache
+d'une fiche produit complète (pas seulement nom+unité) pour un usage
+hors connexion.
+
+Suite de régression complète (37 scripts + corpus OCR) au vert.
+
+**Version testée** : v249

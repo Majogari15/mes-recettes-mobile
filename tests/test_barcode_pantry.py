@@ -241,7 +241,13 @@ def main():
             str(pantry_after_first),
         )
 
-        print("\n=== Rescanner le MÊME code-barres : incrémente sans redemander (mémoire) ===\n")
+        print("\n=== Rescanner le MÊME code-barres : formulaire pré-rempli (nom, unité, quantité +1), jamais d'ajout automatique silencieux ===\n")
+        # Retour direct de l'utilisateur (TESTS_NON_REGRESSION.md point
+        # 106) : l'ancien raccourci "ajout automatique, +1 direct" ne
+        # laissait aucune façon de saisir une quantité différente ou une
+        # nouvelle date de péremption sur un rescan. Le formulaire s'ouvre
+        # donc maintenant à chaque fois, avec une quantité déjà suggérée
+        # (l'ancienne + 1) plutôt qu'imposée.
         page.evaluate("() => { state.screen = 'pantry'; render(); }")
         page.click("text=Scanner un code-barres")
         page.wait_for_timeout(200)
@@ -250,19 +256,47 @@ def main():
         page.fill("#barcode-manual-input", "3017620422003")
         page.click("#barcode-manual-submit")
         page.wait_for_timeout(400)
-        alert_text = page.evaluate("() => { const el = document.getElementById('custom-alert-message'); return el ? el.textContent : null; }")
-        check(
-            "Une confirmation directe s'affiche (pas le formulaire) avec la bonne quantité",
-            alert_text is not None and "2" in alert_text and "Maïs en boîte" in alert_text,
-            alert_text,
+        rescan_prefill = page.evaluate(
+            """
+            () => ({
+                name: document.getElementById('modal-ing-name')?.value,
+                unit: document.getElementById('modal-ing-unit')?.value,
+                qty: document.getElementById('modal-ing-qty')?.value,
+            })
+            """
         )
-        page.click("#custom-alert-ok")
-        page.wait_for_timeout(200)
+        check(
+            "Le formulaire (pas une alerte) s'ouvre, pré-rempli avec le nom, l'unité et la quantité +1 déjà connus",
+            rescan_prefill == {"name": "Maïs en boîte", "unit": "boîte", "qty": "2"},
+            str(rescan_prefill),
+        )
+        page.click("#modal-confirm")
+        page.wait_for_timeout(300)
         pantry_after_second = page.evaluate("() => state.pantry.filter(i => normalize(i.name) === normalize('Maïs en boîte'))")
         check(
             "Toujours un seul article (pas de doublon), quantité passée à 2",
             len(pantry_after_second) == 1 and pantry_after_second[0]["quantity"] == 2,
             str(pantry_after_second),
+        )
+
+        print("\n=== Rescanner encore le même code-barres : la quantité suggérée reste modifiable, et la date de péremption est saisissable ===\n")
+        page.evaluate("() => { state.screen = 'pantry'; render(); }")
+        page.click("text=Scanner un code-barres")
+        page.wait_for_timeout(200)
+        page.click("text=Saisir le code-barres manuellement")
+        page.wait_for_timeout(200)
+        page.fill("#barcode-manual-input", "3017620422003")
+        page.click("#barcode-manual-submit")
+        page.wait_for_timeout(400)
+        page.fill("#modal-ing-qty", "5")
+        page.fill("#modal-ing-expiration", "011226")
+        page.click("#modal-confirm")
+        page.wait_for_timeout(300)
+        pantry_after_third = page.evaluate("() => state.pantry.filter(i => normalize(i.name) === normalize('Maïs en boîte'))")
+        check(
+            "La quantité et la date de péremption saisies à la main sont bien prises en compte (pas figées à +1)",
+            len(pantry_after_third) == 1 and pantry_after_third[0]["quantity"] == 5 and pantry_after_third[0]["expirationDate"] == "2026-12-01",
+            str(pantry_after_third),
         )
 
         print("\n=== Produit non trouvé : formulaire vide + message explicite, pas de plantage ===\n")
@@ -324,14 +358,27 @@ def main():
         page.fill("#barcode-manual-input", "9999999999999")
         page.click("#barcode-manual-submit")
         page.wait_for_timeout(400)
+        rice_rescan_prefill = page.evaluate(
+            """
+            () => ({
+                unit: document.getElementById('modal-ing-unit')?.value,
+                qty: document.getElementById('modal-ing-qty')?.value,
+            })
+            """
+        )
+        check(
+            "Le rescan pré-remplit bien l'unité mémorisée ('kg', pas 'boîte') avec la quantité +1",
+            rice_rescan_prefill == {"unit": "kg", "qty": "2"},
+            str(rice_rescan_prefill),
+        )
+        page.click("#modal-confirm")
+        page.wait_for_timeout(300)
         rice_items = page.evaluate("() => state.pantry.filter(i => normalize(i.name) === normalize('Riz Basmati'))")
         check(
             "Un seul article 'Riz Basmati', en kg, quantité 2 (pas de doublon en 'boîte')",
             len(rice_items) == 1 and rice_items[0]["unit"] == "kg" and rice_items[0]["quantity"] == 2,
             str(rice_items),
         )
-        page.click("#custom-alert-ok")
-        page.wait_for_timeout(200)
         page.unroute("**/world.openfoodfacts.org/**")
 
         print("\n=== Survie de la mémoire code-barres à un aller-retour de sauvegarde locale ===\n")

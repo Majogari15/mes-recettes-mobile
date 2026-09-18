@@ -2531,38 +2531,27 @@ async function lookupProductByBarcode(barcode) {
       `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json?fields=product_name,product_name_fr,quantity,status`,
       8000
     );
-    if (!res.ok) return { name: null, quantityHint: null, networkError: true };
-    const data = await res.json();
-    if (!data || data.status !== 1 || !data.product) return { name: null, quantityHint: null, networkError: false };
+    // L'API v2 d'Open Food Facts répond parfois par un statut HTTP
+    // d'erreur (404 notamment) pour un code-barres simplement absent de
+    // la base, tout en renvoyant malgré tout un corps JSON exploitable
+    // ({status:0, ...}) — vérifier res.ok AVANT de lire ce corps
+    // classait donc à tort ce cas comme une panne réseau, alors que
+    // c'est un produit inconnu ordinaire. Seule l'absence de tout corps
+    // JSON exploitable (page d'erreur générique, coupure...) compte
+    // maintenant comme une vraie panne.
+    let data;
+    try {
+      data = await res.json();
+    } catch (e) {
+      return { name: null, quantityHint: null, networkError: true };
+    }
+    if (!data || typeof data.status !== "number") return { name: null, quantityHint: null, networkError: !res.ok };
+    if (data.status !== 1 || !data.product) return { name: null, quantityHint: null, networkError: false };
     const name = (CURRENT_LANG === "fr" && data.product.product_name_fr) || data.product.product_name || null;
     return { name: name ? name.trim() : null, quantityHint: data.product.quantity ? String(data.product.quantity).trim() : null, networkError: false };
   } catch (e) {
     return { name: null, quantityHint: null, networkError: true };
   }
-}
-
-// Ajoute un article au garde-manger, ou augmente sa quantité de 1 s'il
-// existe déjà (même nom normalisé et même unité) — évite d'ouvrir le
-// formulaire à chaque fois qu'on rescanne un produit déjà présent
-// (typiquement plusieurs boîtes identiques rapportées des courses).
-async function addOrIncrementPantryItem(name, unit) {
-  const key = normalize(name);
-  const existing = state.pantry.find((i) => normalize(i.name) === key && i.unit === unit);
-  if (existing) {
-    // Écrit d'abord une COPIE avec la quantité incrémentée — "existing"
-    // est partagé par référence avec state.pantry, donc le modifier
-    // avant la confirmation de l'écriture affichait un stock augmenté
-    // à tort si storePut échouait ensuite (quota dépassé...), sans
-    // aucun moyen de revenir en arrière.
-    const updated = { ...existing, quantity: (existing.quantity || 0) + 1 };
-    await storePut("pantry", updated);
-    existing.quantity = updated.quantity;
-    return existing;
-  }
-  const item = { id: uid(), name, quantity: 1, unit };
-  await storePut("pantry", item);
-  state.pantry.push(item);
-  return item;
 }
 
 function openBarcodeResultModal(barcode, lookup) {
@@ -2587,9 +2576,21 @@ function openBarcodeResultModal(barcode, lookup) {
 async function handleScannedBarcode(barcode) {
   const known = state.barcodeIngredientMap[barcode];
   if (known && known.name && known.unit) {
-    const item = await addOrIncrementPantryItem(known.name, known.unit);
-    render();
-    await customAlert(t("barcode_added_known", { name: translateIngredientName(item.name), quantity: fmtQty(item.quantity), unit: translateUnit(item.unit) }));
+    // Ouvre quand même le formulaire (pré-rempli avec le nom, l'unité
+    // et une quantité déjà suggérée) plutôt que d'ajouter directement
+    // et silencieusement comme avant — un nouveau scan correspond
+    // souvent à un nouvel achat, avec sa propre quantité (pas toujours
+    // "+1") et sa propre date de péremption imprimée sur CET
+    // exemplaire, potentiellement différente de celle déjà enregistrée.
+    // Retour direct de l'utilisateur : l'ancien raccourci "ajout
+    // silencieux" ne permettait de saisir ni l'une ni l'autre.
+    const existing = state.pantry.find((i) => normalize(i.name) === normalize(known.name) && i.unit === known.unit);
+    openAddItemModal(
+      "pantry",
+      existing ? { ...existing, quantity: (existing.quantity || 0) + 1 } : null,
+      existing ? null : { name: known.name, quantity: 1, unit: known.unit },
+      (item) => { saveBarcodeIngredientMapping(barcode, item.name, item.unit); }
+    );
     return;
   }
   const lookup = await lookupProductByBarcode(barcode);
@@ -7582,8 +7583,7 @@ async function restoreFromSharedZip(file, merge) {
     if (!merge) {
       ops.push({ store: "pantry", puts: parsedPantry, deletes: existing.map((p) => p.id) });
     } else {
-      // Fusionne par nom ET unité (comme le fait déjà
-      // addOrIncrementPantryItem ailleurs dans l'app) — associer par
+      // Fusionne par nom ET unité — associer par
       // le seul nom écraserait un article "Farine (500 g)" déjà
       // présent localement par un import "Farine (1 kg)", au lieu de
       // créer une seconde ligne distincte pour cette unité différente.
@@ -11908,7 +11908,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 248;
+const APP_VERSION = 249;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
