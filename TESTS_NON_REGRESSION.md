@@ -7334,4 +7334,80 @@ nouveau) :
 
 Suite de régression complète (38 scripts + corpus OCR) au vert.
 
+### 110 — "Patch graphique" demandé explicitement : icônes SVG à la place des emoji de chrome d'interface
+
+Suite au point 109, l'utilisateur a explicitement confirmé vouloir malgré
+tout le changement visuel : "c un patch graphique que je veux donc
+applique aussi les changement graphique". Plutôt que d'appliquer le
+paquet "ui-kit" tel que fourni (qui aurait dupliqué la navigation et le
+bouton flottant, voir point 109), le jeu d'icônes SVG qu'il proposait a
+été repris seul et intégré directement DANS les éléments d'interface
+déjà existants — jamais en les dupliquant.
+
+**Fait** :
+- Nouvel objet `ICONS`/fonction `icon(name)` dans `app.js` (juste après
+  `escapeHtml`) : 11 icônes SVG au trait (`currentColor`, `viewBox="0 0
+  24 24"`), rendu strictement identique quel que soit l'appareil, à la
+  différence des emoji dont le dessin varie sensiblement d'un fabricant
+  à l'autre. Chaque icône est marquée `aria-hidden="true"` (purement
+  décorative — le texte ou l'`aria-label` du bouton porte déjà le sens).
+- Emoji de CHROME remplacés par l'icône SVG correspondante, en modifiant
+  chaque élément existant sur place (jamais de nouvel élément dupliqué) :
+  les 4 onglets de la navigation du bas, les 3 boutons flottants (+),
+  le bouton "retour", le bouton recherche et le bouton thème (lune/
+  soleil, y compris sa bascule dynamique) de la barre du haut, les 4
+  loupes décoratives des barres de recherche, et tous les boutons de
+  suppression/fermeture (garde-manger ×2, liste de courses, gestion des
+  ingrédients, journal de cuisine, minuteur de cuisson, planning ×2,
+  photo à importer).
+- Emoji de CONTENU volontairement PAS touchés (hors périmètre de la
+  demande, ce ne sont jamais des icônes de chrome) : étoile de favori
+  (⭐/☆), illustrations d'écran vide (🔍/🛒/📦/🗑️), poignée de
+  glisser-déposer (☰), bouton de don (☕), bouton de cycle de langue,
+  crayon d'édition (✏️), boutons lecture/réinitialisation du minuteur
+  (▶️/🔄) — aucun de ces derniers n'appartenait au jeu d'icônes proposé
+  par le paquet examiné au point 109, donc laissés en l'état pour ne pas
+  élargir la demande initiale.
+- CSS : nouvelle classe `.ui-icon` (taille par défaut adaptée aux petits
+  boutons ronds, avec des tailles spécifiques `.nav-icon .ui-icon`/
+  `.fab .ui-icon` reprenant les anciens `font-size` de ces contextes).
+
+**Bug de test pré-existant découvert et corrigé en cours de
+vérification, sans rapport avec ce changement d'icônes** : le test
+d'audit d'accessibilité (`test_accessibility_audit.py`, point 90)
+échouait de façon intermittente (environ 1 essai sur 2-3, reproduit
+5 fois via `git stash` sur le code NON modifié pour confirmer que la
+cause n'était pas les icônes) sur une fausse alerte "color-contrast"
+dans la fenêtre de saisie manuelle de code-barres. Cause réelle :
+l'animation d'entrée des fenêtres modales (`modal-fade-in`, 0.18s —
+ajoutée au point 109) entrait en course avec le délai fixe de 150ms
+attendu avant chaque appel à `axe.run()`, qui pouvait donc mesurer le
+contraste EN PLEIN FONDU (opacité < 1). Corrigé en demandant au
+navigateur de test la préférence `prefers-reduced-motion: reduce` (déjà
+respectée par l'application elle-même, voir sa règle globale dans
+`styles.css`) via `page.emulate_media(reduced_motion="reduce")` — 5
+exécutions consécutives toutes au vert après ce correctif, contre 1
+échec sur 3 avant.
+
+**Vérifié** (voir `tests/test_ui_icon_replacement.py`, nouveau, et
+captures d'écran manuelles clair/sombre sur les 4 écrans principaux +
+détail recette + fenêtre de recherche) :
+- Les 4 onglets, le bouton flottant, le bouton retour, les boutons
+  recherche/thème et un bouton de suppression contiennent bien une
+  icône SVG (`svg.ui-icon`) et déclenchent toujours exactement la même
+  action qu'avant (navigation, ouverture de fenêtre, suppression,
+  bascule de thème).
+- L'étoile de favori et l'illustration d'écran vide du garde-manger
+  restent des emoji, non remplacées.
+- Chaque icône SVG est bien `aria-hidden="true"` ; chaque bouton garde
+  son `aria-label` (ou son texte visible, pour les onglets) inchangé —
+  un lecteur d'écran annonce donc exactement la même chose qu'avant ce
+  changement purement visuel.
+- Audit d'accessibilité (axe-core) toujours au vert dans les deux
+  thèmes, désormais de façon fiable (voir correctif ci-dessus).
+- Rendu visuel vérifié à l'œil (captures d'écran) : icônes nettes,
+  centrées, contraste correct dans les deux thèmes.
+
+Suite de régression complète (39 scripts + corpus OCR) au vert.
+
 **Version testée** : v252

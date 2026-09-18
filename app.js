@@ -449,6 +449,30 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 }
+// Icônes SVG (trait fin, currentColor) remplaçant les emoji utilisés
+// comme CHROME d'interface (navigation, bouton flottant, retour,
+// recherche, suppression, thème) — jamais les emoji de CONTENU
+// (catégories de recette, illustrations d'écran vide, favoris...),
+// qui restent des emoji : un rendu strictement identique quel que
+// soit l'appareil/la police système, plutôt que des emoji dont le
+// dessin varie sensiblement d'un fabricant à l'autre.
+const ICONS = {
+  home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z"/>',
+  recipes: '<path d="M4 19.5V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13.5"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M8 8h8M8 12h6"/>',
+  shopping: '<circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 4h2l2.6 12.5a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20.5 8H6"/>',
+  pantry: '<path d="M9 3h6v3H9z"/><path d="M7 6h10a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/><path d="M6 12h12"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  back: '<path d="M19 12H5M12 19l-7-7 7-7"/>',
+  close: '<path d="M18 6 6 18M6 6l12 12"/>',
+  trash: '<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/>',
+  moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+};
+function icon(name) {
+  return `<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
+}
+
 // Remplace window.alert()/window.confirm() par des fenêtres propres à
 // l'application — les fenêtres natives du navigateur affichent toujours
 // le nom du site ("majogari15.github.io indique...") avant le message,
@@ -928,7 +952,7 @@ function render() {
   }
   if (["recipes", "shopping", "pantry"].includes(state.screen)) {
     const fabLabel = state.screen === "pantry" ? t("pantry_add") : state.screen === "shopping" ? t("shopping_title") : t("home_add_recipe");
-    const fab = el(`<button class="fab" aria-label="${fabLabel}">＋</button>`);
+    const fab = el(`<button class="fab" aria-label="${fabLabel}">${icon("plus")}</button>`);
     fab.addEventListener("click", () => {
       if (state.screen === "pantry") { openPantryAddPrompt(); }
       else if (state.screen === "shopping") { openShoppingAddPrompt(); }
@@ -937,12 +961,12 @@ function render() {
     app.appendChild(fab);
   }
   if (state.screen === "menus") {
-    const fab = el(`<button class="fab" aria-label="${t("menu_new_title")}">＋</button>`);
+    const fab = el(`<button class="fab" aria-label="${t("menu_new_title")}">${icon("plus")}</button>`);
     fab.addEventListener("click", () => openMenuDetail(null));
     app.appendChild(fab);
   }
   if (state.screen === "ingredients") {
-    const fab = el(`<button class="fab" aria-label="${t("form_add_ingredient")}">＋</button>`);
+    const fab = el(`<button class="fab" aria-label="${t("form_add_ingredient")}">${icon("plus")}</button>`);
     fab.addEventListener("click", () => openIngredientNameModal(null));
     app.appendChild(fab);
   }
@@ -984,7 +1008,7 @@ function renderTopbar() {
   const bar = el(`<header class="topbar"></header>`);
 
   if (showBack) {
-    const back = el(`<button class="back-btn" aria-label="${t("common_back")}">←</button>`);
+    const back = el(`<button class="back-btn" aria-label="${t("common_back")}">${icon("back")}</button>`);
     back.addEventListener("click", () => {
       if (state.screen === "form") { state.screen = state.editingRecipeId ? "recipe" : "recipes"; }
       else if (state.screen === "menu") { state.screen = "menus"; }
@@ -1016,7 +1040,7 @@ function renderTopbar() {
 
   const actions = el(`<div class="topbar-actions"></div>`);
   if (["home", "recipes", "shopping", "pantry"].includes(state.screen)) {
-    const searchBtn = el(`<button class="icon-btn" aria-label="${t("quick_search_label")}">🔍</button>`);
+    const searchBtn = el(`<button class="icon-btn" aria-label="${t("quick_search_label")}">${icon("search")}</button>`);
     searchBtn.addEventListener("click", () => {
       openRecipePickerModal((recipe) => {
         state.currentRecipeId = recipe.id;
@@ -1045,8 +1069,7 @@ function renderTopbar() {
     });
     actions.appendChild(langBtn);
 
-    const themeBtn = el(`<button class="icon-btn" aria-label="${t("theme_toggle")}">🌙</button>`);
-    themeBtn.textContent = document.documentElement.dataset.theme === "dark" ? "☀️" : "🌙";
+    const themeBtn = el(`<button class="icon-btn" aria-label="${t("theme_toggle")}">${icon(document.documentElement.dataset.theme === "dark" ? "sun" : "moon")}</button>`);
     themeBtn.addEventListener("click", toggleTheme);
     actions.appendChild(themeBtn);
   }
@@ -1068,16 +1091,16 @@ function renderTopbar() {
 
 function renderBottomNav() {
   const items = [
-    { key: "home", icon: "🏠", label: t("nav_home") },
-    { key: "recipes", icon: "📖", label: t("nav_recipes") },
-    { key: "shopping", icon: "🛒", label: t("nav_shopping") },
-    { key: "pantry", icon: "📦", label: t("nav_pantry") },
+    { key: "home", icon: "home", label: t("nav_home") },
+    { key: "recipes", icon: "recipes", label: t("nav_recipes") },
+    { key: "shopping", icon: "shopping", label: t("nav_shopping") },
+    { key: "pantry", icon: "pantry", label: t("nav_pantry") },
   ];
   const nav = el(`<nav class="bottom-nav"></nav>`);
   items.forEach((item) => {
     const active = state.screen === item.key || (state.screen === "recipe" && item.key === "recipes");
     const btn = el(`<button class="nav-item ${active ? "active" : ""}" ${active ? 'aria-current="page"' : ""}>
-      <span class="nav-icon">${item.icon}</span><span>${escapeHtml(item.label)}</span>
+      <span class="nav-icon">${icon(item.icon)}</span><span>${escapeHtml(item.label)}</span>
     </button>`);
     btn.addEventListener("click", () => {
       state.screen = item.key;
@@ -1371,7 +1394,7 @@ function filteredRecipes() {
 function renderRecipeList() {
   const wrap = el(`<div></div>`);
   const searchBar = el(`<div class="search-bar">
-    <span>🔍</span>
+    <span>${icon("search")}</span>
     <input type="search" placeholder="${t("search_placeholder")}" aria-label="${escapeHtml(t("search_placeholder"))}" />
   </div>`);
   const input = searchBar.querySelector("input");
@@ -2396,7 +2419,7 @@ function shoppingItemRow(item, wrap, manualMode) {
     ${manualMode ? `<button type="button" class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</button>` : ""}
     <input type="checkbox" ${item.checked ? "checked" : ""}>
     <span class="label" style="flex:1;cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}</span>
-    <button type="button" class="shopping-item-delete" aria-label="${escapeHtml(t("common_delete"))}" style="background:none;border:none;color:var(--text-muted);font-size:18px;padding:4px 8px;cursor:pointer;line-height:1;">×</button>
+    <button type="button" class="shopping-item-delete" aria-label="${escapeHtml(t("common_delete"))}" style="background:none;border:none;color:var(--text-muted);padding:4px 8px;cursor:pointer;line-height:1;">${icon("trash")}</button>
   </div>`);
   // Utilisé par attachDragReorder (voir fillShoppingList) pour
   // retrouver, au relâchement, quel article correspond à chaque ligne
@@ -3231,7 +3254,7 @@ function renderPantry() {
         const row = el(`<div class="shopping-item">
           ${manualMode ? `<button type="button" class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</button>` : ""}
           <span class="label" style="cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}${item.threshold != null ? escapeHtml(t("pantry_threshold_suffix", { threshold: fmtQty(item.threshold) })) : ""}${pantryExpirationSuffixHtml(item)}</span>
-          <button class="remove-ing" style="width:32px;height:32px;" aria-label="${t("common_delete")}">🗑</button>
+          <button class="remove-ing" style="width:32px;height:32px;" aria-label="${t("common_delete")}">${icon("trash")}</button>
         </div>`);
         row._item = item;
         row.querySelector(".label").addEventListener("click", () => openAddItemModal("pantry", item));
@@ -3302,7 +3325,7 @@ function renderPantry() {
       const properName = state.ingredientNames.find((n) => normalize(n) === claim.ingredientKey) || claim.ingredientKey;
       const row = el(`<div class="shopping-item">
         <span class="label">${escapeHtml(translateIngredientName(properName))} — ${fmtQty(claim.amount)} ${escapeHtml(kindToDisplayUnit(claim.kind))} <span style="color:var(--text-muted);font-size:12px;">(${escapeHtml(sourceLabel)})</span></span>
-        <button class="remove-ing" style="width:32px;height:32px;" aria-label="${escapeHtml(t("pantry_reservation_cancel"))}">🗑</button>
+        <button class="remove-ing" style="width:32px;height:32px;" aria-label="${escapeHtml(t("pantry_reservation_cancel"))}">${icon("trash")}</button>
       </div>`);
       row.querySelector("button").addEventListener("click", async () => {
         state.pantryClaimedThisSession = state.pantryClaimedThisSession.filter((c) => c.id !== claim.id);
@@ -3336,7 +3359,7 @@ function renderIngredientManage() {
   dupBtn.addEventListener("click", () => { state.screen = "ingredientDuplicates"; render(); });
   wrap.appendChild(dupBtn);
   const searchBar = el(`<div class="search-bar">
-    <span>🔍</span>
+    <span>${icon("search")}</span>
     <input type="search" placeholder="${t("ingredient_search_placeholder")}" aria-label="${escapeHtml(t("ingredient_search_placeholder"))}" />
   </div>`);
   wrap.appendChild(searchBar);
@@ -3367,7 +3390,7 @@ function renderIngredientManage() {
         <span class="name">${escapeHtml(translateIngredientName(name))}</span>
         <div class="row-actions">
           <button class="edit" aria-label="${t("recipe_edit")}">✏️</button>
-          <button class="del" aria-label="${t("common_delete")}">🗑</button>
+          <button class="del" aria-label="${t("common_delete")}">${icon("trash")}</button>
         </div>
       </div>`);
       row.querySelector(".edit").addEventListener("click", () => openIngredientNameModal(name));
@@ -3396,7 +3419,7 @@ function renderManageSubstitutions() {
   const wrap = el(`<div></div>`);
   wrap.appendChild(el(`<p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;line-height:1.5;">${escapeHtml(t("manage_substitutions_hint"))}</p>`));
   const searchBar = el(`<div class="search-bar">
-    <span>🔍</span>
+    <span>${icon("search")}</span>
     <input type="search" placeholder="${t("manage_substitutions_search_placeholder")}" aria-label="${escapeHtml(t("manage_substitutions_search_placeholder"))}" />
   </div>`);
   wrap.appendChild(searchBar);
@@ -5337,7 +5360,7 @@ function openCookLogViewModal(recipe) {
         <span style="font-weight:600;font-size:13px;color:var(--text-muted);">${escapeHtml(dateStr)}</span>
         <span style="display:flex;gap:10px;">
           <button class="edit" aria-label="${t("recipe_edit")}" style="border:none;background:none;color:var(--primary);font-size:15px;">✏️</button>
-          <button class="del" aria-label="${t("common_delete")}" style="border:none;background:none;color:var(--danger);font-size:15px;">🗑</button>
+          <button class="del" aria-label="${t("common_delete")}" style="border:none;background:none;color:var(--danger);">${icon("trash")}</button>
         </span>
       </div>`);
       headerRow.querySelector(".edit").addEventListener("click", () => {
@@ -5432,7 +5455,7 @@ function renderTimerRow(holder, timer) {
     <div class="timer-row-controls">
       <button class="start-btn" aria-label="${t("cooking_timer_start")}">▶️</button>
       <button class="reset-btn" aria-label="${t("cooking_timer_reset")}">🔄</button>
-      <button class="stop-btn" aria-label="${t("cooking_remove_timer")}">🗑</button>
+      <button class="stop-btn" aria-label="${t("cooking_remove_timer")}">${icon("trash")}</button>
     </div>
   </div>`);
 
@@ -8645,7 +8668,7 @@ function openRecipePickerModal(onPick) {
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
     <h2>${t("planning_pick_recipe_title")}</h2>
-    <div class="search-bar"><span>🔍</span><input type="search" placeholder="${t("search_placeholder")}" aria-label="${escapeHtml(t("search_placeholder"))}"></div>
+    <div class="search-bar"><span>${icon("search")}</span><input type="search" placeholder="${t("search_placeholder")}" aria-label="${escapeHtml(t("search_placeholder"))}"></div>
     <div id="picker-list" style="max-height:50vh;overflow-y:auto;"></div>
     <div class="modal-actions"><button type="button" class="btn btn-outline" id="picker-cancel">${t("form_cancel")}</button></div>
   </div>`);
@@ -8739,7 +8762,7 @@ function renderMenuDetail() {
         <span>${escapeHtml(recipe ? recipe.name : "?")}</span>
         <span style="display:flex;align-items:center;gap:8px;">
           <input type="number" min="1" value="${item.persons}" style="width:50px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:6px;">
-          <button aria-label="${t("common_delete")}" style="width:32px;height:32px;border:none;border-radius:8px;background:var(--danger-light);color:var(--danger);">🗑</button>
+          <button aria-label="${t("common_delete")}" style="width:32px;height:32px;border:none;border-radius:8px;background:var(--danger-light);color:var(--danger);">${icon("trash")}</button>
         </span>
       </div>`);
       row.querySelector("input").addEventListener("input", (e) => { item.persons = Math.max(1, Number(e.target.value) || 1); });
@@ -8848,7 +8871,7 @@ function renderPlanning() {
         const row = el(`<div class="ingredient-item"></div>`);
         if (recipe) {
           row.innerHTML = `<span>${escapeHtml(translateSlot(slot))} — <strong>${escapeHtml(recipe.name)}</strong></span>`;
-          const clearBtn = el(`<button aria-label="${t("common_delete")}" style="width:28px;height:28px;border:none;border-radius:8px;background:var(--danger-light);color:var(--danger);">✕</button>`);
+          const clearBtn = el(`<button aria-label="${t("common_delete")}" style="width:28px;height:28px;border:none;border-radius:8px;background:var(--danger-light);color:var(--danger);">${icon("trash")}</button>`);
           clearBtn.addEventListener("click", async () => {
             delete state.weeklyPlan[day][slot];
             await saveWeeklyPlan();
@@ -8926,7 +8949,7 @@ function renderPlanning() {
         <span>${escapeHtml(template.name)}</span>
         <span style="display:flex;gap:8px;">
           <button class="apply" style="border:none;border-radius:8px;background:var(--primary-light);color:var(--primary);padding:6px 12px;font-weight:600;font-size:13px;">${t("planning_apply_template")}</button>
-          <button class="del" aria-label="${t("common_delete")}" style="width:32px;height:32px;border:none;border-radius:8px;background:var(--danger-light);color:var(--danger);">🗑</button>
+          <button class="del" aria-label="${t("common_delete")}" style="width:32px;height:32px;border:none;border-radius:8px;background:var(--danger-light);color:var(--danger);">${icon("trash")}</button>
         </span>
       </div>`);
       row.querySelector(".apply").addEventListener("click", async () => {
@@ -10968,7 +10991,7 @@ function renderImportPhoto() {
         info.appendChild(cropBtn);
       }
       card.appendChild(info);
-      const removeBtn = el(`<button type="button" aria-label="${escapeHtml(t("import_photo_remove"))}" style="background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:4px;flex-shrink:0;">×</button>`);
+      const removeBtn = el(`<button type="button" aria-label="${escapeHtml(t("import_photo_remove"))}" style="background:none;border:none;color:var(--text-muted);cursor:pointer;padding:4px;flex-shrink:0;">${icon("close")}</button>`);
       removeBtn.addEventListener("click", () => {
         state.multiPhotoImport = state.multiPhotoImport.filter((x) => x.id !== p.id);
         refreshUi();
@@ -12041,7 +12064,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 252;
+const APP_VERSION = 253;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

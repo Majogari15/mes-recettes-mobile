@@ -185,6 +185,11 @@ Depuis, la structure sépare strictement :
   l'application) des écrans principaux en thèmes clair et sombre :
   contraste des couleurs, landmarks (`<main>`/`<header>`/`<nav>`),
   titre de niveau 1 par écran — voir TESTS_NON_REGRESSION.md point 90.
+  Émule `prefers-reduced-motion: reduce` depuis le point 110, pour
+  éviter une fausse alerte "color-contrast" intermittente causée par
+  l'animation d'entrée des fenêtres modales (mesure de contraste
+  capturée en plein fondu selon le timing) — voir le détail au point
+  110.
 - `test_performance_basic.py` — démarrage à froid, rendu et filtrage
   avec un grand volume de données (300 recettes, 500 ingrédients),
   mémoire JS utilisée — seuils larges destinés à détecter une
@@ -354,6 +359,17 @@ Depuis, la structure sépare strictement :
   repéré sur une capture d'écran réelle) ; grille à 2 colonnes de la
   liste de recettes sur écran large (appliquée sur la vraie classe
   `.recipe-list`, colonne unique conservée sur mobile).
+- `test_ui_icon_replacement.py` — suite au "patch graphique" demandé
+  explicitement par l'utilisateur (voir TESTS_NON_REGRESSION.md point
+  110) : les emoji de CHROME d'interface (navigation du bas, bouton
+  flottant, retour, recherche, thème, suppression) ont été remplacés
+  par des icônes SVG (`icon()`/`ICONS` dans app.js), intégrées dans les
+  éléments existants plutôt que dupliquées. Vérifie que chaque bouton
+  concerné contient bien `svg.ui-icon`, que sa fonction (navigation,
+  ouverture de fenêtre, suppression, bascule de thème) est inchangée,
+  que les emoji de CONTENU (favoris, illustrations d'écran vide) ne
+  sont PAS touchés, et que chaque icône est `aria-hidden="true"` avec
+  l'`aria-label`/texte du bouton conservé (lecteur d'écran inchangé).
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

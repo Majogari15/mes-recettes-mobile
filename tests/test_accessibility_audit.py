@@ -74,6 +74,19 @@ def main():
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 390, "height": 844})
+        # Bug pré-existant découvert en vérifiant ce test (indépendant du
+        # remplacement des icônes emoji par du SVG, confirmé en reproduisant
+        # l'échec intermittent sur le code non modifié via "git stash") :
+        # l'animation d'entrée des modales (modal-fade-in, 0.18s — voir
+        # styles.css) entre en course avec le court délai fixe attendu
+        # avant chaque appel à axe.run(), qui pouvait donc mesurer le
+        # contraste couleur EN PLEIN FONDU (opacité < 1), déclenchant une
+        # fausse alerte "color-contrast" un essai sur deux environ.
+        # L'application respecte déjà "prefers-reduced-motion" (voir la
+        # règle globale dans styles.css) — on demande donc ici la même
+        # préférence pour que ce test mesure toujours le contraste final,
+        # jamais un état transitoire de l'animation.
+        page.emulate_media(reduced_motion="reduce")
         errors = []
         page.on("pageerror", lambda exc: errors.append(str(exc)))
         page.goto(base_url, timeout=8000)

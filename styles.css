@@ -153,6 +153,13 @@ a { color: inherit; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* Icônes SVG remplaçant les emoji de chrome d'interface (voir ICONS/icon()
+   dans app.js) — taille par défaut adaptée aux petits boutons ronds
+   (remove-ing, del, stop-btn...), avec des tailles spécifiques pour les
+   contextes qui utilisaient auparavant un font-size différent. */
+.ui-icon { width: 20px; height: 20px; flex-shrink: 0; vertical-align: middle; }
+.nav-icon .ui-icon { width: 22px; height: 22px; }
+.fab .ui-icon { width: 26px; height: 26px; }
 .topbar-actions { display: flex; gap: 6px; flex-shrink: 0; }
 .icon-btn {
   width: 40px; height: 40px;
