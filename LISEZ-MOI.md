@@ -124,7 +124,10 @@ toutes les données restent sur l'appareil.
   rappel séparé apparaît sur l'accueil dès qu'un article approche de sa
   date ou l'a dépassée (touchez-le pour aller les voir dans le
   garde-manger), avec un tri dédié pour faire remonter en premier les
-  articles à surveiller, et **ajout par code-barres** (caméra en
+  articles à surveiller — cette date peut elle aussi être **prise en
+  photo ou importée depuis une photo déjà prise** (reconnaissance
+  automatique du texte de l'étiquette pour préremplir le champ, à
+  vérifier avant d'enregistrer), et **ajout par code-barres** (caméra en
   direct ou depuis une photo déjà prise, au choix) : le nom
   du produit (et son poids/volume net, à titre indicatif) est recherché
   automatiquement via Open Food Facts, mais reste toujours à

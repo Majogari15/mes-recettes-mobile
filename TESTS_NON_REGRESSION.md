@@ -6847,3 +6847,75 @@ nouveau) :
 Suite de régression complète (34 scripts + corpus OCR) au vert.
 
 **Version testée** : v245
+
+### 103 — Nouvelle fonctionnalité : prise/import de photo pour la date de péremption (garde-manger)
+
+Demande explicite de l'utilisateur : le garde-manger dispose déjà de
+l'ajout par photo/scan pour le code-barres (points 95-96) ; il fallait
+la même possibilité pour la DATE DE PÉREMPTION elle-même — prendre une
+photo de l'étiquette (ou en importer une déjà prise) plutôt que de
+toujours devoir saisir les 6 chiffres à la main.
+
+- Deux nouveaux boutons dans le formulaire d'ajout/modification d'un
+  article du garde-manger, juste sous le champ de date déjà existant :
+  "📷 Prendre en photo" et "🖼️ Importer une photo" — même motif que
+  les autres imports photo de l'app (recette, journal de cuisine...) :
+  deux champs `<input type="file">` distincts (`capture="environment"`
+  pour la caméra, sans pour la galerie), plutôt qu'un seul champ
+  combiné qui empêcherait de choisir une image déjà présente sur le
+  téléphone.
+- OCR dédié, plus léger que celui des photos de recette
+  (`runExpirationDateOcr`) : redimensionnement et correction
+  d'orientation réutilisés à l'identique (mêmes fonctions que l'import
+  photo de recette), mais reconnaissance en texte brut seulement — pas
+  besoin ici de la reconstruction de mise en page (blocs/grille/
+  tableau), une étiquette de péremption n'étant jamais une fiche
+  recette en colonnes.
+- Nouvelle heuristique d'extraction (`extractExpirationDateFromOcrText`)
+  : recherche deux formats de date séparément (ISO `AAAA-MM-JJ` et
+  européen `JJ-MM-AA(AA)`, l'année à 2 chiffres étant toujours comprise
+  comme 20XX), chaque candidat noté selon la présence d'un mot-clé de
+  péremption ("DLC", "DDM", "DLUO", "à consommer avant", "best
+  before", "MHD"... dans les 4 langues de l'app plus l'anglais, très
+  fréquent même sur des emballages vendus en France) juste avant la
+  date, et selon sa plausibilité générale (ni trop dans le passé, ni
+  improbablement lointaine) — le candidat le mieux noté est retenu,
+  ce qui permet par exemple de préférer une vraie date de péremption
+  à une date de fabrication présente ailleurs sur la même étiquette.
+  Une date calendairement impossible (31 février) n'est jamais
+  retenue, même mécanisme de validation que `parseCalendarDateLocal`
+  (point 102).
+- **Le résultat ne fait jamais foi seul** : il ne fait que PRÉ-REMPLIR
+  le champ de saisie existant (au même format JJ/MM/AA que la saisie
+  manuelle), à vérifier ou corriger avant d'enregistrer — exactement
+  comme le nom/poids suggéré après un scan de code-barres. Aucune
+  date reconnue -> message clair invitant à réessayer ou saisir
+  manuellement, sans jamais bloquer le formulaire. Échec de l'OCR
+  lui-même (bibliothèque indisponible hors connexion sans le fichier
+  encore téléchargé...) -> message d'erreur lisible, jamais de
+  plantage.
+- Avertissement "économie de données" déjà existant (point 93)
+  affiché ici aussi si applicable, puisque cette action peut
+  déclencher le même téléchargement du modèle de langue Tesseract
+  qu'un import photo de recette.
+
+**Vérifié** (voir `tests/test_pantry_expiration_photo_ocr.py`,
+nouveau) :
+- Heuristique d'extraction testée directement avec de vrais textes
+  OCR représentatifs : mot-clé + ISO, mot-clé + européen, année à 2
+  chiffres, mot-clé préféré à une autre date sans mot-clé dans le même
+  texte, date seule sans mot-clé malgré tout retenue, date impossible
+  ignorée (avec repli sur une autre date valide du même texte si
+  présente), aucune date -> aucun résultat, texte vide/nul -> aucun
+  résultat (jamais d'erreur).
+- Bout en bout dans le vrai formulaire (OCR simulé, jamais le vrai
+  Tesseract) : bouton caméra ET bouton galerie préremplissent
+  correctement le champ ; rien n'est enregistré avant le clic sur
+  "Enregistrer" ; une fois confirmé, l'article est bien sauvegardé
+  avec la date issue de la photo ; message d'échec clair si aucune
+  date n'est reconnue (champ resté vide) ; message d'erreur lisible si
+  l'OCR lui-même échoue.
+
+Suite de régression complète (35 scripts + corpus OCR) au vert.
+
+**Version testée** : v246

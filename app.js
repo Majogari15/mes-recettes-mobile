@@ -2826,6 +2826,14 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved) {
       <input type="text" inputmode="numeric" maxlength="8" placeholder="${t("pantry_expiration_placeholder")}" id="modal-ing-expiration">
       <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0;">${escapeHtml(t("pantry_expiration_hint"))}</p>
       <p id="modal-ing-expiration-error" style="font-size:12px;color:var(--danger);margin:4px 0 0;display:none;"></p>
+      <div id="modal-ing-expiration-datasaver"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button type="button" class="btn btn-outline btn-sm" id="modal-ing-expiration-camera-btn" style="width:auto;flex:1 1 auto;">${t("pantry_expiration_photo_camera")}</button>
+        <button type="button" class="btn btn-outline btn-sm" id="modal-ing-expiration-gallery-btn" style="width:auto;flex:1 1 auto;">${t("pantry_expiration_photo_gallery")}</button>
+      </div>
+      <input type="file" accept="image/*" capture="environment" id="modal-ing-expiration-camera-input" style="display:none;">
+      <input type="file" accept="image/*" id="modal-ing-expiration-gallery-input" style="display:none;">
+      <p id="modal-ing-expiration-ocr-status" style="font-size:12px;margin:6px 0 0;display:none;"></p>
     </div>` : ""}
     <div class="modal-actions">
       <button type="button" class="btn btn-outline" id="modal-cancel">${t("form_cancel")}</button>
@@ -2854,6 +2862,55 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved) {
     expirationInput.addEventListener("input", () => {
       expirationInput.value = formatShortDateInput(expirationInput.value);
       expirationErrorEl.style.display = "none";
+    });
+    // Boutons "prendre une photo" / "importer une photo" de la date de
+    // péremption elle-même — même principe que le scan de code-barres
+    // (voir renderPantry), mais en une seule photo analysée après coup
+    // (pas de flux caméra en direct : contrairement à BarcodeDetector,
+    // Tesseract est bien trop lent pour analyser chaque image d'un flux
+    // vidéo en temps réel) — motif déjà utilisé ailleurs dans l'app pour
+    // importer une photo (import recette, photo de mode cuisine...).
+    // Le résultat ne fait toujours que PRÉ-REMPLIR ce même champ texte,
+    // jamais un enregistrement automatique : la date reste à valider ou
+    // corriger manuellement avant "Enregistrer", exactement comme pour
+    // toute autre valeur pré-remplie de ce formulaire.
+    maybeShowDataSaverWarning(sheet.querySelector("#modal-ing-expiration-datasaver"));
+    const ocrStatusEl = sheet.querySelector("#modal-ing-expiration-ocr-status");
+    const ocrCameraInput = sheet.querySelector("#modal-ing-expiration-camera-input");
+    const ocrGalleryInput = sheet.querySelector("#modal-ing-expiration-gallery-input");
+    sheet.querySelector("#modal-ing-expiration-camera-btn").addEventListener("click", () => ocrCameraInput.click());
+    sheet.querySelector("#modal-ing-expiration-gallery-btn").addEventListener("click", () => ocrGalleryInput.click());
+    async function handleExpirationDatePhoto(file) {
+      if (!file) return;
+      ocrStatusEl.style.display = "block";
+      ocrStatusEl.style.color = "var(--text-muted)";
+      ocrStatusEl.textContent = t("pantry_expiration_photo_analyzing");
+      try {
+        const text = await runExpirationDateOcr(file);
+        const iso = extractExpirationDateFromOcrText(text);
+        if (iso) {
+          expirationInput.value = isoDateToShortInput(iso);
+          expirationErrorEl.style.display = "none";
+          ocrStatusEl.style.color = "var(--accent)";
+          ocrStatusEl.textContent = t("pantry_expiration_photo_found", { date: expirationInput.value });
+        } else {
+          ocrStatusEl.style.color = "var(--danger)";
+          ocrStatusEl.textContent = t("pantry_expiration_photo_not_found");
+        }
+      } catch (e) {
+        ocrStatusEl.style.color = "var(--danger)";
+        ocrStatusEl.textContent = formatCaughtError(e);
+      }
+    }
+    ocrCameraInput.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      e.target.value = "";
+      await handleExpirationDatePhoto(file);
+    });
+    ocrGalleryInput.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      e.target.value = "";
+      await handleExpirationDatePhoto(file);
     });
   }
 
@@ -9627,6 +9684,100 @@ async function runOcrOnImage(file) {
   return { rawText: data.text, layoutText: reconstructTextFromBlocks(data) || data.text, gridText, tableText: reconstructTableRowsFromBlocks(data), correctedImage: input };
 }
 
+// OCR dédié à une photo de date de péremption (garde-manger) — un
+// simple gros-plan sur quelques lignes de texte imprimé sur un
+// emballage, jamais une fiche recette entière en colonnes : pas besoin
+// ici de la reconstruction de mise en page (blocks/grille/tableau) de
+// runOcrOnImage ci-dessus, seul le texte brut sert à extractExpiration
+// DateFromOcrText plus bas. Redimensionnement et correction
+// d'orientation réutilisés à l'identique (mêmes fonctions, même ordre)
+// pour bénéficier des mêmes gains de fiabilité.
+async function runExpirationDateOcr(file) {
+  const worker = await getSharedTesseractWorker();
+  const input = await detectAndCorrectOrientation(await resizeImageForOcr(file));
+  const { data } = await worker.recognize(input);
+  return data.text;
+}
+
+// Mots-clés indiquant qu'une date à proximité immédiate est probablement
+// une date de péremption plutôt qu'une date de fabrication, un numéro de
+// lot, ou toute autre date imprimée sur le même emballage — comparés
+// après normalize() (accents/majuscules ignorés). Inclut l'anglais en
+// plus des 4 langues de l'app : fréquent même sur des emballages vendus
+// en France (produits importés, marques internationales).
+const EXPIRATION_DATE_KEYWORDS = [
+  "dlc", "ddm", "dluo", "a consommer", "consommer avant", "avant le",
+  "best before", "use by", "sell by", "expiry", "expire", "exp",
+  "fecha de caducidad", "caducidad", "consumir antes", "fecha de consumo",
+  "mindestens haltbar", "verbrauchen bis", "haltbar bis", "mhd",
+];
+// Fenêtre (en caractères, avant la position de la date candidate) dans
+// laquelle chercher un mot-clé de péremption à proximité — voir
+// scoreExpirationDateCandidate ci-dessous. Une valeur trop large
+// risquerait de rattacher à tort le mot-clé d'une AUTRE date plus haut
+// sur l'étiquette (ex. une date de fabrication suivie, plus bas, d'une
+// vraie date de péremption sans mot-clé qui lui soit propre).
+const EXPIRATION_DATE_KEYWORD_WINDOW = 30;
+
+// Note un candidat (date déjà validée comme calendairement possible,
+// voir parseCalendarDateLocal) : un mot-clé de péremption juste avant
+// pèse largement plus que tout le reste (+100, très supérieur à tous
+// les autres bonus cumulés), suivi par la plausibilité générale de la
+// date pour un usage de péremption (ni trop dans le passé, ni
+// improbablement lointaine — +10) — sans mot-clé ET sans plausibilité,
+// un candidat reste malgré tout éligible (+1 de base) : mieux qu'aucune
+// pré-saisie du tout, l'utilisateur validant ou corrigeant de toute
+// façon le résultat avant tout enregistrement.
+function scoreExpirationDateCandidate(text, matchIndex, parsedDate) {
+  let score = 1;
+  const precedingText = normalize(text.slice(Math.max(0, matchIndex - EXPIRATION_DATE_KEYWORD_WINDOW), matchIndex));
+  if (EXPIRATION_DATE_KEYWORDS.some((kw) => precedingText.includes(kw))) score += 100;
+  const now = new Date();
+  const minPlausible = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+  const maxPlausible = new Date(now.getFullYear() + 5, now.getMonth(), now.getDate());
+  if (parsedDate >= minPlausible && parsedDate <= maxPlausible) score += 10;
+  return score;
+}
+
+// Essaie d'extraire une date de péremption plausible d'un texte OCR brut
+// (voir runExpirationDateOcr) — ne fait JAMAIS foi seule : le résultat
+// ne fait que PRÉ-REMPLIR le champ de saisie existant de la date de
+// péremption (voir openAddItemModal), à valider ou corriger manuellement
+// avant tout enregistrement, exactement comme n'importe quel autre
+// pré-remplissage de ce formulaire (résultat d'un scan code-barres...).
+//
+// Deux motifs de date recherchés séparément plutôt qu'un seul motif
+// combiné (une date ISO "2026-03-15" contiendrait, mal interprétée, une
+// fausse date européenne "26-03-15" si les deux motifs étaient fusionnés
+// sans discernement) :
+// - ISO (AAAA-MM-JJ, séparateurs -, / ou .) ;
+// - Européen (JJ-MM-AA ou JJ-MM-AAAA, séparateurs -, / ou .), le format
+//   le plus courant sur les emballages vendus en France/Europe.
+// Chaque candidat est noté par scoreExpirationDateCandidate ci-dessus ;
+// le candidat le mieux noté est retenu, les autres ignorés.
+function extractExpirationDateFromOcrText(text) {
+  if (!text) return null;
+  const candidates = [];
+  const isoRegex = /\b(\d{4})[\/.\-](\d{1,2})[\/.\-](\d{1,2})\b/g;
+  let m;
+  while ((m = isoRegex.exec(text))) {
+    const year = parseInt(m[1], 10), month = parseInt(m[2], 10), day = parseInt(m[3], 10);
+    const parsed = parseCalendarDateLocal(`${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
+    if (parsed) candidates.push({ parsed, index: m.index, score: scoreExpirationDateCandidate(text, m.index, parsed) });
+  }
+  const euroRegex = /\b(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})\b/g;
+  while ((m = euroRegex.exec(text))) {
+    const day = parseInt(m[1], 10), month = parseInt(m[2], 10);
+    const year = m[3].length === 2 ? 2000 + parseInt(m[3], 10) : parseInt(m[3], 10);
+    const parsed = parseCalendarDateLocal(`${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
+    if (parsed) candidates.push({ parsed, index: m.index, score: scoreExpirationDateCandidate(text, m.index, parsed) });
+  }
+  if (!candidates.length) return null;
+  candidates.sort((a, b) => b.score - a.score);
+  const best = candidates[0].parsed;
+  return `${best.getFullYear()}-${String(best.getMonth() + 1).padStart(2, "0")}-${String(best.getDate()).padStart(2, "0")}`;
+}
+
 // Détermine les limites verticales des 2 rangées de la grille par une
 // simple division proportionnelle de la hauteur de l'image (moitié
 // haute / moitié basse, avec un léger chevauchement pour ne pas
@@ -11727,7 +11878,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 245;
+const APP_VERSION = 246;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

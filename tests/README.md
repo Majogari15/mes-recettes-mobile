@@ -272,6 +272,23 @@ Depuis, la structure sépare strictement :
   TESTS_NON_REGRESSION.md point 100. Les points manifeste du même
   audit (orientation, captures "wide", favicon 32×32) sont couverts
   dans `test_pwa_manifest.py`.
+- `test_pantry_expiration_photo_ocr.py` — prise/import de photo pour
+  préremplir la date de péremption du garde-manger (même principe que
+  le scan de code-barres, appliqué cette fois à la date elle-même) :
+  heuristique d'extraction de date testée directement (formats
+  ISO/européen, année à 2 chiffres, mot-clé de péremption — "DLC",
+  "best before"... — préféré à une autre date sans mot-clé dans le
+  même texte, date calendairement impossible comme le 31 février
+  toujours ignorée, aucune date ne renvoie jamais d'erreur) ; bout en
+  bout dans le formulaire du garde-manger avec le vrai OCR remplacé
+  par une fonction simulée (jamais le vrai Tesseract, trop lent et non
+  déterministe pour un test automatisé) : boutons caméra et galerie,
+  préremplissage du champ en cas de succès, message clair si aucune
+  date reconnue ou si l'OCR échoue, et surtout aucun enregistrement
+  automatique — l'article n'est sauvegardé qu'après un clic explicite
+  sur "Enregistrer" — voir TESTS_NON_REGRESSION.md point 103. Utilise
+  `tests/fixtures/tiny_blank.png` (contenu réel sans importance,
+  l'OCR étant simulé).
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.
