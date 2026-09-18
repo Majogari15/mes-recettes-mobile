@@ -107,7 +107,7 @@ def main():
 
         print("=== Bug confirmé n°1 : poids trouvé mais nom vide -> les DEUX messages doivent apparaître (plus de masquage) ===\n")
         page.route("**/world.openfoodfacts.org/**", lambda route: mock_off_route(route, {"status": 1, "product": {"quantity": "300 g"}}))
-        scan("1000000000017")
+        scan("3017620422003")
         name1, hint1 = modal_texts()
         check("Le champ nom reste vide (la fiche n'avait pas de nom)", name1 == "", repr(name1))
         check("Le poids net (300 g) est bien indiqué", bool(hint1) and "300 g" in hint1, repr(hint1))
@@ -125,7 +125,7 @@ def main():
             "**/world.openfoodfacts.org/**",
             lambda route: mock_off_route(route, {"status": 1, "product": {"product_name_fr": "Compote de Pommes", "quantity": "4x100g"}}),
         )
-        scan("1000000000024")
+        scan("3017620422003")
         name2, hint2 = modal_texts()
         check("Le nom est bien pré-rempli", name2 == "Compote de Pommes", repr(name2))
         check("Le poids est indiqué", bool(hint2) and "4x100g" in hint2, repr(hint2))
@@ -136,7 +136,7 @@ def main():
 
         print("\n=== Régression : produit vraiment absent de la base (aucun poids non plus) -> seul le message générique ===\n")
         page.route("**/world.openfoodfacts.org/**", lambda route: mock_off_route(route, {"status": 0}))
-        scan("1000000000031")
+        scan("3017620422003")
         name3, hint3 = modal_texts()
         check("Le champ nom reste vide", name3 == "", repr(name3))
         check("Message générique 'non trouvé automatiquement' affiché", bool(hint3) and "non trouvé automatiquement" in hint3, repr(hint3))
@@ -146,7 +146,7 @@ def main():
 
         print("\n=== Bug confirmé n°2 : panne réseau -> message DIFFÉRENT du 'produit non trouvé' générique ===\n")
         page.route("**/world.openfoodfacts.org/**", lambda route: route.abort())
-        scan("1000000000048")
+        scan("3017620422003")
         name4, hint4 = modal_texts()
         check("Le formulaire s'ouvre malgré la panne (pas de plantage)", name4 == "", repr(name4))
         check(
@@ -160,7 +160,7 @@ def main():
 
         print("\n=== Erreur HTTP SANS corps JSON exploitable (ex. 500, page d'erreur générique) traitée comme une panne réseau ===\n")
         page.route("**/world.openfoodfacts.org/**", lambda route: mock_off_route(route, {}, status=500))
-        scan("1000000000055")
+        scan("3017620422003")
         name5, hint5 = modal_texts()
         check("Le formulaire s'ouvre malgré l'erreur HTTP (pas de plantage)", name5 == "", repr(name5))
         check(
@@ -180,7 +180,7 @@ def main():
         # ce corps, classant donc à tort ce cas précis comme une panne
         # réseau plutôt qu'un produit inconnu ordinaire.
         page.route("**/world.openfoodfacts.org/**", lambda route: mock_off_route(route, {"status": 0, "status_verbose": "product not found"}, status=404))
-        scan("1000000000031")
+        scan("3017620422003")
         name6, hint6 = modal_texts()
         check("Le formulaire s'ouvre (pas de plantage)", name6 == "", repr(name6))
         check(

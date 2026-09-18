@@ -7176,3 +7176,60 @@ quantité absolue, comme avant).
 Suite de régression complète (37 scripts + corpus OCR) au vert.
 
 **Version testée** : v250
+
+### 108 — Deux améliorations de robustesse demandées par l'utilisateur (checksum EAN + redimensionnement photo)
+
+Suite au 3e audit externe (points D et G de sa liste, voir point 106),
+l'utilisateur a explicitement demandé ces deux améliorations précises
+parmi la liste plus large de pistes proposées.
+
+1. **Validation de la clé de contrôle EAN-8/UPC-A/EAN-13 en saisie
+   manuelle** — jusqu'ici, seule la LONGUEUR du code (au moins 8
+   chiffres) était vérifiée avant d'interroger Open Food Facts ; un
+   code de bonne longueur mais avec une clé de contrôle fausse (erreur
+   de frappe plausible : un chiffre oublié, inversé...) déclenchait
+   quand même une requête réseau pour aboutir de toute façon à "produit
+   non trouvé". Nouvelle fonction `isValidEanChecksum()` (algorithme
+   GS1 standard, identique pour les 3 longueurs 8/12/13 — seul le
+   nombre de chiffres change) : un code de longueur correcte mais de
+   clé invalide est désormais refusé avant toute requête, avec un
+   message dédié ("ne semble pas valide") distinct du message
+   "incomplet" existant. Validé contre 3 vrais exemples connus
+   (EAN-8 `96385074`, UPC-A `036000291452`, EAN-13 `3017620422003`) et
+   les 4 vrais codes-barres photographiés par l'utilisateur (points
+   104-107) : tous valides, confirmant que l'algorithme ne rejette
+   jamais un vrai code.
+2. **Redimensionnement de la photo avant l'analyse du code-barres** —
+   `decodeBarcodeImageFile()` dessinait jusqu'ici le canvas à la taille
+   d'origine de la photo (`naturalWidth`/`naturalHeight`), parfois
+   2000 px de large ou plus sur une vraie photo de smartphone — bien
+   plus grand que ce qu'un code-barres nécessite pour être lu, au prix
+   d'un canvas plus lourd et d'une analyse plus lente sur un appareil
+   d'entrée de gamme. Limité désormais à 1600 px de plus grand côté
+   (même seuil déjà utilisé par `resizeImageForOcr` pour les photos de
+   recette), ratio conservé.
+
+**Effet de bord positif à noter** : plusieurs codes-barres factices
+utilisés dans les tests existants (`1111111111111`, `9999999999999`,
+et une série `10000000000X`) avaient une clé de contrôle invalide —
+sans conséquence avant ce point puisque rien ne la vérifiait, mais
+ces fixtures auraient été rejetées à tort par la nouvelle validation.
+Remplacées par des codes de clé valide (`1111111111116`,
+`9999999999994`, `3017620422003` réutilisé) — la valeur exacte de ces
+codes n'a jamais eu d'importance pour ce qu'ils testent (mémorisation,
+repli réseau...), seule leur validité de forme compte désormais.
+
+**Vérifié** :
+- `tests/test_barcode_pantry.py` (étendu) : un code de longueur
+  correcte mais de clé invalide est refusé, AUCUNE requête réseau
+  n'est envoyée (vérifié en interceptant les requêtes) ; un EAN-8 et
+  un UPC-A valides sont bien acceptés.
+- `tests/test_barcode_rotation_retry.py` (étendu) : une photo
+  2000×1125 (dimensions des photos réelles d'origine) est bien
+  limitée à 1600×900 avant l'analyse, ratio 16:9 conservé.
+- Suite complète de l'import code-barres toujours au vert avec les
+  fixtures corrigées.
+
+Suite de régression complète (37 scripts + corpus OCR) au vert.
+
+**Version testée** : v251

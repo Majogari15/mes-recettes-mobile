@@ -28,6 +28,12 @@ nulle part renvoie bien `null` (pas de plantage). Il ne prouve PAS que
 cela résout le cas réel signalé par l'utilisateur — seul un nouveau test
 sur le vrai téléphone peut le confirmer.
 
+Couvre aussi (suite à un audit externe) : une grande photo réelle
+(2000x1125, mêmes dimensions que les photos d'origine) est bien
+redimensionnée à 1600 px de plus grand côté avant l'analyse, ratio
+conservé — même seuil que `resizeImageForOcr`, pour ne pas analyser un
+canvas plus lourd que nécessaire sur un appareil d'entrée de gamme.
+
 Utilisation (démarre et arrête lui-même un serveur local temporaire) :
 
     cd /chemin/vers/recipe_pwa
@@ -220,7 +226,55 @@ def main():
         )
         context4.close()
 
-        errors_all = errors1 + errors2 + errors3 + errors4
+        print("\n=== Une grande photo réelle (2000x1125, comme les 4 photos d'origine) est bien redimensionnée avant l'analyse ===\n")
+        # Recommandé par un audit externe : dessiner le canvas à la taille
+        # d'origine (`naturalWidth`/`naturalHeight`) sur une vraie photo de
+        # smartphone (souvent 2000 px de large ou plus) crée un canvas
+        # bien plus lourd que ce qu'un code-barres nécessite pour être lu,
+        # au prix d'une analyse plus lente sur un appareil d'entrée de
+        # gamme. `decodeBarcodeImageFile()` limite désormais le plus grand
+        # côté à 1600 px (même seuil que `resizeImageForOcr`), en
+        # conservant le ratio largeur/hauteur.
+        context5 = browser.new_context()
+        page5 = context5.new_page()
+        errors5 = []
+        page5.on("pageerror", lambda exc: errors5.append(str(exc)))
+        page5.goto(base_url, timeout=8000)
+        page5.wait_for_timeout(300)
+        result5 = page5.evaluate(
+            """
+            async () => {
+                // 2000x1125 : mêmes dimensions que les 4 photos réelles
+                // signalées par l'utilisateur (ratio 16:9 approximatif).
+                const canvas = document.createElement('canvas');
+                canvas.width = 2000;
+                canvas.height = 1125;
+                canvas.getContext('2d').fillRect(0, 0, 2000, 1125);
+                const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg'));
+                const file = new File([blob], 'grande-photo.jpg', { type: 'image/jpeg' });
+
+                let capturedWidth = null, capturedHeight = null;
+                window.BarcodeDetector = class {
+                    constructor() {}
+                    async detect(input) {
+                        capturedWidth = input.width;
+                        capturedHeight = input.height;
+                        return [{ rawValue: '3017620422003' }];
+                    }
+                };
+                await decodeBarcodeImageFile(file);
+                return { capturedWidth, capturedHeight };
+            }
+            """
+        )
+        check(
+            "Le plus grand côté est limité à 1600 px (2000 -> 1600), le ratio 16:9 conservé (1125 -> 900)",
+            result5["capturedWidth"] == 1600 and result5["capturedHeight"] == 900,
+            str(result5),
+        )
+        context5.close()
+
+        errors_all = errors1 + errors2 + errors3 + errors4 + errors5
         check("Aucune erreur JS pendant tout le parcours", not errors_all, "; ".join(errors_all))
 
         browser.close()

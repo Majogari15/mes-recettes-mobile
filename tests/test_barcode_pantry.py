@@ -206,6 +206,54 @@ def main():
         page.click("#barcode-manual-close")
         page.wait_for_timeout(200)
 
+        print("\n=== Saisie manuelle : clé de contrôle EAN invalide refusée AVANT toute requête réseau ===\n")
+        # Recommandé par un audit externe : une longueur correcte (8/12/13
+        # chiffres) mais une clé de contrôle fausse trahit presque
+        # toujours une erreur de frappe — sans cette vérification, un tel
+        # code partait quand même interroger Open Food Facts pour rien.
+        network_calls = []
+        page.on("request", lambda req: network_calls.append(req.url) if "openfoodfacts" in req.url else None)
+        page.click("text=Scanner un code-barres")
+        page.wait_for_timeout(200)
+        page.click("text=Saisir le code-barres manuellement")
+        page.wait_for_timeout(200)
+        # "3017620422004" : même code que "Maïs en boîte" plus loin, mais
+        # avec le dernier chiffre volontairement faussé (clé de contrôle
+        # invalide) — simule une erreur de frappe plausible (un chiffre
+        # mal recopié) plutôt qu'un code-barres aléatoire.
+        page.fill("#barcode-manual-input", "3017620422004")
+        page.click("#barcode-manual-submit")
+        page.wait_for_timeout(300)
+        check("Message dédié affiché pour une clé de contrôle invalide (pas le message 'incomplet')", page.is_visible("text=ne semble pas valide"))
+        check("Le formulaire de recherche ne s'est PAS ouvert (aucune requête réseau déclenchée)", not page.is_visible("#modal-ing-name"))
+        check("Aucune requête vers Open Food Facts n'a été envoyée pour ce code invalide", network_calls == [], str(network_calls))
+        page.click("#barcode-manual-close")
+        page.wait_for_timeout(200)
+
+        print("\n=== Saisie manuelle : un EAN-8 et un UPC-A (12 chiffres) valides sont bien acceptés ===\n")
+        page.route("**/world.openfoodfacts.org/**", lambda route: mock_off_route(route, {"status": 0}))
+        page.click("text=Scanner un code-barres")
+        page.wait_for_timeout(200)
+        page.click("text=Saisir le code-barres manuellement")
+        page.wait_for_timeout(200)
+        page.fill("#barcode-manual-input", "96385074")  # EAN-8 valide
+        page.click("#barcode-manual-submit")
+        page.wait_for_timeout(300)
+        check("Un EAN-8 valide (8 chiffres) est accepté, le formulaire s'ouvre", page.is_visible("#modal-ing-name"))
+        page.click("#modal-cancel")
+        page.wait_for_timeout(200)
+        page.click("text=Scanner un code-barres")
+        page.wait_for_timeout(200)
+        page.click("text=Saisir le code-barres manuellement")
+        page.wait_for_timeout(200)
+        page.fill("#barcode-manual-input", "036000291452")  # UPC-A valide
+        page.click("#barcode-manual-submit")
+        page.wait_for_timeout(300)
+        check("Un UPC-A valide (12 chiffres) est accepté, le formulaire s'ouvre", page.is_visible("#modal-ing-name"))
+        page.click("#modal-cancel")
+        page.wait_for_timeout(200)
+        page.unroute("**/world.openfoodfacts.org/**")
+
         print("\n=== Produit trouvé (Open Food Facts simulé) : nom et poids net pré-remplis ===\n")
         page.route(
             "**/world.openfoodfacts.org/**",
@@ -335,7 +383,7 @@ def main():
         page.wait_for_timeout(200)
         page.click("text=Saisir le code-barres manuellement")
         page.wait_for_timeout(200)
-        page.fill("#barcode-manual-input", "1111111111111")
+        page.fill("#barcode-manual-input", "1111111111116")
         page.click("#barcode-manual-submit")
         page.wait_for_timeout(500)
         modal_open_after_failure = page.is_visible("#modal-ing-name")
@@ -354,7 +402,7 @@ def main():
         page.wait_for_timeout(200)
         page.click("text=Saisir le code-barres manuellement")
         page.wait_for_timeout(200)
-        page.fill("#barcode-manual-input", "9999999999999")
+        page.fill("#barcode-manual-input", "9999999999994")
         page.click("#barcode-manual-submit")
         page.wait_for_timeout(500)
         # Choisit "kg" plutôt que la valeur par défaut "boîte" — ce cas
@@ -368,7 +416,7 @@ def main():
         page.wait_for_timeout(200)
         page.click("text=Saisir le code-barres manuellement")
         page.wait_for_timeout(200)
-        page.fill("#barcode-manual-input", "9999999999999")
+        page.fill("#barcode-manual-input", "9999999999994")
         page.click("#barcode-manual-submit")
         page.wait_for_timeout(400)
         rice_rescan_prefill = page.evaluate(

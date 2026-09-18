@@ -256,9 +256,13 @@ Depuis, la structure sépare strictement :
   quantité représente combien on vient d'EN AJOUTER (préremplie à 1,
   jamais l'ancien total), additionnée au stock existant seulement à
   l'enregistrement — vérifié sur le cas exact signalé (2 déjà présents
-  + 2 ajoutés = 4, jamais écrasé à 2). Utilise
-  `tests/fixtures/tiny_blank.png` (image minimale, son contenu réel
-  n'a aucune importance puisque le détecteur est simulé).
+  + 2 ajoutés = 4, jamais écrasé à 2). Depuis le point 108, un code
+  saisi manuellement de longueur correcte (8/12/13 chiffres) mais de
+  clé de contrôle EAN invalide est refusé avant toute requête réseau
+  (vérifié en interceptant les requêtes) ; un EAN-8 et un UPC-A valides
+  restent bien acceptés. Utilise `tests/fixtures/tiny_blank.png`
+  (image minimale, son contenu réel n'a aucune importance puisque le
+  détecteur est simulé).
 - `test_barcode_rotation_retry.py` — import de code-barres depuis une
   photo qui n'est pas droite (signalé par l'utilisateur avec 4 vraies
   photos toutes prises de travers) : `decodeBarcodeImageFile()` essaie
@@ -272,7 +276,10 @@ Depuis, la structure sépare strictement :
   voir TESTS_NON_REGRESSION.md point 104. Ce test ne prouve PAS que la
   correction résout le cas réel signalé (impossible à vérifier sans le
   vrai détecteur natif) — seul un nouveau test sur téléphone le
-  confirmerait.
+  confirmerait. Depuis le point 108, une grande photo réelle
+  (2000×1125, dimensions des photos réelles d'origine) est bien
+  limitée à 1600×900 avant l'analyse (ratio 16:9 conservé), même seuil
+  que `resizeImageForOcr`.
 - `test_barcode_lookup_messages.py` — messages affichés après la
   recherche d'un produit scanné, suite à 2 bugs confirmés par un
   second audit externe (décodeur indépendant ZXing-C++ sur les mêmes 4

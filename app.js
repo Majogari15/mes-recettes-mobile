@@ -2644,10 +2644,19 @@ async function decodeBarcodeImageFile(file) {
     img.onerror = () => reject(new Error(t("qrscan_image_load_error")));
     img.src = dataUrl;
   });
+  // Redimensionne avant l'analyse — même principe et même seuil que
+  // resizeImageForOcr (voir son commentaire) : une vraie photo
+  // d'appareil peut dépasser 2000 px de large, une taille bien plus
+  // grande que ce qu'un code-barres nécessite pour être lu, au prix
+  // d'un canvas plus lourd et d'une analyse plus lente sur un
+  // téléphone d'entrée de gamme. 1600 px reste largement suffisant
+  // pour distinguer les barres les plus fines d'un EAN-13.
+  const BARCODE_MAX_DIMENSION = 1600;
+  const scale = Math.min(1, BARCODE_MAX_DIMENSION / Math.max(img.naturalWidth, img.naturalHeight));
   const canvas = document.createElement("canvas");
-  canvas.width = img.naturalWidth;
-  canvas.height = img.naturalHeight;
-  canvas.getContext("2d").drawImage(img, 0, 0);
+  canvas.width = Math.round(img.naturalWidth * scale);
+  canvas.height = Math.round(img.naturalHeight * scale);
+  canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
   // Essaie d'abord l'image telle que prise, puis 3 rotations
   // supplémentaires (90/180/270°) avant d'abandonner : contrairement au
   // scan caméra en direct (appareil tenu à peu près à l'horizontale),
@@ -2689,6 +2698,27 @@ async function importBarcodeFromPhotoFile(file) {
   await handleScannedBarcode(barcode);
 }
 
+// Valide la clé de contrôle EAN-8/UPC-A/EAN-13 (même algorithme pour
+// les trois formats, seule leur longueur diffère) — utilisée en
+// saisie manuelle uniquement (voir openBarcodePasteModal) pour éviter
+// d'interroger Open Food Facts pour rien sur une simple erreur de
+// frappe : le scan caméra/photo n'en a pas besoin, le détecteur natif
+// valide déjà lui-même la structure du code avant de le renvoyer.
+// Algorithme GS1 standard : poids 3 sur le chiffre juste à gauche de
+// la clé de contrôle, puis alterné 1/3 en remontant vers la gauche —
+// valable tel quel pour les 3 longueurs (8, 12 ou 13 chiffres), sans
+// distinction particulière selon la longueur.
+function isValidEanChecksum(digits) {
+  if (!/^\d{8}$|^\d{12}$|^\d{13}$/.test(digits)) return false;
+  const nums = digits.split("").map(Number);
+  const check = nums.pop();
+  let sum = 0;
+  for (let i = nums.length - 1, weight = 3; i >= 0; i--, weight = weight === 3 ? 1 : 3) {
+    sum += nums[i] * weight;
+  }
+  return (10 - (sum % 10)) % 10 === check;
+}
+
 function openBarcodePasteModal() {
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
@@ -2713,6 +2743,15 @@ function openBarcodePasteModal() {
     const digits = sheet.querySelector("#barcode-manual-input").value.replace(/\D/g, "");
     if (digits.length < 8) {
       sheet.querySelector("#barcode-manual-status").textContent = t("barcode_manual_invalid");
+      return;
+    }
+    // Une longueur correcte (8/12/13 chiffres) mais une clé de
+    // contrôle invalide trahit presque toujours une erreur de frappe
+    // (chiffre oublié, inversé...) — sans cette vérification, un tel
+    // code partait quand même interroger Open Food Facts pour rien,
+    // pour aboutir de toute façon à "produit non trouvé".
+    if ([8, 12, 13].includes(digits.length) && !isValidEanChecksum(digits)) {
+      sheet.querySelector("#barcode-manual-status").textContent = t("barcode_manual_checksum_invalid");
       return;
     }
     overlay.remove();
@@ -11946,7 +11985,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 250;
+const APP_VERSION = 251;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
