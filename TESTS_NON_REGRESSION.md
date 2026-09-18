@@ -6915,6 +6915,22 @@ nouveau) :
   avec la date issue de la photo ; message d'échec clair si aucune
   date n'est reconnue (champ resté vide) ; message d'erreur lisible si
   l'OCR lui-même échoue.
+- **Demande de suivi de l'utilisateur** ("faudrait aussi... détecter le
+  sens pour remettre à l'endroit si nécessaire") : déjà couvert dès la
+  première version de cette fonctionnalité ci-dessus —
+  `runExpirationDateOcr` réutilise directement `detectAndCorrectOrientation`
+  (la fonction déjà chargée de remettre à l'endroit une photo de
+  recette prise à l'envers ou de côté, point 16), jamais une
+  réimplémentation séparée. Vérifié pour de vrai avec une photo
+  200×100 volontairement non carrée (une rotation 90°/270° change ses
+  dimensions, contrairement à une image carrée qui masquerait un
+  défaut de câblage) : rotation effectivement appliquée avant l'OCR
+  quand l'orientation est détectée avec une confiance suffisante
+  (dimensions bien inversées, 200×100 -> 100×200), image laissée
+  strictement inchangée (le `File` d'origine, jamais converti en
+  `<canvas>`) si la confiance est trop faible ou si la détection
+  d'orientation elle-même échoue — dans les deux cas sans jamais
+  bloquer l'OCR qui continue normalement.
 
 Suite de régression complète (35 scripts + corpus OCR) au vert.
 

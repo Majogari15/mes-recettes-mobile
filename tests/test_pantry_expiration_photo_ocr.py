@@ -30,6 +30,11 @@ Couvre :
   n'est sauvegardé qu'après un clic explicite sur "Enregistrer"), et
   affichent un message clair en cas d'échec (aucune date trouvée, ou erreur
   de l'OCR lui-même).
+- `runExpirationDateOcr` remet réellement à l'endroit une photo pivotée
+  avant l'OCR (même pipeline `detectAndCorrectOrientation` que l'import
+  photo de recette, point 16) : rotation appliquée si l'orientation est
+  détectée avec une confiance suffisante, image inchangée si la confiance
+  est trop faible ou si la détection elle-même échoue (jamais bloquant).
 
 Utilisation (démarre et arrête lui-même un serveur local temporaire) :
 
@@ -203,6 +208,134 @@ def main():
         page2.evaluate("() => { window.runExpirationDateOcr = window.__realRunExpirationDateOcr; }")
         check("Aucune erreur JS pendant tout le parcours du formulaire", not errors2, "; ".join(errors2))
         context2.close()
+
+        print("\n=== runExpirationDateOcr : la photo pivotée est bien remise à l'endroit avant l'OCR (même pipeline que l'import de recette, point 16) ===\n")
+        context3 = browser.new_context()
+        page3 = context3.new_page()
+        errors3 = []
+        page3.on("pageerror", lambda exc: errors3.append(str(exc)))
+        page3.goto(base_url, timeout=8000)
+        page3.wait_for_timeout(300)
+
+        # runExpirationDateOcr() réutilise detectAndCorrectOrientation() —
+        # la même fonction déjà chargée de remettre à l'endroit une photo de
+        # recette prise à l'envers ou de côté (point 16) — jamais une copie
+        # ni une réimplémentation. Pour le vérifier réellement (pas
+        # seulement en le lisant dans le code), seuls les DEUX workers
+        # Tesseract sous-jacents sont simulés ici (OSD pour l'orientation,
+        # principal pour la reconnaissance) ; detectAndCorrectOrientation,
+        # resizeImageForOcr et rotateImageClockwise tournent pour de vrai,
+        # sur une vraie image 200x100 (volontairement non carrée : une
+        # rotation de 90°/270° change ses dimensions, contrairement à une
+        # image carrée qui masquerait le bug si la rotation ne se produisait
+        # pas réellement).
+        result3 = page3.evaluate(
+            """
+            async ({ orientationDegrees, confidence }) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 200;
+                canvas.height = 100;
+                canvas.getContext('2d').fillRect(0, 0, 200, 100);
+                const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg'));
+                const file = new File([blob], 'photo.jpg', { type: 'image/jpeg' });
+
+                window.getSharedOsdWorker = async () => ({
+                    detect: async () => ({ data: { orientation_degrees: orientationDegrees, orientation_confidence: confidence } }),
+                });
+                let capturedWidth = null, capturedHeight = null;
+                window.getSharedTesseractWorker = async () => ({
+                    recognize: async (input) => {
+                        capturedWidth = input.width;
+                        capturedHeight = input.height;
+                        return { data: { text: 'DLC 2026-01-01' } };
+                    },
+                });
+                await runExpirationDateOcr(file);
+                return { capturedWidth, capturedHeight };
+            }
+            """,
+            {"orientationDegrees": 90, "confidence": 10},
+        )
+        check(
+            "Rotation 90° avec confiance suffisante : largeur/hauteur bien inversées avant l'OCR (200x100 -> 100x200)",
+            result3["capturedWidth"] == 100 and result3["capturedHeight"] == 200,
+            str(result3),
+        )
+
+        # Note : un fichier NON pivoté reste le File original (jamais
+        # converti en <canvas>) — il n'a donc pas de propriété
+        # width/height comme un <canvas> pivoté en aurait, contrairement à
+        # ce qu'on pourrait naïvement comparer ; c'est justement la
+        # présence ou l'absence de cette conversion en <canvas> qui permet
+        # de distinguer de façon fiable "pivoté" de "laissé inchangé" ici.
+        result3_low_confidence = page3.evaluate(
+            """
+            async ({ orientationDegrees, confidence }) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 200;
+                canvas.height = 100;
+                canvas.getContext('2d').fillRect(0, 0, 200, 100);
+                const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg'));
+                const file = new File([blob], 'photo2.jpg', { type: 'image/jpeg' });
+
+                window.getSharedOsdWorker = async () => ({
+                    detect: async () => ({ data: { orientation_degrees: orientationDegrees, orientation_confidence: confidence } }),
+                });
+                let wasConvertedToCanvas = null, sameFileInstance = null;
+                window.getSharedTesseractWorker = async () => ({
+                    recognize: async (input) => {
+                        wasConvertedToCanvas = input instanceof HTMLCanvasElement;
+                        sameFileInstance = input === file;
+                        return { data: { text: 'DLC 2026-01-01' } };
+                    },
+                });
+                await runExpirationDateOcr(file);
+                return { wasConvertedToCanvas, sameFileInstance };
+            }
+            """,
+            {"orientationDegrees": 90, "confidence": 0},
+        )
+        check(
+            "Confiance insuffisante : l'image n'est PAS pivotée à tort (le File original arrive inchangé à l'OCR)",
+            result3_low_confidence["wasConvertedToCanvas"] is False and result3_low_confidence["sameFileInstance"] is True,
+            str(result3_low_confidence),
+        )
+
+        result3_osd_failure = page3.evaluate(
+            """
+            async () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 200;
+                canvas.height = 100;
+                canvas.getContext('2d').fillRect(0, 0, 200, 100);
+                const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg'));
+                const file = new File([blob], 'photo3.jpg', { type: 'image/jpeg' });
+
+                window.getSharedOsdWorker = async () => { throw new Error('osd_unavailable'); };
+                let wasConvertedToCanvas = null, sameFileInstance = null, ocrError = null;
+                window.getSharedTesseractWorker = async () => ({
+                    recognize: async (input) => {
+                        wasConvertedToCanvas = input instanceof HTMLCanvasElement;
+                        sameFileInstance = input === file;
+                        return { data: { text: 'DLC 2026-01-01' } };
+                    },
+                });
+                try {
+                    await runExpirationDateOcr(file);
+                } catch (e) {
+                    ocrError = String(e);
+                }
+                return { wasConvertedToCanvas, sameFileInstance, ocrError };
+            }
+            """
+        )
+        check(
+            "OSD indisponible : jamais bloquant, l'OCR continue sur l'image inchangée (le File original, pas converti)",
+            result3_osd_failure["ocrError"] is None and result3_osd_failure["wasConvertedToCanvas"] is False and result3_osd_failure["sameFileInstance"] is True,
+            str(result3_osd_failure),
+        )
+        check("Aucune erreur JS pendant ces appels", not errors3, "; ".join(errors3))
+        context3.close()
 
         browser.close()
     httpd.shutdown()

@@ -286,9 +286,18 @@ Depuis, la structure sépare strictement :
   préremplissage du champ en cas de succès, message clair si aucune
   date reconnue ou si l'OCR échoue, et surtout aucun enregistrement
   automatique — l'article n'est sauvegardé qu'après un clic explicite
-  sur "Enregistrer" — voir TESTS_NON_REGRESSION.md point 103. Utilise
-  `tests/fixtures/tiny_blank.png` (contenu réel sans importance,
-  l'OCR étant simulé).
+  sur "Enregistrer" ; et correction d'orientation réellement vérifiée
+  (pas seulement supposée en relisant le code) : `runExpirationDateOcr`
+  réutilise `detectAndCorrectOrientation` (même pipeline que l'import
+  photo de recette, point 16) — une vraie photo 200×100 non carrée est
+  bien pivotée (dimensions inversées) avant l'OCR quand l'orientation
+  est détectée avec confiance, laissée inchangée sinon (confiance
+  trop faible ou détection en échec, jamais bloquant) — voir
+  TESTS_NON_REGRESSION.md point 103. Utilise `tests/fixtures/tiny_blank.png`
+  (contenu réel sans importance, l'OCR étant simulé) pour les scénarios
+  de formulaire, et un `<canvas>` généré à la volée pour les scénarios
+  d'orientation (dimensions non carrées nécessaires, contrairement à
+  la fixture).
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.
