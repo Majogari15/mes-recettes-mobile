@@ -6626,3 +6626,137 @@ les ajouts à `tests/test_pwa_manifest.py`) :
 Suite de régression complète (32 scripts + corpus OCR) au vert.
 
 **Version testée** : v243
+
+### 101 — Corrections suite à un second audit externe (autre IA), 12 points confirmés
+
+L'utilisateur a fait tester la v243 par une autre IA (lecture du code,
+exécution de ses fonctions en environnement isolé, essais dans
+l'application publiée). Chaque point a de nouveau été vérifié
+moi-même directement dans le code avant correction. Tous les points
+signalés se sont révélés exacts.
+
+**Corrigé** :
+1. **Mode cuisine : quantités non recalculées selon les convives** —
+   confirmé : `recipe.ingredients[i].quantity` est stocké pour 1
+   personne (la fiche recette multiplie par `state.viewPersons` pour
+   l'affichage), mais `openCookingMode()` ne recevait ni n'utilisait
+   ce nombre, affichant toujours la quantité pour 1 seule personne.
+   `openCookingMode(recipe, persons)` accepte maintenant ce paramètre
+   (transmis depuis la fiche recette), et multiplie chaque quantité en
+   conséquence — à défaut de valeur (réouverture depuis une
+   notification de minuteur), repli sur `recipe.defaultPersons`.
+2. **"Remplacer tout" en ZIP conservait les anciennes recettes** —
+   confirmé : `const existing = merge ? await storeAll("recipes") :
+   [];` — en mode remplacement, `existing` valait `[]`, donc la
+   boucle de suppression qui suivait ne supprimait rien. Corrigé pour
+   toujours charger `storeAll("recipes")`, fusion ou remplacement.
+3. **Import ZIP partiellement appliqué en cas d'erreur** — confirmé,
+   les écritures étaient séquentielles sans validation préalable
+   globale. `restoreFromSharedZip()` analyse et convertit maintenant
+   l'intégralité de l'archive (JSON + conversion de chaque recette)
+   AVANT toute écriture IndexedDB : une entrée invalide fait échouer
+   l'import entier, jamais une partie seulement.
+4. **Dates de péremption perdues dans le format ZIP partagé** —
+   confirmé, `pantryToSharedFormat()` ne recopiait pas
+   `expirationDate` dans le dictionnaire exporté. Champ ajouté, dans
+   les deux sens.
+5. **Articles du garde-manger de même nom écrasés dans le ZIP** —
+   confirmé, le dictionnaire exporté n'était indexé que par nom
+   (`dict[nom] = {...}`), donc un second article de même nom (ex.
+   "Farine" en kg ET en g) écrasait le premier. La clé combine
+   maintenant nom ET unité — la FORME de chaque valeur reste
+   inchangée pour l'application de bureau (compatibilité conservée),
+   seule la clé qui l'index change. Le mode fusion associe désormais
+   aussi par nom+unité (au lieu du nom seul) pour la même raison.
+6. **Une erreur HTTP pouvait détruire le bon cache** — confirmé,
+   `fetch()` ne rejette jamais sur un code d'erreur HTTP (seulement
+   sur un échec réseau) : une réponse 500 transitoire sur
+   app.js/i18n.js/index.html était mise en cache comme si c'était le
+   vrai fichier, et resservie ensuite. `res.ok` est maintenant
+   vérifié : une réponse en erreur retombe sur le cache existant sans
+   jamais l'écraser.
+7. **Péremption incorrecte selon le fuseau horaire** — confirmé,
+   `new Date("YYYY-MM-DD")` interprète cette chaîne comme minuit UTC,
+   comparée ensuite à minuit LOCAL — décalage d'un jour dans les
+   fuseaux à l'ouest de l'UTC (ex. Amérique), où un article expirant
+   aujourd'hui apparaissait déjà "expiré". Nouvelle fonction
+   `parseCalendarDateLocal()` dédiée, utilisée pour le calcul du
+   statut et l'affichage.
+8. **Stock augmenté malgré un échec d'enregistrement** — confirmé,
+   `addOrIncrementPantryItem()` incrémentait `existing.quantity`
+   (objet partagé par référence avec `state.pantry`) AVANT que
+   `storePut` soit confirmé — un échec d'écriture laissait quand même
+   le stock affiché augmenté. Écrit maintenant une copie d'abord, ne
+   modifie l'objet partagé qu'après confirmation.
+9. **Suppression de caches d'autres applications du même domaine** —
+   confirmé, le nettoyage à l'activation supprimait tout cache
+   différent de `CACHE_NAME` exact, sans distinction — risque réel
+   pour une autre PWA hébergée sur le même domaine GitHub Pages (Cache
+   Storage est partagé par origine, pas par application). Filtré
+   maintenant par un préfixe dédié (`mes-recettes-cache-`).
+10. **Faux fichier ZIP accepté silencieusement** — confirmé,
+    `parseZipFile()` renvoie `[]` sans erreur si la signature ZIP est
+    absente, menant à un rapport "0 élément importé" présenté comme
+    un succès. `restoreFromSharedZip()` lève maintenant une erreur
+    explicite si l'archive ne contient AUCUN des fichiers reconnus.
+11. **Glisser-déposer inaccessible au clavier** — confirmé (défaut que
+    j'ai moi-même introduit lors de l'ajout de cette fonctionnalité,
+    point 99) : poignées en `<span>`, jamais focalisables, et
+    `attachDragReorder()` ne gérait que les événements de pointeur.
+    Poignées converties en vrais `<button>`, flèches haut/bas
+    ajoutées pour réordonner sans geste tactile ni souris.
+12. **Libellé des valeurs nutritionnelles ambigu** — confirmé, les
+    valeurs sont toujours calculées pour 1 personne, sans que le
+    libellé ne le précise, alors que les ingrédients juste au-dessus
+    sont affichés multipliés par le nombre de convives sélectionné.
+    "par personne" ajouté au libellé (et à sa variante "estimation
+    partielle").
+
+**Corrigé par prudence (risque signalé, jamais reproduit)** :
+- **`waitUntil()` manquant pour le rafraîchissement en arrière-plan
+  (stale-while-revalidate, point 100)** — sans lui, rien n'empêchait
+  le navigateur de considérer l'événement "fetch" terminé dès la
+  réponse (le cache) renvoyée, risquant de couper le service worker
+  avant la fin de la requête de rafraîchissement. Ajouté par
+  précaution.
+
+**Test corrigé (masquait un vrai bug)** :
+- `test_shared_backup.py` vidait lui-même la base avant de tester le
+  mode "remplacer tout", empêchant de jamais détecter que les
+  anciennes recettes restaient (point 2 ci-dessus) — puisqu'il n'y
+  avait justement plus rien à supprimer au moment du test. Réécrit
+  pour laisser une recette différente en place avant l'import, et
+  vérifier explicitement sa disparition après.
+
+**Vérifié mais non retenu comme bug** (voir aussi la conversation) :
+poids du premier chargement (~54 Mo, les 6 variantes du moteur WASM
+Tesseract sont préchargées) — observation valide, mais chantier plus
+large volontairement laissé de côté pour l'instant.
+
+**Vérifié** (voir `tests/test_external_audit_fixes_round2.py`, nouveau,
+et `tests/test_shared_backup.py`, réécrit) :
+- Mode cuisine : la quantité affichée correspond bien au nombre de
+  personnes choisi sur la fiche recette (400 g pour 4 personnes,
+  cohérent des deux côtés).
+- Import ZIP : une entrée invalide n'applique plus rien (recette
+  préexistante non affectée, recette valide de la même archive jamais
+  importée non plus) ; un faux fichier ZIP lève une erreur explicite ;
+  "remplacer tout" supprime réellement les anciennes recettes.
+- Garde-manger (ZIP) : 2 articles de même nom mais d'unité différente
+  survivent tous les deux à l'aller-retour, avec leur date de
+  péremption conservée.
+- Service worker : une erreur HTTP simulée (500) sur app.js ne casse
+  pas le chargement (repli sur le cache valide) et n'altère jamais ce
+  cache ; le cache d'une autre application simulée survit à la
+  réactivation du service worker.
+- Date de péremption : un article expirant "aujourd'hui" n'est pas
+  déjà "expired" dans le fuseau America/New_York.
+- Garde-manger : la quantité (mémoire ET IndexedDB) reste inchangée
+  après un échec d'écriture simulé.
+- Glisser-déposer : la poignée est un vrai `<button>` ; la flèche bas
+  déplace bien la ligne d'une position au clavier.
+- Libellé nutrition : contient bien "par personne".
+
+Suite de régression complète (33 scripts + corpus OCR) au vert.
+
+**Version testée** : v244

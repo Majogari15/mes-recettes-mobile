@@ -106,8 +106,17 @@ def main():
                 await storePut('ingredients', { name: 'pommes' });
 
                 const zipBlob = await buildSharedBackupZip();
+
+                // Remplace le contenu de la base par une recette DIFFÉRENTE
+                // avant l'import — plutôt que de vider la base nous-mêmes
+                // (ce qui masquerait un vrai bug : un mode "remplacer tout"
+                // qui échouerait à supprimer les recettes déjà présentes
+                // passerait inaperçu si la base était déjà vide). Le test
+                // vérifie ensuite explicitement que cette recette-ci a bien
+                // disparu après l'import en mode remplacement.
                 for (const r of await storeAll('recipes')) await storeDelete('recipes', r.id);
                 for (const i of await storeAll('ingredients')) await storeDelete('ingredients', i.name);
+                await storePut('recipes', { id: 'should-be-replaced', name: 'Recette qui doit disparaître', category: 'Plat', ingredients: [] });
 
                 const zipFile = new File([zipBlob], 'test.zip', { type: 'application/zip' });
                 const report = await restoreFromSharedZip(zipFile, false);
@@ -115,22 +124,23 @@ def main():
 
                 return {
                     report,
-                    recipe: recipesAfter[0],
-                    photoMatches: recipesAfter[0] && recipesAfter[0].photo === photoDataUri,
+                    recipeNames: recipesAfter.map((r) => r.name),
+                    recipe: recipesAfter.find((r) => r.id === 'test-r1'),
+                    photoMatches: recipesAfter.find((r) => r.id === 'test-r1')?.photo === photoDataUri,
                 };
             }
             """
         )
         ok2 = (
             result2["report"]["recipesImported"] == 1
-            and result2["recipe"]["name"] == "Recette de test"
+            and result2["recipeNames"] == ["Recette de test"]
             and result2["recipe"]["defaultPersons"] == 4
             and result2["recipe"]["ingredients"][0]["name"] == "pommes"
             and result2["photoMatches"]
         )
         status2 = "✅ OK" if ok2 else "❌ ÉCHEC"
-        print(f"{status2}  export puis réimport complet (recette avec photo, ingrédients)")
-        print(f"        rapport={result2['report']}, photo identique={result2['photoMatches']}")
+        print(f"{status2}  export puis réimport complet en mode remplacement (recette avec photo, ingrédients, ancienne recette bien supprimée)")
+        print(f"        rapport={result2['report']}, recettes après import={result2['recipeNames']}, photo identique={result2['photoMatches']}")
         if not ok2:
             all_ok = False
         print()

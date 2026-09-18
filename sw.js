@@ -3,7 +3,15 @@
 // ensuite (les données elles-mêmes sont stockées séparément, dans IndexedDB,
 // géré directement par app.js).
 
-const CACHE_NAME = "mes-recettes-cache-v243";
+// Préfixe commun à toutes les versions de CACHE_NAME ci-dessous — sert
+// à limiter le nettoyage de "activate" (voir plus bas) aux seuls
+// caches de CETTE application, jamais à ceux d'une autre appli
+// hébergée sur le même domaine (ex. un autre projet du même compte
+// GitHub Pages) : Cache Storage est partagé par ORIGINE, pas par
+// application, donc caches.keys() y voit potentiellement les caches
+// de tout le monde sur ce domaine.
+const CACHE_PREFIX = "mes-recettes-cache-";
+const CACHE_NAME = `${CACHE_PREFIX}v244`;
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -73,7 +81,9 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys
+          .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
       )
     )
   );
@@ -106,6 +116,18 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(event.request)
         .then((res) => {
+          // "fetch" ne rejette QUE sur un échec réseau (pas de
+          // connexion, DNS...), jamais sur un code d'erreur HTTP — une
+          // panne serveur transitoire (500, par exemple) passe donc
+          // par cette branche "succès", pas par le .catch ci-dessous.
+          // Sans cette vérification de res.ok, une telle erreur était
+          // mise en cache comme si c'était le vrai app.js/i18n.js, et
+          // resservie ensuite hors connexion à la place de la dernière
+          // version valide : la moindre panne passagère du serveur
+          // pouvait ainsi casser durablement l'application.
+          if (!res.ok) {
+            return caches.match(event.request).then((cached) => cached || res);
+          }
           const resClone = res.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
           return res;
@@ -142,6 +164,13 @@ self.addEventListener("fetch", (event) => {
             return res;
           })
           .catch(() => null);
+        // Sans event.waitUntil(), rien n'empêche le navigateur de
+        // considérer cet événement "fetch" comme terminé dès que la
+        // réponse (le cache, ci-dessous) est renvoyée, et donc de
+        // couper le service worker avant que cette requête de
+        // rafraîchissement en arrière-plan n'ait fini — le cache ne
+        // serait alors jamais mis à jour pour la prochaine ouverture.
+        event.waitUntil(networkUpdate);
         if (cached) {
           networkUpdate.catch(() => {}); // laissé finir en arrière-plan, jamais attendu
           return cached;

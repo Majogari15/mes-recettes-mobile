@@ -728,6 +728,26 @@ function attachDragReorder(container, rowSelector, handleSelector, onReorder) {
     document.addEventListener("pointerup", onUp);
     document.addEventListener("pointercancel", onUp);
   });
+  // Alternative clavier — la poignée est un vrai <button> focalisable
+  // (voir les 3 appelants), mais aucun geste de glisser n'est possible
+  // sans doigt ni souris. Flèche haut/bas déplace la ligne d'une
+  // position, exactement comme si elle avait franchi le milieu de sa
+  // voisine pendant un glissement — même callback onReorder, jamais
+  // dupliqué.
+  container.addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+    const handle = e.target.closest(handleSelector);
+    if (!handle || !container.contains(handle)) return;
+    const row = handle.closest(rowSelector);
+    if (!row || row.parentElement !== container) return;
+    const sibling = e.key === "ArrowUp" ? row.previousElementSibling : row.nextElementSibling;
+    if (!sibling || !sibling.matches(rowSelector)) return;
+    e.preventDefault();
+    if (e.key === "ArrowUp") container.insertBefore(row, sibling);
+    else container.insertBefore(row, sibling.nextSibling);
+    handle.focus();
+    onReorder(Array.from(container.querySelectorAll(rowSelector)));
+  });
 }
 
 // Complète, avant un affichage en tri manuel, toute valeur "order"
@@ -1496,7 +1516,7 @@ function renderRecipeView() {
   const addShopBtn = el(`<button class="btn btn-primary">${t("recipe_add_to_shopping")}</button>`);
   addShopBtn.addEventListener("click", () => addRecipeToShopping(r, state.viewPersons));
   const cookBtn = el(`<button class="btn btn-secondary">${t("recipe_cooking_mode")}</button>`);
-  cookBtn.addEventListener("click", () => openCookingMode(r));
+  cookBtn.addEventListener("click", () => openCookingMode(r, state.viewPersons));
   actions.appendChild(addShopBtn);
   actions.appendChild(cookBtn);
   wrap.appendChild(actions);
@@ -1987,7 +2007,7 @@ function renderIngredientRows(holder) {
       ? `<span class="ing-uncertain-badge" title="${escapeHtml(t("ingredient_uncertain_tooltip"))}" aria-label="${escapeHtml(t("ingredient_uncertain_tooltip"))}">⚠️</span>`
       : "";
     const row = el(`<div class="ing-form-row${ing.confidence === "uncertain" ? " ing-form-row-uncertain" : ""}">
-      <span class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</span>
+      <button type="button" class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</button>
       ${uncertainBadge}
       <div class="autocomplete-wrap"><input type="text" class="ing-name" placeholder="${t("form_ingredient_name")}" aria-label="${escapeHtml(t("form_ingredient_name"))}" value="${escapeHtml(translateIngredientName(ing.name))}"></div>
       <input type="number" step="any" min="0" class="qty ing-qty" placeholder="${t("form_ingredient_qty")}" aria-label="${escapeHtml(t("form_ingredient_qty"))}" value="${ing.quantity != null ? roundQtyForInput(ing.quantity) : ""}">
@@ -2336,7 +2356,7 @@ function renderSavedShoppingLists() {
 
 function shoppingItemRow(item, wrap, manualMode) {
   const row = el(`<div class="shopping-item ${item.checked ? "checked" : ""}">
-    ${manualMode ? `<span class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</span>` : ""}
+    ${manualMode ? `<button type="button" class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</button>` : ""}
     <input type="checkbox" ${item.checked ? "checked" : ""}>
     <span class="label" style="flex:1;cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}</span>
     <button type="button" class="shopping-item-delete" aria-label="${escapeHtml(t("common_delete"))}" style="background:none;border:none;color:var(--text-muted);font-size:18px;padding:4px 8px;cursor:pointer;line-height:1;">×</button>
@@ -2424,6 +2444,21 @@ function getLowStockPantryItems() {
   return state.pantry.filter((item) => item.threshold != null && (item.quantity || 0) < item.threshold);
 }
 
+// Convertit une date calendaire "YYYY-MM-DD" (jamais accompagnée d'une
+// heure, contrairement aux horodatages ISO complets utilisés ailleurs
+// dans l'application, ex. createdAt) en objet Date à minuit LOCAL —
+// jamais via new Date(chaîne), qui interprète une chaîne ISO sans
+// heure comme minuit UTC. Dans un fuseau à l'ouest de l'UTC (ex.
+// Amérique), minuit UTC du 18 correspond à la SOIRÉE du 17 en heure
+// locale : comparée à minuit local du 18, la date semblait donc déjà
+// dépassée un jour trop tôt — bug confirmé et corrigé ici.
+function parseCalendarDateLocal(dateStr) {
+  if (!dateStr) return null;
+  const parts = String(dateStr).split("-").map(Number);
+  if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) return null;
+  const [year, month, day] = parts;
+  return new Date(year, month - 1, day);
+}
 // Nombre de jours avant l'échéance à partir duquel un article est
 // considéré "bientôt périmé" — inclut aussi tout article déjà expiré.
 const PANTRY_EXPIRATION_WARNING_DAYS = 3;
@@ -2433,8 +2468,8 @@ function getPantryExpirationStatus(item) {
   if (!item.expirationDate) return null;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const expiration = new Date(item.expirationDate);
-  if (Number.isNaN(expiration.getTime())) return null;
+  const expiration = parseCalendarDateLocal(item.expirationDate);
+  if (!expiration || Number.isNaN(expiration.getTime())) return null;
   if (expiration < today) return "expired";
   const limit = new Date(today);
   limit.setDate(limit.getDate() + PANTRY_EXPIRATION_WARNING_DAYS);
@@ -2497,8 +2532,14 @@ async function addOrIncrementPantryItem(name, unit) {
   const key = normalize(name);
   const existing = state.pantry.find((i) => normalize(i.name) === key && i.unit === unit);
   if (existing) {
-    existing.quantity = (existing.quantity || 0) + 1;
-    await storePut("pantry", existing);
+    // Écrit d'abord une COPIE avec la quantité incrémentée — "existing"
+    // est partagé par référence avec state.pantry, donc le modifier
+    // avant la confirmation de l'écriture affichait un stock augmenté
+    // à tort si storePut échouait ensuite (quota dépassé...), sans
+    // aucun moyen de revenir en arrière.
+    const updated = { ...existing, quantity: (existing.quantity || 0) + 1 };
+    await storePut("pantry", updated);
+    existing.quantity = updated.quantity;
     return existing;
   }
   const item = { id: uid(), name, quantity: 1, unit };
@@ -2902,7 +2943,10 @@ function openShoppingAddPrompt() {
 function pantryExpirationSuffixHtml(item) {
   if (!item.expirationDate) return "";
   const status = getPantryExpirationStatus(item);
-  const dateStr = localeDateStr(item.expirationDate);
+  // localeDateStr(item.expirationDate) interpréterait "YYYY-MM-DD"
+  // comme minuit UTC (voir parseCalendarDateLocal) — décalant
+  // l'affichage d'un jour dans les fuseaux à l'ouest de l'UTC.
+  const dateStr = parseCalendarDateLocal(item.expirationDate).toLocaleDateString(CURRENT_LANG);
   const key = status === "expired" ? "pantry_expiration_expired_suffix" : status === "soon" ? "pantry_expiration_soon_suffix" : "pantry_expiration_future_suffix";
   const color = status === "expired" ? "var(--danger)" : status === "soon" ? "var(--accent)" : "var(--text-muted)";
   return `<span style="color:${color};font-weight:${status ? 600 : 400};">${escapeHtml(t(key, { date: dateStr }))}</span>`;
@@ -2965,7 +3009,7 @@ function renderPantry() {
     const list = el(`<div class="card" style="padding:4px 16px;margin-bottom:20px;"></div>`);
     orderedPantry.forEach((item) => {
         const row = el(`<div class="shopping-item">
-          ${manualMode ? `<span class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</span>` : ""}
+          ${manualMode ? `<button type="button" class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</button>` : ""}
           <span class="label" style="cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}${item.threshold != null ? escapeHtml(t("pantry_threshold_suffix", { threshold: fmtQty(item.threshold) })) : ""}${pantryExpirationSuffixHtml(item)}</span>
           <button class="remove-ing" style="width:32px;height:32px;" aria-label="${t("common_delete")}">🗑</button>
         </div>`);
@@ -5419,7 +5463,17 @@ async function closeTimerNotification(timer) {
   } catch (e) { /* sans conséquence */ }
 }
 
-function openCookingMode(recipe) {
+function openCookingMode(recipe, persons) {
+  // Les quantités d'une recette sont enregistrées pour 1 personne (la
+  // fiche recette les multiplie par le nombre de convives sélectionné
+  // pour l'affichage, voir renderRecipeView) — sans la même mise à
+  // l'échelle ici, le mode cuisine affichait toujours la quantité pour
+  // 1 seule personne, quel que soit le nombre réellement choisi juste
+  // avant de cliquer sur "Cuisiner". À défaut de valeur transmise
+  // (réouverture depuis une notification de minuteur, sans écran de
+  // recette pour la fournir), repli sur le nombre de personnes par
+  // défaut de la recette.
+  const cookingPersons = persons || recipe.defaultPersons || 4;
   const overlay = el(`<div class="cooking-overlay"></div>`);
   const header = el(`<div class="cooking-header">
     <h2 style="font-size:19px;">${escapeHtml(recipe.name)}</h2>
@@ -5533,7 +5587,8 @@ function openCookingMode(recipe) {
   overlay.appendChild(el(`<div class="section-label">${t("recipe_ingredients")}</div>`));
   const ingCard = el(`<div class="card" style="padding:4px 16px;margin-bottom:20px;"></div>`);
   (recipe.ingredients || []).forEach((ing) => {
-    ingCard.appendChild(el(`<div class="ingredient-item"><span>${escapeHtml(translateIngredientName(ing.name))}</span><span class="ingredient-qty">${ing.quantity != null ? fmtQty(ing.quantity) + " " + escapeHtml(translateUnit(ing.unit)) : ""}</span></div>`));
+    const scaled = ing.quantity != null ? Number(ing.quantity) * cookingPersons : null;
+    ingCard.appendChild(el(`<div class="ingredient-item"><span>${escapeHtml(translateIngredientName(ing.name))}</span><span class="ingredient-qty">${scaled != null ? fmtQty(scaled) + " " + escapeHtml(translateUnit(ing.unit)) : ""}</span></div>`));
   });
   overlay.appendChild(ingCard);
 
@@ -7206,18 +7261,28 @@ function recipeFromSharedFormat(json, imageBytesByFilename) {
 
 // Garde-manger de l'app mobile (tableau [{id,name,quantity,unit}]) <->
 // format Windows (dictionnaire {clé normalisée: {name,quantity,unit,threshold}}).
+// La clé combine nom ET unité (pas le nom seul) : deux articles
+// distincts de même nom mais d'unité différente (ex. "Farine" en kg
+// ET en g) partageraient sinon la même clé, le second écrasant
+// silencieusement le premier dans le dictionnaire — bug confirmé et
+// corrigé. La FORME de chaque valeur ({name, quantity, unit,
+// threshold, expirationDate}) reste un objet unique, inchangée pour
+// l'application de bureau (juste un champ de plus, ignoré sans
+// risque par un lecteur plus ancien) : seule la clé qui l'index
+// change, jamais le format lu par l'app Windows.
 function pantryToSharedFormat(items) {
   const dict = {};
   for (const item of items) {
-    const key = (item.name || "").toLowerCase().trim();
-    if (!key) continue;
-    dict[key] = { name: item.name, quantity: item.quantity, unit: item.unit, threshold: item.threshold ?? null };
+    const name = (item.name || "").toLowerCase().trim();
+    if (!name) continue;
+    const key = `${name}|${item.unit || ""}`;
+    dict[key] = { name: item.name, quantity: item.quantity, unit: item.unit, threshold: item.threshold ?? null, expirationDate: item.expirationDate ?? null };
   }
   return dict;
 }
 function pantryFromSharedFormat(dict) {
   if (!dict || typeof dict !== "object") return [];
-  return Object.values(dict).map((v) => ({ id: uid(), name: v.name, quantity: v.quantity, unit: migrateLegacyUnit(v.unit), threshold: v.threshold ?? null }));
+  return Object.values(dict).map((v) => ({ id: uid(), name: v.name, quantity: v.quantity, unit: migrateLegacyUnit(v.unit), threshold: v.threshold ?? null, expirationDate: v.expirationDate ?? null }));
 }
 
 async function buildBackupData() {
@@ -7310,6 +7375,14 @@ async function buildSharedBackupZip() {
 // ajoutée comme nouvelle recette avec un identifiant généré) ; merge=false
 // remplace intégralement les recettes, ingrédients, garde-manger et
 // personnalisations actuels.
+// Fichiers reconnus dans une archive partagée — sert aussi à détecter
+// un fichier qui n'est simplement pas une sauvegarde partagée valide
+// (texte quelconque renommé en .zip, archive d'un autre usage...) :
+// sans cette vérification, une telle archive était silencieusement
+// acceptée avec un rapport "0 élément importé" au lieu d'une erreur
+// claire, laissant croire à tort que l'import avait réussi.
+const SHARED_ZIP_KNOWN_FILES = ["recipes.json", "ingredients.json", "pantry.json", "ingredient_custom_data.json"];
+
 async function restoreFromSharedZip(file, merge) {
   const buffer = await file.arrayBuffer();
   const filesArr = await parseZipFile(buffer);
@@ -7319,17 +7392,41 @@ async function restoreFromSharedZip(file, merge) {
     if (f.name.startsWith("images/")) imageBytesByFilename.set(f.name.slice("images/".length), f.data);
   });
 
+  if (!SHARED_ZIP_KNOWN_FILES.some((name) => filesByName.has(name))) {
+    throw new Error("shared_zip_no_known_files");
+  }
+
+  // Analyse et convertit D'ABORD l'intégralité de l'archive, sans
+  // écrire quoi que ce soit dans IndexedDB — une entrée invalide plus
+  // loin dans le fichier (JSON malformé, recette mal formée...) doit
+  // faire échouer l'import EN ENTIER plutôt que de laisser les
+  // premières écritures déjà faites (ex. recettes déjà importées,
+  // puis plus rien après l'erreur) : un import raté doit se comporter
+  // comme s'il n'avait jamais eu lieu, jamais moitié appliqué.
+  const parsedRecipes = filesByName.has("recipes.json")
+    ? JSON.parse(utf8Decode(filesByName.get("recipes.json").data)).map((json) => recipeFromSharedFormat(json, imageBytesByFilename))
+    : null;
+  const parsedIngredientNames = filesByName.has("ingredients.json")
+    ? JSON.parse(utf8Decode(filesByName.get("ingredients.json").data))
+    : null;
+  const parsedPantry = filesByName.has("pantry.json")
+    ? pantryFromSharedFormat(JSON.parse(utf8Decode(filesByName.get("pantry.json").data)))
+    : null;
+  const parsedOverridesDict = filesByName.has("ingredient_custom_data.json")
+    ? JSON.parse(utf8Decode(filesByName.get("ingredient_custom_data.json").data))
+    : null;
+
+  // Plus aucun risque d'échec de lecture/conversion après ce point :
+  // les écritures ci-dessous peuvent commencer.
   const report = { recipesImported: 0, recipesUpdated: 0, ingredientsImported: 0 };
 
-  if (filesByName.has("recipes.json")) {
-    const recipesJson = JSON.parse(utf8Decode(filesByName.get("recipes.json").data));
-    const existing = merge ? await storeAll("recipes") : [];
+  if (parsedRecipes) {
+    const existing = await storeAll("recipes");
     const existingById = new Map(existing.map((r) => [r.id, r]));
     if (!merge) {
       for (const r of existing) await storeDelete("recipes", r.id);
     }
-    for (const json of recipesJson) {
-      const recipe = recipeFromSharedFormat(json, imageBytesByFilename);
+    for (const recipe of parsedRecipes) {
       // Une recette important un identifiant déjà connu localement est mise
       // à jour plutôt que dupliquée — comportement voulu pour resynchroniser
       // la même recette entre les deux appareils, contrairement à l'import
@@ -7344,14 +7441,13 @@ async function restoreFromSharedZip(file, merge) {
     }
   }
 
-  if (filesByName.has("ingredients.json")) {
-    const names = JSON.parse(utf8Decode(filesByName.get("ingredients.json").data));
+  if (parsedIngredientNames) {
     if (!merge) {
       const existing = await storeAll("ingredients");
       for (const i of existing) await storeDelete("ingredients", i.name);
     }
     const existingNames = new Set((await storeAll("ingredients")).map((i) => i.name.toLowerCase()));
-    for (const name of names) {
+    for (const name of parsedIngredientNames) {
       if (typeof name !== "string" || !name.trim()) continue;
       if (!existingNames.has(name.toLowerCase())) {
         await storePut("ingredients", { name });
@@ -7361,35 +7457,35 @@ async function restoreFromSharedZip(file, merge) {
     }
   }
 
-  if (filesByName.has("pantry.json")) {
-    const dict = JSON.parse(utf8Decode(filesByName.get("pantry.json").data));
-    const imported = pantryFromSharedFormat(dict);
+  if (parsedPantry) {
     if (!merge) {
       const existing = await storeAll("pantry");
       for (const p of existing) await storeDelete("pantry", p.id);
-      for (const p of imported) await storePut("pantry", p);
+      for (const p of parsedPantry) await storePut("pantry", p);
     } else {
-      // Fusionne par nom d'ingrédient (normalisé) — une entrée déjà
-      // présente localement pour le même ingrédient est mise à jour
-      // plutôt que dupliquée.
+      // Fusionne par nom ET unité (comme le fait déjà
+      // addOrIncrementPantryItem ailleurs dans l'app) — associer par
+      // le seul nom écraserait un article "Farine (500 g)" déjà
+      // présent localement par un import "Farine (1 kg)", au lieu de
+      // créer une seconde ligne distincte pour cette unité différente.
       const existing = await storeAll("pantry");
-      const byName = new Map(existing.map((p) => [(p.name || "").toLowerCase().trim(), p]));
-      for (const p of imported) {
-        const key = (p.name || "").toLowerCase().trim();
-        const match = byName.get(key);
+      const byNameUnit = new Map(existing.map((p) => [`${(p.name || "").toLowerCase().trim()}|${p.unit || ""}`, p]));
+      for (const p of parsedPantry) {
+        const key = `${(p.name || "").toLowerCase().trim()}|${p.unit || ""}`;
+        const match = byNameUnit.get(key);
         const toStore = match ? { ...p, id: match.id } : p;
         await storePut("pantry", toStore);
+        byNameUnit.set(key, toStore);
       }
     }
   }
 
-  if (filesByName.has("ingredient_custom_data.json")) {
-    const dict = JSON.parse(utf8Decode(filesByName.get("ingredient_custom_data.json").data));
+  if (parsedOverridesDict) {
     if (!merge) {
       const existing = await storeAll("ingredientOverrides");
       for (const o of existing) await storeDelete("ingredientOverrides", o.name);
     }
-    for (const [name, record] of Object.entries(dict || {})) {
+    for (const [name, record] of Object.entries(parsedOverridesDict)) {
       if (record && typeof record === "object") await storePut("ingredientOverrides", { ...record, name: record.name || name });
     }
   }
@@ -11590,7 +11686,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 243;
+const APP_VERSION = 244;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

@@ -85,7 +85,20 @@ Depuis, la structure sépare strictement :
   garde-manger, personnalisations) — la compatibilité réelle avec
   l'application Windows a été vérifiée manuellement (voir
   TESTS_NON_REGRESSION.md), pas automatisable ici (tkinter indisponible
-  dans cet environnement).
+  dans cet environnement). Le test "remplacer tout" laisse une recette
+  différente en place avant l'import et vérifie sa disparition
+  ensuite (ne vide plus lui-même la base au préalable — l'ancienne
+  version masquait ainsi le bug du point 101 ci-dessous).
+- `test_external_audit_fixes_round2.py` — second audit externe (autre
+  IA) : mode cuisine (quantités recalculées selon les convives),
+  import ZIP tout-ou-rien (une entrée invalide n'applique plus rien),
+  faux fichier ZIP rejeté explicitement, garde-manger ZIP (date de
+  péremption conservée, articles de même nom mais unité différente non
+  écrasés), service worker (erreur HTTP n'empoisonnant plus le cache,
+  nettoyage à l'activation limité à cette app), fuseau horaire de la
+  date de péremption, stock non augmenté après un échec d'écriture,
+  glisser-déposer accessible au clavier, libellé nutrition "par
+  personne" — voir TESTS_NON_REGRESSION.md point 101.
 - `test_ingredient_reference_data.py` — protège la mise à jour des
   données de référence ingrédients (allergènes, valeurs
   nutritionnelles, traductions) importées depuis l'application Windows
