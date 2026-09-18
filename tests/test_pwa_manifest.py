@@ -57,6 +57,16 @@ def main():
     check("apple-touch-icon présente (iOS ne lit pas les icônes du manifeste)", 'rel="apple-touch-icon"' in html)
     check("apple-mobile-web-app-capable présente (mode standalone iOS)", 'apple-mobile-web-app-capable' in html)
 
+    # Favicon dédiée 32x32 (point 9 de l'audit externe) : un simple
+    # redimensionnement à la volée depuis le 192x192 par le navigateur
+    # peut donner un rendu flou dans un onglet/favoris de bureau.
+    check("Lien favicon 32x32 dédié présent (pas seulement le 192x192)", 'sizes="32x32"' in html and "icon-32.png" in html)
+    favicon32_path = os.path.join(PROJECT_ROOT, "icons", "icon-32.png")
+    check("icons/icon-32.png existe", os.path.isfile(favicon32_path))
+    if os.path.isfile(favicon32_path):
+        dims32 = png_dimensions(favicon32_path)
+        check("icons/icon-32.png fait bien 32x32", dims32 == (32, 32), str(dims32))
+
     manifests = {}
     for name in MANIFEST_FILES:
         path = os.path.join(PROJECT_ROOT, name)
@@ -72,6 +82,10 @@ def main():
         for key in REQUIRED_KEYS:
             check(f"{name} : clé '{key}' présente", key in data and data[key], "" if key in data else "manquante")
         check(f"{name} : display = \"standalone\" (condition du mode sans barre d'adresse)", data.get("display") == "standalone")
+        # Point 4 de l'audit externe : une orientation forcée empêche
+        # tout usage confortable sur tablette/PC ou téléphone posé à
+        # plat en mode paysage, alors que l'interface est responsive.
+        check(f"{name} : aucune orientation forcée (laisse le choix à l'utilisateur)", "orientation" not in data)
 
         for icon in data.get("icons", []):
             icon_path = os.path.join(PROJECT_ROOT, icon["src"])
@@ -82,6 +96,26 @@ def main():
                 declared = icon["sizes"]
                 actual = f"{dims[0]}x{dims[1]}" if dims else None
                 check(f"{name} : icône '{icon['src']}' fait bien {declared} (déclaré)", actual == declared, f"réel: {actual}")
+
+    print("\n=== Captures d'écran (manifest.json) : narrow ET wide ===\n")
+    # Point 4 de l'audit externe : sans capture "wide", l'invite
+    # d'installation sur PC/tablette n'affiche aucun aperçu.
+    screenshots = manifests.get("manifest.json", {}).get("screenshots", [])
+    form_factors = [s.get("form_factor") for s in screenshots]
+    check("Au moins une capture 'narrow' (mobile) déclarée", "narrow" in form_factors, str(form_factors))
+    check("Au moins une capture 'wide' (bureau/tablette) déclarée", "wide" in form_factors, str(form_factors))
+    for shot in screenshots:
+        shot_path = os.path.join(PROJECT_ROOT, shot["src"])
+        exists = os.path.isfile(shot_path)
+        check(f"Capture '{shot['src']}' ({shot.get('form_factor')}) existe", exists)
+        if exists:
+            dims = png_dimensions(shot_path)
+            declared = shot["sizes"]
+            actual = f"{dims[0]}x{dims[1]}" if dims else None
+            check(f"Capture '{shot['src']}' fait bien {declared} (déclaré)", actual == declared, f"réel: {actual}")
+            if dims:
+                ratio = max(dims) / min(dims)
+                check(f"Capture '{shot['src']}' : ratio {ratio:.2f}:1 dans la limite de 2:1 imposée par les stores", ratio <= 2.0, f"ratio={ratio:.3f}")
 
     print("\n=== Cohérence entre les 4 manifestes (branding partagé) ===\n")
     theme_colors = {name: m.get("theme_color") for name, m in manifests.items()}

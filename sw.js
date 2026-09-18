@@ -3,7 +3,7 @@
 // ensuite (les données elles-mêmes sont stockées séparément, dans IndexedDB,
 // géré directement par app.js).
 
-const CACHE_NAME = "mes-recettes-cache-v242";
+const CACHE_NAME = "mes-recettes-cache-v243";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -21,6 +21,7 @@ const FILES_TO_CACHE = [
   "./manifest-en.json",
   "./manifest-es.json",
   "./manifest-de.json",
+  "./icons/icon-32.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",
@@ -119,14 +120,46 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Pour tout le reste (images, données de référence, bibliothèques
-  // externes) : cache d'abord — plus rapide, et ces fichiers changent
-  // rarement d'une version à l'autre. Si absent du cache (ex. données
-  // de langue Tesseract, volontairement téléchargées à la demande
-  // plutôt que préchargées — voir FILES_TO_CACHE plus haut), le
-  // résultat est mis en cache après ce premier téléchargement, pour que
-  // les usages suivants — y compris hors connexion — n'aient plus
-  // besoin du réseau.
+  // Fichiers JSON de référence (allergènes, valeurs nutritionnelles,
+  // ingrédients par défaut, substitutions, traductions) : "cache
+  // d'abord" pur les aurait laissés figés indéfiniment tant que
+  // CACHE_NAME n'est pas manuellement incrémenté — contrairement aux
+  // trois fichiers critiques ci-dessus, une mise à jour de ces
+  // données ne casse jamais rien si elle arrive un chargement plus
+  // tard, donc pas besoin d'attendre le réseau : la version en cache
+  // (même périmée) répond immédiatement, tandis qu'une requête
+  // silencieuse en arrière-plan rafraîchit le cache pour la PROCHAINE
+  // ouverture ("stale-while-revalidate") — sans jamais bloquer
+  // l'affichage sur cette requête réseau.
+  const isReferenceDataFile = pathname.includes("/data/") && pathname.endsWith(".json");
+  if (isReferenceDataFile) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then(async (cache) => {
+        const cached = await cache.match(event.request);
+        const networkUpdate = fetch(event.request)
+          .then((res) => {
+            if (res.ok) cache.put(event.request, res.clone());
+            return res;
+          })
+          .catch(() => null);
+        if (cached) {
+          networkUpdate.catch(() => {}); // laissé finir en arrière-plan, jamais attendu
+          return cached;
+        }
+        return (await networkUpdate) || Response.error();
+      })
+    );
+    return;
+  }
+
+  // Pour tout le reste (images, bibliothèques externes, moteur OCR) :
+  // cache d'abord — plus rapide, et ces fichiers changent rarement
+  // d'une version à l'autre. Si absent du cache (ex. données de langue
+  // Tesseract, volontairement téléchargées à la demande plutôt que
+  // préchargées — voir FILES_TO_CACHE plus haut), le résultat est mis
+  // en cache après ce premier téléchargement, pour que les usages
+  // suivants — y compris hors connexion — n'aient plus besoin du
+  // réseau.
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;

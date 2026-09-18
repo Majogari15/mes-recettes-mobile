@@ -753,10 +753,20 @@ function ensureManualOrder(itemsInDisplayOrder, storeName) {
 const app = document.getElementById("app");
 
 let _previousScreen = null;
+// Position de défilement mémorisée par écran quitté, pour la restaurer
+// en revenant en arrière (voir renderTopbar) plutôt que de toujours
+// ramener brutalement en haut — utile notamment pour une longue liste
+// de recettes : ouvrir une fiche puis revenir ne doit pas faire perdre
+// l'endroit où on l'avait laissée. Simple objet en mémoire (jamais
+// persisté), une navigation fraîche (barre du bas, etc.) continue de
+// partir du haut comme avant.
+const _scrollPositions = {};
+let _restoreScrollOnNextRender = false;
 function render() {
   if (_previousScreen === "importPhoto" && state.screen !== "importPhoto" && sharedTesseractWorker) {
     terminateSharedTesseractWorker().catch(() => { /* sans conséquence, nettoyage best-effort */ });
   }
+  if (_previousScreen) _scrollPositions[_previousScreen] = window.scrollY;
   _previousScreen = state.screen;
   app.innerHTML = "";
   const topbar = renderTopbar();
@@ -879,7 +889,12 @@ function render() {
     fab.addEventListener("click", () => openIngredientNameModal(null));
     app.appendChild(fab);
   }
-  window.scrollTo(0, 0);
+  if (_restoreScrollOnNextRender && _scrollPositions[state.screen] != null) {
+    window.scrollTo(0, _scrollPositions[state.screen]);
+  } else {
+    window.scrollTo(0, 0);
+  }
+  _restoreScrollOnNextRender = false;
 }
 
 function renderTopbar() {
@@ -921,6 +936,10 @@ function renderTopbar() {
       else if (state.screen === "savedShoppingLists") { state.screen = "shopping"; }
       else if (["ingredients", "backup", "compare", "menus", "planning", "importUrl", "unitConverter", "trash", "whatCanICook", "cookbookExport", "manageSubstitutions", "statistics", "importPhoto"].includes(state.screen)) { state.screen = "home"; }
       else { state.screen = "recipes"; }
+      // Contrairement aux autres navigations (barre du bas, ouverture
+      // d'une recette...), un vrai "retour" doit restaurer la position
+      // de défilement qu'avait l'écran qu'on retrouve — voir render().
+      _restoreScrollOnNextRender = true;
       render();
     });
     bar.appendChild(back);
@@ -5670,8 +5689,44 @@ function applyTheme(theme) {
 }
 function toggleTheme() {
   const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  // Marque un choix explicite : à partir de maintenant, la préférence
+  // système ne doit plus jamais écraser silencieusement ce choix (voir
+  // initThemeFromSystemPreference).
+  localStorage.setItem("themeSetByUser", "1");
   applyTheme(next);
   render();
+}
+// Au tout premier lancement (ou tant que la personne n'a jamais touché
+// elle-même à l'interrupteur clair/sombre), suit la préférence système
+// plutôt que de forcer le thème clair par défaut — et continue de la
+// suivre EN DIRECT si elle change pendant l'utilisation (ex. bascule
+// automatique nuit/jour réglée sur le téléphone). Un choix explicite
+// via toggleTheme() désactive définitivement ce suivi automatique.
+function initThemeFromSystemPreference() {
+  const media = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+  const systemTheme = () => (media && media.matches ? "dark" : "light");
+  // Un thème "dark" déjà enregistré ne peut provenir que d'un clic
+  // explicite sur l'interrupteur (l'app ne basculait jamais en sombre
+  // toute seule avant ce changement) — marqué rétroactivement comme
+  // choix explicite, pour ne pas l'écraser dès la première ouverture
+  // suivant cette mise à jour chez quelqu'un qui l'avait déjà choisi.
+  // Un thème "light" enregistré reste ambigu (valeur forcée par
+  // défaut, ou vrai choix) : laissé au suivi automatique ci-dessous.
+  if (!localStorage.getItem("themeSetByUser") && localStorage.getItem("theme") === "dark") {
+    localStorage.setItem("themeSetByUser", "1");
+  }
+  if (localStorage.getItem("themeSetByUser")) {
+    applyTheme(localStorage.getItem("theme") || "light");
+    return;
+  }
+  applyTheme(systemTheme());
+  if (media && media.addEventListener) {
+    media.addEventListener("change", () => {
+      if (localStorage.getItem("themeSetByUser")) return;
+      applyTheme(systemTheme());
+      render();
+    });
+  }
 }
 
 /* ======================================================================
@@ -9193,6 +9248,36 @@ function loadTesseractLib() {
 }
 const TESSERACT_LANG_MAP = { fr: "fra", en: "eng", es: "spa", de: "deu" };
 
+// Vrai si le modèle de langue Tesseract nécessaire (plusieurs Mo) est
+// déjà en cache — donc si l'import photo à venir ne va PAS déclencher
+// de nouveau téléchargement, peu importe l'état de la connexion.
+async function isOcrLangDataCached(lang) {
+  if (!("caches" in window)) return false;
+  try {
+    const names = await caches.keys();
+    for (const name of names) {
+      const cache = await caches.open(name);
+      if (await cache.match(`./lib/tesseract/lang/${lang}.traineddata.gz`)) return true;
+    }
+  } catch (e) { /* au pire, considéré comme non caché — juste un avertissement affiché à tort */ }
+  return false;
+}
+// Avertit (sans jamais bloquer l'import) si l'économie de données du
+// téléphone est active ET que le modèle de langue nécessaire n'est pas
+// encore en cache — le téléchargement représente plusieurs Mo,
+// potentiellement coûteux sur un forfait limité. Repose sur l'API
+// Network Information (navigator.connection), non standard et absente
+// de Safari/iOS notamment : sur ces navigateurs, aucun avertissement
+// n'est simplement jamais affiché plutôt qu'une erreur.
+async function maybeShowDataSaverWarning(holder) {
+  try {
+    if (!(navigator.connection && navigator.connection.saveData)) return;
+    const lang = TESSERACT_LANG_MAP[CURRENT_LANG] || "eng";
+    if (await isOcrLangDataCached(lang)) return;
+    holder.innerHTML = `<div style="background:var(--accent-light);color:var(--accent);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:13px;line-height:1.4;">${escapeHtml(t("import_photo_savedata_warning"))}</div>`;
+  } catch (e) { /* jamais bloquant : au pire, pas d'avertissement affiché */ }
+}
+
 // Un seul Worker Tesseract réutilisé pour toute une série de photos,
 // plutôt que d'en créer et détruire un à chaque image — avec huit
 // photos, cela représentait huit initialisations complètes du moteur
@@ -10338,6 +10423,10 @@ const MAX_IMPORT_PHOTOS = 8;
 function renderImportPhoto() {
   const wrap = el(`<div></div>`);
   wrap.appendChild(el(`<p style="font-size:13px;color:var(--text-muted);margin:0 0 20px;line-height:1.5;">${escapeHtml(t("import_photo_disclaimer_main"))}<span style="color:var(--danger);text-decoration:underline;">${escapeHtml(t("import_photo_disclaimer_warning"))}</span></p>`));
+
+  const dataSaverNote = el(`<div></div>`);
+  wrap.appendChild(dataSaverNote);
+  maybeShowDataSaverWarning(dataSaverNote);
 
   const listHolder = el(`<div></div>`);
   wrap.appendChild(listHolder);
@@ -11501,7 +11590,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 242;
+const APP_VERSION = 243;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
@@ -11530,7 +11619,15 @@ function renderStartupError(error) {
   if (reloadBtn) reloadBtn.addEventListener("click", () => location.reload());
 }
 
+// Garde contre un double appel accidentel (ex. modification future qui
+// appellerait init() une seconde fois) — sans ça, les écouteurs globaux
+// posés par initInner() (visibilitychange, controllerchange...) se
+// dupliqueraient silencieusement, chacun réagissant plusieurs fois au
+// même événement.
+let _appInitialized = false;
 async function init() {
+  if (_appInitialized) return;
+  _appInitialized = true;
   try {
     await initInner();
   } catch (error) {
@@ -11539,7 +11636,7 @@ async function init() {
 }
 
 async function initInner() {
-  applyTheme(localStorage.getItem("theme") || "light");
+  initThemeFromSystemPreference();
   await loadPantryClaims();
   await loadBarcodeIngredientMap();
 

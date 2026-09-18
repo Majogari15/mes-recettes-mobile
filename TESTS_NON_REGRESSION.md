@@ -6516,3 +6516,113 @@ que d'un ordre arbitraire, pour ne pas mélanger la liste sans raison.
 Suite de régression complète (31 scripts + corpus OCR) au vert.
 
 **Version testée** : v242
+
+### 100 — Corrections suite à un audit externe (autre IA), 7 points sur 9 retenus
+
+L'utilisateur a soumis un audit complet rédigé par une autre IA sur
+l'ensemble du code. Chaque point a été vérifié moi-même directement
+dans le code avant correction plutôt qu'accepté tel quel — 2 points
+(sur les 9 soulevés) ont été volontairement écartés à la demande de
+l'utilisateur (fiabilité du manifeste dynamique par langue, `alt=""`
+sur les photos de recette) après avoir signalé qu'ils étaient
+plausibles mais non vérifiables avec certitude ou discutables plutôt
+que clairement faux — voir la conversation pour le détail de cette
+nuance.
+
+**Corrigé** :
+1. **Cache des fichiers JSON de référence** (`sw.js`) : passait en
+   "cache d'abord" pur, restant figé indéfiniment tant que `CACHE_NAME`
+   n'est pas manuellement incrémenté. Passé en
+   "stale-while-revalidate" pour ces fichiers précis uniquement
+   (`data/*.json`) : la version en cache répond immédiatement, une
+   requête silencieuse en arrière-plan rafraîchit le cache pour la
+   prochaine ouverture — les autres fichiers non critiques (polices,
+   bibliothèques, moteur OCR) restent en cache-d'abord pur comme avant
+   (les revalider à chaque fois gaspillerait de la donnée pour des
+   fichiers qui ne changent presque jamais).
+2. **Préférence système du thème ignorée au 1er lancement** :
+   `applyTheme(localStorage.getItem("theme") || "light")` forçait le
+   clair pour quiconque n'avait jamais choisi explicitement, même avec
+   le téléphone réglé en sombre. Une nouvelle fonction
+   `initThemeFromSystemPreference()` suit maintenant
+   `prefers-color-scheme` par défaut, continue de la suivre EN DIRECT
+   si elle change pendant l'utilisation, et un choix explicite via
+   l'interrupteur (nouveau marqueur `themeSetByUser` dans
+   `localStorage`) désactive définitivement ce suivi automatique.
+   Migration sans surprise pour les utilisateurs déjà installés : un
+   thème sombre déjà enregistré ne pouvait provenir que d'un vrai clic
+   (l'app n'a jamais basculé seule en sombre avant ce changement) et
+   n'est donc jamais écrasé ; un thème clair déjà enregistré reste
+   ambigu (défaut forcé ou vrai choix) et suit désormais l'OS.
+3. **Position de défilement jamais restaurée** : `render()` ramenait
+   systématiquement en haut de page à chaque changement d'écran,
+   y compris un simple retour depuis la fiche d'une recette après
+   avoir fait défiler une longue liste. La position de chaque écran
+   quitté est maintenant mémorisée (`_scrollPositions`, jamais
+   persisté) et restaurée uniquement lors d'un vrai "retour" (bouton
+   dédié) — une navigation fraîche (barre du bas, etc.) continue de
+   partir du haut comme avant.
+4. **Orientation forcée au portrait dans le manifeste** :
+   `"orientation": "portrait-primary"` retiré des 4 manifestes de
+   langue, pour permettre un usage confortable sur tablette, PC ou
+   téléphone posé à plat en mode paysage — l'interface est déjà
+   responsive. **Captures d'écran "wide" absentes** : 2 nouvelles
+   captures générées (1920×1080, vraies données de démonstration,
+   mêmes recettes que les captures "narrow" existantes) et ajoutées au
+   manifeste principal, pour que l'invite d'installation sur PC/tablette
+   affiche aussi un aperçu.
+6. **Téléchargement OCR sans avertissement sur réseau limité** :
+   nouveau bandeau (non bloquant) sur l'écran d'import photo, affiché
+   uniquement si l'API Network Information signale l'économie de
+   données active ET que le modèle de langue Tesseract nécessaire
+   n'est pas déjà en cache — l'utilisateur reste libre de continuer
+   ou d'attendre le Wi-Fi.
+8. **Écouteur `visibilitychange` sans garde contre un double
+   appel** : `init()` n'était en pratique jamais appelé deux fois,
+   rendant le risque réel nul, mais une garde d'idempotence
+   (`_appInitialized`) corrige la cause plutôt que de laisser un
+   `removeEventListener` sans point de nettoyage naturel.
+9. **Pas de favicon 32×32 dédiée** : `icons/icon-32.png` généré (par
+   redimensionnement réel du 192×192 via un `<canvas>`, pas une simple
+   copie) et lié explicitement (`sizes="32x32"`) dans `index.html`,
+   pour un rendu net dans les onglets/favoris de bureau plutôt qu'un
+   redimensionnement à la volée par le navigateur.
+
+**Volontairement écartés (points 5 et 7 de l'audit)** :
+- **Fiabilité du manifeste dynamique par langue** (`manifest-loader.js`
+  modifie le `href` du `<link rel="manifest">` de façon synchrone,
+  juste après le `<link>` dans le HTML) : le risque général décrit
+  (un navigateur ignorant un changement tardif) est réel dans
+  l'absolu, mais rien ne prouve qu'il s'applique à cette modification
+  précoce et synchrone précise — aucun test ne peut vérifier le nom
+  réellement proposé dans une vraie invite d'installation sans un
+  appareil physique.
+- **`alt=""` sur les photos de recette** : techniquement exact, mais
+  dans tous les endroits cités le nom de la recette est déjà affiché
+  en texte à côté de la photo — `alt=""` (image décorative) y est un
+  choix défendable, pas une perte d'information avérée.
+
+**Vérifié** (voir `tests/test_external_audit_fixes.py`, nouveau, et
+les ajouts à `tests/test_pwa_manifest.py`) :
+- Thème système suivi au 1er lancement (clair et sombre), suivi en
+  direct d'un changement d'OS, choix explicite jamais écrasé ensuite,
+  et les deux cas de migration (thème déjà enregistré, sombre ou
+  clair) se comportent exactement comme prévu.
+- Défilement restauré au bouton "retour", jamais lors d'une navigation
+  fraîche.
+- Fichier JSON de référence : réponse immédiate depuis le cache
+  (même volontairement périmée pour le test), cache réellement
+  rafraîchi en arrière-plan avec le vrai contenu.
+- Bandeau d'économie de données : absent sans l'API ou sans
+  l'option active, affiché quand active ET modèle non caché, de
+  nouveau absent une fois le modèle mis en cache.
+- Second appel à `init()` : aucun nouvel écouteur `visibilitychange`
+  posé (idempotence vérifiée directement).
+- Manifeste : absence de la clé `orientation` sur les 4 langues,
+  présence d'au moins une capture "wide", dimensions et ratio (≤2:1)
+  de toutes les captures vérifiés, favicon 32×32 présente et aux
+  bonnes dimensions.
+
+Suite de régression complète (32 scripts + corpus OCR) au vert.
+
+**Version testée** : v243

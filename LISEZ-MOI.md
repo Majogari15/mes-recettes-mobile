@@ -136,7 +136,8 @@ toutes les données restent sur l'appareil.
 - Mode cuisine avec **plusieurs minuteurs** réglables (décompte,
   sonnerie **et vibration**, clignotement à zéro)
 - Multilingue : français, anglais, espagnol, allemand
-- Thème clair / sombre
+- Thème clair / sombre, qui suit automatiquement le réglage du
+  téléphone tant qu'aucun choix n'a été fait manuellement
 - Fonctionne hors connexion une fois ouverte une première fois
 - Installable sur l'écran d'accueil comme une vraie application
 

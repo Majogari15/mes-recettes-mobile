@@ -183,8 +183,12 @@ Depuis, la structure sépare strictement :
 - `test_pwa_manifest.py` — validité des 4 manifestes (fr/en/es/de) :
   icônes existantes aux bonnes dimensions, `display:"standalone"`,
   cohérence de la couleur de thème entre les manifestes et
-  `index.html`, sélection du bon fichier par `manifest-loader.js` —
-  voir TESTS_NON_REGRESSION.md point 92.
+  `index.html`, sélection du bon fichier par `manifest-loader.js`,
+  absence de la clé `orientation` (laisse le choix à l'utilisateur),
+  présence d'au moins une capture d'écran "wide" en plus des "narrow"
+  (dimensions et ratio ≤2:1 vérifiés pour toutes), favicon 32×32
+  dédiée présente et aux bonnes dimensions — voir
+  TESTS_NON_REGRESSION.md points 92 et 100.
 - `test_pwa_install_flow.py` — logique JS du bandeau d'installation
   (événement `beforeinstallprompt` simulé, clic Installer appelant
   `prompt()`, clic Non merci mémorisé et jamais réaffiché, détection du
@@ -232,6 +236,18 @@ Depuis, la structure sépare strictement :
   après un glisser-déposer dans le formulaire de recette, absence de
   débordement horizontal introduit par la nouvelle poignée — voir
   TESTS_NON_REGRESSION.md point 99.
+- `test_external_audit_fixes.py` — corrections suite à un audit
+  externe (autre IA) : thème suivant la préférence système au 1er
+  lancement (et en direct si elle change), choix explicite jamais
+  écrasé ensuite, migration sans surprise pour les utilisateurs déjà
+  installés ; position de défilement restaurée au bouton "retour"
+  uniquement ; cache stale-while-revalidate des fichiers JSON de
+  référence (réponse immédiate + rafraîchissement en arrière-plan) ;
+  avertissement non bloquant "économie de données" avant un
+  téléchargement OCR ; idempotence de `init()` — voir
+  TESTS_NON_REGRESSION.md point 100. Les points manifeste du même
+  audit (orientation, captures "wide", favicon 32×32) sont couverts
+  dans `test_pwa_manifest.py`.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

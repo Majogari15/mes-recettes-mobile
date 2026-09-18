@@ -6,7 +6,6 @@
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait-primary",
   "background_color": "#FBF6EF",
   "theme_color": "#2F5233",
   "lang": "fr",
@@ -20,7 +19,9 @@
     { "src": "screenshots/01_accueil.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Écran d'accueil" },
     { "src": "screenshots/02_recettes.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Liste des recettes" },
     { "src": "screenshots/03_fiche_recette.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Détail d'une recette" },
-    { "src": "screenshots/04_courses.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Liste de courses" }
+    { "src": "screenshots/04_courses.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Liste de courses" },
+    { "src": "screenshots/wide_01_accueil.png", "sizes": "1920x1080", "type": "image/png", "form_factor": "wide", "label": "Écran d'accueil" },
+    { "src": "screenshots/wide_02_recettes.png", "sizes": "1920x1080", "type": "image/png", "form_factor": "wide", "label": "Liste des recettes" }
   ],
   "share_target": {
     "action": "./index.html",
