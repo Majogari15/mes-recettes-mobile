@@ -249,11 +249,16 @@ Depuis, la structure sépare strictement :
   mémorisation du nom ET de l'unité choisis, survie de cette mémoire à
   une sauvegarde locale — voir TESTS_NON_REGRESSION.md points 95-96.
   Depuis le point 106, un rescan d'un code-barres connu ouvre bien le
-  formulaire pré-rempli (nom/unité/quantité+1, modifiable, avec la
-  date de péremption saisissable) au lieu d'ajouter directement et
-  silencieusement comme avant. Utilise `tests/fixtures/tiny_blank.png`
-  (image minimale, son contenu réel n'a aucune importance puisque le
-  détecteur est simulé).
+  formulaire pré-rempli (nom/unité déjà connus, date de péremption
+  saisissable) au lieu d'ajouter directement et silencieusement comme
+  avant. Depuis le point 107 (retour de l'utilisateur : un premier
+  préremplissage à "ancien total + 1" était trompeur), la case
+  quantité représente combien on vient d'EN AJOUTER (préremplie à 1,
+  jamais l'ancien total), additionnée au stock existant seulement à
+  l'enregistrement — vérifié sur le cas exact signalé (2 déjà présents
+  + 2 ajoutés = 4, jamais écrasé à 2). Utilise
+  `tests/fixtures/tiny_blank.png` (image minimale, son contenu réel
+  n'a aucune importance puisque le détecteur est simulé).
 - `test_barcode_rotation_retry.py` — import de code-barres depuis une
   photo qui n'est pas droite (signalé par l'utilisateur avec 4 vraies
   photos toutes prises de travers) : `decodeBarcodeImageFile()` essaie

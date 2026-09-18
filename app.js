@@ -2584,12 +2584,25 @@ async function handleScannedBarcode(barcode) {
     // exemplaire, potentiellement différente de celle déjà enregistrée.
     // Retour direct de l'utilisateur : l'ancien raccourci "ajout
     // silencieux" ne permettait de saisir ni l'une ni l'autre.
+    //
+    // Retour direct de l'utilisateur sur une première version de ce
+    // correctif : préremplir la quantité avec l'ANCIEN TOTAL + 1 (ex.
+    // 3 si 2 étaient déjà présents) était trompeur — la personne
+    // s'attend à saisir combien elle vient d'EN AJOUTER (ex. 2, si
+    // elle en a racheté 2), pas le nouveau total. Avec l'ancien
+    // préremplissage, une personne qui corrige "3" en "2" pour
+    // indiquer les 2 qu'elle ajoute obtenait par erreur un total final
+    // de 2 (écrasé) au lieu de 4 (2 déjà là + 2 ajoutés). Voir
+    // addQuantityMode ci-dessous : la case représente maintenant
+    // toujours "combien j'en ajoute", additionné au stock existant au
+    // moment d'enregistrer.
     const existing = state.pantry.find((i) => normalize(i.name) === normalize(known.name) && i.unit === known.unit);
     openAddItemModal(
       "pantry",
-      existing ? { ...existing, quantity: (existing.quantity || 0) + 1 } : null,
+      existing || null,
       existing ? null : { name: known.name, quantity: 1, unit: known.unit },
-      (item) => { saveBarcodeIngredientMapping(barcode, item.name, item.unit); }
+      (item) => { saveBarcodeIngredientMapping(barcode, item.name, item.unit); },
+      existing ? { addQuantityMode: true } : undefined
     );
     return;
   }
@@ -2832,9 +2845,24 @@ async function openBarcodeScanModal() {
 // juste après l'enregistrement réel, pour permettre à l'appelant de
 // réagir (ex. mémoriser quel ingrédient a été choisi pour ce
 // code-barres) sans dupliquer toute la logique de ce formulaire.
-function openAddItemModal(storeName, existingItem, prefill, onSaved) {
+// "opts.addQuantityMode" (utilisé par handleScannedBarcode pour le
+// rescan d'un code-barres déjà connu) : uniquement en modification
+// (existingItem non nul) — la case quantité représente alors combien
+// on vient d'EN AJOUTER (préremplie à 1, jamais l'ancien total),
+// additionnée au stock déjà présent au moment d'enregistrer, jamais
+// avant.
+function openAddItemModal(storeName, existingItem, prefill, onSaved, opts) {
   const isEdit = !!existingItem;
   const isPantry = storeName === "pantry";
+  // Mode spécifique au rescan d'un code-barres déjà connu (voir
+  // handleScannedBarcode) : la case quantité représente alors combien
+  // on vient d'EN AJOUTER, jamais le nouveau total — additionnée au
+  // stock déjà présent seulement au moment d'enregistrer. Préremplir
+  // avec l'ancien total + 1 (essayé dans une version précédente)
+  // était trompeur : une personne qui corrige ce chiffre pour indiquer
+  // combien elle ajoute réellement écrase alors le total au lieu de
+  // l'augmenter, faussant silencieusement le stock final.
+  const addQuantityMode = isEdit && opts && opts.addQuantityMode;
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
     <h2>${isEdit ? t("form_edit_ingredient") : t("form_add_ingredient")}</h2>
@@ -2847,6 +2875,7 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved) {
       <div class="field"><label for="modal-ing-qty">${t("form_ingredient_qty")}</label><input type="number" step="any" min="0" id="modal-ing-qty"></div>
       <div class="field"><label for="modal-ing-unit">${t("form_ingredient_unit")}</label><select id="modal-ing-unit"></select></div>
     </div>
+    ${addQuantityMode ? `<p style="font-size:12px;color:var(--text-muted);margin:-8px 0 12px;">${escapeHtml(t("pantry_add_quantity_hint", { quantity: fmtQty(existingItem.quantity || 0), unit: translateUnit(existingItem.unit) }))}</p>` : ""}
     ${isPantry ? `<div class="field">
       <label for="modal-ing-threshold">${t("pantry_threshold_label")}</label>
       <input type="number" step="any" min="0" id="modal-ing-threshold">
@@ -2879,7 +2908,11 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved) {
   const nameInput = sheet.querySelector("#modal-ing-name");
   if (isEdit) {
     nameInput.value = translateIngredientName(existingItem.name);
-    if (existingItem.quantity != null) sheet.querySelector("#modal-ing-qty").value = existingItem.quantity;
+    if (addQuantityMode) {
+      sheet.querySelector("#modal-ing-qty").value = 1;
+    } else if (existingItem.quantity != null) {
+      sheet.querySelector("#modal-ing-qty").value = existingItem.quantity;
+    }
     if (isPantry && existingItem.threshold != null) sheet.querySelector("#modal-ing-threshold").value = existingItem.threshold;
     if (isPantry && existingItem.expirationDate) sheet.querySelector("#modal-ing-expiration").value = isoDateToShortInput(existingItem.expirationDate);
   } else if (prefill) {
@@ -2963,6 +2996,11 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved) {
       expirationDate = parsed.iso;
     }
     let quantity = parseQtyOrNull(sheet.querySelector("#modal-ing-qty").value);
+    // La case représente ce qui vient d'être ajouté, pas le nouveau
+    // total (voir addQuantityMode plus haut) — additionnée maintenant,
+    // au moment d'enregistrer, jamais avant (pour ne jamais afficher un
+    // total augmenté à tort si l'écriture échoue plus bas).
+    if (addQuantityMode) quantity = (existingItem.quantity || 0) + (quantity || 0);
     const unit = unitSelect.value;
     // Déterminé maintenant (avant toute réservation), pour pouvoir
     // attacher précisément la nouvelle réservation à cet article
@@ -11908,7 +11946,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 249;
+const APP_VERSION = 250;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

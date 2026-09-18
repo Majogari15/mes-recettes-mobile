@@ -7136,3 +7136,43 @@ hors connexion.
 Suite de régression complète (37 scripts + corpus OCR) au vert.
 
 **Version testée** : v249
+
+### 107 — Retour de l'utilisateur sur le point 106 : le préremplissage "ancien total + 1" était trompeur
+
+Immédiatement après le point 106, l'utilisateur a repéré un vrai
+défaut d'ergonomie dans sa propre correction : préremplir la quantité
+avec l'ANCIEN TOTAL + 1 (ex. 3, si 2 étaient déjà présents) laisse
+penser à la personne qu'elle doit saisir combien elle vient d'EN
+AJOUTER, pas le nouveau total. Exemple concret donné par l'utilisateur
+: 2 déjà présents, la personne en ajoute 2 de plus, voit "3" préaffiché,
+le corrige en "2" (le nombre qu'elle ajoute réellement) — le total
+final devient alors 2 (écrasé) au lieu de 4 (2 déjà là + 2 ajoutés),
+reproduisant silencieusement une erreur de stock.
+
+**Corrigé** : la case quantité représente désormais TOUJOURS "combien
+j'en ajoute" pour un rescan de code-barres connu — préremplie à 1 (pas
+l'ancien total), avec une indication explicite du stock actuel affichée
+sous la case ("Stock actuel : X {unité} — indiquez ici combien vous
+venez d'en ajouter"). La quantité saisie est ADDITIONNÉE au stock
+existant seulement au moment d'enregistrer (jamais avant, cohérent avec
+le principe déjà appliqué ailleurs de ne jamais modifier l'état en
+mémoire avant confirmation de l'écriture — point 63). Un nouveau
+paramètre `opts.addQuantityMode` sur `openAddItemModal()` porte ce
+comportement, sans toucher aux autres appels du même formulaire (modifier
+manuellement un article existant continue d'afficher et de remplacer sa
+quantité absolue, comme avant).
+
+**Vérifié** (`tests/test_barcode_pantry.py`, mis à jour) :
+- Le rescan préremplit la quantité à 1 (jamais l'ancien total), avec
+  l'indication du stock actuel affichée.
+- Reproduction exacte du cas signalé : 2 déjà présents + 2 ajoutés = 4
+  au total (jamais écrasé à 2).
+- Le cas d'une unité mémorisée différente de "boîte" (Riz Basmati, kg)
+  se comporte pareillement.
+- Suite complète (`test_external_audit_fixes_round2.py`, point 63)
+  toujours au vert : un échec d'écriture pendant ce même parcours ne
+  modifie ni la mémoire ni la base.
+
+Suite de régression complète (37 scripts + corpus OCR) au vert.
+
+**Version testée** : v250

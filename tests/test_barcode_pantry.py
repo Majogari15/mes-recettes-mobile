@@ -241,13 +241,17 @@ def main():
             str(pantry_after_first),
         )
 
-        print("\n=== Rescanner le MÊME code-barres : formulaire pré-rempli (nom, unité, quantité +1), jamais d'ajout automatique silencieux ===\n")
+        print("\n=== Rescanner le MÊME code-barres : formulaire pré-rempli (nom, unité, quantité à AJOUTER = 1 par défaut), jamais d'ajout automatique silencieux ===\n")
         # Retour direct de l'utilisateur (TESTS_NON_REGRESSION.md point
         # 106) : l'ancien raccourci "ajout automatique, +1 direct" ne
         # laissait aucune façon de saisir une quantité différente ou une
         # nouvelle date de péremption sur un rescan. Le formulaire s'ouvre
-        # donc maintenant à chaque fois, avec une quantité déjà suggérée
-        # (l'ancienne + 1) plutôt qu'imposée.
+        # donc maintenant à chaque fois. Une PREMIÈRE version de ce
+        # correctif préremplissait la case avec l'ANCIEN TOTAL + 1 — jugé
+        # trompeur par l'utilisateur (voir point 107) : la case représente
+        # maintenant combien on vient d'EN AJOUTER (préremplie à 1, jamais
+        # le nouveau total), additionnée au stock existant seulement à
+        # l'enregistrement.
         page.evaluate("() => { state.screen = 'pantry'; render(); }")
         page.click("text=Scanner un code-barres")
         page.wait_for_timeout(200)
@@ -266,20 +270,29 @@ def main():
             """
         )
         check(
-            "Le formulaire (pas une alerte) s'ouvre, pré-rempli avec le nom, l'unité et la quantité +1 déjà connus",
-            rescan_prefill == {"name": "Maïs en boîte", "unit": "boîte", "qty": "2"},
+            "Le formulaire (pas une alerte) s'ouvre, pré-rempli avec le nom/l'unité connus et une quantité à AJOUTER de 1 (jamais l'ancien total)",
+            rescan_prefill == {"name": "Maïs en boîte", "unit": "boîte", "qty": "1"},
             str(rescan_prefill),
+        )
+        check(
+            "Une indication du stock actuel est affichée, pour éviter toute confusion sur ce que représente la case",
+            page.is_visible("text=Stock actuel : 1 boîte"),
         )
         page.click("#modal-confirm")
         page.wait_for_timeout(300)
         pantry_after_second = page.evaluate("() => state.pantry.filter(i => normalize(i.name) === normalize('Maïs en boîte'))")
         check(
-            "Toujours un seul article (pas de doublon), quantité passée à 2",
+            "Toujours un seul article (pas de doublon), quantité passée à 2 (1 déjà là + 1 ajouté, valeur par défaut)",
             len(pantry_after_second) == 1 and pantry_after_second[0]["quantity"] == 2,
             str(pantry_after_second),
         )
 
-        print("\n=== Rescanner encore le même code-barres : la quantité suggérée reste modifiable, et la date de péremption est saisissable ===\n")
+        print("\n=== Rescanner encore le même code-barres : la quantité saisie s'AJOUTE au stock existant, ne le remplace jamais ===\n")
+        # Cas exact soulevé par l'utilisateur : 2 déjà présents, la
+        # personne en ajoute 2 de plus -> doit obtenir 4 au total, pas 2
+        # (ce qui se serait produit avec l'ancien préremplissage "ancien
+        # total + 1", en corrigeant "3" en "2" pour indiquer les 2 ajoutés
+        # — un total qui aurait alors ÉCRASÉ les 2 déjà présents).
         page.evaluate("() => { state.screen = 'pantry'; render(); }")
         page.click("text=Scanner un code-barres")
         page.wait_for_timeout(200)
@@ -288,14 +301,14 @@ def main():
         page.fill("#barcode-manual-input", "3017620422003")
         page.click("#barcode-manual-submit")
         page.wait_for_timeout(400)
-        page.fill("#modal-ing-qty", "5")
+        page.fill("#modal-ing-qty", "2")
         page.fill("#modal-ing-expiration", "011226")
         page.click("#modal-confirm")
         page.wait_for_timeout(300)
         pantry_after_third = page.evaluate("() => state.pantry.filter(i => normalize(i.name) === normalize('Maïs en boîte'))")
         check(
-            "La quantité et la date de péremption saisies à la main sont bien prises en compte (pas figées à +1)",
-            len(pantry_after_third) == 1 and pantry_after_third[0]["quantity"] == 5 and pantry_after_third[0]["expirationDate"] == "2026-12-01",
+            "2 déjà présents + 2 ajoutés = 4 au total (jamais écrasé à 2), et la date de péremption saisie est bien prise en compte",
+            len(pantry_after_third) == 1 and pantry_after_third[0]["quantity"] == 4 and pantry_after_third[0]["expirationDate"] == "2026-12-01",
             str(pantry_after_third),
         )
 
@@ -367,15 +380,15 @@ def main():
             """
         )
         check(
-            "Le rescan pré-remplit bien l'unité mémorisée ('kg', pas 'boîte') avec la quantité +1",
-            rice_rescan_prefill == {"unit": "kg", "qty": "2"},
+            "Le rescan pré-remplit bien l'unité mémorisée ('kg', pas 'boîte') avec une quantité à ajouter de 1 (jamais l'ancien total)",
+            rice_rescan_prefill == {"unit": "kg", "qty": "1"},
             str(rice_rescan_prefill),
         )
         page.click("#modal-confirm")
         page.wait_for_timeout(300)
         rice_items = page.evaluate("() => state.pantry.filter(i => normalize(i.name) === normalize('Riz Basmati'))")
         check(
-            "Un seul article 'Riz Basmati', en kg, quantité 2 (pas de doublon en 'boîte')",
+            "Un seul article 'Riz Basmati', en kg, quantité 2 (1 déjà là + 1 ajouté, pas de doublon en 'boîte')",
             len(rice_items) == 1 and rice_items[0]["unit"] == "kg" and rice_items[0]["quantity"] == 2,
             str(rice_items),
         )
