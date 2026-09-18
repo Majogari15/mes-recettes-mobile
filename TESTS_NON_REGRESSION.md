@@ -7515,3 +7515,41 @@ d'écran manuelles clair/sombre + largeur tablette) :
 Suite de régression complète (40 scripts + corpus OCR) au vert.
 
 **Version testée** : v254
+
+### 112 — Grille 2 colonnes dès le mobile (pas seulement à partir de 720px)
+
+Retour direct de l'utilisateur avec une capture d'écran de référence (un
+mockup de l'appli en 2 colonnes sur téléphone) : la grille 2 colonnes
+introduite au point 109 ne se déclenchait qu'à partir de 720px de large
+(tablette) — sur un vrai téléphone, la liste de recettes restait donc en
+une seule colonne verticale, rendant les grandes cartes photo de la
+"vague visuelle 1" (point 111) moins spectaculaires que prévu tant
+qu'aucun écran large n'était utilisé.
+
+**Fait** : `.recipe-list` passe en grille 2 colonnes fixes
+(`grid-template-columns: repeat(2, 1fr)`) dès le mobile, sans condition
+de largeur d'écran. La media query à 720px ne fait plus que changer le
+NOMBRE de colonnes pour un écran large (`auto-fill, minmax(240px, 1fr)`,
+qui donne 2-3 colonnes selon la largeur disponible, l'écran restant de
+toute façon plafonné à 640px — voir `.screen`) plutôt que d'activer la
+grille elle-même.
+
+Ce changement s'applique à toutes les listes qui réutilisent
+`.recipe-list`/`.card.recipe-row` : la liste principale des recettes, la
+section "Favoris" de l'accueil, et la liste des menus — toutes gagnent la
+grille 2 colonnes de façon cohérente, sans code supplémentaire.
+
+**Vérifié** (capture d'écran à 360px et 390px, clair et sombre, voir
+aussi la mise à jour du test existant `test_pantry_delete_undo_and_polish.py`
+qui vérifiait auparavant l'ANCIEN comportement — colonne unique sur
+mobile — désormais volontairement changé) :
+- Sur mobile (360-390px), la liste de recettes affiche bien 2 cartes
+  côte à côte sur la même ligne, sans débordement horizontal, titres et
+  photos restent lisibles dans les deux thèmes.
+- Sur écran large (900px), la grille reste fonctionnelle (auto-fill).
+- Audit d'accessibilité (axe-core) toujours au vert (3 exécutions
+  consécutives).
+
+Suite de régression complète (40 scripts + corpus OCR) au vert.
+
+**Version testée** : v255

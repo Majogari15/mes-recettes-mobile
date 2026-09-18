@@ -372,12 +372,18 @@ a { color: inherit; }
 .chip.active { background: var(--primary-strong); border-color: var(--primary-strong); color: #fff; }
 
 /* ---------- Liste de recettes ---------- */
-.recipe-list { display: flex; flex-direction: column; gap: 14px; }
-/* Sur un écran large, affiche 2 lignes de recette côte à côte plutôt
-   qu'une seule colonne étroite — l'écran lui-même reste plafonné à
-   640px (voir .screen), donc jamais plus de 2 colonnes en pratique. */
+/* Grille 2 colonnes dès le mobile (demande explicite de l'utilisateur,
+   avec capture d'écran de référence) — la version précédente ne
+   passait en grille qu'à partir de 720px (tablette), ce qui rendait
+   les cartes photo introduites par la "vague visuelle 1" invisibles
+   en 2 colonnes sur un téléphone. */
+.recipe-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+/* Sur un écran large, plus de colonnes proportionnellement à la place
+   disponible plutôt qu'un nombre fixe de 2 — l'écran lui-même reste
+   plafonné à 640px (voir .screen), donc jamais plus de 2-3 colonnes en
+   pratique même sur tablette/desktop. */
 @media (min-width: 720px) {
-  .recipe-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .recipe-list { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
 }
 .recipe-row {
   display: flex;

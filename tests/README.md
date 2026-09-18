@@ -358,7 +358,11 @@ Depuis, la structure sépare strictement :
   flottant masqué pendant l'affichage du bandeau (chevauchement visuel
   repéré sur une capture d'écran réelle) ; grille à 2 colonnes de la
   liste de recettes sur écran large (appliquée sur la vraie classe
-  `.recipe-list`, colonne unique conservée sur mobile).
+  `.recipe-list`). Son dernier cas ("colonne unique sur mobile") a été
+  mis à jour au point 112 (TESTS_NON_REGRESSION.md) : la grille 2
+  colonnes s'applique désormais aussi au mobile, sur demande explicite
+  de l'utilisateur — le test vérifie maintenant que 2 cartes sont bien
+  côte à côte à 390px, sans débordement horizontal.
 - `test_ui_icon_replacement.py` — suite au "patch graphique" demandé
   explicitement par l'utilisateur (voir TESTS_NON_REGRESSION.md point
   110) : les emoji de CHROME d'interface (navigation du bas, bouton

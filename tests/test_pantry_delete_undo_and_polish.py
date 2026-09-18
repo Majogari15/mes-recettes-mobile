@@ -208,7 +208,13 @@ def main():
         check("Le bouton + est masqué pendant l'affichage du snackbar (ne le chevauche plus)", fab_during == "none", fab_during)
         context4.close()
 
-        print("\n=== Liste de recettes : grille à 2 colonnes sur un écran large, colonne unique sur mobile ===\n")
+        print("\n=== Liste de recettes : grille à 2 colonnes dès le mobile, plus de colonnes sur écran large ===\n")
+        # Comportement volontairement changé depuis (voir TESTS_NON_REGRESSION.md,
+        # point "grille 2 colonnes sur mobile") : demande explicite de
+        # l'utilisateur, capture d'écran de référence à l'appui — la grille
+        # 2 colonnes ne se limite plus aux écrans ≥720px, elle s'applique
+        # aussi au mobile, où les cartes photo de la "vague visuelle 1"
+        # étaient sinon quasi invisibles en 2 colonnes.
         context5 = browser.new_context()
         page5 = context5.new_page()
         errors5 = []
@@ -222,6 +228,7 @@ def main():
             async () => {
                 for (const r of await storeAll('recipes')) await storeDelete('recipes', r.id);
                 await storePut('recipes', { id: 'r1', name: 'Tarte', category: 'Dessert', ingredients: [] });
+                await storePut('recipes', { id: 'r2', name: 'Ratatouille', category: 'Plat', ingredients: [] });
                 state.recipes = await storeAll('recipes');
                 state.screen = 'recipes';
                 render();
@@ -230,11 +237,17 @@ def main():
         )
         page5.wait_for_timeout(300)
         display_mobile = page5.evaluate("() => getComputedStyle(document.querySelector('.recipe-list')).display")
+        rows = page5.query_selector_all(".recipe-list .card.recipe-row")
+        boxes_mobile = [r.bounding_box() for r in rows]
+        two_columns_mobile = len(boxes_mobile) == 2 and abs(boxes_mobile[0]["y"] - boxes_mobile[1]["y"]) < 2 and boxes_mobile[0]["x"] != boxes_mobile[1]["x"]
+        overflow_mobile = page5.evaluate("() => document.documentElement.scrollWidth > document.documentElement.clientWidth")
         page5.set_viewport_size({"width": 900, "height": 800})
         page5.wait_for_timeout(200)
         display_tablet = page5.evaluate("() => getComputedStyle(document.querySelector('.recipe-list')).display")
-        check("Sur mobile (390px), la liste reste en colonne unique (flex)", display_mobile == "flex", display_mobile)
-        check("Sur écran large (900px), la liste passe en grille", display_tablet == "grid", display_tablet)
+        check("Sur mobile (390px), la liste est bien en grille (pas flex)", display_mobile == "grid", display_mobile)
+        check("Sur mobile (390px), les 2 cartes sont côte à côte sur la même ligne (2 colonnes)", two_columns_mobile, str(boxes_mobile))
+        check("Sur mobile (390px), aucun débordement horizontal", not overflow_mobile, str(overflow_mobile))
+        check("Sur écran large (900px), la liste reste en grille", display_tablet == "grid", display_tablet)
         context5.close()
 
         errors_all = errors1 + errors2 + errors3 + errors4 + errors5
