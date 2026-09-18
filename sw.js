@@ -11,7 +11,7 @@
 // application, donc caches.keys() y voit potentiellement les caches
 // de tout le monde sur ce domaine.
 const CACHE_PREFIX = "mes-recettes-cache-";
-const CACHE_NAME = `${CACHE_PREFIX}v255`;
+const CACHE_NAME = `${CACHE_PREFIX}v256`;
 const FILES_TO_CACHE = [
   "./",
   "./index.html",

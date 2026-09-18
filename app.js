@@ -8835,8 +8835,23 @@ async function saveWeeklyPlan() {
 
 const PLAN_HISTORY_MAX = 26; // environ 6 mois, même limite que la version bureau
 
+// Un repas (déjeuner, dîner...) est composé en réalité de plusieurs
+// recettes (entrée, plat, dessert...), jamais d'une seule — chaque
+// case jour/repas contient donc désormais un TABLEAU d'assignations
+// ({recipeId, persons}), plutôt qu'une assignation unique. Les anciens
+// plannings/modèles/historiques déjà enregistrés avant ce changement
+// stockent encore une assignation unique (pas un tableau) pour chaque
+// case déjà remplie : cette fonction accepte les deux formes, pour ne
+// jamais perdre ni casser l'affichage de données existantes — aucune
+// migration réécrivant le stockage n'est nécessaire, la case se
+// convertit simplement en tableau dès qu'elle est modifiée à nouveau.
+function planSlotAssignments(assigned) {
+  if (!assigned) return [];
+  return Array.isArray(assigned) ? assigned : [assigned];
+}
+
 function planHasAnyAssignment(plan) {
-  return WEEKDAYS.some((day) => MEAL_SLOTS.some((slot) => (plan[day] || {})[slot]));
+  return WEEKDAYS.some((day) => MEAL_SLOTS.some((slot) => planSlotAssignments((plan[day] || {})[slot]).length > 0));
 }
 
 // Archive automatiquement le planning actuel avant qu'il ne soit effacé
@@ -8865,33 +8880,45 @@ function renderPlanning() {
     WEEKDAYS.forEach((day) => {
       daysHolder.appendChild(el(`<div class="section-label">${escapeHtml(translateWeekday(day))}</div>`));
       const card = el(`<div class="card" style="padding:2px 16px;margin-bottom:16px;"></div>`);
+      // Un repas se compose en réalité de plusieurs recettes (entrée,
+      // plat, dessert...), jamais d'une seule — chaque créneau affiche
+      // donc désormais autant de lignes "recette + supprimer" que de
+      // recettes assignées, plus un bouton "+ Ajouter" toujours visible
+      // pour en ajouter d'autres (aucune limite : au moins 3 pour un
+      // repas complet, mais pas imposé).
       MEAL_SLOTS.forEach((slot) => {
-        const assigned = (state.weeklyPlan[day] || {})[slot];
-        const recipe = assigned ? state.recipes.find((r) => r.id === assigned.recipeId) : null;
-        const row = el(`<div class="ingredient-item"></div>`);
-        if (recipe) {
-          row.innerHTML = `<span>${escapeHtml(translateSlot(slot))} — <strong>${escapeHtml(recipe.name)}</strong></span>`;
+        const assignments = planSlotAssignments((state.weeklyPlan[day] || {})[slot]);
+        const labelRow = el(`<div class="ingredient-item" ${assignments.length ? 'style="border-bottom:none;padding-bottom:4px;"' : ""}></div>`);
+        labelRow.innerHTML = `<span style="color:var(--text-muted);">${escapeHtml(translateSlot(slot))}</span>`;
+        const addBtn = el(`<button style="border:none;background:none;color:var(--primary);font-weight:600;font-size:13px;">${t("planning_empty_slot")}</button>`);
+        addBtn.addEventListener("click", () => {
+          openRecipePickerModal(async (recipe) => {
+            if (!state.weeklyPlan[day]) state.weeklyPlan[day] = {};
+            const arr = planSlotAssignments(state.weeklyPlan[day][slot]);
+            arr.push({ recipeId: recipe.id, persons: recipe.defaultPersons || 4 });
+            state.weeklyPlan[day][slot] = arr;
+            await saveWeeklyPlan();
+            fillDays();
+          });
+        });
+        labelRow.appendChild(addBtn);
+        card.appendChild(labelRow);
+        assignments.forEach((assigned, index) => {
+          const recipe = state.recipes.find((r) => r.id === assigned.recipeId);
+          const row = el(`<div class="ingredient-item" style="padding-top:0;${index === assignments.length - 1 ? "" : "border-bottom:none;padding-bottom:4px;"}"></div>`);
+          row.innerHTML = `<span style="padding-left:12px;">${escapeHtml(recipe ? recipe.name : "?")}</span>`;
           const clearBtn = el(`<button aria-label="${t("common_delete")}" style="width:28px;height:28px;border:none;border-radius:8px;background:var(--danger-light);color:var(--danger);">${icon("trash")}</button>`);
           clearBtn.addEventListener("click", async () => {
-            delete state.weeklyPlan[day][slot];
+            const current = planSlotAssignments(state.weeklyPlan[day][slot]);
+            current.splice(index, 1);
+            if (current.length) state.weeklyPlan[day][slot] = current;
+            else delete state.weeklyPlan[day][slot];
             await saveWeeklyPlan();
             fillDays();
           });
           row.appendChild(clearBtn);
-        } else {
-          row.innerHTML = `<span style="color:var(--text-muted);">${escapeHtml(translateSlot(slot))}</span>`;
-          const addBtn = el(`<button style="border:none;background:none;color:var(--primary);font-weight:600;font-size:13px;">${t("planning_empty_slot")}</button>`);
-          addBtn.addEventListener("click", () => {
-            openRecipePickerModal(async (recipe) => {
-              if (!state.weeklyPlan[day]) state.weeklyPlan[day] = {};
-              state.weeklyPlan[day][slot] = { recipeId: recipe.id, persons: recipe.defaultPersons || 4 };
-              await saveWeeklyPlan();
-              fillDays();
-            });
-          });
-          row.appendChild(addBtn);
-        }
-        card.appendChild(row);
+          card.appendChild(row);
+        });
       });
       daysHolder.appendChild(card);
     });
@@ -8907,10 +8934,10 @@ function renderPlanning() {
     let any = false;
     for (const day of WEEKDAYS) {
       for (const slot of MEAL_SLOTS) {
-        const assigned = (state.weeklyPlan[day] || {})[slot];
-        if (!assigned) continue;
-        const recipe = state.recipes.find((r) => r.id === assigned.recipeId);
-        if (recipe) { await addRecipeToShoppingSilent(recipe, assigned.persons); any = true; }
+        for (const assigned of planSlotAssignments((state.weeklyPlan[day] || {})[slot])) {
+          const recipe = state.recipes.find((r) => r.id === assigned.recipeId);
+          if (recipe) { await addRecipeToShoppingSilent(recipe, assigned.persons); any = true; }
+        }
       }
     }
     if (any) { state.screen = "shopping"; render(); }
@@ -8989,11 +9016,14 @@ function renderPlanningHistory() {
     let anyRow = false;
     WEEKDAYS.forEach((day) => {
       MEAL_SLOTS.forEach((slot) => {
-        const assigned = (entry.plan[day] || {})[slot];
-        if (!assigned) return;
-        const recipe = state.recipes.find((r) => r.id === assigned.recipeId);
+        const assignments = planSlotAssignments((entry.plan[day] || {})[slot]);
+        if (!assignments.length) return;
         anyRow = true;
-        card.appendChild(el(`<div class="ingredient-item"><span>${escapeHtml(translateWeekday(day))} · ${escapeHtml(translateSlot(slot))}</span><span class="ingredient-qty">${escapeHtml(recipe ? recipe.name : "?")}</span></div>`));
+        const names = assignments.map((assigned) => {
+          const recipe = state.recipes.find((r) => r.id === assigned.recipeId);
+          return recipe ? recipe.name : "?";
+        }).join(" + ");
+        card.appendChild(el(`<div class="ingredient-item"><span>${escapeHtml(translateWeekday(day))} · ${escapeHtml(translateSlot(slot))}</span><span class="ingredient-qty">${escapeHtml(names)}</span></div>`));
       });
     });
     if (!anyRow) {
@@ -12064,7 +12094,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 255;
+const APP_VERSION = 256;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

@@ -389,6 +389,19 @@ Depuis, la structure sépare strictement :
   d'accessibilité sur l'écran diagnostic, scénario exact qui avait
   révélé une chute de contraste sous le seuil AA à cause de la
   transparence des barres (corrigée en relevant leur opacité à 95%).
+- `test_weekly_plan_multi_recipe.py` — plusieurs recettes par repas dans
+  le planning de la semaine (voir TESTS_NON_REGRESSION.md point 113,
+  retour direct de l'utilisateur : un déjeuner/dîner se compose en
+  réalité d'une entrée, un plat et un dessert, jamais d'une seule
+  recette). Chaque case jour/repas contient désormais un tableau
+  d'assignations (`planSlotAssignments()`, qui accepte aussi l'ancien
+  format à assignation unique — aucune migration réécrivant le stockage
+  n'a été nécessaire). Vérifie l'ajout/la suppression individuelle de
+  plusieurs recettes sur un même créneau, qu'un ancien planning au
+  format hérité s'affiche et se convertit correctement, que la
+  génération de la liste de courses et l'archivage dans l'historique
+  prennent bien en compte toutes les recettes d'un repas (pas
+  seulement la première).
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

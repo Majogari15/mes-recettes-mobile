@@ -7553,3 +7553,70 @@ mobile — désormais volontairement changé) :
 Suite de régression complète (40 scripts + corpus OCR) au vert.
 
 **Version testée** : v255
+
+### 113 — Plusieurs recettes par repas dans le planning (entrée + plat + dessert)
+
+Retour direct de l'utilisateur : "le déjeuner et le dîner sont constitué
+généralement d'une entrée, un plat principal et un dessert, là on peut
+choisir uniquement une recette alors qu'il en faudrait au moins 3". Le
+planning de la semaine ne permettait en effet d'assigner qu'UNE seule
+recette par créneau jour/repas (`state.weeklyPlan[jour][repas] =
+{recipeId, persons}`) — vérifié dans le vrai code (`renderPlanning`)
+avant de modifier quoi que ce soit.
+
+**Fait** : chaque créneau jour/repas contient désormais un TABLEAU
+d'assignations plutôt qu'une assignation unique. Nouvelle fonction
+`planSlotAssignments(assigned)` qui accepte les DEUX formes (l'ancienne,
+un objet unique ; la nouvelle, un tableau) — utilisée à chaque lecture
+d'une case du planning (écran principal, génération de la liste de
+courses, historique). Aucune migration réécrivant le stockage n'a été
+nécessaire : une case au format hérité continue de s'afficher
+normalement, et se convertit proprement en tableau dès qu'elle est
+modifiée à nouveau (ajout d'une 2e recette) — un vrai planning déjà
+enregistré par l'utilisateur avant ce changement n'est donc jamais
+perdu ni cassé, vérifié directement en simulant ce cas précis avant
+d'écrire le test permanent.
+
+Chaque créneau affiche maintenant une ligne par recette assignée (avec
+son propre bouton de suppression individuel), plus un bouton "+
+Ajouter" toujours visible pour en ajouter d'autres — aucune limite
+imposée dans l'interface (l'utilisateur peut mettre 1, 3, ou davantage),
+la limite basse de 3 pour un repas complet restant une convention, pas
+une contrainte technique. Supprimer la dernière recette d'un créneau
+retire la case entièrement (`delete`) plutôt que de laisser un tableau
+vide, pour ne pas fausser `planHasAnyAssignment()` (qui déciderait à
+tort qu'un créneau vide compte comme "planning rempli").
+
+Trois autres endroits qui lisaient une case du planning ont été mis à
+jour pour parcourir toutes les recettes assignées, plus seulement la
+première : la génération de la liste de courses depuis le planning
+(`genBtn`), l'affichage de l'historique des semaines archivées
+(`renderPlanningHistory`, qui joint les noms avec " + " sur une seule
+ligne), et `planHasAnyAssignment()` (utilisée avant d'archiver
+automatiquement le planning actuel). Les modèles de planning et le
+réappliquage d'un historique n'ont pas eu besoin de changement : ils
+clonent `state.weeklyPlan` tel quel (`JSON.parse(JSON.stringify(...))`),
+sans jamais interpréter sa structure interne.
+
+**Vérifié** (voir `tests/test_weekly_plan_multi_recipe.py`, nouveau) :
+- 3 recettes assignées au même créneau s'affichent bien chacune sur sa
+  propre ligne, avec son propre bouton de suppression.
+- Supprimer une recette du milieu d'un créneau à 3 recettes laisse les
+  2 autres intactes.
+- Supprimer la dernière recette d'un créneau retire la case (pas un
+  tableau vide) ; `planHasAnyAssignment()` ne compte plus alors le
+  planning comme rempli.
+- Une case au format hérité (objet unique, simulée comme si elle avait
+  été enregistrée avant ce changement) s'affiche toujours correctement,
+  et se convertit en tableau de 2 éléments (sans perdre l'ancienne
+  recette) après l'ajout d'une seconde.
+- "Générer la liste de courses" ajoute bien les ingrédients des 3
+  recettes d'un repas complet (entrée + plat + dessert), pas seulement
+  la première.
+- L'archivage automatique dans l'historique (avant effacement du
+  planning) conserve la totalité des 3 recettes assignées à un repas.
+- Audit d'accessibilité (axe-core) au vert (3 exécutions consécutives).
+
+Suite de régression complète (41 scripts + corpus OCR) au vert.
+
+**Version testée** : v256
