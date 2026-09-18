@@ -6935,3 +6935,62 @@ nouveau) :
 Suite de régression complète (35 scripts + corpus OCR) au vert.
 
 **Version testée** : v246
+
+### 104 — Import de code-barres depuis une photo qui n'est pas droite : essai de plusieurs rotations
+
+Signalé par l'utilisateur avec 4 vraies photos de produits (jambon,
+boîte en carton, 2 conserves) — toutes prises de travers (portrait, à
+l'envers ou de côté, aucune droite), non reconnues par l'import photo
+de code-barres. Les 4 codes-barres ont été relus à l'œil sur les
+photos et validés par le calcul de la clé de contrôle EAN-13 :
+3245412950872, 3245411815059, 3560071006822 et 3560071493882, les 4
+valides — confirme que la lecture est correcte et que ce ne sont pas
+des codes-barres corrompus ou mal imprimés.
+
+**Limite reconnue avant correction** : le `BarcodeDetector` natif du
+navigateur (API "Shape Detection") n'existe pas dans le Chromium de
+cet environnement de test (`"BarcodeDetector" in window` renvoie
+`false`, vérifié directement) — impossible donc de reproduire ici
+l'échec exact que l'utilisateur observe sur son téléphone, ni de
+confirmer avec certitude la cause exacte. Cela dit, `decodeBarcodeImageFile()`
+transmettait jusqu'ici toujours l'image exactement comme prise, sans
+aucune tentative de rotation — contrairement au scan caméra en direct
+(appareil tenu à peu près à l'horizontale), une photo déjà prise d'un
+produit peut être cadrée dans n'importe quel sens, et un détecteur de
+code-barres statique s'est montré, dans les faits, généralement moins
+tolérant à la rotation qu'un flux vidéo en direct (optimisé, lui,
+pour un cadrage globalement horizontal en continu).
+
+**Corrigé (sans certitude que ce soit LA cause exacte, mais un vrai
+gain de robustesse dans tous les cas)** : `decodeBarcodeImageFile()`
+essaie maintenant l'image telle que prise, puis — si rien n'est
+trouvé — 3 rotations supplémentaires (90°, 180°, 270°) avant
+d'abandonner, en s'arrêtant dès qu'une rotation réussit. Réutilise
+`rotateImageClockwise()` (même fonction que la correction
+d'orientation avant l'OCR, point 16) plutôt que de dupliquer le calcul
+de rotation.
+
+**Vérifié** (voir `tests/test_barcode_rotation_retry.py`, nouveau) —
+avec le détecteur simulé, puisque le vrai n'est pas disponible ici :
+- Une réussite dès la 1ère tentative (0°) ne déclenche aucune rotation
+  inutile (comportement inchangé pour le cas déjà courant).
+- Un échec sur les 2 premières tentatives (0° et 90°) laisse bien
+  essayer la 3e (180°), qui réussit — avec les bonnes dimensions
+  d'image à chaque tentative (200×100, puis 100×200, puis 200×100).
+- Aucune rotation qui réussit -> `null` après avoir essayé les 4,
+  sans planter.
+- Une exception sur une rotation (pas seulement un tableau vide)
+  n'interrompt pas l'essai des rotations suivantes.
+- Suite de régression complète de l'import code-barres
+  (`test_barcode_pantry.py`) toujours au vert : les mocks existants
+  (succès ou échec dès le premier appel) ne sont pas affectés par la
+  boucle de rotation.
+
+**Non vérifié, à confirmer par l'utilisateur sur son téléphone** :
+que cette correction résout réellement l'échec observé sur les 4
+photos d'origine — impossible à tester avec le vrai détecteur natif
+dans cet environnement.
+
+Suite de régression complète (36 scripts + corpus OCR) au vert.
+
+**Version testée** : v247

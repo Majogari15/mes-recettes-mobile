@@ -2618,12 +2618,26 @@ async function decodeBarcodeImageFile(file) {
   canvas.width = img.naturalWidth;
   canvas.height = img.naturalHeight;
   canvas.getContext("2d").drawImage(img, 0, 0);
-  try {
-    const barcodes = await detector.detect(canvas);
-    return barcodes && barcodes.length ? barcodes[0].rawValue : null;
-  } catch (e) {
-    return null;
+  // Essaie d'abord l'image telle que prise, puis 3 rotations
+  // supplémentaires (90/180/270°) avant d'abandonner : contrairement au
+  // scan caméra en direct (appareil tenu à peu près à l'horizontale),
+  // une photo déjà prise du produit peut avoir été cadrée dans
+  // n'importe quel sens (portrait, à l'envers sur un emballage
+  // difficile à manipuler...), et le détecteur natif s'est montré, en
+  // pratique, moins tolérant à la rotation sur une image statique que
+  // sur un flux vidéo en direct. Réutilise rotateImageClockwise (même
+  // fonction que la correction d'orientation avant l'OCR) plutôt que
+  // de dupliquer le calcul de rotation.
+  for (const degrees of [0, 90, 180, 270]) {
+    const input = degrees === 0 ? canvas : await rotateImageClockwise(canvas, degrees);
+    try {
+      const barcodes = await detector.detect(input);
+      if (barcodes && barcodes.length) return barcodes[0].rawValue;
+    } catch (e) {
+      // essaie la rotation suivante
+    }
   }
+  return null;
 }
 
 async function importBarcodeFromPhotoFile(file) {
@@ -11878,7 +11892,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 246;
+const APP_VERSION = 247;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

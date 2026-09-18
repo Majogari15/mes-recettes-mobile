@@ -250,6 +250,20 @@ Depuis, la structure sépare strictement :
   une sauvegarde locale — voir TESTS_NON_REGRESSION.md points 95-96.
   Utilise `tests/fixtures/tiny_blank.png` (image minimale, son contenu
   réel n'a aucune importance puisque le détecteur est simulé).
+- `test_barcode_rotation_retry.py` — import de code-barres depuis une
+  photo qui n'est pas droite (signalé par l'utilisateur avec 4 vraies
+  photos toutes prises de travers) : `decodeBarcodeImageFile()` essaie
+  désormais l'image telle que prise puis 3 rotations supplémentaires
+  (90/180/270°) avant d'abandonner. Détecteur simulé (le vrai
+  `BarcodeDetector` n'existe pas dans ce Chromium de test — vérifié
+  directement) : réussite au 1er essai sans rotation inutile, échec
+  aux 2 premiers essais puis réussite au 3e (bonnes dimensions à
+  chaque tentative), aucune réussite -> `null` après les 4 essais sans
+  planter, une exception sur un essai n'interrompt pas les suivants —
+  voir TESTS_NON_REGRESSION.md point 104. Ce test ne prouve PAS que la
+  correction résout le cas réel signalé (impossible à vérifier sans le
+  vrai détecteur natif) — seul un nouveau test sur téléphone le
+  confirmerait.
 - `test_drag_reorder.py` — glisser-déposer manuel (liste de courses,
   garde-manger, ingrédients d'un formulaire de recette), simulé via de
   vrais événements souris que Chromium traduit en Pointer Events :
