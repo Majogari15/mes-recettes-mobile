@@ -2518,19 +2518,26 @@ function saveBarcodeIngredientMapping(barcode, name, unit) {
 // renvoie jamais d'erreur : un échec réseau ou un produit inconnu
 // donne simplement {name: null, quantityHint: null}, laissant la
 // saisie manuelle prendre le relais.
+// "networkError: true" distingue une VRAIE panne (pas de réponse, délai
+// dépassé, erreur HTTP) d'une fiche simplement absente de la base — les
+// deux donnaient jusqu'ici le même résultat ({name:null}), rendant le
+// diagnostic impossible pour la personne qui utilise l'app (impossible
+// de savoir si le produit est vraiment inconnu ou si c'est juste la
+// connexion qui a coupé). Voir openBarcodeResultModal, qui affiche un
+// message différent selon le cas.
 async function lookupProductByBarcode(barcode) {
   try {
     const res = await fetchWithTimeout(
       `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json?fields=product_name,product_name_fr,quantity,status`,
       8000
     );
-    if (!res.ok) return { name: null, quantityHint: null };
+    if (!res.ok) return { name: null, quantityHint: null, networkError: true };
     const data = await res.json();
-    if (!data || data.status !== 1 || !data.product) return { name: null, quantityHint: null };
+    if (!data || data.status !== 1 || !data.product) return { name: null, quantityHint: null, networkError: false };
     const name = (CURRENT_LANG === "fr" && data.product.product_name_fr) || data.product.product_name || null;
-    return { name: name ? name.trim() : null, quantityHint: data.product.quantity ? String(data.product.quantity).trim() : null };
+    return { name: name ? name.trim() : null, quantityHint: data.product.quantity ? String(data.product.quantity).trim() : null, networkError: false };
   } catch (e) {
-    return { name: null, quantityHint: null };
+    return { name: null, quantityHint: null, networkError: true };
   }
 }
 
@@ -2559,7 +2566,16 @@ async function addOrIncrementPantryItem(name, unit) {
 }
 
 function openBarcodeResultModal(barcode, lookup) {
-  const hint = lookup && lookup.quantityHint ? t("barcode_net_quantity_hint", { quantity: lookup.quantityHint }) : (lookup && !lookup.name ? t("barcode_product_not_found") : "");
+  // Les deux indications sont indépendantes l'une de l'autre : un
+  // ancien bug ici affichait UNIQUEMENT le poids net dès qu'il était
+  // connu, masquant alors silencieusement l'avertissement "nom non
+  // trouvé" quand la fiche produit ne comportait que le poids (cas
+  // réel constaté : nom vide mais poids renseigné) — la personne se
+  // retrouvait avec un champ nom vide sans aucune explication visible.
+  const hints = [];
+  if (lookup && lookup.quantityHint) hints.push(t("barcode_net_quantity_hint", { quantity: lookup.quantityHint }));
+  if (lookup && !lookup.name) hints.push(lookup.networkError ? t("barcode_lookup_network_error") : t("barcode_product_not_found"));
+  const hint = hints.join("\n");
   openAddItemModal(
     "pantry",
     null,
@@ -2824,7 +2840,7 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved) {
     <div class="field">
       <label for="modal-ing-name">${t("form_ingredient_name")}</label>
       <div class="autocomplete-wrap"><input type="text" id="modal-ing-name" placeholder="${t("form_ingredient_name")}"></div>
-      ${!isEdit && prefill && prefill.hint ? `<p style="font-size:12px;color:var(--text-muted);margin:4px 0 0;">${escapeHtml(prefill.hint)}</p>` : ""}
+      ${!isEdit && prefill && prefill.hint ? `<p style="font-size:12px;color:var(--text-muted);margin:4px 0 0;white-space:pre-line;">${escapeHtml(prefill.hint)}</p>` : ""}
     </div>
     <div class="field-row">
       <div class="field"><label for="modal-ing-qty">${t("form_ingredient_qty")}</label><input type="number" step="any" min="0" id="modal-ing-qty"></div>
@@ -11892,7 +11908,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 247;
+const APP_VERSION = 248;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

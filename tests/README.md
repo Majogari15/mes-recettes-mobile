@@ -264,6 +264,15 @@ Depuis, la structure sépare strictement :
   correction résout le cas réel signalé (impossible à vérifier sans le
   vrai détecteur natif) — seul un nouveau test sur téléphone le
   confirmerait.
+- `test_barcode_lookup_messages.py` — messages affichés après la
+  recherche d'un produit scanné, suite à 2 bugs confirmés par un
+  second audit externe (décodeur indépendant ZXing-C++ sur les mêmes 4
+  photos) : un poids trouvé masquait silencieusement l'avertissement
+  "nom non trouvé" (les deux s'affichent maintenant ensemble quand les
+  deux s'appliquent) ; une panne réseau et un produit vraiment absent
+  de la base étaient indiscernables (message dédié désormais pour la
+  panne réseau, y compris une erreur HTTP) — voir
+  TESTS_NON_REGRESSION.md point 105.
 - `test_drag_reorder.py` — glisser-déposer manuel (liste de courses,
   garde-manger, ingrédients d'un formulaire de recette), simulé via de
   vrais événements souris que Chromium traduit en Pointer Events :

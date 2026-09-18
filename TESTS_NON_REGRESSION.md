@@ -6994,3 +6994,72 @@ dans cet environnement.
 Suite de régression complète (36 scripts + corpus OCR) au vert.
 
 **Version testée** : v247
+
+### 105 — Deux bugs confirmés par un second audit externe sur le résultat d'un scan de code-barres
+
+Suite au point 104, l'utilisateur a partagé l'avis d'une autre IA
+ayant testé les 4 mêmes photos avec un décodeur indépendant
+(ZXing-C++, puisque le vrai `BarcodeDetector` natif de son téléphone
+Samsung n'est pas non plus disponible dans son propre environnement de
+test). Deux points structurels ont été vérifiés dans le code puis
+corrigés ; les autres points de cet avis (absence de moteur de secours
+pur JS pour les codes-barres, difficulté de lecture propre à une
+photo précise) sont des constats exacts mais non corrigés ici — voir
+plus bas.
+
+**Confirmé et corrigé** :
+1. **Un poids trouvé masquait silencieusement l'avertissement "nom
+   non trouvé"** — confirmé : `openBarcodeResultModal()` traitait les
+   deux indications (poids net / nom introuvable) comme mutuellement
+   exclusives via un `if/else`, alors qu'elles sont indépendantes.
+   Sur le produit réel signalé (300 g, aucun nom dans la fiche), seul
+   le poids s'affichait, sans aucune explication sur le champ nom
+   resté vide. Corrigé : les deux messages s'affichent maintenant
+   ensemble quand les deux s'appliquent (`white-space:pre-line` sur le
+   paragraphe pour bien les séparer visuellement).
+2. **Panne réseau et produit vraiment absent de la base
+   indiscernables** — confirmé : `lookupProductByBarcode()` renvoyait
+   exactement le même résultat (`{name: null}`) pour une vraie panne
+   (aucune réponse, délai dépassé, erreur HTTP) que pour une fiche
+   simplement absente de la base (`status !== 1`), rendant tout
+   diagnostic impossible pour la personne utilisant l'app. Un champ
+   `networkError` distinct permet maintenant d'afficher un message
+   spécifique ("impossible de vérifier ce produit en ligne") plutôt
+   que le message générique "produit non trouvé automatiquement" dans
+   ce cas.
+
+**Constats exacts, non corrigés dans ce point** :
+- **Aucun moteur de secours pur JS pour les codes-barres** — confirmé
+  structurellement (jsQR ne lit que les QR codes, voir le commentaire
+  existant dans `openBarcodeScanModal`). Ajouter un décodeur JS de
+  secours (type ZXing porté en JS) est une vraie piste, mais un
+  ajout de bibliothèque conséquent pour un gain incertain tant que le
+  point 104 (rotation) n'a pas eu l'occasion de prouver son effet sur
+  le terrain — délibérément non entrepris ici, à réévaluer selon les
+  retours de l'utilisateur.
+- **Une des 4 photos (maïs) reste probablement illisible même par un
+  décodeur robuste** — l'avis externe rapporte un échec du décodeur
+  indépendant malgré plusieurs essais de recadrage/contraste sur cette
+  photo précise : pourrait nécessiter une nouvelle photo plutôt qu'une
+  correction de code.
+- Les tests d'import photo continuent de simuler la détection
+  (`BarcodeDetector` mocké) — déjà signalé au point 104, aucun moyen
+  de le vérifier avec le vrai détecteur natif dans cet environnement.
+
+**Vérifié** (voir `tests/test_barcode_lookup_messages.py`, nouveau) :
+- Poids trouvé + nom vide -> les deux messages ("poids net" ET "non
+  trouvé automatiquement") apparaissent ensemble.
+- Régression : nom ET poids trouvés -> pas de message "non trouvé"
+  superflu.
+- Régression : produit vraiment absent (aucun poids) -> seul le
+  message générique.
+- Panne réseau (requête interceptée et annulée) -> message dédié,
+  différent du message générique "non trouvé automatiquement".
+- Erreur HTTP (500) -> même message dédié de panne réseau, pas le
+  message générique.
+- Suite complète de l'import code-barres (`test_barcode_pantry.py`)
+  toujours au vert.
+
+Suite de régression complète (37 scripts + corpus OCR) au vert.
+
+**Version testée** : v248
