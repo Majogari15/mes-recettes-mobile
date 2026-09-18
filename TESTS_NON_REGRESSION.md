@@ -7233,3 +7233,105 @@ repli réseau...), seule leur validité de forme compte désormais.
 Suite de régression complète (37 scripts + corpus OCR) au vert.
 
 **Version testée** : v251
+
+### 109 — Examen d'un paquet "ui-kit" (autre IA) : conflits réels confirmés, adoption partielle
+
+L'utilisateur a transmis un paquet de 3 fichiers (`ui-kit.js`,
+`ui-kit.css`, des consignes) produit par une autre IA n'ayant plus accès
+au dépôt réel pour le vérifier elle-même : une barre d'onglets, un
+bouton flottant (FAB) et une bibliothèque d'icônes SVG, présentés comme
+strictement additifs ("n'enveloppe que render(), ne modifie aucun
+fichier existant"). Chaque affirmation a été vérifiée dans le vrai code
+avant d'agir, plutôt que d'appliquer le paquet tel que fourni.
+
+**Conflits réels confirmés, non appliqués** :
+1. **Barre d'onglets dupliquée** — l'app dispose déjà d'une vraie
+   navigation basse (`renderBottomNav()`, classe `.bottom-nav`,
+   `position:fixed;bottom:0;z-index:30`). La nouvelle barre proposée
+   (`#tabbar`, mêmes `position:fixed;bottom:0`, mais `z-index:25`,
+   donc rendue EN DESSOUS) se serait retrouvée entièrement masquée
+   derrière la vraie barre — présente dans le DOM, injectée à chaque
+   `render()`, mais invisible et morte.
+2. **Bouton flottant dupliqué avec un comportement différent** — l'app
+   a déjà un vrai FAB contextuel (`.fab`, `position:fixed;right:18px`,
+   z-index 25) affiché sur recettes/courses/garde-manger/menus. Le
+   nouveau FAB proposé (`#fab`, position quasi identique, z-index 26,
+   donc PAR-DESSUS) aurait pris sa place visuellement, mais avec une
+   logique différente : sur l'écran garde-manger, son mode "scan"
+   recherche par texte un bouton "Scanner un code-barres" à cliquer,
+   au lieu d'ouvrir le formulaire d'ajout manuel (comportement actuel
+   du vrai bouton "+") — un vrai changement de comportement, jamais
+   demandé, découvert avant application plutôt qu'après.
+3. **Classe `recipe-grid` inexistante, `.recipe-thumb` en no-op** — la
+   consigne demandait d'ajouter une classe `recipe-grid` dans
+   `renderRecipeList()`, mais aucune trace de cette classe dans le
+   vrai code : la liste de recettes utilise déjà `.recipe-list` (voir
+   point retenu ci-dessous). La règle `.recipe-thumb { aspect-ratio:
+   16/10 }` proposée n'aurait eu aucun effet : ce thumbnail a déjà une
+   largeur ET une hauteur fixes (56×56px, une icône carrée dans une
+   ligne de liste, pas une photo de carte) — `aspect-ratio` ne
+   s'applique jamais quand les deux dimensions sont déjà fixées.
+4. **Recouvrement de valeurs déjà réglées** — `:focus-visible` et les
+   états `:active` des boutons sont déjà définis dans `styles.css`
+   (contraste déjà vérifié à plusieurs reprises cette session, voir
+   points 90-91) ; les redéfinir avec des valeurs différentes aurait
+   changé un comportement déjà accessible sans raison vérifiée.
+5. **Variables de couleur en thème sombre non vérifiées** — le paquet
+   proposait de redéfinir `--text-muted`/`--danger` en thème sombre
+   "si nécessaire" (condition non vérifiée par son auteur) : non
+   appliqué, pour ne pas risquer de régresser des valeurs déjà
+   auditées par axe-core à plusieurs reprises.
+6. Création d'une branche séparée et d'une pull request non
+   fusionnée, demandée par les consignes du paquet — non fait,
+   contraire à l'instruction explicite déjà donnée par l'utilisateur
+   plus tôt dans cette session ("je veux plus que tu crée de branche
+   à côté") : toute modification va directement sur `main`.
+
+**Retenu et appliqué, après vérification** :
+1. **Bandeau "Annuler" (snackbar) pour la suppression d'un article du
+   garde-manger** — genuinement nouveau, sans rien dupliquer : la
+   suppression reste immédiate (aucun changement de ce comportement),
+   mais un bandeau temporaire avec un bouton "Annuler" permet de
+   restaurer l'article (nom, quantité, unité, seuil, date de
+   péremption) en cas d'erreur, plutôt qu'aucun filet de sécurité du
+   tout comme avant. Fonctions `showSnackbar()`/`hideSnackbar()`
+   ajoutées directement dans `app.js` (pas de fichier séparé, pour
+   rester cohérent avec la structure à un seul fichier déjà en place).
+2. **Bug réel trouvé EN COURS d'examen, sans rapport avec le "ui-kit"
+   lui-même** : `row.querySelector("button")` sans classe précise, dans
+   le gestionnaire de suppression du garde-manger, sélectionnait à
+   tort la poignée de glisser-déposer (premier `<button>` de la ligne
+   en mode tri manuel, avant `.remove-ing`) — cliquer sur la poignée ☰
+   supprimait donc l'article au lieu de rien faire. Reproduit
+   directement avant correction (`row.querySelector(".remove-ing")`).
+3. **Grille à 2 colonnes sur écran large pour la liste de recettes** —
+   appliquée sur la vraie classe `.recipe-list` (pas une classe
+   inventée), simple ajout d'une media query `@media (min-width:
+   720px)` : aucun changement JS/HTML nécessaire. Vérifié à l'œil
+   (capture d'écran à 900px) : rendu propre, cohérent avec le design
+   existant.
+4. **Chevauchement visuel repéré sur cette même capture d'écran** :
+   le bouton flottant (+) et le nouveau snackbar occupent le même coin
+   — corrigé en masquant le bouton pendant l'affichage du snackbar
+   (`body:has(#snackbar.show) .fab { display: none; }`, repli sans
+   risque si `:has()` n'est pas supporté).
+5. **Chiffres tabulaires** (`font-variant-numeric: tabular-nums` sur
+   les quantités et champs numériques) et **animation d'entrée des
+   fenêtres modales** (respecte la règle `prefers-reduced-motion` déjà
+   en place) — polish visuel à coût nul, aucun conflit détecté.
+
+**Vérifié** (voir `tests/test_pantry_delete_undo_and_polish.py`,
+nouveau) :
+- Cliquer sur la poignée ☰ en tri manuel ne supprime plus l'article.
+- Suppression toujours immédiate ; le bandeau "Annuler" restaure
+  l'article avec la totalité de ses champs (pas seulement le nom).
+- Le snackbar disparaît seul après son délai.
+- Le bouton flottant se masque bien pendant l'affichage du snackbar.
+- La liste de recettes reste en colonne unique sur mobile, passe en
+  grille à partir de 720px de large.
+- Audit d'accessibilité (axe-core) toujours au vert, aucune nouvelle
+  violation introduite par le snackbar ou les animations.
+
+Suite de régression complète (38 scripts + corpus OCR) au vert.
+
+**Version testée** : v252

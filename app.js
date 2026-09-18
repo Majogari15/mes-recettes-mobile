@@ -599,6 +599,43 @@ function customConfirm(message) {
     sheet.querySelector("#custom-confirm-ok").focus();
   });
 }
+// Notification temporaire discrète (ex. "Article supprimé — Annuler ?"),
+// avec un bouton d'action optionnel — contrairement à customAlert/
+// customConfirm, ne bloque jamais l'interaction avec le reste de l'écran
+// et se referme seule après un délai. Un seul emplacement à la fois
+// (pas de file d'attente) : un nouvel appel remplace simplement le
+// message et l'action en cours plutôt que d'empiler plusieurs bandeaux,
+// suffisant pour l'usage actuel (une seule suppression à la fois).
+let snackbarTimer = null;
+function ensureSnackbarEl() {
+  let sb = document.getElementById("snackbar");
+  if (sb) return sb;
+  sb = el(`<div id="snackbar" role="status"><span class="snackbar-msg"></span><button type="button" class="snackbar-action"></button></div>`);
+  document.body.appendChild(sb);
+  return sb;
+}
+function showSnackbar(message, options) {
+  options = options || {};
+  const sb = ensureSnackbarEl();
+  sb.querySelector(".snackbar-msg").textContent = message;
+  const actionBtn = sb.querySelector(".snackbar-action");
+  if (options.actionLabel) {
+    actionBtn.style.display = "";
+    actionBtn.textContent = options.actionLabel;
+    actionBtn.onclick = () => { hideSnackbar(); if (options.onAction) options.onAction(); };
+  } else {
+    actionBtn.style.display = "none";
+    actionBtn.onclick = null;
+  }
+  sb.classList.add("show");
+  clearTimeout(snackbarTimer);
+  snackbarTimer = setTimeout(hideSnackbar, options.duration || 6000);
+}
+function hideSnackbar() {
+  clearTimeout(snackbarTimer);
+  const sb = document.getElementById("snackbar");
+  if (sb) sb.classList.remove("show");
+}
 function fmtQty(qty) {
   if (qty == null || qty === "") return "";
   const n = Number(qty);
@@ -3198,11 +3235,30 @@ function renderPantry() {
         </div>`);
         row._item = item;
         row.querySelector(".label").addEventListener("click", () => openAddItemModal("pantry", item));
-        row.querySelector("button").addEventListener("click", async () => {
+        // Bug corrigé : "row.querySelector("button")" sans classe
+        // précise sélectionnait à tort la poignée de glisser-déposer
+        // (premier <button> de la ligne en mode tri manuel, avant même
+        // ".remove-ing") — cliquer sur la poignée ☰ supprimait alors
+        // l'article au lieu de rien faire. Reproduit et vérifié
+        // directement avant correction.
+        row.querySelector(".remove-ing").addEventListener("click", async () => {
+          const snapshot = { ...item };
           await storeDelete("pantry", item.id);
           state.pantry = state.pantry.filter((p) => p.id !== item.id);
           await releasePantryClaimsForIngredient(normalize(item.name));
           render();
+          // Suppression toujours immédiate (comportement inchangé,
+          // jamais de confirmation bloquante ici) — seule nouveauté :
+          // un filet de sécurité pour annuler par erreur, plutôt que de
+          // devoir tout retaper si le mauvais article a été supprimé.
+          showSnackbar(t("pantry_item_deleted_snack", { name: translateIngredientName(item.name) }), {
+            actionLabel: t("common_undo"),
+            onAction: async () => {
+              await storePut("pantry", snapshot);
+              state.pantry.push(snapshot);
+              render();
+            },
+          });
         });
         list.appendChild(row);
       });
@@ -11985,7 +12041,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 251;
+const APP_VERSION = 252;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

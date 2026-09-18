@@ -340,6 +340,20 @@ Depuis, la structure sépare strictement :
   de formulaire, et un `<canvas>` généré à la volée pour les scénarios
   d'orientation (dimensions non carrées nécessaires, contrairement à
   la fixture).
+- `test_pantry_delete_undo_and_polish.py` — suite à l'examen d'un
+  paquet "ui-kit" proposé par une autre IA (tabbar/FAB/icônes SVG
+  présentés comme additifs, mais entrant en conflit réel avec la
+  navigation et le bouton flottant déjà existants — non appliqués, voir
+  TESTS_NON_REGRESSION.md point 109 pour le détail) : bug réel trouvé
+  en cours d'examen (cliquer sur la poignée ☰ en tri manuel du
+  garde-manger supprimait l'article au lieu de rien faire, sélecteur
+  trop générique) ; bandeau "Annuler" retenu pour la suppression d'un
+  article (restauration avec la totalité des champs, pas seulement le
+  nom) ; disparition automatique du bandeau après son délai ; bouton
+  flottant masqué pendant l'affichage du bandeau (chevauchement visuel
+  repéré sur une capture d'écran réelle) ; grille à 2 colonnes de la
+  liste de recettes sur écran large (appliquée sur la vraie classe
+  `.recipe-list`, colonne unique conservée sur mobile).
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

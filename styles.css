@@ -347,6 +347,12 @@ a { color: inherit; }
 
 /* ---------- Liste de recettes ---------- */
 .recipe-list { display: flex; flex-direction: column; gap: 10px; }
+/* Sur un écran large, affiche 2 lignes de recette côte à côte plutôt
+   qu'une seule colonne étroite — l'écran lui-même reste plafonné à
+   640px (voir .screen), donc jamais plus de 2 colonnes en pratique. */
+@media (min-width: 720px) {
+  .recipe-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+}
 .recipe-row {
   display: flex;
   align-items: center;
@@ -418,6 +424,10 @@ a { color: inherit; }
 }
 .ingredient-item:last-child { border-bottom: none; }
 .ingredient-qty { color: var(--text-muted); font-weight: 500; }
+/* Chiffres de largeur fixe : une quantité qui change (mode cuisine,
+   ajustement du nombre de personnes) ne fait plus "sauter" légèrement
+   le texte à côté à chaque changement de chiffre. */
+.ingredient-qty, input[type="number"] { font-variant-numeric: tabular-nums; }
 .persons-stepper {
   display: flex;
   align-items: center;
@@ -686,6 +696,37 @@ a { color: inherit; }
 }
 .fab:active { transform: scale(0.95); }
 
+/* ---------- Notification temporaire (snackbar/undo) ---------- */
+#snackbar {
+  position: fixed;
+  left: 12px; right: 12px;
+  bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 12px);
+  z-index: 85;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--text);
+  color: var(--bg);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  transform: translateY(16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+#snackbar.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+/* Le bouton flottant occupe le même coin que le snackbar (garde-manger,
+   recettes) — repéré directement sur une capture d'écran : les deux se
+   chevauchaient visuellement pendant l'affichage du snackbar. Repli
+   sans risque si :has() n'est pas supporté (le bouton reste simplement
+   affiché, comportement identique à avant ce correctif). */
+body:has(#snackbar.show) .fab { display: none; }
+.snackbar-msg { flex: 1; }
+.snackbar-action {
+  border: none; background: none; color: var(--accent-light);
+  font-weight: 700; font-size: 14px; cursor: pointer; flex-shrink: 0; padding: 4px 6px;
+}
+
 /* ---------- Bandeau d'installation ---------- */
 .install-banner {
   position: fixed;
@@ -795,6 +836,13 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .modal-sheet h2 { font-size: 18px; margin-bottom: 16px; }
 .modal-actions { display: flex; gap: 10px; margin-top: 8px; }
 .modal-actions .btn { flex: 1; }
+/* Légère animation d'entrée — respecte déjà la règle
+   prefers-reduced-motion existante plus haut (transition/animation
+   désactivées globalement dans ce cas). */
+@keyframes modal-sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes modal-fade-in { from { opacity: 0; } to { opacity: 1; } }
+.modal-sheet { animation: modal-sheet-up 0.22s cubic-bezier(0.32, 0.72, 0, 1); }
+.modal-overlay { animation: modal-fade-in 0.18s ease; }
 
 /* ---------- Gestion des ingrédients ---------- */
 .ingredient-manage-row {
