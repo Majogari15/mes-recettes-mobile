@@ -1151,9 +1151,15 @@ function renderHome() {
       lowStock.forEach((pantryItem) => {
         const qty = pantryItem.threshold;
         const existing = state.shopping.find((i) => normalize(i.name) === normalize(pantryItem.name) && i.unit === pantryItem.unit && !i.checked);
-        if (existing && qty != null && existing.quantity != null) {
-          existing.quantity += qty;
-          puts.push(existing);
+        if (existing) {
+          // Un article correspondant existe déjà (même nom, même unité) :
+          // ne jamais en créer un second en double juste parce que cette
+          // quantité-ci est inconnue — voir le même correctif dans
+          // addRecipeToShopping/addRecipeToShoppingSilent.
+          if (qty != null) {
+            existing.quantity = (existing.quantity != null ? existing.quantity : 0) + qty;
+            puts.push(existing);
+          }
         } else {
           const item = { id: uid(), name: pantryItem.name, quantity: qty, unit: pantryItem.unit, checked: false };
           state.shopping.push(item);
@@ -2215,9 +2221,20 @@ function addRecipeToShoppingSilent(recipe, persons) {
   (recipe.ingredients || []).forEach((ing) => {
     const qty = ing.quantity != null ? Number(ing.quantity) * persons : null;
     const existing = items.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
-    if (existing && qty != null && existing.quantity != null) {
-      existing.quantity += qty;
-      puts.push(existing);
+    if (existing) {
+      // Un article correspondant (même nom, même unité, pas encore
+      // coché) existe déjà : ne jamais en créer un second en double.
+      // Sans cette branche, un ingrédient dont CETTE occurrence-ci n'a
+      // pas de quantité précisée (qty === null, ex. "sel" sans dosage)
+      // ratait la condition "existing.quantity != null" ci-dessous et
+      // retombait dans le "else", créant un doublon au lieu de
+      // reconnaître l'article déjà présent — bug réel signalé par
+      // l'utilisateur (ingrédients sans quantité dupliqués en ajoutant
+      // une recette/un menu à une liste de courses déjà existante).
+      if (qty != null) {
+        existing.quantity = (existing.quantity != null ? existing.quantity : 0) + qty;
+        puts.push(existing);
+      }
     } else {
       const item = { id: uid(), name: ing.name, quantity: qty, unit: ing.unit, checked: false };
       items.push(item);
@@ -2276,14 +2293,20 @@ async function addRecipeToShopping(recipe, persons) {
   for (const ing of plan) {
     const existing = items.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
     let resultItem;
-    if (existing && ing.quantity != null && existing.quantity != null) {
-      existing.quantity += ing.quantity;
+    if (existing) {
+      // Voir le même correctif dans addRecipeToShoppingSilent : un
+      // ingrédient sans quantité précisée ne doit jamais créer un
+      // doublon d'un article déjà présent (même nom, même unité).
       resultItem = existing;
+      if (ing.quantity != null) {
+        existing.quantity = (existing.quantity != null ? existing.quantity : 0) + ing.quantity;
+        puts.push(existing);
+      }
     } else {
       resultItem = { id: uid(), name: ing.name, quantity: ing.quantity, unit: ing.unit, checked: false };
       items.push(resultItem);
+      puts.push(resultItem);
     }
-    puts.push(resultItem);
     // Attachée à l'article de courses réel qui en résulte (existant
     // fusionné, ou nouvellement créé) — permet de la libérer
     // précisément si CET article est ensuite supprimé ou modifié.
@@ -12094,7 +12117,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 256;
+const APP_VERSION = 257;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

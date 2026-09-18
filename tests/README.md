@@ -402,6 +402,17 @@ Depuis, la structure sépare strictement :
   génération de la liste de courses et l'archivage dans l'historique
   prennent bien en compte toutes les recettes d'un repas (pas
   seulement la première).
+- `test_shopping_no_duplicate_missing_qty.py` — ne plus dupliquer un
+  article de la liste de courses quand l'ingrédient ajouté (recette,
+  menu, planning, rappel "stock bas" de l'accueil) n'a pas de quantité
+  précisée (voir TESTS_NON_REGRESSION.md point 114, signalé par
+  l'utilisateur avec capture d'écran). Cause : la fusion avec un article
+  déjà présent n'avait lieu QUE si les deux quantités étaient non
+  nulles — un ingrédient sans quantité ratait toujours cette condition
+  et créait un doublon. Vérifie les 3 combinaisons (existant/ajout avec
+  ou sans quantité), qu'un article déjà coché n'est toujours pas
+  réutilisé, et un scénario de bout en bout reproduisant le cas exact
+  signalé (recette ajoutée à une liste déjà existante).
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

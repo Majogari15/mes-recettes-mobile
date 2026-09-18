@@ -7620,3 +7620,58 @@ sans jamais interpréter sa structure interne.
 Suite de régression complète (41 scripts + corpus OCR) au vert.
 
 **Version testée** : v256
+
+### 114 — Ingrédients sans quantité dupliqués en ajoutant une recette/un menu à une liste de courses déjà existante
+
+Retour direct de l'utilisateur avec une capture d'écran : ajouter une
+recette ou un menu à une liste de courses déjà existante créait des
+doublons — précisément pour les ingrédients qui n'ont pas de quantité
+indiquée dans la recette (ex. "sel" sans dosage). Diagnostiqué en lisant
+le vrai code avant de le modifier : trois endroits distincts partageaient
+exactement la même erreur.
+
+**Cause confirmée** : `addRecipeToShoppingSilent()` (planning, menus),
+`addRecipeToShopping()` (bouton "Ajouter aux courses" d'une fiche
+recette) et le rappel "stock bas" de l'accueil recherchaient bien un
+article déjà présent dans la liste (même nom, même unité, pas coché),
+mais ne le réutilisaient QUE si les DEUX quantités (celle déjà dans la
+liste ET celle ajoutée) étaient non nulles :
+
+```js
+if (existing && qty != null && existing.quantity != null) { /* fusionne */ }
+else { /* crée un nouvel article */ }
+```
+
+Un ingrédient sans quantité (`qty === null`) ratait cette condition même
+quand un article correspondant existait déjà, et retombait dans le
+"else" — créant un doublon au lieu de reconnaître l'article déjà
+présent. Le rappel "stock bas" de l'accueil avait le même défaut (jamais
+signalé par l'utilisateur, corrigé par cohérence, cause identique).
+
+**Corrigé** : dès qu'un article correspondant existe, il est toujours
+réutilisé (jamais de doublon) — sa quantité n'est mise à jour que si le
+nouvel ajout en précise une (en partant de 0 si l'article existant n'en
+avait pas encore). Un article déjà coché n'est toujours pas réutilisé
+(comportement existant, inchangé) : cocher un article "termine" cette
+occurrence, un ajout ultérieur du même ingrédient doit repartir sur un
+nouvel article.
+
+**Vérifié** (voir `tests/test_shopping_no_duplicate_missing_qty.py`,
+nouveau, y compris un scénario de bout en bout reproduisant exactement
+le cas signalé — recette ajoutée à une liste déjà existante) :
+- Existant sans quantité + ajout sans quantité → aucun doublon.
+- Existant avec quantité + ajout sans quantité → aucun doublon, quantité
+  existante conservée.
+- Existant sans quantité + ajout avec quantité → aucun doublon, quantité
+  mise à jour.
+- Un article déjà coché n'est pas réutilisé (comportement inchangé,
+  vérifié pour ne pas avoir régressé avec ce correctif).
+- Scénario réel : une recette avec un ingrédient sans quantité (déjà
+  dans la liste), un avec quantité (cumulé correctement) et un nouveau
+  (ajouté), ajoutée à une liste de courses déjà existante — exactement
+  3 articles au total, aucun doublon.
+- Audit d'accessibilité (axe-core) au vert (3 exécutions consécutives).
+
+Suite de régression complète (42 scripts + corpus OCR) au vert.
+
+**Version testée** : v257
