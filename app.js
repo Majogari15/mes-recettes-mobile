@@ -8889,6 +8889,17 @@ function renderBackup() {
           // est tout de même mis en sécurité par téléchargement
           // classique, avec un message explicite — même logique que
           // pour l'export classique, voir son commentaire ci-dessus.
+          //
+          // Message dédié (pas backup_share_fallback_notice, utilisé
+          // pour l'export JSON) : navigator.canShare() peut répondre
+          // "oui" pour un fichier .zip sur cet appareil (affichant donc
+          // ce bouton) alors que navigator.share() lui-même refuse
+          // ensuite (NotAllowedError) — de nombreux navigateurs ne
+          // permettent pas le partage direct de fichiers .zip via le
+          // Web Share API, une restriction déjà rencontrée et
+          // documentée (voir TESTS_NON_REGRESSION.md point 59). Le
+          // message précise que c'est une limitation connue, pas un
+          // bug de l'application, pour éviter d'inquiéter inutilement.
           const url = URL.createObjectURL(readySharedFile);
           const a = document.createElement("a");
           a.href = url;
@@ -8898,7 +8909,7 @@ function renderBackup() {
           a.remove();
           URL.revokeObjectURL(url);
           const detail = result.error ? `\n\n(${result.error})` : "";
-          await customAlert(t("backup_share_fallback_notice") + detail);
+          await customAlert(t("backup_shared_share_fallback_notice") + detail);
         }
       });
     });
@@ -12579,7 +12590,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 266;
+const APP_VERSION = 267;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

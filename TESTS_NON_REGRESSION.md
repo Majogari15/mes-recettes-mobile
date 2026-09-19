@@ -8258,3 +8258,59 @@ révélé le bug initial (les tests automatisés d'un round précédent ne
 l'avaient pas détecté faute de vérifier le chargement réel de l'image).
 
 **Version testée** : v266
+
+### 124 — Message dédié quand le partage natif échoue pour la sauvegarde partagée (.zip)
+
+L'utilisateur a testé le correctif du point 123 (photos) avec succès
+(import par lien, ancienne recette, export/import JSON, partage avec
+l'app Windows : tout fonctionne), mais a signalé, capture d'écran à
+l'appui, un problème repéré en marge : le bouton "Partager la
+sauvegarde" de la section "Sauvegarde partagée avec l'app Windows"
+affiche un message d'erreur (`NotAllowedError — Permission denied`) au
+lieu du menu de partage Android natif attendu — alors que le bouton
+équivalent pour la sauvegarde JSON classique fonctionne correctement.
+
+**Cause** : ce problème précis avait déjà été rencontré et documenté
+dans ce projet (point 59, v203) — Chromium exclut `.zip` de sa liste
+d'extensions autorisées pour le Web Share API. Sur l'appareil de
+l'utilisateur, `navigator.canShare({files:[zipFile]})` répond
+désormais "oui" (affichant donc le bouton), mais `navigator.share()`
+échoue quand même à l'exécution avec `NotAllowedError` — signe que le
+comportement de Chromium a évolué depuis (le blocage se produit
+maintenant à un niveau différent de celui testé en v203), sans que
+Claude puisse vérifier avec certitude la liste actuelle d'extensions
+autorisées par Chromium (accès direct à la documentation Chromium/
+web.dev bloqué depuis cet environnement — recherche web utilisée à la
+place, sans confirmation définitive).
+
+**Décision de l'utilisateur** (questionné explicitement avant tout
+changement) : garder le bouton visible plutôt que le cacher à nouveau
+(l'option retenue en v203), et seulement améliorer le message affiché
+en cas d'échec.
+
+**Corrigé** : nouvelle clé de traduction dédiée
+(`backup_shared_share_fallback_notice`, 4 langues) utilisée
+uniquement par le bouton de partage ZIP — précise que le partage direct
+de fichiers `.zip` n'est pas pris en charge par de nombreux
+navigateurs, que ce n'est pas un bug de l'application, et que la
+sauvegarde reste tout de même enregistrée dans Téléchargements. Le
+message générique (`backup_share_fallback_notice`) reste inchangé pour
+le bouton de partage JSON classique, non affecté par ce problème.
+Alternative suggérée à l'utilisateur, sans changement de code associé :
+partager le fichier déjà enregistré dans Téléchargements depuis un
+gestionnaire de fichiers Android (ex. Mes fichiers, Files by Google) —
+son propre bouton "Partager" passe par le partage natif Android
+directement, sans la restriction spécifique au Web Share API du
+navigateur.
+
+**Vérifié** (voir `tests/test_zip_share_fallback_message.py`, nouveau,
+2 vérifications via Playwright) : reproduit exactement le scénario du
+signalement (`navigator.canShare` simulé pour répondre "oui",
+`navigator.share` simulé pour rejeter avec `NotAllowedError`, comme
+observé sur l'appareil de l'utilisateur) — confirme que le nouveau
+message dédié s'affiche pour le bouton ZIP (avec le détail technique de
+l'erreur), et que le bouton JSON classique garde son message générique
+inchangé dans le même scénario d'échec. Suite de régression complète
+(52 scripts + corpus OCR) au vert.
+
+**Version testée** : v267
