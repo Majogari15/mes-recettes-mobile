@@ -8398,4 +8398,12 @@ réimportable (`recipes.json` retrouvé après un vrai passage par
 retiré) ; le bouton JSON classique reste inchangé. Suite de régression
 complète (52 scripts + corpus OCR) au vert.
 
+**Confirmé physiquement par l'utilisateur** : le partage ouvre bien
+désormais le menu Android natif complet, comme attendu. Côté Windows,
+il a vérifié qu'en renommant manuellement le fichier `.txt` reçu en
+`.zip`, l'import fonctionne correctement — confirme que le contenu de
+l'archive reste intact malgré le déguisement. Il ajoutera de son côté
+ce renommage automatique à l'import de l'application Windows, pour
+qu'aucune étape manuelle ne soit plus nécessaire.
+
 **Version testée** : v268
