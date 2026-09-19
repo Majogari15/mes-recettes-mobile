@@ -428,6 +428,17 @@ Depuis, la structure sépare strictement :
   réelle, `importAllData`, `addRecipeToShoppingSilent` avec un
   `storePut` simulé en échec, rendu réel des lignes de courses/garde-
   manger, inspection du code source de `sw.js`).
+- `test_shopping_partial_quantity_display.py` — suite au point 115,
+  demande explicite de l'utilisateur (voir TESTS_NON_REGRESSION.md
+  point 116) : affiche "... + quantité non précisée" au lieu de
+  fusionner silencieusement une quantité connue et une quantité non
+  précisée pour le même article de courses. Vérifie le marqueur
+  `partialQuantity` posé (ou non) dans les 3 points d'ajout qui
+  fusionnent un article existant (`addRecipeToShoppingSilent`,
+  `addRecipeToShopping`, rappel "stock bas" de l'accueil), sa
+  persistance à travers une fusion ultérieure, le suffixe réellement
+  affiché à l'écran (texte et `aria-label`), et son effacement lors
+  d'une modification manuelle via le formulaire d'édition.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

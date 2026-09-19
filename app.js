@@ -1165,11 +1165,12 @@ function renderHome() {
           // ne jamais en créer un second en double juste parce que cette
           // quantité-ci est inconnue — voir le même correctif dans
           // addRecipeToShopping/addRecipeToShoppingSilent.
-          if (qty != null) {
+          const merge = computeShoppingMerge(existing, qty);
+          if (merge) {
             // Écrit et confirmé avant toute mutation de l'état en
             // mémoire — voir le même correctif dans
             // addRecipeToShopping/addRecipeToShoppingSilent.
-            const updated = { ...existing, quantity: (existing.quantity != null ? existing.quantity : 0) + qty };
+            const updated = { ...existing, ...merge };
             await storePut("shopping", updated);
             Object.assign(existing, updated);
           }
@@ -2227,6 +2228,29 @@ async function saveRecipeForm(wrap, existing) {
 /* ======================================================================
    LISTE DE COURSES
    ====================================================================== */
+// Calcule le résultat de la fusion d'une quantité ajoutée (qty, peut
+// être null si l'ingrédient n'a pas de quantité précisée) dans un
+// article de courses déjà présent (existing). Si l'une des deux
+// quantités en jeu (celle déjà là, celle ajoutée) est inconnue alors
+// que l'autre ne l'est pas, le nombre résultant ne représente plus
+// qu'UNE PARTIE du besoin réel — partialQuantity le signale, pour que
+// l'affichage le précise ("5g + quantité non précisée") au lieu de
+// laisser croire à tort que ce nombre est le total exact. Retourne
+// null si rien ne doit changer (aucune écriture nécessaire).
+function computeShoppingMerge(existing, qty) {
+  if (qty != null) {
+    return {
+      quantity: (existing.quantity != null ? existing.quantity : 0) + qty,
+      // Une quantité déjà "partielle" le reste : la nouvelle valeur ne
+      // comble jamais la part inconnue laissée par un ajout antérieur.
+      partialQuantity: existing.quantity == null ? true : !!existing.partialQuantity,
+    };
+  }
+  if (existing.quantity != null && !existing.partialQuantity) {
+    return { quantity: existing.quantity, partialQuantity: true };
+  }
+  return null;
+}
 async function addRecipeToShoppingSilent(recipe, persons) {
   const items = state.shopping;
   for (const ing of recipe.ingredients || []) {
@@ -2242,14 +2266,15 @@ async function addRecipeToShoppingSilent(recipe, persons) {
       // reconnaître l'article déjà présent — bug réel signalé par
       // l'utilisateur (ingrédients sans quantité dupliqués en ajoutant
       // une recette/un menu à une liste de courses déjà existante).
-      if (qty != null) {
+      const merge = computeShoppingMerge(existing, qty);
+      if (merge) {
         // La quantité en mémoire n'est mise à jour qu'APRÈS confirmation
         // de l'écriture (sur une copie, jamais en modifiant "existing"
         // avant coup) — sinon un échec d'écriture (quota IndexedDB
         // dépassé...) laissait une quantité augmentée à l'écran alors
         // qu'elle n'avait jamais été réellement enregistrée, bug réel
         // confirmé avant ce correctif.
-        const updated = { ...existing, quantity: (existing.quantity != null ? existing.quantity : 0) + qty };
+        const updated = { ...existing, ...merge };
         await storePut("shopping", updated);
         Object.assign(existing, updated);
       }
@@ -2314,12 +2339,13 @@ async function addRecipeToShopping(recipe, persons) {
       // ingrédient sans quantité précisée ne doit jamais créer un
       // doublon d'un article déjà présent (même nom, même unité).
       resultItem = existing;
-      if (ing.quantity != null) {
+      const merge = computeShoppingMerge(existing, ing.quantity);
+      if (merge) {
         // Écrit et confirmé AVANT toute mutation de l'état en mémoire
         // (sur une copie) — sinon un échec d'écriture laissait une
         // quantité augmentée à l'écran sans jamais avoir été
         // réellement enregistrée, bug réel confirmé avant ce correctif.
-        const updated = { ...existing, quantity: (existing.quantity != null ? existing.quantity : 0) + ing.quantity };
+        const updated = { ...existing, ...merge };
         await storePut("shopping", updated);
         Object.assign(existing, updated);
       }
@@ -2464,7 +2490,12 @@ function shoppingItemRow(item, wrap, manualMode) {
   // modification — un <span> n'est ni focalisable ni activable au
   // clavier, rendant la modification inaccessible sans souris/tactile.
   // Deux défauts réels confirmés avant ce correctif.
-  const itemLabel = `${translateIngredientName(item.name)}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + translateUnit(item.unit) : ""}`;
+  // partialQuantity (voir computeShoppingMerge) : ce nombre ne couvre
+  // qu'une partie du besoin réel — l'autre partie vient d'un ajout où
+  // l'ingrédient n'avait pas de quantité précisée. Sans ce suffixe, la
+  // quantité affichée pouvait laisser croire à tort qu'elle était
+  // complète.
+  const itemLabel = `${translateIngredientName(item.name)}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + translateUnit(item.unit) + (item.partialQuantity ? t("shopping_quantity_partial_suffix") : "") : ""}`;
   const row = el(`<div class="shopping-item ${item.checked ? "checked" : ""}">
     ${manualMode ? `<button type="button" class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</button>` : ""}
     <input type="checkbox" aria-label="${escapeHtml(itemLabel)}" ${item.checked ? "checked" : ""}>
@@ -12172,7 +12203,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 258;
+const APP_VERSION = 259;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

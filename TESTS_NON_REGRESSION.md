@@ -7805,3 +7805,45 @@ consécutives). Suite de régression complète (43 scripts + corpus OCR)
 au vert.
 
 **Version testée** : v258
+
+### 116 — Affichage explicite d'une quantité partielle dans la liste de courses ("5g + quantité non précisée")
+
+Suite directe du point 115 : le compromis délibéré du point 114 (fusionner
+toujours un article déjà présent plutôt que de créer un doublon, même
+quand une des deux quantités en jeu n'est pas précisée) affichait
+silencieusement le nombre connu, sans indiquer qu'une partie du besoin
+restait non chiffrée. L'utilisateur a explicitement demandé
+l'affichage proposé en réponse au point 115 : "5g + quantité non
+précisée" plutôt qu'une fusion muette.
+
+**Implémenté** : un nouveau champ `partialQuantity` sur l'article de
+courses, posé par une fonction commune aux 3 points d'ajout qui
+fusionnent un article existant (`addRecipeToShoppingSilent`,
+`addRecipeToShopping`, rappel "stock bas" de l'accueil) :
+
+- Quantité connue fusionnée avec une quantité inconnue (dans un sens
+  comme dans l'autre) → `partialQuantity = true`, quantité affichée
+  suivie de " + quantité non précisée" (nouvelle clé de traduction
+  `shopping_quantity_partial_suffix`, dans les 4 langues).
+- Deux quantités connues fusionnées → jamais marqué partiel (le total
+  est exact).
+- Deux quantités inconnues fusionnées → l'article reste simplement
+  sans quantité (comportement inchangé, rien à signaler).
+- Une fois posé, le marqueur survit à une fusion quantifiée
+  ultérieure (le nombre affiché ne "rattrape" jamais la part restée
+  non précisée par un ajout antérieur).
+- Une modification manuelle de la quantité via le formulaire
+  d'édition (courses ou garde-manger) reprend entièrement la main sur
+  la valeur et efface le marqueur — l'utilisateur a alors
+  explicitement fourni un nombre qu'il considère exact.
+
+**Vérifié** (voir `tests/test_shopping_partial_quantity_display.py`,
+nouveau) : les 3 points d'ajout posent bien le marqueur dans les bons
+cas et jamais dans les autres, le marqueur persiste à travers une
+fusion ultérieure, le suffixe est bien visible à l'écran (texte ET
+`aria-label` de la case à cocher) uniquement sur l'article concerné,
+et une modification manuelle l'efface. Audit d'accessibilité (axe-core)
+au vert (3 exécutions consécutives). Suite de régression complète
+(44 scripts + corpus OCR) au vert.
+
+**Version testée** : v259
