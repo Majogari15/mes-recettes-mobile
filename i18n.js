@@ -2680,8 +2680,13 @@ const UNIT_KEYS = {
   "autre": "unit_other",
 };
 
-let CURRENT_LANG = localStorage.getItem("lang") || (navigator.language || "fr").slice(0, 2);
-if (!TRANSLATIONS[CURRENT_LANG]) CURRENT_LANG = "fr";
+let CURRENT_LANG = localStorage.getItem("lang") || (navigator.language || "en").slice(0, 2);
+// Repli sur l'anglais (pas le français) : la langue du navigateur/
+// téléphone n'est pas forcément liée à la nationalité de la personne
+// qui l'utilise, et l'anglais reste la langue la plus généralement
+// comprise parmi celles non couvertes par les 4 traductions
+// disponibles.
+if (!TRANSLATIONS[CURRENT_LANG]) CURRENT_LANG = "en";
 // Synchronise dès le chargement initial (pas seulement lors d'un
 // changement manuel via setLang) — sans ça, un appareil détecté en
 // anglais/espagnol/allemand dès la première visite gardait quand même

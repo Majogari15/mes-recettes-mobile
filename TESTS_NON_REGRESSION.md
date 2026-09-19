@@ -8167,3 +8167,38 @@ unique par entrée de journal, à ajouter d'abord ; et la modularisation
 du code recommandée par le même audit.
 
 **Version testée** : v264
+
+### 122 — Repli sur l'anglais (et non plus le français) pour une langue du navigateur non supportée
+
+L'utilisateur a demandé si l'application détectait bien la langue du
+téléphone au tout premier lancement, et si une langue non couverte par
+les 4 disponibles (fr/en/es/de) pouvait basculer par défaut sur
+l'anglais plutôt que le français. Vérifié dans le code (`i18n.js`)
+avant toute réponse : la détection au premier lancement existait déjà
+(`navigator.language`, uniquement si aucun choix n'est encore
+enregistré dans `localStorage`), mais le repli en cas de langue non
+supportée tombait sur le français, jamais testé/documenté comme tel
+jusqu'ici.
+
+**Modifié** : `CURRENT_LANG` retombe désormais sur `"en"` (et non plus
+`"fr"`) à la fois pour l'absence de `navigator.language` et pour une
+langue détectée qui ne fait pas partie des 4 traductions disponibles —
+l'anglais restant la langue la plus généralement comprise parmi celles
+non couvertes. Le choix déjà enregistré (`localStorage.lang`, qu'il
+vienne d'un lancement précédent ou d'un changement manuel via
+`setLang()`) garde toujours la priorité sur la langue du navigateur,
+supportée ou non — comportement inchangé.
+
+**Vérifié** (voir `tests/test_language_detection.py`, nouveau, 4
+vérifications via Playwright, chacune avec un vrai contexte de
+navigateur configuré sur une locale différente — pas une simulation en
+JS après coup, pour tester le vrai chemin de code qui s'exécute au tout
+premier chargement de `i18n.js`) : une langue supportée (espagnol) est
+bien adoptée au premier lancement, une langue non supportée (italien)
+retombe bien sur l'anglais (plus le français), un choix déjà enregistré
+(allemand) garde la priorité sur une langue navigateur non supportée, et
+une langue supportée déjà couverte (français) continue d'être détectée
+normalement. Suite de régression complète (50 scripts + corpus OCR) au
+vert.
+
+**Version testée** : v265

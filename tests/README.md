@@ -499,6 +499,16 @@ Depuis, la structure sépare strictement :
   base64 dans le JSON, format externe inchangé), l'export PDF, et le
   cycle de vie des URL d'objet (révocation au rendu suivant, pas de
   fuite mémoire).
+- `test_language_detection.py` — suite à une question de l'utilisateur
+  (voir TESTS_NON_REGRESSION.md point 122) : détection de la langue du
+  navigateur/téléphone au tout premier lancement, avec repli sur
+  l'anglais (et non plus le français) pour une langue non parmi les 4
+  supportées (fr/en/es/de). Vérifie, via de vrais contextes Playwright
+  configurés sur des locales différentes (pas une simulation en JS
+  après coup) : qu'une langue supportée est bien adoptée, qu'une langue
+  non supportée retombe bien sur l'anglais, qu'un choix déjà enregistré
+  garde toujours la priorité sur le navigateur, et que la détection
+  d'une langue déjà couverte (français) reste inchangée.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.
