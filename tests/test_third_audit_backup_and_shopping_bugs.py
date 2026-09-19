@@ -133,7 +133,7 @@ def main():
                 const existing = { id: 'shared-id-1', name: 'Tarte', category: 'Dessert', ingredients: [], defaultPersons: 4 };
                 await storePut('recipes', existing);
                 state.recipes = await storeAll('recipes');
-                const zipRecipe = recipeToSharedFormat({ ...existing, name: 'Tarte (mise à jour)' }).json;
+                const zipRecipe = (await recipeToSharedFormat({ ...existing, name: 'Tarte (mise à jour)' })).json;
                 const entries = [{ name: 'recipes.json', data: utf8Encode(JSON.stringify([zipRecipe])) }];
                 const zipBuffer = await buildZipFile(entries);
                 const file = new File([zipBuffer], 'partage.zip', { type: 'application/zip' });

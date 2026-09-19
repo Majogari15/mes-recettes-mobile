@@ -93,13 +93,18 @@ def main():
             """
             async () => {
                 const photoDataUri = "data:image/jpeg;base64," + btoa("fake jpeg bytes test permanent");
+                // La photo est stockée en Blob en interne (voir
+                // TESTS_NON_REGRESSION.md point 121) — dataUrlToBlob()
+                // reproduit ici ce qu'une vraie recette aurait déjà après
+                // migration/capture, jamais une chaîne brute comme avant.
+                const photoBlob = dataUrlToBlob(photoDataUri);
                 const recipe = {
                     id: 'test-r1', name: 'Recette de test', category: 'Dessert', difficulty: 'Facile',
                     defaultPersons: 4, prepTime: 20, cookTime: 30, favorite: true, vegetarian: true,
                     wishlist: false, ingredients: [{name:'pommes', quantity:4, unit:'pièce'}],
                     allergens: ['gluten'], description: 'Une description', notes: 'Une note',
                     personalRating: 5, familyOpinion: '', improvementNotes: '', actualDifficulty: '',
-                    photo: photoDataUri, createdAt: '2026-01-01T00:00:00.000Z',
+                    photo: photoBlob, createdAt: '2026-01-01T00:00:00.000Z',
                     cookLog: [{date:'2026-01-05T12:00:00.000Z', note:'Bon', photo:null}], timesCooked: 1,
                 };
                 await storePut('recipes', recipe);
@@ -121,12 +126,14 @@ def main():
                 const zipFile = new File([zipBlob], 'test.zip', { type: 'application/zip' });
                 const report = await restoreFromSharedZip(zipFile, false);
                 const recipesAfter = await storeAll('recipes');
+                const recipeAfter = recipesAfter.find((r) => r.id === 'test-r1');
+                const photoAfterDataUri = recipeAfter && recipeAfter.photo instanceof Blob ? await blobToDataUrl(recipeAfter.photo) : null;
 
                 return {
                     report,
                     recipeNames: recipesAfter.map((r) => r.name),
-                    recipe: recipesAfter.find((r) => r.id === 'test-r1'),
-                    photoMatches: recipesAfter.find((r) => r.id === 'test-r1')?.photo === photoDataUri,
+                    recipe: recipeAfter,
+                    photoMatches: photoAfterDataUri === photoDataUri,
                 };
             }
             """

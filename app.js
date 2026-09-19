@@ -856,12 +856,32 @@ let _previousScreen = null;
 // partir du haut comme avant.
 const _scrollPositions = {};
 let _restoreScrollOnNextRender = false;
+// URL d'objet créées pour le rendu EN COURS (voir photoObjectUrl,
+// utilisée par tout affichage de recipe.photo/cookLog[].photo — un
+// Blob depuis ce round, jamais une chaîne base64) — révoquées au tout
+// début du PROCHAIN rendu, jamais avant : sans ça, une URL encore
+// utilisée par le DOM affiché serait révoquée alors qu'elle sert
+// encore. render() reconstruisant #app en entier à chaque changement
+// d'écran (voir "app.innerHTML = ''" juste en dessous), chaque photo
+// affichée obtient une URL fraîche à chaque rendu — jamais réutilisée
+// d'un rendu à l'autre, mais jamais non plus laissée orpheline
+// indéfiniment (contrairement à un cache par Blob, qui ne revoquerait
+// jamais lui-même l'URL navigateur sous-jacente).
+let _renderPhotoUrls = [];
+function photoObjectUrl(photo) {
+  if (!(photo instanceof Blob)) return "";
+  const url = URL.createObjectURL(photo);
+  _renderPhotoUrls.push(url);
+  return url;
+}
 function render() {
   if (_previousScreen === "importPhoto" && state.screen !== "importPhoto" && sharedTesseractWorker) {
     terminateSharedTesseractWorker().catch(() => { /* sans conséquence, nettoyage best-effort */ });
   }
   if (_previousScreen) _scrollPositions[_previousScreen] = window.scrollY;
   _previousScreen = state.screen;
+  _renderPhotoUrls.forEach((url) => URL.revokeObjectURL(url));
+  _renderPhotoUrls = [];
   app.innerHTML = "";
   const topbar = renderTopbar();
   const screenEl = document.createElement("main");
@@ -1364,7 +1384,7 @@ function renderRecipeRow(recipe) {
   const row = el(`<button class="card recipe-row"></button>`);
   const thumb = el(`<div class="recipe-thumb"></div>`);
   if (recipe.photo) {
-    thumb.innerHTML = `<img src="${escapeHtml(recipe.photo)}" alt="">`;
+    thumb.innerHTML = `<img src="${photoObjectUrl(recipe.photo)}" alt="">`;
   } else {
     thumb.textContent = "🍽️";
   }
@@ -1519,7 +1539,7 @@ function renderRecipeView() {
   }
   const wrap = el(`<div></div>`);
   const hero = el(`<div class="recipe-hero"></div>`);
-  hero.innerHTML = r.photo ? `<img src="${escapeHtml(r.photo)}" alt="">` : "🍽️";
+  hero.innerHTML = r.photo ? `<img src="${photoObjectUrl(r.photo)}" alt="">` : "🍽️";
   wrap.appendChild(hero);
 
   const stats = el(`<div class="stat-row"></div>`);
@@ -1875,7 +1895,7 @@ function renderRecipeForm() {
   }
 
   const photoBox = el(`<div class="photo-upload">
-    ${state.formPhoto ? `<img src="${escapeHtml(state.formPhoto)}" alt="">` : `<div>${t("form_photo")}</div>`}
+    ${state.formPhoto ? `<img src="${photoObjectUrl(state.formPhoto)}" alt="">` : `<div>${t("form_photo")}</div>`}
   </div>`);
   wrap.appendChild(photoBox);
 
@@ -1909,8 +1929,12 @@ function renderRecipeForm() {
         canvas.width = img.width * scale;
         canvas.height = img.height * scale;
         canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-        state.formPhoto = canvas.toDataURL("image/jpeg", 0.8);
-        render();
+        // Blob, jamais une chaîne base64 — voir le commentaire sur
+        // dataUrlToBlob pour le détail du stockage interne.
+        canvas.toBlob((blob) => {
+          state.formPhoto = blob;
+          render();
+        }, "image/jpeg", 0.8);
       };
       img.src = reader.result;
     };
@@ -3873,7 +3897,12 @@ function openIngredientNameModal(existingName) {
 // Dessine le contenu d'une recette dans un PDF déjà positionné en début
 // de page (y=22) — logique partagée entre l'export d'une seule recette
 // et l'export "livre de cuisine" (plusieurs recettes à la suite).
-function drawRecipeContent(doc, recipe, persons, margin, maxWidth, includePhoto) {
+// photoDataUrl : chaîne base64 déjà résolue par l'appelant (jsPDF ne
+// sait pas lire un Blob directement, et le convertir est asynchrone —
+// voir blobToDataUrl — alors que cette fonction reste volontairement
+// synchrone, appelée en séquence pendant la construction du PDF), ou
+// null pour ne pas inclure de photo.
+function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl) {
   let y = 22;
 
   function ensureSpace(needed) {
@@ -3906,9 +3935,9 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, includePhoto)
     y += 9;
   });
 
-  if (includePhoto && recipe.photo) {
+  if (photoDataUrl) {
     try {
-      const props = doc.getImageProperties(recipe.photo);
+      const props = doc.getImageProperties(photoDataUrl);
       const maxPhotoHeight = 85;
       let displayWidth = maxWidth;
       let displayHeight = displayWidth * (props.height / props.width);
@@ -3919,7 +3948,7 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, includePhoto)
         displayWidth = displayHeight * (props.width / props.height);
       }
       ensureSpace(displayHeight + 6);
-      doc.addImage(recipe.photo, "JPEG", margin, y, displayWidth, displayHeight);
+      doc.addImage(photoDataUrl, "JPEG", margin, y, displayWidth, displayHeight);
       y += displayHeight + 8;
     } catch (e) {
       // Photo illisible (format inattendu) : on continue sans elle plutôt
@@ -4004,12 +4033,13 @@ async function exportRecipePdf(recipe, persons) {
     return;
   }
   const includePhoto = recipe.photo ? await customConfirm(t("pdf_include_photo_confirm")) : false;
+  const photoDataUrl = includePhoto && recipe.photo instanceof Blob ? await blobToDataUrl(recipe.photo) : null;
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const margin = 20;
   const maxWidth = doc.internal.pageSize.getWidth() - margin * 2;
 
-  drawRecipeContent(doc, recipe, persons, margin, maxWidth, includePhoto);
+  drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl);
 
   const safeName = recipe.name.replace(/[^\w\s-]/g, "").trim() || "recette";
   doc.save(`${safeName}.pdf`);
@@ -4123,12 +4153,16 @@ async function exportCookbookPdf(recipes, includePhotos) {
   });
 
   // Une recette par page (toujours démarrée sur une page neuve, pour
-  // que son numéro de page soit connu à l'avance).
-  tocEntries.forEach((entry) => {
+  // que son numéro de page soit connu à l'avance). Boucle séquentielle
+  // (pas forEach) : la conversion Blob -> base64 d'une photo est
+  // asynchrone (voir blobToDataUrl), contrairement au reste de cette
+  // fonction.
+  for (const entry of tocEntries) {
     doc.addPage();
     entry.pageNumber = doc.internal.getNumberOfPages();
-    drawRecipeContent(doc, entry.recipe, entry.recipe.defaultPersons || 4, margin, maxWidth, includePhotos);
-  });
+    const photoDataUrl = includePhotos && entry.recipe.photo instanceof Blob ? await blobToDataUrl(entry.recipe.photo) : null;
+    drawRecipeContent(doc, entry.recipe, entry.recipe.defaultPersons || 4, margin, maxWidth, photoDataUrl);
+  }
 
   // Retour sur les pages du sommaire pour y écrire les numéros de page,
   // maintenant connus.
@@ -5253,7 +5287,7 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
       <textarea id="cooklog-note">${escapeHtml(isEdit ? existingEntry.note || "" : "")}</textarea>
     </div>
     <div class="photo-upload" style="margin-bottom:10px;">
-      <div id="cooklog-photo-preview">${isEdit && existingEntry.photo ? `<img src="${existingEntry.photo}" alt="" style="width:100%;border-radius:10px;display:block;">` : escapeHtml(t("cooklog_add_photo_label"))}</div>
+      <div id="cooklog-photo-preview">${escapeHtml(t("cooklog_add_photo_label"))}</div>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:20px;">
       <button type="button" class="btn btn-outline" style="flex:1;" id="cooklog-photo-camera-btn">${t("import_photo_add_camera")}</button>
@@ -5269,6 +5303,7 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
 
   const photoPreview = sheet.querySelector("#cooklog-photo-preview");
   let photoData = isEdit ? (existingEntry.photo || null) : null;
+  if (photoData) setPreviewFromPhoto(photoData);
   // Deux boutons distincts (appareil photo / galerie) plutôt qu'un
   // unique champ avec capture="environment" — même correctif que le
   // formulaire de recette (voir TESTS_NON_REGRESSION.md) : cet
@@ -5276,6 +5311,21 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
   // de choisir une image déjà présente sur le téléphone.
   sheet.querySelector("#cooklog-photo-camera-btn").addEventListener("click", () => sheet.querySelector("#cooklog-photo-camera-input").click());
   sheet.querySelector("#cooklog-photo-gallery-btn").addEventListener("click", () => sheet.querySelector("#cooklog-photo-gallery-input").click());
+  // URL d'objet du dernier aperçu affiché dans CETTE fenêtre modale —
+  // hors du cycle de rendu normal (voir photoObjectUrl/render()) car
+  // cette fenêtre vit dans document.body, jamais effacée par
+  // render() : révoquée explicitement avant chaque nouvel aperçu et à
+  // la fermeture (voir plus bas), sans quoi elle resterait orpheline.
+  let previewUrl = null;
+  function setPreviewFromPhoto(photo) {
+    if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl = null; }
+    if (photo instanceof Blob) {
+      previewUrl = URL.createObjectURL(photo);
+      photoPreview.innerHTML = `<img src="${previewUrl}" alt="" style="width:100%;border-radius:10px;display:block;">`;
+    } else {
+      photoPreview.textContent = t("cooklog_add_photo_label");
+    }
+  }
   function handleCookLogPhotoFile(file) {
     if (!file) return;
     const reader = new FileReader();
@@ -5288,10 +5338,14 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
         canvas.width = img.width * scale;
         canvas.height = img.height * scale;
         canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-        photoData = canvas.toDataURL("image/jpeg", 0.8);
-        // Retour visuel immédiat : sans ça, rien n'indique que la photo a
-        // bien été prise avant l'enregistrement de l'entrée.
-        photoPreview.innerHTML = `<img src="${escapeHtml(photoData)}" alt="" style="width:100%;border-radius:10px;display:block;">`;
+        // Blob, jamais une chaîne base64 — voir le commentaire sur
+        // dataUrlToBlob pour le détail du stockage interne.
+        canvas.toBlob((blob) => {
+          photoData = blob;
+          // Retour visuel immédiat : sans ça, rien n'indique que la photo a
+          // bien été prise avant l'enregistrement de l'entrée.
+          setPreviewFromPhoto(photoData);
+        }, "image/jpeg", 0.8);
       };
       img.src = reader.result;
     };
@@ -5305,8 +5359,16 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
   if (isEdit) {
     sheet.querySelector("#cooklog-remove-photo").addEventListener("click", () => {
       photoData = null;
-      photoPreview.textContent = t("cooklog_add_photo_label");
+      setPreviewFromPhoto(null);
     });
+  }
+  // Ferme la fenêtre en libérant systématiquement l'URL d'objet de
+  // l'aperçu (voir previewUrl plus haut) — sans ça, elle resterait
+  // orpheline indéfiniment : cette fenêtre vit hors du cycle de rendu
+  // normal (document.body, jamais effacée par render()).
+  function closeModal() {
+    if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl = null; }
+    overlay.remove();
   }
 
   async function saveEntry(withDetails) {
@@ -5326,14 +5388,14 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
     await storePut("recipes", recipe);
     const idx = state.recipes.findIndex((x) => x.id === recipe.id);
     if (idx >= 0) state.recipes[idx] = recipe;
-    overlay.remove();
+    closeModal();
     if (onDone) onDone(); else render();
   }
   if (!isEdit) sheet.querySelector("#cooklog-skip").addEventListener("click", () => saveEntry(false));
   sheet.querySelector("#cooklog-save").addEventListener("click", () => saveEntry(true));
 
   overlay.appendChild(sheet);
-  overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
   document.body.appendChild(overlay);
   initModalA11y(overlay, sheet);
 }
@@ -5544,7 +5606,15 @@ function openCookLogViewModal(recipe) {
   const entriesHolder = el(`<div id="cooklog-entries-holder"></div>`);
   sheet.appendChild(entriesHolder);
 
+  // URL d'objet des photos actuellement affichées — cette fenêtre vit
+  // hors du cycle de rendu normal (document.body, jamais effacée par
+  // render()) : révoquées explicitement à chaque reconstruction de la
+  // liste et à la fermeture (voir closeModal plus bas), jamais laissées
+  // orphelines. Voir le même principe dans openCookLogAddModal.
+  let entryPhotoUrls = [];
   function fillEntries() {
+    entryPhotoUrls.forEach((url) => URL.revokeObjectURL(url));
+    entryPhotoUrls = [];
     entriesHolder.innerHTML = "";
     const entries = recipe.cookLog || [];
     if (!entries.length) {
@@ -5574,18 +5644,27 @@ function openCookLogViewModal(recipe) {
         fillEntries();
       });
       card.appendChild(headerRow);
-      if (entry.photo) card.appendChild(el(`<img src="${escapeHtml(entry.photo)}" style="width:100%;border-radius:10px;margin-bottom:8px;" alt="">`));
+      if (entry.photo instanceof Blob) {
+        const url = URL.createObjectURL(entry.photo);
+        entryPhotoUrls.push(url);
+        card.appendChild(el(`<img src="${url}" style="width:100%;border-radius:10px;margin-bottom:8px;" alt="">`));
+      }
       if (entry.note) card.appendChild(el(`<p class="prose" style="margin:0;">${escapeHtml(entry.note)}</p>`));
       entriesHolder.appendChild(card);
     });
   }
   fillEntries();
 
+  function closeModal() {
+    entryPhotoUrls.forEach((url) => URL.revokeObjectURL(url));
+    entryPhotoUrls = [];
+    overlay.remove();
+  }
   const closeBtn = el(`<button type="button" class="btn btn-outline">${t("cooking_close")}</button>`);
-  closeBtn.addEventListener("click", () => { overlay.remove(); render(); });
+  closeBtn.addEventListener("click", () => { closeModal(); render(); });
   sheet.appendChild(closeBtn);
   overlay.appendChild(sheet);
-  overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
   document.body.appendChild(overlay);
   initModalA11y(overlay, sheet);
 }
@@ -6854,6 +6933,50 @@ async function dedupeQuantityListAfterUnitMigration(list, storeName) {
 // deviendrait "inconnu" pour ces ingrédients). Sans effet, et donc sûr
 // à ré-exécuter à chaque démarrage ou après une restauration de
 // sauvegarde, une fois la migration déjà faite.
+// Migration au démarrage : recipe.photo et cookLog[].photo encore en
+// base64 (créés par une version de l'app antérieure au stockage en
+// Blob, voir le commentaire sur dataUrlToBlob) sont convertis une
+// bonne fois pour toutes — ~33% de stockage local économisé par photo
+// (le surcoût propre à l'encodage base64). Couvre aussi la corbeille
+// (une recette supprimée garde la même forme, voir moveRecipeToTrash)
+// et le brouillon de formulaire en cours (entrepôt "kv", voir
+// RECIPE_DRAFT_KEY) — sans ce dernier, un brouillon capturé juste
+// avant la mise à jour resterait figé en base64 jusqu'à sa
+// restauration ou son abandon. Toujours sûre à retenter : ne touche
+// que ce qui est encore une chaîne, jamais une photo déjà migrée
+// (comparaison de type, même principe que migrateLegacyUnit
+// ci-dessous) — un échec partiel (l'écriture d'une recette échoue en
+// cours de route) n'est jamais bloquant, juste retenté au prochain
+// démarrage.
+function migratePhotoFieldsToBlob(item) {
+  let touched = false;
+  if (typeof item.photo === "string") {
+    item.photo = dataUrlToBlob(item.photo);
+    touched = true;
+  }
+  if (Array.isArray(item.cookLog)) {
+    item.cookLog.forEach((entry) => {
+      if (entry && typeof entry.photo === "string") {
+        entry.photo = dataUrlToBlob(entry.photo);
+        touched = true;
+      }
+    });
+  }
+  return touched;
+}
+async function migratePhotosToBlob() {
+  for (const r of state.recipes) {
+    if (migratePhotoFieldsToBlob(r)) await storePut("recipes", r);
+  }
+  for (const entry of state.trash) {
+    if (migratePhotoFieldsToBlob(entry)) await storePut("trash", entry);
+  }
+  const draft = await getRecipeFormDraft();
+  if (draft && typeof draft.photo === "string") {
+    draft.photo = dataUrlToBlob(draft.photo);
+    await kvSet(RECIPE_DRAFT_KEY, draft);
+  }
+}
 async function migrateMergedContainerUnits() {
   let recipesTouched = false;
   state.recipes.forEach((r) => {
@@ -7600,36 +7723,36 @@ const BACKUP_STORES = ["recipes", "shopping", "pantry", "ingredients", "ingredie
 // l'application Windows (module Python), pour qu'une sauvegarde produite par
 // l'une soit directement utilisable par l'autre.
 
-function dataUriToBytes(dataUri) {
-  const match = typeof dataUri === "string" && dataUri.match(/^data:image\/(\w+);base64,(.+)$/i);
-  if (!match) return null;
-  const ext = match[1].toLowerCase() === "jpeg" ? "jpg" : match[1].toLowerCase();
-  const binary = atob(match[2]);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return { bytes, ext };
-}
-function bytesToDataUri(bytes, ext) {
-  let binary = "";
-  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-  const mime = ext === "jpg" || ext === "jpeg" ? "image/jpeg" : ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : ext === "gif" ? "image/gif" : "image/jpeg";
-  return `data:${mime};base64,${btoa(binary)}`;
-}
-
 // Recette de l'app mobile -> { json (champs "snake_case", identiques à
 // l'app Windows), photoFiles: [{filename, bytes}] } — la photo unique en
 // base64 devient un fichier séparé référencé par son nom, comme le fait déjà
 // l'app Windows pour ses propres photos.
-function recipeToSharedFormat(recipe) {
+// Extension de fichier ZIP à partir du type MIME d'un Blob photo —
+// convention identique à dataUriToBytes ("jpg", jamais "jpeg").
+function photoBlobExt(blob) {
+  const type = (blob && blob.type) || "";
+  if (type === "image/png") return "png";
+  if (type === "image/webp") return "webp";
+  if (type === "image/gif") return "gif";
+  return "jpg";
+}
+async function recipeToSharedFormat(recipe) {
   const photoFiles = [];
   let images = [];
-  if (recipe.photo) {
-    const decoded = dataUriToBytes(recipe.photo);
-    if (decoded) {
-      const filename = `${recipe.id || uid()}.${decoded.ext}`;
-      photoFiles.push({ filename, bytes: decoded.bytes });
-      images = [filename];
-    }
+  if (recipe.photo instanceof Blob) {
+    const bytes = new Uint8Array(await recipe.photo.arrayBuffer());
+    const filename = `${recipe.id || uid()}.${photoBlobExt(recipe.photo)}`;
+    photoFiles.push({ filename, bytes });
+    images = [filename];
+  }
+  // cook_log_full : contrairement à la photo de couverture ci-dessus,
+  // le contrat de format avec l'application Windows embarque toujours
+  // ses photos en base64 dans ce champ JSON (jamais externalisées en
+  // fichiers séparés dans le ZIP) — reconverties depuis le Blob
+  // interne uniquement à cette frontière précise.
+  const cookLogFull = [];
+  for (const entry of recipe.cookLog || []) {
+    cookLogFull.push(entry && entry.photo instanceof Blob ? { ...entry, photo: await blobToDataUrl(entry.photo) } : entry);
   }
   const json = {
     id: recipe.id,
@@ -7658,7 +7781,7 @@ function recipeToSharedFormat(recipe) {
     family_opinion: recipe.familyOpinion || "",
     improvement_notes: recipe.improvementNotes || "",
     actual_difficulty: recipe.actualDifficulty || "",
-    cook_log_full: recipe.cookLog || [],
+    cook_log_full: cookLogFull,
   };
   return { json, photoFiles };
 }
@@ -7671,7 +7794,11 @@ function recipeFromSharedFormat(json, imageBytesByFilename) {
   if (images.length && imageBytesByFilename && imageBytesByFilename.has(images[0])) {
     const bytes = imageBytesByFilename.get(images[0]);
     const ext = (images[0].split(".").pop() || "jpg").toLowerCase();
-    photo = bytesToDataUri(bytes, ext);
+    const mime = ext === "jpg" || ext === "jpeg" ? "image/jpeg" : ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : ext === "gif" ? "image/gif" : "image/jpeg";
+    // Blob, jamais une chaîne base64 (voir dataUrlToBlob) — la
+    // validation/normalisation finale (type MIME, etc.) est faite
+    // juste après par sanitizeBackupItem, comme pour le chemin JSON.
+    photo = new Blob([bytes], { type: mime });
   }
   const cookLog = Array.isArray(json.cook_log_full) && json.cook_log_full.length
     ? json.cook_log_full
@@ -7740,6 +7867,22 @@ async function buildBackupData() {
   for (const storeName of BACKUP_STORES) {
     data[storeName] = await storeAll(storeName);
   }
+  // JSON.stringify (exportAllData/buildBackupFile, plus bas) ne sait
+  // pas représenter de binaire — les photos (Blob en interne depuis ce
+  // round, voir le commentaire sur dataUrlToBlob) sont donc
+  // reconverties en base64 uniquement ici, à cette frontière précise.
+  // storeAll() renvoie des copies fraîches issues d'IndexedDB (jamais
+  // les mêmes références que state.recipes) : muter ces objets
+  // localement est donc sans risque, aucun alias avec l'état affiché
+  // ne peut en être affecté.
+  for (const recipe of data.recipes) {
+    if (recipe.photo instanceof Blob) recipe.photo = await blobToDataUrl(recipe.photo);
+    if (Array.isArray(recipe.cookLog)) {
+      for (const entry of recipe.cookLog) {
+        if (entry && entry.photo instanceof Blob) entry.photo = await blobToDataUrl(entry.photo);
+      }
+    }
+  }
   return data;
 }
 function backupFileName() {
@@ -7799,7 +7942,7 @@ async function buildSharedBackupZip() {
   const recipes = await storeAll("recipes");
   const recipesJson = [];
   for (const r of recipes) {
-    const { json, photoFiles } = recipeToSharedFormat(r);
+    const { json, photoFiles } = await recipeToSharedFormat(r);
     recipesJson.push(json);
     for (const pf of photoFiles) entries.push({ name: `images/${pf.filename}`, data: pf.bytes });
   }
@@ -8019,20 +8162,71 @@ function shareBackupData(file) {
 const BACKUP_WARNING_SIZE = 50 * 1024 * 1024; // 50 Mo — avertissement, mais pas de refus
 const MAX_BACKUP_FILE_SIZE = 100 * 1024 * 1024; // 100 Mo — refus définitif
 
-// Un champ photo valide est soit absent, soit une image encodée en
-// data URL — jamais une chaîne arbitraire, pour éviter qu'une valeur
-// fabriquée dans un fichier de sauvegarde modifié ne se retrouve
-// utilisée telle quelle comme adresse d'image ailleurs dans l'app.
-function isValidPhotoField(photo) {
-  // Ancrée jusqu'à la fin (le "$" final) et limitée à l'alphabet base64 :
-  // sans ça, seul le PRÉFIXE était vérifié, laissant passer n'importe
-  // quelle suite de caractères après "base64," — y compris un guillemet
-  // suivi d'un nouvel attribut HTML, permettant de sortir de l'attribut
-  // src="..." où cette valeur est ensuite injectée (voir escapeHtml, qui
-  // ferme ce trou indépendamment, mais cette validation doit rester
-  // stricte de son côté : un champ photo n'est jamais un vecteur de
-  // texte libre).
-  return photo == null || (typeof photo === "string" && /^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+/]*={0,2}$/i.test(photo));
+// Stockage interne des photos (recipe.photo, cookLog[].photo) : un
+// Blob, jamais une chaîne base64 — ~33% de stockage local économisé
+// (l'inflation propre à l'encodage base64), IndexedDB stockant un Blob
+// nativement sans conversion. Trois frontières continuent cependant
+// d'exiger une représentation texte, où le stockage interne n'entre
+// jamais en jeu directement : la sauvegarde JSON complète (JSON ne
+// sait pas représenter de binaire), le JSON embarqué dans le ZIP
+// partagé pour le journal de cuisine (contrat de format avec
+// l'application Windows, jamais modifié par ce choix de stockage
+// interne), et l'export PDF (jsPDF). Les miniatures purement
+// transitoires de l'import photo multi-page (jamais persistées, voir
+// state.multiPhotoImport) restent volontairement en base64 — aucun
+// gain de stockage à en attendre, conversion non justifiée.
+//
+// Reconstruit un Blob depuis une chaîne "data:image/...;base64,...".
+// Ancrée jusqu'à la fin (le "$" final) et limitée à l'alphabet base64 :
+// sans ça, seul le PRÉFIXE était vérifié, laissant passer n'importe
+// quelle suite de caractères après "base64," — y compris un guillemet
+// suivi d'un nouvel attribut HTML, permettant de sortir de l'attribut
+// src="..." où cette valeur était directement injectée avant ce
+// correctif (voir escapeHtml, qui fermait ce trou indépendamment, mais
+// cette validation doit rester stricte de son côté : un champ photo
+// n'est jamais un vecteur de texte libre). Utilisée uniquement à la
+// frontière de désérialisation d'une donnée non fiable (voir
+// sanitizePhotoField) — jamais pour une conversion interne déjà fiable
+// (voir dataUriToBytes, plus permissive, réservée aux données produites
+// par l'app elle-même pour le ZIP partagé).
+function dataUrlToBlob(dataUrl) {
+  const match = typeof dataUrl === "string" && dataUrl.match(/^data:image\/(png|jpe?g|webp|gif);base64,([A-Za-z0-9+/]*={0,2})$/i);
+  if (!match) return null;
+  const ext = match[1].toLowerCase();
+  const mime = `image/${ext === "jpg" ? "jpeg" : ext}`;
+  const binary = atob(match[2]);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
+// Inverse : Blob -> chaîne "data:...;base64,...", pour les 3
+// frontières listées ci-dessus. Toujours asynchrone (FileReader) —
+// contrairement à dataUrlToBlob, il n'existe pas d'équivalent
+// synchrone pour lire le contenu d'un Blob.
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error || new Error("blob_read_error"));
+    reader.readAsDataURL(blob);
+  });
+}
+// Nettoie un champ photo venant d'une sauvegarde (JSON complet ou ZIP
+// partagé) : accepte un Blob déjà construit (ZIP partagé, où la photo
+// de couverture est reconstruite avant cet appel) OU une chaîne
+// base64 (sauvegarde JSON, ancien format) — renvoie toujours un Blob
+// ou null, jamais une chaîne arbitraire.
+function sanitizePhotoField(photo, report) {
+  if (photo == null) return null;
+  if (photo instanceof Blob) {
+    if (typeof photo.type === "string" && photo.type.startsWith("image/") && photo.size > 0) return photo;
+    report.photosRemoved += 1;
+    return null;
+  }
+  const blob = dataUrlToBlob(photo);
+  if (blob) return blob;
+  report.photosRemoved += 1;
+  return null;
 }
 
 // Un identifiant valide est une chaîne non vide — tous les entrepôts de
@@ -8088,9 +8282,8 @@ function fixIngredientsArrayUnits(ingredients, report) {
 }
 function sanitizeBackupItem(item, storeName, report) {
   const cleaned = { ...item };
-  if ("photo" in cleaned && cleaned.photo != null && !isValidPhotoField(cleaned.photo)) {
-    cleaned.photo = null;
-    report.photosRemoved += 1;
+  if ("photo" in cleaned && cleaned.photo != null) {
+    cleaned.photo = sanitizePhotoField(cleaned.photo, report);
   }
   if (storeName === "recipes") {
     // Un nom absent ou non textuel peut faire planter le tri de la
@@ -8147,9 +8340,8 @@ function sanitizeBackupItem(item, storeName, report) {
       cleaned.cookLog = cleaned.cookLog
         .filter((entry) => entry && typeof entry === "object" && !Array.isArray(entry))
         .map((entry) => {
-          if ("photo" in entry && entry.photo != null && !isValidPhotoField(entry.photo)) {
-            report.photosRemoved += 1;
-            return { ...entry, photo: null };
+          if ("photo" in entry && entry.photo != null) {
+            return { ...entry, photo: sanitizePhotoField(entry.photo, report) };
           }
           return entry;
         });
@@ -8894,7 +9086,16 @@ function openRecipePickerModal(onPick) {
     <div class="modal-actions"><button type="button" class="btn btn-outline" id="picker-cancel">${t("form_cancel")}</button></div>
   </div>`);
   const listHolder = sheet.querySelector("#picker-list");
+  // URL d'objet des miniatures actuellement affichées — cette fenêtre
+  // vit hors du cycle de rendu normal (document.body, jamais effacée
+  // par render()) et reconstruit sa liste à chaque frappe dans la
+  // recherche : révoquées explicitement à chaque reconstruction et à
+  // la fermeture (voir closeModal plus bas), jamais laissées
+  // orphelines.
+  let thumbUrls = [];
   function fillList(query) {
+    thumbUrls.forEach((url) => URL.revokeObjectURL(url));
+    thumbUrls = [];
     listHolder.innerHTML = "";
     const key = normalize(query || "");
     const list = state.recipes
@@ -8905,22 +9106,33 @@ function openRecipePickerModal(onPick) {
       return;
     }
     list.forEach((r) => {
+      let thumbHtml = "🍽️";
+      if (r.photo instanceof Blob) {
+        const url = URL.createObjectURL(r.photo);
+        thumbUrls.push(url);
+        thumbHtml = `<img src="${url}" alt="">`;
+      }
       const row = el(`<button class="recipe-row" style="width:100%;margin-bottom:8px;">
-        <div class="recipe-thumb">${r.photo ? `<img src="${escapeHtml(r.photo)}" alt="">` : "🍽️"}</div>
+        <div class="recipe-thumb">${thumbHtml}</div>
         <div class="recipe-info"><div class="recipe-name">${escapeHtml(r.name)}</div></div>
       </button>`);
       row.addEventListener("click", () => {
-        overlay.remove();
+        closeModal();
         onPick(r);
       });
       listHolder.appendChild(row);
     });
   }
+  function closeModal() {
+    thumbUrls.forEach((url) => URL.revokeObjectURL(url));
+    thumbUrls = [];
+    overlay.remove();
+  }
   sheet.querySelector("input").addEventListener("input", (e) => fillList(e.target.value));
   fillList("");
-  sheet.querySelector("#picker-cancel").addEventListener("click", () => overlay.remove());
+  sheet.querySelector("#picker-cancel").addEventListener("click", () => closeModal());
   overlay.appendChild(sheet);
-  overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
   document.body.appendChild(overlay);
   initModalA11y(overlay, sheet);
 }
@@ -11498,7 +11710,9 @@ function resolveImportedIngredientName(rawName) {
   return trimmed;
 }
 
-function resizeBlobToDataUrl(blob) {
+// Renvoie un Blob (jamais une chaîne base64 — voir le commentaire sur
+// dataUrlToBlob pour le détail du stockage interne), redimensionné.
+function resizeImageBlob(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -11510,7 +11724,10 @@ function resizeBlobToDataUrl(blob) {
         canvas.width = img.width * scale;
         canvas.height = img.height * scale;
         canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL("image/jpeg", 0.8));
+        canvas.toBlob((resized) => {
+          if (resized) resolve(resized);
+          else reject(new Error("image_encode_failed"));
+        }, "image/jpeg", 0.8);
       };
       img.onerror = () => reject(new Error("image_decode_failed"));
       img.src = reader.result;
@@ -11526,7 +11743,7 @@ function resizeBlobToDataUrl(blob) {
 // depuis n'importe quel site), puis via les mêmes services intermédiaires
 // que pour la page elle-même en repli. Un échec ici n'empêche jamais
 // l'import du reste de la recette.
-async function fetchImageAsDataUrl(imageUrl) {
+async function fetchImageAsPhotoBlob(imageUrl) {
   const attempts = [{ url: imageUrl, timeout: 15000 }];
   // Le Worker Cloudflare personnel (si configuré) est essayé avant les
   // 3 services de repli publics, pour la même raison de fiabilité que
@@ -11541,7 +11758,7 @@ async function fetchImageAsDataUrl(imageUrl) {
       if (!res.ok) continue;
       const blob = await res.blob();
       if (!blob.type.startsWith("image/")) continue;
-      return await resizeBlobToDataUrl(blob);
+      return await resizeImageBlob(blob);
     } catch (e) { /* tentative suivante */ }
   }
   return null;
@@ -11730,7 +11947,7 @@ async function buildRecipeFromStructuredData(recipeData) {
   let photo = null;
   const imageUrl = extractRecipeImageUrl(recipeData);
   if (imageUrl) {
-    try { photo = await fetchImageAsDataUrl(imageUrl); } catch (e) { photo = null; }
+    try { photo = await fetchImageAsPhotoBlob(imageUrl); } catch (e) { photo = null; }
   }
 
   return { name, description, ingredients, persons, prepTime, cookTime, category, photo };
@@ -12180,7 +12397,7 @@ function renderWhatCanICook() {
     scored.forEach(({ recipe, total, have, missing }) => {
       const isFeasible = have === total;
       const row = el(`<button class="card recipe-row" style="margin-bottom:10px;">
-        <div class="recipe-thumb">${recipe.photo ? `<img src="${escapeHtml(recipe.photo)}" alt="">` : "🍽️"}</div>
+        <div class="recipe-thumb">${recipe.photo ? `<img src="${photoObjectUrl(recipe.photo)}" alt="">` : "🍽️"}</div>
         <div class="recipe-info">
           <div class="recipe-name">${escapeHtml(recipe.name)}</div>
           <div class="recipe-meta">${isFeasible ? escapeHtml(t("whatcancook_feasible")) : escapeHtml(t("whatcancook_almost", { have: String(have), total: String(total) }))}</div>
@@ -12362,7 +12579,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 263;
+const APP_VERSION = 264;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
@@ -12463,6 +12680,7 @@ async function initInner() {
   const savedPlan = await kvGet("weeklyPlan");
   state.weeklyPlan = savedPlan || {};
   await migrateMergedContainerUnits();
+  await migratePhotosToBlob();
   await ensureIngredientListLoaded();
   await loadIngredientOverrides();
   await loadDismissedPairs();

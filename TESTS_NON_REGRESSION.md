@@ -8083,3 +8083,87 @@ consécutives). Suite de régression complète (48 scripts + corpus OCR)
 au vert.
 
 **Version testée** : v263
+
+### 121 — Stockage des photos en Blob (recette + journal de cuisine)
+
+Suite au même audit externe (point 120), l'utilisateur a demandé son
+avis sur la recommandation "stocker les photos en Blob" avant toute
+implémentation. Analyse transmise et confirmée par l'utilisateur :
+passer `recipe.photo`/`cookLog[].photo` de chaînes base64
+(`data:image/...;base64,...`) à des `Blob` natifs dans IndexedDB (qui
+les supporte nativement) économise environ un tiers de la place
+occupée localement — l'encodage base64 alourdit d'environ 33% par
+rapport aux octets bruts — mais **ne réduit jamais la taille du fichier
+de sauvegarde `.json` exporté** : JSON ne pouvant pas représenter du
+binaire, l'export doit toujours réencoder les photos en base64 au
+moment de l'écriture du fichier. Confirmé aussi que les prises de photo
+du garde-manger (code-barres, date de péremption) ne sont jamais
+persistées (état transitoire, image analysée puis jetée) et donc hors
+sujet, et que le format du ZIP partagé mobile↔bureau — dont les noms de
+champs et de fichiers (`images/{recipeId}.{ext}`) sont documentés dans
+le code comme identiques à l'application Windows correspondante, pour
+l'interopérabilité directe — devait rester inchangé à l'octet près.
+L'utilisateur a alors demandé le lancement du chantier, précisant
+pouvoir tester lui-même l'interopérabilité ZIP avec la vraie
+application Windows (installée depuis le Microsoft Store).
+
+**Modifié** : représentation interne uniquement, jamais le format
+externe.
+- Nouvelles fonctions : `dataUrlToBlob()`/`blobToDataUrl()` (conversion
+  dans les deux sens, la première reprenant la validation stricte
+  ancrée par regex qu'utilisait l'ancienne `isValidPhotoField()`,
+  supprimée) et `photoObjectUrl()` (crée une URL d'objet pour l'affichage).
+- Les deux points de capture (photo de recette, photo du journal de
+  cuisine) utilisent désormais `canvas.toBlob()` au lieu de
+  `canvas.toDataURL()`.
+- Les ~10 points d'affichage (liste de recettes, fiche détail,
+  formulaire, "Que cuisiner ?", journal de cuisine, sélecteur de
+  recette...) utilisent `URL.createObjectURL()`/`photoObjectUrl()`
+  plutôt qu'une chaîne base64 directement en `src`. Deux stratégies de
+  cycle de vie des URL d'objet selon le contexte : un cache global
+  révoqué au début de chaque `render()` pour le contenu recréé par
+  `render()`, un suivi local par modale (révoqué avant chaque
+  reconstruction et à la fermeture) pour le contenu vivant hors de
+  `#app`.
+- Migration au démarrage (`migratePhotosToBlob()`, appelée une fois
+  dans `init()`, idempotente et sûre à retenter comme les migrations
+  précédentes) : convertit toute photo encore en chaîne base64
+  (recettes, corbeille, brouillon en cours) en Blob.
+- Sauvegarde JSON complète (`buildBackupData()`) : reconvertit chaque
+  Blob en base64 au moment de l'export ; `sanitizeBackupItem()` accepte
+  aussi bien un Blob (déjà migré) qu'une chaîne base64 (fichier plus
+  ancien) au ré-import.
+- ZIP partagé (`recipeToSharedFormat()`, devenue asynchrone,
+  `recipeFromSharedFormat()`) : format externe inchangé à l'octet
+  près — la photo de couverture reste un fichier séparé dans le ZIP,
+  le journal de cuisine reste en base64 dans `recipes.json`, seule la
+  construction interne change.
+- Export PDF (jsPDF, qui exige une chaîne base64, jamais un Blob) :
+  le Blob est résolu en base64 une seule fois avant l'appel à
+  `drawRecipeContent()`, qui reste synchrone.
+
+**Vérifié** (voir `tests/test_photo_blob_storage.py`, nouveau, 7
+vérifications via Playwright sur les vraies fonctions) : migration au
+démarrage, capture (formulaire), affichage (`<img src>` commence par
+`blob:`, jamais `data:`), sauvegarde JSON complète (export en base64,
+ré-import en Blob, aucune photo perdue), ZIP partagé (format externe
+inchangé, reconstruction en Blob), export PDF sans erreur, et cycle de
+vie des URL d'objet (révocation au rendu suivant, pas de fuite). Deux
+tests existants (`test_shared_backup.py`, `test_third_audit_backup_and_shopping_bugs.py`)
+comparaient encore une photo à une chaîne base64 brute ou appelaient
+`recipeToSharedFormat()` sans `await` (devenue asynchrone) — corrigés
+pour refléter le nouveau format interne. `test_security_hardening.py`
+adapté : la validation stricte auparavant testée via
+`isValidPhotoField()` (supprimée) l'est désormais via
+`dataUrlToBlob()`/`sanitizePhotoField()`, avec le même cas malveillant
+(préfixe correct suivi d'un guillemet injecté) toujours rejeté. Suite
+de régression complète (49 scripts + corpus OCR) au vert.
+
+**Non fait dans ce round, explicitement laissé de côté à la demande de
+l'utilisateur** : externaliser aussi les photos du journal de cuisine
+dans le ZIP partagé (actuellement en base64 dans `recipes.json`,
+jamais en fichier séparé) — bloqué en partie par l'absence d'identifiant
+unique par entrée de journal, à ajouter d'abord ; et la modularisation
+du code recommandée par le même audit.
+
+**Version testée** : v264

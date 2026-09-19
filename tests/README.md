@@ -487,6 +487,18 @@ Depuis, la structure sépare strictement :
   plusieurs écrans, que le lien lui-même survit aux changements
   d'écran (il vit hors de `#app`, jamais effacé par `render()`), et sa
   traduction dans les 4 langues.
+- `test_photo_blob_storage.py` — suite au même audit externe (voir
+  TESTS_NON_REGRESSION.md point 121) : passage du stockage des photos
+  (recette + journal de cuisine) de chaînes base64 à des `Blob` natifs
+  dans IndexedDB, sans changer le format externe (sauvegarde `.json`,
+  ZIP partagé mobile↔bureau). Vérifie la migration au démarrage, la
+  capture (`canvas.toBlob`), l'affichage (`<img src>` en `blob:`,
+  jamais `data:`), la sauvegarde JSON complète (export en base64,
+  ré-import en Blob, aucune photo perdue), le ZIP partagé (photo de
+  couverture externalisée en octets, journal de cuisine toujours en
+  base64 dans le JSON, format externe inchangé), l'export PDF, et le
+  cycle de vie des URL d'objet (révocation au rendu suivant, pas de
+  fuite mémoire).
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

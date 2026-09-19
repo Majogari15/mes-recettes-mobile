@@ -12,7 +12,13 @@ complet (voir TESTS_NON_REGRESSION.md point 82) :
 2. `isValidPhotoField()` ne vérifiait que le PRÉFIXE d'une data URL
    ("data:image/png;base64,"), laissant passer n'importe quelle suite de
    caractères ensuite — combiné au défaut 1, un champ photo dans une
-   sauvegarde restaurée pouvait ainsi injecter du HTML.
+   sauvegarde restaurée pouvait ainsi injecter du HTML. Depuis le passage
+   du stockage des photos en Blob (voir TESTS_NON_REGRESSION.md point
+   121), cette validation stricte vit dans `dataUrlToBlob()` (même regex
+   ancrée qu'avant, mais qui retourne désormais un Blob ou null plutôt
+   qu'un booléen) et `sanitizePhotoField()`, qui l'utilise à la frontière
+   de restauration d'une sauvegarde — testées ci-dessous à la place de
+   l'ancienne `isValidPhotoField()`, supprimée.
 
 Utilisation (démarre et arrête lui-même un serveur local temporaire) :
 
@@ -133,29 +139,60 @@ def main():
         )
         print()
 
-        print("=== isValidPhotoField() rejette désormais une charge qui ne respecte pas le format base64 jusqu'au bout ===\n")
+        print("=== dataUrlToBlob()/sanitizePhotoField() rejettent désormais une charge qui ne respecte pas le format base64 jusqu'au bout ===\n")
         result_photo = page.evaluate(
             """
-            () => ({
-                validPrefixOnly: isValidPhotoField('data:image/png;base64,X" onload="window.__pwned=true'),
-                validRealImage: isValidPhotoField('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='),
-                validNull: isValidPhotoField(null),
-                validNonString: isValidPhotoField(42),
-            })
+            () => {
+                const report = () => ({ structuralFixes: 0, numbersFixed: 0, photosRemoved: 0 });
+                const prefixOnlyReport = report();
+                const realImageReport = report();
+                const nullReport = report();
+                const nonStringReport = report();
+                return {
+                    prefixOnlyIsBlob: dataUrlToBlob('data:image/png;base64,X" onload="window.__pwned=true') instanceof Blob,
+                    realImageIsBlob: dataUrlToBlob('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=') instanceof Blob,
+                    sanitizedPrefixOnly: sanitizePhotoField('data:image/png;base64,X" onload="window.__pwned=true', prefixOnlyReport),
+                    prefixOnlyRemoved: prefixOnlyReport.photosRemoved,
+                    sanitizedRealImageIsBlob: sanitizePhotoField('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', realImageReport) instanceof Blob,
+                    realImageRemoved: realImageReport.photosRemoved,
+                    sanitizedNull: sanitizePhotoField(null, nullReport),
+                    nullRemoved: nullReport.photosRemoved,
+                    sanitizedNonString: sanitizePhotoField(42, nonStringReport),
+                    nonStringRemoved: nonStringReport.photosRemoved,
+                };
+            }
             """
         )
         check(
-            "une charge avec un préfixe correct mais un guillemet ensuite est rejetée",
-            result_photo["validPrefixOnly"] is False,
+            "une charge avec un préfixe correct mais un guillemet ensuite est rejetée par dataUrlToBlob (pas de Blob)",
+            result_photo["prefixOnlyIsBlob"] is False,
             str(result_photo),
         )
         check(
-            "une vraie image base64 valide passe toujours la validation",
-            result_photo["validRealImage"] is True,
+            "une vraie image base64 valide est convertie en Blob par dataUrlToBlob",
+            result_photo["realImageIsBlob"] is True,
             str(result_photo),
         )
-        check("null reste accepté (photo absente)", result_photo["validNull"] is True, str(result_photo))
-        check("une valeur non textuelle est rejetée", result_photo["validNonString"] is False, str(result_photo))
+        check(
+            "sanitizePhotoField rejette la même charge malveillante (null, comptée dans photosRemoved)",
+            result_photo["sanitizedPrefixOnly"] is None and result_photo["prefixOnlyRemoved"] == 1,
+            str(result_photo),
+        )
+        check(
+            "sanitizePhotoField accepte la vraie image (Blob, non comptée dans photosRemoved)",
+            result_photo["sanitizedRealImageIsBlob"] is True and result_photo["realImageRemoved"] == 0,
+            str(result_photo),
+        )
+        check(
+            "null reste accepté (photo absente, non comptée dans photosRemoved)",
+            result_photo["sanitizedNull"] is None and result_photo["nullRemoved"] == 0,
+            str(result_photo),
+        )
+        check(
+            "une valeur non textuelle est rejetée (comptée dans photosRemoved)",
+            result_photo["sanitizedNonString"] is None and result_photo["nonStringRemoved"] == 1,
+            str(result_photo),
+        )
         print()
 
         print("=== Bout en bout : une photo malveillante dans une recette n'injecte plus rien à l'affichage ===\n")
