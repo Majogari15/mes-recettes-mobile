@@ -8003,3 +8003,48 @@ Audit d'accessibilité (axe-core) au vert (3 exécutions consécutives).
 Suite de régression complète (46 scripts + corpus OCR) au vert.
 
 **Version testée** : v261
+
+### 119 — Quatrième relecture externe : génération multi-recettes (menu/planning) rendue atomique sur l'ensemble de l'opération
+
+Suite au point 118, l'utilisateur a transmis le compte rendu à une
+quatrième IA, qui a reproduit les 3 correctifs précédents comme
+fonctionnant, mais a identifié un point non couvert : la transaction du
+point 118 protège UNE recette entière, mais les boutons "Générer la
+liste de courses" d'un menu ou du planning ajoutent encore les
+recettes d'une génération les unes après les autres, chacune dans sa
+PROPRE transaction. Reproduit et confirmé : un échec sur la 2ᵉ recette
+d'une génération de 2 laisse la 1ʳᵉ déjà écrite avec succès ; une
+nouvelle tentative de la génération complète ré-ajoute alors cette 1ʳᵉ
+recette par-dessus elle-même (double comptage : 50g + 50g = 100g au
+lieu de 50g).
+
+**Corrigé** : `addRecipeToShoppingSilent(recipe, persons)` est
+maintenant un simple raccourci pour une seule recette, qui délègue à la
+nouvelle `addRecipesToShoppingSilent(recipePersonsList)` — celle-ci
+calcule l'état final de TOUTES les recettes de la génération sur une
+copie de travail commune (pour qu'un même ingrédient partagé par 2
+recettes se cumule correctement en un seul passage), puis écrit tout
+en une seule transaction IndexedDB. Les boutons "Ajouter tout aux
+courses" d'un menu et "Générer la liste de courses" du planning
+construisent désormais la liste complète des recettes concernées AVANT
+d'appeler la fonction une seule fois, au lieu de boucler avec un appel
+(et donc une transaction) par recette. Le message d'erreur affiché en
+cas d'échec (voir point 118) couvre maintenant l'opération complète, et
+la navigation vers l'écran "Courses" ne se produit plus après un échec
+(comportement affiné au passage : avant ce correctif, le planning
+naviguait vers l'écran courses même après une erreur, dès qu'au moins
+une recette avait été traitée avant l'échec).
+
+**Vérifié** (voir `tests/test_shopping_generation_full_atomic.py`,
+nouveau, 5 vérifications via Playwright) : le scénario exact reproduit
+par la relecture externe (échec sur la 2ᵉ recette, puis nouvelle
+tentative de la génération complète) donne bien les quantités exactes,
+sans double comptage ; `addRecipesToShoppingSilent` n'effectue qu'un
+seul appel de transaction quel que soit le nombre de recettes ; les 2
+vrais boutons (menu et planning), cliqués réellement dans la page,
+n'effectuent eux aussi qu'une seule transaction ; le raccourci
+mono-recette reste pleinement fonctionnel. Audit d'accessibilité
+(axe-core) au vert (3 exécutions consécutives). Suite de régression
+complète (47 scripts + corpus OCR) au vert.
+
+**Version testée** : v262

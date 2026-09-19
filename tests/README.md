@@ -464,6 +464,19 @@ Depuis, la structure sépare strictement :
   l'utilisateur en cas d'échec (silencieux auparavant), et que les
   chemins normaux (couverture totale, partielle, sans réduction)
   restent inchangés.
+- `test_shopping_generation_full_atomic.py` — suite à une quatrième
+  relecture externe (voir TESTS_NON_REGRESSION.md point 119) : le
+  point 118 rendait atomique l'ajout d'UNE recette aux courses, mais
+  les boutons "Générer la liste de courses" d'un menu ou du planning
+  ajoutaient encore chaque recette dans sa propre transaction — un
+  échec sur la 2e recette laissait la 1ère déjà écrite, risquant un
+  double comptage à la prochaine tentative. Vérifie le scénario exact
+  reproduit par la relecture (échec puis retentative complète, sans
+  double comptage), qu'`addRecipesToShoppingSilent` n'effectue qu'une
+  seule transaction pour N recettes, que les 2 vrais boutons (menu et
+  planning) n'en déclenchent eux aussi qu'une seule en cliquant
+  réellement dessus, et que le raccourci mono-recette
+  (`addRecipeToShoppingSilent`) reste fonctionnel.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

@@ -2263,42 +2263,54 @@ function computeShoppingMerge(existing, qty) {
   }
   return null;
 }
-async function addRecipeToShoppingSilent(recipe, persons) {
+// Ajoute UNE OU PLUSIEURS recettes à la liste de courses en silence
+// (pas de gestion du garde-manger, contrairement à addRecipeToShopping)
+// — recipePersonsList : [{ recipe, persons }, ...]. Utilisée aussi bien
+// pour une seule recette (voir le raccourci addRecipeToShoppingSilent
+// plus bas) que pour "Générer la liste de courses" d'un menu ou du
+// planning (plusieurs recettes d'un coup). Calcule D'ABORD l'état final
+// de chaque article touché par TOUTES les recettes, sur une copie de
+// travail commune — sans rien écrire ni muter l'état réel tant que tout
+// n'est pas prêt. Une seule transaction (storeWriteManyAcrossStores)
+// écrit ensuite TOUS les articles de TOUTES les recettes d'un bloc :
+// soit elles sont toutes ajoutées ensemble, soit aucune ne l'est.
+// Indispensable pour un menu/planning à plusieurs recettes : avant ce
+// correctif, chaque recette de la génération s'écrivait dans sa propre
+// transaction séparée — une recette déjà écrite avec succès avant
+// qu'une autre échoue plus loin restait appliquée, exposant un risque
+// de double comptage à la prochaine tentative (relecture externe, voir
+// TESTS_NON_REGRESSION.md point 119). Et, à l'intérieur d'une même
+// recette, un échec sur le 2e ingrédient d'une recette de 2 laissait le
+// 1er déjà écrit — même risque, bug réel confirmé par une relecture
+// externe précédente (point 118).
+async function addRecipesToShoppingSilent(recipePersonsList) {
   const items = state.shopping;
-  // Calcule D'ABORD l'état final de chaque article touché, sur une
-  // copie de travail — sans rien écrire ni muter l'état réel tant que
-  // tout n'est pas prêt. Une seule transaction (storeWriteManyAcrossStores)
-  // écrit ensuite TOUS les articles de la recette d'un bloc : soit ils
-  // sont tous ajoutés/fusionnés ensemble, soit rien ne l'est. Avant ce
-  // correctif, chaque article s'écrivait séparément dans une boucle —
-  // un échec sur le 2e ingrédient d'une recette de 2 laissait le 1er
-  // déjà écrit (recette ajoutée seulement en partie), une nouvelle
-  // tentative risquant de l'ajouter une seconde fois. Bug réel
-  // confirmé par relecture externe avant ce correctif.
   const localItems = items.map((i) => ({ ...i }));
   const touchedItems = [];
-  for (const ing of recipe.ingredients || []) {
-    const qty = ing.quantity != null ? Number(ing.quantity) * persons : null;
-    const existing = localItems.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
-    if (existing) {
-      // Un article correspondant (même nom, même unité, pas encore
-      // coché) existe déjà : ne jamais en créer un second en double.
-      // Sans cette branche, un ingrédient dont CETTE occurrence-ci n'a
-      // pas de quantité précisée (qty === null, ex. "sel" sans dosage)
-      // ratait la condition "existing.quantity != null" ci-dessous et
-      // retombait dans le "else", créant un doublon au lieu de
-      // reconnaître l'article déjà présent — bug réel signalé par
-      // l'utilisateur (ingrédients sans quantité dupliqués en ajoutant
-      // une recette/un menu à une liste de courses déjà existante).
-      const merge = computeShoppingMerge(existing, qty);
-      if (merge) {
-        Object.assign(existing, merge);
-        touchedItems.push(existing);
+  for (const { recipe, persons } of recipePersonsList) {
+    for (const ing of recipe.ingredients || []) {
+      const qty = ing.quantity != null ? Number(ing.quantity) * persons : null;
+      const existing = localItems.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
+      if (existing) {
+        // Un article correspondant (même nom, même unité, pas encore
+        // coché) existe déjà : ne jamais en créer un second en double.
+        // Sans cette branche, un ingrédient dont CETTE occurrence-ci n'a
+        // pas de quantité précisée (qty === null, ex. "sel" sans dosage)
+        // ratait la condition "existing.quantity != null" ci-dessous et
+        // retombait dans le "else", créant un doublon au lieu de
+        // reconnaître l'article déjà présent — bug réel signalé par
+        // l'utilisateur (ingrédients sans quantité dupliqués en ajoutant
+        // une recette/un menu à une liste de courses déjà existante).
+        const merge = computeShoppingMerge(existing, qty);
+        if (merge) {
+          Object.assign(existing, merge);
+          touchedItems.push(existing);
+        }
+      } else {
+        const item = { id: uid(), name: ing.name, quantity: qty, unit: ing.unit, checked: false };
+        localItems.push(item);
+        touchedItems.push(item);
       }
-    } else {
-      const item = { id: uid(), name: ing.name, quantity: qty, unit: ing.unit, checked: false };
-      localItems.push(item);
-      touchedItems.push(item);
     }
   }
   const uniqueTouchedItems = [...new Set(touchedItems)];
@@ -2314,6 +2326,10 @@ async function addRecipeToShoppingSilent(recipe, persons) {
     if (idx >= 0) Object.assign(items[idx], item);
     else items.push(item);
   }
+}
+// Raccourci pour une seule recette (voir addRecipesToShoppingSilent).
+async function addRecipeToShoppingSilent(recipe, persons) {
+  await addRecipesToShoppingSilent([{ recipe, persons }]);
 }
 async function addRecipeToShopping(recipe, persons) {
   const items = state.shopping;
@@ -8999,17 +9015,24 @@ function renderMenuDetail() {
   if (existing) {
     const shopBtn = el(`<button class="btn btn-secondary" style="margin-bottom:10px;">${t("menu_generate_shopping")}</button>`);
     shopBtn.addEventListener("click", async () => {
+      // Toutes les recettes du menu sont préparées PUIS ajoutées en un
+      // seul appel (voir addRecipesToShoppingSilent) — dans une seule
+      // transaction IndexedDB couvrant l'ensemble de cette génération.
+      // Avant ce correctif, chaque recette s'écrivait séparément dans
+      // la boucle : une recette déjà ajoutée avec succès avant qu'une
+      // autre échoue plus loin restait appliquée, risquant d'être
+      // comptée deux fois à la prochaine tentative — bug réel confirmé
+      // par relecture externe.
+      const pairs = items
+        .map((item) => ({ recipe: state.recipes.find((r) => r.id === item.recipeId), persons: item.persons }))
+        .filter((pair) => pair.recipe);
       try {
-        for (const item of items) {
-          const recipe = state.recipes.find((r) => r.id === item.recipeId);
-          if (recipe) await addRecipeToShoppingSilent(recipe, item.persons);
-        }
+        await addRecipesToShoppingSilent(pairs);
       } catch (e) {
-        // Sans ce filet, un échec ici (transaction IndexedDB atomique,
-        // voir addRecipeToShoppingSilent) restait totalement invisible
-        // pour l'utilisateur, y compris pour les recettes déjà ajoutées
-        // avec succès avant celle qui échoue.
+        // Sans ce filet, un échec ici restait totalement invisible
+        // pour l'utilisateur.
         await customAlert(t("storage_write_error"));
+        return;
       }
       state.screen = "shopping";
       render();
@@ -9136,23 +9159,34 @@ function renderPlanning() {
 
   const genBtn = el(`<button class="btn btn-primary" style="margin-bottom:10px;">${t("planning_generate_shopping")}</button>`);
   genBtn.addEventListener("click", async () => {
-    let any = false;
-    try {
-      for (const day of WEEKDAYS) {
-        for (const slot of MEAL_SLOTS) {
-          for (const assigned of planSlotAssignments((state.weeklyPlan[day] || {})[slot])) {
-            const recipe = state.recipes.find((r) => r.id === assigned.recipeId);
-            if (recipe) { await addRecipeToShoppingSilent(recipe, assigned.persons); any = true; }
-          }
+    // Toutes les recettes du planning sont préparées PUIS ajoutées en
+    // un seul appel (voir addRecipesToShoppingSilent) — dans une seule
+    // transaction IndexedDB couvrant l'ensemble de cette génération.
+    // Avant ce correctif, chaque recette s'écrivait séparément dans la
+    // boucle : une recette déjà ajoutée avec succès avant qu'une autre
+    // échoue plus loin restait appliquée, risquant d'être comptée deux
+    // fois à la prochaine tentative — bug réel confirmé par relecture
+    // externe.
+    const pairs = [];
+    for (const day of WEEKDAYS) {
+      for (const slot of MEAL_SLOTS) {
+        for (const assigned of planSlotAssignments((state.weeklyPlan[day] || {})[slot])) {
+          const recipe = state.recipes.find((r) => r.id === assigned.recipeId);
+          if (recipe) pairs.push({ recipe, persons: assigned.persons });
         }
       }
-    } catch (e) {
-      // Sans ce filet, un échec ici (transaction IndexedDB atomique,
-      // voir addRecipeToShoppingSilent) restait totalement invisible
-      // pour l'utilisateur.
-      await customAlert(t("storage_write_error"));
     }
-    if (any) { state.screen = "shopping"; render(); }
+    if (!pairs.length) return;
+    try {
+      await addRecipesToShoppingSilent(pairs);
+    } catch (e) {
+      // Sans ce filet, un échec ici restait totalement invisible pour
+      // l'utilisateur.
+      await customAlert(t("storage_write_error"));
+      return;
+    }
+    state.screen = "shopping";
+    render();
   });
   wrap.appendChild(genBtn);
 
@@ -12320,7 +12354,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 261;
+const APP_VERSION = 262;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
