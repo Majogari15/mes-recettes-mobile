@@ -345,10 +345,13 @@ const state = {
   pantry: [],
   // Registre des réservations du garde-manger pour la session en
   // cours — un tableau d'entrées {id, ingredientKey, amount,
-  // sourceType, sourceId}, voir commitPantryClaim() et
-  // computePantryReduction(). Remis à zéro entièrement lors d'une
-  // opération globale (vider toute la liste, en charger une autre,
-  // restaurer une sauvegarde) ; libéré précisément par source sinon.
+  // sourceType, sourceId}, voir computePantryReduction() et les
+  // fonctions qui écrivent ici une nouvelle réservation
+  // (addRecipeToShopping, openAddItemModal) dans la même transaction
+  // IndexedDB que l'article de courses concerné. Remis à zéro
+  // entièrement lors d'une opération globale (vider toute la liste, en
+  // charger une autre, restaurer une sauvegarde) ; libéré précisément
+  // par source sinon.
   pantryClaimedThisSession: [],
   // {code-barres: nom d'ingrédient} — mémorisé une fois que
   // l'utilisateur a choisi/confirmé quel ingrédient correspond à ce
@@ -1593,7 +1596,16 @@ function renderRecipeView() {
 
   const actions = el(`<div class="action-row"></div>`);
   const addShopBtn = el(`<button class="btn btn-primary">${t("recipe_add_to_shopping")}</button>`);
-  addShopBtn.addEventListener("click", () => addRecipeToShopping(r, state.viewPersons));
+  addShopBtn.addEventListener("click", async () => {
+    try {
+      await addRecipeToShopping(r, state.viewPersons);
+    } catch (e) {
+      // Sans ce filet, un échec ici (transaction IndexedDB atomique,
+      // voir addRecipeToShopping) restait totalement invisible pour
+      // l'utilisateur — aucun changement à l'écran, aucun message.
+      await customAlert(t("storage_write_error"));
+    }
+  });
   const cookBtn = el(`<button class="btn btn-secondary">${t("recipe_cooking_mode")}</button>`);
   cookBtn.addEventListener("click", () => openCookingMode(r, state.viewPersons));
   actions.appendChild(addShopBtn);
@@ -2253,9 +2265,21 @@ function computeShoppingMerge(existing, qty) {
 }
 async function addRecipeToShoppingSilent(recipe, persons) {
   const items = state.shopping;
+  // Calcule D'ABORD l'état final de chaque article touché, sur une
+  // copie de travail — sans rien écrire ni muter l'état réel tant que
+  // tout n'est pas prêt. Une seule transaction (storeWriteManyAcrossStores)
+  // écrit ensuite TOUS les articles de la recette d'un bloc : soit ils
+  // sont tous ajoutés/fusionnés ensemble, soit rien ne l'est. Avant ce
+  // correctif, chaque article s'écrivait séparément dans une boucle —
+  // un échec sur le 2e ingrédient d'une recette de 2 laissait le 1er
+  // déjà écrit (recette ajoutée seulement en partie), une nouvelle
+  // tentative risquant de l'ajouter une seconde fois. Bug réel
+  // confirmé par relecture externe avant ce correctif.
+  const localItems = items.map((i) => ({ ...i }));
+  const touchedItems = [];
   for (const ing of recipe.ingredients || []) {
     const qty = ing.quantity != null ? Number(ing.quantity) * persons : null;
-    const existing = items.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
+    const existing = localItems.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
     if (existing) {
       // Un article correspondant (même nom, même unité, pas encore
       // coché) existe déjà : ne jamais en créer un second en double.
@@ -2268,21 +2292,27 @@ async function addRecipeToShoppingSilent(recipe, persons) {
       // une recette/un menu à une liste de courses déjà existante).
       const merge = computeShoppingMerge(existing, qty);
       if (merge) {
-        // La quantité en mémoire n'est mise à jour qu'APRÈS confirmation
-        // de l'écriture (sur une copie, jamais en modifiant "existing"
-        // avant coup) — sinon un échec d'écriture (quota IndexedDB
-        // dépassé...) laissait une quantité augmentée à l'écran alors
-        // qu'elle n'avait jamais été réellement enregistrée, bug réel
-        // confirmé avant ce correctif.
-        const updated = { ...existing, ...merge };
-        await storePut("shopping", updated);
-        Object.assign(existing, updated);
+        Object.assign(existing, merge);
+        touchedItems.push(existing);
       }
     } else {
       const item = { id: uid(), name: ing.name, quantity: qty, unit: ing.unit, checked: false };
-      await storePut("shopping", item);
-      items.push(item);
+      localItems.push(item);
+      touchedItems.push(item);
     }
+  }
+  const uniqueTouchedItems = [...new Set(touchedItems)];
+  if (!uniqueTouchedItems.length) return;
+  await storeWriteManyAcrossStores([{ store: "shopping", puts: uniqueTouchedItems, deletes: [] }]);
+  // Seulement maintenant, une fois l'écriture confirmée réussie : la
+  // quantité en mémoire n'est mise à jour qu'APRÈS confirmation de
+  // l'écriture, jamais avant — sinon un échec d'écriture (quota
+  // IndexedDB dépassé...) laissait une quantité augmentée à l'écran
+  // alors qu'elle n'avait jamais été réellement enregistrée.
+  for (const item of uniqueTouchedItems) {
+    const idx = items.findIndex((i) => i.id === item.id);
+    if (idx >= 0) Object.assign(items[idx], item);
+    else items.push(item);
   }
 }
 async function addRecipeToShopping(recipe, persons) {
@@ -2323,16 +2353,35 @@ async function addRecipeToShopping(recipe, persons) {
     const summaryText = `${t("pantry_reduction_summary_title")}\n\n${summaryLines.join("\n")}\n\n${t("pantry_reduction_confirm_continue")}`;
     if (!await customConfirm(summaryText)) return;
   }
-  // Les réservations ne sont appliquées pour de vrai qu'à partir
-  // d'ici — après un éventuel "Annuler" ci-dessus, rien n'aura été
-  // modifié. Celles des ingrédients entièrement couverts sont
-  // attachées à cette opération d'ajout précise (voir operationId).
+
+  // Calcule maintenant TOUT ce qu'il faut écrire — les articles de
+  // courses touchés (fusionnés ou créés) ET les nouvelles réservations
+  // (couverture totale + par article restant) — sans rien écrire ni
+  // muter l'état réel tant que tout n'est pas prêt. Regroupées dans
+  // UNE SEULE transaction (storeWriteManyAcrossStores, entrepôts
+  // "shopping" et "kv") : soit toute la recette et toutes ses
+  // réservations sont appliquées ensemble, soit rien n'est écrit du
+  // tout. Avant ce correctif, chaque article et chaque réservation
+  // s'écrivaient l'un après l'autre (via storePut/commitPantryClaim,
+  // qui écrit lui-même séparément dans "kv") : un échec en cours de
+  // route laissait les précédents déjà appliqués — une réservation de
+  // garde-manger pouvait ainsi rester engagée sans qu'aucun article de
+  // courses ne lui corresponde, ou une recette n'être ajoutée qu'en
+  // partie. Bugs réels confirmés par relecture externe avant ce
+  // correctif.
+  const localItems = items.map((i) => ({ ...i }));
+  const touchedItems = [];
+  const newClaims = state.pantryClaimedThisSession.slice();
+
+  // Réservations des ingrédients entièrement couverts : attachées à
+  // cette opération d'ajout précise (voir operationId), aucun article
+  // de courses ne les représente.
   for (const { claimKey, claimAmount, claimKind } of fullyCoveredClaims) {
-    await commitPantryClaim(claimKey, claimAmount, "recipe", operationId, claimKind);
+    newClaims.push({ id: uid(), ingredientKey: claimKey, amount: claimAmount, sourceType: "recipe", sourceId: operationId, kind: claimKind || null });
   }
 
   for (const ing of plan) {
-    const existing = items.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
+    const existing = localItems.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
     let resultItem;
     if (existing) {
       // Voir le même correctif dans addRecipeToShoppingSilent : un
@@ -2341,24 +2390,37 @@ async function addRecipeToShopping(recipe, persons) {
       resultItem = existing;
       const merge = computeShoppingMerge(existing, ing.quantity);
       if (merge) {
-        // Écrit et confirmé AVANT toute mutation de l'état en mémoire
-        // (sur une copie) — sinon un échec d'écriture laissait une
-        // quantité augmentée à l'écran sans jamais avoir été
-        // réellement enregistrée, bug réel confirmé avant ce correctif.
-        const updated = { ...existing, ...merge };
-        await storePut("shopping", updated);
-        Object.assign(existing, updated);
+        Object.assign(existing, merge);
+        touchedItems.push(existing);
       }
     } else {
       resultItem = { id: uid(), name: ing.name, quantity: ing.quantity, unit: ing.unit, checked: false };
-      await storePut("shopping", resultItem);
-      items.push(resultItem);
+      localItems.push(resultItem);
+      touchedItems.push(resultItem);
     }
     // Attachée à l'article de courses réel qui en résulte (existant
     // fusionné, ou nouvellement créé) — permet de la libérer
     // précisément si CET article est ensuite supprimé ou modifié.
-    if (ing.claimKey && ing.claimAmount) await commitPantryClaim(ing.claimKey, ing.claimAmount, "shopping", resultItem.id, ing.claimKind);
+    if (ing.claimKey && ing.claimAmount) {
+      newClaims.push({ id: uid(), ingredientKey: ing.claimKey, amount: ing.claimAmount, sourceType: "shopping", sourceId: resultItem.id, kind: ing.claimKind || null });
+    }
   }
+
+  const uniqueTouchedItems = [...new Set(touchedItems)];
+  const ops = [];
+  if (uniqueTouchedItems.length) ops.push({ store: "shopping", puts: uniqueTouchedItems, deletes: [] });
+  if (newClaims.length !== state.pantryClaimedThisSession.length) ops.push({ store: "kv", puts: [{ key: "pantryClaimedThisSession", value: newClaims }], deletes: [] });
+  if (ops.length) await storeWriteManyAcrossStores(ops);
+
+  // Seulement maintenant, une fois la transaction confirmée réussie :
+  // applique les mêmes changements à l'état réel en mémoire.
+  for (const item of uniqueTouchedItems) {
+    const idx = items.findIndex((i) => i.id === item.id);
+    if (idx >= 0) Object.assign(items[idx], item);
+    else items.push(item);
+  }
+  state.pantryClaimedThisSession = newClaims;
+
   state.screen = "shopping";
   render();
 }
@@ -3191,6 +3253,14 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved, opts) {
     // Vérifie le garde-manger uniquement pour un nouvel article de la
     // liste de courses (pas en modification, ni pour le garde-manger
     // lui-même, où ça n'aurait pas de sens).
+    // claimRecord : préparé ici mais jamais écrit avant le bloc plus
+    // bas, qui le combine dans LA MÊME transaction que l'article lui
+    // même (voir storeWriteManyAcrossStores) — sans ça, la réservation
+    // pouvait rester engagée en mémoire (et parfois en base) alors que
+    // l'écriture de l'article de courses échouait juste après, ou
+    // l'inverse. Bug réel confirmé par relecture externe avant ce
+    // correctif.
+    let claimRecord = null;
     if (storeName === "shopping" && !isEdit) {
       const { adjustedQty, reducedAmount, fullyCovered, claimKey, claimAmount, claimKind } = computePantryReduction(name, unit, quantity);
       if (fullyCovered || reducedAmount > 0) {
@@ -3199,11 +3269,22 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved, opts) {
           : t("pantry_reduction_reduced", { name: translateIngredientName(name), qty: fmtQty(adjustedQty), unit: translateUnit(unit) });
         const summaryText = `${t("pantry_reduction_summary_title")}\n\n${line}\n\n${t("pantry_reduction_confirm_continue")}`;
         if (!await customConfirm(summaryText)) return;
-        // La réservation n'est appliquée pour de vrai qu'après ce point,
-        // une fois la confirmation acceptée — attachée à cet article de
-        // courses précis (voir itemId ci-dessus).
-        if (claimKey && claimAmount) await commitPantryClaim(claimKey, claimAmount, "shopping", itemId, claimKind);
-        if (fullyCovered) { overlay.remove(); return; }
+        if (claimKey && claimAmount) {
+          claimRecord = { id: uid(), ingredientKey: claimKey, amount: claimAmount, sourceType: "shopping", sourceId: itemId, kind: claimKind || null };
+        }
+        if (fullyCovered) {
+          // Aucun article de courses pour un ingrédient entièrement
+          // couvert — seule la réservation doit être écrite. Même
+          // logique atomique que plus bas : si l'écriture échoue, rien
+          // n'est laissé en mémoire non plus.
+          if (claimRecord) {
+            const newClaims = [...state.pantryClaimedThisSession, claimRecord];
+            await storeWriteManyAcrossStores([{ store: "kv", puts: [{ key: "pantryClaimedThisSession", value: newClaims }], deletes: [] }]);
+            state.pantryClaimedThisSession = newClaims;
+          }
+          overlay.remove();
+          return;
+        }
         quantity = adjustedQty;
       }
     }
@@ -3217,7 +3298,16 @@ function openAddItemModal(storeName, existingItem, prefill, onSaved, opts) {
     if (storeName === "shopping") item.checked = isEdit ? existingItem.checked : false;
     if (isPantry) item.threshold = parseQtyOrNull(sheet.querySelector("#modal-ing-threshold").value);
     if (isPantry) item.expirationDate = expirationDate;
-    await storePut(storeName, item);
+    if (claimRecord) {
+      const newClaims = [...state.pantryClaimedThisSession, claimRecord];
+      await storeWriteManyAcrossStores([
+        { store: storeName, puts: [item], deletes: [] },
+        { store: "kv", puts: [{ key: "pantryClaimedThisSession", value: newClaims }], deletes: [] },
+      ]);
+      state.pantryClaimedThisSession = newClaims;
+    } else {
+      await storePut(storeName, item);
+    }
     if (storeName === "shopping" && isEdit) {
       // Modifier un article de courses existant rend sa réservation
       // éventuelle obsolète (basée sur l'ancienne quantité) — libère
@@ -7157,16 +7247,6 @@ function computePantryReduction(name, unit, neededQty, pendingClaims) {
   const adjustedQty = neededQty * remainingRatio;
   return { adjustedQty, reducedAmount: neededQty - adjustedQty, fullyCovered: false, claimKey: key, claimAmount: effectiveAvailable, claimKind: neededBase.kind };
 }
-// N'applique réellement la réservation qu'une fois l'utilisateur passé
-// par la confirmation — à appeler uniquement après un customConfirm()
-// accepté, jamais avant, pour qu'un "Annuler" n'affecte jamais l'état.
-// "sourceType"/"sourceId" identifient ce qui crée cette réservation
-// précise (voir commentaire ci-dessus) — obligatoires pour pouvoir la
-// libérer plus tard sans toucher aux réservations d'autres sources.
-async function commitPantryClaim(ingredientKey, amount, sourceType, sourceId, kind) {
-  state.pantryClaimedThisSession.push({ id: uid(), ingredientKey, amount, sourceType, sourceId, kind: kind || null });
-  await persistPantryClaims();
-}
 // Libère uniquement les réservations liées à cette source précise —
 // jamais les autres réservations du même ingrédient créées ailleurs.
 // Libère TOUTES les réservations d'un ingrédient, peu importe leur
@@ -8919,9 +8999,17 @@ function renderMenuDetail() {
   if (existing) {
     const shopBtn = el(`<button class="btn btn-secondary" style="margin-bottom:10px;">${t("menu_generate_shopping")}</button>`);
     shopBtn.addEventListener("click", async () => {
-      for (const item of items) {
-        const recipe = state.recipes.find((r) => r.id === item.recipeId);
-        if (recipe) await addRecipeToShoppingSilent(recipe, item.persons);
+      try {
+        for (const item of items) {
+          const recipe = state.recipes.find((r) => r.id === item.recipeId);
+          if (recipe) await addRecipeToShoppingSilent(recipe, item.persons);
+        }
+      } catch (e) {
+        // Sans ce filet, un échec ici (transaction IndexedDB atomique,
+        // voir addRecipeToShoppingSilent) restait totalement invisible
+        // pour l'utilisateur, y compris pour les recettes déjà ajoutées
+        // avec succès avant celle qui échoue.
+        await customAlert(t("storage_write_error"));
       }
       state.screen = "shopping";
       render();
@@ -9049,13 +9137,20 @@ function renderPlanning() {
   const genBtn = el(`<button class="btn btn-primary" style="margin-bottom:10px;">${t("planning_generate_shopping")}</button>`);
   genBtn.addEventListener("click", async () => {
     let any = false;
-    for (const day of WEEKDAYS) {
-      for (const slot of MEAL_SLOTS) {
-        for (const assigned of planSlotAssignments((state.weeklyPlan[day] || {})[slot])) {
-          const recipe = state.recipes.find((r) => r.id === assigned.recipeId);
-          if (recipe) { await addRecipeToShoppingSilent(recipe, assigned.persons); any = true; }
+    try {
+      for (const day of WEEKDAYS) {
+        for (const slot of MEAL_SLOTS) {
+          for (const assigned of planSlotAssignments((state.weeklyPlan[day] || {})[slot])) {
+            const recipe = state.recipes.find((r) => r.id === assigned.recipeId);
+            if (recipe) { await addRecipeToShoppingSilent(recipe, assigned.persons); any = true; }
+          }
         }
       }
+    } catch (e) {
+      // Sans ce filet, un échec ici (transaction IndexedDB atomique,
+      // voir addRecipeToShoppingSilent) restait totalement invisible
+      // pour l'utilisateur.
+      await customAlert(t("storage_write_error"));
     }
     if (any) { state.screen = "shopping"; render(); }
   });
@@ -12225,7 +12320,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 260;
+const APP_VERSION = 261;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

@@ -152,11 +152,14 @@ def main():
                 state.shopping = [];
                 state.pantryClaimedThisSession = [];
 
-                const realStorePut = window.storePut;
-                window.storePut = (store, item) => {
-                    if (store === 'shopping') return Promise.reject(new Error('quota dépassé (simulé)'));
-                    return realStorePut(store, item);
-                };
+                // addRecipeToShopping écrit désormais l'article ET sa
+                // réservation dans LA MÊME transaction
+                // (storeWriteManyAcrossStores, voir
+                // TESTS_NON_REGRESSION.md point 118) et non plus via
+                // storePut/commitPantryClaim séparément — c'est donc ce
+                // point d'entrée qu'il faut simuler en échec.
+                const realWriteMany = window.storeWriteManyAcrossStores;
+                window.storeWriteManyAcrossStores = () => Promise.reject(new Error('quota dépassé (simulé)'));
                 const realCustomConfirm = window.customConfirm;
                 window.customConfirm = () => Promise.resolve(true);
                 let threw = false;
@@ -165,7 +168,7 @@ def main():
                 } catch (e) {
                     threw = true;
                 }
-                window.storePut = realStorePut;
+                window.storeWriteManyAcrossStores = realWriteMany;
                 window.customConfirm = realCustomConfirm;
                 return {
                     threw,

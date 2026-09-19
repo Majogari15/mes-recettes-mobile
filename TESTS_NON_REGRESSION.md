@@ -7923,3 +7923,83 @@ Audit d'accessibilité (axe-core) au vert (3 exécutions consécutives).
 Suite de régression complète (45 scripts + corpus OCR) au vert.
 
 **Version testée** : v260
+
+### 118 — Troisième relecture (autre IA) : ajout aux courses avec réservation garde-manger rendu réellement atomique
+
+Suite au point 117, l'utilisateur a transmis le compte rendu à une
+troisième IA, qui a reproduit — avec les vraies fonctions de la v260 —
+3 défauts "importants" non couverts par les tests du point 115 :
+l'échec d'écriture N'EST PAS un simple aller-retour ; TROIS fonctions
+distinctes écrivaient chacune en plusieurs étapes séparées (article de
+courses, puis réservation de garde-manger — ou plusieurs ingrédients
+d'une même recette l'un après l'autre), sans qu'aucune transaction ne
+les lie. Chaque point a été reproduit dans le vrai code avant d'être
+corrigé — les 3 sont confirmés réels.
+
+**Bugs confirmés et corrigés** :
+
+1. **`addRecipeToShopping`** (bouton "Ajouter aux courses" d'une fiche
+   recette) : les réservations des ingrédients entièrement couverts par
+   le garde-manger étaient appliquées (`commitPantryClaim`, qui écrit
+   lui-même séparément dans le magasin "kv") AVANT la boucle qui écrit
+   les articles de courses restants. Si un ingrédient plus loin dans la
+   même recette échouait à s'écrire, l'opération globale échouait
+   visiblement — mais la réservation déjà appliquée, elle, restait
+   engagée en mémoire ET en base, sans qu'aucun article de courses ne
+   lui corresponde. Une nouvelle tentative pouvait alors "déduire" une
+   seconde fois le même stock déjà réservé.
+2. **Même fonction : article et réservation non liés.** Pour chaque
+   ingrédient partiellement couvert, l'article de courses (`storePut`)
+   et sa réservation (`commitPantryClaim`, écriture "kv" séparée)
+   étaient deux écritures indépendantes l'une de l'autre — rien ne
+   garantissait qu'elles réussissent ou échouent ensemble.
+3. **`addRecipeToShoppingSilent`** (génération de la liste de courses
+   depuis un menu ou le planning) : chaque ingrédient de la recette
+   s'écrivait séparément dans une boucle. Un échec sur le 2ᵉ ingrédient
+   d'une recette de 2 laissait le 1ᵉʳ déjà écrit — la recette n'était
+   ajoutée qu'en partie, et une nouvelle tentative risquait de
+   dupliquer ce premier ingrédient.
+
+Une quatrième occurrence du même défaut, non signalée par l'audit mais
+partageant exactement le même code (`commitPantryClaim` avant
+`storePut`), a été trouvée par cohérence dans `openAddItemModal`
+(ajout manuel d'un article de courses avec réduction du garde-manger) —
+corrigée de la même façon.
+
+**Corrigé** : les 3 fonctions ont été réécrites pour calculer D'ABORD,
+sur une copie de travail, l'état final de tous les articles de courses
+touchés ET de toutes les nouvelles réservations, sans rien écrire ni
+muter l'état réel — puis appliquer TOUT d'un bloc dans une seule
+transaction IndexedDB (`storeWriteManyAcrossStores`, déjà utilisée pour
+la restauration ZIP depuis le point 115, ici étendue aux entrepôts
+"shopping" et "kv" ensemble). L'état en mémoire n'est mis à jour
+qu'après confirmation de cette transaction, jamais avant. La fonction
+`commitPantryClaim()`, devenue sans appelant après ce correctif, a été
+supprimée (code mort).
+
+**Amélioration ajoutée** (relevée en creusant les 3 scénarios, pas
+directement demandée) : aucun des 3 points d'appel UI (bouton "Ajouter
+aux courses", "Générer la liste de courses" d'un menu ou du planning)
+n'affichait le moindre message en cas d'échec — l'opération échouait en
+silence, sans aucun retour visible pour l'utilisateur. Les 3 boutons
+affichent désormais le message d'erreur déjà utilisé ailleurs dans
+l'application (`storage_write_error`) en cas d'échec.
+
+**Vérifié** (voir `tests/test_shopping_atomic_pantry_transaction.py`,
+nouveau, 8 vérifications via Playwright sur les vraies fonctions) :
+aucune réservation orpheline ni écriture partielle sur un échec simulé
+de la transaction (les 3 fonctions), l'article et sa réservation
+partent bien dans un seul appel couvrant "shopping" et "kv" ensemble,
+le message d'erreur s'affiche bien à l'utilisateur, et les chemins
+normaux (couverture totale, partielle, sans réduction) restent
+inchangés. Deux tests existants (points 115 et 117) devaient simuler
+l'échec via `storePut` — devenu inopérant puisque ces fonctions
+écrivent maintenant via `storeWriteManyAcrossStores` — corrigés pour
+cibler ce nouveau point d'entrée. `tests/test_units_migration.py`
+utilisait `commitPantryClaim()` comme simple raccourci de préparation
+de scénario ; adapté pour reproduire son effet directement (registre en
+mémoire + persistance "kv"), sans dépendre d'une fonction supprimée.
+Audit d'accessibilité (axe-core) au vert (3 exécutions consécutives).
+Suite de régression complète (46 scripts + corpus OCR) au vert.
+
+**Version testée** : v261

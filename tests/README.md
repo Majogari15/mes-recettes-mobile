@@ -449,6 +449,21 @@ Depuis, la structure sépare strictement :
   vérifie qu'un échec d'écriture pendant `addRecipeToShopping` (pas
   seulement la version silencieuse) ne laisse ni article de courses
   fictif ni réservation de garde-manger orpheline.
+- `test_shopping_atomic_pantry_transaction.py` — suite à une troisième
+  relecture externe (voir TESTS_NON_REGRESSION.md point 118) : l'ajout
+  d'une recette (ou d'un article manuel) à la liste de courses avec
+  réservation du garde-manger écrit désormais l'article ET sa
+  réservation dans UNE SEULE transaction IndexedDB
+  (`storeWriteManyAcrossStores`, entrepôts "shopping" et "kv"), sur les
+  3 fonctions concernées (`addRecipeToShopping`,
+  `addRecipeToShoppingSilent`, l'ajout manuel dans
+  `openAddItemModal`). Vérifie qu'un échec simulé de cette transaction
+  ne laisse ni réservation orpheline ni écriture partielle sur aucune
+  des 3, que l'article et sa réservation partent bien ensemble, que le
+  message d'erreur `storage_write_error` s'affiche désormais à
+  l'utilisateur en cas d'échec (silencieux auparavant), et que les
+  chemins normaux (couverture totale, partielle, sans réduction)
+  restent inchangés.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

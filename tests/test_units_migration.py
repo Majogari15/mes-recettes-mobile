@@ -287,7 +287,14 @@ def main():
                 await storePut('shopping', { id: 'cl-1', name: 'Beurre demi-sel', unit: 'pot', quantity: 1, checked: false });
                 await storePut('shopping', { id: 'cl-2', name: 'Beurre demi-sel', unit: 'sachet', quantity: 1, checked: false });
                 state.shopping = await storeAll('shopping');
-                await commitPantryClaim('Beurre demi-sel', 0.5, 'shopping', 'cl-2', 'weight');
+                // commitPantryClaim() a été retiré (code mort, voir
+                // TESTS_NON_REGRESSION.md point 118) : les 3 fonctions qui
+                // posent une réservation l'écrivent désormais directement
+                // dans la même transaction que l'article concerné. Ici, on
+                // reproduit son effet (registre en mémoire + persistance
+                // kv) pour préparer ce scénario de test.
+                state.pantryClaimedThisSession.push({ id: 'claim-1', ingredientKey: 'Beurre demi-sel', amount: 0.5, sourceType: 'shopping', sourceId: 'cl-2', kind: 'weight' });
+                await kvSet('pantryClaimedThisSession', state.pantryClaimedThisSession);
                 await migrateMergedContainerUnits();
                 const survivor = state.shopping.find((s) => s.name === 'Beurre demi-sel');
                 const claims = state.pantryClaimedThisSession.filter((c) => c.ingredientKey === 'Beurre demi-sel');
@@ -318,7 +325,11 @@ def main():
                 await storePut('shopping', { id: 'pm-1', name: 'Test Fusion Claims', unit: 'boîte', quantity: 1, checked: false });
                 await storePut('shopping', { id: 'pm-2', name: 'Test Fusion Claims', unit: 'boîte', quantity: 1, checked: false });
                 state.shopping = await storeAll('shopping');
-                await commitPantryClaim('Test Fusion Claims', 0.5, 'shopping', 'pm-2', 'weight');
+                // commitPantryClaim() a été retiré (code mort, voir
+                // TESTS_NON_REGRESSION.md point 118) : reproduit son effet
+                // directement pour préparer ce scénario de test.
+                state.pantryClaimedThisSession.push({ id: 'claim-2', ingredientKey: 'Test Fusion Claims', amount: 0.5, sourceType: 'shopping', sourceId: 'pm-2', kind: 'weight' });
+                await kvSet('pantryClaimedThisSession', state.pantryClaimedThisSession);
                 const shoppingSnapshotBefore = JSON.stringify(state.shopping);
                 const claimsSnapshotBefore = JSON.stringify(state.pantryClaimedThisSession);
 

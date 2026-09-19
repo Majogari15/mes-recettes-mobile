@@ -233,13 +233,19 @@ def main():
                 for (const s of await storeAll('shopping')) await storeDelete('shopping', s.id);
                 await storePut('shopping', { id: 'e1', name: 'Farine', quantity: 10, unit: 'g', checked: false });
                 state.shopping = await storeAll('shopping');
-                const realStorePut = window.storePut;
-                window.storePut = () => Promise.reject(new Error('échec simulé'));
+                // addRecipeToShoppingSilent écrit désormais via
+                // storeWriteManyAcrossStores (transaction atomique, voir
+                // TESTS_NON_REGRESSION.md point 118) et non plus via
+                // storePut directement — c'est donc ce point d'entrée
+                // qu'il faut simuler en échec pour reproduire le même
+                // scénario qu'avant ce correctif.
+                const realWriteMany = window.storeWriteManyAcrossStores;
+                window.storeWriteManyAcrossStores = () => Promise.reject(new Error('échec simulé'));
                 let threw = false;
                 try {
                     await addRecipeToShoppingSilent({ ingredients: [{ name: 'Farine', quantity: 10, unit: 'g' }] }, 1);
                 } catch (e) { threw = true; }
-                window.storePut = realStorePut;
+                window.storeWriteManyAcrossStores = realWriteMany;
                 return { threw, memQty: state.shopping.find((i) => i.id === 'e1').quantity, dbQty: (await storeAll('shopping')).find((i) => i.id === 'e1').quantity };
             }
             """
