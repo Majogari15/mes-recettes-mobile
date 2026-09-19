@@ -477,6 +477,16 @@ Depuis, la structure sépare strictement :
   planning) n'en déclenchent eux aussi qu'une seule en cliquant
   réellement dessus, et que le raccourci mono-recette
   (`addRecipeToShoppingSilent`) reste fonctionnel.
+- `test_skip_link.py` — suite à un audit externe (voir
+  TESTS_NON_REGRESSION.md point 120) : ajoute un lien d'évitement
+  ("skip link") absent auparavant — premier élément focalisable de la
+  page, invisible sauf au focus clavier, saute vers
+  `<main id="main-content">`. Vérifie sa présence avant `#app` dans le
+  DOM, sa visibilité au premier Tab, que l'activer déplace bien le
+  focus vers le contenu principal, la stabilité de `#main-content` sur
+  plusieurs écrans, que le lien lui-même survit aux changements
+  d'écran (il vit hors de `#app`, jamais effacé par `render()`), et sa
+  traduction dans les 4 langues.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

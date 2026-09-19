@@ -16,6 +16,7 @@ const TRANSLATIONS = {
     startup_error_details: "Détails techniques",
     storage_write_error: "Impossible d'enregistrer cette modification (problème de stockage local). Rien n'a été perdu de votre côté, mais réessayez avant de continuer.",
     app_name: "Mes Recettes",
+    skip_to_content: "Aller au contenu principal",
     nav_home: "Accueil",
     nav_recipes: "Recettes",
     nav_shopping: "Courses",
@@ -626,6 +627,7 @@ const TRANSLATIONS = {
     startup_error_details: "Technical details",
     storage_write_error: "Couldn't save this change (local storage issue). Nothing on your end has been lost, but try again before continuing.",
     app_name: "My Recipes",
+    skip_to_content: "Skip to main content",
     nav_home: "Home",
     nav_recipes: "Recipes",
     nav_shopping: "Shopping",
@@ -1234,6 +1236,7 @@ const TRANSLATIONS = {
     startup_error_details: "Detalles técnicos",
     storage_write_error: "No se pudo guardar este cambio (problema de almacenamiento local). No se ha perdido nada de su parte, pero vuelva a intentarlo antes de continuar.",
     app_name: "Mis Recetas",
+    skip_to_content: "Ir al contenido principal",
     common_delete: "Eliminar",
     common_undo: "Deshacer",
     nav_home: "Inicio",
@@ -1844,6 +1847,7 @@ const TRANSLATIONS = {
     startup_error_details: "Technische Details",
     storage_write_error: "Diese Änderung konnte nicht gespeichert werden (Problem beim lokalen Speicher). Auf Ihrer Seite ist nichts verloren gegangen, aber versuchen Sie es erneut, bevor Sie fortfahren.",
     app_name: "Meine Rezepte",
+    skip_to_content: "Zum Hauptinhalt springen",
     nav_home: "Start",
     common_delete: "Löschen",
     common_undo: "Rückgängig",
@@ -2688,6 +2692,13 @@ if (typeof document !== "undefined") {
   if (TRANSLATIONS[CURRENT_LANG] && TRANSLATIONS[CURRENT_LANG].app_name) {
     document.title = TRANSLATIONS[CURRENT_LANG].app_name;
   }
+  // Lien d'évitement (voir index.html) : hors de #app, jamais retouché
+  // par render() — sa langue doit donc être synchronisée ici au
+  // chargement, et dans setLang() ci-dessous lors d'un changement.
+  const skipLinkEl = document.getElementById("skip-link");
+  if (skipLinkEl && TRANSLATIONS[CURRENT_LANG] && TRANSLATIONS[CURRENT_LANG].skip_to_content) {
+    skipLinkEl.textContent = TRANSLATIONS[CURRENT_LANG].skip_to_content;
+  }
 }
 
 function t(key, params) {
@@ -2705,6 +2716,8 @@ function setLang(lang) {
   localStorage.setItem("lang", lang);
   document.documentElement.lang = lang;
   document.title = t("app_name");
+  const skipLinkEl = document.getElementById("skip-link");
+  if (skipLinkEl) skipLinkEl.textContent = t("skip_to_content");
   // Retrie immédiatement selon la traduction de la nouvelle langue —
   // sans ça, la liste restait triée selon l'ordre de la langue
   // précédente jusqu'au prochain redémarrage de l'application.

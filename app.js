@@ -866,6 +866,14 @@ function render() {
   const topbar = renderTopbar();
   const screenEl = document.createElement("main");
   screenEl.className = "screen";
+  // Cible du lien d'évitement ("skip link", voir index.html/styles.css)
+  // — id référencé par son href="#main-content", tabindex="-1" pour
+  // que ce <main> (pas nativement focalisable) accepte quand même le
+  // focus programmatique envoyé par ce lien, sans pour autant entrer
+  // dans l'ordre de tabulation normal (Tab ne s'y arrête jamais tout
+  // seul).
+  screenEl.id = "main-content";
+  screenEl.tabIndex = -1;
 
   switch (state.screen) {
     case "home":
@@ -12354,7 +12362,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 262;
+const APP_VERSION = 263;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

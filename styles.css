@@ -882,6 +882,29 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   outline-offset: 2px;
 }
 
+/* Lien d'évitement ("skip link") : hors écran tant qu'il n'a pas le
+   focus, ramené visible et au premier plan dès qu'on y arrive au
+   clavier (Tab) — jamais visible pour une navigation à la souris/au
+   tactile. Voir index.html pour le HTML et app.js (#main-content) pour
+   la cible. */
+.skip-link {
+  position: fixed;
+  top: -60px;
+  left: 8px;
+  z-index: 1000;
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: 8px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }

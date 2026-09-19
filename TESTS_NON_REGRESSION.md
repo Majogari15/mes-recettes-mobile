@@ -8048,3 +8048,38 @@ mono-recette reste pleinement fonctionnel. Audit d'accessibilité
 complète (47 scripts + corpus OCR) au vert.
 
 **Version testée** : v262
+
+### 120 — Ajout d'un lien d'évitement ("skip link")
+
+Suite à un audit externe complet transmis par l'utilisateur (score
+global 87%, priorité basse sur ce point précis), vérifié avant toute
+implémentation : aucun skip-link n'existait (recherche directe dans
+`index.html`/`app.js`/`styles.css`, aucune occurrence). Une autre
+affirmation du même audit ("1 fichier ~3000 lignes" pour `app.js`) a en
+revanche été vérifiée fausse — `app.js` fait 12 533 lignes, plus de 4
+fois cette estimation — sans conséquence sur ce point précis, mais
+signalé à l'utilisateur.
+
+**Ajouté** : un lien "Aller au contenu principal", premier élément
+focalisable de la page, invisible tant qu'il n'a pas le focus clavier
+(jamais visible à la souris/au tactile), qui saute vers
+`<main id="main-content">` (l'élément recréé à chaque `render()`, avec
+`tabindex="-1"` pour accepter ce focus programmatique sans entrer dans
+l'ordre de tabulation normal). Placé dans `index.html`, HORS de `#app`
+(jamais effacé par `render()`, qui vide et reconstruit `#app` à chaque
+changement d'écran) — sa traduction est donc synchronisée séparément
+depuis `i18n.js` (au chargement et dans `setLang()`), exactement comme
+`document.title` et `document.documentElement.lang` le sont déjà pour
+la même raison. Traduit dans les 4 langues.
+
+**Vérifié** (voir `tests/test_skip_link.py`, nouveau) : le lien est
+bien le premier élément du DOM avant `#app`, invisible par défaut,
+devient visible au premier Tab, l'activer (Entrée) déplace bien le
+focus vers `#main-content`, celui-ci reste présent avec le bon
+`tabindex` sur tous les écrans testés, le lien lui-même survit à
+plusieurs changements d'écran, et son texte est bien traduit dans les
+4 langues. Audit d'accessibilité (axe-core) au vert (3 exécutions
+consécutives). Suite de régression complète (48 scripts + corpus OCR)
+au vert.
+
+**Version testée** : v263
