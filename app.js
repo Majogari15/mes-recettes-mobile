@@ -7934,6 +7934,20 @@ function sharedBackupFileName() {
   const pad = (n) => String(n).padStart(2, "0");
   return `sauvegarde-partagee-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}.zip`;
 }
+// Même astuce que backupShareFileName() ci-dessus, appliquée au zip
+// partagé : Chromium exclut ".zip" de son Web Share API (voir
+// TESTS_NON_REGRESSION.md points 59 et 124), mais pas ".txt" — renommer
+// le fichier UNIQUEMENT pour l'appel de partage (jamais pour le bouton
+// "Exporter", qui garde ".zip") permet donc au menu de partage natif de
+// s'ouvrir normalement. Le contenu reste un zip valide, identique octet
+// pour octet ; seuls le nom et le type MIME déclarés changent pour cet
+// appel précis. Ce qui reçoit ce fichier (une autre appli mobile, ou
+// l'appli Windows une fois adaptée) doit reconnaître le zip par son
+// contenu (les octets "PK" en tête de fichier), pas par son extension —
+// exactement le principe déjà appliqué à la sauvegarde JSON/txt.
+function sharedBackupShareFileName() {
+  return sharedBackupFileName().replace(/\.zip$/, ".txt");
+}
 
 // Construit l'archive ZIP au format partagé avec l'application Windows.
 async function buildSharedBackupZip() {
@@ -8655,16 +8669,13 @@ function renderBackup() {
   const wrap = el(`<div></div>`);
 
   const canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [new File([""], "test.txt", { type: "text/plain" })] }));
-  // Vérification séparée pour le zip de la sauvegarde partagée : les
-  // fichiers .zip échouent systématiquement ce test sur Chromium
-  // (restriction de sécurité documentée dans le code source du
-  // navigateur — liste blanche d'extensions autorisées qui n'a jamais
-  // inclus zip, pour éviter le partage de fichiers exécutables). Sans
-  // cette vérification séparée, le bouton "Partager" apparaîtrait à
-  // tort pour la sauvegarde partagée en se basant sur le test .txt
-  // ci-dessus, alors que le partage échouerait toujours pour ce
-  // fichier précis.
-  const canShareZip = !!(navigator.canShare && navigator.canShare({ files: [new File([""], "test.zip", { type: "application/zip" })] }));
+  // La sauvegarde partagée (zip) est désormais elle aussi partagée sous
+  // un nom/type ".txt" (voir sharedBackupShareFileName) — le même test
+  // canShareFiles ci-dessus s'applique donc, plus besoin d'une
+  // vérification séparée pour un vrai fichier .zip (que Chromium
+  // refusait systématiquement, voir TESTS_NON_REGRESSION.md points 59
+  // et 124 pour l'historique de cette restriction et de son
+  // contournement).
 
   const exportSection = el(`<div class="section">
     <div class="section-label">${t("backup_export_title")}</div>
@@ -8838,7 +8849,7 @@ function renderBackup() {
     <div class="card" style="padding:16px;">
       <p class="prose" style="margin:0 0 14px;font-size:14px;">${escapeHtml(t("backup_shared_text"))}</p>
       <button class="btn btn-primary" id="shared-export-btn" style="margin-bottom:10px;">${t("backup_shared_export_button")}</button>
-      ${canShareZip ? `<button class="btn btn-secondary" id="shared-share-btn" disabled style="margin-bottom:14px;">${t("backup_share_preparing")}</button>` : ""}
+      ${canShareFiles ? `<button class="btn btn-secondary" id="shared-share-btn" disabled style="margin-bottom:14px;">${t("backup_share_preparing")}</button>` : ""}
       <div class="field">
         <label for="import-mode-shared">${t("backup_import_mode_title")}</label>
         <select id="import-mode-shared">
@@ -8848,7 +8859,7 @@ function renderBackup() {
       </div>
       <div class="field">
         <label for="shared-import-file" class="file-input-label">${t("backup_shared_import_button")}</label>
-        <input type="file" accept="application/zip,.zip" id="shared-import-file" class="file-input-hidden">
+        <input type="file" accept="application/zip,.zip,text/plain,.txt" id="shared-import-file" class="file-input-hidden">
         <span class="file-input-filename" id="shared-import-file-filename">${t("backup_no_file_chosen")}</span>
       </div>
     </div>
@@ -8868,48 +8879,48 @@ function renderBackup() {
     a.remove();
     URL.revokeObjectURL(url);
   });
-  if (canShareZip) {
+  if (canShareFiles) {
     const sharedShareBtn = sharedSection.querySelector("#shared-share-btn");
     // Même précaution que pour l'export classique : le fichier est
     // entièrement préparé AVANT que le bouton ne devienne cliquable,
     // pour qu'aucun await ne se produise entre le clic et l'appel à
     // navigator.share() lui-même (sans quoi le navigateur peut refuser
-    // le partage, le geste n'étant plus reconnu comme "actif").
-    let readySharedFile = null;
+    // le partage, le geste n'étant plus reconnu comme "actif"). On
+    // garde le Blob brut (pas encore enveloppé dans un File nommé) :
+    // le nom/type exact dépend de l'usage au moment du clic (partage
+    // en .txt déguisé, ou repli en .zip réel si le partage échoue).
+    let readySharedZipBlob = null;
     buildSharedBackupZip().then((blob) => {
-      readySharedFile = new File([blob], sharedBackupFileName(), { type: "application/zip" });
+      readySharedZipBlob = blob;
       sharedShareBtn.disabled = false;
       sharedShareBtn.textContent = t("backup_share_button");
     });
     sharedShareBtn.addEventListener("click", () => {
-      if (!readySharedFile) return; // ne devrait pas arriver, bouton désactivé jusque-là
-      shareBackupData(readySharedFile).then(async (result) => {
+      if (!readySharedZipBlob) return; // ne devrait pas arriver, bouton désactivé jusque-là
+      // Partagé sous un nom/type ".txt" (voir sharedBackupShareFileName) :
+      // Chromium autorise le partage de fichiers .txt mais pas .zip — le
+      // contenu reste un zip valide à l'octet près, seuls le nom et le
+      // type déclarés changent pour cet appel de partage précis.
+      const shareFile = new File([readySharedZipBlob], sharedBackupShareFileName(), { type: "text/plain" });
+      shareBackupData(shareFile).then(async (result) => {
         if (!result.ok && !result.cancelled) {
           // Le partage a échoué (pas simplement annulé) : le fichier
           // est tout de même mis en sécurité par téléchargement
           // classique, avec un message explicite — même logique que
           // pour l'export classique, voir son commentaire ci-dessus.
-          //
-          // Message dédié (pas backup_share_fallback_notice, utilisé
-          // pour l'export JSON) : navigator.canShare() peut répondre
-          // "oui" pour un fichier .zip sur cet appareil (affichant donc
-          // ce bouton) alors que navigator.share() lui-même refuse
-          // ensuite (NotAllowedError) — de nombreux navigateurs ne
-          // permettent pas le partage direct de fichiers .zip via le
-          // Web Share API, une restriction déjà rencontrée et
-          // documentée (voir TESTS_NON_REGRESSION.md point 59). Le
-          // message précise que c'est une limitation connue, pas un
-          // bug de l'application, pour éviter d'inquiéter inutilement.
-          const url = URL.createObjectURL(readySharedFile);
+          // Repli avec le VRAI nom ".zip" (pas le nom ".txt" déguisé
+          // utilisé seulement pour tenter le partage) : immédiatement
+          // utilisable tel quel, sans renommage manuel.
+          const url = URL.createObjectURL(readySharedZipBlob);
           const a = document.createElement("a");
           a.href = url;
-          a.download = readySharedFile.name;
+          a.download = sharedBackupFileName();
           document.body.appendChild(a);
           a.click();
           a.remove();
           URL.revokeObjectURL(url);
           const detail = result.error ? `\n\n(${result.error})` : "";
-          await customAlert(t("backup_shared_share_fallback_notice") + detail);
+          await customAlert(t("backup_share_fallback_notice") + detail);
         }
       });
     });
@@ -12590,7 +12601,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 267;
+const APP_VERSION = 268;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

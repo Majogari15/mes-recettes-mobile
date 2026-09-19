@@ -8314,3 +8314,88 @@ inchangé dans le même scénario d'échec. Suite de régression complète
 (52 scripts + corpus OCR) au vert.
 
 **Version testée** : v267
+
+### 125 — Déguisement en .txt du zip partagé pour contourner la restriction de Chromium (demande utilisateur)
+
+Suite au point 124, l'utilisateur a confirmé que le partage depuis un
+gestionnaire de fichiers Android fonctionne (contournement manuel), mais
+a jugé cette étape trop peu naturelle pour une grande partie des
+utilisateurs ("quand une chose ne marche pas en un clic ils
+abandonnent"). Il a demandé une explication concrète de la différence
+entre la sauvegarde JSON et la sauvegarde partagée (zip), et proposé
+d'utiliser le JSON comme format d'échange unique entre les deux
+applications.
+
+**Différence expliquée** (voir aussi points 50/59 pour l'historique) :
+le JSON est un DUMP COMPLET de la base de données interne de l'appli
+mobile (recettes, courses, garde-manger, menus, planning, corbeille,
+listes enregistrées...), dans la forme exacte de son propre modèle de
+données — jamais pensé pour être lu par l'appli Windows. Le zip partagé
+est un SOUS-ENSEMBLE volontairement réduit (recettes+photos,
+ingrédients, garde-manger, personnalisations — sans planning/menus/
+courses, dont les modèles diffèrent trop entre les deux applications
+pour une correspondance fiable), avec des noms de champs TRADUITS vers
+ceux attendus par l'appli Windows, et les photos en fichiers séparés
+plutôt qu'en base64 (plus compact). Remplacer le zip par le JSON
+demanderait donc à l'appli Windows d'apprendre un format entièrement
+différent du sien — un chantier plus lourd que nécessaire.
+
+**Solution retenue, proposée par Claude et validée par l'utilisateur** :
+plutôt que de changer de format, appliquer au zip la même astuce déjà
+utilisée avec succès pour la sauvegarde JSON (renommée ".txt" et
+retypée "text/plain" uniquement pour le partage, voir
+`backupShareFileName()`) — Chromium autorise le partage de fichiers
+".txt" via son Web Share API, mais pas ".zip" (cause du point 124). Le
+contenu reste un zip valide à l'octet près ; seuls le nom et le type
+MIME déclarés changent, et uniquement pour l'appel `navigator.share()`.
+
+**Corrigé** :
+- Nouvelle fonction `sharedBackupShareFileName()` (miroir de
+  `backupShareFileName()`), qui remplace `.zip` par `.txt`.
+- Le bouton "Partager la sauvegarde" (zip) s'affiche désormais selon la
+  même condition que le bouton JSON (`canShareFiles`, testé avec un
+  fichier `.txt`) — la vérification séparée `canShareZip` (testée avec
+  un vrai `.zip`, systématiquement refusée par Chromium, voir point 59)
+  est supprimée, devenue inutile puisqu'on ne partage plus jamais un
+  fichier réellement nommé `.zip`.
+- Le fichier transmis à `navigator.share()` utilise le nom/type
+  déguisés ; le bouton "Exporter (.zip)" (téléchargement direct) n'est
+  pas concerné et garde le vrai nom `.zip`.
+- En cas d'échec malgré le déguisement, le repli télécharge le fichier
+  sous son VRAI nom `.zip` (pas le nom `.txt` utilisé seulement pour la
+  tentative de partage) — immédiatement utilisable sans renommage
+  manuel — avec le même message générique que la sauvegarde JSON
+  (`backup_share_fallback_notice`) ; le message spécifique au zip
+  ajouté au point 124 est retiré (devenu obsolète, l'explication
+  n'étant plus exacte puisqu'on ne partage plus un fichier nommé
+  ".zip").
+- Le champ de sélection de fichier pour l'import du zip partagé accepte
+  désormais aussi `.txt`/`text/plain` (comme celui de la sauvegarde
+  JSON), pour permettre de réimporter un fichier reçu encore sous son
+  nom déguisé (échange entre deux téléphones, ou avant l'adaptation
+  côté Windows évoquée ci-dessous).
+
+**Limite assumée, communiquée à l'utilisateur avant l'implémentation** :
+ce correctif ne concerne que le côté mobile. Tant que l'application
+Windows (code Python, inaccessible à Claude) ne reconnaît le fichier
+reçu QUE par son extension `.zip`, un fichier partagé ainsi sous le nom
+`.txt` devra encore être renommé manuellement avant d'être importé côté
+Windows — un changement côté Windows (reconnaître l'archive par son
+contenu, les octets "PK" en tête de fichier, plutôt que par
+l'extension — le même principe que l'appli mobile applique déjà à ses
+propres sauvegardes JSON/txt) reste nécessaire pour fermer complètement
+la boucle, comme l'utilisateur l'anticipait lui-même.
+
+**Vérifié** (voir `tests/test_zip_share_txt_disguise.py`, nouveau, 4
+vérifications via Playwright — remplace `test_zip_share_fallback_message.py`
+du point 124, devenu obsolète) : le bouton s'affiche même quand seul un
+`.txt` est partageable (pas un vrai `.zip`, contrairement à l'ancien
+comportement) ; le fichier réellement transmis à `navigator.share()`
+est nommé/typé comme du texte tout en contenant un zip valide et
+réimportable (`recipes.json` retrouvé après un vrai passage par
+`parseZipFile()`) ; un échec du partage retombe bien sur le VRAI nom
+`.zip` avec le message générique (plus le message spécifique désormais
+retiré) ; le bouton JSON classique reste inchangé. Suite de régression
+complète (52 scripts + corpus OCR) au vert.
+
+**Version testée** : v268

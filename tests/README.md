@@ -513,17 +513,19 @@ Depuis, la structure sépare strictement :
   non supportée retombe bien sur l'anglais, qu'un choix déjà enregistré
   garde toujours la priorité sur le navigateur, et que la détection
   d'une langue déjà couverte (français) reste inchangée.
-- `test_zip_share_fallback_message.py` — suite à un signalement de
-  l'utilisateur avec capture d'écran (voir TESTS_NON_REGRESSION.md
-  point 124) : quand le partage natif échoue pour la sauvegarde
-  partagée `.zip` (`navigator.canShare()` répond "oui" mais
-  `navigator.share()` rejette avec `NotAllowedError` — limitation de
-  nombreux navigateurs pour ce format, déjà rencontrée au point 59),
-  un message dédié explique que ce n'est pas un bug de l'application,
-  plutôt que le message générique utilisé par le bouton de partage JSON
-  classique. Vérifie, en simulant exactement ce scénario, que le
-  message dédié apparaît pour le bouton ZIP et que le bouton JSON
-  classique garde son message générique inchangé.
+- `test_zip_share_txt_disguise.py` — suite à un signalement utilisateur
+  (voir TESTS_NON_REGRESSION.md points 124 et 125) : le partage natif
+  échouait systématiquement pour la sauvegarde partagée `.zip`
+  (Chromium n'autorise pas ce format dans son Web Share API, déjà
+  rencontré au point 59). Corrigé en appliquant au zip la même astuce
+  déjà utilisée pour la sauvegarde JSON : renommé/retypé `.txt`/
+  `text/plain` uniquement pour l'appel de partage (contenu inchangé,
+  toujours un zip valide), jamais pour le bouton "Exporter". Vérifie
+  que le bouton s'affiche même quand seul un `.txt` est partageable,
+  que le fichier réellement transmis à `navigator.share()` reste un zip
+  réimportable malgré le déguisement, qu'un échec retombe sur le VRAI
+  nom `.zip` avec le message générique (partagé avec la sauvegarde
+  JSON), et que le bouton JSON classique reste inchangé.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.
