@@ -439,6 +439,16 @@ Depuis, la structure sépare strictement :
   persistance à travers une fusion ultérieure, le suffixe réellement
   affiché à l'écran (texte et `aria-label`), et son effacement lors
   d'une modification manuelle via le formulaire d'édition.
+- `test_second_review_backup_hint_and_density.py` — suite à la relecture
+  du point 115 par une seconde IA (voir TESTS_NON_REGRESSION.md point
+  117) : corrige un vrai bug (le bandeau "Conserver une copie dans le
+  cloud" de l'écran Sauvegarde renvoyait vers un bouton "Partager"
+  absent sur les navigateurs sans support du partage de fichiers),
+  ajoute un avertissement contextuel au convertisseur d'unités
+  (conversion masse↔volume supposant une densité proche de l'eau), et
+  vérifie qu'un échec d'écriture pendant `addRecipeToShopping` (pas
+  seulement la version silencieuse) ne laisse ni article de courses
+  fictif ni réservation de garde-manger orpheline.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.

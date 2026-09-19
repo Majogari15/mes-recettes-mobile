@@ -8428,9 +8428,17 @@ function renderBackup() {
   }
   wrap.appendChild(exportSection);
 
+  // Ce bandeau était affiché SANS condition alors que son texte renvoie
+  // vers le bouton "Partager la sauvegarde" — lui-même affiché
+  // uniquement si canShareFiles est vrai (voir plus haut). Sur un
+  // navigateur sans ce support (Firefox Android, plusieurs versions de
+  // Safari, tout navigateur de bureau), l'utilisateur voyait donc une
+  // instruction renvoyant vers un bouton absent de son écran — bug réel
+  // confirmé, texte de repli distinct utilisé dans ce cas (n'évoque plus
+  // ce bouton, explique la marche à suivre manuelle à la place).
   const androidTip = el(`<div style="background:var(--accent-light);color:var(--accent);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;">
     <strong>${escapeHtml(t("backup_android_tip_title"))}</strong>
-    <p style="margin:6px 0 0;line-height:1.5;">${escapeHtml(t("backup_android_tip_text"))}</p>
+    <p style="margin:6px 0 0;line-height:1.5;">${escapeHtml(t(canShareFiles ? "backup_android_tip_text" : "backup_android_tip_text_no_share"))}</p>
   </div>`);
   wrap.appendChild(androidTip);
 
@@ -11808,17 +11816,23 @@ function renderImportUrl() {
    estimation rapide, sans prétendre à une conversion parfaite volume/
    poids qui dépendrait de la densité de chaque ingrédient.
    ====================================================================== */
+// Troisième élément ("mass"/"volume") : sert uniquement à savoir quand
+// afficher l'avertissement de densité dans renderUnitConverter (voir
+// plus bas) — convertir entre les deux domaines suppose 1 mL = 1 g
+// (densité de l'eau), une simplification déjà documentée mais qui
+// n'était affichée nulle part à l'écran, faussant potentiellement le
+// résultat pour un ingrédient plus léger (farine) ou plus lourd (miel).
 const CONVERTER_UNIT_KEYS = [
-  ["unitconv_gram", 1.0],
-  ["unitconv_kilogram", 1000.0],
-  ["unitconv_ounce", 28.35],
-  ["unitconv_pound", 453.6],
-  ["unitconv_milliliter", 1.0],
-  ["unitconv_centiliter", 10.0],
-  ["unitconv_liter", 1000.0],
-  ["unitconv_teaspoon", 5.0],
-  ["unitconv_tablespoon", 15.0],
-  ["unitconv_cup", 240.0],
+  ["unitconv_gram", 1.0, "mass"],
+  ["unitconv_kilogram", 1000.0, "mass"],
+  ["unitconv_ounce", 28.35, "mass"],
+  ["unitconv_pound", 453.6, "mass"],
+  ["unitconv_milliliter", 1.0, "volume"],
+  ["unitconv_centiliter", 10.0, "volume"],
+  ["unitconv_liter", 1000.0, "volume"],
+  ["unitconv_teaspoon", 5.0, "volume"],
+  ["unitconv_tablespoon", 15.0, "volume"],
+  ["unitconv_cup", 240.0, "volume"],
 ];
 
 /* ======================================================================
@@ -11913,12 +11927,18 @@ function renderUnitConverter() {
 
   const convertBtn = el(`<button class="btn btn-primary" style="margin-top:6px;">${t("unitconv_convert_button")}</button>`);
   const resultHolder = el(`<div style="margin-top:16px;font-size:18px;font-weight:700;color:var(--primary);text-align:center;"></div>`);
+  // Affiché uniquement quand la conversion traverse masse <-> volume
+  // (voir le commentaire sur CONVERTER_UNIT_KEYS) — jamais pour une
+  // conversion à l'intérieur d'un même domaine (g<->kg, mL<->L...), où
+  // le résultat est exact et n'a besoin d'aucune réserve.
+  const densityWarningHolder = el(`<p style="margin-top:8px;font-size:12px;color:var(--text-muted);text-align:center;line-height:1.4;"></p>`);
 
   function doConvert() {
     const qtyRaw = wrap.querySelector("#conv-qty").value.trim().replace(",", ".");
     const quantity = parseFloat(qtyRaw);
     if (Number.isNaN(quantity)) {
       resultHolder.textContent = t("unitconv_error_invalid_quantity");
+      densityWarningHolder.textContent = "";
       return;
     }
     const fromEntry = CONVERTER_UNIT_KEYS.find(([key]) => key === fromSelect.value);
@@ -11933,10 +11953,12 @@ function renderUnitConverter() {
       result: fmtQty(result),
       to_unit: t(toEntry[0]),
     });
+    densityWarningHolder.textContent = fromEntry[2] !== toEntry[2] ? t("unitconv_density_warning") : "";
   }
   convertBtn.addEventListener("click", doConvert);
   wrap.appendChild(convertBtn);
   wrap.appendChild(resultHolder);
+  wrap.appendChild(densityWarningHolder);
   doConvert();
   return wrap;
 }
@@ -12203,7 +12225,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 259;
+const APP_VERSION = 260;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

@@ -7689,23 +7689,41 @@ correction — aucun n'a été appliqué "sur parole".
    avec un identifiant déjà existant.** `storeWriteManyAcrossStores()`
    (utilisée par `restoreFromSharedZip`) appliquait les `puts` d'une
    opération AVANT ses `deletes` dans la même transaction IndexedDB. En
-   mode "remplacer", l'opération de restauration supprime d'abord tout
-   (une opération avec seulement des `deletes`) puis réinsère le contenu
-   importé (une opération avec seulement des `puts`) — l'ordre
-   `puts`-avant-`deletes` n'affectait donc pas ce cas précis, MAIS
-   exposait un vrai risque pour tout futur appel combinant les deux dans
-   une même opération sur la même clé (un `put` suivi d'un `delete` sur
-   le même id aurait silencieusement supprimé l'élément qui venait
-   d'être écrit). Corrigé en inversant l'ordre : `deletes` toujours
-   avant `puts` dans chaque opération. Vérifié sur les 3 points d'appel
-   existants (renommage d'ingrédient, fusion de doublons, restauration
-   ZIP) : aucun n'est affecté négativement, le point de restauration ZIP
-   est maintenant protégé contre toute évolution future du code.
+   mode "remplacer", `restoreFromSharedZip` construit, PAR ENTREPÔT,
+   une seule opération contenant à la fois tous les `puts` (le contenu
+   importé) ET tous les `deletes` (tout ce qui existait localement) —
+   pas deux opérations séparées. Pour les recettes et les réglages
+   personnalisés d'ingrédient (`ingredientOverrides`), dont l'identifiant
+   (id, ou nom pour les réglages) vient directement du fichier ZIP,
+   un identifiant déjà présent localement se retrouvait donc à la fois
+   dans `puts` (la version importée) ET dans `deletes` (l'ancienne
+   version) de la MÊME opération — l'écrire d'abord puis le supprimer
+   juste après effaçait silencieusement l'élément qui venait d'être
+   restauré. Reproduit et confirmé pour ces deux entrepôts (voir le
+   test ci-dessous). Corrigé en inversant l'ordre : `deletes` toujours
+   avant `puts` dans chaque opération.
 
    1bis. Même fonction, même correctif : les réglages personnalisés
    d'ingrédient (`ingredientOverrides`, clé = nom) partagent exactement
-   le même chemin de code et bénéficient donc automatiquement du même
-   correctif.
+   le même chemin de code et le même défaut, reproduit et corrigé de la
+   même façon.
+
+   **Précision apportée après relecture par une autre IA (voir le
+   compte rendu transmis par l'utilisateur en réponse au point
+   précédent)** : le garde-manger (`pantry`) utilise la même structure
+   d'opération, mais `pantryFromSharedFormat()` génère un `id` neuf
+   (`uid()`) pour CHAQUE article importé — le format ZIP partagé du
+   garde-manger ne transporte d'ailleurs aucun id, seulement un
+   dictionnaire nom+unité. Il ne peut donc jamais y avoir de collision
+   entre un id présent dans `puts` et un id présent dans `deletes` pour
+   ce chemin précis : la perte de données démontrée pour les recettes et
+   les réglages d'ingrédient n'était pas reproductible pour le
+   garde-manger via `restoreFromSharedZip`, contrairement à ce que la
+   généralisation "les 3 entrepôts partagent le même correctif" pouvait
+   laisser entendre. Le correctif d'ordre reste une bonne pratique
+   générale (protège contre toute évolution future où un id commun
+   apparaîtrait), mais cette précision corrige une affirmation trop
+   générale du compte rendu initial de ce point.
 
 2. **Recette mal formée dans un ZIP partagé non validée.**
    `recipeFromSharedFormat()` acceptait tel quel un nom non-chaîne (ex.
@@ -7847,3 +7865,61 @@ au vert (3 exécutions consécutives). Suite de régression complète
 (44 scripts + corpus OCR) au vert.
 
 **Version testée** : v259
+
+### 117 — Relecture du point 115 par une seconde IA : 1 bug réel confirmé, 1 amélioration UX ajoutée, 1 correction de documentation
+
+L'utilisateur a transmis le compte rendu du point 115 à une seconde IA,
+qui a nuancé 3 des 4 points de mon propre compte rendu précédent. Chaque
+nuance a été vérifiée directement dans le code réel avant toute action —
+certaines confirmées, aucune appliquée sur la seule foi du compte rendu.
+
+**Bug réel confirmé et corrigé** : le bandeau "💡 Conserver une copie
+dans le cloud" de l'écran Sauvegarde (`renderBackup`) était affiché SANS
+aucune condition, et son texte renvoie vers le bouton "Partager la
+sauvegarde" — lui-même affiché uniquement si le navigateur supporte le
+partage de fichiers (`navigator.canShare({files:...})`, absent de
+Firefox Android, de plusieurs versions de Safari, et de tout navigateur
+de bureau). Sur un navigateur sans ce support, l'utilisateur voyait donc
+une instruction renvoyant vers un bouton absent de son écran. Ma
+première vérification (point 115, claim 8) avait mal interprété ce
+signalement et vérifié un texte différent (déjà correctement conditionné)
+au lieu de ce bandeau précis — erreur reconnue, corrigée ici. Un texte de
+repli (`backup_android_tip_text_no_share`, 4 langues) est maintenant
+utilisé quand le partage de fichiers n'est pas supporté : il explique la
+marche à suivre manuelle (dossier Téléchargements) sans jamais évoquer
+un bouton absent.
+
+**Amélioration UX ajoutée** (observation valide, pas un bug) : le
+convertisseur d'unités convertit entre masse et volume en supposant une
+densité proche de celle de l'eau (1 mL ≈ 1 g) — déjà documenté dans le
+code (`CONVERTER_UNIT_KEYS`) mais jamais communiqué à l'écran, ce qui
+pouvait faire croire à un résultat exact pour un ingrédient bien plus
+léger (farine, sucre) ou plus lourd (miel, huile). Un avertissement
+contextuel est maintenant affiché sous le résultat, uniquement quand la
+conversion traverse les deux domaines (jamais pour g↔kg, mL↔L...).
+
+**Correction de documentation** (pas de code) : le point 115 généralisait
+à tort le bug critique de perte de données en restauration ZIP
+"remplacer" (identifiant commun) aux 3 entrepôts concernés par le même
+correctif d'ordre `deletes`/`puts`. En réalité, `pantryFromSharedFormat()`
+génère toujours un identifiant neuf pour chaque article du garde-manger
+importé (le format ZIP partagé de ce dernier ne transporte d'ailleurs
+aucun id) : il ne pouvait donc jamais y avoir de collision entre un id
+mis à jour et un id supprimé pour ce chemin précis, contrairement aux
+recettes et aux réglages d'ingrédient (id venant directement du ZIP), où
+la perte de données a bien été reproduite et confirmée. Le texte du
+point 115 a été corrigé pour refléter cette nuance — voir la section 1
+et 1bis de ce point.
+
+**Vérifié** (voir `tests/test_second_review_backup_hint_and_density.py`,
+nouveau) : le bandeau de repli s'affiche sans jamais mentionner le
+bouton absent quand le partage de fichiers n'est pas supporté, le
+comportement d'origine reste inchangé quand il l'est, l'avertissement de
+densité s'affiche uniquement pour une conversion masse↔volume, et — sur
+la suggestion de la seconde IA — un échec d'écriture simulé pendant
+`addRecipeToShopping` (pas seulement la version silencieuse) ne laisse
+ni article de courses fictif ni réservation de garde-manger orpheline.
+Audit d'accessibilité (axe-core) au vert (3 exécutions consécutives).
+Suite de régression complète (45 scripts + corpus OCR) au vert.
+
+**Version testée** : v260
