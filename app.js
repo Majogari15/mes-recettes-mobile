@@ -213,8 +213,18 @@ function storeWriteManyAcrossStores(operations) {
         try {
           operations.forEach((op) => {
             const store = tx.objectStore(op.store);
-            (op.puts || []).forEach((item) => store.put(item));
+            // Les suppressions doivent passer AVANT les écritures : un
+            // appelant en mode "remplacer" (voir restoreFromSharedZip)
+            // planifie souvent puts = les nouvelles données ET deletes =
+            // TOUS les anciens identifiants, qui se recoupent forcément
+            // quand un identifiant importé existait déjà localement.
+            // Avec l'ordre inverse (déjà tenté), la ligne fraîchement
+            // écrite par ce put() était aussitôt effacée par le delete()
+            // du même identifiant, faisant disparaître les données
+            // qu'on venait tout juste de restaurer — reproduit et vérifié
+            // avant ce correctif.
             (op.deletes || []).forEach((key) => store.delete(key));
+            (op.puts || []).forEach((item) => store.put(item));
           });
         } catch (e) {
           tx.abort();
@@ -1147,8 +1157,7 @@ function renderHome() {
       ${escapeHtml(t("home_low_stock_reminder", { count: String(lowStock.length), names }))}
     </div>`);
     reminder.addEventListener("click", async () => {
-      const puts = [];
-      lowStock.forEach((pantryItem) => {
+      for (const pantryItem of lowStock) {
         const qty = pantryItem.threshold;
         const existing = state.shopping.find((i) => normalize(i.name) === normalize(pantryItem.name) && i.unit === pantryItem.unit && !i.checked);
         if (existing) {
@@ -1157,16 +1166,19 @@ function renderHome() {
           // quantité-ci est inconnue — voir le même correctif dans
           // addRecipeToShopping/addRecipeToShoppingSilent.
           if (qty != null) {
-            existing.quantity = (existing.quantity != null ? existing.quantity : 0) + qty;
-            puts.push(existing);
+            // Écrit et confirmé avant toute mutation de l'état en
+            // mémoire — voir le même correctif dans
+            // addRecipeToShopping/addRecipeToShoppingSilent.
+            const updated = { ...existing, quantity: (existing.quantity != null ? existing.quantity : 0) + qty };
+            await storePut("shopping", updated);
+            Object.assign(existing, updated);
           }
         } else {
           const item = { id: uid(), name: pantryItem.name, quantity: qty, unit: pantryItem.unit, checked: false };
+          await storePut("shopping", item);
           state.shopping.push(item);
-          puts.push(item);
         }
-      });
-      await Promise.all(puts.map((item) => storePut("shopping", item)));
+      }
       state.screen = "shopping";
       render();
     });
@@ -2215,10 +2227,9 @@ async function saveRecipeForm(wrap, existing) {
 /* ======================================================================
    LISTE DE COURSES
    ====================================================================== */
-function addRecipeToShoppingSilent(recipe, persons) {
+async function addRecipeToShoppingSilent(recipe, persons) {
   const items = state.shopping;
-  const puts = [];
-  (recipe.ingredients || []).forEach((ing) => {
+  for (const ing of recipe.ingredients || []) {
     const qty = ing.quantity != null ? Number(ing.quantity) * persons : null;
     const existing = items.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
     if (existing) {
@@ -2232,16 +2243,22 @@ function addRecipeToShoppingSilent(recipe, persons) {
       // l'utilisateur (ingrédients sans quantité dupliqués en ajoutant
       // une recette/un menu à une liste de courses déjà existante).
       if (qty != null) {
-        existing.quantity = (existing.quantity != null ? existing.quantity : 0) + qty;
-        puts.push(existing);
+        // La quantité en mémoire n'est mise à jour qu'APRÈS confirmation
+        // de l'écriture (sur une copie, jamais en modifiant "existing"
+        // avant coup) — sinon un échec d'écriture (quota IndexedDB
+        // dépassé...) laissait une quantité augmentée à l'écran alors
+        // qu'elle n'avait jamais été réellement enregistrée, bug réel
+        // confirmé avant ce correctif.
+        const updated = { ...existing, quantity: (existing.quantity != null ? existing.quantity : 0) + qty };
+        await storePut("shopping", updated);
+        Object.assign(existing, updated);
       }
     } else {
       const item = { id: uid(), name: ing.name, quantity: qty, unit: ing.unit, checked: false };
+      await storePut("shopping", item);
       items.push(item);
-      puts.push(item);
     }
-  });
-  return Promise.all(puts.map((item) => storePut("shopping", item)));
+  }
 }
 async function addRecipeToShopping(recipe, persons) {
   const items = state.shopping;
@@ -2289,7 +2306,6 @@ async function addRecipeToShopping(recipe, persons) {
     await commitPantryClaim(claimKey, claimAmount, "recipe", operationId, claimKind);
   }
 
-  const puts = [];
   for (const ing of plan) {
     const existing = items.find((i) => normalize(i.name) === normalize(ing.name) && i.unit === ing.unit && !i.checked);
     let resultItem;
@@ -2299,20 +2315,24 @@ async function addRecipeToShopping(recipe, persons) {
       // doublon d'un article déjà présent (même nom, même unité).
       resultItem = existing;
       if (ing.quantity != null) {
-        existing.quantity = (existing.quantity != null ? existing.quantity : 0) + ing.quantity;
-        puts.push(existing);
+        // Écrit et confirmé AVANT toute mutation de l'état en mémoire
+        // (sur une copie) — sinon un échec d'écriture laissait une
+        // quantité augmentée à l'écran sans jamais avoir été
+        // réellement enregistrée, bug réel confirmé avant ce correctif.
+        const updated = { ...existing, quantity: (existing.quantity != null ? existing.quantity : 0) + ing.quantity };
+        await storePut("shopping", updated);
+        Object.assign(existing, updated);
       }
     } else {
       resultItem = { id: uid(), name: ing.name, quantity: ing.quantity, unit: ing.unit, checked: false };
+      await storePut("shopping", resultItem);
       items.push(resultItem);
-      puts.push(resultItem);
     }
     // Attachée à l'article de courses réel qui en résulte (existant
     // fusionné, ou nouvellement créé) — permet de la libérer
     // précisément si CET article est ensuite supprimé ou modifié.
     if (ing.claimKey && ing.claimAmount) await commitPantryClaim(ing.claimKey, ing.claimAmount, "shopping", resultItem.id, ing.claimKind);
   }
-  await Promise.all(puts.map((item) => storePut("shopping", item)));
   state.screen = "shopping";
   render();
 }
@@ -2438,10 +2458,17 @@ function renderSavedShoppingLists() {
 }
 
 function shoppingItemRow(item, wrap, manualMode) {
+  // Case à cocher avec aria-label reliant explicitement à l'ingrédient
+  // (sinon un lecteur d'écran annonce juste "case à cocher", sans dire
+  // laquelle), et bouton (pas un simple <span> cliquable) pour ouvrir la
+  // modification — un <span> n'est ni focalisable ni activable au
+  // clavier, rendant la modification inaccessible sans souris/tactile.
+  // Deux défauts réels confirmés avant ce correctif.
+  const itemLabel = `${translateIngredientName(item.name)}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + translateUnit(item.unit) : ""}`;
   const row = el(`<div class="shopping-item ${item.checked ? "checked" : ""}">
     ${manualMode ? `<button type="button" class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</button>` : ""}
-    <input type="checkbox" ${item.checked ? "checked" : ""}>
-    <span class="label" style="flex:1;cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}</span>
+    <input type="checkbox" aria-label="${escapeHtml(itemLabel)}" ${item.checked ? "checked" : ""}>
+    <button type="button" class="label" style="flex:1;text-align:left;background:none;border:none;padding:0;font:inherit;color:inherit;cursor:pointer;">${escapeHtml(itemLabel)}</button>
     <button type="button" class="shopping-item-delete" aria-label="${escapeHtml(t("common_delete"))}" style="background:none;border:none;color:var(--text-muted);padding:4px 8px;cursor:pointer;line-height:1;">${icon("trash")}</button>
   </div>`);
   // Utilisé par attachDragReorder (voir fillShoppingList) pour
@@ -3274,9 +3301,12 @@ function renderPantry() {
 
     const list = el(`<div class="card" style="padding:4px 16px;margin-bottom:20px;"></div>`);
     orderedPantry.forEach((item) => {
+        // Bouton (pas un <span> cliquable, ni focalisable ni activable au
+        // clavier) pour ouvrir la modification — même correctif
+        // d'accessibilité que pour la liste de courses (shoppingItemRow).
         const row = el(`<div class="shopping-item">
           ${manualMode ? `<button type="button" class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</button>` : ""}
-          <span class="label" style="cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}${item.threshold != null ? escapeHtml(t("pantry_threshold_suffix", { threshold: fmtQty(item.threshold) })) : ""}${pantryExpirationSuffixHtml(item)}</span>
+          <button type="button" class="label" style="text-align:left;background:none;border:none;padding:0;font:inherit;color:inherit;cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}${item.threshold != null ? escapeHtml(t("pantry_threshold_suffix", { threshold: fmtQty(item.threshold) })) : ""}${pantryExpirationSuffixHtml(item)}</button>
           <button class="remove-ing" style="width:32px;height:32px;" aria-label="${t("common_delete")}">${icon("trash")}</button>
         </div>`);
         row._item = item;
@@ -7694,8 +7724,20 @@ async function restoreFromSharedZip(file, merge) {
   // n'apparaissait que plus tard, PENDANT l'écriture d'une section
   // suivante, après que des sections précédentes avaient déjà été
   // appliquées.
+  // sanitizeBackupItem (déjà utilisée pour l'import JSON complet, voir
+  // importAllData) est réutilisée ici pour la même raison : sans elle,
+  // un nom de recette non textuel (ex. un nombre) faisait planter le
+  // tri de la liste des recettes (localeCompare exige une vraie
+  // chaîne) juste après l'import, et un ingrédient "null" dans le
+  // tableau se propageait tel quel jusqu'à l'affichage — bug réel
+  // confirmé avant ce correctif, un fichier recipes.json malformé
+  // n'était auparavant filtré par aucune validation sur ce chemin
+  // d'import (contrairement à importAllData).
+  const sharedZipSanitizeReport = { structuralFixes: 0, numbersFixed: 0, photosRemoved: 0 };
   const parsedRecipes = filesByName.has("recipes.json")
-    ? JSON.parse(utf8Decode(filesByName.get("recipes.json").data)).map((json) => recipeFromSharedFormat(json, imageBytesByFilename))
+    ? JSON.parse(utf8Decode(filesByName.get("recipes.json").data))
+        .map((json) => recipeFromSharedFormat(json, imageBytesByFilename))
+        .map((recipe) => sanitizeBackupItem(recipe, "recipes", sharedZipSanitizeReport))
     : null;
   const parsedIngredientNames = filesByName.has("ingredients.json")
     ? JSON.parse(utf8Decode(filesByName.get("ingredients.json").data))
@@ -8126,6 +8168,19 @@ async function importAllData(data, mode) {
   await loadBarcodeIngredientMap();
   await ensureIngredientListLoaded();
   await loadIngredientOverrides();
+  // Ces collections sont elles aussi couvertes par BACKUP_STORES (donc
+  // bien restaurées dans IndexedDB ci-dessus), mais restaient jusqu'ici
+  // absentes de ce rechargement — bug réel confirmé : après une
+  // restauration, l'écran affichait encore les menus/modèles/historique/
+  // listes enregistrées/planning d'AVANT la restauration jusqu'au
+  // prochain rechargement complet de la page, malgré des données déjà
+  // à jour en base.
+  state.menus = await storeAll("menus");
+  state.planTemplates = await storeAll("planTemplates");
+  state.planHistory = (await storeAll("planHistory")).sort((a, b) => b.date.localeCompare(a.date));
+  state.trash = (await storeAll("trash")).sort((a, b) => (b.deletedAt || "").localeCompare(a.deletedAt || ""));
+  state.savedShoppingLists = await storeAll("savedShoppingLists");
+  state.weeklyPlan = (await kvGet("weeklyPlan")) || {};
 }
 
 async function renderDiagnostic() {
@@ -12117,7 +12172,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 257;
+const APP_VERSION = 258;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

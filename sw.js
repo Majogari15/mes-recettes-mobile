@@ -11,7 +11,7 @@
 // application, donc caches.keys() y voit potentiellement les caches
 // de tout le monde sur ce domaine.
 const CACHE_PREFIX = "mes-recettes-cache-";
-const CACHE_NAME = `${CACHE_PREFIX}v257`;
+const CACHE_NAME = `${CACHE_PREFIX}v258`;
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -129,7 +129,14 @@ self.addEventListener("fetch", (event) => {
             return caches.match(event.request).then((cached) => cached || res);
           }
           const resClone = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
+          // event.waitUntil() : sans lui, rien n'empêche le navigateur de
+          // considérer cet événement "fetch" comme terminé dès que "res"
+          // est renvoyé ci-dessous, et donc de couper le service worker
+          // avant que cette écriture en cache n'ait fini — la nouvelle
+          // version de ce fichier critique ne serait alors jamais mise en
+          // cache pour le prochain usage hors ligne. Même raisonnement
+          // que pour les fichiers JSON de référence plus bas.
+          event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone)));
           return res;
         })
         .catch(() =>
@@ -203,7 +210,11 @@ self.addEventListener("fetch", (event) => {
         .then((res) => {
           if (res.ok) {
             const resClone = res.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
+            // event.waitUntil() : même raison que pour les fichiers
+            // critiques plus haut — sans lui, cette écriture en cache
+            // pourrait ne jamais se terminer si le service worker est
+            // coupé juste après le retour de "res".
+            event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone)));
           }
           return res;
         })

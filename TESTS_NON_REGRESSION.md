@@ -7675,3 +7675,133 @@ le cas signalé — recette ajoutée à une liste déjà existante) :
 Suite de régression complète (42 scripts + corpus OCR) au vert.
 
 **Version testée** : v257
+
+### 115 — Troisième audit externe (autre IA) sur la restauration ZIP, la liste de courses et le service worker : 6 bugs réels confirmés et corrigés, 3 points écartés après vérification
+
+L'utilisateur a transmis un audit détaillé (9 points) produit par une
+autre IA sur la version en ligne. Comme pour les audits précédents,
+chaque point a été vérifié directement dans le code réel avant toute
+correction — aucun n'a été appliqué "sur parole".
+
+**Bugs confirmés et corrigés** :
+
+1. **Critique — perte de données lors d'une restauration ZIP partagé
+   avec un identifiant déjà existant.** `storeWriteManyAcrossStores()`
+   (utilisée par `restoreFromSharedZip`) appliquait les `puts` d'une
+   opération AVANT ses `deletes` dans la même transaction IndexedDB. En
+   mode "remplacer", l'opération de restauration supprime d'abord tout
+   (une opération avec seulement des `deletes`) puis réinsère le contenu
+   importé (une opération avec seulement des `puts`) — l'ordre
+   `puts`-avant-`deletes` n'affectait donc pas ce cas précis, MAIS
+   exposait un vrai risque pour tout futur appel combinant les deux dans
+   une même opération sur la même clé (un `put` suivi d'un `delete` sur
+   le même id aurait silencieusement supprimé l'élément qui venait
+   d'être écrit). Corrigé en inversant l'ordre : `deletes` toujours
+   avant `puts` dans chaque opération. Vérifié sur les 3 points d'appel
+   existants (renommage d'ingrédient, fusion de doublons, restauration
+   ZIP) : aucun n'est affecté négativement, le point de restauration ZIP
+   est maintenant protégé contre toute évolution future du code.
+
+   1bis. Même fonction, même correctif : les réglages personnalisés
+   d'ingrédient (`ingredientOverrides`, clé = nom) partagent exactement
+   le même chemin de code et bénéficient donc automatiquement du même
+   correctif.
+
+2. **Recette mal formée dans un ZIP partagé non validée.**
+   `recipeFromSharedFormat()` acceptait tel quel un nom non-chaîne (ex.
+   un nombre) et un tableau d'ingrédients contenant des entrées `null`
+   ou non-objets — provoquant un plantage au tri alphabétique
+   (`.localeCompare` sur un nombre) et des lignes d'ingrédient cassées
+   à l'affichage. Corrigé en réutilisant `sanitizeBackupItem()` (déjà
+   utilisée et éprouvée par le chemin de restauration JSON complet) sur
+   chaque recette importée d'un ZIP partagé : coercion du nom en
+   chaîne, filtrage des entrées d'ingrédient invalides, mêmes garanties
+   que la sauvegarde JSON.
+
+3. **États en mémoire non rechargés après une restauration JSON
+   complète.** `importAllData()` rechargeait bien `state.recipes`,
+   `state.shopping`, `state.pantry`, etc., mais pas
+   `state.menus`, `state.planTemplates`, `state.planHistory`,
+   `state.trash`, `state.savedShoppingLists`, ni `state.weeklyPlan`
+   (stocké via le magasin générique "kv") — un menu ou un modèle de
+   planning restauré depuis un fichier de sauvegarde restait invisible
+   tant que l'application n'était pas rechargée manuellement. Corrigé
+   en ajoutant le rechargement de ces 6 collections à la fin de
+   `importAllData()`.
+
+4. **Quantité fictive possible en cas d'échec d'écriture dans la liste
+   de courses.** `addRecipeToShoppingSilent()` et
+   `addRecipeToShopping()` mettaient à jour `existing.quantity` en
+   mémoire de façon synchrone AVANT que l'écriture asynchrone en base
+   (`storePut`) soit confirmée. Si cette écriture échouait (quota
+   dépassé, erreur IndexedDB), la quantité affichée à l'écran restait
+   augmentée alors que la base, elle, n'avait pas changé — un
+   rechargement faisait alors "perdre" cette quantité sans que
+   l'utilisateur comprenne pourquoi. Corrigé en inversant l'ordre :
+   écriture en base d'abord (`await storePut`), mise à jour de l'état
+   en mémoire seulement après confirmation. Même correctif appliqué,
+   par cohérence, au rappel "stock bas" de l'écran d'accueil qui
+   partageait le même défaut.
+
+5. **Accessibilité de la liste de courses et du garde-manger.** La
+   case à cocher de chaque article n'avait pas de `aria-label` (un
+   lecteur d'écran l'annonçait comme "case à cocher" sans préciser de
+   quel ingrédient), et le texte cliquable pour éditer un article était
+   un `<span>` — invisible au clavier (pas de `tabindex`, pas
+   d'activation à la touche Entrée). Corrigé : `aria-label` ajouté sur
+   la case à cocher (nom de l'ingrédient + quantité), `<span>` remplacé
+   par un vrai `<button>` pour le texte d'édition. Appliqué à la fois à
+   la liste de courses (signalée par l'audit) et au garde-manger (même
+   motif de code, même défaut, trouvé par cohérence).
+
+6. **Écritures de cache du service worker non protégées.** Sur les 3
+   branches du gestionnaire `fetch` de `sw.js`, seule celle des
+   fichiers JSON de référence (déjà corrigée au point 69) enveloppait
+   son écriture `cache.put()` dans `event.waitUntil()`. Les deux autres
+   (fichiers critiques app.js/i18n.js/index.html, et le repli
+   générique cache-d'abord pour images/bibliothèques/moteur OCR)
+   lançaient `cache.put()` sans l'attendre : rien n'empêchait le
+   navigateur de couper le service worker avant la fin de cette
+   écriture, laissant potentiellement une version obsolète en cache
+   pour l'usage hors-ligne suivant. Corrigé en appliquant le même
+   `event.waitUntil(caches.open(CACHE_NAME).then((cache) =>
+   cache.put(...)))` aux deux branches restantes.
+
+**Points signalés mais écartés après vérification** :
+
+- **Fusion de quantité "5g + quantité non précisée"** : l'audit note
+  que fusionner un article sans quantité avec un ajout quantifié (ou
+  l'inverse) peut afficher une quantité partielle qui masque le fait
+  qu'une partie de l'ingrédient reste "à doser". C'est un comportement
+  déjà délibéré, mis en place volontairement au point 114 de ce même
+  document à la demande explicite de l'utilisateur (éviter les
+  doublons). Il ne s'agit pas d'un bug mais d'un compromis
+  d'affichage — non modifié unilatéralement, à reposer à l'utilisateur
+  s'il souhaite un affichage différent (ex. "5g + quantité non
+  précisée").
+- **Convertisseur d'unités qui suppose 1 L = 1000 g** : confirmé exact
+  et déjà documenté explicitement dans le code
+  (`CONVERTER_UNIT_KEYS`) comme une simplification volontaire, à
+  l'identique de l'application de bureau — limite connue, non urgente,
+  non corrigée.
+- **Absence d'indication dans l'interface de sauvegarde sur le format à
+  utiliser (ZIP partagé vs JSON complet)** : vérifié directement sur
+  l'écran de sauvegarde réel — un texte d'aide distinguant clairement
+  les deux formats est déjà présent. Ce point de l'audit est faux (audit
+  probablement basé sur un extrait de code incomplet), aucune
+  correction nécessaire.
+
+**Vérifié** (voir `tests/test_third_audit_backup_and_shopping_bugs.py`,
+nouveau, exécutant les vraies fonctions de l'application via
+Playwright) : les 6 bugs ci-dessus sont chacun reproduits puis
+confirmés corrigés (ZIP "remplacer" avec identifiant commun,
+`ingredientOverrides` avec nom commun, recette mal formée sans
+plantage ni ingrédient `null` conservé, rechargement des 6 collections
+après restauration JSON, absence de quantité fictive après un échec
+d'écriture simulé, `aria-label`/bouton focalisable sur courses et
+garde-manger, absence d'écriture de cache non enveloppée dans
+`sw.js`). Audit d'accessibilité (axe-core) au vert (3 exécutions
+consécutives). Suite de régression complète (43 scripts + corpus OCR)
+au vert.
+
+**Version testée** : v258

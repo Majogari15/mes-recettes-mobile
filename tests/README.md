@@ -413,6 +413,21 @@ Depuis, la structure sépare strictement :
   ou sans quantité), qu'un article déjà coché n'est toujours pas
   réutilisé, et un scénario de bout en bout reproduisant le cas exact
   signalé (recette ajoutée à une liste déjà existante).
+- `test_third_audit_backup_and_shopping_bugs.py` — suite à un troisième
+  audit externe (voir TESTS_NON_REGRESSION.md point 115) : 6 bugs
+  confirmés et corrigés (ordre `puts`/`deletes` dans
+  `storeWriteManyAcrossStores` risquant une perte de données ZIP,
+  recette mal formée d'un ZIP partagé non validée, collections en
+  mémoire non rechargées après une restauration JSON complète
+  (menus/modèles/planning/liste sauvegardées/historique/corbeille),
+  quantité fictive possible en cas d'échec d'écriture dans la liste de
+  courses, accessibilité clavier/lecteur d'écran de la liste de
+  courses et du garde-manger, écritures de cache du service worker non
+  protégées par `event.waitUntil()`). Vérifie chaque correctif en
+  appelant les vraies fonctions de l'application (restauration ZIP
+  réelle, `importAllData`, `addRecipeToShoppingSilent` avec un
+  `storePut` simulé en échec, rendu réel des lignes de courses/garde-
+  manger, inspection du code source de `sw.js`).
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.
