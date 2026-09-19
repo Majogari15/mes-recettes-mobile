@@ -8202,3 +8202,59 @@ normalement. Suite de régression complète (50 scripts + corpus OCR) au
 vert.
 
 **Version testée** : v265
+
+### 123 — RÉGRESSION CRITIQUE : photos cassées (Content-Security-Policy oubliée) suite au chantier "photos en Blob"
+
+L'utilisateur a testé la v265 sur son téléphone après le chantier
+"photos en Blob" (point 121) et signalé, captures d'écran à l'appui,
+que les photos des anciennes recettes ne s'affichaient plus (icône
+d'image cassée) sur la fiche détail comme sur la liste, et que l'aperçu
+photo restait vide après un import de recette par lien.
+
+**Cause racine trouvée** : la directive `img-src` de la
+Content-Security-Policy (`index.html`) autorisait `'self' data: https:`
+mais jamais `blob:` — or le chantier du point 121 fait désormais
+pointer tous les `<img src>` de photo vers une URL d'objet
+(`blob:...`, via `photoObjectUrl()`). Reproduit et confirmé
+directement : Chromium accepte bien d'écrire l'attribut `src="blob:..."`
+sur la balise, mais REFUSE ensuite de charger l'image elle-même
+(`img.naturalWidth === 0` malgré `img.complete === true`), avec le
+message `Refused to load the image 'blob:...' because it violates the
+following Content Security Policy directive: "img-src 'self' data:
+https:"` dans la console — exactement l'icône d'image cassée observée
+par l'utilisateur, sur tous les écrans concernés (liste de recettes,
+fiche détail, aperçu du formulaire après import).
+
+**Faille du round précédent qui a laissé passer cette régression** :
+la première version de `tests/test_photo_blob_storage.py` (point 121)
+vérifiait seulement que `img.src` commençait par `"blob:"` — jamais que
+l'image se chargeait VRAIMENT. Cette vérification passait donc même
+avec la CSP cassée, puisque l'attribut `src` était bien écrit ; seul le
+chargement réel de la ressource échouait, silencieusement du point de
+vue de ce test.
+
+**Corrigé** : `img-src` inclut désormais `blob:` (`'self' data: blob:
+https:`). Changement minimal et sans risque de sécurité supplémentaire
+— une URL `blob:` n'est utilisable que par la page qui l'a créée elle-
+même (portée à l'origine), et les Blob affichés proviennent tous de
+`sanitizePhotoField()`/`dataUrlToBlob()`, déjà validés.
+
+**Vérifié** : reproduit le bug avant correctif (violation CSP + `img
+.naturalWidth === 0` sur une image migrée), confirmé le correctif
+(même image, `naturalWidth > 0`, aucune violation). `tests/test_photo_blob_storage.py`
+renforcé pour vérifier systématiquement `naturalWidth > 0` (pas
+seulement le préfixe `src`) sur les 3 scénarios d'affichage (liste,
+aperçu du formulaire — le flux d'import par lien signalé par
+l'utilisateur —, cycle de rendu), et pour surveiller toute violation
+CSP sur l'ensemble du parcours. Repassé volontairement la CSP à son
+état cassé pour confirmer que ce test renforcé détecte bien la
+régression (échec net sur les 3 vérifications concernées), avant de
+remettre le correctif et confirmer qu'il passe de nouveau. Suite de
+régression complète (51 scripts + corpus OCR) au vert.
+
+**Non vérifié physiquement par Claude** : ce correctif doit encore être
+confirmé sur le vrai téléphone de l'utilisateur, seul terrain qui a
+révélé le bug initial (les tests automatisés d'un round précédent ne
+l'avaient pas détecté faute de vérifier le chargement réel de l'image).
+
+**Version testée** : v266

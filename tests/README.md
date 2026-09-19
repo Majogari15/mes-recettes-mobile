@@ -492,13 +492,17 @@ Depuis, la structure sépare strictement :
   (recette + journal de cuisine) de chaînes base64 à des `Blob` natifs
   dans IndexedDB, sans changer le format externe (sauvegarde `.json`,
   ZIP partagé mobile↔bureau). Vérifie la migration au démarrage, la
-  capture (`canvas.toBlob`), l'affichage (`<img src>` en `blob:`,
-  jamais `data:`), la sauvegarde JSON complète (export en base64,
-  ré-import en Blob, aucune photo perdue), le ZIP partagé (photo de
-  couverture externalisée en octets, journal de cuisine toujours en
-  base64 dans le JSON, format externe inchangé), l'export PDF, et le
-  cycle de vie des URL d'objet (révocation au rendu suivant, pas de
-  fuite mémoire).
+  capture (`canvas.toBlob`), l'affichage — `<img src>` en `blob:`,
+  jamais `data:`, ET chargement RÉEL de l'image (`naturalWidth > 0`),
+  sur la liste de recettes comme sur l'aperçu du formulaire —, la
+  sauvegarde JSON complète (export en base64, ré-import en Blob, aucune
+  photo perdue), le ZIP partagé (photo de couverture externalisée en
+  octets, journal de cuisine toujours en base64 dans le JSON, format
+  externe inchangé), l'export PDF, et le cycle de vie des URL d'objet
+  (révocation au rendu suivant, pas de fuite mémoire). Renforcé au
+  point 123 suite à une régression critique passée inaperçue : la
+  première version ne vérifiait que le préfixe `src`, jamais le
+  chargement réel — voir ce point pour le détail.
 - `test_language_detection.py` — suite à une question de l'utilisateur
   (voir TESTS_NON_REGRESSION.md point 122) : détection de la langue du
   navigateur/téléphone au tout premier lancement, avec repli sur

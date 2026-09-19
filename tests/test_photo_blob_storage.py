@@ -10,7 +10,8 @@ représenter du binaire, l'export réencode toujours en base64 aux
 frontières.
 
 Couvre : migration au démarrage, capture (formulaire + journal de
-cuisine), affichage (src en blob:, jamais data:), sauvegarde JSON
+cuisine), affichage (src en blob:, jamais data:, ET chargement RÉEL de
+l'image — pas seulement le préfixe de l'attribut src), sauvegarde JSON
 complète (aller-retour Blob<->base64), ZIP partagé (photo de couverture
 externalisée en octets, journal de cuisine toujours en base64 dans le
 JSON), export PDF, et le cycle de vie des URL d'objet (révocation au
@@ -21,6 +22,17 @@ l'application (connect-src n'autorise pas "data:", volontairement —
 seul img-src l'autorise, pour les <img src="data:...">). Ce test utilise
 donc dataUrlToBlob() — la fonction de l'application elle-même, déjà
 couverte par ailleurs — pour construire les Blob de test, jamais fetch().
+
+Piège trouvé lors de la première mise en production de ce chantier
+(voir TESTS_NON_REGRESSION.md point 123) : la première version de ce
+test vérifiait seulement que `img.src` commençait par "blob:", jamais
+que l'image se chargeait VRAIMENT — or la CSP de l'application
+n'autorisait pas encore "blob:" dans sa directive img-src, donc
+Chromium acceptait bien l'attribut src mais refusait ensuite de charger
+l'image (icône cassée en vrai usage, `img.naturalWidth === 0` en test).
+Ce test vérifie donc maintenant systématiquement `naturalWidth > 0` en
+plus du préfixe, et surveille la console pour toute violation CSP
+("Refused to load...") sur l'ensemble du parcours.
 """
 import http.server
 import json
@@ -61,7 +73,9 @@ def main():
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 390, "height": 900})
         errors = []
+        csp_violations = []
         page.on("pageerror", lambda exc: errors.append(str(exc)))
+        page.on("console", lambda msg: csp_violations.append(msg.text) if "Refused" in msg.text else None)
         page.goto(base_url, timeout=8000)
         page.wait_for_timeout(600)
         page.evaluate("() => setLang('fr')")
@@ -132,7 +146,7 @@ def main():
             json.dumps(r2),
         )
 
-        print("\n=== 3. Affichage : <img src> commence par blob: (jamais data:) ===")
+        print("\n=== 3. Affichage (liste de recettes) : <img src> en blob:, ET l'image se charge VRAIMENT ===")
         r3 = page.evaluate(
             """
             async (dataUrl) => {
@@ -142,14 +156,42 @@ def main():
                 state.recipes = await storeAll('recipes');
                 state.screen = 'recipes';
                 render();
-                await new Promise((r) => setTimeout(r, 100));
+                await new Promise((r) => setTimeout(r, 300));
                 const img = document.querySelector('.recipe-thumb img');
-                return { src: img ? img.src : null };
+                return { src: img ? img.src : null, naturalWidth: img ? img.naturalWidth : null, complete: img ? img.complete : null };
             }
             """,
             TINY_JPEG_DATA_URL,
         )
-        check("src commence par blob:", bool(r3["src"]) and r3["src"].startswith("blob:"), json.dumps(r3))
+        check(
+            "src commence par blob: ET l'image se charge réellement (naturalWidth > 0, pas une icône cassée)",
+            bool(r3["src"]) and r3["src"].startswith("blob:") and r3["complete"] and r3["naturalWidth"] > 0,
+            json.dumps(r3),
+        )
+
+        print("\n=== 3bis. Affichage (aperçu du formulaire, ex. après import web) : l'image se charge VRAIMENT ===")
+        r3b = page.evaluate(
+            """
+            async (dataUrl) => {
+                const blob = dataUrlToBlob(dataUrl);
+                state.screen = 'form';
+                state.editingRecipeId = null;
+                state.formIngredients = [{ name: '', quantity: '', unit: 'pièce' }];
+                state.formAllergens = [];
+                state.formPhoto = blob;
+                render();
+                await new Promise((r) => setTimeout(r, 300));
+                const img = document.querySelector('img[src^="blob:"]');
+                return { found: !!img, naturalWidth: img ? img.naturalWidth : null, complete: img ? img.complete : null };
+            }
+            """,
+            TINY_JPEG_DATA_URL,
+        )
+        check(
+            "aperçu du formulaire : l'image importée se charge réellement",
+            r3b["found"] and r3b["complete"] and r3b["naturalWidth"] > 0,
+            json.dumps(r3b),
+        )
 
         print("\n=== 4. Sauvegarde JSON complète : export produit du base64, ré-import reconstruit un Blob ===")
         r4 = page.evaluate(
@@ -248,27 +290,30 @@ def main():
                 state.recipes = await storeAll('recipes');
                 state.screen = 'recipes';
                 render();
-                await new Promise((r) => setTimeout(r, 50));
-                const firstSrc = document.querySelector('.recipe-thumb img').src;
+                await new Promise((r) => setTimeout(r, 300));
+                const firstImg = document.querySelector('.recipe-thumb img');
+                const firstSrc = firstImg.src;
+                const firstNaturalWidth = firstImg.naturalWidth;
                 let revokedFirst = false;
                 const realRevoke = URL.revokeObjectURL;
                 URL.revokeObjectURL = (u) => { if (u === firstSrc) revokedFirst = true; return realRevoke.call(URL, u); };
                 render();
-                await new Promise((r) => setTimeout(r, 50));
+                await new Promise((r) => setTimeout(r, 300));
                 URL.revokeObjectURL = realRevoke;
-                const secondSrc = document.querySelector('.recipe-thumb img').src;
-                return { firstSrc, secondSrc, revokedFirst, different: firstSrc !== secondSrc };
+                const secondImg = document.querySelector('.recipe-thumb img');
+                return { firstSrc, secondSrc: secondImg.src, revokedFirst, different: firstSrc !== secondImg.src, firstNaturalWidth, secondNaturalWidth: secondImg.naturalWidth };
             }
             """,
             TINY_JPEG_DATA_URL,
         )
         check(
-            "l'URL d'objet du rendu précédent est révoquée au rendu suivant",
-            r7["revokedFirst"] and r7["different"],
+            "l'URL d'objet du rendu précédent est révoquée au rendu suivant, et les deux images se chargent réellement",
+            r7["revokedFirst"] and r7["different"] and r7["firstNaturalWidth"] > 0 and r7["secondNaturalWidth"] > 0,
             json.dumps(r7),
         )
 
         check("Aucune erreur JS pendant tout le parcours", not errors, str(errors))
+        check("Aucune violation de la politique de sécurité du contenu (CSP) pendant tout le parcours", not csp_violations, str(csp_violations))
 
         print("\n=== Résumé ===")
         print("TOUT CORRECT" if all_ok else "AU MOINS UN ECHEC")
