@@ -8407,3 +8407,49 @@ ce renommage automatique à l'import de l'application Windows, pour
 qu'aucune étape manuelle ne soit plus nécessaire.
 
 **Version testée** : v268
+
+### 126 — Avertissement d'ingrédient en double à l'enregistrement d'une recette (demande utilisateur, parité avec l'app Windows)
+
+L'utilisateur a signalé qu'un ingrédient présent deux fois dans une
+recette importée depuis un lien externe (exemple donné : un cassoulet
+sur Marmiton) ne déclenchait aucun avertissement à l'enregistrement,
+contrairement à l'application Windows, qui propose déjà "Garder tel
+quel" ou "Fusionner" (quantités additionnées) dans ce cas précis
+(fonctions `ask_merge_duplicate_ingredients`/`merge_duplicate_ingredients`
+du dépôt Windows). Le lien Marmiton donné en exemple n'a pas pu être
+récupéré depuis cet environnement (accès réseau bloqué vers ce
+domaine, confirmé par `curl` et par l'outil `WebFetch`) — la
+fonctionnalité elle-même, bien spécifiée côté Windows après lecture
+complète de son code, a été reprise à l'identique côté mobile, testée
+avec des ingrédients dupliqués injectés directement (le mécanisme est
+indépendant de la source du duplicata, import ou saisie manuelle).
+
+**Ajouté** : à l'enregistrement d'une recette (`saveRecipeForm`), si un
+même nom d'ingrédient apparaît plusieurs fois dans la liste (comparaison
+insensible aux accents/casse via `normalize()`, déjà utilisée ailleurs
+dans l'app), une fenêtre à 2 choix nommés (nouvelle fonction générique
+`customTwoChoice`, sur le modèle de `customConfirm`/`customPrompt`)
+propose "Garder tel quel" ou "Fusionner" — annuler (croix/Échap, clic
+hors de la fenêtre) n'enregistre rien, pour laisser revenir corriger
+manuellement. `mergeDuplicateIngredients()` ne fusionne que les lignes
+de MÊME nom ET MÊME unité (reprise fidèle de la règle Windows) : un même
+ingrédient dans deux unités différentes (ex. "Sel" en grammes et en
+cuillères) n'est jamais fusionné automatiquement, additionner des
+unités différentes donnerait un nombre faux — ces lignes restent donc
+séparées même après avoir choisi "Fusionner". Une quantité manquante
+(ingrédient sans quantité précisée) est traitée comme absente plutôt
+que comme zéro : la quantité connue l'emporte au lieu d'annuler la
+somme, même règle que Windows.
+
+**Vérifié** (voir `tests/test_duplicate_ingredient_on_save.py`, nouveau,
+7 vérifications via Playwright) : la fenêtre apparaît bien pour un
+doublon (nom accentué/casse différente inclus) ; "Fusionner" additionne
+correctement les quantités en une seule ligne ; "Garder tel quel"
+conserve les deux lignes inchangées ; annuler (Échap) n'enregistre
+rien et laisse le formulaire ouvert ; un même nom avec des unités
+différentes n'est jamais fusionné même après avoir choisi "Fusionner" ;
+une quantité manquante ne fait ni 0 ni un doublement du résultat ;
+aucune fenêtre ne s'affiche en l'absence de doublon. Suite de
+régression complète (53 scripts + corpus OCR) au vert.
+
+**Version testée** : v269

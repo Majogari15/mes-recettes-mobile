@@ -636,6 +636,38 @@ function customConfirm(message) {
     sheet.querySelector("#custom-confirm-ok").focus();
   });
 }
+// Dialogue à 2 choix nommés (ni un simple "OK", ni "Oui/Non") — utilisé
+// pour l'ingrédient en double du formulaire de recette (voir
+// saveRecipeForm) : "Garder" ou "Fusionner", jamais un booléen qui
+// masquerait laquelle des deux options a été choisie. Annuler (croix
+// virtuelle/Échap, ou clic hors de la fenêtre) renvoie null — ne doit
+// jamais silencieusement se comporter comme l'un des deux choix.
+function customTwoChoice(message, keepLabel, mergeLabel) {
+  return new Promise((resolve) => {
+    const previouslyFocused = document.activeElement;
+    const overlay = el(`<div class="modal-overlay"></div>`);
+    const sheet = el(`<div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="custom-two-choice-message">
+      <p id="custom-two-choice-message" style="margin:0 0 20px;font-size:15px;line-height:1.5;white-space:pre-line;">${escapeHtml(message)}</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="custom-two-choice-keep">${escapeHtml(keepLabel)}</button>
+        <button type="button" class="btn btn-primary" id="custom-two-choice-merge">${escapeHtml(mergeLabel)}</button>
+      </div>
+    </div>`);
+    overlay.appendChild(sheet);
+    document.body.appendChild(overlay);
+    const removeTrap = trapFocusInModal(sheet, () => finish(null));
+    function finish(value) {
+      removeTrap();
+      overlay.remove();
+      if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
+      resolve(value);
+    }
+    sheet.querySelector("#custom-two-choice-keep").addEventListener("click", () => finish("keep"));
+    sheet.querySelector("#custom-two-choice-merge").addEventListener("click", () => finish("merge"));
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) finish(null); });
+    sheet.querySelector("#custom-two-choice-merge").focus();
+  });
+}
 // Notification temporaire discrète (ex. "Article supprimé — Annuler ?"),
 // avec un bouton d'action optionnel — contrairement à customAlert/
 // customConfirm, ne bloque jamais l'interaction avec le reste de l'écran
@@ -2195,6 +2227,62 @@ function renderAllergenCheckboxes(holder) {
   });
 }
 
+// Fusionne les lignes d'ingrédients qui partagent le même nom (insensible
+// aux accents/casse, voir normalize()) ET la même unité — quantités
+// additionnées, ordre de première apparition conservé. Un même nom avec
+// des unités différentes (ex. "Farine" en grammes ET en cuillères) n'est
+// volontairement PAS fusionné : additionner des unités différentes
+// donnerait un nombre faux, ces lignes restent donc séparées. Une
+// quantité manquante (ingrédient sans quantité précisée) est traitée
+// comme absente plutôt que comme zéro : la quantité connue l'emporte au
+// lieu d'annuler la somme. Même règle que la version Windows
+// (merge_duplicate_ingredients) pour un comportement cohérent entre les
+// deux applications.
+function mergeDuplicateIngredients(ingredients) {
+  const merged = [];
+  const indexByKey = new Map();
+  for (const ing of ingredients) {
+    const key = `${normalize(ing.name)}\u0000${ing.unit}`;
+    const existingIdx = indexByKey.get(key);
+    if (existingIdx !== undefined) {
+      const target = merged[existingIdx];
+      if (target.quantity == null) target.quantity = ing.quantity;
+      else if (ing.quantity != null) target.quantity = target.quantity + ing.quantity;
+    } else {
+      indexByKey.set(key, merged.length);
+      merged.push({ ...ing });
+    }
+  }
+  return merged;
+}
+
+// Détecte un ingrédient saisi plusieurs fois dans la même recette (même
+// nom, insensible aux accents/casse) et propose de garder tel quel ou de
+// fusionner — voir mergeDuplicateIngredients. Retourne la liste finale
+// d'ingrédients à enregistrer, ou null si l'utilisateur annule (auquel
+// cas l'appelant ne doit rien enregistrer, pour laisser revenir corriger
+// manuellement).
+async function resolveDuplicateIngredientsForSave(ingredients) {
+  const seenKeys = new Set();
+  const duplicateNames = [];
+  for (const ing of ingredients) {
+    const key = normalize(ing.name);
+    if (seenKeys.has(key)) {
+      if (!duplicateNames.some((n) => normalize(n) === key)) duplicateNames.push(ing.name);
+    } else {
+      seenKeys.add(key);
+    }
+  }
+  if (!duplicateNames.length) return ingredients;
+  const choice = await customTwoChoice(
+    t("recipeform_duplicate_ingredient_message", { list: duplicateNames.join(", ") }),
+    t("recipeform_keep_duplicates_button"),
+    t("recipeform_merge_duplicates_button")
+  );
+  if (choice === null) return null;
+  return choice === "merge" ? mergeDuplicateIngredients(ingredients) : ingredients;
+}
+
 async function saveRecipeForm(wrap, existing) {
   const name = wrap.querySelector("#f-name").value.trim();
   if (!name) { await customAlert(t("form_error_name")); return; }
@@ -2207,13 +2295,24 @@ async function saveRecipeForm(wrap, existing) {
     .filter((i) => i.name);
   if (!validIngredients.length) { await customAlert(t("form_error_ingredient")); return; }
 
+  // Ingrédient saisi plusieurs fois dans la même recette (souvent une
+  // erreur d'import depuis un lien externe, qui liste parfois un même
+  // ingrédient dans deux sections de la fiche source) : signalé avant
+  // l'enregistrement plutôt que silencieusement accepté, avec le choix
+  // de garder tel quel (volontaire : même ingrédient utilisé à deux
+  // endroits différents de la recette) ou de fusionner. Annuler
+  // (croix/Échap) laisse la personne revenir corriger manuellement,
+  // sans rien enregistrer.
+  const finalIngredients = await resolveDuplicateIngredientsForSave(validIngredients);
+  if (!finalIngredients) return;
+
   // Tout ingrédient réellement nouveau (ne correspondant à aucun nom déjà
   // connu, ni en français ni traduit) est ajouté à la liste des
   // ingrédients, pour être immédiatement disponible en autocomplétion
   // partout ailleurs (autre recette, liste de courses, garde-manger) —
   // notamment utile après un import de recette depuis un lien, qui
   // introduit souvent des noms absents de la liste par défaut.
-  for (const ing of validIngredients) {
+  for (const ing of finalIngredients) {
     if (!state.ingredientNames.some((n) => normalize(n) === normalize(ing.name))) {
       await addIngredientName(ing.name);
     }
@@ -2230,7 +2329,7 @@ async function saveRecipeForm(wrap, existing) {
     favorite: wrap.querySelector("#f-favorite").checked,
     vegetarian: wrap.querySelector("#f-vegetarian").checked,
     wishlist: wrap.querySelector("#f-wishlist").checked,
-    ingredients: validIngredients,
+    ingredients: finalIngredients,
     allergens: state.formAllergens.slice(),
     description: wrap.querySelector("#f-description").value.trim(),
     notes: wrap.querySelector("#f-notes").value.trim(),
@@ -12601,7 +12700,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 268;
+const APP_VERSION = 269;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

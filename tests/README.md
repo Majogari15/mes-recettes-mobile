@@ -526,6 +526,16 @@ Depuis, la structure sépare strictement :
   réimportable malgré le déguisement, qu'un échec retombe sur le VRAI
   nom `.zip` avec le message générique (partagé avec la sauvegarde
   JSON), et que le bouton JSON classique reste inchangé.
+- `test_duplicate_ingredient_on_save.py` — suite à un signalement
+  utilisateur (voir TESTS_NON_REGRESSION.md point 126) : un ingrédient
+  présent deux fois dans une recette (souvent après un import depuis un
+  lien externe) déclenche désormais une fenêtre "Garder tel quel" /
+  "Fusionner" à l'enregistrement, à l'identique de l'application
+  Windows. Vérifie l'apparition de la fenêtre, la fusion (quantités
+  additionnées), la conservation telle quelle, l'annulation (rien
+  n'est enregistré), que des unités différentes pour un même nom ne
+  sont jamais fusionnées, qu'une quantité manquante ne fausse pas le
+  résultat, et qu'aucune fenêtre n'apparaît sans doublon.
 - `vendor/axe.min.js` — bibliothèque axe-core (MIT, Deque Systems),
   utilisée uniquement par `test_accessibility_audit.py` — jamais
   chargée par l'application elle-même.
