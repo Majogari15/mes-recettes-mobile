@@ -28,6 +28,23 @@ ajout dans le fichier français aurait décalé silencieusement toutes les
 traductions suivantes. Chaque relation de substitution a maintenant son
 propre "substitutionId" stable, les traductions sont keyées par cet id.
 
+Un troisième problème, repéré par un second avis externe après la
+première version de cette migration, a été corrigé dans un second
+temps : `INGREDIENT_REVERSE_TRANSLATIONS` (utilisée par
+`resolveIngredientInput` pour reconnaître une saisie dans une autre
+langue) résolvait vers le nom français D'ORIGINE du catalogue, pas vers
+le nom ACTUEL de l'ingrédient dans la liste de l'utilisateur — un
+ingrédient renommé ("Tomate" -> "Tomate ronde") redevenait "Tomate" à
+la moindre saisie en anglais ("Tomato"), recréant un doublon au lieu de
+retrouver le bon ingrédient. Reproduit et corrigé : la résolution passe
+maintenant par l'id catalogue puis par `state.ingredientNameByCatalogId`
+(nouvelle table, sens inverse de `state.ingredientCatalogIds`). Au
+passage, une collision entre deux ingrédients partageant la même
+traduction (ex. "Peanut" pour "Arachide" ET "Cacahuète", 24 cas réels
+existants en anglais) n'est plus résolue arbitrairement vers le premier
+trouvé : `INGREDIENT_REVERSE_TRANSLATIONS` retient tous les ids
+concernés, et une saisie ambiguë n'est jamais associée automatiquement.
+
 Couvre :
 - Premier lancement : chaque ingrédient du catalogue reçoit son catalogId.
 - Renommage : allergènes/nutrition/catalogId survivent au renommage.
@@ -40,6 +57,10 @@ Couvre :
 - Rétrocompatibilité : un enregistrement IndexedDB antérieur à cette
   migration (sans catalogId) est relié à son id au prochain chargement,
   par simple correspondance de nom — sans bloquer le démarrage.
+- Saisie bilingue après renommage : résout vers le nom ACTUEL, jamais
+  l'ancien nom français du catalogue.
+- Collision de traduction inverse : jamais de résolution automatique
+  vers l'un des deux ingrédients concernés.
 
 Utilisation (démarre et arrête lui-même un serveur local temporaire) :
 
@@ -177,6 +198,32 @@ def main():
             "async () => { const all = await storeAll('ingredients'); const r = all.find((i) => i.name === 'Farine'); return r ? r.catalogId : null; }"
         )
         check("catalogId aussi écrit dans IndexedDB (pas seulement en mémoire)", bool(persisted), str(persisted))
+
+        print("\n=== Saisie bilingue après renommage : résout vers le nom ACTUEL, pas l'ancien nom du catalogue ===\n")
+        page.evaluate("() => setLang('fr')")
+        page.evaluate("async () => { await renameIngredientName('Tomate', 'Tomate ronde'); }")
+        page.evaluate("() => setLang('en')")
+        resolved = page.evaluate("() => resolveIngredientInput('Tomato')")
+        page.evaluate("() => setLang('fr')")
+        check(
+            "'Tomato' résout vers 'Tomate ronde' (le nom actuel), pas 'Tomate' (l'ancien nom du catalogue)",
+            resolved == "Tomate ronde",
+            f"obtenu={resolved!r}",
+        )
+
+        print("\n=== Collision de traduction inverse : jamais de résolution automatique ===\n")
+        # "Peanut" est la traduction anglaise à la fois d'Arachide et de
+        # Cacahuète (vraie collision du fichier de traduction actuel) —
+        # une saisie ambiguë ne doit jamais être associée silencieusement
+        # à l'un des deux au hasard.
+        page.evaluate("() => setLang('en')")
+        collision_resolved = page.evaluate("() => resolveIngredientInput('Peanut')")
+        page.evaluate("() => setLang('fr')")
+        check(
+            "'Peanut' (collision Arachide/Cacahuète) n'est jamais résolu automatiquement",
+            collision_resolved == "Peanut",
+            f"obtenu={collision_resolved!r}",
+        )
 
         check("Aucune erreur JS pendant tout le parcours", len(errors) == 0, str(errors))
 

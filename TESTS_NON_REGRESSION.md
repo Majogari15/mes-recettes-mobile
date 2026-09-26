@@ -8721,3 +8721,61 @@ au vert sans aucune modification de ce test, seule la structure interne
 des données a changé.
 
 **Version testée** : v272
+
+### 130 — Correction de la résolution bilingue après renommage, trouvée par un second avis externe sur la migration du point 129
+
+Un second avis externe (autre IA), invité à réauditer la migration du
+point 129 une fois appliquée, a signalé un problème réel non détecté
+lors de la conversation de conception initiale : `resolveIngredientInput()`
+(utilisée pour reconnaître une saisie tapée dans une langue différente
+du français, ex. import, saisie manuelle) résolvait via
+`INGREDIENT_REVERSE_TRANSLATIONS`, construite comme `traduction ->
+nom français D'ORIGINE du catalogue` — jamais mis à jour après un
+renommage utilisateur. Reproduit avant correction : après avoir renommé
+"Tomate" en "Tomate ronde", taper "Tomato" en interface anglaise
+résolvait vers "Tomate" (absent de la liste actuelle de l'utilisateur)
+plutôt que vers "Tomate ronde", ce qui aurait recréé un doublon au lieu
+de retrouver le bon ingrédient.
+
+**Corrigé** : nouvelle table en mémoire `state.ingredientNameByCatalogId`
+(sens inverse de `state.ingredientCatalogIds` : id -> nom actuel),
+maintenue aux mêmes points que cette dernière
+(`ensureIngredientListLoaded`, `addIngredientName`,
+`renameIngredientName`, `mergeIngredientNames`, `deleteIngredientName`).
+`INGREDIENT_REVERSE_TRANSLATIONS` stocke désormais l'id catalogue
+plutôt que le nom français directement ; `resolveIngredientInput`
+résout d'abord vers l'id, puis vers le nom actuel via cette nouvelle
+table (repli sur le nom du catalogue seulement si l'ingrédient a depuis
+été supprimé de la liste locale).
+
+**Deuxième correction au passage, même avis externe** : une collision
+entre deux ingrédients partageant la même traduction (ex. "Peanut" pour
+"Arachide" ET "Cacahuète" — 24 collisions réelles confirmées dans le
+fichier de traduction anglais actuel) faisait que la seconde entrée
+écrasait silencieusement la première dans le dictionnaire inverse, une
+saisie ambiguë étant alors associée arbitrairement à l'un des deux au
+hasard. `INGREDIENT_REVERSE_TRANSLATIONS[lang][texte traduit]` est
+désormais un TABLEAU d'ids (pas un id unique) : une correspondance
+unique reste résolue automatiquement, une collision n'est jamais
+résolue automatiquement (la saisie reste inchangée, comme pour tout
+texte non reconnu).
+
+**Volontairement pas traité dans ce tour** (points soulevés par le même
+avis, jugés à juste titre non urgents avant l'extension réelle à
+10 000 ingrédients/10 langues, donc reportés) : insertion par lots
+plutôt que par transactions IndexedDB séquentielles au premier
+lancement (`ensureIngredientListLoaded`), `Promise.allSettled` plutôt
+qu'un unique `Promise.all` pour les fichiers de référence secondaires
+(actuellement 9, un JSON mal formé dans l'un d'eux viderait aujourd'hui
+les 9), script de validation systématique (ids orphelins/dupliqués,
+`targetIngredientId` inexistant), détection des substitutions libres
+devenues entre-temps des ingrédients officiels, distinction formelle
+"non documenté" vs "vérifié, aucun" pour les allergènes.
+
+**Vérifié** (`tests/test_ingredient_catalog_ids.py`, 2 nouvelles
+vérifications) : reproduit le bug exact avant correction (confirmé en
+échec), puis vérifié corrigé après ; collision "Peanut" jamais résolue
+automatiquement. Suite de régression complète rejouée, aucune
+régression.
+
+**Version testée** : v273

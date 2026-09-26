@@ -377,6 +377,13 @@ const state = {
   // — c'est précisément ce qui permet à allergènes/nutrition/traductions/
   // substitutions de continuer à fonctionner après un renommage.
   ingredientCatalogIds: {},
+  // Sens inverse de ingredientCatalogIds (id -> nom ACTUEL, plutôt que
+  // nom -> id) — nécessaire pour résoudre une saisie dans une autre
+  // langue vers le bon nom local après un renommage (voir
+  // resolveIngredientInput) : sans cette table, la résolution ne
+  // pouvait retrouver que le nom français D'ORIGINE du catalogue, pas
+  // le nom effectivement présent dans la liste de l'utilisateur.
+  ingredientNameByCatalogId: {},
   formPhoto: null,
   // Miniatures des photos sources d'un import photo, pour comparaison
   // dans le formulaire — contrairement à _importSourcePhotos (plus
@@ -6510,7 +6517,7 @@ function showInstallBanner() {
 let ALLERGEN_DB = {}; // clé : id catalogue ("ing_000123") -> allergènes
 let NUTRITION_DB = {}; // clé : id catalogue -> nutrition
 let INGREDIENT_TRANSLATIONS = {}; // {en: {id: texte}, es: {...}, de: {...}}
-let INGREDIENT_REVERSE_TRANSLATIONS = {}; // {lang: {normalize(texte traduit) -> nom français}}, pour la saisie bilingue
+let INGREDIENT_REVERSE_TRANSLATIONS = {}; // {lang: {normalize(texte traduit) -> [id catalogue, ...]}}, pour la saisie bilingue — un tableau plutôt qu'un id unique : voir resolveIngredientInput pour la désambiguïsation en cas de collision (deux ingrédients différents partageant la même traduction, ex. "Peanut")
 let SUBSTITUTIONS_DB = []; // [{substitutionId, ingredientId, targetIngredientId|null, note, name?}, ...]
 let SUBSTITUTIONS_BY_INGREDIENT_ID = {}; // ingredientId -> [relations] (index construit depuis SUBSTITUTIONS_DB)
 let SUBSTITUTIONS_TRANSLATIONS = {}; // {en: {substitutionId: {note, name?}}, es: {...}, de: {...}}
@@ -6572,8 +6579,9 @@ async function loadReferenceData() {
     Object.keys(INGREDIENT_TRANSLATIONS).forEach((lang) => {
       INGREDIENT_REVERSE_TRANSLATIONS[lang] = {};
       Object.entries(INGREDIENT_TRANSLATIONS[lang]).forEach(([id, translated]) => {
-        const fr = CATALOGUE_BY_ID[id];
-        if (fr) INGREDIENT_REVERSE_TRANSLATIONS[lang][normalize(translated)] = fr;
+        if (!CATALOGUE_BY_ID[id]) return;
+        const key = normalize(translated);
+        (INGREDIENT_REVERSE_TRANSLATIONS[lang][key] = INGREDIENT_REVERSE_TRANSLATIONS[lang][key] || []).push(id);
       });
     });
     SUBSTITUTIONS_DB = subRes.ok ? await subRes.json() : [];
@@ -6726,8 +6734,25 @@ function resolveIngredientInput(typedName) {
   }
   const dict = INGREDIENT_REVERSE_TRANSLATIONS[CURRENT_LANG];
   if (dict) {
-    const resolved = dict[normalize(trimmed)];
-    if (resolved) return resolved;
+    const ids = dict[normalize(trimmed)];
+    // Un seul ingrédient du catalogue partage cette traduction : résolu
+    // vers son nom ACTUEL dans la liste de l'utilisateur (potentiellement
+    // renommé depuis), jamais vers le nom français d'origine du
+    // catalogue — sans quoi un ingrédient renommé (ex. "Tomate" ->
+    // "Tomate ronde") redeviendrait "Tomate" à la moindre saisie dans une
+    // autre langue, recréant un doublon au lieu de retrouver le bon
+    // ingrédient. Repli sur le nom du catalogue seulement si l'ingrédient
+    // a depuis été supprimé de la liste locale (aucun nom actuel connu).
+    // Plusieurs ingrédients partagent la même traduction (collision, ex.
+    // "Peanut" pour "Arachide" ET "Cacahuète") : jamais de résolution
+    // automatique dans ce cas — mieux vaut laisser créer un ingrédient
+    // distinct que de deviner silencieusement le mauvais des deux.
+    if (ids && ids.length === 1) {
+      const localName = state.ingredientNameByCatalogId[ids[0]];
+      if (localName) return localName;
+      const fr = CATALOGUE_BY_ID[ids[0]];
+      if (fr) return fr;
+    }
   }
   return trimmed;
 }
@@ -6754,13 +6779,17 @@ async function ensureIngredientListLoaded() {
     // reste sans catalogId, traité partout comme "pas de donnée de
     // référence disponible" — jamais une erreur.
     state.ingredientCatalogIds = {};
+    state.ingredientNameByCatalogId = {};
     for (const record of existing) {
       let catalogId = record.catalogId;
       if (!catalogId) {
         catalogId = CATALOGUE_ID_BY_NAME[normalize(record.name)];
         if (catalogId) await storePut("ingredients", { ...record, catalogId });
       }
-      if (catalogId) state.ingredientCatalogIds[normalize(record.name)] = catalogId;
+      if (catalogId) {
+        state.ingredientCatalogIds[normalize(record.name)] = catalogId;
+        state.ingredientNameByCatalogId[catalogId] = record.name;
+      }
     }
     return;
   }
@@ -6770,9 +6799,11 @@ async function ensureIngredientListLoaded() {
   // ingredients_par_defaut.json, devenu une simple projection du même
   // catalogue (voir TESTS_NON_REGRESSION.md).
   state.ingredientCatalogIds = {};
+  state.ingredientNameByCatalogId = {};
   for (const entry of INGREDIENT_CATALOGUE) {
     await storePut("ingredients", { name: entry.fr, catalogId: entry.id });
     state.ingredientCatalogIds[normalize(entry.fr)] = entry.id;
+    state.ingredientNameByCatalogId[entry.id] = entry.fr;
   }
   state.ingredientNames = INGREDIENT_CATALOGUE.map((e) => e.fr).sort(compareIngredientNamesForDisplay);
 }
@@ -6787,7 +6818,10 @@ async function addIngredientName(name) {
   // rattachement risqué à la mauvaise entrée du catalogue.
   const catalogId = CATALOGUE_ID_BY_NAME[key];
   await storePut("ingredients", catalogId ? { name: trimmed, catalogId } : { name: trimmed });
-  if (catalogId) state.ingredientCatalogIds[key] = catalogId;
+  if (catalogId) {
+    state.ingredientCatalogIds[key] = catalogId;
+    state.ingredientNameByCatalogId[catalogId] = trimmed;
+  }
   state.ingredientNames.push(trimmed);
   state.ingredientNames.sort(compareIngredientNamesForDisplay);
   return true;
@@ -6852,7 +6886,10 @@ async function renameIngredientName(oldName, newName) {
   state.ingredientNames.push(trimmed);
   state.ingredientNames.sort(compareIngredientNamesForDisplay);
   delete state.ingredientCatalogIds[oldKey];
-  if (catalogId) state.ingredientCatalogIds[normalize(trimmed)] = catalogId;
+  if (catalogId) {
+    state.ingredientCatalogIds[normalize(trimmed)] = catalogId;
+    state.ingredientNameByCatalogId[catalogId] = trimmed;
+  }
   renamedRecipes.forEach((updated) => {
     const idx = state.recipes.findIndex((r) => r.id === updated.id);
     if (idx >= 0) state.recipes[idx] = updated;
@@ -6878,7 +6915,10 @@ async function renameIngredientName(oldName, newName) {
 async function deleteIngredientName(name) {
   await storeDelete("ingredients", name);
   state.ingredientNames = state.ingredientNames.filter((n) => n !== name);
-  delete state.ingredientCatalogIds[normalize(name)];
+  const key = normalize(name);
+  const catalogId = state.ingredientCatalogIds[key];
+  delete state.ingredientCatalogIds[key];
+  if (catalogId && state.ingredientNameByCatalogId[catalogId] === name) delete state.ingredientNameByCatalogId[catalogId];
   await deleteIngredientOverrideFor(name);
 }
 function searchIngredientNames(query, limit) {
@@ -7042,7 +7082,12 @@ async function mergeIngredientNames(keep, remove) {
 
   state.ingredientNames = state.ingredientNames.filter((n) => n !== remove);
   delete state.ingredientCatalogIds[removeKey];
-  if (moveCatalogId) state.ingredientCatalogIds[normalize(keep)] = removeCatalogId;
+  if (moveCatalogId) {
+    state.ingredientCatalogIds[normalize(keep)] = removeCatalogId;
+    state.ingredientNameByCatalogId[removeCatalogId] = keep;
+  } else if (removeCatalogId && state.ingredientNameByCatalogId[removeCatalogId] === remove) {
+    delete state.ingredientNameByCatalogId[removeCatalogId];
+  }
   renamedRecipes.forEach((updated) => {
     const idx = state.recipes.findIndex((r) => r.id === updated.id);
     if (idx >= 0) state.recipes[idx] = updated;
@@ -12901,7 +12946,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 272;
+const APP_VERSION = 273;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
