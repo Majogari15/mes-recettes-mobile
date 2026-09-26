@@ -8485,3 +8485,52 @@ aucune fenêtre ne s'affiche en l'absence de doublon. Suite de
 régression complète (53 scripts + corpus OCR) au vert.
 
 **Version testée** : v269
+
+### 127 — Bouton "Coller le lien copié" et nettoyage des paramètres de traçage à l'import par lien (suite à un avis externe sur la simplification de l'import mobile)
+
+Un avis externe (autre IA) a proposé plusieurs pistes pour simplifier
+l'import de recette par lien sur mobile. Après relecture du code
+existant, la plupart des pistes étaient déjà en place : `share_target`
+dans les 4 manifestes, extraction de l'URL depuis `url` OU `text` (lien
+noyé dans du texte libre selon l'app source, `extractFirstUrl`), et la
+file d'attente `pendingSharedUrl` qui attend la fin de l'initialisation
+d'IndexedDB avant d'afficher l'écran d'import — déjà couvert par un
+tour précédent. Deux pistes manquaient réellement et ont été retenues :
+
+- **Nouveau bouton "📋 Coller le lien copié"** sur l'écran d'import par
+  lien (`renderImportUrl`) : lit le presse-papiers
+  (`navigator.clipboard.readText()`), y cherche une adresse http(s) avec
+  `extractFirstUrl` (même fonction que le partage natif, donc un lien
+  noyé dans du texte copié fonctionne aussi), et préremplit le champ.
+  Utile en secours quand le partage natif direct n'est pas disponible
+  ou mal pris en charge (notamment iOS/Safari). Navigateur sans
+  l'API, autorisation refusée, ou aucune adresse trouvée dans le
+  presse-papiers → message dédié, la saisie manuelle reste toujours
+  possible, jamais bloquée.
+- **Nouvelle fonction `stripTrackingParams()`** : retire une liste
+  fermée de paramètres de traçage marketing bien identifiés
+  (`utm_*`, `gclid`, `fbclid`, `igshid`, `mc_cid`/`mc_eid`, `msclkid`,
+  `yclid`, `twclid`, `ref_src`, `ref_url`, `mkt_tok`, `_hsenc`/`_hsmi`,
+  `vero_id`) avant import — volontairement une liste fermée de noms
+  connus plutôt qu'une règle générale par préfixe, pour ne jamais
+  risquer de retirer un jour un paramètre dont une page aurait
+  réellement besoin. Appliqué aux trois points d'entrée d'une URL :
+  lien reçu par partage natif, lien collé via le nouveau bouton, et
+  lien saisi/collé à la main dans le champ (au moment du clic sur
+  "Récupérer la recette").
+
+Piste explicitement écartée : l'écran "Recette détectée" séparé avant
+sauvegarde, jugé redondant avec le formulaire déjà pré-rempli après
+import (qui remplit déjà ce rôle de vérification avant enregistrement)
+pour un gain marginal.
+
+**Vérifié** : `stripTrackingParams()` testé directement (retire bien
+`utm_source`/`utm_medium`/`fbclid` en conservant `id=123` et les autres
+paramètres fonctionnels ; URL déjà propre ou texte non-URL laissés
+inchangés) ; bouton "Coller le lien" testé bout en bout (presse-papiers
+simulé avec un lien noyé dans du texte et un paramètre `utm_source` →
+champ correctement rempli avec le lien nettoyé). Suite de régression
+existante (accessibilité 13 écrans + coupure réseau à l'import)
+rejouée, aucune régression.
+
+**Version testée** : v270

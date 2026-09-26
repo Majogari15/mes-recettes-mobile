@@ -749,6 +749,34 @@ function extractFirstUrl(str) {
   const match = str.match(/https?:\/\/[^\s]+/i);
   return match ? match[0] : null;
 }
+
+// Paramètres de traçage marketing bien identifiés (jamais utiles au
+// fonctionnement d'une page de recette) — retirés avant import, que
+// l'adresse arrive par partage natif, presse-papiers ou saisie
+// manuelle. Volontairement une liste fermée de noms connus plutôt
+// qu'une règle générale (ex. "tout ce qui commence par utm_" suffirait
+// ici, mais une règle plus large risquerait de retirer un jour un
+// paramètre dont dépend réellement la page visée).
+const TRACKING_URL_PARAMS = [
+  "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id",
+  "gclid", "fbclid", "igshid", "mc_cid", "mc_eid", "msclkid", "yclid", "twclid",
+  "ref_src", "ref_url", "mkt_tok", "_hsenc", "_hsmi", "vero_id",
+];
+function stripTrackingParams(urlStr) {
+  try {
+    const parsed = new URL(urlStr);
+    let changed = false;
+    for (const param of TRACKING_URL_PARAMS) {
+      if (parsed.searchParams.has(param)) { parsed.searchParams.delete(param); changed = true; }
+    }
+    return changed ? parsed.toString() : urlStr;
+  } catch (e) {
+    // Adresse mal formée : laissée telle quelle, le message d'erreur
+    // habituel de l'import se chargera de le signaler à l'étape
+    // suivante plutôt que de masquer le problème ici.
+    return urlStr;
+  }
+}
 function parseQtyOrNull(value) {
   if (value === "" || value == null) return null;
   const n = Number(value);
@@ -12229,6 +12257,16 @@ function renderImportUrl() {
       <button type="button" id="import-url-clear" class="btn btn-outline btn-sm" style="width:auto;flex-shrink:0;">${t("import_url_clear_button")}</button>
     </div>
   </div>`));
+  // Bouton de secours pratique quand le partage natif direct
+  // (share_target) n'est pas disponible ou pas pris en charge — copier
+  // le lien dans le navigateur puis revenir coller ici, sans avoir à
+  // ressaisir l'adresse à la main. navigator.clipboard.readText()
+  // nécessite un contexte sécurisé (https, déjà le cas ici) et
+  // l'autorisation "clipboard-read" ; son absence ou son refus (ex.
+  // iOS hors interaction utilisateur directe) est géré proprement,
+  // sans jamais bloquer la saisie manuelle qui reste toujours possible.
+  const pasteBtn = el(`<button type="button" class="btn btn-outline" style="margin-bottom:16px;">${t("import_url_paste_button")}</button>`);
+  wrap.appendChild(pasteBtn);
   wrap.appendChild(el(`<p style="font-size:13px;color:var(--danger);margin:0 0 20px;line-height:1.5;">${escapeHtml(t("import_url_duplicate_warning"))}</p>`));
   const btn = el(`<button class="btn btn-primary">${t("import_url_button")}</button>`);
   wrap.appendChild(btn);
@@ -12239,6 +12277,21 @@ function renderImportUrl() {
     statusHolder.textContent = "";
     wrap.querySelector("#import-url-input").focus();
   });
+  pasteBtn.addEventListener("click", async () => {
+    statusHolder.textContent = "";
+    if (!navigator.clipboard || !navigator.clipboard.readText) {
+      statusHolder.textContent = t("import_url_paste_error");
+      return;
+    }
+    try {
+      const clipboardText = await navigator.clipboard.readText();
+      const found = extractFirstUrl(clipboardText);
+      if (!found) { statusHolder.textContent = t("import_url_paste_empty"); return; }
+      wrap.querySelector("#import-url-input").value = stripTrackingParams(found);
+    } catch (e) {
+      statusHolder.textContent = t("import_url_paste_error");
+    }
+  });
   btn.addEventListener("click", async () => {
     let url = wrap.querySelector("#import-url-input").value.trim();
     // Ajoute automatiquement le protocole si absent — cas fréquent
@@ -12248,6 +12301,7 @@ function renderImportUrl() {
     // invalide alors qu'elle est parfaitement reconnaissable.
     if (url && !/^https?:\/\//i.test(url)) url = "https://" + url;
     if (!url) { statusHolder.textContent = t("import_url_no_url"); return; }
+    url = stripTrackingParams(url);
     btn.disabled = true;
     statusHolder.textContent = t("import_url_fetching");
     try {
@@ -12700,7 +12754,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 269;
+const APP_VERSION = 270;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
@@ -12820,7 +12874,8 @@ async function initInner() {
   // remplissent que "text" avec le lien tel quel ou noyé dans un peu de
   // texte — d'où la recherche d'une adresse http(s) dans les deux.
   const sharedParams = new URLSearchParams(location.search);
-  const sharedUrl = extractFirstUrl(sharedParams.get("url")) || extractFirstUrl(sharedParams.get("text"));
+  const rawSharedUrl = extractFirstUrl(sharedParams.get("url")) || extractFirstUrl(sharedParams.get("text"));
+  const sharedUrl = rawSharedUrl ? stripTrackingParams(rawSharedUrl) : null;
   if (requestedScreen || requestedRecipeId || sharedUrl) {
     // Retire le paramètre de l'adresse une fois lu — sinon, une simple
     // actualisation de la page rouvrait indéfiniment le même écran au
