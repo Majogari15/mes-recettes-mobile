@@ -1050,6 +1050,14 @@ attendu → résultat obtenu → version testée.
   différée) ; ❌ non fiable écran verrouillé (rien à l'heure prévue,
   déclenché seulement au réveil de l'écran) ; ❌ aucune notification
   système dans aucun cas. Voir le détail complet en section 19.1.
+- **Précision de l'utilisateur le 26/09/2026** : si l'application était
+  ouverte au moment du verrouillage de l'écran, la sonnerie se déclenche
+  bien à l'heure prévue écran verrouillé, seule la vibration est
+  différée (elle se déclenche dès la sortie du verrouillage, pas avant)
+  — comportement du navigateur (Wake Lock/timers suspendus écran
+  verrouillé), pas un bug de l'application. Jugé acceptable tel quel par
+  l'utilisateur — considéré comme fait, aucun correctif prévu (rejoint
+  la limite déjà documentée au point 19.13).
 
 ### 14.8 — Manifestes/raccourcis après changement de langue et redémarrage *(physique)*
 - **Résultat obtenu** : ✅ Réussi, avec une nuance mineure et attendue :
