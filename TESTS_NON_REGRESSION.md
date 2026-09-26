@@ -8533,4 +8533,25 @@ champ correctement rempli avec le lien nettoyé). Suite de régression
 existante (accessibilité 13 écrans + coupure réseau à l'import)
 rejouée, aucune régression.
 
+**Confirmé physiquement le 26/09/2026** : premier vrai test physique du
+Web Share Target (jusqu'ici seulement vérifié "en navigateur mobile"
+selon le point 69/v213, jamais via une icône d'app réellement
+installée). Premier essai en échec : partage vers l'icône obtenue par
+le Play Store il y a plusieurs semaines → l'app se rouvre sur l'accueil
+sans rien importer, de façon reproductible (app fermée ou déjà
+ouverte, même résultat). Cause identifiée : cette icône Play Store
+avait été installée bien avant que le partage natif ne soit
+opérationnel — Android fige la configuration de partage d'une app au
+moment de l'installation/dernière synchronisation, sans la
+régénérer automatiquement quand le manifeste du site évolue ensuite.
+Après désinstallation complète, effacement des données du site dans
+Chrome, réouverture normale du site puis réinstallation via "Ajouter à
+l'écran d'accueil" : le partage fonctionne correctement, l'écran
+d'import s'ouvre avec l'adresse préremplie. Point clos pour l'usage
+normal ; à garder en tête pour la publication finale sur le Play
+Store : les utilisateurs ayant installé une version ancienne de l'app
+devront la réinstaller pour bénéficier du partage natif, une simple
+mise à jour ne suffit pas à réactiver cette configuration figée au
+niveau du système.
+
 **Version testée** : v270
