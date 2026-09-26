@@ -8602,4 +8602,7 @@ refléter le nouveau comportement) et rejouée avec
 `tests/test_ui_icon_replacement.py` (bouton thème toujours
 fonctionnel), toutes deux au vert.
 
+**Confirmé physiquement le 26/09/2026** : thème clair à l'installation
+et menu déroulant des langues vérifiés fonctionnels sur vrai appareil.
+
 **Version testée** : v271
