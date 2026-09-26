@@ -1161,13 +1161,14 @@ function renderTopbar() {
     });
     actions.appendChild(donateBtn);
 
-    const langBtn = el(`<button class="icon-btn lang-cycle-btn" aria-label="${t("lang_label")}">${CURRENT_LANG.toUpperCase()}</button>`);
-    langBtn.addEventListener("click", () => {
-      const order = ["fr", "en", "es", "de"];
-      const next = order[(order.indexOf(CURRENT_LANG) + 1) % order.length];
-      setLang(next);
-      render();
-    });
+    // Menu déroulant plutôt qu'un bouton qui faisait défiler les
+    // langues une à une (cliquer N-1 fois pour atteindre la N-ième
+    // langue devient vite impraticable dès que la liste s'allonge
+    // au-delà de 3-4 langues, ce qui est prévu — voir
+    // SUPPORTED_LANGUAGES dans i18n.js pour en ajouter).
+    const currentLangMeta = SUPPORTED_LANGUAGES.find((l) => l.code === CURRENT_LANG);
+    const langBtn = el(`<button class="icon-btn lang-cycle-btn" aria-label="${t("lang_label")}">${currentLangMeta ? currentLangMeta.flag : CURRENT_LANG.toUpperCase()}</button>`);
+    langBtn.addEventListener("click", () => openLanguagePickerModal());
     actions.appendChild(langBtn);
 
     const themeBtn = el(`<button class="icon-btn" aria-label="${t("theme_toggle")}">${icon(document.documentElement.dataset.theme === "dark" ? "sun" : "moon")}</button>`);
@@ -6410,44 +6411,19 @@ function applyTheme(theme) {
 }
 function toggleTheme() {
   const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-  // Marque un choix explicite : à partir de maintenant, la préférence
-  // système ne doit plus jamais écraser silencieusement ce choix (voir
-  // initThemeFromSystemPreference).
-  localStorage.setItem("themeSetByUser", "1");
   applyTheme(next);
   render();
 }
-// Au tout premier lancement (ou tant que la personne n'a jamais touché
-// elle-même à l'interrupteur clair/sombre), suit la préférence système
-// plutôt que de forcer le thème clair par défaut — et continue de la
-// suivre EN DIRECT si elle change pendant l'utilisation (ex. bascule
-// automatique nuit/jour réglée sur le téléphone). Un choix explicite
-// via toggleTheme() désactive définitivement ce suivi automatique.
+// Toujours clair par défaut au premier lancement, quel que soit le
+// réglage du système d'exploitation — décision explicite de
+// l'utilisateur (revient sur un suivi automatique de
+// `prefers-color-scheme` essayé un temps, jugé source de confusion :
+// des personnes découvraient l'app en sombre sans l'avoir demandé,
+// simplement parce que leur téléphone l'était). Le thème sombre reste
+// entièrement disponible via l'interrupteur, qui continue de mémoriser
+// le choix (`localStorage`) d'une session à l'autre.
 function initThemeFromSystemPreference() {
-  const media = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
-  const systemTheme = () => (media && media.matches ? "dark" : "light");
-  // Un thème "dark" déjà enregistré ne peut provenir que d'un clic
-  // explicite sur l'interrupteur (l'app ne basculait jamais en sombre
-  // toute seule avant ce changement) — marqué rétroactivement comme
-  // choix explicite, pour ne pas l'écraser dès la première ouverture
-  // suivant cette mise à jour chez quelqu'un qui l'avait déjà choisi.
-  // Un thème "light" enregistré reste ambigu (valeur forcée par
-  // défaut, ou vrai choix) : laissé au suivi automatique ci-dessous.
-  if (!localStorage.getItem("themeSetByUser") && localStorage.getItem("theme") === "dark") {
-    localStorage.setItem("themeSetByUser", "1");
-  }
-  if (localStorage.getItem("themeSetByUser")) {
-    applyTheme(localStorage.getItem("theme") || "light");
-    return;
-  }
-  applyTheme(systemTheme());
-  if (media && media.addEventListener) {
-    media.addEventListener("change", () => {
-      if (localStorage.getItem("themeSetByUser")) return;
-      applyTheme(systemTheme());
-      render();
-    });
-  }
+  applyTheme(localStorage.getItem("theme") || "light");
 }
 
 /* ======================================================================
@@ -9280,6 +9256,39 @@ function openRecipePickerModal(onPick) {
   sheet.querySelector("input").addEventListener("input", (e) => fillList(e.target.value));
   fillList("");
   sheet.querySelector("#picker-cancel").addEventListener("click", () => closeModal());
+  overlay.appendChild(sheet);
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
+  document.body.appendChild(overlay);
+  initModalA11y(overlay, sheet);
+}
+
+// Remplace l'ancien bouton "fait défiler les langues une à une" —
+// impraticable dès que la liste s'allonge (prévu, voir
+// SUPPORTED_LANGUAGES dans i18n.js). Une seule liste, cochant la
+// langue actuelle, avec son drapeau devant son nom natif.
+function openLanguagePickerModal() {
+  const overlay = el(`<div class="modal-overlay"></div>`);
+  const sheet = el(`<div class="modal-sheet">
+    <h2>${t("lang_picker_title")}</h2>
+    <div id="lang-picker-list"></div>
+    <div class="modal-actions"><button type="button" class="btn btn-outline" id="lang-picker-cancel">${t("form_cancel")}</button></div>
+  </div>`);
+  const listHolder = sheet.querySelector("#lang-picker-list");
+  function closeModal() { overlay.remove(); }
+  SUPPORTED_LANGUAGES.forEach((langMeta) => {
+    const isCurrent = langMeta.code === CURRENT_LANG;
+    const row = el(`<button type="button" class="recipe-row" style="width:100%;margin-bottom:8px;" aria-pressed="${isCurrent}">
+      <div class="recipe-thumb" style="font-size:22px;">${langMeta.flag}</div>
+      <div class="recipe-info"><div class="recipe-name">${escapeHtml(langMeta.nativeName)}</div></div>
+      ${isCurrent ? `<span aria-hidden="true">✓</span>` : ""}
+    </button>`);
+    row.addEventListener("click", () => {
+      closeModal();
+      if (!isCurrent) { setLang(langMeta.code); render(); }
+    });
+    listHolder.appendChild(row);
+  });
+  sheet.querySelector("#lang-picker-cancel").addEventListener("click", () => closeModal());
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
   document.body.appendChild(overlay);
@@ -12754,7 +12763,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 270;
+const APP_VERSION = 271;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

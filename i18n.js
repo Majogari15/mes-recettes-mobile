@@ -611,6 +611,7 @@ const TRANSLATIONS = {
     cooking_stop_alarm: "Arrêter la sonnerie",
     theme_toggle: "🌙 Thème",
     lang_label: "Langue",
+    lang_picker_title: "Choisir la langue",
     install_prompt_title: "Installer l'application",
     install_prompt_text: "Ajoutez cette application à votre écran d'accueil pour l'ouvrir comme une vraie app.",
     install_prompt_button: "Installer",
@@ -1226,6 +1227,7 @@ const TRANSLATIONS = {
     cooklog_view_button: "📔 Cooking journal",
     theme_toggle: "🌙 Theme",
     lang_label: "Language",
+    lang_picker_title: "Choose language",
     cooklog_remove_photo_button: "🗑 Remove photo",
     cooklog_delete_confirm: "Delete this journal entry?",
     install_prompt_title: "Install the app",
@@ -1843,6 +1845,7 @@ const TRANSLATIONS = {
     cooklog_no_entries: "Todavía no hay ninguna nota.",
     cooklog_view_button: "📔 Diario de cocina",
     lang_label: "Idioma",
+    lang_picker_title: "Elegir idioma",
     install_prompt_title: "Instalar la aplicación",
     install_prompt_text: "Añade esta aplicación a tu pantalla de inicio para abrirla como una app real.",
     install_prompt_button: "Instalar",
@@ -2450,6 +2453,7 @@ const TRANSLATIONS = {
     pantry_reservations_reset_confirm: "Alle Reservierungen der Vorratskammer zurücksetzen? Zukünftige Hinzufügungen zur Einkaufsliste betrachten den gesamten Bestand wieder als verfügbar.",
     pantry_reservations_none: "Keine aktiven Reservierungen.",
     lang_label: "Sprache",
+    lang_picker_title: "Sprache wählen",
     cooking_read_aloud: "🔊 Vorlesen",
     cooking_stop_reading: "⏹ Vorlesen stoppen",
     recipe_cooked_button: "🍳 Habe ich gekocht!",
@@ -2703,6 +2707,18 @@ const UNIT_KEYS = {
   "filet": "unit_drizzle",
   "autre": "unit_other",
 };
+
+// Liste de référence des langues proposées dans le sélecteur (menu
+// déroulant, voir renderTopbar) — un seul endroit à modifier pour en
+// ajouter une nouvelle plus tard, plutôt qu'un ordre codé en dur répété
+// à plusieurs endroits comme avant (ancien bouton qui les faisait
+// défiler une à une, devenu impraticable au-delà de 3-4 langues).
+const SUPPORTED_LANGUAGES = [
+  { code: "fr", flag: "🇫🇷", nativeName: "Français" },
+  { code: "en", flag: "🇬🇧", nativeName: "English" },
+  { code: "es", flag: "🇪🇸", nativeName: "Español" },
+  { code: "de", flag: "🇩🇪", nativeName: "Deutsch" },
+];
 
 let CURRENT_LANG = localStorage.getItem("lang") || (navigator.language || "en").slice(0, 2);
 // Repli sur l'anglais (pas le français) : la langue du navigateur/

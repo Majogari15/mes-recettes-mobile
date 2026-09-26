@@ -8555,3 +8555,51 @@ mise à jour ne suffit pas à réactiver cette configuration figée au
 niveau du système.
 
 **Version testée** : v270
+
+### 128 — Thème toujours clair par défaut (retour sur le suivi automatique de l'OS), menu déroulant pour la langue
+
+Demande explicite de l'utilisateur, suite au test physique du point
+127 : après réinstallation propre, l'app s'est ouverte en thème sombre
+sans qu'il l'ait demandé, simplement parce que son téléphone est réglé
+en sombre au niveau système. Il a demandé à revenir sur le suivi
+automatique de `prefers-color-scheme` (ajouté au point 100/v242 suite
+à un audit externe) : thème clair par défaut pour tout le monde au
+premier lancement, chacun bascule lui-même en sombre via
+l'interrupteur s'il le souhaite.
+
+**Corrigé** : `initThemeFromSystemPreference()` simplifiée à
+`applyTheme(localStorage.getItem("theme") || "light")` — plus de
+lecture de `matchMedia("(prefers-color-scheme: dark)")`, plus de
+suivi en direct d'un changement de réglage pendant l'utilisation, plus
+de marqueur `themeSetByUser` (devenu inutile, toute la logique de
+migration qu'il servait à distinguer disparaît avec le suivi
+automatique lui-même). Le bouton interrupteur (`toggleTheme()`)
+continue de fonctionner à l'identique et son choix reste mémorisé
+d'une session à l'autre.
+
+**Ajouté séparément** (même demande, anticipant l'ajout de nombreuses
+autres langues une fois l'app finalisée) : le bouton de langue de la
+barre du haut, qui faisait jusqu'ici défiler les langues une à une à
+chaque clic (cliquer N-1 fois pour atteindre la N-ième langue,
+impraticable au-delà de 3-4 langues), ouvre désormais un menu déroulant
+(`openLanguagePickerModal()`, même gabarit de fenêtre que le sélecteur
+de recette du planning) listant toutes les langues disponibles avec
+leur drapeau et leur nom natif (`SUPPORTED_LANGUAGES` dans `i18n.js` —
+un seul tableau à étendre pour ajouter une langue future). Le bouton
+lui-même affiche désormais le drapeau de la langue active plutôt que
+son code à 2 lettres.
+
+**Vérifié** : thème clair confirmé au 1er lancement même avec l'OS en
+sombre ; plus aucun effet d'un changement de réglage OS pendant
+l'utilisation ; un choix explicite via l'interrupteur persiste après
+rechargement, indépendamment de l'OS ; une préférence déjà enregistrée
+(clair ou sombre) est toujours restaurée telle quelle. Menu de langue
+testé bout en bout : les 4 langues s'affichent avec leur nom natif,
+sélectionner "Español" change bien `CURRENT_LANG` vers "es". Suite de
+régression adaptée en conséquence
+(`tests/test_external_audit_fixes.py`, les cas thème réécrits pour
+refléter le nouveau comportement) et rejouée avec
+`tests/test_ui_icon_replacement.py` (bouton thème toujours
+fonctionnel), toutes deux au vert.
+
+**Version testée** : v271

@@ -8,12 +8,13 @@ pour les points manifeste (orientation, captures "wide", favicon
 32x32), traités séparément car déjà du ressort de ce fichier.
 
 Couvre :
-- Thème : suit la préférence système (prefers-color-scheme) au 1er
-  lancement au lieu de forcer le clair, continue de la suivre en
-  direct tant qu'aucun choix explicite n'a été fait, un choix explicite
-  (interrupteur) prend définitivement le dessus, et la migration des
-  utilisateurs déjà installés est sans surprise (un thème sombre déjà
-  enregistré ne peut provenir que d'un vrai choix, jamais écrasé).
+- Thème : toujours clair par défaut au 1er lancement, quel que soit le
+  réglage du système d'exploitation (revient sur un suivi automatique
+  de prefers-color-scheme essayé un temps — voir TESTS_NON_REGRESSION.md
+  point 128 — jugé source de confusion par l'utilisateur : des
+  personnes découvraient l'app en sombre sans l'avoir demandé). Un
+  choix explicite via l'interrupteur est mémorisé et persiste d'une
+  session à l'autre, sans jamais être affecté par l'OS.
 - Défilement : restauré au bouton "retour" (ex. liste de recettes ->
   fiche -> retour), jamais lors d'une navigation fraîche (barre du
   bas), qui repart toujours du haut comme avant.
@@ -88,8 +89,8 @@ def main():
         page1.goto(base_url, timeout=8000)
         page1.wait_for_timeout(1000)
         check(
-            "Le thème sombre est appliqué automatiquement (plus de clair forcé par défaut)",
-            page1.evaluate("() => document.documentElement.dataset.theme") == "dark",
+            "Le thème clair est appliqué malgré un OS en sombre (toujours clair par défaut)",
+            page1.evaluate("() => document.documentElement.dataset.theme") == "light",
         )
         context1.close()
 
@@ -99,29 +100,29 @@ def main():
         page2.on("pageerror", lambda exc: errors.append(str(exc)))
         page2.goto(base_url, timeout=8000)
         page2.wait_for_timeout(1000)
-        check("Le thème clair est appliqué (cohérent avec l'OS)", page2.evaluate("() => document.documentElement.dataset.theme") == "light")
+        check("Le thème clair est appliqué", page2.evaluate("() => document.documentElement.dataset.theme") == "light")
 
-        print("\n=== Thème : suivi en direct d'un changement OS, sans choix explicite ===\n")
+        print("\n=== Thème : un changement OS pendant l'utilisation n'a plus aucun effet ===\n")
         page2.emulate_media(color_scheme="dark")
         page2.wait_for_timeout(300)
         check(
-            "Le thème bascule automatiquement en sombre quand l'OS change pendant l'utilisation",
-            page2.evaluate("() => document.documentElement.dataset.theme") == "dark",
+            "Le thème reste clair malgré le changement de l'OS (plus de suivi automatique)",
+            page2.evaluate("() => document.documentElement.dataset.theme") == "light",
         )
 
-        print("\n=== Thème : un choix explicite (interrupteur) n'est plus jamais écrasé par l'OS ===\n")
+        print("\n=== Thème : un choix explicite (interrupteur) persiste, jamais affecté par l'OS ===\n")
         page2.evaluate("() => toggleTheme()")
         theme_after_toggle = page2.evaluate("() => document.documentElement.dataset.theme")
         page2.emulate_media(color_scheme="light" if theme_after_toggle == "dark" else "dark")
         page2.wait_for_timeout(300)
         check(
-            "Le thème choisi explicitement reste inchangé malgré un nouveau changement de l'OS",
+            "Le thème choisi explicitement reste inchangé malgré un changement de l'OS",
             page2.evaluate("() => document.documentElement.dataset.theme") == theme_after_toggle,
             f"choisi={theme_after_toggle}",
         )
         context2.close()
 
-        print("\n=== Thème : migration — un thème 'dark' déjà enregistré (ne peut venir que d'un vrai choix) n'est jamais écrasé ===\n")
+        print("\n=== Thème : un thème 'dark' déjà enregistré (choix précédent) est bien restauré, OS en clair ===\n")
         context3 = browser.new_context(color_scheme="light")
         page3 = context3.new_page()
         page3.on("pageerror", lambda exc: errors.append(str(exc)))
@@ -129,12 +130,12 @@ def main():
         page3.goto(base_url, timeout=8000)
         page3.wait_for_timeout(1000)
         check(
-            "Reste en sombre malgré un OS en mode clair (migration sans surprise)",
+            "Reste en sombre (préférence enregistrée respectée, indépendamment de l'OS)",
             page3.evaluate("() => document.documentElement.dataset.theme") == "dark",
         )
         context3.close()
 
-        print("\n=== Thème : migration — un thème 'light' déjà enregistré (ambigu, était le seul défaut possible) suit l'OS ===\n")
+        print("\n=== Thème : un thème 'light' déjà enregistré reste clair, OS en sombre ===\n")
         context4 = browser.new_context(color_scheme="dark")
         page4 = context4.new_page()
         page4.on("pageerror", lambda exc: errors.append(str(exc)))
@@ -142,8 +143,8 @@ def main():
         page4.goto(base_url, timeout=8000)
         page4.wait_for_timeout(1000)
         check(
-            "Bascule en sombre pour suivre l'OS (l'ancien 'light' était juste l'ancien défaut forcé, pas un choix prouvé)",
-            page4.evaluate("() => document.documentElement.dataset.theme") == "dark",
+            "Reste en clair (préférence enregistrée respectée, indépendamment de l'OS)",
+            page4.evaluate("() => document.documentElement.dataset.theme") == "light",
         )
         context4.close()
 
