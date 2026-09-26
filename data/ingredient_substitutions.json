@@ -1,276 +1,332 @@
-{
-  "beurre": [
-    {
-      "nom": "Margarine",
-      "note": "Même quantité, résultat très proche."
-    },
-    {
-      "nom": "Huile végétale",
-      "note": "Réduire la quantité d'environ 25 %."
-    },
-    {
-      "nom": "Compote de pommes",
-      "note": "Dans les gâteaux, pour une version plus légère."
-    }
-  ],
-  "oeufs": [
-    {
-      "nom": "Compote de pommes",
-      "note": "Environ 60 g de compote par œuf, dans les gâteaux."
-    },
-    {
-      "nom": "Graine de lin",
-      "note": "1 c. à soupe moulue + 3 c. à soupe d'eau par œuf, à laisser gonfler 5 min."
-    }
-  ],
-  "lait": [
-    {
-      "nom": "Lait d'amande",
-      "note": "Goût plus neutre, un peu plus liquide."
-    },
-    {
-      "nom": "Lait de soja",
-      "note": "Bon substitut pour la cuisson comme pour boire."
-    },
-    {
-      "nom": "Lait d'avoine",
-      "note": "Légèrement sucré naturellement."
-    }
-  ],
-  "crème fraîche épaisse": [
-    {
-      "nom": "Yaourt grec",
-      "note": "Plus léger, moins riche en matière grasse."
-    },
-    {
-      "nom": "Crème de coco",
-      "note": "Pour une version sans lactose, apporte un léger goût de coco."
-    }
-  ],
-  "farine": [
-    {
-      "nom": "Farine de riz",
-      "note": "Pour une version sans gluten."
-    },
-    {
-      "nom": "Maïzena",
-      "note": "Pour épaissir une sauce ; ne remplace pas la farine pour faire lever un gâteau."
-    },
-    {
-      "nom": "Farine d'amande",
-      "note": "Change la texture et le goût, plus dense et plus riche."
-    }
-  ],
-  "sucre": [
-    {
-      "nom": "Miel",
-      "note": "Réduire un peu la quantité de liquide de la recette (le miel est humide)."
-    },
-    {
-      "nom": "Sirop d'érable",
-      "note": "Goût plus prononcé, réduire légèrement le liquide de la recette."
-    },
-    {
-      "nom": "Cassonade",
-      "note": "Goût plus caramélisé, même quantité."
-    }
-  ],
-  "levure chimique": [
-    {
-      "nom": "Bicarbonate de soude",
-      "note": "Associer à un ingrédient acide (vinaigre, jus de citron) pour qu'il agisse."
-    }
-  ],
-  "vin blanc": [
-    {
-      "nom": "Bouillon de légumes",
-      "note": "Ajouter un peu de jus de citron pour retrouver l'acidité du vin."
-    }
-  ],
-  "vin rouge": [
-    {
-      "nom": "Bouillon de boeuf",
-      "note": "Ajouter un peu de vinaigre balsamique pour l'acidité et la couleur."
-    }
-  ],
-  "huile d'olive": [
-    {
-      "nom": "Huile de tournesol",
-      "note": "Goût plus neutre."
-    },
-    {
-      "nom": "Huile de colza",
-      "note": "Bon apport en oméga-3, goût neutre."
-    }
-  ],
-  "yaourt nature": [
-    {
-      "nom": "Fromage blanc",
-      "note": "Un peu plus dense, légèrement moins acide."
-    },
-    {
-      "nom": "Crème fraîche épaisse allégée",
-      "note": "Plus riche, à utiliser en quantité un peu réduite."
-    }
-  ],
-  "parmesan": [
-    {
-      "nom": "Pecorino",
-      "note": "Goût plus salé et plus prononcé."
-    },
-    {
-      "nom": "Levure maltée",
-      "note": "Pour une version végétalienne, apporte un goût umami similaire."
-    }
-  ],
-  "chapelure": [
-    {
-      "nom": "Flocons d'avoine",
-      "note": "À mixer grossièrement avant usage."
-    },
-    {
-      "nom": "Biscotte",
-      "note": "À émietter finement."
-    }
-  ],
-  "moutarde": [
-    {
-      "nom": "Raifort",
-      "note": "Plus piquant, à doser avec prudence."
-    },
-    {
-      "nom": "Curcuma",
-      "note": "Associer à un peu de vinaigre pour retrouver l'acidité."
-    }
-  ],
-  "ail": [
-    {
-      "nom": "Ail en poudre",
-      "note": "Environ 1/8 de c. à café par gousse d'ail frais."
-    },
-    {
-      "nom": "Échalote",
-      "note": "Goût plus doux et plus sucré."
-    }
-  ],
-  "oignon": [
-    {
-      "nom": "Échalote",
-      "note": "Goût plus doux, cuit plus vite."
-    },
-    {
-      "nom": "Poireau",
-      "note": "Utiliser le blanc, goût plus délicat."
-    }
-  ],
-  "citron": [
-    {
-      "nom": "Vinaigre blanc",
-      "note": "Pour l'acidité seulement, sans le goût d'agrume."
-    },
-    {
-      "nom": "Citron vert",
-      "note": "Goût un peu plus vif."
-    }
-  ],
-  "vinaigre balsamique": [
-    {
-      "nom": "Vinaigre de vin rouge",
-      "note": "Ajouter une pincée de sucre pour retrouver le côté légèrement sucré."
-    }
-  ],
-  "cube de bouillon": [
-    {
-      "nom": "Bouillon de légumes déshydraté",
-      "note": "Même usage, souvent moins salé."
-    },
-    {
-      "nom": "Sauce soja",
-      "note": "Diluée dans l'eau, apporte du goût salé et umami."
-    }
-  ],
-  "crème liquide entière": [
-    {
-      "nom": "Lait concentré non sucré",
-      "note": "Un peu moins riche, mais une texture proche."
-    },
-    {
-      "nom": "Crème de coco",
-      "note": "Pour une version sans lactose."
-    }
-  ],
-  "mascarpone": [
-    {
-      "nom": "Fromage frais",
-      "note": "Mélanger avec un peu de crème fraîche épaisse pour la richesse."
-    }
-  ],
-  "chocolat noir": [
-    {
-      "nom": "Cacao en poudre",
-      "note": "Mélanger avec du beurre et du sucre pour retrouver une texture proche."
-    }
-  ],
-  "amandes": [
-    {
-      "nom": "Noisette",
-      "note": "Goût plus prononcé."
-    },
-    {
-      "nom": "Noix de cajou",
-      "note": "Goût plus doux et plus crémeux."
-    }
-  ],
-  "riz": [
-    {
-      "nom": "Quinoa",
-      "note": "Plus riche en protéines, texture légèrement différente."
-    },
-    {
-      "nom": "Boulgour",
-      "note": "Temps de cuisson plus court."
-    }
-  ],
-  "pâtes": [
-    {
-      "nom": "Riz",
-      "note": "Pour une version sans gluten."
-    },
-    {
-      "nom": "Nouilles de riz",
-      "note": "Pour une version sans gluten, cuisson plus rapide."
-    }
-  ],
-  "sucre vanillé": [
-    {
-      "nom": "Extrait de vanille",
-      "note": "Quelques gouttes suffisent, à ajouter au sucre normal."
-    }
-  ],
-  "miel": [
-    {
-      "nom": "Sirop d'érable",
-      "note": "Goût différent mais texture proche."
-    },
-    {
-      "nom": "Sucre",
-      "note": "Ajouter un peu de liquide en plus pour compenser (le miel est humide)."
-    }
-  ],
-  "fromage blanc": [
-    {
-      "nom": "Yaourt nature",
-      "note": "Un peu plus liquide."
-    }
-  ],
-  "sauce soja": [
-    {
-      "nom": "Tamari",
-      "note": "Pour une version sans gluten, goût très proche."
-    },
-    {
-      "nom": "Sel",
-      "note": "Dilué dans un peu d'eau ; le goût umami sera moins présent."
-    }
-  ]
-}
+[
+  {
+    "substitutionId": "sub_000001",
+    "ingredientId": "ing_000066",
+    "targetIngredientId": "ing_000555",
+    "note": "Même quantité, résultat très proche."
+  },
+  {
+    "substitutionId": "sub_000002",
+    "ingredientId": "ing_000066",
+    "targetIngredientId": "ing_000468",
+    "note": "Réduire la quantité d'environ 25 %."
+  },
+  {
+    "substitutionId": "sub_000003",
+    "ingredientId": "ing_000066",
+    "targetIngredientId": null,
+    "note": "Dans les gâteaux, pour une version plus légère.",
+    "name": "Compote de pommes"
+  },
+  {
+    "substitutionId": "sub_000004",
+    "ingredientId": "ing_000628",
+    "targetIngredientId": null,
+    "note": "Environ 60 g de compote par œuf, dans les gâteaux.",
+    "name": "Compote de pommes"
+  },
+  {
+    "substitutionId": "sub_000005",
+    "ingredientId": "ing_000628",
+    "targetIngredientId": null,
+    "note": "1 c. à soupe moulue + 3 c. à soupe d'eau par œuf, à laisser gonfler 5 min.",
+    "name": "Graine de lin"
+  },
+  {
+    "substitutionId": "sub_000006",
+    "ingredientId": "ing_000498",
+    "targetIngredientId": "ing_000501",
+    "note": "Goût plus neutre, un peu plus liquide."
+  },
+  {
+    "substitutionId": "sub_000007",
+    "ingredientId": "ing_000498",
+    "targetIngredientId": "ing_000506",
+    "note": "Bon substitut pour la cuisson comme pour boire."
+  },
+  {
+    "substitutionId": "sub_000008",
+    "ingredientId": "ing_000498",
+    "targetIngredientId": "ing_000502",
+    "note": "Légèrement sucré naturellement."
+  },
+  {
+    "substitutionId": "sub_000009",
+    "ingredientId": "ing_000250",
+    "targetIngredientId": "ing_001024",
+    "note": "Plus léger, moins riche en matière grasse."
+  },
+  {
+    "substitutionId": "sub_000010",
+    "ingredientId": "ing_000250",
+    "targetIngredientId": "ing_000244",
+    "note": "Pour une version sans lactose, apporte un léger goût de coco."
+  },
+  {
+    "substitutionId": "sub_000011",
+    "ingredientId": "ing_000321",
+    "targetIngredientId": "ing_000334",
+    "note": "Pour une version sans gluten."
+  },
+  {
+    "substitutionId": "sub_000012",
+    "ingredientId": "ing_000321",
+    "targetIngredientId": "ing_000548",
+    "note": "Pour épaissir une sauce ; ne remplace pas la farine pour faire lever un gâteau."
+  },
+  {
+    "substitutionId": "sub_000013",
+    "ingredientId": "ing_000321",
+    "targetIngredientId": "ing_000322",
+    "note": "Change la texture et le goût, plus dense et plus riche."
+  },
+  {
+    "substitutionId": "sub_000014",
+    "ingredientId": "ing_000929",
+    "targetIngredientId": "ing_000577",
+    "note": "Réduire un peu la quantité de liquide de la recette (le miel est humide)."
+  },
+  {
+    "substitutionId": "sub_000015",
+    "ingredientId": "ing_000929",
+    "targetIngredientId": "ing_000909",
+    "note": "Goût plus prononcé, réduire légèrement le liquide de la recette."
+  },
+  {
+    "substitutionId": "sub_000016",
+    "ingredientId": "ing_000929",
+    "targetIngredientId": "ing_000138",
+    "note": "Goût plus caramélisé, même quantité."
+  },
+  {
+    "substitutionId": "sub_000017",
+    "ingredientId": "ing_000529",
+    "targetIngredientId": "ing_000075",
+    "note": "Associer à un ingrédient acide (vinaigre, jus de citron) pour qu'il agisse."
+  },
+  {
+    "substitutionId": "sub_000018",
+    "ingredientId": "ing_000999",
+    "targetIngredientId": "ing_000095",
+    "note": "Ajouter un peu de jus de citron pour retrouver l'acidité du vin."
+  },
+  {
+    "substitutionId": "sub_000019",
+    "ingredientId": "ing_001004",
+    "targetIngredientId": "ing_000094",
+    "note": "Ajouter un peu de vinaigre balsamique pour l'acidité et la couleur."
+  },
+  {
+    "substitutionId": "sub_000020",
+    "ingredientId": "ing_000449",
+    "targetIngredientId": "ing_000464",
+    "note": "Goût plus neutre."
+  },
+  {
+    "substitutionId": "sub_000021",
+    "ingredientId": "ing_000449",
+    "targetIngredientId": "ing_000453",
+    "note": "Bon apport en oméga-3, goût neutre."
+  },
+  {
+    "substitutionId": "sub_000022",
+    "ingredientId": "ing_001025",
+    "targetIngredientId": "ing_000377",
+    "note": "Un peu plus dense, légèrement moins acide."
+  },
+  {
+    "substitutionId": "sub_000023",
+    "ingredientId": "ing_001025",
+    "targetIngredientId": null,
+    "note": "Plus riche, à utiliser en quantité un peu réduite.",
+    "name": "Crème fraîche épaisse allégée"
+  },
+  {
+    "substitutionId": "sub_000024",
+    "ingredientId": "ing_000667",
+    "targetIngredientId": "ing_000689",
+    "note": "Goût plus salé et plus prononcé."
+  },
+  {
+    "substitutionId": "sub_000025",
+    "ingredientId": "ing_000667",
+    "targetIngredientId": "ing_000532",
+    "note": "Pour une version végétalienne, apporte un goût umami similaire."
+  },
+  {
+    "substitutionId": "sub_000026",
+    "ingredientId": "ing_000154",
+    "targetIngredientId": "ing_000360",
+    "note": "À mixer grossièrement avant usage."
+  },
+  {
+    "substitutionId": "sub_000027",
+    "ingredientId": "ing_000154",
+    "targetIngredientId": "ing_000079",
+    "note": "À émietter finement."
+  },
+  {
+    "substitutionId": "sub_000028",
+    "ingredientId": "ing_000586",
+    "targetIngredientId": "ing_000805",
+    "note": "Plus piquant, à doser avec prudence."
+  },
+  {
+    "substitutionId": "sub_000029",
+    "ingredientId": "ing_000586",
+    "targetIngredientId": "ing_000269",
+    "note": "Associer à un peu de vinaigre pour retrouver l'acidité."
+  },
+  {
+    "substitutionId": "sub_000030",
+    "ingredientId": "ing_000005",
+    "targetIngredientId": "ing_000008",
+    "note": "Environ 1/8 de c. à café par gousse d'ail frais."
+  },
+  {
+    "substitutionId": "sub_000031",
+    "ingredientId": "ing_000005",
+    "targetIngredientId": "ing_000288",
+    "note": "Goût plus doux et plus sucré."
+  },
+  {
+    "substitutionId": "sub_000032",
+    "ingredientId": "ing_000633",
+    "targetIngredientId": "ing_000288",
+    "note": "Goût plus doux, cuit plus vite."
+  },
+  {
+    "substitutionId": "sub_000033",
+    "ingredientId": "ing_000633",
+    "targetIngredientId": "ing_000732",
+    "note": "Utiliser le blanc, goût plus délicat."
+  },
+  {
+    "substitutionId": "sub_000034",
+    "ingredientId": "ing_000186",
+    "targetIngredientId": "ing_001008",
+    "note": "Pour l'acidité seulement, sans le goût d'agrume."
+  },
+  {
+    "substitutionId": "sub_000035",
+    "ingredientId": "ing_000186",
+    "targetIngredientId": "ing_000189",
+    "note": "Goût un peu plus vif."
+  },
+  {
+    "substitutionId": "sub_000036",
+    "ingredientId": "ing_001006",
+    "targetIngredientId": "ing_001014",
+    "note": "Ajouter une pincée de sucre pour retrouver le côté légèrement sucré."
+  },
+  {
+    "substitutionId": "sub_000037",
+    "ingredientId": "ing_000262",
+    "targetIngredientId": "ing_000096",
+    "note": "Même usage, souvent moins salé."
+  },
+  {
+    "substitutionId": "sub_000038",
+    "ingredientId": "ing_000262",
+    "targetIngredientId": "ing_000871",
+    "note": "Diluée dans l'eau, apporte du goût salé et umami."
+  },
+  {
+    "substitutionId": "sub_000039",
+    "ingredientId": "ing_000252",
+    "targetIngredientId": "ing_000499",
+    "note": "Un peu moins riche, mais une texture proche."
+  },
+  {
+    "substitutionId": "sub_000040",
+    "ingredientId": "ing_000252",
+    "targetIngredientId": "ing_000244",
+    "note": "Pour une version sans lactose."
+  },
+  {
+    "substitutionId": "sub_000041",
+    "ingredientId": "ing_000562",
+    "targetIngredientId": null,
+    "note": "Mélanger avec un peu de crème fraîche épaisse pour la richesse.",
+    "name": "Fromage frais"
+  },
+  {
+    "substitutionId": "sub_000042",
+    "ingredientId": "ing_000168",
+    "targetIngredientId": "ing_000112",
+    "note": "Mélanger avec du beurre et du sucre pour retrouver une texture proche."
+  },
+  {
+    "substitutionId": "sub_000043",
+    "ingredientId": "ing_000019",
+    "targetIngredientId": "ing_000607",
+    "note": "Goût plus prononcé."
+  },
+  {
+    "substitutionId": "sub_000044",
+    "ingredientId": "ing_000019",
+    "targetIngredientId": "ing_000610",
+    "note": "Goût plus doux et plus crémeux."
+  },
+  {
+    "substitutionId": "sub_000045",
+    "ingredientId": "ing_000821",
+    "targetIngredientId": "ing_000799",
+    "note": "Plus riche en protéines, texture légèrement différente."
+  },
+  {
+    "substitutionId": "sub_000046",
+    "ingredientId": "ing_000821",
+    "targetIngredientId": "ing_000098",
+    "note": "Temps de cuisson plus court."
+  },
+  {
+    "substitutionId": "sub_000047",
+    "ingredientId": "ing_000686",
+    "targetIngredientId": "ing_000821",
+    "note": "Pour une version sans gluten."
+  },
+  {
+    "substitutionId": "sub_000048",
+    "ingredientId": "ing_000686",
+    "targetIngredientId": "ing_000622",
+    "note": "Pour une version sans gluten, cuisson plus rapide."
+  },
+  {
+    "substitutionId": "sub_000049",
+    "ingredientId": "ing_000941",
+    "targetIngredientId": "ing_000319",
+    "note": "Quelques gouttes suffisent, à ajouter au sucre normal."
+  },
+  {
+    "substitutionId": "sub_000050",
+    "ingredientId": "ing_000577",
+    "targetIngredientId": "ing_000909",
+    "note": "Goût différent mais texture proche."
+  },
+  {
+    "substitutionId": "sub_000051",
+    "ingredientId": "ing_000577",
+    "targetIngredientId": "ing_000929",
+    "note": "Ajouter un peu de liquide en plus pour compenser (le miel est humide)."
+  },
+  {
+    "substitutionId": "sub_000052",
+    "ingredientId": "ing_000377",
+    "targetIngredientId": "ing_001025",
+    "note": "Un peu plus liquide."
+  },
+  {
+    "substitutionId": "sub_000053",
+    "ingredientId": "ing_000871",
+    "targetIngredientId": null,
+    "note": "Pour une version sans gluten, goût très proche.",
+    "name": "Tamari"
+  },
+  {
+    "substitutionId": "sub_000054",
+    "ingredientId": "ing_000871",
+    "targetIngredientId": "ing_000894",
+    "note": "Dilué dans un peu d'eau ; le goût umami sera moins présent."
+  }
+]

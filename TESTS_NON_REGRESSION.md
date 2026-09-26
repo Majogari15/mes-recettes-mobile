@@ -8606,3 +8606,118 @@ fonctionnel), toutes deux au vert.
 et menu déroulant des langues vérifiés fonctionnels sur vrai appareil.
 
 **Version testée** : v271
+
+### 129 — Catalogue d'ingrédients à id stable, en préparation d'un futur passage à ~10 000 ingrédients et une dizaine de langues
+
+Suite à un audit externe (autre IA) sur la scalabilité de l'application
+en vue d'atteindre à terme au moins 10 000 ingrédients et une dizaine
+de langues, discussion approfondie entre l'utilisateur, Claude et
+l'audit externe (3 allers-retours) pour converger sur une architecture
+commune avant implémentation — voir la conversation pour le détail des
+échanges. Diagnostic partagé : les données de référence (allergènes,
+nutrition, traductions, substitutions) étaient toutes keyées
+directement par le nom français exact de l'ingrédient. Renommer un
+ingrédient dans "Gérer les ingrédients" les rendait inaccessibles
+silencieusement, alors même que `renameIngredientName()` propage déjà
+correctement le renommage vers recettes/courses/garde-manger/listes
+enregistrées/overrides (vérifié dans le code avant de conclure — la
+migration n'avait donc pas besoin de toucher au stockage des recettes
+elles-mêmes, seulement aux fichiers de référence statiques).
+
+**Deux fragilités confirmées en relisant le code, plus graves que ce
+que l'audit externe avait initialement supposé** :
+- `getIngredientAllergens`/`getIngredientNutrition` faisaient une
+  comparaison EXACTE sur la clé (pas même insensible à la casse) : une
+  simple différence d'accent ou de majuscule suffisait déjà à perdre
+  ces données, pas seulement un vrai renommage.
+- Les traductions de substitutions
+  (`ingredient_substitutions_en/es/de.json`) étaient associées par
+  POSITION dans un tableau (même index que le fichier français), sans
+  aucun identifiant — un simple réordonnancement ou ajout dans le
+  fichier français aurait décalé silencieusement toutes les traductions
+  suivantes, sans erreur visible.
+
+**Ajouté** :
+- Nouveau `data/ingredients_catalogue.json` : catalogue développeur
+  `[{id, fr}, ...]`, un id stable (`ing_000001`...) par ingrédient,
+  jamais recyclé, jamais affecté par un renommage utilisateur — devient
+  la seule source de la liste par défaut au premier lancement, en
+  remplacement de l'ancien `ingredients_par_defaut.json` (supprimé,
+  devenu une simple projection redondante du même catalogue).
+- `ingredient_allergenes.json`, `valeurs_nutritionnelles.json`,
+  `ingredient_translations_en/es/de.json` reclés par cet id (0 entrée
+  perdue lors de la conversion, vérifié par script).
+- `ingredient_substitutions.json` restructuré : d'un dictionnaire
+  `{nom_français: [{nom, note}]}` vers un tableau de relations
+  `{substitutionId, ingredientId, targetIngredientId, note}` —
+  `targetIngredientId` quand le substitut est lui-même un ingrédient du
+  catalogue (cas le plus fréquent : 44 des 50 substituts distincts),
+  sinon un champ `name` libre pour les 6 restants (ex. "Compote de
+  pommes" absente du catalogue). Les traductions
+  (`ingredient_substitutions_en/es/de.json`) sont désormais keyées par
+  `substitutionId`, plus jamais par position.
+- Nouveau champ `catalogId` sur l'enregistrement IndexedDB de chaque
+  ingrédient (store `ingredients`), et nouvelle table en mémoire
+  `state.ingredientCatalogIds` (nom actuel normalisé -> id) —
+  c'est ce lien, jamais le nom lui-même, que consultent maintenant
+  `getIngredientAllergens`, `getIngredientNutrition`,
+  `getReferenceSubstitutes`/`getDisplaySubstitutes` et
+  `translateIngredientName` (nouvelle fonction interne
+  `translateIngredientNameById`, utilisée directement quand l'id est
+  déjà connu — ex. le substitut ciblé d'une substitution — pour ne
+  jamais avoir à repasser par un nom qui pourrait lui-même avoir été
+  renommé ailleurs).
+- `renameIngredientName()` et `mergeIngredientNames()` corrigées pour
+  reporter explicitement le `catalogId` (jamais automatique : ces
+  fonctions reconstruisaient l'enregistrement IndexedDB de zéro,
+  `{ name: trimmed }`, ce qui aurait sinon effacé le lien au catalogue
+  au premier renommage — exactement l'inverse de ce que cette
+  migration cherche à corriger). `addIngredientName()` associe un
+  `catalogId` uniquement sur correspondance EXACTE avec le catalogue,
+  jamais approximative (une ressemblance floue reste un ingrédient
+  personnel plutôt qu'un rattachement risqué à la mauvaise entrée à
+  10 000 ingrédients).
+- Rétrocompatibilité pour les installations déjà existantes : un
+  enregistrement IndexedDB antérieur à cette migration (sans
+  `catalogId`) est relié à son id au prochain chargement par simple
+  correspondance de nom normalisé (`ensureIngredientListLoaded`), sans
+  bloquer le démarrage ni exiger de migration en bloc — un ingrédient
+  qui ne correspond à rien (personnel, ou renommé au point de ne plus
+  matcher) reste simplement sans `catalogId`, traité partout comme
+  "aucune donnée de référence disponible", jamais une erreur.
+- Chargement du catalogue isolé dans son propre `try/catch` (voir
+  `loadReferenceData`) : un échec réseau sur l'un des 9 AUTRES fichiers
+  de référence ne doit jamais empêcher le catalogue de charger et donc
+  la liste d'ingrédients de s'amorcer au premier lancement — même
+  résilience que l'ancien `ingredients_par_defaut.json`, qui avait déjà
+  son propre fetch indépendant pour cette raison.
+
+**Volontairement pas fait maintenant** (converge avec l'audit externe) :
+pas d'id sur les ingrédients au niveau des recettes elles-mêmes
+(`ing.name` reste une simple chaîne, comme avant) — inutile et
+risqué : `renameIngredientName`/`mergeIngredientNames` propagent déjà
+correctement un renommage à toutes les recettes/listes existantes,
+migrer aussi leur stockage interne n'aurait rien apporté de plus pour
+un risque réel sur les sauvegardes/imports existants. Alias explicites
+(variantes orthographiques type "Echalotte"/"Échalote") non ajoutés :
+`findClosestIngredientMatch()` (déjà utilisée à l'import, tolérante aux
+pluriels/fautes) couvre déjà ces cas ; réservés pour de vrais synonymes
+que la similarité de texte ne peut pas deviner, si le besoin se
+confirme une fois le catalogue étendu.
+
+**Vérifié** (voir `tests/test_ingredient_catalog_ids.py`, nouveau) :
+premier lancement (1030/1030 ingrédients rattachés au catalogue) ;
+renommage (allergènes/nutrition/catalogId identiques avant/après) ;
+substitutions (structure correcte, traduction espagnole vérifiée
+différente du texte français) ; ingrédient personnel hors catalogue
+(jamais de plantage, jamais de fausse association) ; fusion de
+doublons (catalogId reporté sur l'ingrédient conservé) ;
+rétrocompatibilité (ancien enregistrement sans catalogId relié au
+prochain chargement, y compris persisté dans IndexedDB, pas seulement
+en mémoire). Suite de régression complète (54 scripts) rejouée,
+aucune régression — en particulier `test_ingredient_reference_data.py`
+(comptage 1030, échantillon d'allergènes/nutrition Ciqual v56) toujours
+au vert sans aucune modification de ce test, seule la structure interne
+des données a changé.
+
+**Version testée** : v272

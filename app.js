@@ -369,6 +369,14 @@ const state = {
   formIngredients: [],
   formAllergens: [],
   ingredientNames: [],
+  // Lien vers le catalogue développeur (voir ingredients_catalogue.json),
+  // indexé par normalize(nom actuel) -> id stable ("ing_000123") — voir
+  // ensureIngredientListLoaded. Absent pour un ingrédient personnel
+  // (créé par l'utilisateur, jamais dans le catalogue). Un renommage ne
+  // change jamais l'id, seulement la clé sous laquelle il est rangé ici
+  // — c'est précisément ce qui permet à allergènes/nutrition/traductions/
+  // substitutions de continuer à fonctionner après un renommage.
+  ingredientCatalogIds: {},
   formPhoto: null,
   // Miniatures des photos sources d'un import photo, pour comparaison
   // dans le formulaire — contrairement à _importSourcePhotos (plus
@@ -6499,14 +6507,48 @@ function showInstallBanner() {
    sont des données de référence, jamais modifiées par l'utilisateur, pas
    besoin de les stocker dans IndexedDB.
    ====================================================================== */
-let ALLERGEN_DB = {};
-let NUTRITION_DB = {};
-let INGREDIENT_TRANSLATIONS = {}; // {en: {...}, es: {...}, de: {...}}
-let INGREDIENT_REVERSE_TRANSLATIONS = {}; // même contenu, indexé en minuscules pour la résolution
-let SUBSTITUTIONS_DB = {}; // clé : nom d'ingrédient en minuscules -> [{nom, note}]
-let SUBSTITUTIONS_TRANSLATIONS = {}; // {en: {...}, es: {...}, de: {...}}, même structure, même ordre
+let ALLERGEN_DB = {}; // clé : id catalogue ("ing_000123") -> allergènes
+let NUTRITION_DB = {}; // clé : id catalogue -> nutrition
+let INGREDIENT_TRANSLATIONS = {}; // {en: {id: texte}, es: {...}, de: {...}}
+let INGREDIENT_REVERSE_TRANSLATIONS = {}; // {lang: {normalize(texte traduit) -> nom français}}, pour la saisie bilingue
+let SUBSTITUTIONS_DB = []; // [{substitutionId, ingredientId, targetIngredientId|null, note, name?}, ...]
+let SUBSTITUTIONS_BY_INGREDIENT_ID = {}; // ingredientId -> [relations] (index construit depuis SUBSTITUTIONS_DB)
+let SUBSTITUTIONS_TRANSLATIONS = {}; // {en: {substitutionId: {note, name?}}, es: {...}, de: {...}}
+// Catalogue développeur des ingrédients "officiels" (voir
+// ingredients_catalogue.json) : un id stable par ingrédient, immuable
+// même si son nom français change un jour — c'est ce qui permet à
+// allergènes/nutrition/traductions/substitutions de rester valides
+// après un renommage utilisateur, au lieu d'être keyés directement par
+// le nom français (fragile : sensible à la casse/aux accents, et perdu
+// dès qu'un nom est modifié). Voir TESTS_NON_REGRESSION.md pour le
+// contexte de cette migration.
+let INGREDIENT_CATALOGUE = []; // [{id, fr}, ...]
+let CATALOGUE_BY_ID = {}; // id -> nom français d'origine du catalogue
+let CATALOGUE_ID_BY_NAME = {}; // normalize(nom français du catalogue) -> id
 
 async function loadReferenceData() {
+  // Le catalogue est chargé dans SON PROPRE try/catch, séparé de tout le
+  // reste ci-dessous : c'est lui qui permet d'amorcer la liste
+  // d'ingrédients au tout premier lancement (voir
+  // ensureIngredientListLoaded) — un échec réseau sur l'un des 9 AUTRES
+  // fichiers de référence (allergènes, nutrition, traductions...) ne
+  // doit surtout pas l'entraîner dans sa chute et empêcher le premier
+  // lancement de fonctionner, comme c'était déjà le cas avant cette
+  // migration (l'ancien ingredients_par_defaut.json avait son propre
+  // fetch indépendant, pour la même raison).
+  try {
+    const catalogueRes = await fetch("./data/ingredients_catalogue.json");
+    INGREDIENT_CATALOGUE = catalogueRes.ok ? await catalogueRes.json() : [];
+  } catch (e) {
+    INGREDIENT_CATALOGUE = [];
+  }
+  CATALOGUE_BY_ID = {};
+  CATALOGUE_ID_BY_NAME = {};
+  INGREDIENT_CATALOGUE.forEach((entry) => {
+    CATALOGUE_BY_ID[entry.id] = entry.fr;
+    CATALOGUE_ID_BY_NAME[normalize(entry.fr)] = entry.id;
+  });
+
   try {
     const [allergenRes, nutritionRes, enRes, esRes, deRes, subRes, subEnRes, subEsRes, subDeRes] = await Promise.all([
       fetch("./data/ingredient_allergenes.json"),
@@ -6529,11 +6571,16 @@ async function loadReferenceData() {
     INGREDIENT_REVERSE_TRANSLATIONS = {};
     Object.keys(INGREDIENT_TRANSLATIONS).forEach((lang) => {
       INGREDIENT_REVERSE_TRANSLATIONS[lang] = {};
-      Object.entries(INGREDIENT_TRANSLATIONS[lang]).forEach(([fr, translated]) => {
-        INGREDIENT_REVERSE_TRANSLATIONS[lang][normalize(translated)] = fr;
+      Object.entries(INGREDIENT_TRANSLATIONS[lang]).forEach(([id, translated]) => {
+        const fr = CATALOGUE_BY_ID[id];
+        if (fr) INGREDIENT_REVERSE_TRANSLATIONS[lang][normalize(translated)] = fr;
       });
     });
-    SUBSTITUTIONS_DB = subRes.ok ? await subRes.json() : {};
+    SUBSTITUTIONS_DB = subRes.ok ? await subRes.json() : [];
+    SUBSTITUTIONS_BY_INGREDIENT_ID = {};
+    SUBSTITUTIONS_DB.forEach((rel) => {
+      (SUBSTITUTIONS_BY_INGREDIENT_ID[rel.ingredientId] = SUBSTITUTIONS_BY_INGREDIENT_ID[rel.ingredientId] || []).push(rel);
+    });
     SUBSTITUTIONS_TRANSLATIONS = {
       en: subEnRes.ok ? await subEnRes.json() : {},
       es: subEsRes.ok ? await subEsRes.json() : {},
@@ -6543,18 +6590,33 @@ async function loadReferenceData() {
     // Hors connexion au tout premier lancement (avant mise en cache) :
     // l'application continue de fonctionner, simplement sans détection
     // automatique ni traduction d'ingrédient tant que ces fichiers n'ont
-    // pas pu être récupérés une première fois.
+    // pas pu être récupérés une première fois. Le catalogue lui-même
+    // (INGREDIENT_CATALOGUE/CATALOGUE_BY_ID/CATALOGUE_ID_BY_NAME) n'est
+    // pas concerné ici, voir son propre try/catch ci-dessus.
     ALLERGEN_DB = {};
     NUTRITION_DB = {};
     INGREDIENT_TRANSLATIONS = {};
     INGREDIENT_REVERSE_TRANSLATIONS = {};
-    SUBSTITUTIONS_DB = {};
+    SUBSTITUTIONS_DB = [];
+    SUBSTITUTIONS_BY_INGREDIENT_ID = {};
     SUBSTITUTIONS_TRANSLATIONS = {};
   }
 }
 
+// Retrouve l'id catalogue lié au nom ACTUEL (potentiellement renommé)
+// d'un ingrédient, via le lien conservé dans state.ingredientCatalogIds
+// (voir ensureIngredientListLoaded) — jamais en recherchant le nom
+// directement dans le catalogue, ce qui échouerait justement après un
+// renommage. Un ingrédient personnel (jamais rattaché au catalogue)
+// renvoie undefined, traité comme "aucune donnée de référence" partout
+// où cette fonction est utilisée.
+function getIngredientCatalogId(name) {
+  return state.ingredientCatalogIds[normalize((name || "").trim())];
+}
+
 function getReferenceSubstitutes(name) {
-  return SUBSTITUTIONS_DB[(name || "").trim().toLowerCase()] || [];
+  const catalogId = getIngredientCatalogId(name);
+  return catalogId ? (SUBSTITUTIONS_BY_INGREDIENT_ID[catalogId] || []) : [];
 }
 // Les substituts personnalisés sont stockés dans la surcharge de
 // l'ingrédient (comme les allergènes/nutrition/prix) — l'utilisateur les
@@ -6567,22 +6629,29 @@ function getCustomSubstitutes(name) {
 function getIngredientSubstitutes(name) {
   return getReferenceSubstitutes(name).concat(getCustomSubstitutes(name));
 }
-// Retourne les substituts d'un ingrédient traduits pour l'affichage,
-// en conservant toujours la même donnée française en interne pour ceux
-// de la base fournie. La traduction se fait par position dans la liste
-// (même ordre que la base française), avec repli sur le texte français
-// si l'index n'a pas d'équivalent traduit. Les substituts personnalisés
-// sont ajoutés après, toujours dans leur langue d'origine.
+// Retourne les substituts d'un ingrédient traduits pour l'affichage. Le
+// nom du substitut, quand il correspond lui-même à un ingrédient du
+// catalogue (targetIngredientId), est traduit via translateIngredientName
+// — même mécanisme que partout ailleurs, aucune donnée à dupliquer pour
+// ça. Seuls la note (et le nom, pour les rares substituts hors
+// catalogue — ex. "Compote de pommes" quand elle n'y figure pas encore)
+// sont repris depuis les fichiers de traduction dédiés, indexés par
+// substitutionId (jamais par position dans un tableau — un ré-ordonnancement
+// ou un ajout dans la base française ne peut donc plus décaler
+// silencieusement les traductions d'un cran, contrairement à l'ancien
+// schéma). Les substituts personnalisés sont ajoutés après, toujours
+// dans leur langue d'origine (jamais traduits).
 function getDisplaySubstitutes(name) {
-  const referenceList = getReferenceSubstitutes(name);
+  const referenceList = getReferenceSubstitutes(name).map((rel) => {
+    const subTranslation = (SUBSTITUTIONS_TRANSLATIONS[CURRENT_LANG] || {})[rel.substitutionId];
+    const nom = rel.targetIngredientId
+      ? (translateIngredientNameById(rel.targetIngredientId) || rel.name)
+      : (CURRENT_LANG !== "fr" && subTranslation && subTranslation.name) || rel.name;
+    const note = (CURRENT_LANG !== "fr" && subTranslation && subTranslation.note) || rel.note;
+    return { nom, note };
+  });
   const customList = getCustomSubstitutes(name);
-  if (CURRENT_LANG === "fr" || !referenceList.length) {
-    return referenceList.concat(customList);
-  }
-  const key = (name || "").trim().toLowerCase();
-  const translatedList = (SUBSTITUTIONS_TRANSLATIONS[CURRENT_LANG] || {})[key];
-  const translatedReference = translatedList ? referenceList.map((entry, idx) => translatedList[idx] || entry) : referenceList;
-  return translatedReference.concat(customList);
+  return referenceList.concat(customList);
 }
 
 // Calculé une seule fois par langue (mis en cache) : l'ensemble des
@@ -6603,14 +6672,28 @@ function getIngredientTranslationCollisions(lang) {
   _ingredientTranslationCollisionsCache[lang] = collisions;
   return collisions;
 }
+// Traduit directement par id catalogue — utilisée quand l'id est déjà
+// connu (ex. le substitut ciblé d'une substitution) sans repasser par un
+// nom qui pourrait ne plus correspondre à state.ingredientCatalogIds
+// (ex. si CE substitut a lui-même été renommé par l'utilisateur ailleurs
+// dans sa liste, son nom de catalogue d'origine ne serait alors plus la
+// bonne clé de recherche). Renvoie le nom français du catalogue si
+// aucune traduction n'existe pour la langue actuelle.
+function translateIngredientNameById(id) {
+  if (!id) return null;
+  const fr = CATALOGUE_BY_ID[id];
+  if (CURRENT_LANG === "fr") return fr || null;
+  const dict = INGREDIENT_TRANSLATIONS[CURRENT_LANG];
+  const translated = dict && dict[id];
+  if (!translated) return fr || null;
+  const collisions = getIngredientTranslationCollisions(CURRENT_LANG);
+  return collisions.has(translated) ? `${translated} (${fr})` : translated;
+}
 function translateIngredientName(name) {
   if (!name || CURRENT_LANG === "fr") return name;
-  const dict = INGREDIENT_TRANSLATIONS[CURRENT_LANG];
-  if (!dict) return name;
-  const translated = dict[name];
-  if (!translated) return name;
-  const collisions = getIngredientTranslationCollisions(CURRENT_LANG);
-  return collisions.has(translated) ? `${translated} (${name})` : translated;
+  const id = getIngredientCatalogId(name);
+  if (!id) return name;
+  return translateIngredientNameById(id) || name;
 }
 // Compare deux noms d'ingrédients selon leur traduction AFFICHÉE dans la
 // langue actuelle, pas selon leur nom français interne — sans ça, la
@@ -6660,24 +6743,51 @@ async function ensureIngredientListLoaded() {
   const existing = await storeAll("ingredients");
   if (existing.length) {
     state.ingredientNames = existing.map((i) => i.name).sort(compareIngredientNamesForDisplay);
+    // Relie chaque ingrédient déjà enregistré à son id de catalogue —
+    // déjà présent (installation faite après cette migration) ou
+    // retrouvé ici par son nom actuel et écrit une bonne fois pour
+    // toutes (installation antérieure à cette migration, jamais migrée
+    // en bloc pour éviter un blocage au démarrage : un simple passage
+    // ici à la prochaine ouverture suffit, ingrédient par ingrédient).
+    // Un nom qui ne correspond à rien dans le catalogue (ingrédient
+    // personnel, ou renommé au point de ne plus matcher aucune entrée)
+    // reste sans catalogId, traité partout comme "pas de donnée de
+    // référence disponible" — jamais une erreur.
+    state.ingredientCatalogIds = {};
+    for (const record of existing) {
+      let catalogId = record.catalogId;
+      if (!catalogId) {
+        catalogId = CATALOGUE_ID_BY_NAME[normalize(record.name)];
+        if (catalogId) await storePut("ingredients", { ...record, catalogId });
+      }
+      if (catalogId) state.ingredientCatalogIds[normalize(record.name)] = catalogId;
+    }
     return;
   }
-  // Première utilisation : préremplit avec la liste fournie.
-  try {
-    const res = await fetch("./data/ingredients_par_defaut.json");
-    const defaults = res.ok ? await res.json() : [];
-    for (const name of defaults) await storePut("ingredients", { name });
-    state.ingredientNames = defaults.slice().sort(compareIngredientNamesForDisplay);
-  } catch (e) {
-    state.ingredientNames = [];
+  // Première utilisation : préremplit avec le catalogue développeur
+  // (voir INGREDIENT_CATALOGUE, chargé par loadReferenceData juste
+  // avant ce point de l'initialisation) — remplace l'ancien
+  // ingredients_par_defaut.json, devenu une simple projection du même
+  // catalogue (voir TESTS_NON_REGRESSION.md).
+  state.ingredientCatalogIds = {};
+  for (const entry of INGREDIENT_CATALOGUE) {
+    await storePut("ingredients", { name: entry.fr, catalogId: entry.id });
+    state.ingredientCatalogIds[normalize(entry.fr)] = entry.id;
   }
+  state.ingredientNames = INGREDIENT_CATALOGUE.map((e) => e.fr).sort(compareIngredientNamesForDisplay);
 }
 async function addIngredientName(name) {
   const trimmed = (name || "").trim();
   if (!trimmed) return false;
   const key = normalize(trimmed);
   if (state.ingredientNames.some((n) => normalize(n) === key)) return false;
-  await storePut("ingredients", { name: trimmed });
+  // Correspondance EXACTE uniquement (jamais floue) : une association
+  // automatique au catalogue doit être certaine, une ressemblance
+  // approximative reste un simple ingrédient personnel plutôt qu'un
+  // rattachement risqué à la mauvaise entrée du catalogue.
+  const catalogId = CATALOGUE_ID_BY_NAME[key];
+  await storePut("ingredients", catalogId ? { name: trimmed, catalogId } : { name: trimmed });
+  if (catalogId) state.ingredientCatalogIds[key] = catalogId;
   state.ingredientNames.push(trimmed);
   state.ingredientNames.sort(compareIngredientNamesForDisplay);
   return true;
@@ -6719,7 +6829,15 @@ async function renameIngredientName(oldName, newName) {
   const hasOverride = !!INGREDIENT_OVERRIDES[oldName];
   const overrideRecord = hasOverride ? { ...INGREDIENT_OVERRIDES[oldName], name: trimmed } : null;
 
-  const operations = [{ store: "ingredients", puts: [{ name: trimmed }], deletes: [oldName] }];
+  // Le lien vers le catalogue développeur (voir getIngredientCatalogId)
+  // doit survivre au renommage — c'est tout l'intérêt de cet id stable :
+  // sans le reporter explicitement ici, un renommage effacerait
+  // silencieusement l'accès aux allergènes/nutrition/traductions/
+  // substitutions de cet ingrédient, l'inverse de ce que cette
+  // migration cherche à corriger.
+  const catalogId = state.ingredientCatalogIds[oldKey];
+  const newIngredientRecord = catalogId ? { name: trimmed, catalogId } : { name: trimmed };
+  const operations = [{ store: "ingredients", puts: [newIngredientRecord], deletes: [oldName] }];
   if (renamedRecipes.length) operations.push({ store: "recipes", puts: renamedRecipes });
   if (renamedShopping.length) operations.push({ store: "shopping", puts: renamedShopping });
   if (renamedPantry.length) operations.push({ store: "pantry", puts: renamedPantry });
@@ -6733,6 +6851,8 @@ async function renameIngredientName(oldName, newName) {
   state.ingredientNames = state.ingredientNames.filter((n) => n !== oldName);
   state.ingredientNames.push(trimmed);
   state.ingredientNames.sort(compareIngredientNamesForDisplay);
+  delete state.ingredientCatalogIds[oldKey];
+  if (catalogId) state.ingredientCatalogIds[normalize(trimmed)] = catalogId;
   renamedRecipes.forEach((updated) => {
     const idx = state.recipes.findIndex((r) => r.id === updated.id);
     if (idx >= 0) state.recipes[idx] = updated;
@@ -6758,6 +6878,7 @@ async function renameIngredientName(oldName, newName) {
 async function deleteIngredientName(name) {
   await storeDelete("ingredients", name);
   state.ingredientNames = state.ingredientNames.filter((n) => n !== name);
+  delete state.ingredientCatalogIds[normalize(name)];
   await deleteIngredientOverrideFor(name);
 }
 function searchIngredientNames(query, limit) {
@@ -6896,7 +7017,20 @@ async function mergeIngredientNames(keep, remove) {
   const deleteOverride = !moveOverride && !!INGREDIENT_OVERRIDES[remove];
   const overrideRecord = moveOverride ? { ...INGREDIENT_OVERRIDES[remove], name: keep } : null;
 
-  const operations = [{ store: "ingredients", deletes: [remove] }];
+  // Même principe que pour les allergènes/nutrition ci-dessus : si
+  // "keep" n'est rattaché à aucune entrée du catalogue mais que "remove"
+  // l'était, ce lien est reporté sur "keep" plutôt que perdu — sinon la
+  // fusion ferait perdre l'accès aux allergènes/nutrition/traductions/
+  // substitutions que "remove" apportait justement.
+  const removeCatalogId = state.ingredientCatalogIds[removeKey];
+  const keepCatalogId = state.ingredientCatalogIds[normalize(keep)];
+  const moveCatalogId = !keepCatalogId && !!removeCatalogId;
+
+  const operations = [
+    moveCatalogId
+      ? { store: "ingredients", deletes: [remove], puts: [{ name: keep, catalogId: removeCatalogId }] }
+      : { store: "ingredients", deletes: [remove] },
+  ];
   if (renamedRecipes.length) operations.push({ store: "recipes", puts: renamedRecipes });
   if (renamedShopping.length) operations.push({ store: "shopping", puts: renamedShopping });
   if (renamedPantry.length) operations.push({ store: "pantry", puts: renamedPantry });
@@ -6907,6 +7041,8 @@ async function mergeIngredientNames(keep, remove) {
   await storeWriteManyAcrossStores(operations);
 
   state.ingredientNames = state.ingredientNames.filter((n) => n !== remove);
+  delete state.ingredientCatalogIds[removeKey];
+  if (moveCatalogId) state.ingredientCatalogIds[normalize(keep)] = removeCatalogId;
   renamedRecipes.forEach((updated) => {
     const idx = state.recipes.findIndex((r) => r.id === updated.id);
     if (idx >= 0) state.recipes[idx] = updated;
@@ -7347,7 +7483,8 @@ async function deleteIngredientOverrideFor(name) {
 function getIngredientAllergens(name) {
   const key = (name || "").trim();
   if (INGREDIENT_OVERRIDES[key]) return INGREDIENT_OVERRIDES[key].allergens || [];
-  return ALLERGEN_DB[key] || [];
+  const catalogId = getIngredientCatalogId(name);
+  return (catalogId && ALLERGEN_DB[catalogId]) || [];
 }
 function computeRecipeAllergens(ingredients) {
   const found = new Set();
@@ -7359,7 +7496,8 @@ function computeRecipeAllergens(ingredients) {
 function getIngredientNutrition(name) {
   const key = (name || "").trim();
   if (INGREDIENT_OVERRIDES[key]) return INGREDIENT_OVERRIDES[key].nutrition || null;
-  return NUTRITION_DB[key] || null;
+  const catalogId = getIngredientCatalogId(name);
+  return (catalogId && NUTRITION_DB[catalogId]) || null;
 }
 function computeRecipeNutrition(ingredients) {
   let kcal = 0, protein = 0, carbs = 0, fat = 0, known = 0;
@@ -12763,7 +12901,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 271;
+const APP_VERSION = 272;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

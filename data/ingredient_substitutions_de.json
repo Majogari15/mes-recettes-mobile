@@ -1,114 +1,170 @@
 {
-  "beurre": [
-    {"nom": "Margarine", "note": "Gleiche Menge, sehr ähnliches Ergebnis."},
-    {"nom": "Pflanzenöl", "note": "Menge um etwa 25% reduzieren."},
-    {"nom": "Apfelmus", "note": "In Kuchen, für eine leichtere Version."}
-  ],
-  "oeufs": [
-    {"nom": "Apfelmus", "note": "Etwa 60 g Apfelmus pro Ei, in Kuchen."},
-    {"nom": "Gemahlener Leinsamen", "note": "1 EL gemahlen + 3 EL Wasser pro Ei, 5 Min. quellen lassen."}
-  ],
-  "lait": [
-    {"nom": "Mandelmilch", "note": "Neutralerer Geschmack, etwas flüssiger."},
-    {"nom": "Sojamilch", "note": "Guter Ersatz sowohl zum Kochen als auch zum Trinken."},
-    {"nom": "Hafermilch", "note": "Von Natur aus leicht süß."}
-  ],
-  "crème fraîche épaisse": [
-    {"nom": "Griechischer Joghurt", "note": "Leichter, weniger fetthaltig."},
-    {"nom": "Kokoscreme", "note": "Für eine laktosefreie Version, bringt einen leichten Kokosgeschmack."}
-  ],
-  "farine": [
-    {"nom": "Reismehl", "note": "Für eine glutenfreie Version."},
-    {"nom": "Speisestärke", "note": "Zum Andicken einer Sauce; ersetzt nicht das Mehl, um einen Kuchen aufgehen zu lassen."},
-    {"nom": "Mandelmehl", "note": "Verändert Textur und Geschmack, dichter und reichhaltiger."}
-  ],
-  "sucre": [
-    {"nom": "Honig", "note": "Die Flüssigkeitsmenge im Rezept etwas reduzieren (Honig ist feucht)."},
-    {"nom": "Ahornsirup", "note": "Ausgeprägterer Geschmack, die Flüssigkeit im Rezept leicht reduzieren."},
-    {"nom": "Brauner Zucker", "note": "Karamelligerer Geschmack, gleiche Menge."}
-  ],
-  "levure chimique": [
-    {"nom": "Natron", "note": "Mit einer säurehaltigen Zutat (Essig, Zitronensaft) kombinieren, damit es wirkt."}
-  ],
-  "vin blanc": [
-    {"nom": "Gemüsebrühe", "note": "Etwas Zitronensaft hinzufügen, um die Säure des Weins wiederherzustellen."}
-  ],
-  "vin rouge": [
-    {"nom": "Rinderbrühe", "note": "Etwas Balsamico-Essig für die Säure und die Farbe hinzufügen."}
-  ],
-  "huile d'olive": [
-    {"nom": "Sonnenblumenöl", "note": "Neutralerer Geschmack."},
-    {"nom": "Rapsöl", "note": "Guter Omega-3-Gehalt, neutraler Geschmack."}
-  ],
-  "yaourt nature": [
-    {"nom": "Fromage blanc", "note": "Etwas dichter, leicht weniger säuerlich."},
-    {"nom": "Leichte dicke Crème fraîche", "note": "Reichhaltiger, in etwas reduzierter Menge verwenden."}
-  ],
-  "parmesan": [
-    {"nom": "Pecorino", "note": "Salzigerer und ausgeprägterer Geschmack."},
-    {"nom": "Nährhefe", "note": "Für eine vegane Version, bringt einen ähnlichen Umami-Geschmack."}
-  ],
-  "chapelure": [
-    {"nom": "Haferflocken", "note": "Vor Gebrauch grob mixen."},
-    {"nom": "Zwieback", "note": "Fein zerbröseln."}
-  ],
-  "moutarde": [
-    {"nom": "Meerrettich", "note": "Schärfer, vorsichtig dosieren."},
-    {"nom": "Kurkuma", "note": "Mit etwas Essig kombinieren, um die Säure wiederherzustellen."}
-  ],
-  "ail": [
-    {"nom": "Knoblauchpulver", "note": "Etwa 1/8 Teelöffel pro frischer Knoblauchzehe."},
-    {"nom": "Schalotte", "note": "Milderer und süßerer Geschmack."}
-  ],
-  "oignon": [
-    {"nom": "Schalotte", "note": "Milderer Geschmack, gart schneller."},
-    {"nom": "Lauch", "note": "Das Weiße verwenden, feinerer Geschmack."}
-  ],
-  "citron": [
-    {"nom": "Weißer Essig", "note": "Nur für die Säure, ohne den Zitrusgeschmack."},
-    {"nom": "Limette", "note": "Etwas kräftigerer Geschmack."}
-  ],
-  "vinaigre balsamique": [
-    {"nom": "Rotweinessig", "note": "Eine Prise Zucker hinzufügen, um die leicht süße Seite wiederherzustellen."}
-  ],
-  "cube de bouillon": [
-    {"nom": "Getrocknete Gemüsebrühe", "note": "Gleiche Verwendung, oft weniger salzig."},
-    {"nom": "Sojasauce", "note": "In Wasser verdünnt, bringt salzigen und umami Geschmack."}
-  ],
-  "crème liquide entière": [
-    {"nom": "Ungesüßte Kondensmilch", "note": "Etwas weniger reichhaltig, aber eine ähnliche Textur."},
-    {"nom": "Kokoscreme", "note": "Für eine laktosefreie Version."}
-  ],
-  "mascarpone": [
-    {"nom": "Frischkäse", "note": "Mit etwas dicker Crème fraîche für die Reichhaltigkeit mischen."}
-  ],
-  "chocolat noir": [
-    {"nom": "Kakaopulver", "note": "Mit Butter und Zucker mischen, um eine ähnliche Textur wiederherzustellen."}
-  ],
-  "amandes": [
-    {"nom": "Haselnuss", "note": "Ausgeprägterer Geschmack."},
-    {"nom": "Cashewnuss", "note": "Milderer und cremigerer Geschmack."}
-  ],
-  "riz": [
-    {"nom": "Quinoa", "note": "Proteinreicher, leicht andere Textur."},
-    {"nom": "Bulgur", "note": "Kürzere Kochzeit."}
-  ],
-  "pâtes": [
-    {"nom": "Reis", "note": "Für eine glutenfreie Version."},
-    {"nom": "Reisnudeln", "note": "Für eine glutenfreie Version, schnellere Zubereitung."}
-  ],
-  "sucre vanillé": [
-    {"nom": "Vanilleextrakt", "note": "Ein paar Tropfen reichen, zum normalen Zucker hinzufügen."}
-  ],
-  "miel": [
-    {"nom": "Ahornsirup", "note": "Anderer Geschmack, aber ähnliche Textur."},
-    {"nom": "Zucker", "note": "Etwas mehr Flüssigkeit hinzufügen, um auszugleichen (Honig ist feucht)."}
-  ],
-  "fromage blanc": [
-    {"nom": "Naturjoghurt", "note": "Etwas flüssiger."}
-  ],
-  "sauce soja": [
-    {"nom": "Tamari", "note": "Für eine glutenfreie Version, sehr ähnlicher Geschmack."},
-    {"nom": "Salz", "note": "In etwas Wasser verdünnt; der Umami-Geschmack wird weniger präsent sein."}
-  ]
+  "sub_000001": {
+    "note": "Gleiche Menge, sehr ähnliches Ergebnis."
+  },
+  "sub_000002": {
+    "note": "Menge um etwa 25% reduzieren."
+  },
+  "sub_000003": {
+    "note": "In Kuchen, für eine leichtere Version.",
+    "name": "Apfelmus"
+  },
+  "sub_000004": {
+    "note": "Etwa 60 g Apfelmus pro Ei, in Kuchen.",
+    "name": "Apfelmus"
+  },
+  "sub_000005": {
+    "note": "1 EL gemahlen + 3 EL Wasser pro Ei, 5 Min. quellen lassen.",
+    "name": "Gemahlener Leinsamen"
+  },
+  "sub_000006": {
+    "note": "Neutralerer Geschmack, etwas flüssiger."
+  },
+  "sub_000007": {
+    "note": "Guter Ersatz sowohl zum Kochen als auch zum Trinken."
+  },
+  "sub_000008": {
+    "note": "Von Natur aus leicht süß."
+  },
+  "sub_000009": {
+    "note": "Leichter, weniger fetthaltig."
+  },
+  "sub_000010": {
+    "note": "Für eine laktosefreie Version, bringt einen leichten Kokosgeschmack."
+  },
+  "sub_000011": {
+    "note": "Für eine glutenfreie Version."
+  },
+  "sub_000012": {
+    "note": "Zum Andicken einer Sauce; ersetzt nicht das Mehl, um einen Kuchen aufgehen zu lassen."
+  },
+  "sub_000013": {
+    "note": "Verändert Textur und Geschmack, dichter und reichhaltiger."
+  },
+  "sub_000014": {
+    "note": "Die Flüssigkeitsmenge im Rezept etwas reduzieren (Honig ist feucht)."
+  },
+  "sub_000015": {
+    "note": "Ausgeprägterer Geschmack, die Flüssigkeit im Rezept leicht reduzieren."
+  },
+  "sub_000016": {
+    "note": "Karamelligerer Geschmack, gleiche Menge."
+  },
+  "sub_000017": {
+    "note": "Mit einer säurehaltigen Zutat (Essig, Zitronensaft) kombinieren, damit es wirkt."
+  },
+  "sub_000018": {
+    "note": "Etwas Zitronensaft hinzufügen, um die Säure des Weins wiederherzustellen."
+  },
+  "sub_000019": {
+    "note": "Etwas Balsamico-Essig für die Säure und die Farbe hinzufügen."
+  },
+  "sub_000020": {
+    "note": "Neutralerer Geschmack."
+  },
+  "sub_000021": {
+    "note": "Guter Omega-3-Gehalt, neutraler Geschmack."
+  },
+  "sub_000022": {
+    "note": "Etwas dichter, leicht weniger säuerlich."
+  },
+  "sub_000023": {
+    "note": "Reichhaltiger, in etwas reduzierter Menge verwenden.",
+    "name": "Leichte dicke Crème fraîche"
+  },
+  "sub_000024": {
+    "note": "Salzigerer und ausgeprägterer Geschmack."
+  },
+  "sub_000025": {
+    "note": "Für eine vegane Version, bringt einen ähnlichen Umami-Geschmack."
+  },
+  "sub_000026": {
+    "note": "Vor Gebrauch grob mixen."
+  },
+  "sub_000027": {
+    "note": "Fein zerbröseln."
+  },
+  "sub_000028": {
+    "note": "Schärfer, vorsichtig dosieren."
+  },
+  "sub_000029": {
+    "note": "Mit etwas Essig kombinieren, um die Säure wiederherzustellen."
+  },
+  "sub_000030": {
+    "note": "Etwa 1/8 Teelöffel pro frischer Knoblauchzehe."
+  },
+  "sub_000031": {
+    "note": "Milderer und süßerer Geschmack."
+  },
+  "sub_000032": {
+    "note": "Milderer Geschmack, gart schneller."
+  },
+  "sub_000033": {
+    "note": "Das Weiße verwenden, feinerer Geschmack."
+  },
+  "sub_000034": {
+    "note": "Nur für die Säure, ohne den Zitrusgeschmack."
+  },
+  "sub_000035": {
+    "note": "Etwas kräftigerer Geschmack."
+  },
+  "sub_000036": {
+    "note": "Eine Prise Zucker hinzufügen, um die leicht süße Seite wiederherzustellen."
+  },
+  "sub_000037": {
+    "note": "Gleiche Verwendung, oft weniger salzig."
+  },
+  "sub_000038": {
+    "note": "In Wasser verdünnt, bringt salzigen und umami Geschmack."
+  },
+  "sub_000039": {
+    "note": "Etwas weniger reichhaltig, aber eine ähnliche Textur."
+  },
+  "sub_000040": {
+    "note": "Für eine laktosefreie Version."
+  },
+  "sub_000041": {
+    "note": "Mit etwas dicker Crème fraîche für die Reichhaltigkeit mischen.",
+    "name": "Frischkäse"
+  },
+  "sub_000042": {
+    "note": "Mit Butter und Zucker mischen, um eine ähnliche Textur wiederherzustellen."
+  },
+  "sub_000043": {
+    "note": "Ausgeprägterer Geschmack."
+  },
+  "sub_000044": {
+    "note": "Milderer und cremigerer Geschmack."
+  },
+  "sub_000045": {
+    "note": "Proteinreicher, leicht andere Textur."
+  },
+  "sub_000046": {
+    "note": "Kürzere Kochzeit."
+  },
+  "sub_000047": {
+    "note": "Für eine glutenfreie Version."
+  },
+  "sub_000048": {
+    "note": "Für eine glutenfreie Version, schnellere Zubereitung."
+  },
+  "sub_000049": {
+    "note": "Ein paar Tropfen reichen, zum normalen Zucker hinzufügen."
+  },
+  "sub_000050": {
+    "note": "Anderer Geschmack, aber ähnliche Textur."
+  },
+  "sub_000051": {
+    "note": "Etwas mehr Flüssigkeit hinzufügen, um auszugleichen (Honig ist feucht)."
+  },
+  "sub_000052": {
+    "note": "Etwas flüssiger."
+  },
+  "sub_000053": {
+    "note": "Für eine glutenfreie Version, sehr ähnlicher Geschmack.",
+    "name": "Tamari"
+  },
+  "sub_000054": {
+    "note": "In etwas Wasser verdünnt; der Umami-Geschmack wird weniger präsent sein."
+  }
 }
