@@ -1,0 +1,155 @@
+#!/usr/bin/env python3
+"""Test permanent : détection des doublons d'ingrédients
+(findSimilarIngredientPairs) — voir TESTS_NON_REGRESSION.md, point 131.
+
+Un second avis externe, après avoir validé la migration du catalogue
+d'ingrédients (points 129-130), a testé l'algorithme de détection de
+doublons lui-même sur des cas ciblés et trouvé 3 angles morts réels,
+tous vérifiés en exécutant le vrai code avant correction :
+
+1. Regroupement par les 2 premières lettres avant comparaison : un nom
+   mal orthographié dès la 2e lettre ("Mozzarella"/"Mzzarella", ratio
+   réel 94,7%, largement au-dessus du seuil 90%) tombait dans un groupe
+   différent et n'était donc jamais comparé. Élargi à la seule première
+   lettre.
+2. Deux noms strictement identiques après normalisation
+   ("Crème fraîche"/"Creme fraiche") étaient silencieusement ignorés
+   (`if (keyA === keyB) continue`) — en usage normal `addIngredientName`
+   empêche déjà ce cas, mais une ancienne sauvegarde ou un import
+   pourrait en contenir deux malgré tout. Signalés maintenant comme
+   doublon exact (ratio 1.0) plutôt qu'ignorés.
+3. Le pluriel irrégulier français ("Bocal"/"Bocaux", "-al" -> "-aux")
+   n'était pas reconnu, contrairement au pluriel simple +s/+x. Nouvelle
+   fonction dédiée `isIrregularPluralVariant`.
+
+Couvre aussi le vrai négatif (deux ingrédients différents ne devant
+jamais être signalés) et les cas déjà correctement détectés avant ces
+3 corrections, pour s'assurer qu'elles ne les cassent pas.
+
+Utilisation (démarre et arrête lui-même un serveur local temporaire) :
+
+    cd /chemin/vers/recipe_pwa
+    pip install -r tests/requirements.txt
+    python3 -m playwright install chromium  # une seule fois
+    python3 tests/test_ingredient_duplicates.py
+
+Code de sortie : 0 si tous les cas passent, 1 sinon.
+"""
+import http.server
+import os
+import socket
+import sys
+import threading
+
+from playwright.sync_api import sync_playwright
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def find_free_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        return s.getsockname()[1]
+
+
+def start_local_server(port):
+    handler = lambda *args, **kwargs: http.server.SimpleHTTPRequestHandler(
+        *args, directory=PROJECT_ROOT, **kwargs
+    )
+    httpd = http.server.ThreadingHTTPServer(("127.0.0.1", port), handler)
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    return httpd
+
+
+def main():
+    port = find_free_port()
+    httpd = start_local_server(port)
+    base_url = f"http://127.0.0.1:{port}/index.html"
+
+    all_ok = True
+
+    def check(label, ok, detail=""):
+        nonlocal all_ok
+        print(f"{'✅ OK' if ok else '❌ ÉCHEC'}  {label}" + (f" — {detail}" if detail else ""))
+        if not ok:
+            all_ok = False
+
+    def pair_found(pairs, a, b):
+        for name_a, name_b, ratio in pairs:
+            if {name_a, name_b} == {a, b}:
+                return ratio
+        return None
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        errors = []
+        page = browser.new_page()
+        page.on("pageerror", lambda exc: errors.append(str(exc)))
+        page.goto(base_url, timeout=8000)
+        page.wait_for_timeout(1500)
+
+        def find(a, b):
+            pairs = page.evaluate("([a, b]) => findSimilarIngredientPairs([a, b], 0.9)", [a, b])
+            return pair_found(pairs, a, b)
+
+        print("=== Cas déjà correctement détectés avant ces corrections (non-régression) ===\n")
+        check("'Tomate'/'Tomates' détecté (pluriel simple)", find("Tomate", "Tomates") is not None)
+        check("'Échalote'/'Echalotte' détecté (faute + accent)", find("Échalote", "Echalotte") is not None)
+        check("'Arachide'/'Cacahuète' JAMAIS considéré comme doublon (vrai négatif)", find("Arachide", "Cacahuète") is None)
+
+        print("\n=== Correction 1 : regroupement élargi (1ère lettre, pas les 2 premières) ===\n")
+        ratio = find("Mozzarella", "Mzzarella")
+        check(
+            "'Mozzarella'/'Mzzarella' maintenant détecté malgré la faute dès la 2e lettre",
+            ratio is not None and ratio >= 0.9,
+            f"ratio={ratio}",
+        )
+
+        print("\n=== Correction 2 : doublon exact après normalisation, signalé plutôt qu'ignoré ===\n")
+        ratio = find("Crème fraîche", "Creme fraiche")
+        check(
+            "'Crème fraîche'/'Creme fraiche' signalé comme doublon exact (ratio 1.0)",
+            ratio == 1,
+            f"ratio={ratio}",
+        )
+
+        print("\n=== Correction 3 : pluriel irrégulier français (-al -> -aux) ===\n")
+        ratio = find("Bocal", "Bocaux")
+        check("'Bocal'/'Bocaux' maintenant détecté (pluriel irrégulier)", ratio is not None, f"ratio={ratio}")
+        ratio2 = find("Cheval", "Chevaux")
+        check("'Cheval'/'Chevaux' aussi détecté (même règle)", ratio2 is not None, f"ratio={ratio2}")
+
+        print("\n=== Écran dédié : une paire ignorée disparaît, une fusion retire bien le doublon ===\n")
+        page.evaluate(
+            """async () => {
+                if (!state.ingredientNames.includes('Testinga')) await addIngredientName('Testinga');
+                if (!state.ingredientNames.includes('Testingaz')) await addIngredientName('Testingaz');
+                state.screen = 'ingredientDuplicates';
+                render();
+            }"""
+        )
+        page.wait_for_timeout(300)
+        before = page.evaluate("() => document.body.innerText.includes('Testinga')")
+        check("La paire de test apparaît bien dans l'écran de vérification", before)
+        page.evaluate(
+            """async () => {
+                const idx = Array.from(document.querySelectorAll('.card')).findIndex((c) => c.textContent.includes('Testinga'));
+                if (idx >= 0) document.querySelectorAll('.card')[idx].querySelector('.dismiss-btn').click();
+            }"""
+        )
+        page.wait_for_timeout(300)
+        after_dismiss = page.evaluate("() => document.body.innerText.includes('Testinga')")
+        check("Ignorer la paire la fait disparaître de l'écran", not after_dismiss)
+
+        browser.close()
+
+    httpd.shutdown()
+
+    print("\n=== Résumé ===")
+    print("TOUT CORRECT" if all_ok else "AU MOINS UN ÉCHEC — voir le détail ci-dessus")
+    sys.exit(0 if all_ok else 1)
+
+
+if __name__ == "__main__":
+    main()

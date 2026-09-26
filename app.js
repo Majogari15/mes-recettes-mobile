@@ -6980,12 +6980,33 @@ function sequenceMatcherRatio(a, b) {
   const total = a.length + b.length;
   return total === 0 ? 1 : (2 * matches) / total;
 }
+// Deux formes irrégulières du pluriel français assez courantes chez les
+// ingrédients (ex. "Bocal"/"Bocaux", "Cheval"/"Chevaux") — le suffixe
+// +s/+x seul (voir isPluralVariant ci-dessous) ne les couvre pas,
+// puisque le radical change lui aussi (bocal -> bocau, pas bocal).
+function isIrregularPluralVariant(keyA, keyB) {
+  const singular = (s) => s.endsWith("al") ? s.slice(0, -2) : null;
+  const plural = (s) => s.endsWith("aux") ? s.slice(0, -3) : null;
+  return (
+    (singular(keyA) !== null && singular(keyA) === plural(keyB)) ||
+    (singular(keyB) !== null && singular(keyB) === plural(keyA))
+  );
+}
 function findSimilarIngredientPairs(names, threshold) {
   threshold = threshold || 0.9;
   const normalized = names.map((n) => [n, normalize(n)]);
+  // Regroupe par PREMIÈRE lettre seulement (pas les deux premières
+  // comme avant) : un ingrédient mal orthographié dès la deuxième
+  // lettre ("Mozzarella"/"Mzzarella", ratio réel 94,7%) tombait dans un
+  // groupe différent et n'était donc jamais comparé, malgré une
+  // similarité largement au-dessus du seuil. Un seul caractère de
+  // regroupement élargit les groupes (~1030 ingrédients aujourd'hui,
+  // encore largement gérable) tout en gardant une détection de
+  // doublons bien plus utile qu'un filtrage trop agressif ; à revoir si
+  // le volume grimpe significativement au-delà (voir TESTS_NON_REGRESSION.md).
   const buckets = {};
   normalized.forEach(([name, key]) => {
-    const prefix = key.length >= 2 ? key.slice(0, 2) : key;
+    const prefix = key.length >= 1 ? key.slice(0, 1) : key;
     (buckets[prefix] = buckets[prefix] || []).push([name, key]);
   });
   const pairs = [];
@@ -6994,8 +7015,16 @@ function findSimilarIngredientPairs(names, threshold) {
       const [nameA, keyA] = bucket[i];
       for (let j = i + 1; j < bucket.length; j++) {
         const [nameB, keyB] = bucket[j];
-        if (keyA === keyB) continue;
-        const isPluralVariant = keyA === keyB + "s" || keyA === keyB + "x" || keyB === keyA + "s" || keyB === keyA + "x";
+        // Deux noms strictement identiques une fois normalisés (accents/
+        // casse ignorés) : en usage normal, addIngredientName() empêche
+        // déjà d'en créer un second, mais une ancienne sauvegarde, un
+        // import ou une donnée historique corrompue peut en contenir
+        // deux malgré tout — signalé ici comme un doublon exact (100%)
+        // plutôt que silencieusement ignoré comme avant.
+        if (keyA === keyB) { pairs.push([nameA, nameB, 1]); continue; }
+        const isPluralVariant =
+          keyA === keyB + "s" || keyA === keyB + "x" || keyB === keyA + "s" || keyB === keyA + "x" ||
+          isIrregularPluralVariant(keyA, keyB);
         const ratio = sequenceMatcherRatio(keyA, keyB);
         if (isPluralVariant || ratio >= threshold) {
           pairs.push([nameA, nameB, isPluralVariant ? Math.max(ratio, 0.9) : ratio]);
@@ -12946,7 +12975,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 273;
+const APP_VERSION = 274;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

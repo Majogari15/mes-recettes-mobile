@@ -8779,3 +8779,60 @@ automatiquement. Suite de régression complète rejouée, aucune
 régression.
 
 **Version testée** : v273
+
+### 131 — 3 angles morts corrigés dans la détection de doublons d'ingrédients, suite à un troisième avis externe
+
+Après validation de la migration des points 129-130, le même avis
+externe a testé directement l'algorithme de détection de doublons
+(`findSimilarIngredientPairs`, écran "Vérification des doublons") sur
+des cas ciblés plutôt que la simple fusion déjà couverte par les tests
+précédents. Chaque affirmation vérifiée en exécutant le vrai code avant
+correction (aucune supposée sur parole) :
+
+1. **Regroupement trop strict avant comparaison** : les noms étaient
+   groupés par leurs 2 premières lettres avant même de calculer une
+   similarité — un nom mal orthographié dès la 2e lettre ("Mozzarella"
+   vs "Mzzarella", ratio réel mesuré 94,7 %, largement au-dessus du
+   seuil 90 %) tombait dans un groupe différent et n'était donc jamais
+   comparé. Confirmé en reproduisant : `findSimilarIngredientPairs`
+   renvoyait `[]` pour cette paire malgré le score.
+2. **Doublon exact après normalisation silencieusement ignoré** :
+   `if (keyA === keyB) continue` faisait disparaître une paire comme
+   "Crème fraîche"/"Creme fraiche" de la détection. En usage normal
+   `addIngredientName()` empêche déjà d'en créer un second, mais une
+   ancienne sauvegarde ou un import pourrait en contenir deux malgré
+   tout — un écran nommé "Vérification des doublons" ne devrait
+   silencieusement rien manquer de ce genre.
+3. **Pluriel irrégulier français non reconnu** : seul le suffixe simple
+   +s/+x était traité comme variation plurielle ; "Bocal"/"Bocaux" ou
+   "Cheval"/"Chevaux" (radical qui change, pas seulement une lettre en
+   fin de mot) n'étaient pas détectés.
+
+**Corrigé** :
+- Regroupement élargi à la seule première lettre (au lieu des deux) —
+  toujours suffisant pour limiter le nombre de comparaisons à ~1030
+  ingrédients (mesuré : ~435 ms pour un scan complet, un écran ouvert
+  ponctuellement à la demande, jamais un chemin critique), à revisiter
+  si le volume grimpe significativement au-delà.
+- Une égalité stricte après normalisation est désormais elle-même
+  renvoyée comme paire (ratio 1.0) plutôt qu'ignorée.
+- Nouvelle fonction `isIrregularPluralVariant()` : reconnaît le schéma
+  "-al" -> "-aux", en plus du suffixe +s/+x déjà géré.
+
+**Volontairement pas traité maintenant** (jugé par le même avis comme
+amélioration de qualité de données à faire une fois le volume réellement
+étendu, pas un bug actif) : script de validation du catalogue lui-même
+(ids orphelins/dupliqués), détection des substitutions libres devenues
+des ingrédients officiels, distinction "non documenté" vs "vérifié,
+aucun" — voir point 130 pour le détail, ces points restent en attente.
+
+**Vérifié** (`tests/test_ingredient_duplicates.py`, nouveau, 9
+vérifications) : les 3 correctifs testés individuellement (avec les
+mêmes exemples et le même ratio mesuré que l'avis externe) ; non-
+régression sur les cas déjà détectés avant ("Tomate"/"Tomates",
+"Échalote"/"Echalotte") et le vrai négatif ("Arachide"/"Cacahuète",
+jamais un doublon) ; écran "Vérification des doublons" testé bout en
+bout (une paire apparaît, "Ignorer" la fait disparaître). Suite de
+régression complète (55 scripts) rejouée, aucune régression.
+
+**Version testée** : v274
