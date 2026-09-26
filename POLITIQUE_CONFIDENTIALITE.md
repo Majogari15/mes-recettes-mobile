@@ -185,5 +185,5 @@ document.
 ## Contact
 
 Pour toute question sur cette politique de confidentialité :
-fabrice.moritel15@gmail.com (vous pouvez aussi ouvrir une discussion
+majogari81@gmail.com (vous pouvez aussi ouvrir une discussion
 « Issue » sur le dépôt GitHub du projet).

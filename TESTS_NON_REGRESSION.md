@@ -4342,6 +4342,11 @@ pas du code)** :
   date]` et `[votre adresse email]` non remplacés — rappelé à
   l'utilisateur, hors de portée du code puisque ces informations lui
   appartiennent.
+  **Corrigé le 26/09/2026** : date déjà renseignée (17 septembre 2026)
+  depuis un tour précédent ; email de contact mis à jour vers
+  `majogari81@gmail.com` (`POLITIQUE_CONFIDENTIALITE.md` et
+  `FICHE_PLAY_STORE.md`, à la demande explicite de l'utilisateur, qui a
+  fourni cette adresse). Point clos.
 - Digital Asset Links toujours en 404 : attendu à ce stade, ce fichier
   ne peut être généré qu'après avoir finalisé l'identifiant de paquet
   Android et la clé de signature dans PWABuilder.

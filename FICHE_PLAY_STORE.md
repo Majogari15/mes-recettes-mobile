@@ -79,7 +79,7 @@ Food & Drink (ou "Lifestyle" en alternative)
 Google)*
 
 ```
-fabrice.moritel15@gmail.com
+majogari81@gmail.com
 ```
 
 ## Politique de confidentialité
