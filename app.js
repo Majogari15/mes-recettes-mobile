@@ -6980,6 +6980,34 @@ function sequenceMatcherRatio(a, b) {
   const total = a.length + b.length;
   return total === 0 ? 1 : (2 * matches) / total;
 }
+// Coefficient de Dice sur les bigrammes de caractères — bien moins
+// coûteux à calculer que sequenceMatcherRatio (une simple intersection
+// de compteurs, pas un alignement récursif), utilisé uniquement comme
+// filtre rapide AVANT de lancer le calcul complet (voir
+// findSimilarIngredientPairs) : sur un très grand catalogue, la très
+// grande majorité des paires réellement comparées (mêmes première
+// lettre et longueur proche) n'ont en fait aucune similarité réelle et
+// n'ont pas besoin du calcul exact pour être écartées.
+function bigramCounts(s) {
+  const counts = new Map();
+  for (let i = 0; i < s.length - 1; i++) {
+    const bg = s.slice(i, i + 2);
+    counts.set(bg, (counts.get(bg) || 0) + 1);
+  }
+  return counts;
+}
+function diceCoefficient(countsA, lenA, countsB, lenB) {
+  const bigramsA = lenA - 1;
+  const bigramsB = lenB - 1;
+  if (bigramsA <= 0 || bigramsB <= 0) return lenA === lenB ? 1 : 0;
+  const [smaller, larger] = countsA.size <= countsB.size ? [countsA, countsB] : [countsB, countsA];
+  let intersection = 0;
+  smaller.forEach((count, bg) => {
+    const otherCount = larger.get(bg);
+    if (otherCount) intersection += Math.min(count, otherCount);
+  });
+  return (2 * intersection) / (bigramsA + bigramsB);
+}
 // Deux formes irrégulières du pluriel français assez courantes chez les
 // ingrédients (ex. "Bocal"/"Bocaux", "Cheval"/"Chevaux") — le suffixe
 // +s/+x seul (voir isPluralVariant ci-dessous) ne les couvre pas,
@@ -6994,27 +7022,55 @@ function isIrregularPluralVariant(keyA, keyB) {
 }
 function findSimilarIngredientPairs(names, threshold) {
   threshold = threshold || 0.9;
-  const normalized = names.map((n) => [n, normalize(n)]);
+  // Bigrammes précalculés une seule fois par nom (pas à chaque paire
+  // comparée) — voir diceCoefficient, le filtre rapide utilisé plus bas.
+  const normalized = names.map((n) => {
+    const key = normalize(n);
+    return [n, key, bigramCounts(key)];
+  });
   // Regroupe par PREMIÈRE lettre seulement (pas les deux premières
   // comme avant) : un ingrédient mal orthographié dès la deuxième
   // lettre ("Mozzarella"/"Mzzarella", ratio réel 94,7%) tombait dans un
   // groupe différent et n'était donc jamais comparé, malgré une
-  // similarité largement au-dessus du seuil. Un seul caractère de
-  // regroupement élargit les groupes (~1030 ingrédients aujourd'hui,
-  // encore largement gérable) tout en gardant une détection de
-  // doublons bien plus utile qu'un filtrage trop agressif ; à revoir si
-  // le volume grimpe significativement au-delà (voir TESTS_NON_REGRESSION.md).
+  // similarité largement au-dessus du seuil.
   const buckets = {};
-  normalized.forEach(([name, key]) => {
-    const prefix = key.length >= 1 ? key.slice(0, 1) : key;
-    (buckets[prefix] = buckets[prefix] || []).push([name, key]);
+  normalized.forEach((entry) => {
+    const prefix = entry[1].length >= 1 ? entry[1].slice(0, 1) : entry[1];
+    (buckets[prefix] = buckets[prefix] || []).push(entry);
   });
+  // Deux chaînes de longueurs trop différentes ne peuvent de toute
+  // façon jamais atteindre "threshold" : la borne supérieure du ratio
+  // (2*min(la,lb)/(la+lb), voir sequenceMatcherRatio) le prouve
+  // mathématiquement, avant même de calculer le moindre alignement.
+  // maxLenFor(la) donne la plus grande longueur lb (>= la) qui peut
+  // encore espérer atteindre le seuil.
+  const maxLenFactor = 2 / threshold - 1;
+  const maxLenFor = (la) => Math.floor(la * maxLenFactor);
+  // Marge de sécurité sous le seuil réel pour le filtre rapide (Dice) :
+  // il mesure la similarité différemment de sequenceMatcherRatio (pas
+  // sensible à l'ORDRE des caractères communs, seulement à leur
+  // présence), donc un score Dice un peu plus bas peut correspondre à
+  // un ratio exact plus élevé — cette marge évite de rejeter à tort une
+  // vraie paire proche du seuil, au prix de laisser passer un peu plus
+  // de paires au calcul exact que l'idéal.
+  const cheapThreshold = Math.max(0, threshold - 0.2);
   const pairs = [];
   Object.values(buckets).forEach((bucket) => {
+    // Trié par longueur croissante : pour chaque élément, seuls ceux
+    // suffisamment proches en longueur peuvent encore être comparés
+    // (fenêtre glissante qui s'arrête dès que la borne est dépassée,
+    // plutôt qu'un balayage O(n²) complet du groupe). Sans cette
+    // réduction ET le filtre Dice ci-dessous, un lot de 10 000
+    // ingrédients (nécessaire pour une future extension du catalogue)
+    // prenait plus de 4 minutes et gelait complètement l'écran —
+    // mesuré avant ce correctif, voir TESTS_NON_REGRESSION.md.
+    bucket.sort((a, b) => a[1].length - b[1].length);
     for (let i = 0; i < bucket.length; i++) {
-      const [nameA, keyA] = bucket[i];
+      const [nameA, keyA, bigramsA] = bucket[i];
+      const maxLen = maxLenFor(keyA.length);
       for (let j = i + 1; j < bucket.length; j++) {
-        const [nameB, keyB] = bucket[j];
+        const [nameB, keyB, bigramsB] = bucket[j];
+        if (keyB.length > maxLen) break; // trié par longueur : tout le reste dépasse aussi
         // Deux noms strictement identiques une fois normalisés (accents/
         // casse ignorés) : en usage normal, addIngredientName() empêche
         // déjà d'en créer un second, mais une ancienne sauvegarde, un
@@ -7025,6 +7081,19 @@ function findSimilarIngredientPairs(names, threshold) {
         const isPluralVariant =
           keyA === keyB + "s" || keyA === keyB + "x" || keyB === keyA + "s" || keyB === keyA + "x" ||
           isIrregularPluralVariant(keyA, keyB);
+        // Le calcul exact (sequenceMatcherRatio) est bien plus coûteux
+        // que ce filtre — sauté seulement si le résultat le plus
+        // généreux possible (Dice) reste trop bas pour espérer
+        // atteindre le seuil, sauf pour un pluriel déjà confirmé par
+        // ailleurs. Sur des noms COURTS (moins de 15 caractères — la
+        // quasi-totalité des ingrédients français d'origine), le
+        // filtre est sauté : trop peu de bigrammes pour un score fiable
+        // (une seule lettre qui diffère peut faire chuter Dice bien
+        // plus que le ratio exact, ex. "Pêche"/"Perche" perdu à tort
+        // lors des tests) — et le calcul exact est de toute façon
+        // immédiat sur des chaînes aussi courtes, sans coût à éviter.
+        const bothLongEnoughForCheapFilter = keyA.length >= 15 && keyB.length >= 15;
+        if (!isPluralVariant && bothLongEnoughForCheapFilter && diceCoefficient(bigramsA, keyA.length, bigramsB, keyB.length) < cheapThreshold) continue;
         const ratio = sequenceMatcherRatio(keyA, keyB);
         if (isPluralVariant || ratio >= threshold) {
           pairs.push([nameA, nameB, isPluralVariant ? Math.max(ratio, 0.9) : ratio]);
@@ -12975,7 +13044,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 274;
+const APP_VERSION = 275;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

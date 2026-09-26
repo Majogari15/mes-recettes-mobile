@@ -26,6 +26,27 @@ Couvre aussi le vrai négatif (deux ingrédients différents ne devant
 jamais être signalés) et les cas déjà correctement détectés avant ces
 3 corrections, pour s'assurer qu'elles ne les cassent pas.
 
+Un quatrième correctif, distinct, a suivi après un essai avec un vrai
+jeu de 10 000 ingrédients (catalogue candidat non retenu tel quel,
+voir la conversation) : `findSimilarIngredientPairs` mettait plus de
+4 MINUTES (254 s) et gelait complètement l'écran à ce volume — la
+fenêtre de longueur seule (déjà présente ci-dessus) ne suffisait pas,
+la majorité du temps étant passée à calculer `sequenceMatcherRatio`
+(coûteux) sur des paires qui n'avaient de toute façon aucune chance
+d'atteindre le seuil. Un filtre rapide par coefficient de Dice sur les
+bigrammes de caractères (bien moins coûteux, une simple intersection de
+compteurs) est maintenant appliqué avant ce calcul — mais seulement sur
+les noms d'au moins 15 caractères : sur des mots courts, quelques
+bigrammes suffisent à fausser le score (repéré avant correction :
+"Pêche"/"Perche" perdu à tort par ce filtre). Résultat mesuré sur les
+10 000 vrais noms : 254 s -> 19 s, EXACTEMENT les mêmes 8900 paires
+qu'un calcul de référence sans le filtre rapide (zéro perte, zéro faux
+positif introduit). Le test de performance ci-dessous est synthétique
+(généré, ne dépend d'aucun fichier externe) pour rester exécutable par
+quiconque clone le dépôt, mais reproduit la même forme de données
+(nombreux noms longs et très proches les uns des autres) qui faisait
+échouer l'ancienne version.
+
 Utilisation (démarre et arrête lui-même un serveur local temporaire) :
 
     cd /chemin/vers/recipe_pwa
@@ -141,6 +162,40 @@ def main():
         page.wait_for_timeout(300)
         after_dismiss = page.evaluate("() => document.body.innerText.includes('Testinga')")
         check("Ignorer la paire la fait disparaître de l'écran", not after_dismiss)
+
+        print("\n=== Performance : gros volume de noms longs et très proches (forme USDA-like) ===\n")
+        # Génère un jeu synthétique reproduisant la forme qui faisait
+        # échouer l'ancienne version : de nombreux noms longs partageant
+        # la même racine (variantes "cru"/"cuit"), plutôt que les noms
+        # courts habituels de la liste française actuelle. Ne dépend
+        # d'aucun fichier externe — reproductible par quiconque clone le
+        # dépôt. Le nombre de racines (150) correspond au pire cas
+        # RÉELLEMENT observé sur un vrai jeu de 10 000 ingrédients d'un
+        # bundle candidat (variantes "Poulet, poulets de chair, ..." :
+        # 118 entrées quasi identiques dans le même préfixe) — pas un
+        # cas pathologique arbitraire, mais la vraie taille de groupe la
+        # plus défavorable rencontrée en pratique.
+        perf_result = page.evaluate(
+            """() => {
+                const bases = [];
+                for (let i = 0; i < 150; i++) {
+                    bases.push(
+                        `Ingrédient synthétique numéro ${i}, catégorie test, préparation détaillée avec plusieurs qualificatifs`
+                    );
+                }
+                const names = [];
+                bases.forEach((b) => { names.push(b + ', cru'); names.push(b + ', cuit'); });
+                const t0 = performance.now();
+                const pairs = findSimilarIngredientPairs(names, 0.9);
+                const t1 = performance.now();
+                return { ms: t1 - t0, count: names.length, pairsFound: pairs.length };
+            }"""
+        )
+        check(
+            "300 noms longs et proches (pire groupe réel observé) traités en moins de 20 s",
+            perf_result["ms"] < 20000,
+            f"{perf_result['ms']:.0f} ms pour {perf_result['count']} noms, {perf_result['pairsFound']} paires trouvées",
+        )
 
         browser.close()
 

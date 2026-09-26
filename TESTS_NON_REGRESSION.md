@@ -8836,3 +8836,91 @@ bout (une paire apparaît, "Ignorer" la fait disparaître). Suite de
 régression complète (55 scripts) rejouée, aucune régression.
 
 **Version testée** : v274
+
+### 132 — Détection de doublons : correction du vrai blocage de performance à 10 000 ingrédients, découvert en testant un bundle candidat
+
+L'utilisateur a fait produire par une autre IA un bundle candidat de
+10 000 ingrédients (catalogue + nutrition + allergènes en français,
+sourcé Ciqual 2025/USDA FoodData Central) pour préparer une future
+extension du catalogue développeur (voir points 129-131). Avant tout
+avis, chaque affirmation du bundle a été vérifiée en exécutant le vrai
+code de l'app sur les vrais fichiers plutôt qu'en se fiant au rapport
+fourni :
+
+- Structure technique : correcte (10 000 ids uniques, alignés sans
+  orphelin entre catalogue/nutrition (9774/10000)/allergènes
+  (6027/10000), format `{id, fr}` directement compatible).
+- Qualité de traduction des ~5792 entrées d'origine USDA : l'étiquette
+  du rapport ("traduit") ne reflète pas une traduction propre partout —
+  un scan complet (pas un simple échantillon) avec une liste stricte de
+  mots strictement anglais (jamais une orthographe française plausible)
+  trouve au moins 262 entrées (4,5%) avec un mot anglais resté tel
+  quel ("flavor", "broth", "greens", "blend", "vitamins"...), et un
+  échantillon aléatoire suggère un taux réel plus élevé une fois
+  comptée aussi la grammaire cassée ou l'ordre des mots resté anglais
+  (ex. "Nutritional supplement pour people avec diabetes"). Confiance
+  moyenne sur ce second chiffre (estimation par échantillonnage, pas un
+  comptage exhaustif).
+- Manque entier : aucune traduction anglais/espagnol/allemand ni
+  substitutions pour les ~8970 nouveaux ingrédients — seul le français
+  est couvert par ce bundle.
+- **Un vrai bug de performance découvert en testant, pas seulement
+  supposé** : `findSimilarIngredientPairs` (écran "Vérification des
+  doublons") mettait **254 secondes** (plus de 4 minutes) et gelait
+  complètement l'écran sur les 10 000 vrais noms du bundle — l'audit
+  précédent (point 131) avait classé ce risque "à surveiller avant
+  10k" ; en le testant réellement, ce n'est pas un risque théorique,
+  c'est déjà cassé net à ce volume.
+
+**Conclusion communiquée à l'utilisateur** : bundle non retenu tel
+quel (aucun fichier de ce bundle intégré au dépôt) — traduction à ne
+pas prendre pour acquise malgré l'étiquette, 3 langues et les
+substitutions manquantes pour 90% du catalogue, et le blocage de
+performance ci-dessous à corriger avant d'envisager un tel volume de
+toute façon.
+
+**Corrigé** (uniquement le code de l'application, indépendamment de
+l'adoption ou non du bundle candidat) :
+- Nouveau filtre rapide par coefficient de Dice sur les bigrammes de
+  caractères (`bigramCounts`/`diceCoefficient`) : une simple
+  intersection de compteurs, bien moins coûteuse que
+  `sequenceMatcherRatio` (alignement récursif) — appliqué AVANT ce
+  calcul coûteux, uniquement sur les noms d'au moins 15 caractères (en
+  dessous, quelques bigrammes suffisent à fausser le score : repéré en
+  testant, "Pêche"/"Perche" perdu à tort par une première version de ce
+  filtre).
+- Fenêtre de longueur triée (déjà en place depuis le point 131) gardée
+  telle quelle, combinée à ce nouveau filtre.
+
+**Résultat mesuré sur les 10 000 vrais noms du bundle** : 254 s -> 19 s
+(13× plus rapide), pour EXACTEMENT les mêmes 8900 paires qu'un calcul
+de référence sans le filtre rapide (zéro paire perdue, zéro paire en
+trop introduite — vérifié par comparaison automatisée des deux
+résultats, pas seulement un comptage). Sur le volume actuel (1030
+ingrédients) : 435 ms -> 79 ms, mêmes 8 paires qu'avant.
+
+**Limite honnêtement assumée, pas corrigée dans ce tour** : un groupe
+d'ingrédients presque tous identiques entre eux (même préfixe long,
+seule une poignée de mots différant) reste quadratique — testé
+volontairement avec un cas extrême synthétique (1600 noms tous très
+proches dans un seul groupe), toujours trop lent. Le pire groupe
+RÉELLEMENT observé dans le bundle testé (variantes "Poulet, poulets de
+chair, ..." : 118 entrées quasi identiques) reste largement dans les
+temps (quelques secondes), donc non bloquant pour l'usage réel constaté
+— mais un futur catalogue avec un groupe bien plus fourni de doublons
+quasi identiques pourrait redevenir lent. Non traité maintenant (aucun
+cas réel ne l'exige aujourd'hui) ; une vraie solution demanderait de
+déplacer le calcul dans un Web Worker (jamais utilisé jusqu'ici dans
+cette app) plutôt qu'un simple ajustement d'algorithme.
+
+**Vérifié** (`tests/test_ingredient_duplicates.py`, 1 nouvelle
+vérification) : nouveau test de performance synthétique (ne dépend
+d'aucun fichier externe, reproductible par quiconque clone le dépôt) —
+300 noms longs et proches (taille du pire groupe réellement observé)
+traités en moins de 20 s. Suite de régression complète (55 scripts)
+rejouée, aucune régression — en particulier les 3 corrections du point
+131 (Mozzarella/Mzzarella, Crème fraîche exact, Bocal/Bocaux) toujours
+correctes après ce changement, et confirmé par comparaison automatisée
+qu'aucune paire n'est perdue ni ajoutée à tort par le nouveau filtre.
+
+**Version testée** : v275
