@@ -1039,6 +1039,10 @@ attendu → résultat obtenu → version testée.
   attente**, à investiguer séparément (cause non encore identifiée,
   contrairement au scanner de recette/liste qui avait été testé
   fonctionnel plus tôt — écart à clarifier).
+- **Confirmé physiquement le 26/09/2026** : refonctionne de manière
+  fiable, y compris pour plusieurs QR importés à la suite (import
+  répété sans échec observé). Cause initiale non identifiée avec
+  certitude, mais plus reproduite depuis — point clos.
 
 ### 14.7 — Notification et vibration Android *(physique — terminé)*
 - **Résultat obtenu** : ✅ Fiable au premier plan (sonnerie, vibration,
@@ -4168,6 +4172,10 @@ création du compte développeur Play Console, passage par PWABuilder
 pour générer le paquet signé, hébergement de la politique de
 confidentialité en ligne, remplissage final et soumission.
 
+**Mise à jour du 26/09/2026** : application envoyée sur le Play Store,
+actuellement en phase de test interne pour quelques jours avant
+validation et publication définitive.
+
 **Version testée** : v199 (pas de changement de code applicatif,
 uniquement le manifeste — pas de bump de version nécessaire)
 
@@ -6087,14 +6095,18 @@ tentative de simulation trompeuse) :
 - **Safari/iOS** : seul le moteur Chromium est disponible ici (déjà
   documenté au point 90) — aucune plateforme Apple n'a jamais été
   testée, ni par moi ni, à ma connaissance, par l'utilisateur.
+  **Confirmé physiquement le 26/09/2026** : testé sur Safari iPhone,
+  pas en profondeur (pas tout testé), mais l'import et la création de
+  recette par lien externe et par photo fonctionnent.
 - **Persistance du stockage après inactivité prolongée sur iOS** :
   comportement réel du système sur plusieurs semaines, impossible à
-  simuler fidèlement.
+  simuler fidèlement. Toujours non vérifié.
 - **Rendu visuel réel une fois l'app installée** (icône sur l'écran
   d'accueil, écran de démarrage) : les DONNÉES qui le déterminent sont
   validées (point 1 ci-dessus), mais le rendu final dépend du système
   d'exploitation réel, jamais vérifié visuellement dans cet
-  environnement.
+  environnement. **Confirmé physiquement le 26/09/2026** : vérifié à
+  l'œil sur appareil réel, fonctionnel.
 - **Notifications Push** (au sens strict, serveur → navigateur) :
   l'application n'en a pas — seulement des notifications locales
   (minuteurs de cuisine), déjà testées bien avant cette session. Non
@@ -6933,6 +6945,9 @@ nouveau) :
   bloquer l'OCR qui continue normalement.
 
 Suite de régression complète (35 scripts + corpus OCR) au vert.
+
+**Confirmé physiquement le 26/09/2026** : testé sur vrai téléphone,
+fonctionnel.
 
 **Version testée** : v246
 
@@ -8405,6 +8420,10 @@ il a vérifié qu'en renommant manuellement le fichier `.txt` reçu en
 l'archive reste intact malgré le déguisement. Il ajoutera de son côté
 ce renommage automatique à l'import de l'application Windows, pour
 qu'aucune étape manuelle ne soit plus nécessaire.
+
+**Confirmé le 26/09/2026** : le renommage automatique `.txt` → `.zip`
+à l'import a été ajouté côté application Windows — plus aucune étape
+manuelle nécessaire des deux côtés. Point clos.
 
 **Version testée** : v268
 
