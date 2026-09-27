@@ -39730,5 +39730,245 @@
  {
   "id": "ing_004208",
   "fr": "Poudre cacaotée pour bébé"
+ },
+ {
+  "id": "ing_010001",
+  "fr": "Huile de macadamia"
+ },
+ {
+  "id": "ing_010002",
+  "fr": "Huile de pépins de courge"
+ },
+ {
+  "id": "ing_010003",
+  "fr": "Huile de périlla"
+ },
+ {
+  "id": "ing_010004",
+  "fr": "Huile de palme rouge, non raffinée"
+ },
+ {
+  "id": "ing_010005",
+  "fr": "Margarine allégée"
+ },
+ {
+  "id": "ing_010006",
+  "fr": "Beurre de noisette, pur, sans sucre ajouté"
+ },
+ {
+  "id": "ing_010007",
+  "fr": "Huile de germe de maïs"
+ },
+ {
+  "id": "ing_010008",
+  "fr": "Huile MCT (triglycérides à chaîne moyenne)"
+ },
+ {
+  "id": "ing_010009",
+  "fr": "Huile de coco fractionnée"
+ },
+ {
+  "id": "ing_010010",
+  "fr": "Huile de bourrache"
+ },
+ {
+  "id": "ing_010011",
+  "fr": "Huile de pistache"
+ },
+ {
+  "id": "ing_010012",
+  "fr": "Huile de noix de pécan"
+ },
+ {
+  "id": "ing_010013",
+  "fr": "Huile de sésame grillé"
+ },
+ {
+  "id": "ing_010014",
+  "fr": "Huile de tournesol vierge, pressée à froid"
+ },
+ {
+  "id": "ing_010015",
+  "fr": "Huile de colza vierge, pressée à froid"
+ },
+ {
+  "id": "ing_010016",
+  "fr": "Suif de mouton"
+ },
+ {
+  "id": "ing_010017",
+  "fr": "Beurre allégé"
+ },
+ {
+  "id": "ing_010018",
+  "fr": "Beurre fermier cru, non pasteurisé"
+ },
+ {
+  "id": "ing_010019",
+  "fr": "Huile d'olive vierge, non filtrée"
+ },
+ {
+  "id": "ing_010020",
+  "fr": "Huile de sésame noir"
+ },
+ {
+  "id": "ing_010021",
+  "fr": "Sauce vierge"
+ },
+ {
+  "id": "ing_010022",
+  "fr": "Sauce gribiche"
+ },
+ {
+  "id": "ing_010023",
+  "fr": "Sauce ravigote"
+ },
+ {
+  "id": "ing_010024",
+  "fr": "Sauce poulette"
+ },
+ {
+  "id": "ing_010025",
+  "fr": "Sauce Nantua"
+ },
+ {
+  "id": "ing_010026",
+  "fr": "Sauce Mornay"
+ },
+ {
+  "id": "ing_010027",
+  "fr": "Sauce Choron"
+ },
+ {
+  "id": "ing_010028",
+  "fr": "Sauce à l'échalote"
+ },
+ {
+  "id": "ing_010029",
+  "fr": "Pico de gallo"
+ },
+ {
+  "id": "ing_010030",
+  "fr": "Sauce mole"
+ },
+ {
+  "id": "ing_010031",
+  "fr": "Sauce adobo"
+ },
+ {
+  "id": "ing_010032",
+  "fr": "Sauce chili sucrée"
+ },
+ {
+  "id": "ing_010033",
+  "fr": "Sauce cranberry (condiment)"
+ },
+ {
+  "id": "ing_010034",
+  "fr": "Piccalilli"
+ },
+ {
+  "id": "ing_010035",
+  "fr": "Sauce meunière"
+ },
+ {
+  "id": "ing_010036",
+  "fr": "Sauce colombo, prête à l'emploi"
+ },
+ {
+  "id": "ing_010037",
+  "fr": "Sauce chien (antillaise)"
+ },
+ {
+  "id": "ing_010038",
+  "fr": "Sauce XO"
+ },
+ {
+  "id": "ing_010039",
+  "fr": "Sauce raita"
+ },
+ {
+  "id": "ing_010040",
+  "fr": "Gremolata"
+ },
+ {
+  "id": "ing_010041",
+  "fr": "Sauce diable"
+ },
+ {
+  "id": "ing_010042",
+  "fr": "Sauce Périgueux"
+ },
+ {
+  "id": "ing_010043",
+  "fr": "Sauce Bercy"
+ },
+ {
+  "id": "ing_010044",
+  "fr": "Sauce marchand de vin"
+ },
+ {
+  "id": "ing_010045",
+  "fr": "Sauce arrabbiata"
+ },
+ {
+  "id": "ing_010046",
+  "fr": "Sauce puttanesca"
+ },
+ {
+  "id": "ing_010047",
+  "fr": "Sauce curry vert thaï"
+ },
+ {
+  "id": "ing_010048",
+  "fr": "Sauce curry rouge thaï"
+ },
+ {
+  "id": "ing_010049",
+  "fr": "Sauce à l'ail (toum libanais)"
+ },
+ {
+  "id": "ing_010050",
+  "fr": "Sauce yakiniku"
+ },
+ {
+  "id": "ing_010051",
+  "fr": "Sauce nuoc cham"
+ },
+ {
+  "id": "ing_010052",
+  "fr": "Sauce romesco"
+ },
+ {
+  "id": "ing_010053",
+  "fr": "Sauce skordalia"
+ },
+ {
+  "id": "ing_010054",
+  "fr": "Sauce piri-piri"
+ },
+ {
+  "id": "ing_010055",
+  "fr": "Sauce zhoug"
+ },
+ {
+  "id": "ing_010056",
+  "fr": "Sauce gochujang"
+ },
+ {
+  "id": "ing_010057",
+  "fr": "Sauce ssamjang"
+ },
+ {
+  "id": "ing_010058",
+  "fr": "Sauce enchilada verte"
+ },
+ {
+  "id": "ing_010059",
+  "fr": "Sauce fajita"
+ },
+ {
+  "id": "ing_010060",
+  "fr": "Sauce moutarde au miel"
  }
 ]

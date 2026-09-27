@@ -132646,5 +132646,635 @@
    "url": "https://doi.org/10.57745/RDMHWY",
    "qualifiers": {}
   }
+ },
+ "ing_010004": {
+  "kcal": 900.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_ciqual_extra": {
+   "provider": "CIQUAL",
+   "code": "16129",
+   "food": "Huile de palme, sans précision",
+   "basis": "100g",
+   "url": "https://ciqual.anses.fr/#/aliment/16129/huile-de-palme-sans-precision"
+  }
+ },
+ "ing_010005": {
+  "kcal": 536.0,
+  "protein_g": 0.3,
+  "carbs_g": 0.18,
+  "fat_g": 59.3,
+  "_ciqual_extra": {
+   "provider": "CIQUAL",
+   "code": "16741",
+   "food": "Matière grasse végétale (type margarine) à 50-63% MG, allégée, doux",
+   "basis": "100g",
+   "url": "https://ciqual.anses.fr/#/aliment/16741"
+  }
+ },
+ "ing_010007": {
+  "kcal": 900.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_ciqual_extra": {
+   "provider": "CIQUAL",
+   "code": "17190",
+   "food": "Huile de maïs",
+   "basis": "100g",
+   "url": "https://ciqual.anses.fr/#/aliment/17190/huile-de-mais"
+  }
+ },
+ "ing_010013": {
+  "kcal": 900.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_ciqual_extra": {
+   "provider": "CIQUAL",
+   "code": "17400",
+   "food": "Huile de sésame",
+   "basis": "100g",
+   "url": "https://ciqual.anses.fr/#/aliment/17400/huile-de-sesame"
+  }
+ },
+ "ing_010014": {
+  "kcal": 901.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_ciqual_extra": {
+   "provider": "CIQUAL",
+   "code": "17440",
+   "food": "Huile de tournesol",
+   "basis": "100g",
+   "url": "https://ciqual.anses.fr/#/aliment/17440/huile-de-tournesol"
+  }
+ },
+ "ing_010015": {
+  "kcal": 900.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_ciqual_extra": {
+   "provider": "CIQUAL",
+   "code": "17130",
+   "food": "Huile de colza",
+   "basis": "100g",
+   "url": "https://ciqual.anses.fr/#/aliment/17130/huile-de-colza"
+  }
+ },
+ "ing_010016": {
+  "kcal": 902.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_usda": {
+   "provider": "USDA FoodData Central (SR Legacy)",
+   "code": "NDB 04528",
+   "food": "Fat, mutton tallow",
+   "basis": "100g",
+   "url": "https://foods.fatsecret.com/calories-nutrition/usda/mutton-tallow-fat"
+  }
+ },
+ "ing_010017": {
+  "kcal": 368.0,
+  "protein_g": 0.33,
+  "carbs_g": 3.73,
+  "fat_g": 38.9,
+  "_ciqual_extra": {
+   "provider": "CIQUAL",
+   "code": "16412",
+   "food": "Beurre ou assimilé allégé (léger ou à teneur reduite en matière grasse), doux (aliment moyen)",
+   "basis": "100g",
+   "url": "https://ciqual.anses.fr/#/aliment/16412"
+  }
+ },
+ "ing_010018": {
+  "kcal": 753.0,
+  "protein_g": 0.7,
+  "carbs_g": 0.9,
+  "fat_g": 82.9,
+  "_ciqual_extra": {
+   "provider": "CIQUAL",
+   "code": "16400",
+   "food": "Beurre à 82% MG, doux (valeur la plus proche disponible ; CIQUAL ne distingue pas le beurre cru non pasteurisé)",
+   "basis": "100g",
+   "url": "https://ciqual.anses.fr/#/aliment/16400/beurre-a-82-mg-doux"
+  }
+ },
+ "ing_010019": {
+  "kcal": 900.0,
+  "protein_g": 0.3,
+  "carbs_g": 0.0,
+  "fat_g": 99.9,
+  "_ciqual_extra": {
+   "provider": "CIQUAL",
+   "code": "17270",
+   "food": "Huile d'olive vierge extra (valeur la plus proche disponible ; CIQUAL ne distingue pas la version non filtrée)",
+   "basis": "100g",
+   "url": "https://ciqual.anses.fr/#/aliment/17270/huile-d-olive-vierge-extra"
+  }
+ },
+ "ing_010020": {
+  "kcal": 900.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_ciqual_extra": {
+   "provider": "CIQUAL",
+   "code": "17400",
+   "food": "Huile de sésame (valeur la plus proche disponible ; CIQUAL ne distingue pas le sésame noir)",
+   "basis": "100g",
+   "url": "https://ciqual.anses.fr/#/aliment/17400/huile-de-sesame"
+  }
+ },
+ "ing_010022": {
+  "kcal": 680.0,
+  "protein_g": 1.0,
+  "carbs_g": 2.0,
+  "fat_g": 75.0,
+  "_usda": {
+   "provider": "USDA FoodData Central",
+   "code": null,
+   "food": "Mayonnaise, regular (proxy)",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-search?query=mayonnaise",
+   "note": "Aucune fiche dédiée « sauce gribiche » sur USDA/CIQUAL. Approximation par la mayonnaise (émulsion œuf+huile la plus proche déjà documentée) ; la gribiche réelle (blancs d'œufs hachés, câpres, cornichons) est probablement moins riche en matières grasses que cette valeur (surestimation probable)."
+  }
+ },
+ "ing_010023": {
+  "kcal": 380.0,
+  "protein_g": 0.6,
+  "carbs_g": 3.0,
+  "fat_g": 40.0,
+  "_usda": {
+   "provider": "USDA FoodData Central",
+   "code": null,
+   "food": "Salad dressing, vinaigrette (proxy)",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-search?query=vinaigrette",
+   "note": "Aucune fiche dédiée « sauce ravigote ». Approximation par une vinaigrette classique (huile, vinaigre, moutarde), composition la plus proche déjà documentée."
+  }
+ },
+ "ing_010024": {
+  "kcal": 108.0,
+  "protein_g": 2.5,
+  "carbs_g": 7.4,
+  "fat_g": 6.9,
+  "_ciqual_extra": {
+   "provider": "CIQUAL (repris via Journal des Femmes Santé)",
+   "code": null,
+   "food": "Sauce béchamel",
+   "basis": "100g",
+   "url": "https://sante.journaldesfemmes.fr/calories/bechamel-en-brique/aliment-11113",
+   "note": "Pas de fiche dédiée pour la sauce poulette (velouté + jaune d'œuf + citron). Approximée par la béchamel, base la plus proche documentée ; sous-estime probablement l'apport réel car la poulette est enrichie de jaune d'œuf et de crème."
+  }
+ },
+ "ing_010025": {
+  "kcal": 108.0,
+  "protein_g": 2.5,
+  "carbs_g": 7.4,
+  "fat_g": 6.9,
+  "_ciqual_extra": {
+   "provider": "CIQUAL (repris via Journal des Femmes Santé)",
+   "code": null,
+   "food": "Sauce béchamel",
+   "basis": "100g",
+   "url": "https://sante.journaldesfemmes.fr/calories/bechamel-en-brique/aliment-11113",
+   "note": "Pas de fiche dédiée pour la sauce Nantua (béchamel + beurre d'écrevisses). Approximée par la béchamel simple, ce qui sous-estime nettement l'apport réel (le beurre d'écrevisses ajoute beaucoup de matière grasse)."
+  }
+ },
+ "ing_010026": {
+  "kcal": 108.0,
+  "protein_g": 2.5,
+  "carbs_g": 7.4,
+  "fat_g": 6.9,
+  "_ciqual_extra": {
+   "provider": "CIQUAL (repris via Journal des Femmes Santé)",
+   "code": null,
+   "food": "Sauce béchamel",
+   "basis": "100g",
+   "url": "https://sante.journaldesfemmes.fr/calories/bechamel-en-brique/aliment-11113",
+   "note": "Pas de fiche dédiée pour la sauce Mornay (béchamel + fromage râpé). Approximée par la béchamel simple, ce qui sous-estime l'apport réel (le fromage ajoute protéines, lipides et calories)."
+  }
+ },
+ "ing_010027": {
+  "kcal": 379.0,
+  "protein_g": 2.7,
+  "carbs_g": 2.5,
+  "fat_g": 40.0,
+  "_ciqual_extra": {
+   "provider": "CIQUAL (repris via Sorn.fr)",
+   "code": null,
+   "food": "Sauce béarnaise",
+   "basis": "100g",
+   "url": "https://www.sorn.fr/calories-macros-sauce-bearnaise-271",
+   "note": "Pas de fiche dédiée pour la sauce Choron (béarnaise + purée de tomate concentrée). Approximée par la béarnaise classique, très proche en composition (jaune d'œuf + beurre dominants, la tomate apporte peu de calories)."
+  }
+ },
+ "ing_010029": {
+  "kcal": 17.1,
+  "protein_g": 0.8,
+  "carbs_g": 3.7,
+  "fat_g": 0.2,
+  "_usda": {
+   "provider": "USDA FoodData Central",
+   "code": "2709737",
+   "food": "Pico de gallo",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/2709737/nutrients",
+   "note": "Valeur énergétique reprise via un site tiers citant explicitement la fiche FDC 2709737 (41 kcal / 240 g soit 17,1 kcal/100 g) ; macronutriments estimés à partir de la composition typique (tomate, oignon, coriandre, citron vert, piment)."
+  }
+ },
+ "ing_010030": {
+  "kcal": 164.0,
+  "protein_g": 3.54,
+  "carbs_g": 12.94,
+  "fat_g": 10.95,
+  "_usda": {
+   "provider": "USDA FoodData Central (repris via FatSecret)",
+   "code": null,
+   "food": "Mole Poblano Sauce",
+   "basis": "100g",
+   "url": "https://foods.fatsecret.com/calories-nutrition/usda/mole-poblano-sauce",
+   "note": "FatSecret cite directement la base USDA FoodData Central pour cette fiche."
+  }
+ },
+ "ing_010031": {
+  "kcal": 48.4,
+  "protein_g": 0.0,
+  "carbs_g": 6.45,
+  "fat_g": 1.6,
+  "_usda": {
+   "provider": "USDA FoodData Central (Branded)",
+   "code": null,
+   "food": "Chipotle peppers in adobo sauce, canned",
+   "basis": "100g",
+   "url": "https://www.recipal.com/ingredients/9983-nutrition-facts-calories-protein-carbs-fat-chipotle-peppers-in-adobo-sauce",
+   "note": "Produit commercial le plus proche disponible dans la base USDA Branded Food Database, utilisé comme équivalent pour la sauce adobo seule."
+  }
+ },
+ "ing_010032": {
+  "kcal": 233.3,
+  "protein_g": 0.0,
+  "carbs_g": 56.7,
+  "fat_g": 0.0,
+  "_usda": {
+   "provider": "USDA FoodData Central (Branded)",
+   "code": null,
+   "food": "Mae Ploy Sweet Chili Sauce",
+   "basis": "100g",
+   "url": "https://www.recipal.com/ingredients/44382-nutrition-facts-calories-protein-carbs-fat-mae-ploy-sweet-chili-sauce"
+  }
+ },
+ "ing_010033": {
+  "kcal": 146.0,
+  "protein_g": 0.14,
+  "carbs_g": 37.9,
+  "fat_g": 0.09,
+  "_usda": {
+   "provider": "USDA FoodData Central (SR Legacy)",
+   "code": "NDB 09078",
+   "food": "Cranberry sauce, canned, sweetened",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-search?query=cranberry%20sauce"
+  }
+ },
+ "ing_010034": {
+  "kcal": 123.0,
+  "protein_g": 1.0,
+  "carbs_g": 26.0,
+  "fat_g": 0.5,
+  "_usda": {
+   "provider": "Étiquette commerciale (via Fitia / Nutracheck)",
+   "code": null,
+   "food": "Piccalilli (Branston)",
+   "basis": "100g",
+   "url": "https://fitia.app/calories-nutritional-information/slug-F6ghre5f4s/",
+   "note": "Pas de fiche USDA/CIQUAL générique pour le piccalilli ; valeur reprise d'une étiquette de produit commercial (Branston Piccalilli) comme équivalent documenté le plus proche."
+  }
+ },
+ "ing_010035": {
+  "kcal": 620.0,
+  "protein_g": 0.7,
+  "carbs_g": 0.5,
+  "fat_g": 68.0,
+  "_usda": {
+   "provider": "USDA FoodData Central",
+   "code": null,
+   "food": "Butter, salted (proxy)",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-search?query=butter",
+   "note": "Pas de fiche dédiée « sauce meunière » (beurre noisette, jus de citron, persil, composant très majoritairement du beurre). Approximée à partir du beurre, légèrement diluée pour tenir compte du citron et du persil."
+  }
+ },
+ "ing_010036": {
+  "kcal": 115.0,
+  "protein_g": 1.9,
+  "carbs_g": 9.9,
+  "fat_g": 7.6,
+  "_ciqual_extra": {
+   "provider": "Open Food Facts (ingrédients rattachés à des codes CIQUAL)",
+   "code": "3379140018532",
+   "food": "Sauce Colombo – PSP – 200 g",
+   "basis": "100g",
+   "url": "https://fr.openfoodfacts.org/produit/3379140018532/sauce-colombo-psp",
+   "note": "Pas de fiche CIQUAL générique « sauce colombo » ; valeur reprise d'un produit commercial français documenté (PSP), équivalent le plus proche d'une sauce colombo prête à l'emploi. Allergène moutarde confirmé par l'étiquette (graine de moutarde dans les épices)."
+  }
+ },
+ "ing_010038": {
+  "kcal": 583.0,
+  "protein_g": 17.0,
+  "carbs_g": 8.3,
+  "fat_g": 58.0,
+  "_usda": {
+   "provider": "USDA FoodData Central (Branded)",
+   "code": null,
+   "food": "Lee Kum Kee XO Sauce",
+   "basis": "100g",
+   "url": "https://www.nutritionvalue.org/Lee_kum_kee%2C_xo_sauce_by_Lee_Kum_Kee_Co._Ltd._1501427_nutritional_value.html"
+  }
+ },
+ "ing_010041": {
+  "kcal": 70.0,
+  "protein_g": 1.2,
+  "carbs_g": 9.0,
+  "fat_g": 3.0,
+  "_usda": {
+   "provider": "approximation",
+   "code": null,
+   "food": "Sauce marchand de vin (CHEF, prête à l'emploi) utilisée comme proxy",
+   "basis": "100g",
+   "url": "https://fr.openfoodfacts.org/produit/3033710033096/sauce-marchand-de-vin-chef-boite-de-850-g-pour-5-6-l",
+   "note": "Aucune fiche USDA FDC ou CIQUAL dédiée trouvée pour la sauce diable (fond brun/demi-glace + vin blanc + échalotes + cayenne, épaissie à la farine). Valeur approchée à partir d'une sauce française au vin de composition proche (marchand de vin, base farine de blé)."
+  }
+ },
+ "ing_010042": {
+  "kcal": 32.0,
+  "protein_g": 0.9,
+  "carbs_g": 4.8,
+  "fat_g": 1.0,
+  "_usda": {
+   "provider": "Open Food Facts (déclaration nutritionnelle fabricant, France)",
+   "code": "3162900028007",
+   "food": "Sauce Périgueux aux Truffes 1% - Albert Menès - 200 g",
+   "basis": "100g",
+   "url": "https://fr.openfoodfacts.org/produit/3162900028007/sauce-perigueux-aux-truffes-1-albert-menes",
+   "note": "Produit du commerce français réel; contient farine de blé (gluten) et graisse de canard (pas de lait/beurre identifié dans la liste d'ingrédients)."
+  }
+ },
+ "ing_010043": {
+  "kcal": 90.0,
+  "protein_g": 1.5,
+  "carbs_g": 3.5,
+  "fat_g": 7.0,
+  "_usda": {
+   "provider": "approximation",
+   "code": null,
+   "food": "Sauce marchand de vin (CHEF) + composition classique (velouté de poisson, vin blanc, échalotes, beurre)",
+   "basis": "100g",
+   "url": "https://fr.openfoodfacts.org/produit/3033710033096/sauce-marchand-de-vin-chef-boite-de-850-g-pour-5-6-l",
+   "note": "Aucune fiche USDA/CIQUAL dédiée trouvée pour la sauce Bercy. Recette classique = fumet de poisson + vin blanc + échalotes + beurre monté (roux/velouté), d'où gluten (farine), lactose (beurre) et poisson (fumet) ; valeur énergétique estimée par analogie avec une sauce au vin similaire, à considérer comme approximative."
+  }
+ },
+ "ing_010044": {
+  "kcal": 69.0,
+  "protein_g": 1.1,
+  "carbs_g": 10.4,
+  "fat_g": 2.5,
+  "_usda": {
+   "provider": "Open Food Facts (déclaration nutritionnelle fabricant, France)",
+   "code": "3033710033096",
+   "food": "Sauce Marchand de Vin - CHEF (préparé, pour 100 g)",
+   "basis": "100g",
+   "url": "https://fr.openfoodfacts.org/produit/3033710033096/sauce-marchand-de-vin-chef-boite-de-850-g-pour-5-6-l",
+   "note": "Valeurs 'préparées' (produit reconstitué); contient farine de blé (gluten)."
+  }
+ },
+ "ing_010045": {
+  "kcal": 62.0,
+  "protein_g": 2.3,
+  "carbs_g": 9.5,
+  "fat_g": 3.5,
+  "_usda": {
+   "provider": "EatBetter (agrégateur nutrition, sans code FDC officiel identifié)",
+   "code": null,
+   "food": "Arrabbiata sauce",
+   "basis": "100g",
+   "url": "https://www.eatbetter.app/en/food/arabiyata-sos",
+   "note": "Aucune fiche USDA FoodData Central dédiée trouvée; sauce tomate à l'ail/piment/huile d'olive, valeur approximative issue d'un agrégateur nutritionnel basé sur des produits du commerce."
+  }
+ },
+ "ing_010046": {
+  "kcal": 71.0,
+  "protein_g": 1.8,
+  "carbs_g": 3.7,
+  "fat_g": 5.4,
+  "_usda": {
+   "provider": "Eat This Much (agrégateur, données produit Rao's Homemade)",
+   "code": null,
+   "food": "Rao's Homemade Puttanesca Sauce",
+   "basis": "100g",
+   "url": "https://www.eatthismuch.com/calories/puttanesca-sauce-487652",
+   "note": "Approximation à partir d'un produit du commerce; recette classique = tomate, olives, câpres, ail, anchois (d'où l'allergène poisson)."
+  }
+ },
+ "ing_010047": {
+  "kcal": 180.0,
+  "protein_g": 2.0,
+  "carbs_g": 8.0,
+  "fat_g": 15.0,
+  "_usda": {
+   "provider": "approximation",
+   "code": null,
+   "food": "Moyenne de sauces de cuisson curry thaï du commerce (base lait de coco)",
+   "basis": "100g",
+   "url": "https://tools.myfooddata.com/nutrition-facts/2030015/wt1",
+   "note": "Aucune fiche USDA/branded dédiée au curry vert trouvée; valeur estimée par analogie avec des sauces de cuisson au curry thaï à base de lait de coco (curry rouge, pâtes de curry). La pâte de curry vert traditionnelle contient typiquement pâte de crevette (crustacés) et nuoc-mâm/sauce de poisson (poisson)."
+  }
+ },
+ "ing_010048": {
+  "kcal": 220.0,
+  "protein_g": 1.7,
+  "carbs_g": 21.2,
+  "fat_g": 13.6,
+  "_usda": {
+   "provider": "USDA Branded Food (via Open Food Facts / myfooddata)",
+   "code": "2030015",
+   "food": "Taste Of Inspirations - Thai Red Curry Cooking Sauce",
+   "basis": "100g",
+   "url": "https://tools.myfooddata.com/nutrition-facts/2030015/wt1",
+   "note": "Sauce de cuisson au curry rouge (lait de coco); la pâte de curry rouge traditionnelle contient typiquement pâte de crevette (crustacés) et sauce de poisson (poisson)."
+  }
+ },
+ "ing_010049": {
+  "kcal": 119.0,
+  "protein_g": 1.9,
+  "carbs_g": 8.8,
+  "fat_g": 8.1,
+  "_usda": {
+   "provider": "USDA FoodData Central (Branded Foods, via Open Food Facts)",
+   "code": "101337518",
+   "food": "Alfez, Lebanese Style Garlic Toum Sauce",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/fdc-app.html#/food-details/101337518/nutrients",
+   "note": "Produit du commerce à teneur en huile réduite; le toum traditionnel fait maison (émulsion huile/ail) est beaucoup plus riche en matières grasses (environ 500-650 kcal/100 g selon les recettes artisanales)."
+  }
+ },
+ "ing_010050": {
+  "kcal": 143.0,
+  "protein_g": 2.9,
+  "carbs_g": 31.4,
+  "fat_g": 1.4,
+  "_usda": {
+   "provider": "Nutritionvalue.org / myfooddata (données produit)",
+   "code": null,
+   "food": "Yakiniku Sauce - Nippon Shokken U.S.A. Inc.",
+   "basis": "100g",
+   "url": "https://www.nutritionvalue.org/Yakiniku_sauce_by_Nippon_Shokken_U.S.A._Inc._796323_nutritional_value.html",
+   "note": "Sauce japonaise à base de sauce soja (soja, gluten), souvent sésame (huile/graines); valeur extrapolée depuis une portion de 35 g (2 c. à soupe)."
+  }
+ },
+ "ing_010051": {
+  "kcal": 93.0,
+  "protein_g": 1.3,
+  "carbs_g": 21.0,
+  "fat_g": 0.1,
+  "_usda": {
+   "provider": "MyFitnessPal (agrégateur nutrition)",
+   "code": null,
+   "food": "Nuoc Cham Dipping Sauce",
+   "basis": "100g",
+   "url": "https://www.myfitnesspal.com/food/calories/nuoc-cham-dipping-sauce-403368631",
+   "note": "Sauce de trempette vietnamienne à base de nuoc-mâm (sauce de poisson), sucre, citron vert, ail, piment; valeur approximative, pas de fiche USDA FDC dédiée identifiée."
+  }
+ },
+ "ing_010052": {
+  "kcal": 155.0,
+  "protein_g": 2.5,
+  "carbs_g": 8.0,
+  "fat_g": 12.5,
+  "_usda": {
+   "provider": "Food Calorie Calculator (agrégateur) ; ingrédients confirmés via USDA Branded Food FDC 1962065",
+   "code": "1962065",
+   "food": "Romesco sauce (moyenne) / Four J - Romesco Sauce (ingrédients)",
+   "basis": "100g",
+   "url": "https://foodcaloriecalculator.co.uk/calories/condiments/romesco-sauce/",
+   "note": "La fiche USDA Branded Food dédiée (Four J - Romesco Sauce, FDC 1962065, https://fdc.nal.usda.gov/food-details/1962065/nutrients) confirme la présence d'amandes et de pain (blé) dans la recette mais ses valeurs nutritionnelles par portion sont arrondies à 0 et inutilisables ; valeur énergétique reprise d'un agrégateur nutritionnel pour approximation."
+  }
+ },
+ "ing_010053": {
+  "kcal": 183.0,
+  "protein_g": 2.0,
+  "carbs_g": 12.0,
+  "fat_g": 14.0,
+  "_usda": {
+   "provider": "SnapCalorie / MyFoodData (agrégateurs)",
+   "code": null,
+   "food": "Skordalia (Greek Garlic-Potato/Bread Dip)",
+   "basis": "100g",
+   "url": "https://www.snapcalorie.com/nutrition/skordalia_nutrition.html",
+   "note": "Valeur approximative pour la version à base de pain (d'où le gluten); la variante à base d'amandes existe aussi (fruits à coque) mais est moins courante. Pas de fiche USDA/CIQUAL dédiée trouvée avec macronutriments détaillés fiables."
+  }
+ },
+ "ing_010054": {
+  "kcal": 69.0,
+  "protein_g": 0.8,
+  "carbs_g": 14.0,
+  "fat_g": 1.2,
+  "_usda": {
+   "provider": "Eat This Much (agrégateur, données produit Tesco)",
+   "code": null,
+   "food": "Tesco Peri Peri Sauce",
+   "basis": "100g",
+   "url": "https://www.eatthismuch.com/food/nutrition/peri-peri-sauce,141573/",
+   "note": "Sauce piment/ail/citron/huile; variable selon les marques (69 à 140 kcal/100g observés); valeur approximative d'un produit du commerce."
+  }
+ },
+ "ing_010055": {
+  "kcal": 300.0,
+  "protein_g": 1.5,
+  "carbs_g": 9.8,
+  "fat_g": 28.0,
+  "_usda": {
+   "provider": "Eat This Much (agrégateur, données produit Trader Joe's)",
+   "code": null,
+   "food": "Trader Joe's Zhoug Sauce",
+   "basis": "100g",
+   "url": "https://www.eatthismuch.com/calories/zhoug-sauce-2332444",
+   "note": "Sauce yéménite coriandre/persil/piment/ail/huile d'olive; version du commerce riche en huile. Des recettes maison donnent des valeurs plus basses (92-166 kcal/100g) selon la quantité d'huile."
+  }
+ },
+ "ing_010056": {
+  "kcal": 200.0,
+  "protein_g": 5.0,
+  "carbs_g": 50.0,
+  "fat_g": 0.0,
+  "_usda": {
+   "provider": "USDA FoodData Central (Branded Foods, via Open Food Facts)",
+   "code": "100393956",
+   "food": "CJ Foods, Gochujang",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/fdc-app.html#/food-details/100393956/nutrients",
+   "note": "Pâte de piment fermenté à base de riz/soja/blé, extrapolée depuis une portion de 20 g (1 c. à soupe)."
+  }
+ },
+ "ing_010057": {
+  "kcal": 167.0,
+  "protein_g": 6.7,
+  "carbs_g": 26.7,
+  "fat_g": 0.0,
+  "_usda": {
+   "provider": "USDA FoodData Central (Branded Foods)",
+   "code": "2085573",
+   "food": "Ssam Sauce, Korean Chilli Sauce",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/2085573/nutrients",
+   "note": "Ingrédients confirmés : gochujang (soja, blé), miso, sauce soja (blé), pâte de soja fermentée ; extrapolée depuis une portion de 15 g (1 c. à soupe)."
+  }
+ },
+ "ing_010058": {
+  "kcal": 74.0,
+  "protein_g": 1.5,
+  "carbs_g": 5.5,
+  "fat_g": 6.0,
+  "_usda": {
+   "provider": "FatSecret Platform API (générique)",
+   "code": null,
+   "food": "Green Enchilada Sauce (generic)",
+   "basis": "100g",
+   "url": "https://mobile.fatsecret.com/calories-nutrition/generic/enchilada-sauce-green",
+   "note": "Sauce tomatillo/piments verts/ail/oignon; pas d'allergène direct identifié dans la recette classique."
+  }
+ },
+ "ing_010059": {
+  "kcal": 71.0,
+  "protein_g": 1.0,
+  "carbs_g": 14.0,
+  "fat_g": 1.0,
+  "_usda": {
+   "provider": "Eat This Much / FatSecret (agrégateurs, données produit McCormick)",
+   "code": null,
+   "food": "McCormick Fajita Skillet Sauce",
+   "basis": "100g",
+   "url": "https://android.fatsecret.com/calories-nutrition/mccormick/fajita-skillet-sauce",
+   "note": "Sauce tomate/poivrons/oignons/épices; pas d'allergène direct identifié dans la recette classique."
+  }
+ },
+ "ing_010060": {
+  "kcal": 464.0,
+  "protein_g": 0.87,
+  "carbs_g": 23.0,
+  "fat_g": 41.0,
+  "_usda": {
+   "provider": "USDA FoodData Central (SR/Legacy)",
+   "code": "171043",
+   "food": "Salad dressing, honey mustard, regular",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/171043/nutrients",
+   "note": "Fiche USDA correspond à une version 'salad dressing' riche en huile; le condiment français type moutarde+miel (sauce à tremper/badigeonner) est en général moins gras que cette vinaigrette du commerce - valeur à considérer comme un majorant."
+  }
  }
 }
