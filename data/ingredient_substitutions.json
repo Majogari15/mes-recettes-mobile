@@ -6518,5 +6518,2477 @@
   "ingredientId": "ing_009904",
   "targetIngredientId": "ing_009971",
   "note": "Cream of Rice et Cream of Wheat : céréales chaudes substituables"
+ },
+ {
+  "ingredientId": "ing_001121",
+  "targetIngredientId": "ing_001156",
+  "note": "Même produit sans soja ajouté ; quantité identique, cuisson identique.",
+  "substitutionId": "sub_001068"
+ },
+ {
+  "ingredientId": "ing_001156",
+  "targetIngredientId": "ing_001149",
+  "note": "Nuggets de volaille à la place du poulet seul, texture et cuisson très proches.",
+  "substitutionId": "sub_001069"
+ },
+ {
+  "ingredientId": "ing_001135",
+  "targetIngredientId": "ing_001158",
+  "note": "Remplacer le veau par du poulet pané ; même quantité, cuisson identique.",
+  "substitutionId": "sub_001070"
+ },
+ {
+  "ingredientId": "ing_001159",
+  "targetIngredientId": "ing_001158",
+  "note": "Dinde et poulet panés sont interchangeables à quantité égale.",
+  "substitutionId": "sub_001071"
+ },
+ {
+  "ingredientId": "ing_001091",
+  "targetIngredientId": "ing_001099",
+  "note": "Bouillon de volaille à la place du bœuf, goût un peu moins prononcé mais base équivalente.",
+  "substitutionId": "sub_001072"
+ },
+ {
+  "ingredientId": "ing_001099",
+  "targetIngredientId": "ing_001100",
+  "note": "Bouillon de légumes pour une version plus légère (ou végétarienne), même quantité.",
+  "substitutionId": "sub_001073"
+ },
+ {
+  "ingredientId": "ing_001161",
+  "targetIngredientId": "ing_001166",
+  "note": "Remplacer le mouton par un couscous à la viande classique, mêmes légumes et semoule.",
+  "substitutionId": "sub_001074"
+ },
+ {
+  "ingredientId": "ing_001165",
+  "targetIngredientId": "ing_001162",
+  "note": "Version allégée à la viande ou au poulet, même principe et même quantité.",
+  "substitutionId": "sub_001075"
+ },
+ {
+  "ingredientId": "ing_001131",
+  "targetIngredientId": "ing_001132",
+  "note": "Paupiette de volaille à la place du veau, préparation et cuisson identiques.",
+  "substitutionId": "sub_001076"
+ },
+ {
+  "ingredientId": "ing_001182",
+  "targetIngredientId": "ing_001186",
+  "note": "Tajine de poulet à la place du mouton, mêmes épices et légumes, cuisson un peu plus courte.",
+  "substitutionId": "sub_001077"
+ },
+ {
+  "ingredientId": "ing_001175",
+  "targetIngredientId": "ing_001169",
+  "note": "Cassoulet appertisé classique à la place de la version au porc, base haricots identique.",
+  "substitutionId": "sub_001078"
+ },
+ {
+  "ingredientId": "ing_001176",
+  "targetIngredientId": "ing_001175",
+  "note": "Cassoulet au porc à la place du canard/oie ; base identique, saveur moins prononcée.",
+  "substitutionId": "sub_001079"
+ },
+ {
+  "ingredientId": "ing_001082",
+  "targetIngredientId": "ing_001095",
+  "note": "Version déshydratée à reconstituer, même goût, diluer selon le sachet.",
+  "substitutionId": "sub_001080"
+ },
+ {
+  "ingredientId": "ing_001079",
+  "targetIngredientId": "ing_001097",
+  "note": "Sachet déshydraté à reconstituer, résultat très proche de la version fraîche.",
+  "substitutionId": "sub_001081"
+ },
+ {
+  "ingredientId": "ing_001080",
+  "targetIngredientId": "ing_001096",
+  "note": "Version déshydratée à reconstituer, goût très proche.",
+  "substitutionId": "sub_001082"
+ },
+ {
+  "ingredientId": "ing_001073",
+  "targetIngredientId": "ing_001075",
+  "note": "Version déshydratée reconstituée, même type de légumes, à diluer selon le sachet.",
+  "substitutionId": "sub_001083"
+ },
+ {
+  "ingredientId": "ing_001076",
+  "targetIngredientId": "ing_001089",
+  "note": "Sachet déshydraté à reconstituer, même recette poireaux/pommes de terre.",
+  "substitutionId": "sub_001084"
+ },
+ {
+  "ingredientId": "ing_001072",
+  "targetIngredientId": "ing_001090",
+  "note": "Version déshydratée à reconstituer, même base volaille et légumes.",
+  "substitutionId": "sub_001085"
+ },
+ {
+  "ingredientId": "ing_001084",
+  "targetIngredientId": "ing_001106",
+  "note": "Minestrone déshydraté à reconstituer, même recette.",
+  "substitutionId": "sub_001086"
+ },
+ {
+  "ingredientId": "ing_001098",
+  "targetIngredientId": "ing_001104",
+  "note": "Soupe au potiron déshydratée à reconstituer, goût très proche.",
+  "substitutionId": "sub_001087"
+ },
+ {
+  "ingredientId": "ing_001197",
+  "targetIngredientId": "ing_001207",
+  "note": "Poisson blanc cuit nature, à napper d'une sauce maison si besoin ; base identique.",
+  "substitutionId": "sub_001088"
+ },
+ {
+  "ingredientId": "ing_001196",
+  "targetIngredientId": "ing_001207",
+  "note": "Poisson blanc cuit nature, à accompagner d'une sauce tomate maison si besoin.",
+  "substitutionId": "sub_001089"
+ },
+ {
+  "ingredientId": "ing_001199",
+  "targetIngredientId": "ing_001207",
+  "note": "Poisson blanc cuit nature ; ajouter un peu de moutarde à la préparation si besoin.",
+  "substitutionId": "sub_001090"
+ },
+ {
+  "ingredientId": "ing_001195",
+  "targetIngredientId": "ing_001207",
+  "note": "Poisson blanc cuit nature, sans la chapelure/huile de la version bordelaise.",
+  "substitutionId": "sub_001091"
+ },
+ {
+  "ingredientId": "ing_001034",
+  "targetIngredientId": "ing_001048",
+  "note": "Céleri-carotte rémoulade à la place du céleri seul, texture et sauce quasi identiques.",
+  "substitutionId": "sub_001092"
+ },
+ {
+  "ingredientId": "ing_001038",
+  "targetIngredientId": "ing_001040",
+  "note": "Salade de pomme de terre piémontaise à la place de la maison, base pomme de terre/mayonnaise identique.",
+  "substitutionId": "sub_001093"
+ },
+ {
+  "ingredientId": "ing_001069",
+  "targetIngredientId": "ing_001058",
+  "note": "Coleslaw (chou blanc/carotte) à la place du chou rouge, même principe de salade de chou.",
+  "substitutionId": "sub_001094"
+ },
+ {
+  "ingredientId": "ing_001039",
+  "targetIngredientId": "ing_001063",
+  "note": "Taboulé au poulet à la place du taboulé aux légumes ; retirer le poulet si besoin d'une version végétarienne.",
+  "substitutionId": "sub_001095"
+ },
+ {
+  "ingredientId": "ing_001235",
+  "targetIngredientId": "ing_001237",
+  "note": "Même produit, en version préemballée au lieu de vente à emporter.",
+  "substitutionId": "sub_001096"
+ },
+ {
+  "ingredientId": "ing_001240",
+  "targetIngredientId": "ing_001260",
+  "note": "Version végétarienne du même plat (ravioli en sauce tomate en conserve).",
+  "substitutionId": "sub_001097"
+ },
+ {
+  "ingredientId": "ing_001241",
+  "targetIngredientId": "ing_001246",
+  "note": "Version végétarienne sans viande, même format préemballé.",
+  "substitutionId": "sub_001098"
+ },
+ {
+  "ingredientId": "ing_001269",
+  "targetIngredientId": "ing_001730",
+  "note": "Remplacer par une purée de pomme de terre classique, sans la tomme fraîche.",
+  "substitutionId": "sub_001099"
+ },
+ {
+  "ingredientId": "ing_001272",
+  "targetIngredientId": "ing_001224",
+  "note": "Gratin de pommes de terre similaire, sans reblochon ni lardons.",
+  "substitutionId": "sub_001100"
+ },
+ {
+  "ingredientId": "ing_001238",
+  "targetIngredientId": "ing_001971",
+  "note": "Même céréale, à cuire soi-même plutôt qu'en sachet micro-ondable.",
+  "substitutionId": "sub_001101"
+ },
+ {
+  "ingredientId": "ing_001250",
+  "targetIngredientId": "ing_001986",
+  "note": "Semoule de couscous nature, à agrémenter soi-même de légumes.",
+  "substitutionId": "sub_001102"
+ },
+ {
+  "ingredientId": "ing_001284",
+  "targetIngredientId": "ing_000217",
+  "note": "Cordon bleu classique à base de viande, même préparation panée.",
+  "substitutionId": "sub_001103"
+ },
+ {
+  "ingredientId": "ing_001279",
+  "targetIngredientId": "ing_001156",
+  "note": "Nuggets classiques au poulet, même quantité.",
+  "substitutionId": "sub_001104"
+ },
+ {
+  "ingredientId": "ing_001281",
+  "targetIngredientId": "ing_001279",
+  "note": "Alternative sans soja, même format pané.",
+  "substitutionId": "sub_001105"
+ },
+ {
+  "ingredientId": "ing_001348",
+  "targetIngredientId": "ing_001381",
+  "note": "Même quantité, version préemballée du croque-monsieur.",
+  "substitutionId": "sub_001106"
+ },
+ {
+  "ingredientId": "ing_001381",
+  "targetIngredientId": "ing_001348",
+  "note": "Même quantité, version faite maison.",
+  "substitutionId": "sub_001107"
+ },
+ {
+  "ingredientId": "ing_001379",
+  "targetIngredientId": "ing_001348",
+  "note": "Retirer l'œuf pour obtenir un croque-monsieur classique.",
+  "substitutionId": "sub_001108"
+ },
+ {
+  "ingredientId": "ing_001356",
+  "targetIngredientId": "ing_001386",
+  "note": "Même sandwich, version vente à emporter.",
+  "substitutionId": "sub_001109"
+ },
+ {
+  "ingredientId": "ing_001359",
+  "targetIngredientId": "ing_001389",
+  "note": "Même sandwich, version vente à emporter.",
+  "substitutionId": "sub_001110"
+ },
+ {
+  "ingredientId": "ing_001366",
+  "targetIngredientId": "ing_001387",
+  "note": "Même sandwich, version vente à emporter.",
+  "substitutionId": "sub_001111"
+ },
+ {
+  "ingredientId": "ing_001367",
+  "targetIngredientId": "ing_001391",
+  "note": "Même sandwich, version vente à emporter.",
+  "substitutionId": "sub_001112"
+ },
+ {
+  "ingredientId": "ing_001369",
+  "targetIngredientId": "ing_001390",
+  "note": "Même sandwich, version vente à emporter.",
+  "substitutionId": "sub_001113"
+ },
+ {
+  "ingredientId": "ing_001360",
+  "targetIngredientId": "ing_001388",
+  "note": "Même sandwich, version vente à emporter.",
+  "substitutionId": "sub_001114"
+ },
+ {
+  "ingredientId": "ing_001414",
+  "targetIngredientId": "ing_001425",
+  "note": "Même type de préparation, faite maison plutôt que préemballée.",
+  "substitutionId": "sub_001115"
+ },
+ {
+  "ingredientId": "ing_001428",
+  "targetIngredientId": "ing_001234",
+  "note": "Version végétarienne du beignet, sans viande ni poisson.",
+  "substitutionId": "sub_001116"
+ },
+ {
+  "ingredientId": "ing_001256",
+  "targetIngredientId": "ing_001239",
+  "note": "Remplacer les crevettes par une garniture viande/légumes, même base de nouilles sautées.",
+  "substitutionId": "sub_001117"
+ },
+ {
+  "ingredientId": "ing_001267",
+  "targetIngredientId": "ing_001239",
+  "note": "Nouilles asiatiques non instantanées, à cuisiner soi-même plutôt qu'en version instantanée.",
+  "substitutionId": "sub_001118"
+ },
+ {
+  "ingredientId": "ing_001303",
+  "targetIngredientId": "ing_001297",
+  "note": "Retirer le jambon pour obtenir une pizza fromage/margherita.",
+  "substitutionId": "sub_001119"
+ },
+ {
+  "ingredientId": "ing_001277",
+  "targetIngredientId": "ing_001278",
+  "note": "Même produit, version non garantie sans ingrédients animaux.",
+  "substitutionId": "sub_001120"
+ },
+ {
+  "ingredientId": "ing_001278",
+  "targetIngredientId": "ing_001277",
+  "note": "Même produit, en version convenant aux véganes.",
+  "substitutionId": "sub_001121"
+ },
+ {
+  "ingredientId": "ing_001280",
+  "targetIngredientId": "ing_001281",
+  "note": "Même produit, en version convenant aux véganes.",
+  "substitutionId": "sub_001122"
+ },
+ {
+  "ingredientId": "ing_001291",
+  "targetIngredientId": "ing_001292",
+  "note": "Même produit, version non garantie sans ingrédients animaux.",
+  "substitutionId": "sub_001123"
+ },
+ {
+  "ingredientId": "ing_001292",
+  "targetIngredientId": "ing_001291",
+  "note": "Même produit, en version convenant aux véganes.",
+  "substitutionId": "sub_001124"
+ },
+ {
+  "ingredientId": "ing_001451",
+  "targetIngredientId": "ing_000441",
+  "note": "Remplacer par des haricots verts frais, même quantité, en ajustant le temps de cuisson.",
+  "substitutionId": "sub_001125"
+ },
+ {
+  "ingredientId": "ing_001452",
+  "targetIngredientId": "ing_004234",
+  "note": "Remplacer par du chou-fleur frais, même quantité.",
+  "substitutionId": "sub_001126"
+ },
+ {
+  "ingredientId": "ing_001454",
+  "targetIngredientId": "ing_000705",
+  "note": "Remplacer par des petits pois frais écossés, même quantité.",
+  "substitutionId": "sub_001127"
+ },
+ {
+  "ingredientId": "ing_001485",
+  "targetIngredientId": "ing_000133",
+  "note": "Remplacer par de la carotte fraîche, même quantité.",
+  "substitutionId": "sub_001128"
+ },
+ {
+  "ingredientId": "ing_001483",
+  "targetIngredientId": "ing_004217",
+  "note": "Remplacer par du brocoli frais, même quantité.",
+  "substitutionId": "sub_001129"
+ },
+ {
+  "ingredientId": "ing_001453",
+  "targetIngredientId": "ing_001449",
+  "note": "Remplacer par des épinards frais crus, prévoir environ deux fois plus de poids car ils réduisent beaucoup à la cuisson.",
+  "substitutionId": "sub_001130"
+ },
+ {
+  "ingredientId": "ing_001487",
+  "targetIngredientId": "ing_001558",
+  "note": "Remplacer par un mélange petits pois-carottes en conserve, bien égoutté.",
+  "substitutionId": "sub_001131"
+ },
+ {
+  "ingredientId": "ing_001488",
+  "targetIngredientId": "ing_001554",
+  "note": "Remplacer par des champignons de Paris en conserve, bien égouttés.",
+  "substitutionId": "sub_001132"
+ },
+ {
+  "ingredientId": "ing_001482",
+  "targetIngredientId": "ing_001546",
+  "note": "Remplacer par des haricots beurre en conserve, bien égouttés.",
+  "substitutionId": "sub_001133"
+ },
+ {
+  "ingredientId": "ing_001491",
+  "targetIngredientId": "ing_001570",
+  "note": "Remplacer par des fonds d'artichaut en conserve, bien égouttés.",
+  "substitutionId": "sub_001134"
+ },
+ {
+  "ingredientId": "ing_001496",
+  "targetIngredientId": "ing_001555",
+  "note": "Remplacer par des salsifis en conserve, bien égouttés.",
+  "substitutionId": "sub_001135"
+ },
+ {
+  "ingredientId": "ing_001456",
+  "targetIngredientId": "ing_001543",
+  "note": "Remplacer par une macédoine de légumes en conserve, bien égouttée.",
+  "substitutionId": "sub_001136"
+ },
+ {
+  "ingredientId": "ing_001548",
+  "targetIngredientId": "ing_001588",
+  "note": "Utiliser environ deux fois moins de double concentré et diluer avec un peu d'eau.",
+  "substitutionId": "sub_001137"
+ },
+ {
+  "ingredientId": "ing_001588",
+  "targetIngredientId": "ing_001548",
+  "note": "Utiliser environ deux fois plus de concentré simple et réduire l'eau ajoutée.",
+  "substitutionId": "sub_001138"
+ },
+ {
+  "ingredientId": "ing_001541",
+  "targetIngredientId": "ing_001573",
+  "note": "Même quantité, résultat très proche (tomates pelées ou en morceaux en conserve).",
+  "substitutionId": "sub_001139"
+ },
+ {
+  "ingredientId": "ing_001480",
+  "targetIngredientId": "ing_001574",
+  "note": "Remplacer par des pousses de bambou en conserve, bien égouttées, même quantité.",
+  "substitutionId": "sub_001140"
+ },
+ {
+  "ingredientId": "ing_001477",
+  "targetIngredientId": "ing_001533",
+  "note": "Remplacer par des pousses de soja en conserve, bien égouttées.",
+  "substitutionId": "sub_001141"
+ },
+ {
+  "ingredientId": "ing_001464",
+  "targetIngredientId": "ing_001467",
+  "note": "Remplacer par de la courge butternut, même quantité, saveur légèrement moins sucrée.",
+  "substitutionId": "sub_001142"
+ },
+ {
+  "ingredientId": "ing_001566",
+  "targetIngredientId": "ing_001539",
+  "note": "Remplacer par des poireaux cuits émincés, même quantité.",
+  "substitutionId": "sub_001143"
+ },
+ {
+  "ingredientId": "ing_001470",
+  "targetIngredientId": "ing_004885",
+  "note": "Remplacer par des champignons de Paris frais, moins parfumé mais bon substitut économique.",
+  "substitutionId": "sub_001144"
+ },
+ {
+  "ingredientId": "ing_001457",
+  "targetIngredientId": "ing_001461",
+  "note": "Remplacer par des pleurotes fraîches, même quantité, saveur plus douce.",
+  "substitutionId": "sub_001145"
+ },
+ {
+  "ingredientId": "ing_001479",
+  "targetIngredientId": "ing_000848",
+  "note": "Remplacer par du salsifis (blanc), même quantité, préparation identique.",
+  "substitutionId": "sub_001146"
+ },
+ {
+  "ingredientId": "ing_001492",
+  "targetIngredientId": "ing_005204",
+  "note": "Remplacer par du maïs doux frais égrainé, même quantité.",
+  "substitutionId": "sub_001147"
+ },
+ {
+  "ingredientId": "ing_001652",
+  "targetIngredientId": "ing_004944",
+  "note": "Réhydrater puis utiliser en quantité équivalente ; texture plus ferme, saveur moins prononcée que le champignon noir.",
+  "substitutionId": "sub_001148"
+ },
+ {
+  "ingredientId": "ing_001654",
+  "targetIngredientId": "ing_000971",
+  "note": "Ajouter un peu d'huile d'olive pour compenser l'absence de marinade.",
+  "substitutionId": "sub_001149"
+ },
+ {
+  "ingredientId": "ing_001651",
+  "targetIngredientId": "ing_000633",
+  "note": "Utiliser environ 3 fois plus d'oignon frais émincé que d'oignon séché.",
+  "substitutionId": "sub_001150"
+ },
+ {
+  "ingredientId": "ing_001650",
+  "targetIngredientId": "ing_001639",
+  "note": "Réhydrater puis cuire, ou remplacer directement par de la carotte fraîche cuite en quantité équivalente.",
+  "substitutionId": "sub_001151"
+ },
+ {
+  "ingredientId": "ing_001635",
+  "targetIngredientId": "ing_001692",
+  "note": "Même légume (pak choï/bok choy), quantité identique.",
+  "substitutionId": "sub_001152"
+ },
+ {
+  "ingredientId": "ing_001659",
+  "targetIngredientId": "ing_001693",
+  "note": "Même légume (chayote/christophine), quantité identique.",
+  "substitutionId": "sub_001153"
+ },
+ {
+  "ingredientId": "ing_001676",
+  "targetIngredientId": "ing_001649",
+  "note": "Même légume, quantité identique.",
+  "substitutionId": "sub_001154"
+ },
+ {
+  "ingredientId": "ing_001737",
+  "targetIngredientId": "ing_001731",
+  "note": "Texture proche, saveur plus sucrée ; quantité identique.",
+  "substitutionId": "sub_001155"
+ },
+ {
+  "ingredientId": "ing_001745",
+  "targetIngredientId": "ing_001731",
+  "note": "Texture plus farineuse ; quantité identique, ajuster la cuisson.",
+  "substitutionId": "sub_001156"
+ },
+ {
+  "ingredientId": "ing_001744",
+  "targetIngredientId": "ing_001696",
+  "note": "Quantité identique, goût plus neutre.",
+  "substitutionId": "sub_001157"
+ },
+ {
+  "ingredientId": "ing_001742",
+  "targetIngredientId": "ing_001731",
+  "note": "Quantité identique, texture légèrement plus collante avec le taro.",
+  "substitutionId": "sub_001158"
+ },
+ {
+  "ingredientId": "ing_001746",
+  "targetIngredientId": "ing_001749",
+  "note": "Haricots blancs très proches, quantité identique.",
+  "substitutionId": "sub_001159"
+ },
+ {
+  "ingredientId": "ing_001751",
+  "targetIngredientId": "ing_001747",
+  "note": "Pour potages/purées, quantité identique.",
+  "substitutionId": "sub_001160"
+ },
+ {
+  "ingredientId": "ing_001781",
+  "targetIngredientId": "ing_001782",
+  "note": "Cuisson et texture très proches, quantité identique.",
+  "substitutionId": "sub_001161"
+ },
+ {
+  "ingredientId": "ing_001782",
+  "targetIngredientId": "ing_001781",
+  "note": "Cuisson et texture très proches, quantité identique.",
+  "substitutionId": "sub_001162"
+ },
+ {
+  "ingredientId": "ing_001817",
+  "targetIngredientId": "ing_001818",
+  "note": "Même quantité, saveur légèrement moins acidulée.",
+  "substitutionId": "sub_001163"
+ },
+ {
+  "ingredientId": "ing_001818",
+  "targetIngredientId": "ing_001817",
+  "note": "Même quantité, saveur légèrement plus acidulée.",
+  "substitutionId": "sub_001164"
+ },
+ {
+  "ingredientId": "ing_001807",
+  "targetIngredientId": "ing_001808",
+  "note": "Même quantité, saveur un peu moins sucrée.",
+  "substitutionId": "sub_001165"
+ },
+ {
+  "ingredientId": "ing_001808",
+  "targetIngredientId": "ing_001807",
+  "note": "Même quantité, saveur un peu plus sucrée.",
+  "substitutionId": "sub_001166"
+ },
+ {
+  "ingredientId": "ing_001785",
+  "targetIngredientId": "ing_001788",
+  "note": "Même quantité, la reine-claude est un peu plus sucrée.",
+  "substitutionId": "sub_001167"
+ },
+ {
+  "ingredientId": "ing_001788",
+  "targetIngredientId": "ing_001785",
+  "note": "Même quantité, la mirabelle est un peu plus acidulée.",
+  "substitutionId": "sub_001168"
+ },
+ {
+  "ingredientId": "ing_001786",
+  "targetIngredientId": "ing_001809",
+  "note": "Même fruit frais/surgelé, quantité identique.",
+  "substitutionId": "sub_001169"
+ },
+ {
+  "ingredientId": "ing_001809",
+  "targetIngredientId": "ing_001786",
+  "note": "Même fruit frais/surgelé, quantité identique.",
+  "substitutionId": "sub_001170"
+ },
+ {
+  "ingredientId": "ing_001797",
+  "targetIngredientId": "ing_001814",
+  "note": "Même quantité, la Gala est plus sucrée et moins acidulée.",
+  "substitutionId": "sub_001171"
+ },
+ {
+  "ingredientId": "ing_001814",
+  "targetIngredientId": "ing_001797",
+  "note": "Même quantité, la Golden tient mieux à la cuisson.",
+  "substitutionId": "sub_001172"
+ },
+ {
+  "ingredientId": "ing_001810",
+  "targetIngredientId": "ing_001811",
+  "note": "Même quantité, le pomelo rose est un peu plus sucré.",
+  "substitutionId": "sub_001173"
+ },
+ {
+  "ingredientId": "ing_001811",
+  "targetIngredientId": "ing_001810",
+  "note": "Même quantité, le pomelo jaune est un peu plus acidulé.",
+  "substitutionId": "sub_001174"
+ },
+ {
+  "ingredientId": "ing_001784",
+  "targetIngredientId": "ing_001833",
+  "note": "Même quantité, chair un peu moins parfumée.",
+  "substitutionId": "sub_001175"
+ },
+ {
+  "ingredientId": "ing_001833",
+  "targetIngredientId": "ing_001784",
+  "note": "Même quantité, chair un peu plus parfumée.",
+  "substitutionId": "sub_001176"
+ },
+ {
+  "ingredientId": "ing_001799",
+  "targetIngredientId": "ing_001783",
+  "note": "La cerise est plus douce : réduire un peu le sucre ajouté dans la recette.",
+  "substitutionId": "sub_001177"
+ },
+ {
+  "ingredientId": "ing_001836",
+  "targetIngredientId": "ing_001847",
+  "note": "Purée de pommes sans sucres ajoutés, moins sucrée mais texture identique, même quantité.",
+  "substitutionId": "sub_001178"
+ },
+ {
+  "ingredientId": "ing_001839",
+  "targetIngredientId": "ing_001836",
+  "note": "Compote de pomme classique, légèrement plus sucrée, même quantité.",
+  "substitutionId": "sub_001179"
+ },
+ {
+  "ingredientId": "ing_001850",
+  "targetIngredientId": "ing_001836",
+  "note": "Compote de pomme, goût plus neutre, même quantité en pâtisserie.",
+  "substitutionId": "sub_001180"
+ },
+ {
+  "ingredientId": "ing_001851",
+  "targetIngredientId": "ing_001836",
+  "note": "Compote de pomme, goût plus neutre, même quantité.",
+  "substitutionId": "sub_001181"
+ },
+ {
+  "ingredientId": "ing_001861",
+  "targetIngredientId": "ing_001867",
+  "note": "Version au sirop léger, moins sucrée, même quantité.",
+  "substitutionId": "sub_001182"
+ },
+ {
+  "ingredientId": "ing_001870",
+  "targetIngredientId": "ing_001868",
+  "note": "Version au sirop léger, moins sucrée, même quantité.",
+  "substitutionId": "sub_001183"
+ },
+ {
+  "ingredientId": "ing_001862",
+  "targetIngredientId": "ing_001865",
+  "note": "Version au sirop léger, moins sucrée, même quantité.",
+  "substitutionId": "sub_001184"
+ },
+ {
+  "ingredientId": "ing_001864",
+  "targetIngredientId": "ing_001866",
+  "note": "Version au sirop léger, moins sucrée, même quantité.",
+  "substitutionId": "sub_001185"
+ },
+ {
+  "ingredientId": "ing_001873",
+  "targetIngredientId": "ing_001871",
+  "note": "Ananas au jus, moins sucré, bien égoutter avant usage.",
+  "substitutionId": "sub_001186"
+ },
+ {
+  "ingredientId": "ing_001876",
+  "targetIngredientId": "ing_001878",
+  "note": "Poire au sirop léger, texture et sucrosité proches, même quantité.",
+  "substitutionId": "sub_001187"
+ },
+ {
+  "ingredientId": "ing_001880",
+  "targetIngredientId": "ing_001884",
+  "note": "Canneberge séchée, plus acidulée, même quantité dans gâteaux ou salades.",
+  "substitutionId": "sub_001188"
+ },
+ {
+  "ingredientId": "ing_001933",
+  "targetIngredientId": "ing_001951",
+  "note": "Version sans sel ajouté, pour réduire le sel, même quantité, resaler à convenance.",
+  "substitutionId": "sub_001189"
+ },
+ {
+  "ingredientId": "ing_001940",
+  "targetIngredientId": "ing_001960",
+  "note": "Version sans sel ajouté, même quantité, resaler à convenance.",
+  "substitutionId": "sub_001190"
+ },
+ {
+  "ingredientId": "ing_001946",
+  "targetIngredientId": "ing_001959",
+  "note": "Version sans sel ajouté, même quantité, resaler à convenance.",
+  "substitutionId": "sub_001191"
+ },
+ {
+  "ingredientId": "ing_001949",
+  "targetIngredientId": "ing_001957",
+  "note": "Bon substitut dans mélanges apéritifs ou pâtisserie, même quantité.",
+  "substitutionId": "sub_001192"
+ },
+ {
+  "ingredientId": "ing_001934",
+  "targetIngredientId": "ing_001945",
+  "note": "Graines décortiquées, un peu plus digestes, même quantité.",
+  "substitutionId": "sub_001193"
+ },
+ {
+  "ingredientId": "ing_001944",
+  "targetIngredientId": "ing_001954",
+  "note": "Même usage comme liant (gel avec eau) en pâtisserie/porridge, même quantité.",
+  "substitutionId": "sub_001194"
+ },
+ {
+  "ingredientId": "ing_001969",
+  "targetIngredientId": "ing_000068",
+  "note": "Texture proche pour sauces et pâtisseries, goût plus sucré et prononcé.",
+  "substitutionId": "sub_001195"
+ },
+ {
+  "ingredientId": "ing_001941",
+  "targetIngredientId": "ing_001942",
+  "note": "Goût plus grillé, même quantité, texture un peu plus sèche.",
+  "substitutionId": "sub_001196"
+ },
+ {
+  "ingredientId": "ing_001973",
+  "targetIngredientId": "ing_001980",
+  "note": "Riz basmati, grains interchangeables, même quantité.",
+  "substitutionId": "sub_001197"
+ },
+ {
+  "ingredientId": "ing_001979",
+  "targetIngredientId": "ing_001980",
+  "note": "Riz basmati, grains longs similaires, même quantité.",
+  "substitutionId": "sub_001198"
+ },
+ {
+  "ingredientId": "ing_002007",
+  "targetIngredientId": "ing_002005",
+  "note": "Riz blanc classique, même quantité et cuisson proche.",
+  "substitutionId": "sub_001199"
+ },
+ {
+  "ingredientId": "ing_001990",
+  "targetIngredientId": "ing_001994",
+  "note": "Version complète, plus riche en fibres, même quantité.",
+  "substitutionId": "sub_001200"
+ },
+ {
+  "ingredientId": "ing_002021",
+  "targetIngredientId": "ing_002025",
+  "note": "Version complète, plus riche en fibres, même quantité.",
+  "substitutionId": "sub_001201"
+ },
+ {
+  "ingredientId": "ing_001986",
+  "targetIngredientId": "ing_001989",
+  "note": "Boulgour cuit, texture un peu plus ferme, même usage en salade ou accompagnement.",
+  "substitutionId": "sub_001202"
+ },
+ {
+  "ingredientId": "ing_002019",
+  "targetIngredientId": "ing_002020",
+  "note": "Boulgour cru, cuisson similaire, même usage.",
+  "substitutionId": "sub_001203"
+ },
+ {
+  "ingredientId": "ing_001998",
+  "targetIngredientId": "ing_001999",
+  "note": "Vermicelle de soja, texture proche, même quantité.",
+  "substitutionId": "sub_001204"
+ },
+ {
+  "ingredientId": "ing_002027",
+  "targetIngredientId": "ing_002028",
+  "note": "Vermicelles de soja, texture proche, même quantité.",
+  "substitutionId": "sub_001205"
+ },
+ {
+  "ingredientId": "ing_002029",
+  "targetIngredientId": "ing_002030",
+  "note": "Gnocchi à la semoule, texture un peu plus ferme, même quantité.",
+  "substitutionId": "sub_001206"
+ },
+ {
+  "ingredientId": "ing_001993",
+  "targetIngredientId": "ing_001990",
+  "note": "Pâtes classiques si pas de contrainte sans gluten, même quantité et cuisson.",
+  "substitutionId": "sub_001207"
+ },
+ {
+  "ingredientId": "ing_001990",
+  "targetIngredientId": "ing_001993",
+  "note": "Pâtes sans gluten pour un repas adapté, même quantité et cuisson proche.",
+  "substitutionId": "sub_001208"
+ },
+ {
+  "ingredientId": "ing_002139",
+  "targetIngredientId": "ing_000341",
+  "note": "Même quantité, pouvoir liant très proche.",
+  "substitutionId": "sub_001209"
+ },
+ {
+  "ingredientId": "ing_002145",
+  "targetIngredientId": "ing_002139",
+  "note": "Même quantité, pouvoir épaississant similaire.",
+  "substitutionId": "sub_001210"
+ },
+ {
+  "ingredientId": "ing_002138",
+  "targetIngredientId": "ing_000325",
+  "note": "Même quantité, saveur un peu plus neutre.",
+  "substitutionId": "sub_001211"
+ },
+ {
+  "ingredientId": "ing_002135",
+  "targetIngredientId": "ing_000326",
+  "note": "Même quantité, résultat moins rustique.",
+  "substitutionId": "sub_001212"
+ },
+ {
+  "ingredientId": "ing_002137",
+  "targetIngredientId": "ing_000326",
+  "note": "Même quantité, mie un peu plus légère.",
+  "substitutionId": "sub_001213"
+ },
+ {
+  "ingredientId": "ing_002153",
+  "targetIngredientId": "ing_002154",
+  "note": "Même quantité, goût plus prononcé (pur beurre).",
+  "substitutionId": "sub_001214"
+ },
+ {
+  "ingredientId": "ing_002154",
+  "targetIngredientId": "ing_002153",
+  "note": "Même quantité, version sans beurre (utile en cas d'intolérance).",
+  "substitutionId": "sub_001215"
+ },
+ {
+  "ingredientId": "ing_002148",
+  "targetIngredientId": "ing_002150",
+  "note": "Même quantité, pâte plus friable et goût plus prononcé.",
+  "substitutionId": "sub_001216"
+ },
+ {
+  "ingredientId": "ing_002150",
+  "targetIngredientId": "ing_002148",
+  "note": "Même quantité, alternative sans beurre.",
+  "substitutionId": "sub_001217"
+ },
+ {
+  "ingredientId": "ing_002158",
+  "targetIngredientId": "ing_002160",
+  "note": "Même quantité, saveur plus riche (pur beurre).",
+  "substitutionId": "sub_001218"
+ },
+ {
+  "ingredientId": "ing_002165",
+  "targetIngredientId": "ing_002161",
+  "note": "Superposer environ 2 feuilles de filo pour remplacer une feuille de brick.",
+  "substitutionId": "sub_001219"
+ },
+ {
+  "ingredientId": "ing_002161",
+  "targetIngredientId": "ing_002165",
+  "note": "Une feuille de brick remplace environ 2 feuilles de filo.",
+  "substitutionId": "sub_001220"
+ },
+ {
+  "ingredientId": "ing_002070",
+  "targetIngredientId": "ing_002071",
+  "note": "Même quantité, texture plus souple, goût plus neutre.",
+  "substitutionId": "sub_001221"
+ },
+ {
+  "ingredientId": "ing_002071",
+  "targetIngredientId": "ing_002070",
+  "note": "Même quantité, option sans gluten.",
+  "substitutionId": "sub_001222"
+ },
+ {
+  "ingredientId": "ing_002064",
+  "targetIngredientId": "ing_002065",
+  "note": "Même usage pour sandwich garni, forme allongée.",
+  "substitutionId": "sub_001223"
+ },
+ {
+  "ingredientId": "ing_002199",
+  "targetIngredientId": "ing_002213",
+  "note": "Même mode de cuisson, goût plus prononcé.",
+  "substitutionId": "sub_001224"
+ },
+ {
+  "ingredientId": "ing_002201",
+  "targetIngredientId": "ing_002226",
+  "note": "Même quantité, viande plus maigre.",
+  "substitutionId": "sub_001225"
+ },
+ {
+  "ingredientId": "ing_002226",
+  "targetIngredientId": "ing_002233",
+  "note": "Même quantité, goût et texture très proches.",
+  "substitutionId": "sub_001226"
+ },
+ {
+  "ingredientId": "ing_002223",
+  "targetIngredientId": "ing_002232",
+  "note": "Même quantité, viande un peu plus sèche à surveiller à la cuisson.",
+  "substitutionId": "sub_001227"
+ },
+ {
+  "ingredientId": "ing_002231",
+  "targetIngredientId": "ing_002226",
+  "note": "Même produit, version non biologique.",
+  "substitutionId": "sub_001228"
+ },
+ {
+  "ingredientId": "ing_002183",
+  "targetIngredientId": "ing_002185",
+  "note": "Même mode de cuisson, morceau un peu plus tendre.",
+  "substitutionId": "sub_001229"
+ },
+ {
+  "ingredientId": "ing_002216",
+  "targetIngredientId": "ing_002217",
+  "note": "Même famille de morceau, cuisson similaire.",
+  "substitutionId": "sub_001230"
+ },
+ {
+  "ingredientId": "ing_002172",
+  "targetIngredientId": "ing_002183",
+  "note": "Même mode de cuisson, résultat proche.",
+  "substitutionId": "sub_001231"
+ },
+ {
+  "ingredientId": "ing_002328",
+  "targetIngredientId": "ing_002381",
+  "note": "Escalope de dinde, même préparation, goût un peu plus neutre.",
+  "substitutionId": "sub_001232"
+ },
+ {
+  "ingredientId": "ing_002381",
+  "targetIngredientId": "ing_002328",
+  "note": "Escalope de veau, quantité identique, texture proche.",
+  "substitutionId": "sub_001233"
+ },
+ {
+  "ingredientId": "ing_002363",
+  "targetIngredientId": "ing_002380",
+  "note": "Viande de dinde, même quantité, goût très proche.",
+  "substitutionId": "sub_001234"
+ },
+ {
+  "ingredientId": "ing_002380",
+  "targetIngredientId": "ing_002363",
+  "note": "Viande de poulet, même quantité, goût très proche.",
+  "substitutionId": "sub_001235"
+ },
+ {
+  "ingredientId": "ing_002420",
+  "targetIngredientId": "ing_002365",
+  "note": "Poulet fermier, même quantité, saveur moins prononcée.",
+  "substitutionId": "sub_001236"
+ },
+ {
+  "ingredientId": "ing_002418",
+  "targetIngredientId": "ing_002414",
+  "note": "Viande de canard, même quantité, goût proche (volaille grasse).",
+  "substitutionId": "sub_001237"
+ },
+ {
+  "ingredientId": "ing_002403",
+  "targetIngredientId": "ing_002365",
+  "note": "Poulet fermier, même quantité, saveur de gibier en moins.",
+  "substitutionId": "sub_001238"
+ },
+ {
+  "ingredientId": "ing_002405",
+  "targetIngredientId": "ing_002313",
+  "note": "Steak de boeuf, même quantité, résultat proche.",
+  "substitutionId": "sub_001239"
+ },
+ {
+  "ingredientId": "ing_002406",
+  "targetIngredientId": "ing_002312",
+  "note": "Tende de tranche de boeuf, même quantité, résultat proche.",
+  "substitutionId": "sub_001240"
+ },
+ {
+  "ingredientId": "ing_002407",
+  "targetIngredientId": "ing_002306",
+  "note": "Faux-filet de boeuf, même quantité, résultat proche.",
+  "substitutionId": "sub_001241"
+ },
+ {
+  "ingredientId": "ing_002408",
+  "targetIngredientId": "ing_002304",
+  "note": "Entrecôte de boeuf, même quantité, résultat proche.",
+  "substitutionId": "sub_001242"
+ },
+ {
+  "ingredientId": "ing_002409",
+  "targetIngredientId": "ing_002392",
+  "note": "Gigot d'agneau, même quantité, goût proche.",
+  "substitutionId": "sub_001243"
+ },
+ {
+  "ingredientId": "ing_002423",
+  "targetIngredientId": "ing_002307",
+  "note": "Filet de boeuf, viande rouge maigre, même quantité.",
+  "substitutionId": "sub_001244"
+ },
+ {
+  "ingredientId": "ing_002402",
+  "targetIngredientId": "ing_002307",
+  "note": "Boeuf maigre (filet), même quantité, saveur de gibier en moins.",
+  "substitutionId": "sub_001245"
+ },
+ {
+  "ingredientId": "ing_002401",
+  "targetIngredientId": "ing_007418",
+  "note": "Viande de lapin, même quantité, goût plus doux.",
+  "substitutionId": "sub_001246"
+ },
+ {
+  "ingredientId": "ing_002435",
+  "targetIngredientId": "ing_002434",
+  "note": "Foie de génisse, même quantité, goût très proche.",
+  "substitutionId": "sub_001247"
+ },
+ {
+  "ingredientId": "ing_002434",
+  "targetIngredientId": "ing_002435",
+  "note": "Foie de veau, même quantité, goût très proche.",
+  "substitutionId": "sub_001248"
+ },
+ {
+  "ingredientId": "ing_002427",
+  "targetIngredientId": "ing_002432",
+  "note": "Coeur de veau, même quantité, texture un peu plus tendre.",
+  "substitutionId": "sub_001249"
+ },
+ {
+  "ingredientId": "ing_002424",
+  "targetIngredientId": "ing_002426",
+  "note": "Cervelle de veau, même quantité, texture identique.",
+  "substitutionId": "sub_001250"
+ },
+ {
+  "ingredientId": "ing_002320",
+  "targetIngredientId": "ing_002321",
+  "note": "Steak haché 10% MG, légèrement plus gras.",
+  "substitutionId": "sub_001251"
+ },
+ {
+  "ingredientId": "ing_002323",
+  "targetIngredientId": "ing_002322",
+  "note": "Steak haché 15% MG, légèrement moins gras.",
+  "substitutionId": "sub_001252"
+ },
+ {
+  "ingredientId": "ing_002331",
+  "targetIngredientId": "ing_002332",
+  "note": "Steak haché de veau 15% MG, légèrement moins gras.",
+  "substitutionId": "sub_001253"
+ },
+ {
+  "ingredientId": "ing_002347",
+  "targetIngredientId": "ing_002339",
+  "note": "Épaule de porc, même quantité, un peu moins persillée.",
+  "substitutionId": "sub_001254"
+ },
+ {
+  "ingredientId": "ing_002392",
+  "targetIngredientId": "ing_002393",
+  "note": "Épaule d'agneau, même quantité, un peu plus grasse.",
+  "substitutionId": "sub_001255"
+ },
+ {
+  "ingredientId": "ing_002318",
+  "targetIngredientId": "ing_002324",
+  "note": "Paleron de boeuf, même usage pour un braisé long.",
+  "substitutionId": "sub_001256"
+ },
+ {
+  "ingredientId": "ing_002324",
+  "targetIngredientId": "ing_002319",
+  "note": "Collier de boeuf, même usage pour un braisé long.",
+  "substitutionId": "sub_001257"
+ },
+ {
+  "ingredientId": "ing_002371",
+  "targetIngredientId": "ing_002373",
+  "note": "Cuisse de poulet désossée, même quantité, temps de cuisson à ajuster.",
+  "substitutionId": "sub_001258"
+ },
+ {
+  "ingredientId": "ing_002383",
+  "targetIngredientId": "ing_002373",
+  "note": "Cuisse de poulet, même quantité, goût proche.",
+  "substitutionId": "sub_001259"
+ },
+ {
+  "ingredientId": "ing_002237",
+  "targetIngredientId": "ing_002238",
+  "note": "Épaule d'agneau rôtie, même usage, un peu plus grasse et fondante.",
+  "substitutionId": "sub_001260"
+ },
+ {
+  "ingredientId": "ing_002287",
+  "targetIngredientId": "ing_002288",
+  "note": "Foie de dinde cuit, même quantité, goût très proche.",
+  "substitutionId": "sub_001261"
+ },
+ {
+  "ingredientId": "ing_002279",
+  "targetIngredientId": "ing_002280",
+  "note": "Coeur de dinde cuit, même quantité, goût très proche.",
+  "substitutionId": "sub_001262"
+ },
+ {
+  "ingredientId": "ing_002438",
+  "targetIngredientId": "ing_002439",
+  "note": "Foie de dinde, texture et goût très proches.",
+  "substitutionId": "sub_001263"
+ },
+ {
+  "ingredientId": "ing_002439",
+  "targetIngredientId": "ing_002438",
+  "note": "Foie de poulet, se substitue facilement, saveur un peu plus prononcée.",
+  "substitutionId": "sub_001264"
+ },
+ {
+  "ingredientId": "ing_002448",
+  "targetIngredientId": "ing_002447",
+  "note": "Ris d'agneau, préparation identique, pièces plus petites.",
+  "substitutionId": "sub_001265"
+ },
+ {
+  "ingredientId": "ing_002447",
+  "targetIngredientId": "ing_002448",
+  "note": "Ris de veau, plus courant, même préparation.",
+  "substitutionId": "sub_001266"
+ },
+ {
+  "ingredientId": "ing_002452",
+  "targetIngredientId": "ing_002451",
+  "note": "Rognon d'agneau, même mode de cuisson, saveur un peu plus marquée.",
+  "substitutionId": "sub_001267"
+ },
+ {
+  "ingredientId": "ing_002451",
+  "targetIngredientId": "ing_002452",
+  "note": "Rognon de veau, plus doux, même préparation.",
+  "substitutionId": "sub_001268"
+ },
+ {
+  "ingredientId": "ing_002444",
+  "targetIngredientId": "ing_002443",
+  "note": "Langue de boeuf, plus grosse mais même préparation (pochée puis braisée).",
+  "substitutionId": "sub_001269"
+ },
+ {
+  "ingredientId": "ing_002443",
+  "targetIngredientId": "ing_002444",
+  "note": "Langue de veau, plus petite et plus tendre, même préparation.",
+  "substitutionId": "sub_001270"
+ },
+ {
+  "ingredientId": "ing_002459",
+  "targetIngredientId": "ing_002600",
+  "note": "Lardons fumés, même usage en cuisine (poêlée, quiche, salade).",
+  "substitutionId": "sub_001271"
+ },
+ {
+  "ingredientId": "ing_002487",
+  "targetIngredientId": "ing_002591",
+  "note": "Lardons nature, à défaut de pancetta pour parfumer un plat mijoté.",
+  "substitutionId": "sub_001272"
+ },
+ {
+  "ingredientId": "ing_002593",
+  "targetIngredientId": "ing_002603",
+  "note": "Viande des Grisons, même type de charcuterie séchée en tranches fines.",
+  "substitutionId": "sub_001273"
+ },
+ {
+  "ingredientId": "ing_002603",
+  "targetIngredientId": "ing_002593",
+  "note": "Bresaola, viande de boeuf séchée similaire, en tranches fines.",
+  "substitutionId": "sub_001274"
+ },
+ {
+  "ingredientId": "ing_002484",
+  "targetIngredientId": "ing_002482",
+  "note": "Jambon de Bayonne, à défaut de jambon de Parme, même famille de jambon sec.",
+  "substitutionId": "sub_001275"
+ },
+ {
+  "ingredientId": "ing_002485",
+  "targetIngredientId": "ing_002482",
+  "note": "Jambon de Bayonne, à défaut de Serrano, jambon cru sec similaire.",
+  "substitutionId": "sub_001276"
+ },
+ {
+  "ingredientId": "ing_002482",
+  "targetIngredientId": "ing_002483",
+  "note": "Jambon sec générique, même texture et usage.",
+  "substitutionId": "sub_001277"
+ },
+ {
+  "ingredientId": "ing_002554",
+  "targetIngredientId": "ing_002549",
+  "note": "Rillettes pur porc, à défaut de canard, texture proche.",
+  "substitutionId": "sub_001278"
+ },
+ {
+  "ingredientId": "ing_002555",
+  "targetIngredientId": "ing_002554",
+  "note": "Rillettes de canard, plus faciles à trouver, saveur proche de l'oie.",
+  "substitutionId": "sub_001279"
+ },
+ {
+  "ingredientId": "ing_002553",
+  "targetIngredientId": "ing_002554",
+  "note": "Rillettes de canard, à défaut de rillettes pur oie.",
+  "substitutionId": "sub_001280"
+ },
+ {
+  "ingredientId": "ing_002545",
+  "targetIngredientId": "ing_002544",
+  "note": "Pâté de foie de volaille, à défaut de foie d'oie, plus courant.",
+  "substitutionId": "sub_001281"
+ },
+ {
+  "ingredientId": "ing_002488",
+  "targetIngredientId": "ing_002609",
+  "note": "Salami, charcuterie sèche similaire, même usage en tranches.",
+  "substitutionId": "sub_001282"
+ },
+ {
+  "ingredientId": "ing_002609",
+  "targetIngredientId": "ing_002488",
+  "note": "Saucisson sec pur porc, même type de charcuterie séchée.",
+  "substitutionId": "sub_001283"
+ },
+ {
+  "ingredientId": "ing_002607",
+  "targetIngredientId": "ing_002510",
+  "note": "Merguez crue, à défaut de chorizo, pour une saveur épicée similaire au barbecue.",
+  "substitutionId": "sub_001284"
+ },
+ {
+  "ingredientId": "ing_002504",
+  "targetIngredientId": "ing_002505",
+  "note": "Chipolata crue, même usage au barbecue ou à la poêle.",
+  "substitutionId": "sub_001285"
+ },
+ {
+  "ingredientId": "ing_002505",
+  "targetIngredientId": "ing_002504",
+  "note": "Saucisse de Toulouse crue, même usage, saveur un peu plus corsée.",
+  "substitutionId": "sub_001286"
+ },
+ {
+  "ingredientId": "ing_002510",
+  "targetIngredientId": "ing_002504",
+  "note": "Saucisse de Toulouse crue, à défaut de merguez (moins épicée, ajuster les épices).",
+  "substitutionId": "sub_001287"
+ },
+ {
+  "ingredientId": "ing_002519",
+  "targetIngredientId": "ing_002509",
+  "note": "Saucisse de Francfort, texture et usage identiques (hot-dog, choucroute).",
+  "substitutionId": "sub_001288"
+ },
+ {
+  "ingredientId": "ing_002509",
+  "targetIngredientId": "ing_002519",
+  "note": "Saucisse de Strasbourg/knack, même type de saucisse à cuire à l'eau.",
+  "substitutionId": "sub_001289"
+ },
+ {
+  "ingredientId": "ing_002508",
+  "targetIngredientId": "ing_002519",
+  "note": "Saucisse de Strasbourg/knack pur porc, à défaut de la version volaille.",
+  "substitutionId": "sub_001290"
+ },
+ {
+  "ingredientId": "ing_002617",
+  "targetIngredientId": "ing_002614",
+  "note": "Cervelas, charcuterie cuite en tranches, usage similaire en apéritif ou salade.",
+  "substitutionId": "sub_001291"
+ },
+ {
+  "ingredientId": "ing_002576",
+  "targetIngredientId": "ing_002577",
+  "note": "Museau de boeuf, autre charcuterie de tête en gelée, souvent servie en vinaigrette.",
+  "substitutionId": "sub_001292"
+ },
+ {
+  "ingredientId": "ing_002577",
+  "targetIngredientId": "ing_002576",
+  "note": "Fromage de tête, préparation en gelée similaire.",
+  "substitutionId": "sub_001293"
+ },
+ {
+  "ingredientId": "ing_002629",
+  "targetIngredientId": "ing_002631",
+  "note": "Cabillaud cuit, chair blanche ferme, texture proche.",
+  "substitutionId": "sub_001294"
+ },
+ {
+  "ingredientId": "ing_002633",
+  "targetIngredientId": "ing_002631",
+  "note": "Cabillaud cuit, poisson blanc maigre au goût proche.",
+  "substitutionId": "sub_001295"
+ },
+ {
+  "ingredientId": "ing_002632",
+  "targetIngredientId": "ing_002633",
+  "note": "Églefin cuit à la vapeur, poisson blanc maigre similaire.",
+  "substitutionId": "sub_001296"
+ },
+ {
+  "ingredientId": "ing_002642",
+  "targetIngredientId": "ing_000533",
+  "note": "Poissons blancs à chair ferme, substitution courante en filet cuit au four.",
+  "substitutionId": "sub_001297"
+ },
+ {
+  "ingredientId": "ing_002676",
+  "targetIngredientId": "ing_002677",
+  "note": "Poissons d'eau douce à chair ferme, préparation au four similaire.",
+  "substitutionId": "sub_001298"
+ },
+ {
+  "ingredientId": "ing_002678",
+  "targetIngredientId": "ing_002679",
+  "note": "Petits poissons entiers cuits au four, préparation équivalente.",
+  "substitutionId": "sub_001299"
+ },
+ {
+  "ingredientId": "ing_002637",
+  "targetIngredientId": "ing_002650",
+  "note": "Poissons plats fins, cuisson vapeur équivalente.",
+  "substitutionId": "sub_001300"
+ },
+ {
+  "ingredientId": "ing_002641",
+  "targetIngredientId": "ing_002644",
+  "note": "Poissons blancs maigres, cuisson vapeur interchangeable.",
+  "substitutionId": "sub_001301"
+ },
+ {
+  "ingredientId": "ing_002648",
+  "targetIngredientId": "ing_002682",
+  "note": "Poissons gras roses, cuisson vapeur similaire.",
+  "substitutionId": "sub_001302"
+ },
+ {
+  "ingredientId": "ing_002643",
+  "targetIngredientId": "ing_002693",
+  "note": "Morue salée et cabillaud frais partagent la même chair, réhydrater la morue avant substitution.",
+  "substitutionId": "sub_001303"
+ },
+ {
+  "ingredientId": "ing_002658",
+  "targetIngredientId": "ing_002644",
+  "note": "Poissons blancs maigres, cuisson douce équivalente.",
+  "substitutionId": "sub_001304"
+ },
+ {
+  "ingredientId": "ing_002659",
+  "targetIngredientId": "ing_002663",
+  "note": "Poissons blancs de la famille des gadidés, préparation grillée similaire.",
+  "substitutionId": "sub_001305"
+ },
+ {
+  "ingredientId": "ing_002660",
+  "targetIngredientId": "ing_002718",
+  "note": "Petits poissons gras, grillade similaire (sardine/maquereau).",
+  "substitutionId": "sub_001306"
+ },
+ {
+  "ingredientId": "ing_002672",
+  "targetIngredientId": "ing_002679",
+  "note": "Truites, préparation poêlée/rôtie équivalente.",
+  "substitutionId": "sub_001307"
+ },
+ {
+  "ingredientId": "ing_002687",
+  "targetIngredientId": "ing_002702",
+  "note": "Bars, chairs proches utilisables de façon interchangeable crues.",
+  "substitutionId": "sub_001308"
+ },
+ {
+  "ingredientId": "ing_002688",
+  "targetIngredientId": "ing_002693",
+  "note": "Poissons blancs de la famille des gadidés, chair proche à cru.",
+  "substitutionId": "sub_001309"
+ },
+ {
+  "ingredientId": "ing_002689",
+  "targetIngredientId": "ing_002737",
+  "note": "Flétans, chairs proches interchangeables.",
+  "substitutionId": "sub_001310"
+ },
+ {
+  "ingredientId": "ing_002696",
+  "targetIngredientId": "ing_002697",
+  "note": "Poissons plats proches, chair fine similaire.",
+  "substitutionId": "sub_001311"
+ },
+ {
+  "ingredientId": "ing_002740",
+  "targetIngredientId": "ing_002691",
+  "note": "Saumon sauvage et saumon d'élevage, chair proche à cru.",
+  "substitutionId": "sub_001312"
+ },
+ {
+  "ingredientId": "ing_002760",
+  "targetIngredientId": "ing_002740",
+  "note": "Saumons de différentes espèces, chair proche à cru.",
+  "substitutionId": "sub_001313"
+ },
+ {
+  "ingredientId": "ing_002780",
+  "targetIngredientId": "ing_002781",
+  "note": "Crevettes de différentes espèces, cuites, souvent interchangeables en recette.",
+  "substitutionId": "sub_001314"
+ },
+ {
+  "ingredientId": "ing_002785",
+  "targetIngredientId": "ing_002782",
+  "note": "Langouste et homard, chairs proches, cuissons à l'eau équivalentes.",
+  "substitutionId": "sub_001315"
+ },
+ {
+  "ingredientId": "ing_002793",
+  "targetIngredientId": "ing_002781",
+  "note": "Langoustine et crevette, chair proche, cuisson à l'eau similaire.",
+  "substitutionId": "sub_001316"
+ },
+ {
+  "ingredientId": "ing_002787",
+  "targetIngredientId": "ing_002790",
+  "note": "Coquillages proches, préparation à l'eau équivalente.",
+  "substitutionId": "sub_001317"
+ },
+ {
+  "ingredientId": "ing_002784",
+  "targetIngredientId": "ing_002778",
+  "note": "Petits gastéropodes marins, cuisson et usage culinaire équivalents.",
+  "substitutionId": "sub_001318"
+ },
+ {
+  "ingredientId": "ing_002791",
+  "targetIngredientId": "ing_002798",
+  "note": "Calmar et poulpe, chairs de céphalopodes souvent substituées.",
+  "substitutionId": "sub_001319"
+ },
+ {
+  "ingredientId": "ing_002821",
+  "targetIngredientId": "ing_002820",
+  "note": "Rillettes de poisson, souvent interchangeables selon le poisson disponible.",
+  "substitutionId": "sub_001320"
+ },
+ {
+  "ingredientId": "ing_002826",
+  "targetIngredientId": "ing_002823",
+  "note": "Taramas, recette et usage identiques selon l'oeuf de poisson utilisé.",
+  "substitutionId": "sub_001321"
+ },
+ {
+  "ingredientId": "ing_002844",
+  "targetIngredientId": "ing_002843",
+  "note": "Oeufs de lompe = substitut courant et bien moins coûteux du caviar, même usage en garniture",
+  "substitutionId": "sub_001322"
+ },
+ {
+  "ingredientId": "ing_002842",
+  "targetIngredientId": "ing_002866",
+  "note": "Poisson blanc pané, texture et usage similaires (fish and chips, poêlée panée)",
+  "substitutionId": "sub_001323"
+ },
+ {
+  "ingredientId": "ing_002847",
+  "targetIngredientId": "ing_002866",
+  "note": "Poisson blanc pané, se substitue facilement en cuisine",
+  "substitutionId": "sub_001324"
+ },
+ {
+  "ingredientId": "ing_002852",
+  "targetIngredientId": "ing_002854",
+  "note": "Thon au naturel en boîte peut remplacer la sardine à l'huile dans salades et pâtés",
+  "substitutionId": "sub_001325"
+ },
+ {
+  "ingredientId": "ing_002858",
+  "targetIngredientId": "ing_002853",
+  "note": "Conserves de poisson en sauce tomate interchangeables (maquereau/sardine)",
+  "substitutionId": "sub_001326"
+ },
+ {
+  "ingredientId": "ing_002859",
+  "targetIngredientId": "ing_000890",
+  "note": "Poisson fumé, saveur et texture proches, utilisable en substitut moins cher",
+  "substitutionId": "sub_001327"
+ },
+ {
+  "ingredientId": "ing_002860",
+  "targetIngredientId": "ing_000890",
+  "note": "Haddock fumé peut remplacer le saumon fumé dans salades, quiches, oeufs brouillés",
+  "substitutionId": "sub_001328"
+ },
+ {
+  "ingredientId": "ing_002864",
+  "targetIngredientId": "ing_002854",
+  "note": "Conserves de saumon et de thon s'utilisent de façon interchangeable (rillettes, salades)",
+  "substitutionId": "sub_001329"
+ },
+ {
+  "ingredientId": "ing_002890",
+  "targetIngredientId": "ing_000890",
+  "note": "Truite fumée est un substitut classique et moins onéreux du saumon fumé",
+  "substitutionId": "sub_001330"
+ },
+ {
+  "ingredientId": "ing_002901",
+  "targetIngredientId": "ing_002898",
+  "note": "À défaut, remplacer par environ 4 oeufs de poule (équivalence de volume)",
+  "substitutionId": "sub_001331"
+ },
+ {
+  "ingredientId": "ing_002902",
+  "targetIngredientId": "ing_002898",
+  "note": "À défaut, remplacer par environ 1,5 oeuf de poule (équivalence de volume)",
+  "substitutionId": "sub_001332"
+ },
+ {
+  "ingredientId": "ing_002905",
+  "targetIngredientId": "ing_002898",
+  "note": "Oeuf en poudre reconstitué à l'eau remplace l'oeuf frais en pâtisserie",
+  "substitutionId": "sub_001333"
+ },
+ {
+  "ingredientId": "ing_002903",
+  "targetIngredientId": "ing_002900",
+  "note": "Jaune d'oeuf en poudre reconstitué remplace le jaune frais",
+  "substitutionId": "sub_001334"
+ },
+ {
+  "ingredientId": "ing_002904",
+  "targetIngredientId": "ing_002899",
+  "note": "Blanc d'oeuf en poudre reconstitué remplace le blanc frais",
+  "substitutionId": "sub_001335"
+ },
+ {
+  "ingredientId": "ing_002923",
+  "targetIngredientId": "ing_002915",
+  "note": "Lait de vache entier en remplacement si lait de chèvre indisponible ou pour adoucir le goût",
+  "substitutionId": "sub_001336"
+ },
+ {
+  "ingredientId": "ing_002925",
+  "targetIngredientId": "ing_002915",
+  "note": "Lait de vache entier en remplacement si lait de chèvre indisponible",
+  "substitutionId": "sub_001337"
+ },
+ {
+  "ingredientId": "ing_002927",
+  "targetIngredientId": "ing_002915",
+  "note": "Lait de vache entier en remplacement si lait de brebis indisponible",
+  "substitutionId": "sub_001338"
+ },
+ {
+  "ingredientId": "ing_002928",
+  "targetIngredientId": "ing_002915",
+  "note": "Lait de vache entier en remplacement si lait de bufflonne indisponible",
+  "substitutionId": "sub_001339"
+ },
+ {
+  "ingredientId": "ing_002929",
+  "targetIngredientId": "ing_002915",
+  "note": "Reconstitué avec de l'eau, remplace le lait frais entier",
+  "substitutionId": "sub_001340"
+ },
+ {
+  "ingredientId": "ing_002930",
+  "targetIngredientId": "ing_002915",
+  "note": "Dilué avec de l'eau (à parts égales), remplace le lait entier",
+  "substitutionId": "sub_001341"
+ },
+ {
+  "ingredientId": "ing_002989",
+  "targetIngredientId": "ing_002993",
+  "note": "Fromage blanc nature peut remplacer le yaourt grec, texture un peu moins onctueuse",
+  "substitutionId": "sub_001342"
+ },
+ {
+  "ingredientId": "ing_002946",
+  "targetIngredientId": "ing_002989",
+  "note": "Yaourt à la grecque classique en remplacement si lait de brebis indisponible",
+  "substitutionId": "sub_001343"
+ },
+ {
+  "ingredientId": "ing_002950",
+  "targetIngredientId": "ing_002966",
+  "note": "Yaourt nature au lait de vache en remplacement si lait de brebis indisponible",
+  "substitutionId": "sub_001344"
+ },
+ {
+  "ingredientId": "ing_002952",
+  "targetIngredientId": "ing_002966",
+  "note": "Yaourt nature au lait de vache en remplacement si lait de chèvre indisponible",
+  "substitutionId": "sub_001345"
+ },
+ {
+  "ingredientId": "ing_002991",
+  "targetIngredientId": "ing_002966",
+  "note": "Kéfir de lait peut remplacer un yaourt à boire nature dans les recettes",
+  "substitutionId": "sub_001346"
+ },
+ {
+  "ingredientId": "ing_002996",
+  "targetIngredientId": "ing_002999",
+  "note": "Faisselle égouttée a une texture proche du fromage blanc 0% MG",
+  "substitutionId": "sub_001347"
+ },
+ {
+  "ingredientId": "ing_002997",
+  "targetIngredientId": "ing_003019",
+  "note": "Faisselle égouttée a une texture proche du fromage blanc nature à teneur en MG comparable",
+  "substitutionId": "sub_001348"
+ },
+ {
+  "ingredientId": "ing_003037",
+  "targetIngredientId": "ing_003045",
+  "note": "Dessert proche à base d'œufs et de lait, texture et usage similaires à la crème caramel.",
+  "substitutionId": "sub_001349"
+ },
+ {
+  "ingredientId": "ing_003038",
+  "targetIngredientId": "ing_003052",
+  "note": "Texture crémeuse et onctueuse proche, remplace la panna cotta en dessert lacté.",
+  "substitutionId": "sub_001350"
+ },
+ {
+  "ingredientId": "ing_003042",
+  "targetIngredientId": "ing_006016",
+  "note": "Milkshake standard équivalent au format restauration rapide.",
+  "substitutionId": "sub_001351"
+ },
+ {
+  "ingredientId": "ing_003047",
+  "targetIngredientId": "ing_000823",
+  "note": "Version de base du riz au lait, sans arôme ajouté.",
+  "substitutionId": "sub_001352"
+ },
+ {
+  "ingredientId": "ing_003051",
+  "targetIngredientId": "ing_000823",
+  "note": "Dessert lacté à base de céréale similaire (semoule remplacée par riz).",
+  "substitutionId": "sub_001353"
+ },
+ {
+  "ingredientId": "ing_003077",
+  "targetIngredientId": "ing_000254",
+  "note": "Crème pâtissière préparée maison équivalente à la version instantanée reconstituée.",
+  "substitutionId": "sub_001354"
+ },
+ {
+  "ingredientId": "ing_003079",
+  "targetIngredientId": "ing_001025",
+  "note": "Équivalent laitier nature, si aucune contrainte végétale.",
+  "substitutionId": "sub_001355"
+ },
+ {
+  "ingredientId": "ing_003085",
+  "targetIngredientId": "ing_006378",
+  "note": "Alternative laitière aromatisée équivalente si aucune contrainte végétale.",
+  "substitutionId": "sub_001356"
+ },
+ {
+  "ingredientId": "ing_003092",
+  "targetIngredientId": "ing_003070",
+  "note": "Version laitière classique équivalente à la mousse au chocolat végétale.",
+  "substitutionId": "sub_001357"
+ },
+ {
+  "ingredientId": "ing_003093",
+  "targetIngredientId": "ing_000295",
+  "note": "Un seul fromage râpé (emmental) à la place du mélange spécial gratin/pizza.",
+  "substitutionId": "sub_001358"
+ },
+ {
+  "ingredientId": "ing_003100",
+  "targetIngredientId": "ing_000103",
+  "note": "Fromage à pâte molle et croûte fleurie proche, type brie.",
+  "substitutionId": "sub_001359"
+ },
+ {
+  "ingredientId": "ing_003105",
+  "targetIngredientId": "ing_000103",
+  "note": "Fromage à pâte molle crémeux proche du chaource.",
+  "substitutionId": "sub_001360"
+ },
+ {
+  "ingredientId": "ing_003144",
+  "targetIngredientId": "ing_000087",
+  "note": "Fromage bleu au lait de vache équivalent.",
+  "substitutionId": "sub_001361"
+ },
+ {
+  "ingredientId": "ing_003164",
+  "targetIngredientId": "ing_000411",
+  "note": "Fromage à pâte pressée doux proche, à défaut de mimolette.",
+  "substitutionId": "sub_001362"
+ },
+ {
+  "ingredientId": "ing_003172",
+  "targetIngredientId": "ing_000376",
+  "note": "Fromage à raclette générique équivalent.",
+  "substitutionId": "sub_001363"
+ },
+ {
+  "ingredientId": "ing_003189",
+  "targetIngredientId": "ing_000379",
+  "note": "Fromage fondu générique équivalent, hors format tranchette.",
+  "substitutionId": "sub_001364"
+ },
+ {
+  "ingredientId": "ing_003202",
+  "targetIngredientId": "ing_000343",
+  "note": "Feta générique équivalente.",
+  "substitutionId": "sub_001365"
+ },
+ {
+  "ingredientId": "ing_003218",
+  "targetIngredientId": "ing_000593",
+  "note": "Mozzarella générique équivalente au lait de vache.",
+  "substitutionId": "sub_001366"
+ },
+ {
+  "ingredientId": "ing_003226",
+  "targetIngredientId": "ing_000250",
+  "note": "Crème fraîche épaisse classique de même teneur en matière grasse.",
+  "substitutionId": "sub_001367"
+ },
+ {
+  "ingredientId": "ing_003229",
+  "targetIngredientId": "ing_000251",
+  "note": "Crème fraîche liquide classique équivalente.",
+  "substitutionId": "sub_001368"
+ },
+ {
+  "ingredientId": "ing_003230",
+  "targetIngredientId": "ing_000252",
+  "note": "Crème liquide entière à fouetter soi-même en chantilly.",
+  "substitutionId": "sub_001369"
+ },
+ {
+  "ingredientId": "ing_003236",
+  "targetIngredientId": "ing_000251",
+  "note": "La spécialité culinaire légère aromatisée à cuisiner peut être remplacée par de la crème fraîche liquide classique dans les préparations chaudes.",
+  "substitutionId": "sub_001370"
+ },
+ {
+  "ingredientId": "ing_003237",
+  "targetIngredientId": "ing_000251",
+  "note": "Crème légère 12-20% MG remplaçable par de la crème fraîche liquide entière (résultat plus onctueux, réduire légèrement la quantité).",
+  "substitutionId": "sub_001371"
+ },
+ {
+  "ingredientId": "ing_003242",
+  "targetIngredientId": "ing_003240",
+  "note": "Eau du robinet substituable par de l'eau minérale plate en cuisine et pâtisserie.",
+  "substitutionId": "sub_001372"
+ },
+ {
+  "ingredientId": "ing_003330",
+  "targetIngredientId": "ing_003345",
+  "note": "Jus de citron fait maison remplaçable par du jus de citron pur jus en bouteille.",
+  "substitutionId": "sub_001373"
+ },
+ {
+  "ingredientId": "ing_003346",
+  "targetIngredientId": "ing_003330",
+  "note": "Jus de citron vert frais remplaçable par du jus de citron jaune, à quantité égale, saveur légèrement différente.",
+  "substitutionId": "sub_001374"
+ },
+ {
+  "ingredientId": "ing_003347",
+  "targetIngredientId": "ing_003345",
+  "note": "Jus de citron vert pur jus remplaçable par du jus de citron jaune pur jus.",
+  "substitutionId": "sub_001375"
+ },
+ {
+  "ingredientId": "ing_003326",
+  "targetIngredientId": "ing_003363",
+  "note": "Jus d'ananas à base de concentré remplaçable par du jus d'ananas pur jus.",
+  "substitutionId": "sub_001376"
+ },
+ {
+  "ingredientId": "ing_003332",
+  "targetIngredientId": "ing_003333",
+  "note": "Jus d'orange à base de concentré remplaçable par du jus d'orange frais pressé.",
+  "substitutionId": "sub_001377"
+ },
+ {
+  "ingredientId": "ing_003334",
+  "targetIngredientId": "ing_003364",
+  "note": "Jus de pomme à base de concentré remplaçable par du jus de pomme pur jus.",
+  "substitutionId": "sub_001378"
+ },
+ {
+  "ingredientId": "ing_003335",
+  "targetIngredientId": "ing_003344",
+  "note": "Jus de pamplemousse à base de concentré remplaçable par du jus de pamplemousse pur jus.",
+  "substitutionId": "sub_001379"
+ },
+ {
+  "ingredientId": "ing_003339",
+  "targetIngredientId": "ing_003336",
+  "note": "Jus de raisin à base de concentré remplaçable par du jus de raisin pur jus.",
+  "substitutionId": "sub_001380"
+ },
+ {
+  "ingredientId": "ing_003362",
+  "targetIngredientId": "ing_003366",
+  "note": "Jus de fruits pur jus remplaçable par un jus de fruits à base de concentré, disponibilité et coût souvent différents.",
+  "substitutionId": "sub_001381"
+ },
+ {
+  "ingredientId": "ing_003381",
+  "targetIngredientId": "ing_003364",
+  "note": "Nectar de pomme remplaçable par du jus de pomme pur jus, en réduisant le sucre ajouté d'une recette.",
+  "substitutionId": "sub_001382"
+ },
+ {
+  "ingredientId": "ing_003388",
+  "targetIngredientId": "ing_003360",
+  "note": "Nectar d'orange remplaçable par du jus d'orange pur jus, plus concentré en fruit et moins sucré.",
+  "substitutionId": "sub_001383"
+ },
+ {
+  "ingredientId": "ing_003387",
+  "targetIngredientId": "ing_003363",
+  "note": "Nectar d'ananas remplaçable par du jus d'ananas pur jus.",
+  "substitutionId": "sub_001384"
+ },
+ {
+  "ingredientId": "ing_003397",
+  "targetIngredientId": "ing_003418",
+  "note": "Cola sucré remplaçable par un cola sans sucres ajoutés avec édulcorants pour une version allégée.",
+  "substitutionId": "sub_001385"
+ },
+ {
+  "ingredientId": "ing_003391",
+  "targetIngredientId": "ing_003409",
+  "note": "Limonade sucrée remplaçable par une limonade sans sucres ajoutés avec édulcorants.",
+  "substitutionId": "sub_001386"
+ },
+ {
+  "ingredientId": "ing_003394",
+  "targetIngredientId": "ing_003393",
+  "note": "Tonic sucré avec édulcorants remplaçable par un tonic sans sucres ajoutés avec édulcorants.",
+  "substitutionId": "sub_001387"
+ },
+ {
+  "ingredientId": "ing_003471",
+  "targetIngredientId": "ing_003472",
+  "note": "Boissons végétales nature interchangeables en cuisine (pâtisserie, sauces) : avoine remplacée par soja nature.",
+  "substitutionId": "sub_001388"
+ },
+ {
+  "ingredientId": "ing_003472",
+  "targetIngredientId": "ing_003466",
+  "note": "Boisson au soja nature substituable par boisson à l'amande nature dans la plupart des recettes.",
+  "substitutionId": "sub_001389"
+ },
+ {
+  "ingredientId": "ing_003476",
+  "targetIngredientId": "ing_003466",
+  "note": "Boisson au riz plus fluide : peut être remplacée par boisson à l'amande nature en cuisine courante.",
+  "substitutionId": "sub_001390"
+ },
+ {
+  "ingredientId": "ing_003478",
+  "targetIngredientId": "ing_003466",
+  "note": "Boisson à la noix de coco substituable par boisson à l'amande nature quand on veut atténuer le goût coco.",
+  "substitutionId": "sub_001391"
+ },
+ {
+  "ingredientId": "ing_003490",
+  "targetIngredientId": "ing_003491",
+  "note": "Thé noir et thé vert infusés s'utilisent souvent l'un pour l'autre selon le goût recherché.",
+  "substitutionId": "sub_001392"
+ },
+ {
+  "ingredientId": "ing_003480",
+  "targetIngredientId": "ing_003485",
+  "note": "Café non instantané prêt à boire remplaçable par un café instantané reconstitué.",
+  "substitutionId": "sub_001393"
+ },
+ {
+  "ingredientId": "ing_003494",
+  "targetIngredientId": "ing_003495",
+  "note": "Café moulu à infuser peut être remplacé par du café soluble dilué dans l'eau chaude.",
+  "substitutionId": "sub_001394"
+ },
+ {
+  "ingredientId": "ing_003558",
+  "targetIngredientId": "ing_000929",
+  "note": "Fructose substituable par du sucre classique en pâtisserie (ajuster légèrement la quantité).",
+  "substitutionId": "sub_001395"
+ },
+ {
+  "ingredientId": "ing_003555",
+  "targetIngredientId": "ing_000929",
+  "note": "Édulcorant à la saccharine remplaçable par du sucre pour retrouver un goût plus naturel.",
+  "substitutionId": "sub_001396"
+ },
+ {
+  "ingredientId": "ing_003552",
+  "targetIngredientId": "ing_000929",
+  "note": "Édulcorant à l'aspartame en poudre substituable par du sucre en cuisine et pâtisserie.",
+  "substitutionId": "sub_001397"
+ },
+ {
+  "ingredientId": "ing_003559",
+  "targetIngredientId": "ing_000929",
+  "note": "Édulcorant à la stévia remplaçable par du sucre classique (goût plus proche, quantité à ajuster).",
+  "substitutionId": "sub_001398"
+ },
+ {
+  "ingredientId": "ing_003556",
+  "targetIngredientId": "ing_000909",
+  "note": "Mélasse de canne substituable par du sirop d'érable en pâtisserie pour un goût sucré proche.",
+  "substitutionId": "sub_001399"
+ },
+ {
+  "ingredientId": "ing_003554",
+  "targetIngredientId": "ing_000577",
+  "note": "Caramel liquide utilisé en nappage peut être remplacé par du miel.",
+  "substitutionId": "sub_001400"
+ },
+ {
+  "ingredientId": "ing_003563",
+  "targetIngredientId": "ing_000168",
+  "note": "Chocolat noir 50% en tablette remplaçable par du chocolat noir standard en cuisine/pâtisserie.",
+  "substitutionId": "sub_001401"
+ },
+ {
+  "ingredientId": "ing_003580",
+  "targetIngredientId": "ing_000168",
+  "note": "Chocolat noir 70% de dégustation substituable par du chocolat noir standard pour la cuisson.",
+  "substitutionId": "sub_001402"
+ },
+ {
+  "ingredientId": "ing_003583",
+  "targetIngredientId": "ing_000168",
+  "note": "Chocolat noir à pâtisser (40%+) remplaçable par du chocolat noir standard.",
+  "substitutionId": "sub_001403"
+ },
+ {
+  "ingredientId": "ing_003567",
+  "targetIngredientId": "ing_000166",
+  "note": "Chocolat au lait sans sucres ajoutés substituable par du chocolat au lait classique.",
+  "substitutionId": "sub_001404"
+ },
+ {
+  "ingredientId": "ing_003539",
+  "targetIngredientId": "ing_003540",
+  "note": "Eau de vie type cognac/armagnac substituable par une eau de vie de type calvados dans un flambage ou une sauce.",
+  "substitutionId": "sub_001405"
+ },
+ {
+  "ingredientId": "ing_003532",
+  "targetIngredientId": "ing_000818",
+  "note": "Rhum (aliment moyen) remplaçable par du rhum blanc dans la plupart des usages culinaires.",
+  "substitutionId": "sub_001406"
+ },
+ {
+  "ingredientId": "ing_003627",
+  "targetIngredientId": "ing_000212",
+  "note": "Confiture de fraise (extra ou classique) équivalente à la confiture de fraise standard du catalogue.",
+  "substitutionId": "sub_001407"
+ },
+ {
+  "ingredientId": "ing_003628",
+  "targetIngredientId": "ing_000211",
+  "note": "Confiture d'abricot (extra ou classique) équivalente à la confiture d'abricot standard du catalogue.",
+  "substitutionId": "sub_001408"
+ },
+ {
+  "ingredientId": "ing_003621",
+  "targetIngredientId": "ing_000212",
+  "note": "Confiture de fraise allégée en sucres substituable par de la confiture de fraise classique (plus sucrée).",
+  "substitutionId": "sub_001409"
+ },
+ {
+  "ingredientId": "ing_003622",
+  "targetIngredientId": "ing_000211",
+  "note": "Confiture d'abricot allégée en sucres substituable par de la confiture d'abricot classique.",
+  "substitutionId": "sub_001410"
+ },
+ {
+  "ingredientId": "ing_003636",
+  "targetIngredientId": "ing_003632",
+  "note": "Gelée de groseille remplaçable par confiture de framboise (autre fruit rouge) dans garnitures, tartines ou fonds de tarte.",
+  "substitutionId": "sub_001411"
+ },
+ {
+  "ingredientId": "ing_003641",
+  "targetIngredientId": "ing_003644",
+  "note": "Croissant ordinaire artisanal remplaçable par un croissant pur beurre artisanal, goût plus riche mais usage identique.",
+  "substitutionId": "sub_001412"
+ },
+ {
+  "ingredientId": "ing_003647",
+  "targetIngredientId": "ing_003658",
+  "note": "Pain au lait remplaçable par une brioche nature artisanale pour le petit-déjeuner ou le goûter.",
+  "substitutionId": "sub_001413"
+ },
+ {
+  "ingredientId": "ing_003650",
+  "targetIngredientId": "ing_003661",
+  "note": "Panettone remplaçable par une brioche nature classique si les fruits confits ne sont pas disponibles.",
+  "substitutionId": "sub_001414"
+ },
+ {
+  "ingredientId": "ing_003651",
+  "targetIngredientId": "ing_003655",
+  "note": "Pain aux raisins remplaçable par une brioche fourrée aux fruits, viennoiserie sucrée aux fruits similaire.",
+  "substitutionId": "sub_001415"
+ },
+ {
+  "ingredientId": "ing_003652",
+  "targetIngredientId": "ing_003644",
+  "note": "Pain au chocolat remplaçable par un croissant pur beurre en cas de rupture de viennoiserie chocolatée.",
+  "substitutionId": "sub_001416"
+ },
+ {
+  "ingredientId": "ing_003654",
+  "targetIngredientId": "ing_003657",
+  "note": "Brioche aux pépites de chocolat remplaçable par une brioche nature préemballée, version non chocolatée.",
+  "substitutionId": "sub_001417"
+ },
+ {
+  "ingredientId": "ing_003681",
+  "targetIngredientId": "ing_003670",
+  "note": "Biscuit petit beurre remplaçable par un biscuit sec nature, base identique pour cheesecake ou émietté en dessert.",
+  "substitutionId": "sub_001418"
+ },
+ {
+  "ingredientId": "ing_003819",
+  "targetIngredientId": "ing_003820",
+  "note": "Quatre-quarts artisanal et préemballé sont directement interchangeables, même recette de base.",
+  "substitutionId": "sub_001419"
+ },
+ {
+  "ingredientId": "ing_003802",
+  "targetIngredientId": "ing_003810",
+  "note": "Baba au rhum rayon frais remplaçable par un baba au rhum artisanal, même pâtisserie.",
+  "substitutionId": "sub_001420"
+ },
+ {
+  "ingredientId": "ing_003812",
+  "targetIngredientId": "ing_003825",
+  "note": "Kouign amann préemballé remplaçable par un kouign amann artisanal, même spécialité bretonne.",
+  "substitutionId": "sub_001421"
+ },
+ {
+  "ingredientId": "ing_003830",
+  "targetIngredientId": "ing_003833",
+  "note": "Chou à la crème et éclair partagent la même pâte à choux et une garniture crème pâtissière proche.",
+  "substitutionId": "sub_001422"
+ },
+ {
+  "ingredientId": "ing_003832",
+  "targetIngredientId": "ing_003831",
+  "note": "Chou à la crème pâtissière remplaçable par un chou à la chantilly (type Saint-honoré) selon la garniture souhaitée.",
+  "substitutionId": "sub_001423"
+ },
+ {
+  "ingredientId": "ing_003829",
+  "targetIngredientId": "ing_003828",
+  "note": "Corne de gazelle et baklava sont deux pâtisseries orientales aux amandes et au sucre, interchangeables sur un plateau oriental.",
+  "substitutionId": "sub_001424"
+ },
+ {
+  "ingredientId": "ing_003815",
+  "targetIngredientId": "ing_003816",
+  "note": "Brownie aux fruits à coque remplaçable par un brownie nature, notamment en cas d'allergie aux fruits à coque.",
+  "substitutionId": "sub_001425"
+ },
+ {
+  "ingredientId": "ing_003823",
+  "targetIngredientId": "ing_003824",
+  "note": "Gâteau breton fourré aux pruneaux remplaçable par un far breton aux pruneaux, spécialités bretonnes aux mêmes saveurs.",
+  "substitutionId": "sub_001426"
+ },
+ {
+  "ingredientId": "ing_003807",
+  "targetIngredientId": "ing_003809",
+  "note": "Gâteau mousse de fruits sur génoise (bavarois/miroir) et fraisier/framboisier partagent une structure proche (génoise, crème, fruits).",
+  "substitutionId": "sub_001427"
+ },
+ {
+  "ingredientId": "ing_003668",
+  "targetIngredientId": "ing_003813",
+  "note": "Macaron sec remplaçable par un macaron moelleux fourré pour varier un plateau de mignardises sucrées.",
+  "substitutionId": "sub_001428"
+ },
+ {
+  "ingredientId": "ing_003981",
+  "targetIngredientId": "ing_000879",
+  "note": "Ketchup préemballé substituable par de la sauce tomate nature",
+  "substitutionId": "sub_001429"
+ },
+ {
+  "ingredientId": "ing_003984",
+  "targetIngredientId": "ing_003981",
+  "note": "Ketchup allégé remplaçable par un ketchup classique",
+  "substitutionId": "sub_001430"
+ },
+ {
+  "ingredientId": "ing_003985",
+  "targetIngredientId": "ing_003983",
+  "note": "Mayonnaise allégée remplaçable par une mayonnaise classique",
+  "substitutionId": "sub_001431"
+ },
+ {
+  "ingredientId": "ing_003986",
+  "targetIngredientId": "ing_003981",
+  "note": "Sauce barbecue substituable par du ketchup, base tomate sucrée-épicée proche",
+  "substitutionId": "sub_001432"
+ },
+ {
+  "ingredientId": "ing_003987",
+  "targetIngredientId": "ing_003998",
+  "note": "Sauce soja remplaçable par de la sauce nuoc-mâm en cuisine asiatique",
+  "substitutionId": "sub_001433"
+ },
+ {
+  "ingredientId": "ing_004005",
+  "targetIngredientId": "ing_003987",
+  "note": "Sauce soja sucrée remplaçable par de la sauce soja classique",
+  "substitutionId": "sub_001434"
+ },
+ {
+  "ingredientId": "ing_004016",
+  "targetIngredientId": "ing_004005",
+  "note": "Sauce teriyaki substituable par de la sauce soja sucrée",
+  "substitutionId": "sub_001435"
+ },
+ {
+  "ingredientId": "ing_003988",
+  "targetIngredientId": "ing_003990",
+  "note": "Vinaigrette à l'huile d'olive équivalente à une vinaigrette classique 50-75% d'huile",
+  "substitutionId": "sub_001436"
+ },
+ {
+  "ingredientId": "ing_003991",
+  "targetIngredientId": "ing_000719",
+  "note": "Harissa substituable par du piment fort utilisé avec parcimonie",
+  "substitutionId": "sub_001437"
+ },
+ {
+  "ingredientId": "ing_003993",
+  "targetIngredientId": "ing_000588",
+  "note": "Sauce moutarde remplaçable par de la moutarde de Dijon détendue avec un peu de crème",
+  "substitutionId": "sub_001438"
+ },
+ {
+  "ingredientId": "ing_004015",
+  "targetIngredientId": "ing_003983",
+  "note": "Sauce Caesar substituable par de la mayonnaise additionnée de parmesan et anchois",
+  "substitutionId": "sub_001439"
+ },
+ {
+  "ingredientId": "ing_004017",
+  "targetIngredientId": "ing_004030",
+  "note": "Sauce béchamel préemballée remplaçable par une béchamel maison au beurre",
+  "substitutionId": "sub_001440"
+ },
+ {
+  "ingredientId": "ing_004018",
+  "targetIngredientId": "ing_004019",
+  "note": "Sauce béarnaise et sauce hollandaise sont interchangeables, bases voisines",
+  "substitutionId": "sub_001441"
+ },
+ {
+  "ingredientId": "ing_004024",
+  "targetIngredientId": "ing_004037",
+  "note": "Sauce madère remplaçable par une sauce au vin rouge faite maison",
+  "substitutionId": "sub_001442"
+ },
+ {
+  "ingredientId": "ing_003926",
+  "targetIngredientId": "ing_000071",
+  "note": "Huile ou beurre concentré remplaçable par du beurre doux classique",
+  "substitutionId": "sub_001443"
+ },
+ {
+  "ingredientId": "ing_003930",
+  "targetIngredientId": "ing_000071",
+  "note": "Beurre allégé doux substituable par du beurre doux classique",
+  "substitutionId": "sub_001444"
+ },
+ {
+  "ingredientId": "ing_003929",
+  "targetIngredientId": "ing_000070",
+  "note": "Beurre allégé demi-sel substituable par du beurre demi-sel classique",
+  "substitutionId": "sub_001445"
+ },
+ {
+  "ingredientId": "ing_003937",
+  "targetIngredientId": "ing_000071",
+  "note": "Huile de coco solide substituable par du beurre doux en pâtisserie, texture proche à froid",
+  "substitutionId": "sub_001446"
+ },
+ {
+  "ingredientId": "ing_003943",
+  "targetIngredientId": "ing_000453",
+  "note": "Huile de palme remplaçable par de l'huile de colza, alternative végétale courante",
+  "substitutionId": "sub_001447"
+ },
+ {
+  "ingredientId": "ing_003942",
+  "targetIngredientId": "ing_000464",
+  "note": "Huile pour friture non précisée remplaçable par de l'huile de tournesol",
+  "substitutionId": "sub_001448"
+ },
+ {
+  "ingredientId": "ing_003950",
+  "targetIngredientId": "ing_000450",
+  "note": "Huile d'olive vierge extra équivalente à l'huile d'olive extra vierge",
+  "substitutionId": "sub_001449"
+ },
+ {
+  "ingredientId": "ing_003977",
+  "targetIngredientId": "ing_000845",
+  "note": "Lard gras cru substituable par du saindoux en cuisine",
+  "substitutionId": "sub_001450"
+ },
+ {
+  "ingredientId": "ing_004050",
+  "targetIngredientId": "ing_000699",
+  "note": "Pesto rosso remplaçable par du pesto basilic classique si indisponible.",
+  "substitutionId": "sub_001451"
+ },
+ {
+  "ingredientId": "ing_004057",
+  "targetIngredientId": "ing_000221",
+  "note": "Cornichon haché comme substitut acidulé et croquant aux câpres.",
+  "substitutionId": "sub_001452"
+ },
+ {
+  "ingredientId": "ing_004058",
+  "targetIngredientId": "ing_000221",
+  "note": "Cornichon au vinaigre remplace l'oignon au vinaigre pour l'acidité en accompagnement.",
+  "substitutionId": "sub_001453"
+ },
+ {
+  "ingredientId": "ing_004059",
+  "targetIngredientId": "ing_000222",
+  "note": "Cornichons au vinaigre classiques comme alternative moins sucrée au cornichon aigre-doux.",
+  "substitutionId": "sub_001454"
+ },
+ {
+  "ingredientId": "ing_004060",
+  "targetIngredientId": "ing_004061",
+  "note": "Olive verte en saumure interchangeable avec l'olive noire dans la plupart des recettes.",
+  "substitutionId": "sub_001455"
+ },
+ {
+  "ingredientId": "ing_004061",
+  "targetIngredientId": "ing_004060",
+  "note": "Olive noire en saumure interchangeable avec l'olive verte dans la plupart des recettes.",
+  "substitutionId": "sub_001456"
+ },
+ {
+  "ingredientId": "ing_004062",
+  "targetIngredientId": "ing_004060",
+  "note": "Olive noire en saumure comme alternative à l'olive noire à l'huile si non disponible.",
+  "substitutionId": "sub_001457"
+ },
+ {
+  "ingredientId": "ing_004069",
+  "targetIngredientId": "ing_000920",
+  "note": "Son de blé comme substitut courant de fibre alimentaire au son de maïs.",
+  "substitutionId": "sub_001458"
+ },
+ {
+  "ingredientId": "ing_004070",
+  "targetIngredientId": "ing_000920",
+  "note": "Son de blé comme substitut courant de fibre alimentaire au son de riz.",
+  "substitutionId": "sub_001459"
+ },
+ {
+  "ingredientId": "ing_004071",
+  "targetIngredientId": "ing_000094",
+  "note": "Bouillon de boeuf prêt à l'emploi remplace le bouillon déshydraté (reconstituer selon dosage).",
+  "substitutionId": "sub_001460"
+ },
+ {
+  "ingredientId": "ing_004072",
+  "targetIngredientId": "ing_000531",
+  "note": "Levure de bière en flocons interchangeable avec la levure de bière standard.",
+  "substitutionId": "sub_001461"
+ },
+ {
+  "ingredientId": "ing_004073",
+  "targetIngredientId": "ing_004075",
+  "note": "Levure de boulanger déshydratée remplace la fraîche (environ moitié du poids).",
+  "substitutionId": "sub_001462"
+ },
+ {
+  "ingredientId": "ing_004075",
+  "targetIngredientId": "ing_004073",
+  "note": "Levure de boulanger fraîche remplace la déshydratée (environ le double du poids).",
+  "substitutionId": "sub_001463"
+ },
+ {
+  "ingredientId": "ing_004076",
+  "targetIngredientId": "ing_000412",
+  "note": "Une gousse de vanille grattée remplace l'extrait alcoolique de vanille.",
+  "substitutionId": "sub_001464"
+ },
+ {
+  "ingredientId": "ing_004078",
+  "targetIngredientId": "ing_000364",
+  "note": "Fond de veau prêt à l'emploi remplace le fond déshydraté (reconstituer selon dosage).",
+  "substitutionId": "sub_001465"
+ },
+ {
+  "ingredientId": "ing_004080",
+  "targetIngredientId": "ing_000385",
+  "note": "Fumet de poisson prêt à l'emploi comme alternative au court-bouillon déshydraté.",
+  "substitutionId": "sub_001466"
+ },
+ {
+  "ingredientId": "ing_004084",
+  "targetIngredientId": "ing_000871",
+  "note": "Sauce soja apporte une note umami proche pour remplacer l'extrait de levure à tartiner en cuisine.",
+  "substitutionId": "sub_001467"
+ },
+ {
+  "ingredientId": "ing_004093",
+  "targetIngredientId": "ing_000690",
+  "note": "Pectine comme substitut classique du gélifiant pour confitures.",
+  "substitutionId": "sub_001468"
+ },
+ {
+  "ingredientId": "ing_004108",
+  "targetIngredientId": "ing_000319",
+  "note": "Extrait de vanille (environ 1 càc) remplace une gousse de vanille.",
+  "substitutionId": "sub_001469"
+ },
+ {
+  "ingredientId": "ing_004123",
+  "targetIngredientId": "ing_004614",
+  "note": "Menthe fraîche remplace la menthe séchée (tripler la quantité).",
+  "substitutionId": "sub_001470"
+ },
+ {
+  "ingredientId": "ing_004125",
+  "targetIngredientId": "ing_000834",
+  "note": "Romarin frais remplace le romarin séché (tripler la quantité).",
+  "substitutionId": "sub_001471"
+ },
+ {
+  "ingredientId": "ing_004126",
+  "targetIngredientId": "ing_000888",
+  "note": "Sauge fraîche remplace la sauge séchée (tripler la quantité).",
+  "substitutionId": "sub_001472"
+ },
+ {
+  "ingredientId": "ing_004127",
+  "targetIngredientId": "ing_000316",
+  "note": "Estragon frais remplace l'estragon séché (tripler la quantité).",
+  "substitutionId": "sub_001473"
+ },
+ {
+  "ingredientId": "ing_004129",
+  "targetIngredientId": "ing_000029",
+  "note": "Aneth frais remplace l'aneth séché (tripler la quantité).",
+  "substitutionId": "sub_001474"
+ },
+ {
+  "ingredientId": "ing_004130",
+  "targetIngredientId": "ing_000183",
+  "note": "Ciboulette fraîche remplace la ciboulette séchée (tripler la quantité).",
+  "substitutionId": "sub_001475"
+ },
+ {
+  "ingredientId": "ing_004156",
+  "targetIngredientId": "ing_000250",
+  "note": "Alternative végétale classique à la crème fraîche en cuisine (préparations, sauces).",
+  "substitutionId": "sub_001476"
+ },
+ {
+  "ingredientId": "ing_004159",
+  "targetIngredientId": "ing_000084",
+  "note": "Le tofu nature est un substitut végétal courant du blanc de poulet dans les sautés et currys.",
+  "substitutionId": "sub_001477"
+ },
+ {
+  "ingredientId": "ing_004162",
+  "targetIngredientId": "ing_000089",
+  "note": "Le seitan est un substitut végétal courant du boeuf haché dans les plats mijotés et bolognaises.",
+  "substitutionId": "sub_001478"
+ },
+ {
+  "ingredientId": "ing_004163",
+  "targetIngredientId": "ing_004169",
+  "note": "Tartinade à base de légumes similaire, interchangeable avec le caviar d'aubergine à l'apéritif.",
+  "substitutionId": "sub_001479"
  }
 ]
