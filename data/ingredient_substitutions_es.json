@@ -1,170 +1,4560 @@
 {
-  "sub_000001": {
-    "note": "Misma cantidad, resultado muy similar."
-  },
-  "sub_000002": {
-    "note": "Reducir la cantidad en un 25% aproximadamente."
-  },
-  "sub_000003": {
-    "note": "En pasteles, para una versión más ligera.",
-    "name": "Compota de manzana"
-  },
-  "sub_000004": {
-    "note": "Unos 60 g de compota por huevo, en pasteles.",
-    "name": "Compota de manzana"
-  },
-  "sub_000005": {
-    "note": "1 cucharada molida + 3 cucharadas de agua por huevo, dejar reposar 5 min para que espese.",
-    "name": "Semilla de lino molida"
-  },
-  "sub_000006": {
-    "note": "Sabor más neutro, un poco más líquida."
-  },
-  "sub_000007": {
-    "note": "Buen sustituto tanto para cocinar como para beber."
-  },
-  "sub_000008": {
-    "note": "Ligeramente dulce de forma natural."
-  },
-  "sub_000009": {
-    "note": "Más ligero, menos rico en materia grasa."
-  },
-  "sub_000010": {
-    "note": "Para una versión sin lactosa, aporta un ligero sabor a coco."
-  },
-  "sub_000011": {
-    "note": "Para una versión sin gluten."
-  },
-  "sub_000012": {
-    "note": "Para espesar una salsa; no sustituye a la harina para hacer subir un pastel."
-  },
-  "sub_000013": {
-    "note": "Cambia la textura y el sabor, más densa y más rica."
-  },
-  "sub_000014": {
-    "note": "Reducir un poco la cantidad de líquido de la receta (la miel es húmeda)."
-  },
-  "sub_000015": {
-    "note": "Sabor más pronunciado, reducir ligeramente el líquido de la receta."
-  },
-  "sub_000016": {
-    "note": "Sabor más caramelizado, misma cantidad."
-  },
-  "sub_000017": {
-    "note": "Combinar con un ingrediente ácido (vinagre, zumo de limón) para que actúe."
-  },
-  "sub_000018": {
-    "note": "Añadir un poco de zumo de limón para recuperar la acidez del vino."
-  },
-  "sub_000019": {
-    "note": "Añadir un poco de vinagre balsámico para la acidez y el color."
-  },
-  "sub_000020": {
-    "note": "Sabor más neutro."
-  },
-  "sub_000021": {
-    "note": "Buen aporte de omega-3, sabor neutro."
-  },
-  "sub_000022": {
-    "note": "Un poco más denso, ligeramente menos ácido."
-  },
-  "sub_000023": {
-    "note": "Más rico, usar en cantidad algo reducida.",
-    "name": "Nata espesa light"
-  },
-  "sub_000024": {
-    "note": "Sabor más salado y más pronunciado."
-  },
-  "sub_000025": {
-    "note": "Para una versión vegana, aporta un sabor umami similar."
-  },
-  "sub_000026": {
-    "note": "Triturar groseramente antes de usar."
-  },
-  "sub_000027": {
-    "note": "Desmenuzar finamente."
-  },
-  "sub_000028": {
-    "note": "Más picante, dosificar con cuidado."
-  },
-  "sub_000029": {
-    "note": "Combinar con un poco de vinagre para recuperar la acidez."
-  },
-  "sub_000030": {
-    "note": "Aproximadamente 1/8 de cucharadita por diente de ajo fresco."
-  },
-  "sub_000031": {
-    "note": "Sabor más suave y más dulce."
-  },
-  "sub_000032": {
-    "note": "Sabor más suave, se cocina más rápido."
-  },
-  "sub_000033": {
-    "note": "Usar la parte blanca, sabor más delicado."
-  },
-  "sub_000034": {
-    "note": "Solo para la acidez, sin el sabor cítrico."
-  },
-  "sub_000035": {
-    "note": "Sabor un poco más intenso."
-  },
-  "sub_000036": {
-    "note": "Añadir una pizca de azúcar para recuperar el lado ligeramente dulce."
-  },
-  "sub_000037": {
-    "note": "Mismo uso, a menudo menos salado."
-  },
-  "sub_000038": {
-    "note": "Diluida en agua, aporta sabor salado y umami."
-  },
-  "sub_000039": {
-    "note": "Un poco menos rica, pero una textura similar."
-  },
-  "sub_000040": {
-    "note": "Para una versión sin lactosa."
-  },
-  "sub_000041": {
-    "note": "Mezclar con un poco de nata espesa para la riqueza.",
-    "name": "Queso fresco"
-  },
-  "sub_000042": {
-    "note": "Mezclar con mantequilla y azúcar para recuperar una textura similar."
-  },
-  "sub_000043": {
-    "note": "Sabor más pronunciado."
-  },
-  "sub_000044": {
-    "note": "Sabor más suave y más cremoso."
-  },
-  "sub_000045": {
-    "note": "Más rica en proteínas, textura ligeramente diferente."
-  },
-  "sub_000046": {
-    "note": "Tiempo de cocción más corto."
-  },
-  "sub_000047": {
-    "note": "Para una versión sin gluten."
-  },
-  "sub_000048": {
-    "note": "Para una versión sin gluten, cocción más rápida."
-  },
-  "sub_000049": {
-    "note": "Unas gotas son suficientes, añadir al azúcar normal."
-  },
-  "sub_000050": {
-    "note": "Sabor diferente pero textura similar."
-  },
-  "sub_000051": {
-    "note": "Añadir un poco más de líquido para compensar (la miel es húmeda)."
-  },
-  "sub_000052": {
-    "note": "Un poco más líquido."
-  },
-  "sub_000053": {
-    "note": "Para una versión sin gluten, sabor muy similar.",
-    "name": "Tamari"
-  },
-  "sub_000054": {
-    "note": "Diluida en un poco de agua; el sabor umami será menos presente."
-  }
+ "sub_000001": {
+  "note": "Misma cantidad, resultado muy similar."
+ },
+ "sub_000002": {
+  "note": "Reducir la cantidad en un 25% aproximadamente."
+ },
+ "sub_000003": {
+  "note": "En pasteles, para una versión más ligera.",
+  "name": "Compota de manzana"
+ },
+ "sub_000004": {
+  "note": "Unos 60 g de compota por huevo, en pasteles.",
+  "name": "Compota de manzana"
+ },
+ "sub_000005": {
+  "note": "1 cucharada molida + 3 cucharadas de agua por huevo, dejar reposar 5 min para que espese.",
+  "name": "Semilla de lino molida"
+ },
+ "sub_000006": {
+  "note": "Sabor más neutro, un poco más líquida."
+ },
+ "sub_000007": {
+  "note": "Buen sustituto tanto para cocinar como para beber."
+ },
+ "sub_000008": {
+  "note": "Ligeramente dulce de forma natural."
+ },
+ "sub_000009": {
+  "note": "Más ligero, menos rico en materia grasa."
+ },
+ "sub_000010": {
+  "note": "Para una versión sin lactosa, aporta un ligero sabor a coco."
+ },
+ "sub_000011": {
+  "note": "Para una versión sin gluten."
+ },
+ "sub_000012": {
+  "note": "Para espesar una salsa; no sustituye a la harina para hacer subir un pastel."
+ },
+ "sub_000013": {
+  "note": "Cambia la textura y el sabor, más densa y más rica."
+ },
+ "sub_000014": {
+  "note": "Reducir un poco la cantidad de líquido de la receta (la miel es húmeda)."
+ },
+ "sub_000015": {
+  "note": "Sabor más pronunciado, reducir ligeramente el líquido de la receta."
+ },
+ "sub_000016": {
+  "note": "Sabor más caramelizado, misma cantidad."
+ },
+ "sub_000017": {
+  "note": "Combinar con un ingrediente ácido (vinagre, zumo de limón) para que actúe."
+ },
+ "sub_000018": {
+  "note": "Añadir un poco de zumo de limón para recuperar la acidez del vino."
+ },
+ "sub_000019": {
+  "note": "Añadir un poco de vinagre balsámico para la acidez y el color."
+ },
+ "sub_000020": {
+  "note": "Sabor más neutro."
+ },
+ "sub_000021": {
+  "note": "Buen aporte de omega-3, sabor neutro."
+ },
+ "sub_000022": {
+  "note": "Un poco más denso, ligeramente menos ácido."
+ },
+ "sub_000023": {
+  "note": "Más rico, usar en cantidad algo reducida.",
+  "name": "Nata espesa light"
+ },
+ "sub_000024": {
+  "note": "Sabor más salado y más pronunciado."
+ },
+ "sub_000025": {
+  "note": "Para una versión vegana, aporta un sabor umami similar."
+ },
+ "sub_000026": {
+  "note": "Triturar groseramente antes de usar."
+ },
+ "sub_000027": {
+  "note": "Desmenuzar finamente."
+ },
+ "sub_000028": {
+  "note": "Más picante, dosificar con cuidado."
+ },
+ "sub_000029": {
+  "note": "Combinar con un poco de vinagre para recuperar la acidez."
+ },
+ "sub_000030": {
+  "note": "Aproximadamente 1/8 de cucharadita por diente de ajo fresco."
+ },
+ "sub_000031": {
+  "note": "Sabor más suave y más dulce."
+ },
+ "sub_000032": {
+  "note": "Sabor más suave, se cocina más rápido."
+ },
+ "sub_000033": {
+  "note": "Usar la parte blanca, sabor más delicado."
+ },
+ "sub_000034": {
+  "note": "Solo para la acidez, sin el sabor cítrico."
+ },
+ "sub_000035": {
+  "note": "Sabor un poco más intenso."
+ },
+ "sub_000036": {
+  "note": "Añadir una pizca de azúcar para recuperar el lado ligeramente dulce."
+ },
+ "sub_000037": {
+  "note": "Mismo uso, a menudo menos salado."
+ },
+ "sub_000038": {
+  "note": "Diluida en agua, aporta sabor salado y umami."
+ },
+ "sub_000039": {
+  "note": "Un poco menos rica, pero una textura similar."
+ },
+ "sub_000040": {
+  "note": "Para una versión sin lactosa."
+ },
+ "sub_000041": {
+  "note": "Mezclar con un poco de nata espesa para la riqueza.",
+  "name": "Queso fresco"
+ },
+ "sub_000042": {
+  "note": "Mezclar con mantequilla y azúcar para recuperar una textura similar."
+ },
+ "sub_000043": {
+  "note": "Sabor más pronunciado."
+ },
+ "sub_000044": {
+  "note": "Sabor más suave y más cremoso."
+ },
+ "sub_000045": {
+  "note": "Más rica en proteínas, textura ligeramente diferente."
+ },
+ "sub_000046": {
+  "note": "Tiempo de cocción más corto."
+ },
+ "sub_000047": {
+  "note": "Para una versión sin gluten."
+ },
+ "sub_000048": {
+  "note": "Para una versión sin gluten, cocción más rápida."
+ },
+ "sub_000049": {
+  "note": "Unas gotas son suficientes, añadir al azúcar normal."
+ },
+ "sub_000050": {
+  "note": "Sabor diferente pero textura similar."
+ },
+ "sub_000051": {
+  "note": "Añadir un poco más de líquido para compensar (la miel es húmeda)."
+ },
+ "sub_000052": {
+  "note": "Un poco más líquido."
+ },
+ "sub_000053": {
+  "note": "Para una versión sin gluten, sabor muy similar.",
+  "name": "Tamari"
+ },
+ "sub_000054": {
+  "note": "Diluida en un poco de agua; el sabor umami será menos presente."
+ },
+ "sub_000055": {
+  "note": "Los nabos y el colinabo son intercambiables en guisos y purés, en la misma cantidad."
+ },
+ "sub_000056": {
+  "note": "La coliflor y el brócoli se intercambian en la misma cantidad en la mayoría de las recetas (gratinados, salteados, arroz de coliflor/brócoli)."
+ },
+ "sub_000057": {
+  "note": "El repollo morado y el verde son intercambiables en la misma cantidad; el color del plato cambiará."
+ },
+ "sub_000058": {
+  "note": "La cebolla morada se puede sustituir por cebolla amarilla en la misma cantidad, con un sabor algo menos dulce."
+ },
+ "sub_000059": {
+  "note": "La cebolla blanca y la cebolla amarilla son intercambiables en la misma cantidad."
+ },
+ "sub_000060": {
+  "note": "La lechuga iceberg y la romana son intercambiables en ensaladas; la romana es más crujiente y nutritiva."
+ },
+ "sub_000061": {
+  "note": "La lechuga de hoja roja y la de hoja verde son intercambiables en ensaladas, en la misma cantidad."
+ },
+ "sub_000062": {
+  "note": "El pimiento rojo se puede sustituir por pimiento verde en la misma cantidad, con un sabor más amargo y menos dulce."
+ },
+ "sub_000063": {
+  "note": "El pimiento amarillo y el naranja son intercambiables en la misma cantidad (igual dulzor)."
+ },
+ "sub_000064": {
+  "note": "El champiñón blanco se puede sustituir por el champiñón marrón (crimini), con un sabor más intenso, en la misma cantidad."
+ },
+ "sub_000065": {
+  "note": "El champiñón marrón (crimini) y el portobello son la misma especie en distinto grado de madurez y son intercambiables (el portobello es más carnoso)."
+ },
+ "sub_000066": {
+  "note": "El shiitake se puede sustituir por portobello para lograr una textura carnosa similar en salteados, en la misma cantidad."
+ },
+ "sub_000067": {
+  "note": "El enoki se puede sustituir por champiñón blanco si no está disponible, con una textura menos crujiente."
+ },
+ "sub_000068": {
+  "note": "El shimeji se puede sustituir por champiñón blanco, en la misma cantidad."
+ },
+ "sub_000069": {
+  "note": "La seta ostra se puede sustituir por shiitake en salteados y caldos, en la misma cantidad."
+ },
+ "sub_000070": {
+  "note": "El kale y las berzas (collard greens) son intercambiables en platos cocinados a fuego lento, en la misma cantidad."
+ },
+ "sub_000071": {
+  "note": "El melón cantalupo y el melón dulce (honeydew) son intercambiables en ensalada de frutas, en la misma cantidad."
+ },
+ "sub_000072": {
+  "note": "La patata roja se puede sustituir por la Russet, más harinosa (mejor para puré/patatas fritas)."
+ },
+ "sub_000073": {
+  "note": "La patata de carne dorada se puede sustituir por la roja, con una textura firme similar."
+ },
+ "sub_000074": {
+  "note": "Las manzanas Fuji y Gala son intercambiables en la misma cantidad, ambas dulces y firmes."
+ },
+ "sub_000075": {
+  "note": "La manzana Granny Smith se puede sustituir por Red Delicious, pero el resultado será menos ácido (ajustar el azúcar en repostería)."
+ },
+ "sub_000076": {
+  "note": "La manzana Honeycrisp se puede sustituir por Gala en la misma cantidad, algo menos jugosa."
+ },
+ "sub_000077": {
+  "note": "El mango Ataulfo se puede sustituir por Tommy Atkins en la misma cantidad, con una textura algo más fibrosa."
+ },
+ "sub_000078": {
+  "note": "El jalapeño y el serrano son intercambiables; el serrano es más picante, así que reduce ligeramente la cantidad."
+ },
+ "sub_000079": {
+  "note": "El poblano se puede sustituir por jalapeño usando la mitad de la cantidad (el poblano es mucho más suave)."
+ },
+ "sub_000080": {
+  "note": "El chile banana (cera húngaro) se puede sustituir por jalapeño; es más suave, así que usa más cantidad."
+ },
+ "sub_000081": {
+  "note": "Las alubias cannellini y las alubias blancas (navy) son intercambiables en la misma cantidad en sopas y ensaladas."
+ },
+ "sub_000082": {
+  "note": "Los frijoles negros y los frijoles pintos son intercambiables en platos mexicanos/chili, en la misma cantidad."
+ },
+ "sub_000083": {
+  "note": "La mantequilla de cacahuete se puede sustituir por mantequilla de almendra en la misma cantidad (opción sin cacahuete), con un sabor más suave."
+ },
+ "sub_000084": {
+  "note": "El tahini se puede sustituir por mantequilla de almendra en la misma cantidad para un sabor menos amargo (fuera del hummus)."
+ },
+ "sub_000085": {
+  "note": "Los higos secos y las ciruelas pasas son intercambiables en repostería/compotas, en la misma cantidad."
+ },
+ "sub_000086": {
+  "note": "Las pasas oscuras y las pasas doradas (sultanas) son intercambiables en la misma cantidad; las doradas tienen un sabor algo más suave."
+ },
+ "sub_000087": {
+  "note": "Las semillas de calabaza (pepitas) se pueden sustituir por piñones como aderezo (pesto, ensaladas), en la misma cantidad."
+ },
+ "sub_000088": {
+  "note": "El aceite de maíz se puede sustituir por aceite de canola en la misma cantidad, con un sabor igualmente neutro."
+ },
+ "sub_000089": {
+  "note": "El aceite de cártamo se puede sustituir por aceite de girasol en la misma cantidad, con un sabor igualmente neutro."
+ },
+ "sub_000090": {
+  "note": "El aceite de cacahuete se puede sustituir por aceite de canola para freír en caso de alergia, con un punto de humeo similar."
+ },
+ "sub_000091": {
+  "note": "Cebolla amarilla en la misma cantidad, sabor más suave y dulce."
+ },
+ "sub_000092": {
+  "note": "El calabacín y la calabaza de verano amarilla son intercambiables en la misma cantidad."
+ },
+ "sub_000093": {
+  "note": "El cereal ancestral se puede sustituir por quinoa cruda, con un tiempo de cocción similar."
+ },
+ "sub_000094": {
+  "note": "El trigo ancestral se puede sustituir por farro perlado, con una textura firme similar."
+ },
+ "sub_000095": {
+  "note": "El kamut se puede sustituir por farro, de la misma familia de trigo ancestral."
+ },
+ "sub_000096": {
+  "note": "El arroz negro se puede sustituir por arroz integral en la misma cantidad, con un color diferente."
+ },
+ "sub_000097": {
+  "note": "El arroz rojo se puede sustituir por arroz integral en la misma cantidad."
+ },
+ "sub_000098": {
+  "note": "El arroz integral se puede sustituir por arroz blanco; reduce el tiempo de cocción."
+ },
+ "sub_000099": {
+  "note": "El grano de sorgo se puede sustituir por arroz integral en bowls de cereales."
+ },
+ "sub_000100": {
+  "note": "Los espaguetis clásicos y los integrales son intercambiables en la misma cantidad."
+ },
+ "sub_000101": {
+  "note": "Harina común en lugar de harina para repostería; para un resultado más ligero, sustituye 2 cucharadas por taza por maicena."
+ },
+ "sub_000102": {
+  "note": "Versión con cerdo en lugar de la versión vegetariana para un sabor más ahumado."
+ },
+ "sub_000103": {
+  "note": "Los frijoles de ojo negro se pueden sustituir por frijoles pintos, con una textura similar."
+ },
+ "sub_000104": {
+  "note": "Los frijoles negros y los pintos son intercambiables en platos mexicanos."
+ },
+ "sub_000105": {
+  "note": "Las alubias blancas (navy) se pueden sustituir por cannellini en la misma cantidad."
+ },
+ "sub_000106": {
+  "note": "Las alubias great northern y las cannellini son dos alubias blancas intercambiables."
+ },
+ "sub_000107": {
+  "note": "El extra virgen tiene un sabor más pronunciado; el extra ligero es más adecuado para cocinar a alta temperatura."
+ },
+ "sub_000108": {
+  "note": "Vinagre de vino blanco en la misma cantidad para aportar acidez en aliños."
+ },
+ "sub_000109": {
+  "note": "Cúrcuma en polvo como sustituto económico para dar color; usa la mitad de la cantidad, con un sabor diferente."
+ },
+ "sub_000110": {
+  "note": "Mantequilla sin sal + añade aproximadamente 1/4 de cucharadita de sal por cada 115 g."
+ },
+ "sub_000111": {
+  "note": "Mantequilla con sal, eliminando la sal añadida en la receta."
+ },
+ "sub_000112": {
+  "note": "Yogur griego natural en lugar de crema agria, en la misma cantidad, con menos grasa."
+ },
+ "sub_000113": {
+  "note": "Leche + 1 cucharada de zumo de limón o vinagre por taza, dejar reposar 5-10 min",
+  "name": "Leche + zumo de limón o vinagre"
+ },
+ "sub_000114": {
+  "note": "Huevo entero fresco en lugar de huevo deshidratado reconstituido (sigue la proporción de rehidratación)."
+ },
+ "sub_000115": {
+  "note": "Yema de huevo fresca en lugar de yema deshidratada reconstituida."
+ },
+ "sub_000116": {
+  "note": "Clara de huevo fresca en lugar de clara deshidratada reconstituida."
+ },
+ "sub_000117": {
+  "note": "Los pescados blancos magros son intercambiables (abadejo de Alaska y eglefino)."
+ },
+ "sub_000118": {
+  "note": "El carbonero (abadejo negro) se puede sustituir por bacalao, pescados blancos similares."
+ },
+ "sub_000119": {
+  "note": "Los pescados firmes de carne blanca son intercambiables en filete a la plancha o al horno."
+ },
+ "sub_000120": {
+  "note": "El pez espada y el mahi-mahi, pescados firmes para filetes tipo bistec, son intercambiables."
+ },
+ "sub_000121": {
+  "note": "La corvina chilena (merluza negra) se puede sustituir por fletán, con una textura firme y mantecosa similar."
+ },
+ "sub_000122": {
+  "note": "El salmón rojo (sockeye) y el salmón del Atlántico son intercambiables; este último es más graso."
+ },
+ "sub_000123": {
+  "note": "La tilapia y el bagre, pescados de piscifactoría de sabor suave, son intercambiables."
+ },
+ "sub_000124": {
+  "note": "El cangrejo de las nieves y el cangrejo azul son intercambiables en la mayoría de las recetas."
+ },
+ "sub_000125": {
+  "note": "Gruyère en lugar de emmental, con un sabor a avellana similar."
+ },
+ "sub_000126": {
+  "note": "Queso suizo (emmental) en lugar de cheddar para un fundido más suave."
+ },
+ "sub_000127": {
+  "note": "Mozzarella baja en humedad en lugar de queso Oaxaca, con un fundido similar."
+ },
+ "sub_000128": {
+  "note": "Parmesano rallado en lugar de cotija como aderezo salado."
+ },
+ "sub_000129": {
+  "note": "Feta desmenuzado en lugar de queso fresco, con una textura desmenuzable y salada similar."
+ },
+ "sub_000130": {
+  "note": "El queso seco se puede sustituir por cotija, quesos secos y salados similares."
+ },
+ "sub_000131": {
+  "note": "Mozzarella en lugar de Monterey Jack para un fundido suave similar."
+ },
+ "sub_000132": {
+  "note": "Queso suizo (emmental) en lugar de provolone, con un fundido semiduro similar."
+ },
+ "sub_000133": {
+  "note": "Requesón (cottage cheese) triturado en el robot de cocina en lugar de ricotta, con una textura similar."
+ },
+ "sub_000134": {
+  "note": "Cheddar en lugar de queso americano para hamburguesas y sándwiches."
+ },
+ "sub_000135": {
+  "note": "Carne de res picada en lugar de carne de cerdo picada, en la misma cantidad."
+ },
+ "sub_000136": {
+  "note": "Carne de res picada en lugar de cordero picado, con un sabor menos intenso."
+ },
+ "sub_000137": {
+  "note": "Carne de res picada en lugar de bisonte picado, más grasa, reduce el tiempo de cocción."
+ },
+ "sub_000138": {
+  "note": "Pavo picado en lugar de pollo picado, carnes blancas intercambiables."
+ },
+ "sub_000139": {
+  "note": "Muslo de pollo en lugar de pechuga, más jugoso, ajusta el tiempo de cocción."
+ },
+ "sub_000140": {
+  "note": "Muslo deshuesado sin piel en lugar de pechuga deshuesada, más tierno."
+ },
+ "sub_000141": {
+  "note": "Pavo asado en lonchas en lugar de fiambre de pollo."
+ },
+ "sub_000142": {
+  "note": "Pavo asado en lonchas en lugar de rosbif en fiambre."
+ },
+ "sub_000143": {
+  "note": "Pepperoni en lonchas en lugar de salami curado en pizza o sándwich."
+ },
+ "sub_000144": {
+  "note": "Chorizo de cerdo en lugar de salchicha italiana suave, más picante y ahumado."
+ },
+ "sub_000145": {
+  "note": "Salchicha de res para desayuno en lugar de salchicha de pavo."
+ },
+ "sub_000146": {
+  "note": "Leche desnatada en lugar de leche entera, con una textura menos cremosa."
+ },
+ "sub_000147": {
+  "note": "Bebida de almendra en lugar de bebida de avena, leches vegetales intercambiables."
+ },
+ "sub_000148": {
+  "note": "Bebida de almendra sin azúcar en lugar de leche de soja, sin lácteos ni soja."
+ },
+ "sub_000149": {
+  "note": "Tortilla de trigo en lugar de tortilla de maíz, más flexible pero contiene gluten."
+ },
+ "sub_000150": {
+  "note": "Sustituir por romero seco: usar 1/3 de la cantidad (las hierbas secas son más concentradas)."
+ },
+ "sub_000151": {
+  "note": "Sustituir por romero fresco: usar el triple de la cantidad."
+ },
+ "sub_000152": {
+  "note": "Usar aproximadamente 1/3 de la cantidad en eneldo seco."
+ },
+ "sub_000153": {
+  "note": "Usar el triple de la cantidad en eneldo fresco."
+ },
+ "sub_000154": {
+  "note": "Usar el triple de la cantidad en menta fresca."
+ },
+ "sub_000155": {
+  "note": "Usar aproximadamente 1/3 de la cantidad en menta seca."
+ },
+ "sub_000156": {
+  "note": "Sustituto similar en la misma cantidad, con un sabor algo más suave."
+ },
+ "sub_000157": {
+  "note": "Usar el triple de la cantidad en perejil fresco picado."
+ },
+ "sub_000158": {
+  "note": "Usar aproximadamente 1/3 de la cantidad en perejil seco."
+ },
+ "sub_000159": {
+  "note": "Usar aproximadamente 1/3 de la cantidad en cebollino liofilizado."
+ },
+ "sub_000160": {
+  "note": "Rehidratar durante unos minutos; usar aproximadamente 1/3 de la cantidad."
+ },
+ "sub_000161": {
+  "note": "Sustituto en la misma cantidad, sabor muy similar (mismo árbol de especias)."
+ },
+ "sub_000162": {
+  "note": "Sustituto en la misma cantidad, sabor algo más delicado."
+ },
+ "sub_000163": {
+  "note": "Sustituto en la misma cantidad, sabor más suave, menos visible en platos claros."
+ },
+ "sub_000164": {
+  "note": "Usar aproximadamente 6 veces la cantidad en jengibre fresco rallado."
+ },
+ "sub_000165": {
+  "note": "Usar aproximadamente 1/6 de la cantidad en jengibre molido."
+ },
+ "sub_000166": {
+  "note": "Sustituto en la misma cantidad; la pimienta de Jamaica recuerda al clavo, la canela y la nuez moscada."
+ },
+ "sub_000167": {
+  "note": "Sustituto en la misma cantidad, sabor más suave y ligeramente dulce."
+ },
+ "sub_000168": {
+  "note": "Sustituto en la misma cantidad, sabor más intenso."
+ },
+ "sub_000169": {
+  "note": "Sustituto en la misma cantidad, familia aromática similar."
+ },
+ "sub_000170": {
+  "note": "Sustituto en la misma cantidad, sabor suave similar al perejil."
+ },
+ "sub_000171": {
+  "note": "Sustituto directo en la misma cantidad (versión sin alcohol)."
+ },
+ "sub_000172": {
+  "note": "Sustituto directo en la misma cantidad (versión con alcohol)."
+ },
+ "sub_000173": {
+  "note": "Sustituto en la misma cantidad para aportar acidez en platos salados, con un sabor menos redondo."
+ },
+ "sub_000174": {
+  "note": "Usar aproximadamente 1/4 de la cantidad; la pimienta de cayena es mucho más picante y no lleva las otras especias de la mezcla."
+ },
+ "sub_000175": {
+  "note": "Mezclar partes iguales de canela, jengibre y nuez moscada molidos, y añadir una pizca de pimienta de Jamaica molida",
+  "name": "Mezcla casera de canela, jengibre y nuez moscada molidos con una pizca de pimienta de Jamaica"
+ },
+ "sub_000176": {
+  "note": "Sustituto directo en la misma cantidad, versión menos salada."
+ },
+ "sub_000177": {
+  "note": "Reducir la cantidad y rehidratar ligeramente; sabor más concentrado y dulce."
+ },
+ "sub_000178": {
+  "note": "Reducir la cantidad y rehidratar ligeramente; sabor más concentrado."
+ },
+ "sub_000179": {
+  "note": "Rehidratar en agua antes de usar; usar aproximadamente 1/3 de la cantidad."
+ },
+ "sub_000180": {
+  "note": "Sustituto directo en la misma cantidad; escurrir y enjuagar antes de usar."
+ },
+ "sub_000181": {
+  "note": "Sustituto directo; enjuagar para eliminar el exceso de salmuera."
+ },
+ "sub_000182": {
+  "note": "Sustituto en la misma cantidad, con una textura más firme y menos dulce."
+ },
+ "sub_000183": {
+  "note": "Sustituto en la misma cantidad, con una textura más tierna y más dulce."
+ },
+ "sub_000184": {
+  "note": "Sustituto en la misma cantidad para aportar acidez, con un sabor ligeramente diferente."
+ },
+ "sub_000185": {
+  "note": "Sustituto en la misma cantidad para aportar acidez, con un sabor ligeramente diferente."
+ },
+ "sub_000186": {
+  "note": "Sustituto directo en la misma cantidad."
+ },
+ "sub_000187": {
+  "note": "Sustituto en la misma cantidad (fruto híbrido de mora y frambuesa), algo más ácido."
+ },
+ "sub_000188": {
+  "note": "Sustituto en la misma cantidad en ensaladas, con un amargor similar."
+ },
+ "sub_000189": {
+  "note": "Sustituto en la misma cantidad en ensaladas, con un sabor picante similar."
+ },
+ "sub_000190": {
+  "note": "Sustituto en la misma cantidad en ensaladas o salteados."
+ },
+ "sub_000191": {
+  "note": "Sustituto en la misma cantidad en ensaladas, con un sabor más suave."
+ },
+ "sub_000192": {
+  "note": "Sustituto en la misma cantidad, muy similar en sabor y textura."
+ },
+ "sub_000193": {
+  "note": "Sustituto en la misma cantidad, cocción similar."
+ },
+ "sub_000194": {
+  "note": "Sustituto en la misma cantidad, saltear rápidamente."
+ },
+ "sub_000195": {
+  "note": "Sustituto en la misma cantidad (tubérculos muy similares); cocinar siempre bien antes de consumir."
+ },
+ "sub_000196": {
+  "note": "Sustituto en la misma cantidad; cocinar siempre bien antes de consumir."
+ },
+ "sub_000197": {
+  "note": "La espinaca de Malabar cocida se puede sustituir por espinaca normal cocida en la misma cantidad, con una textura algo menos mucilaginosa."
+ },
+ "sub_000198": {
+  "note": "Sustituto similar a la espinaca cruda clásica, en la misma cantidad."
+ },
+ "sub_000199": {
+  "note": "Como solución rápida para el aporte umami/salado (no es el mismo sabor fermentado): usar aproximadamente la mitad de tamari, y salar con moderación."
+ },
+ "sub_000200": {
+  "note": "Patata en la misma cantidad, con una textura similar una vez cocida, sabor más neutro."
+ },
+ "sub_000201": {
+  "note": "1 cucharada de copos deshidratados = aproximadamente 1/4 de cebolla amarilla fresca picada."
+ },
+ "sub_000202": {
+  "note": "Zumo de arándano rojo sin azúcar en la misma cantidad, con una acidez similar, ajustar el azúcar."
+ },
+ "sub_000203": {
+  "note": "Ralladura de limón para el aroma cítrico, a falta de citronela: aproximadamente 1 cucharadita de ralladura por cada tallo de citronela."
+ },
+ "sub_000204": {
+  "note": "Yogur natural lácteo en la misma cantidad si no es necesaria la opción vegetal."
+ },
+ "sub_000205": {
+  "note": "Sustitución clásica en repostería: cacao en polvo en la misma cantidad, añadir un poco más de azúcar ya que la algarroba es naturalmente dulce."
+ },
+ "sub_000206": {
+  "note": "Perejil de hoja plana para quienes no les gusta el cilantro, en la misma cantidad, con un sabor diferente pero un papel aromático similar."
+ },
+ "sub_000207": {
+  "note": "Maicena en la misma cantidad o ligeramente menor para espesar (2 cucharaditas de maicena = 1 cucharada de arrurruz)."
+ },
+ "sub_000208": {
+  "note": "Shoyu (contiene trigo) en la misma cantidad si el gluten no es un problema."
+ },
+ "sub_000209": {
+  "note": "Usar un tamari certificado sin gluten (comprobar la etiqueta, no todos lo son) para una versión sin gluten, en la misma cantidad."
+ },
+ "sub_000210": {
+  "note": "Pera clásica en la misma cantidad, con una textura más blanda que la crujiente pera nashi."
+ },
+ "sub_000211": {
+  "note": "Rábano picante en cantidad reducida (el wasabi es más picante): aproximadamente la mitad."
+ },
+ "sub_000212": {
+  "note": "Espinaca cruda en la misma cantidad, con un tiempo de cocción más corto que la acelga."
+ },
+ "sub_000213": {
+  "note": "Rúcula en la misma cantidad, con un sabor más picante que el berro."
+ },
+ "sub_000214": {
+  "note": "Gelatina en cantidad equivalente para una opción no vegetariana (el agar-agar gelifica más fuerte, ajustar a la baja)."
+ },
+ "sub_000215": {
+  "note": "Cebolleta (cebolla verde) clásica en la misma cantidad."
+ },
+ "sub_000216": {
+  "note": "Melón dulce (Honeydew) en la misma cantidad, con una textura y dulzor similares."
+ },
+ "sub_000217": {
+  "note": "Repollo verde común en la misma cantidad, hojas menos rizadas pero con un sabor similar."
+ },
+ "sub_000218": {
+  "note": "Calabacín en la misma cantidad, con una cocción algo más rápida."
+ },
+ "sub_000219": {
+  "note": "Champiñón shiitake seco (rehidratado) en la misma cantidad para un sabor amaderado similar."
+ },
+ "sub_000220": {
+  "note": "Chile jalapeño en la misma cantidad, algo menos picante."
+ },
+ "sub_000221": {
+  "note": "Chile poblano fresco en la misma cantidad (el ancho es un poblano seco); si no, pimentón dulce para el aroma sin el picante."
+ },
+ "sub_000222": {
+  "note": "Escarola en la misma cantidad, con un amargor algo menos marcado que la endivia."
+ },
+ "sub_000223": {
+  "note": "Lechuga de hoja verde en la misma cantidad, misma textura, color diferente."
+ },
+ "sub_000224": {
+  "note": "Champiñón blanco en la misma cantidad, con una textura más firme."
+ },
+ "sub_000225": {
+  "note": "Brócoli clásico en la misma cantidad; los tallos del kai-lan son más finos y algo más amargos."
+ },
+ "sub_000226": {
+  "note": "Aguacate de California (Hass) en la misma cantidad, más graso y cremoso que el aguacate de Florida."
+ },
+ "sub_000227": {
+  "note": "Pasas normales en la misma cantidad, algo menos dulces/ácidas que las grosellas de Corinto."
+ },
+ "sub_000228": {
+  "note": "Nabo crudo en la misma cantidad, con un sabor más picante y menos dulce que el daikon."
+ },
+ "sub_000229": {
+  "note": "Agar-agar en polvo, usar aproximadamente 1/8 de cucharadita por cada cucharada de musgo irlandés, con un poder gelificante más fuerte."
+ },
+ "sub_000230": {
+  "note": "Chile ancho seco en la misma cantidad, con un sabor algo más suave y afrutado que el pasilla."
+ },
+ "sub_000231": {
+  "note": "Coliflor blanca clásica en la misma cantidad, misma textura, menos decorativa."
+ },
+ "sub_000232": {
+  "note": "Champiñón shiitake en la misma cantidad, con una textura más firme que el maitake."
+ },
+ "sub_000233": {
+  "note": "Caqui japonés (Fuyu) en la misma cantidad, con una textura más firme incluso sin madurar del todo, a diferencia del caqui autóctono."
+ },
+ "sub_000234": {
+  "note": "Champiñón blanco en la misma cantidad, con un sabor menos intenso que el portobello."
+ },
+ "sub_000235": {
+  "note": "Lichi fresco (o en conserva) en la misma cantidad, con una textura y dulzor similares al rambután."
+ },
+ "sub_000236": {
+  "note": "Arándanos rojos secos endulzados en la misma cantidad en repostería, más ácidos que los arándanos azules secos."
+ },
+ "sub_000237": {
+  "note": "Para lograr una textura de \"carne desmenuzada\" vegetal (pulled pork) sin el sabor dulce del yaca: usar en la misma cantidad y marinar más tiempo",
+  "name": "Palmitos o setas ostra desmenuzados"
+ },
+ "sub_000238": {
+  "note": "En la misma cantidad, pulpa verde en lugar de amarilla, con una acidez algo más marcada",
+  "name": "Kiwi verde común"
+ },
+ "sub_000239": {
+  "note": "Concentrado de tomate diluido (1 parte de concentrado por 2-3 partes de agua) para sustituir la salsa de tomate en conserva."
+ },
+ "sub_000240": {
+  "note": "Quinoa en la misma cantidad, con un tiempo de cocción algo más corto que el mijo."
+ },
+ "sub_000241": {
+  "note": "Guisantes verdes crudos en la misma cantidad, con un sabor más dulce y una textura más tierna que las habas frescas."
+ },
+ "sub_000242": {
+  "note": "Quinoa cruda en la misma cantidad (cocción más rápida), alternativa sin gluten al bulgur."
+ },
+ "sub_000243": {
+  "note": "Alcachofa de Jerusalén (pataca) en la misma cantidad, con una textura y un sabor terroso-dulce similares a la salsifí."
+ },
+ "sub_000244": {
+  "note": "Un cereal sin gluten de sabor igualmente neutro; sustituir en la misma cantidad (quinoa cocida)."
+ },
+ "sub_000245": {
+  "note": "Un cereal sin gluten similar; sustituir en la misma cantidad (quinoa cruda)."
+ },
+ "sub_000246": {
+  "note": "Avellanas: textura y uso en repostería similares, en la misma cantidad."
+ },
+ "sub_000247": {
+  "note": "Usar boniato fresco cocido en lugar de la versión en conserva, en cantidad equivalente una vez cocido."
+ },
+ "sub_000248": {
+  "note": "Espárragos frescos cocidos unos minutos sustituyen a la versión en conserva, con una textura más firme."
+ },
+ "sub_000249": {
+  "note": "Champiñones frescos, salteados unos minutos, en la misma cantidad."
+ },
+ "sub_000250": {
+  "note": "El bulgur seco crudo puede sustituir al cuscús seco (con una cocción algo más larga)."
+ },
+ "sub_000251": {
+  "note": "El bulgur cocido y el cuscús cocido son intercambiables en la misma cantidad en la mayoría de las recetas."
+ },
+ "sub_000252": {
+  "note": "Arroz integral cocido como alternativa a la espelta cocida en ensaladas o guarniciones."
+ },
+ "sub_000253": {
+  "note": "Harina de trigo integral como sustituto de la espelta cruda en panificación, proporción 1:1."
+ },
+ "sub_000254": {
+  "note": "Espinacas congeladas picadas en lugar de grelos (hojas de nabo) congelados, con un sabor más suave."
+ },
+ "sub_000255": {
+  "note": "Espinacas congeladas en lugar de hojas de mostaza congeladas, sabor menos picante."
+ },
+ "sub_000256": {
+  "note": "Espinacas crudas en lugar de espinaca-mostaza tendergreen, sabor más suave."
+ },
+ "sub_000257": {
+  "note": "Judías verdes crudas en lugar de judías aladas (vainas tiernas), textura similar."
+ },
+ "sub_000258": {
+  "note": "Judías verdes crudas en lugar de vainas tiernas de caupí, cocción similar."
+ },
+ "sub_000259": {
+  "note": "Judías verdes crudas como sustituto de las judías jacinto inmaduras."
+ },
+ "sub_000260": {
+  "note": "Judías verdes crudas en lugar de judías amarillas tiernas, proporción 1:1."
+ },
+ "sub_000261": {
+  "note": "Arándanos congelados como alternativa a las moras congeladas en postres y batidos."
+ },
+ "sub_000262": {
+  "note": "Calabacín crudo en lugar de calabaza esponja (luffa), textura y cocción similares."
+ },
+ "sub_000263": {
+  "note": "Calabacín crudo como sustituto de la calabaza botella, en igual cantidad."
+ },
+ "sub_000264": {
+  "note": "Calabacín crudo en lugar de calabaza cerosa (melón de invierno chino)."
+ },
+ "sub_000265": {
+  "note": "Quinoa cocida como alternativa al mijo cocido, textura y uso similares."
+ },
+ "sub_000266": {
+  "note": "Arroz integral de grano largo crudo en lugar de arroz salvaje crudo, cocción más corta."
+ },
+ "sub_000267": {
+  "note": "Cebollas frescas crudas, salteadas, en lugar de cebollas en conserva."
+ },
+ "sub_000268": {
+  "note": "Tofu firme en lugar de tempeh cocido, sabor más neutro, mismo uso proteico."
+ },
+ "sub_000269": {
+  "note": "Tofu firme fresco en lugar de tofu deshidratado congelado (koyadofu) tras rehidratarlo."
+ },
+ "sub_000270": {
+  "note": "Naranjas en lugar de mandarinas, sabor un poco menos dulce y más ácido."
+ },
+ "sub_000271": {
+  "note": "Harina de trigo integral en lugar de harina de centeno (oscura), miga más ligera."
+ },
+ "sub_000272": {
+  "note": "Harina de trigo integral como alternativa a la harina de centeno clara."
+ },
+ "sub_000273": {
+  "note": "Harina de trigo integral como alternativa a la harina de centeno media."
+ },
+ "sub_000274": {
+  "note": "Harina de trigo integral en lugar de harina de sorgo, para quien no busque una opción sin gluten."
+ },
+ "sub_000275": {
+  "note": "Harina de trigo integral como alternativa a la harina de triticale, proporción 1:1."
+ },
+ "sub_000276": {
+  "note": "Harina de trigo integral en lugar de harina de trigo sarraceno (fuera de una dieta sin gluten)."
+ },
+ "sub_000277": {
+  "note": "Harina de arroz blanca en lugar de harina de arroz integral, textura más fina."
+ },
+ "sub_000278": {
+  "note": "Semillas de chía como alternativa a las semillas de lino, propiedades espesantes y nutricionales similares.",
+  "name": "Semillas de chía"
+ },
+ "sub_000279": {
+  "note": "Cerezas dulces frescas o en conserva en lugar de cerezas al marrasquino, menos dulces y coloreadas."
+ },
+ "sub_000280": {
+  "note": "Espárragos frescos como sustituto aproximado de los brotes de helecho (fiddleheads), verdura verde de primavera."
+ },
+ "sub_000281": {
+  "note": "Pollo (pechuga cocida) en lugar de pollo vegetal para un plato no vegetariano."
+ },
+ "sub_000282": {
+  "note": "Salchicha de cerdo clásica en lugar de salchicha vegetal, para una versión no vegetariana.",
+  "name": "Salchicha de cerdo"
+ },
+ "sub_000283": {
+  "note": "Salchicha Frankfurt (de cerdo) en lugar de la versión vegetal."
+ },
+ "sub_000284": {
+  "note": "Bacon cocido desmenuzado en lugar de trocitos de bacon vegetal."
+ },
+ "sub_000285": {
+  "note": "Jamón cocido en lonchas en lugar de lonchas de charcutería vegetal."
+ },
+ "sub_000286": {
+  "note": "Plátanos frescos (triturados) en lugar de plátano deshidratado en polvo, ajustar el líquido de la receta."
+ },
+ "sub_000287": {
+  "note": "Dátiles Medjool en lugar de ciruelas pasas guisadas, sabor dulce similar."
+ },
+ "sub_000288": {
+  "note": "Dátiles en lugar de ciruelas pasas deshidratadas crudas, en preparaciones dulces o repostería."
+ },
+ "sub_000289": {
+  "note": "Cebollas crudas (cantidad reducida, sabor más fuerte) en lugar de puerro si no se dispone de él."
+ },
+ "sub_000290": {
+  "note": "Fideos de arroz como alternativa a los fideos de soja (harusame) en sopas y ensaladas asiáticas.",
+  "name": "Fideos de arroz"
+ },
+ "sub_000291": {
+  "note": "Carne de res picada cocida en albóndigas clásicas en lugar de albóndigas vegetales, para una versión no vegetariana."
+ },
+ "sub_000292": {
+  "note": "Si no se dispone de pasta de almendra comercial, mezclar almendra molida y azúcar glas con un poco de clara de huevo.",
+  "name": "Almendra molida y azúcar glas mezclados"
+ },
+ "sub_000293": {
+  "note": "Lechuga romana en lugar de lechuga iceberg, hojas más tiernas y con algo más de sabor."
+ },
+ "sub_000294": {
+  "note": "Leche de vaca entera en lugar de leche de soja enriquecida, para quien no siga una dieta vegana."
+ },
+ "sub_000295": {
+  "note": "Mantequilla en lugar de grasa vegetal (shortening), misma cantidad, textura ligeramente diferente en repostería."
+ },
+ "sub_000296": {
+  "note": "El maíz dulce amarillo crudo es intercambiable con el maíz dulce blanco, solo cambia el color."
+ },
+ "sub_000297": {
+  "note": "El maíz dulce blanco y amarillo son intercambiables en igual cantidad, con una ligera diferencia de dulzor."
+ },
+ "sub_000299": {
+  "note": "Pimiento rojo crudo en lugar de pimiento verde, sabor más suave y dulce."
+ },
+ "sub_000300": {
+  "note": "Cerezas dulces en lugar de cerezas ácidas, reducir el azúcar añadido de la receta."
+ },
+ "sub_000301": {
+  "note": "Calabacín estándar en lugar de calabacines baby, ajustar el tiempo de cocción según el tamaño."
+ },
+ "sub_000302": {
+  "note": "Guisantes frescos en lugar de habas crudas con vaina si no están disponibles, sabor más suave.",
+  "name": "Guisantes frescos"
+ },
+ "sub_000303": {
+  "note": "El pimiento amarillo se puede sustituir por pimiento rojo en igual cantidad, sabor ligeramente más suave"
+ },
+ "sub_000304": {
+  "note": "También se puede sustituir por pimiento verde, sabor más pronunciado y ligeramente amargo"
+ },
+ "sub_000305": {
+  "note": "Pimiento rojo y pimiento verde son intercambiables en igual cantidad (el verde es menos dulce)"
+ },
+ "sub_000306": {
+  "note": "El chile picante rojo (maduro) se puede sustituir por chile picante verde en igual cantidad, un poco menos dulce y a veces más picante"
+ },
+ "sub_000307": {
+  "note": "El chile picante verde se puede sustituir por chile rojo maduro, sabor más dulce"
+ },
+ "sub_000308": {
+  "note": "Cualquier calabaza de invierno (Hubbard) se puede sustituir por calabaza butternut en igual cantidad",
+  "name": "Calabaza butternut"
+ },
+ "sub_000309": {
+  "note": "Las calabazas de invierno son intercambiables entre variedades (Hubbard, butternut, calabaza) en igual cantidad",
+  "name": "Calabaza butternut"
+ },
+ "sub_000310": {
+  "note": "El pattypan (calabaza de verano) se puede sustituir por calabacín en igual cantidad"
+ },
+ "sub_000311": {
+  "note": "Cualquier variedad de calabaza de verano se puede sustituir por calabacín en igual cantidad"
+ },
+ "sub_000312": {
+  "note": "La calabaza de verano de cuello torcido/recto se puede sustituir por calabacín en igual cantidad"
+ },
+ "sub_000313": {
+  "note": "La coliflor se puede sustituir por brócoli en igual cantidad en la mayoría de las recetas (sabor más pronunciado)"
+ },
+ "sub_000314": {
+  "note": "La coliflor se puede sustituir por brócoli en igual cantidad"
+ },
+ "sub_000315": {
+  "note": "El brócoli congelado se puede sustituir por coliflor cruda/fresca, tiempo de cocción similar"
+ },
+ "sub_000316": {
+  "note": "La cebolla congelada se puede sustituir por cebolla fresca picada en igual cantidad (menos agua de cocción)"
+ },
+ "sub_000317": {
+  "note": "La cebolla congelada picada se puede sustituir por cebolla fresca picada en igual cantidad"
+ },
+ "sub_000318": {
+  "note": "Las nueces se pueden sustituir por nueces pecanas en igual cantidad en repostería y ensaladas"
+ },
+ "sub_000319": {
+  "note": "La pasta de sésamo (tahini) se puede sustituir por mantequilla de cacahuete en igual cantidad en salsas (sabor diferente)",
+  "name": "Mantequilla de cacahuete"
+ },
+ "sub_000320": {
+  "note": "La tapioca en perlas se puede sustituir por maicena para espesar (usar aproximadamente la mitad de la cantidad)"
+ },
+ "sub_000321": {
+  "note": "La cebada perlada cruda se puede sustituir por arroz integral de grano largo en igual cantidad en sopas y guisos (textura algo diferente)"
+ },
+ "sub_000322": {
+  "note": "La cebada perlada cocida se puede sustituir por arroz integral cocido en igual cantidad"
+ },
+ "sub_000323": {
+  "note": "El trigo sarraceno tostado (kasha) se puede sustituir por quinoa cruda en igual cantidad como cereal de acompañamiento"
+ },
+ "sub_000324": {
+  "note": "El trigo KAMUT crudo se puede sustituir por espelta en igual cantidad (cereales antiguos similares)"
+ },
+ "sub_000325": {
+  "note": "El trigo KAMUT cocido se puede sustituir por espelta cocida en igual cantidad"
+ },
+ "sub_000326": {
+  "note": "La pasta enriquecida y no enriquecida son intercambiables en igual cantidad (solo hay diferencia nutricional)"
+ },
+ "sub_000327": {
+  "note": "Las lentejas rosas/rojas (cocción rápida, textura que se deshace) se pueden sustituir por lentejas verdes con una cocción algo más larga para una textura más firme",
+  "name": "Lentejas verdes o pardinas"
+ },
+ "sub_000328": {
+  "note": "Las judías mungo crudas (para germinar) se pueden sustituir por judías mungo germinadas en conserva, ya listas para usar"
+ },
+ "sub_000329": {
+  "note": "Los brotes de judía mungo se pueden sustituir por brotes de soja en igual cantidad en ensaladas y salteados"
+ },
+ "sub_000330": {
+  "note": "Los brotes de soja se pueden sustituir por brotes de judía mungo, más habituales en las tiendas"
+ },
+ "sub_000331": {
+  "note": "El boniato hervido se puede sustituir por patata en igual cantidad, textura similar pero menos dulce"
+ },
+ "sub_000332": {
+  "note": "El boniato confitado se puede sustituir por patata en recetas saladas (sabor menos dulce)"
+ },
+ "sub_000333": {
+  "note": "El puré de tomate (concentrado) diluido con un poco de agua puede sustituir a la salsa de tomate en conserva"
+ },
+ "sub_000334": {
+  "note": "El puré de tomate sin sal diluido con agua puede sustituir a la salsa de tomate en conserva"
+ },
+ "sub_000335": {
+  "note": "La salsa de tomate con cebolla se puede sustituir por puré de tomate con cebolla salteada añadida"
+ },
+ "sub_000336": {
+  "note": "La salsa de tomate con champiñones se puede sustituir por puré de tomate con champiñones salteados añadidos"
+ },
+ "sub_000337": {
+  "note": "Los champiñones shiitake se pueden sustituir por champiñones blancos en igual cantidad, sabor menos pronunciado",
+  "name": "Champiñones blancos"
+ },
+ "sub_000338": {
+  "note": "Los champiñones shiitake se pueden sustituir por champiñones blancos en igual cantidad, sabor menos pronunciado",
+  "name": "Champiñones blancos"
+ },
+ "sub_000339": {
+  "note": "Los champiñones paja en conserva se pueden sustituir por champiñones en conserva en igual cantidad",
+  "name": "Champiñones en conserva"
+ },
+ "sub_000340": {
+  "note": "Las zanahorias en conserva sin sal añadida se pueden sustituir por zanahorias en conserva estándar (enjuagar para reducir la sal)"
+ },
+ "sub_000341": {
+  "note": "Las verduras mixtas en conserva se pueden sustituir por verduras mixtas congeladas en igual cantidad"
+ },
+ "sub_000342": {
+  "note": "Las verduras mixtas en conserva se pueden sustituir por verduras mixtas congeladas (cocción un poco más corta)"
+ },
+ "sub_000343": {
+  "note": "Las espinacas en conserva se pueden sustituir por espinacas frescas cocidas (usar aproximadamente 3 veces más peso fresco)"
+ },
+ "sub_000344": {
+  "note": "Las espinacas en conserva se pueden sustituir por espinacas frescas cocidas (usar aproximadamente 3 veces más peso fresco)"
+ },
+ "sub_000345": {
+  "note": "Las espinacas en conserva sin sal se pueden sustituir por espinacas frescas cocidas en cantidad ajustada (aproximadamente 3 veces el peso fresco)"
+ },
+ "sub_000346": {
+  "note": "Los pepinillos agrios se pueden sustituir por pepinillos al eneldo en igual cantidad, sabor ligeramente diferente"
+ },
+ "sub_000347": {
+  "note": "Los pepinillos al eneldo se pueden sustituir por pepinillos agrios en igual cantidad"
+ },
+ "sub_000348": {
+  "note": "Las semillas de chía se pueden sustituir por semillas de lino molidas en igual cantidad (efecto aglutinante/espesante similar)",
+  "name": "Semillas de lino molidas"
+ },
+ "sub_000349": {
+  "note": "El pomelo blanco se puede sustituir por pomelo rosa/rojo en igual cantidad, más dulce y menos amargo"
+ },
+ "sub_000350": {
+  "note": "El pomelo rosa/rojo se puede sustituir por pomelo blanco en igual cantidad, más amargo"
+ },
+ "sub_000351": {
+  "note": "Las frambuesas congeladas azucaradas se pueden sustituir por frambuesas congeladas sin azúcar añadiendo azúcar al gusto"
+ },
+ "sub_000352": {
+  "note": "Las manzanas secas se pueden sustituir por peras secas en igual cantidad en compotas y repostería"
+ },
+ "sub_000353": {
+  "note": "Las nueces de ginkgo se pueden sustituir por nueces de macadamia en igual cantidad en la cocina (textura/uso similares, sabor diferente)"
+ },
+ "sub_000354": {
+  "note": "Harina sin gluten; sustituir por harina de trigo si no hay restricción, ajustando el aglutinante (la harina de sorgo no fermenta)."
+ },
+ "sub_000355": {
+  "note": "Harina integral más densa; sustituir por harina blanca en igual cantidad para una textura más ligera (o mezcla al 50/50)."
+ },
+ "sub_000356": {
+  "note": "Sustituye a la harina de maíz azul en igual cantidad, color diferente pero uso idéntico.",
+  "name": "Harina de maíz amarilla o blanca"
+ },
+ "sub_000357": {
+  "note": "El kasha (trigo sarraceno tostado cocido) se puede sustituir por quinoa cocida en igual cantidad para una textura similar."
+ },
+ "sub_000358": {
+  "note": "Sustituir por almendras enteras crudas en igual cantidad, ligero cambio de textura."
+ },
+ "sub_000359": {
+  "note": "Sustitución habitual entre semillas de girasol y semillas de calabaza en ensaladas/granolas, igual cantidad.",
+  "name": "Semillas de calabaza peladas"
+ },
+ "sub_000360": {
+  "note": "Se pueden sustituir por semillas de girasol peladas en igual cantidad en ensaladas y repostería."
+ },
+ "sub_000361": {
+  "note": "Las semillas de cártamo son menos habituales; sustituir por semillas de girasol peladas en igual cantidad."
+ },
+ "sub_000362": {
+  "note": "Alternativa sin cacahuete en igual cantidad; atención, la mantequilla de almendra contiene frutos secos, comprobar según las alergias implicadas.",
+  "name": "Mantequilla de semillas de calabaza o de almendra"
+ },
+ "sub_000363": {
+  "note": "En caso de alergia al cacahuete, sustituir por mantequilla de semillas de girasol en igual cantidad (sabor más neutro)."
+ },
+ "sub_000364": {
+  "note": "En caso de alergia al cacahuete, sustituir por mantequilla de semillas de girasol en igual cantidad."
+ },
+ "sub_000365": {
+  "note": "En caso de alergia al cacahuete, sustituir por mantequilla de semillas de girasol en igual cantidad."
+ },
+ "sub_000366": {
+  "note": "En caso de alergia al cacahuete, sustituir por mantequilla de semillas de girasol en igual cantidad."
+ },
+ "sub_000367": {
+  "note": "En caso de alergia al cacahuete, sustituir por mantequilla de semillas de girasol en igual cantidad."
+ },
+ "sub_000368": {
+  "note": "Sustituir por leche de soja natural clásica en igual cantidad."
+ },
+ "sub_000369": {
+  "note": "Sin coco: sustituir por leche de soja o leche de almendra en igual cantidad (textura menos cremosa)."
+ },
+ "sub_000370": {
+  "note": "Sin coco: sustituir por leche de soja o leche de almendra en igual cantidad (textura menos cremosa)."
+ },
+ "sub_000371": {
+  "note": "En recetas saladas no veganas, sustituir la leche de coco en lata por nata en igual cantidad.",
+  "name": "Nata espesa o nata líquida entera"
+ },
+ "sub_000372": {
+  "note": "Sustituto no vegano de la crema de coco, en igual cantidad, en postres y salsas.",
+  "name": "Nata espesa"
+ },
+ "sub_000373": {
+  "note": "El dulce de leche se puede sustituir por leche condensada azucarada cocida (al baño maría) o tal cual en algunas recetas."
+ },
+ "sub_000374": {
+  "note": "Las habas crudas se pueden sustituir por judías blancas (Navy) secas en igual cantidad en guisos."
+ },
+ "sub_000375": {
+  "note": "Las habas en conserva se pueden sustituir por judías blancas en conserva en igual cantidad."
+ },
+ "sub_000376": {
+  "note": "Los guandúes crudos (pigeon peas) se pueden sustituir por lentejas secas en igual cantidad, ajustando el tiempo de cocción."
+ },
+ "sub_000377": {
+  "note": "La judía espárrago cruda (judía larga) se puede sustituir por garbanzos secos o judías negras en igual cantidad."
+ },
+ "sub_000378": {
+  "note": "La judía jacinto se puede sustituir por judías blancas secas en igual cantidad."
+ },
+ "sub_000379": {
+  "note": "Si no hay caupí (black-eyed peas) congelado disponible, sustituir por judías blancas en igual cantidad.",
+  "name": "Judías blancas congeladas o en conserva"
+ },
+ "sub_000380": {
+  "note": "Los frijoles refritos comerciales se pueden sustituir por un puré casero de frijoles pintos cocidos y machacados.",
+  "name": "Puré casero de frijoles pintos"
+ },
+ "sub_000381": {
+  "note": "Los frijoles rojos volteados se pueden sustituir por frijoles refritos clásicos en igual cantidad.",
+  "name": "Frijoles refritos"
+ },
+ "sub_000382": {
+  "note": "Judías blancas germinadas crudas; si no se dispone de ellas, sustituir por judías blancas secas cocidas en cantidad equivalente."
+ },
+ "sub_000383": {
+  "note": "Frijoles pintos germinados crudos; si no se dispone de ellos, sustituir por frijoles pintos secos cocidos."
+ },
+ "sub_000384": {
+  "note": "Judías rojas germinadas crudas; si no se dispone de ellas, sustituir por judías rojas/blancas secas cocidas."
+ },
+ "sub_000385": {
+  "note": "Aceite de avena, ingrediente poco común: sustituir por un aceite vegetal neutro en igual cantidad."
+ },
+ "sub_000386": {
+  "note": "Sustituir por un aceite vegetal neutro (girasol, colza) en igual cantidad para freír."
+ },
+ "sub_000387": {
+  "note": "Aceite de nuez (sabor fuerte): sustituir por aceite de oliva para aliñar, misma cantidad."
+ },
+ "sub_000388": {
+  "note": "Aceite de almendra, sustituir por un aceite vegetal neutro en igual cantidad."
+ },
+ "sub_000389": {
+  "note": "Aceite de avellana (sabor fuerte): sustituir por aceite de oliva para aliñar, misma cantidad."
+ },
+ "sub_000390": {
+  "note": "El aceite de aguacate se puede sustituir por aceite de oliva en igual cantidad para aliñar o cocción suave."
+ },
+ "sub_000391": {
+  "note": "Aceite de salvado de arroz, sustituir por un aceite vegetal neutro en igual cantidad."
+ },
+ "sub_000392": {
+  "note": "Aceite de semilla de uva, sustituir por un aceite vegetal neutro o aceite de oliva suave en igual cantidad."
+ },
+ "sub_000393": {
+  "note": "Aceite de germen de trigo (sabor fuerte), sustituir por un aceite vegetal neutro en igual cantidad fuera de su uso nutricional."
+ },
+ "sub_000394": {
+  "note": "Aceite de maíz y colza, sustituir por aceite de colza solo en igual cantidad."
+ },
+ "sub_000395": {
+  "note": "La grasa de oca se puede sustituir por grasa de pato en igual cantidad para asar patatas."
+ },
+ "sub_000396": {
+  "note": "La grasa de pavo se puede sustituir por grasa de pato o mantequilla en igual cantidad."
+ },
+ "sub_000397": {
+  "note": "La grasa de pollo se puede sustituir por grasa de pato o aceite vegetal en igual cantidad."
+ },
+ "sub_000398": {
+  "note": "La grasa de vacuno (sebo) se puede sustituir por manteca de cerdo en igual cantidad para cocinar/freír."
+ },
+ "sub_000399": {
+  "note": "La grasa de bacon se puede sustituir por manteca de cerdo en igual cantidad."
+ },
+ "sub_000400": {
+  "note": "Jengibre encurtido en conserva, sustituir por jengibre fresco rallado (cantidad reducida, sabor más fuerte) o jengibre encurtido clásico."
+ },
+ "sub_000401": {
+  "note": "Los pepinillos dulces bajos en sodio se pueden sustituir por pepinillos al vinagre clásicos en igual cantidad (ajustar la sal)."
+ },
+ "sub_000402": {
+  "note": "Piña en conserva en almíbar, sustituir por piña fresca cortada (reducir el azúcar añadido de la receta)."
+ },
+ "sub_000403": {
+  "note": "Piña en conserva en almíbar espeso, sustituir por piña fresca (reducir el azúcar añadido)."
+ },
+ "sub_000404": {
+  "note": "Piña en conserva en almíbar muy espeso, sustituir por piña fresca (reducir mucho el azúcar añadido)."
+ },
+ "sub_000405": {
+  "note": "Arándanos en conserva en almíbar, sustituir por arándanos frescos o congelados (ajustar el azúcar)."
+ },
+ "sub_000406": {
+  "note": "Moras en conserva en almíbar, sustituir por moras frescas o congeladas (ajustar el azúcar)."
+ },
+ "sub_000407": {
+  "note": "Fresas en conserva en almíbar, sustituir por fresas frescas o congeladas (ajustar el azúcar)."
+ },
+ "sub_000408": {
+  "note": "Higos en conserva en almíbar, sustituir por higos frescos o higos secos rehidratados (ajustar el azúcar)."
+ },
+ "sub_000409": {
+  "note": "Peras en conserva en almíbar muy espeso, sustituir por peras frescas escalfadas (ajustar el azúcar)."
+ },
+ "sub_000410": {
+  "note": "Grosellas espinosas en conserva, sustituir por grosellas espinosas frescas o, en su defecto, arándanos."
+ },
+ "sub_000411": {
+  "note": "Mandarinas en conserva, sustituir por gajos de mandarina fresca o naranjas frescas."
+ },
+ "sub_000412": {
+  "note": "Cerezas ácidas en conserva, sustituir por cerezas dulces frescas deshuesadas (ajustar el azúcar según la acidez)."
+ },
+ "sub_000413": {
+  "note": "Las ciruelas pasas en conserva en almíbar se pueden sustituir por ciruelas pasas secas rehidratadas en agua caliente (menos dulce).",
+  "name": "Ciruelas pasas secas rehidratadas"
+ },
+ "sub_000414": {
+  "note": "Los albaricoques secos cocidos en compota y los melocotones secos son intercambiables en igual cantidad en compotas y repostería.",
+  "name": "Melocotones secos"
+ },
+ "sub_000415": {
+  "note": "Los albaricoques secos crudos y los melocotones secos son intercambiables en igual cantidad en cocina y repostería.",
+  "name": "Melocotones secos"
+ },
+ "sub_000416": {
+  "note": "Los champiñones portobello se pueden sustituir por champiñones marrones (crimini) en igual cantidad, textura más firme."
+ },
+ "sub_000417": {
+  "note": "Los champiñones portobello a la parrilla se pueden sustituir por champiñones marrones (crimini) en igual cantidad."
+ },
+ "sub_000418": {
+  "note": "Los champiñones marrones (crimini) se pueden sustituir por champiñones blancos en igual cantidad, sabor más suave.",
+  "name": "Champiñones blancos"
+ },
+ "sub_000419": {
+  "note": "La calabaza Hubbard asada al horno se puede sustituir por calabaza butternut en igual cantidad."
+ },
+ "sub_000420": {
+  "note": "La calabaza Hubbard asada al horno (sin sal) se puede sustituir por calabaza butternut en igual cantidad."
+ },
+ "sub_000421": {
+  "note": "La calabaza butternut congelada se puede sustituir por calabaza butternut fresca cocida, o calabaza Hubbard, en igual cantidad."
+ },
+ "sub_000422": {
+  "note": "La calabaza cocida se puede sustituir por calabaza butternut cocida en igual cantidad (purés, sopas, tartas)."
+ },
+ "sub_000423": {
+  "note": "Calabacín con piel crudo, variante de referencia idéntica al calabacín clásico del catálogo."
+ },
+ "sub_000424": {
+  "note": "El kale cocido se puede sustituir por espinacas cocidas en igual cantidad (cocción más rápida)."
+ },
+ "sub_000425": {
+  "note": "El kale cocido sin sal se puede sustituir por espinacas cocidas en igual cantidad."
+ },
+ "sub_000426": {
+  "note": "Las berzas (collard greens) cocidas se pueden sustituir por kale cocido en igual cantidad."
+ },
+ "sub_000427": {
+  "note": "La acedera silvestre (patience) cocida se puede sustituir por espinacas cocidas en igual cantidad, sabor menos ácido."
+ },
+ "sub_000428": {
+  "note": "La acedera silvestre cocida sin sal se puede sustituir por espinacas cocidas en igual cantidad."
+ },
+ "sub_000429": {
+  "note": "El borraja cocida se puede sustituir por espinacas cocidas en igual cantidad, sabor más suave."
+ },
+ "sub_000430": {
+  "note": "La verdolaga cocida se puede sustituir por espinacas cocidas o canónigos en igual cantidad."
+ },
+ "sub_000431": {
+  "note": "El cardo cocido se puede sustituir por apio en rama cocido en igual cantidad, textura similar."
+ },
+ "sub_000432": {
+  "note": "El salsifí cocido se puede sustituir por chirivía cocida en igual cantidad, sabor similar."
+ },
+ "sub_000433": {
+  "note": "Las chirivías cocidas se pueden sustituir por zanahorias cocidas en igual cantidad, ligeramente menos dulces.",
+  "name": "Zanahorias cocidas"
+ },
+ "sub_000434": {
+  "note": "El colinabo cocido se puede sustituir por nabo cocido en igual cantidad, sabor similar."
+ },
+ "sub_000435": {
+  "note": "Los nabos cocidos se pueden sustituir por colinabo cocido en igual cantidad, o por colinabo sueco (rutabaga)."
+ },
+ "sub_000436": {
+  "note": "El apionabo cocido se puede sustituir por chirivía cocida en igual cantidad en purés y sopas."
+ },
+ "sub_000437": {
+  "note": "El brócoli cocido se puede sustituir por coliflor cocida en igual cantidad.",
+  "name": "Coliflor cocida"
+ },
+ "sub_000438": {
+  "note": "Las manzanas peladas cocidas hervidas se pueden triturar para sustituir el puré de manzana comercial, en igual cantidad.",
+  "name": "Puré de manzana sin azúcar"
+ },
+ "sub_000439": {
+  "note": "Las manzanas cocidas en microondas y las manzanas hervidas son intercambiables en igual cantidad."
+ },
+ "sub_000440": {
+  "note": "Semillas de árbol del pan asadas, ingrediente poco común: sustituir por castañas asadas en igual cantidad (textura harinosa similar).",
+  "name": "Castañas asadas"
+ },
+ "sub_000441": {
+  "note": "Semillas de bréadnut secas, ingrediente poco común: sustituir por castañas secas en igual cantidad.",
+  "name": "Castañas secas"
+ },
+ "sub_000442": {
+  "note": "El pomelo rosa/rojo se puede sustituir por naranja fresca para un sabor menos amargo, misma cantidad."
+ },
+ "sub_000443": {
+  "note": "El tofu fermentado fuyu (de sabor fuerte) se puede sustituir por tofu firme marinado clásico en platos salteados.",
+  "name": "Tofu firme marinado"
+ },
+ "sub_000444": {
+  "note": "El nabo puede sustituir al colinabo sueco (rutabaga) en igual cantidad, sabor algo más suave"
+ },
+ "sub_000445": {
+  "note": "El nabo puede sustituir al colinabo sueco (rutabaga) en igual cantidad, sabor algo más suave"
+ },
+ "sub_000446": {
+  "note": "El colinabo se sustituye por nabo en igual cantidad, textura similar una vez cocido"
+ },
+ "sub_000447": {
+  "note": "La chirivía sustituye al salsifí en igual cantidad, sabor ligeramente más dulce"
+ },
+ "sub_000448": {
+  "note": "La raíz de bardana se sustituye por chirivía, textura y cocción similares"
+ },
+ "sub_000449": {
+  "note": "La raíz de bardana se sustituye por chirivía, textura y cocción similares"
+ },
+ "sub_000450": {
+  "note": "La chirivía se puede sustituir por zanahoria en igual cantidad en platos guisados"
+ },
+ "sub_000451": {
+  "note": "La jícama se sustituye por castaña de agua para el crujiente, sabor más neutro",
+  "name": "Castaña de agua"
+ },
+ "sub_000452": {
+  "note": "La jícama se sustituye por castaña de agua para el crujiente, sabor más neutro",
+  "name": "Castaña de agua"
+ },
+ "sub_000453": {
+  "note": "Los brotes de bambú se sustituyen por castaña de agua para el crujiente en los salteados",
+  "name": "Castaña de agua"
+ },
+ "sub_000454": {
+  "note": "Los brotes de bambú se sustituyen por castaña de agua para el crujiente en los salteados",
+  "name": "Castaña de agua"
+ },
+ "sub_000455": {
+  "note": "La raíz de loto se sustituye por castaña de agua para el crujiente",
+  "name": "Castaña de agua"
+ },
+ "sub_000456": {
+  "note": "La raíz de loto se puede sustituir por castaña de agua para conservar el crujiente",
+  "name": "Castaña de agua"
+ },
+ "sub_000457": {
+  "note": "La sagitaria (tubérculo) se puede sustituir por castaña de agua, textura crujiente similar",
+  "name": "Castaña de agua"
+ },
+ "sub_000458": {
+  "note": "La sagitaria (tubérculo) se puede sustituir por castaña de agua, textura crujiente similar",
+  "name": "Castaña de agua"
+ },
+ "sub_000459": {
+  "note": "El chenopodio blanco se puede sustituir por espinacas en la misma cantidad"
+ },
+ "sub_000460": {
+  "note": "El chenopodio blanco se puede sustituir por espinacas en la misma cantidad"
+ },
+ "sub_000461": {
+  "note": "La verdolaga se puede sustituir por espinacas, sabor más neutro y menos ácido"
+ },
+ "sub_000462": {
+  "note": "Las hojas de remolacha se pueden sustituir por espinacas en la misma cantidad"
+ },
+ "sub_000463": {
+  "note": "Las hojas de remolacha se pueden sustituir por espinacas en la misma cantidad"
+ },
+ "sub_000464": {
+  "note": "El borraja se puede sustituir por espinacas, sabor más suave"
+ },
+ "sub_000465": {
+  "note": "Las hojas de diente de león se pueden sustituir por espinacas, con menos amargor"
+ },
+ "sub_000466": {
+  "note": "Las hojas de diente de león se pueden sustituir por espinacas, con menos amargor"
+ },
+ "sub_000467": {
+  "note": "Las hojas de amaranto se pueden sustituir por espinacas en la misma cantidad"
+ },
+ "sub_000468": {
+  "note": "Las hojas de amaranto se pueden sustituir por espinacas en la misma cantidad"
+ },
+ "sub_000469": {
+  "note": "La espinaca de Nueva Zelanda se puede sustituir por espinacas en la misma cantidad, sabor muy similar"
+ },
+ "sub_000470": {
+  "note": "La espinaca de Nueva Zelanda se puede sustituir por espinacas en la misma cantidad, sabor muy similar"
+ },
+ "sub_000471": {
+  "note": "El espinaca de agua se puede sustituir por espinacas, sabor y textura similares una vez cocida"
+ },
+ "sub_000472": {
+  "note": "El espinaca de agua se puede sustituir por espinacas, sabor y textura similares una vez cocida"
+ },
+ "sub_000473": {
+  "note": "Las hojas de moringa se pueden sustituir por espinacas en la misma cantidad"
+ },
+ "sub_000474": {
+  "note": "Las hojas de moringa se pueden sustituir por espinacas en la misma cantidad"
+ },
+ "sub_000475": {
+  "note": "Las hojas de calabaza se pueden sustituir por espinacas, sabor más neutro"
+ },
+ "sub_000476": {
+  "note": "Las hojas de calabaza se pueden sustituir por espinacas, sabor más neutro"
+ },
+ "sub_000477": {
+  "note": "Las hojas de nabo se pueden sustituir por col rizada (collard), cocción un poco más larga"
+ },
+ "sub_000478": {
+  "note": "Las hojas de nabo se pueden sustituir por col rizada (collard), cocción un poco más larga"
+ },
+ "sub_000479": {
+  "note": "Las hojas de mostaza se pueden sustituir por col rizada (collard), con menos picante"
+ },
+ "sub_000480": {
+  "note": "Las hojas de mostaza se pueden sustituir por col rizada (collard), con menos picante"
+ },
+ "sub_000481": {
+  "note": "La escarola se puede sustituir por endibia (witloof) o rizada, amargor similar"
+ },
+ "sub_000482": {
+  "note": "El cardo se puede sustituir por apio en rama, sin el sabor a alcachofa"
+ },
+ "sub_000483": {
+  "note": "El apionabo se puede sustituir por chirivía en purés y sopas"
+ },
+ "sub_000484": {
+  "note": "La judía larga (espárrago) se puede sustituir por judías verdes en la misma cantidad"
+ },
+ "sub_000485": {
+  "note": "La judía larga (espárrago) se puede sustituir por judías verdes en la misma cantidad"
+ },
+ "sub_000486": {
+  "note": "Las alubias negras se pueden sustituir por alubias rojas en la misma cantidad"
+ },
+ "sub_000487": {
+  "note": "Las alubias negras (black turtle) se pueden sustituir por alubias rojas en la misma cantidad"
+ },
+ "sub_000488": {
+  "note": "Las alubias rosas se pueden sustituir por alubias rojas o pintas en la misma cantidad"
+ },
+ "sub_000489": {
+  "note": "Las alubias pintas se pueden sustituir por alubias rojas en la misma cantidad"
+ },
+ "sub_000490": {
+  "note": "Las alubias pintas se pueden sustituir por alubias rojas en la misma cantidad"
+ },
+ "sub_000491": {
+  "note": "Las alubias adzuki se pueden sustituir por alubias rojas, sabor más neutro"
+ },
+ "sub_000492": {
+  "note": "Las alubias French (maduras) se pueden sustituir por alubias blancas (navy) en la misma cantidad"
+ },
+ "sub_000493": {
+  "note": "Las alubias amarillas (maduras) se pueden sustituir por alubias blancas en la misma cantidad"
+ },
+ "sub_000494": {
+  "note": "Las alubias blancas pequeñas se pueden sustituir por alubias blancas (navy) en la misma cantidad"
+ },
+ "sub_000495": {
+  "note": "Las judías de Lima se pueden sustituir por habas en la misma cantidad"
+ },
+ "sub_000496": {
+  "note": "Las judías de Lima se pueden sustituir por habas en la misma cantidad"
+ },
+ "sub_000497": {
+  "note": "Las judías de Lima inmaduras se pueden sustituir por habas frescas"
+ },
+ "sub_000498": {
+  "note": "Las judías de Lima inmaduras (Fordhook) se pueden sustituir por habas frescas"
+ },
+ "sub_000499": {
+  "note": "Los caupí catjang (frijol de ojo) se pueden sustituir por garbanzos o alubias blancas en la misma cantidad"
+ },
+ "sub_000500": {
+  "note": "Los fideos al huevo se pueden sustituir por tagliatelle en la misma cantidad"
+ },
+ "sub_000501": {
+  "note": "Los fideos al huevo se pueden sustituir por tagliatelle en la misma cantidad"
+ },
+ "sub_000502": {
+  "note": "Los fideos al huevo se pueden sustituir por tagliatelle en la misma cantidad"
+ },
+ "sub_000503": {
+  "note": "Los fideos soba se pueden sustituir por fideos de arroz o espaguetis integrales"
+ },
+ "sub_000504": {
+  "note": "Los fideos soba se pueden sustituir por fideos de arroz o espaguetis integrales"
+ },
+ "sub_000505": {
+  "note": "Los fideos somen se pueden sustituir por fideos de arroz en la misma cantidad"
+ },
+ "sub_000506": {
+  "note": "Los fideos somen se pueden sustituir por fideos de arroz en la misma cantidad"
+ },
+ "sub_000507": {
+  "note": "La pasta sin gluten de maíz se puede sustituir por fideos o pasta de arroz"
+ },
+ "sub_000508": {
+  "note": "La pasta sin gluten de maíz se puede sustituir por fideos o pasta de arroz"
+ },
+ "sub_000509": {
+  "note": "La harina para repostería se puede sustituir por harina de uso general (T55), textura un poco más densa"
+ },
+ "sub_000510": {
+  "note": "La harina de panadería se puede sustituir por harina de uso general (T55), levado un poco menos fuerte"
+ },
+ "sub_000511": {
+  "note": "Las castañas chinas se pueden sustituir por castañas europeas en la misma cantidad"
+ },
+ "sub_000512": {
+  "note": "Las castañas chinas se pueden sustituir por castañas europeas en la misma cantidad"
+ },
+ "sub_000513": {
+  "note": "Las castañas chinas se pueden sustituir por castañas europeas en la misma cantidad"
+ },
+ "sub_000514": {
+  "note": "Las castañas japonesas se pueden sustituir por castañas europeas en la misma cantidad"
+ },
+ "sub_000515": {
+  "note": "Las castañas japonesas se pueden sustituir por castañas europeas en la misma cantidad"
+ },
+ "sub_000516": {
+  "note": "Las castañas japonesas se pueden sustituir por castañas europeas en la misma cantidad"
+ },
+ "sub_000517": {
+  "note": "Las nueces negras se pueden sustituir por nueces comunes en la misma cantidad, sabor más pronunciado"
+ },
+ "sub_000518": {
+  "note": "Los piñones se pueden sustituir por anacardos (pesto, guarnición), sabor menos resinoso"
+ },
+ "sub_000519": {
+  "note": "Las nueces de Brasil se pueden sustituir por almendras o anacardos en la misma cantidad"
+ },
+ "sub_000520": {
+  "note": "Los cacahuetes españoles se pueden sustituir por cacahuetes normales tostados y salados"
+ },
+ "sub_000521": {
+  "note": "Los cacahuetes valencia se pueden sustituir por cacahuetes normales tostados y salados"
+ },
+ "sub_000522": {
+  "note": "El sucedáneo vegetal de pollo se puede sustituir por tofu firme empanado como alternativa vegetal"
+ },
+ "sub_000523": {
+  "note": "La crema de coco azucarada se puede sustituir por leche de coco con azúcar añadido"
+ },
+ "sub_000524": {
+  "note": "El ñame de montaña (Hawái) se puede sustituir por boniato en la misma cantidad"
+ },
+ "sub_000525": {
+  "note": "El ñame de montaña (Hawái) se puede sustituir por boniato en la misma cantidad"
+ },
+ "sub_000526": {
+  "note": "Las vainas de moringa (drumstick) se pueden sustituir por judías verdes en los currys"
+ },
+ "sub_000527": {
+  "note": "Las vainas de moringa (drumstick) se pueden sustituir por judías verdes en los currys"
+ },
+ "sub_000528": {
+  "note": "Las peras secas guisadas se pueden sustituir por manzanas secas guisadas, textura similar"
+ },
+ "sub_000529": {
+  "note": "Las peras secas guisadas se pueden sustituir por manzanas secas guisadas, textura similar"
+ },
+ "sub_000530": {
+  "note": "Los melocotones secos guisados se pueden sustituir por orejones de albaricoque guisados, sabor similar"
+ },
+ "sub_000531": {
+  "note": "Los melocotones secos guisados se pueden sustituir por orejones de albaricoque guisados, sabor similar"
+ },
+ "sub_000532": {
+  "note": "Las mandarinas en conserva se pueden sustituir por gajos de naranja pelados, sabor más ácido",
+  "name": "Naranjas navel, en conserva o frescas"
+ },
+ "sub_000533": {
+  "note": "El pomelo en conserva se puede sustituir por gajos de naranja pelados, menos amargo",
+  "name": "Naranjas navel, en conserva o frescas"
+ },
+ "sub_000534": {
+  "note": "El pomelo en conserva se puede sustituir por gajos de naranja pelados, menos amargo",
+  "name": "Naranjas navel, en conserva o frescas"
+ },
+ "sub_000535": {
+  "note": "Las cerezas dulces en conserva se pueden sustituir por cerezas frescas deshuesadas (o congeladas)"
+ },
+ "sub_000536": {
+  "note": "Las cerezas dulces en conserva se pueden sustituir por cerezas frescas deshuesadas (o congeladas)"
+ },
+ "sub_000537": {
+  "note": "La pasta para untar tipo margarina (SMART BALANCE) se puede sustituir por margarina vegetal clásica"
+ },
+ "sub_000538": {
+  "note": "Los macarrones con verduras se pueden sustituir por pasta normal (macarrones o tagliatelle)"
+ },
+ "sub_000539": {
+  "note": "Los macarrones con verduras se pueden sustituir por pasta normal (macarrones o tagliatelle)"
+ },
+ "sub_000540": {
+  "note": "Las alubias negras (black turtle) en conserva pueden sustituir a las alubias negras normales en la misma cantidad."
+ },
+ "sub_000541": {
+  "note": "Las alubias great northern se pueden sustituir por alubias cannellini, textura y sabor muy similares."
+ },
+ "sub_000542": {
+  "note": "Las alubias cranberry (romanas) crudas se pueden sustituir por alubias pintas en la misma cantidad."
+ },
+ "sub_000543": {
+  "note": "Las alubias cranberry (romanas) en conserva se pueden sustituir por alubias pintas en conserva."
+ },
+ "sub_000544": {
+  "note": "Se puede sustituir por frijoles refritos pintos clásicos, en la misma cantidad.",
+  "name": "Frijoles refritos, pintos, en conserva"
+ },
+ "sub_000545": {
+  "note": "La mantequilla de almendra se puede sustituir por mantequilla de anacardo, sabor más suave y dulce."
+ },
+ "sub_000546": {
+  "note": "La mantequilla de almendra sin sal se puede sustituir por mantequilla de anacardo, en la misma cantidad."
+ },
+ "sub_000547": {
+  "note": "La mantequilla de anacardo se puede sustituir por mantequilla de almendra, en la misma cantidad."
+ },
+ "sub_000548": {
+  "note": "El tahini se puede sustituir por mantequilla de cacahuete en caso de apuro (sabor diferente, menos amargo)."
+ },
+ "sub_000549": {
+  "note": "El tahini se puede sustituir por mantequilla de anacardo o de almendra para un sabor más suave."
+ },
+ "sub_000550": {
+  "note": "Los cacahuetes tostados se pueden sustituir por anacardos en recetas saladas o salteados."
+ },
+ "sub_000551": {
+  "note": "Los cacahuetes tostados en seco se pueden sustituir por anacardos tostados en seco, en la misma cantidad."
+ },
+ "sub_000552": {
+  "note": "Las nueces pecanas se pueden sustituir por avellanas o nueces, sabor ligeramente diferente, en repostería."
+ },
+ "sub_000553": {
+  "note": "Las nueces se pueden sustituir por nueces pecanas en la misma cantidad en recetas de repostería."
+ },
+ "sub_000554": {
+  "note": "Las avellanas se pueden sustituir por nueces o almendras en la mayoría de las recetas de repostería."
+ },
+ "sub_000555": {
+  "note": "Las pipas de girasol peladas se pueden sustituir por pipas de calabaza (pepitas), en la misma cantidad."
+ },
+ "sub_000556": {
+  "note": "Las pipas de calabaza y de auyama tostadas se pueden sustituir por pipas de girasol peladas, en la misma cantidad."
+ },
+ "sub_000557": {
+  "note": "La harina de uso general sin enriquecer se puede sustituir por la versión enriquecida en la misma cantidad.",
+  "name": "Harina de trigo, uso general, enriquecida"
+ },
+ "sub_000558": {
+  "note": "La harina preparada para tortillas se puede sustituir por harina de trigo de uso general clásica, en la misma cantidad."
+ },
+ "sub_000559": {
+  "note": "La pasta sin gluten (de maíz y arroz) se puede sustituir por fideos de arroz para un plato similar."
+ },
+ "sub_000560": {
+  "note": "Los fideos chinos (celofán, de judía mungo) se pueden sustituir por fideos de arroz, textura similar tras la cocción."
+ },
+ "sub_000561": {
+  "note": "El aceite de cacahuete se puede sustituir por aceite de girasol, sabor neutro, adecuado para cocinar y freír."
+ },
+ "sub_000562": {
+  "note": "El aceite de sésamo (para cocinar, sin tostar) se puede sustituir por aceite de cacahuete para salteados."
+ },
+ "sub_000563": {
+  "note": "El aceite de soja se puede sustituir por aceite de girasol, en la misma cantidad, sabor neutro similar."
+ },
+ "sub_000564": {
+  "note": "El aceite de semilla de algodón, poco disponible, se puede sustituir por aceite de girasol o de soja en la misma cantidad."
+ },
+ "sub_000565": {
+  "note": "La margarina para untar puede sustituir a la mantequilla en la misma cantidad para la mayoría de los usos, salvo repostería fina."
+ },
+ "sub_000566": {
+  "note": "La mantequilla salada se puede sustituir por mantequilla sin sal añadiendo una pizca de sal."
+ },
+ "sub_000567": {
+  "note": "La mantequilla sin sal se puede sustituir por mantequilla salada reduciendo la sal añadida en la receta."
+ },
+ "sub_000568": {
+  "note": "El sustituto de mantequilla en polvo se puede sustituir por mantequilla o margarina fundida, en cantidad ajustada."
+ },
+ "sub_000569": {
+  "note": "El queso azul genérico se puede sustituir por Roquefort, sabor más intenso."
+ },
+ "sub_000570": {
+  "note": "El Roquefort se puede sustituir por otro queso azul, sabor ligeramente más suave."
+ },
+ "sub_000571": {
+  "note": "El Brie se puede sustituir por Camembert en la misma cantidad, sabor muy similar."
+ },
+ "sub_000572": {
+  "note": "El Camembert (variante USDA) se puede sustituir por el Camembert estándar del catálogo, en la misma cantidad."
+ },
+ "sub_000573": {
+  "note": "El Edam se puede sustituir por Gouda, textura y sabor muy similares."
+ },
+ "sub_000574": {
+  "note": "El Gouda se puede sustituir por Edam, ligeramente menos graso."
+ },
+ "sub_000575": {
+  "note": "El Gruyère se puede sustituir por Emmental, sabor un poco más suave."
+ },
+ "sub_000576": {
+  "note": "El Gruyère también se puede sustituir por Cheddar para un gratén, sabor diferente pero fusión similar.",
+  "name": "Cheddar"
+ },
+ "sub_000577": {
+  "note": "El Monterey Jack se puede sustituir por Cheddar suave en la misma cantidad, fusión similar."
+ },
+ "sub_000578": {
+  "note": "La mezcla de quesos mexicanos se puede sustituir por Cheddar solo o combinado con Monterey Jack."
+ },
+ "sub_000579": {
+  "note": "El Muenster se puede sustituir por Gouda o Edam para una fusión y sabor suave similares."
+ },
+ "sub_000580": {
+  "note": "La Feta se puede sustituir por queso de cabra fresco desmenuzado, sabor más suave y menos salado."
+ },
+ "sub_000581": {
+  "note": "El Neufchâtel se puede sustituir por queso crema clásico, textura similar, un poco menos graso."
+ },
+ "sub_000582": {
+  "note": "El queso crema se puede sustituir por Neufchâtel en la misma cantidad, un poco menos graso."
+ },
+ "sub_000583": {
+  "note": "El Romano se puede sustituir por Parmesano para rallar sobre la pasta, sabor similar."
+ },
+ "sub_000584": {
+  "note": "La crema agria light se puede sustituir por yogur griego natural bajo en grasa, en la misma cantidad."
+ },
+ "sub_000585": {
+  "note": "La crema agria sin grasa se puede sustituir por yogur griego natural sin grasa."
+ },
+ "sub_000586": {
+  "note": "La crema agria con contenido reducido de grasa se puede sustituir por yogur griego natural."
+ },
+ "sub_000587": {
+  "note": "Los albaricoques en conserva se pueden sustituir por melocotones en conserva en los postres, sabor similar.",
+  "name": "Melocotones, en conserva, al agua, con líquido"
+ },
+ "sub_000588": {
+  "note": "Los albaricoques en conserva con almíbar se pueden sustituir por melocotones en conserva con zumo, sabor similar."
+ },
+ "sub_000589": {
+  "note": "La macedonia de frutas en conserva al agua se puede sustituir por el cóctel de frutas al agua, composición muy similar."
+ },
+ "sub_000590": {
+  "note": "La macedonia de frutas en conserva con zumo se puede sustituir por el cóctel de frutas con zumo, composición muy similar."
+ },
+ "sub_000591": {
+  "note": "Las semillas de sésamo tostadas saladas se pueden sustituir por semillas de sésamo sin sal, ajustando la sal de la receta."
+ },
+ "sub_000592": {
+  "note": "Las pipas de girasol tostadas en seco se pueden sustituir por pipas de calabaza y de auyama tostadas, en la misma cantidad."
+ },
+ "sub_000593": {
+  "note": "La leche de soja con chocolate se puede sustituir por leche de almendra con chocolate o natural con cacao añadido."
+ },
+ "sub_000594": {
+  "note": "La leche de soja natural se puede sustituir por leche de almendra, sabor más neutro y más ligero."
+ },
+ "sub_000595": {
+  "note": "La leche de soja light se puede sustituir por leche de almendra, en la misma cantidad."
+ },
+ "sub_000596": {
+  "note": "Las judías de Lima en conserva se pueden sustituir por judías verdes, textura más firme, en la misma cantidad.",
+  "name": "Judías verdes, crudas"
+ },
+ "sub_000597": {
+  "note": "El tofu firme se puede sustituir por tofu regular (menos firme) ajustando la cocción, textura más cremosa."
+ },
+ "sub_000598": {
+  "note": "El tofu regular se puede sustituir por tofu firme si se desea una textura más consistente (salteado, a la plancha)."
+ },
+ "sub_000599": {
+  "note": "El concentrado de zumo de pomelo se puede sustituir por concentrado de zumo de naranja, sabor más suave."
+ },
+ "sub_000600": {
+  "note": "La mayonesa light se puede sustituir por mayonesa clásica reduciendo la cantidad utilizada."
+ },
+ "sub_000601": {
+  "note": "La mayonesa clásica se puede sustituir por mayonesa light para reducir las materias grasas."
+ },
+ "sub_000602": {
+  "note": "El surimi se puede sustituir por carne de cangrejo auténtica, sabor más fino, textura diferente."
+ },
+ "sub_000603": {
+  "note": "Sustituir en la misma cantidad por mantequilla (o un aceite vegetal neutro para un resultado más ligero)."
+ },
+ "sub_000604": {
+  "note": "La leche en polvo puede sustituir al sustituto de crema en polvo en el café o en una receta, con un sabor más lácteo."
+ },
+ "sub_000605": {
+  "note": "Sustituir la crema en spray por nata montada casera (nata líquida entera montada), en la misma cantidad."
+ },
+ "sub_000606": {
+  "note": "La mozzarella auténtica sustituye al sucedáneo a base de queso en la misma cantidad, con mejor fusión y sabor más rico."
+ },
+ "sub_000607": {
+  "note": "La mantequilla clásica sustituye al ghee/mantequilla clarificada en la misma cantidad, pero se quema más rápido al cocinar (menos adecuada para altas temperaturas)."
+ },
+ "sub_000608": {
+  "note": "Sustituir por queso crema clásico en la misma cantidad."
+ },
+ "sub_000609": {
+  "note": "Sustituir por parmesano rallado clásico en la misma cantidad (ligero exceso de materia grasa y sabor)."
+ },
+ "sub_000610": {
+  "note": "Sustituir por mantequilla pura en la misma cantidad, o por margarina si se prefiere una opción vegetal."
+ },
+ "sub_000611": {
+  "note": "Sustituir por aceite de colza (canola) estándar no hidrogenado, en la misma cantidad."
+ },
+ "sub_000612": {
+  "note": "El boniato puede sustituir al ñame en la misma cantidad en la mayoría de las recetas (textura y sabor similares, ligeramente más dulce)."
+ },
+ "sub_000613": {
+  "note": "El calabacín (o el pepino para una preparación cruda) puede sustituir al chayote en la misma cantidad."
+ },
+ "sub_000614": {
+  "note": "El nabo puede sustituir al rábano oriental (daikon) en platos cocinados, en la misma cantidad (sabor un poco más pronunciado)."
+ },
+ "sub_000615": {
+  "note": "Los fideos al huevo naturales pueden sustituir a los fideos al huevo con espinacas en la misma cantidad (menos color y aporte de verdura)."
+ },
+ "sub_000616": {
+  "note": "Los guisantes partidos amarillos sustituyen a los guisantes partidos verdes en la misma cantidad, sabor casi idéntico.",
+  "name": "Guisantes partidos amarillos"
+ },
+ "sub_000617": {
+  "note": "Los brotes de soja frescos pueden sustituir a los brotes de judía mungo en conserva, con más crujiente (enjuagar y usar en la misma cantidad)."
+ },
+ "sub_000618": {
+  "note": "Sustituir por arroz integral clásico (no instantáneo); aumentar el tiempo de cocción, ya que este arroz no está vaporizado."
+ },
+ "sub_000619": {
+  "note": "El arroz glutinoso y el arroz redondo clásico son intercambiables; en su defecto, un arroz redondo tipo arborio puede sustituirlo para un resultado más pegajoso."
+ },
+ "sub_000620": {
+  "note": "Las judías verdes clásicas sustituyen al frijol alado en la misma cantidad, textura similar.",
+  "name": "Judías verdes"
+ },
+ "sub_000621": {
+  "note": "El calabacín puede sustituir a la esponja vegetal (luffa) en la misma cantidad en platos salteados o cocinados."
+ },
+ "sub_000622": {
+  "note": "Los cacahuetes tostados pueden sustituir a los cacahuetes hervidos, con una textura más crujiente y menos tierna.",
+  "name": "Cacahuetes tostados salados"
+ },
+ "sub_000623": {
+  "note": "Las judías verdes clásicas pueden sustituir a las vainas jóvenes de caupí, en la misma cantidad."
+ },
+ "sub_000624": {
+  "note": "Las judías de Lima (o el edamame) pueden sustituir al frijol jacinto, en la misma cantidad."
+ },
+ "sub_000625": {
+  "note": "A falta de alubias adzuki dulces en conserva, cocer alubias adzuki secas y endulzarlas uno mismo.",
+  "name": "Alubias adzuki, maduras, crudas (cocidas y endulzadas en casa)"
+ },
+ "sub_000626": {
+  "note": "Los garbanzos pueden sustituir a los altramuces en la misma cantidad en la mayoría de las recetas mediterráneas."
+ },
+ "sub_000627": {
+  "note": "A falta de harina de maíz autoleudante, usar harina de maíz clásica añadiendo 1,5 cucharaditas de levadura química y 1/2 cucharadita de sal por cada 150 g.",
+  "name": "Harina de maíz normal + levadura química + sal"
+ },
+ "sub_000628": {
+  "note": "El calabacín puede sustituir a la calabaza calabaza vinatera (calebasa) en la misma cantidad en platos guisados."
+ },
+ "sub_000629": {
+  "note": "Los chiles jalapeños en conserva pueden sustituir a los chiles rojos picantes en conserva, con un picante algo menos intenso."
+ },
+ "sub_000630": {
+  "note": "A falta de tortitas de patata congeladas, rallar patatas crudas y darles forma de tortitas para freírlas en sartén uno mismo.",
+  "name": "Tortitas de patata rallada caseras"
+ },
+ "sub_000631": {
+  "note": "Usar salsa de tomate natural con cebolla, pimiento verde y apio finamente picados y rehogados, en cantidad equivalente."
+ },
+ "sub_000632": {
+  "note": "Las alubias negras u otras legumbres secas pueden sustituir al caupí en la misma cantidad en la mayoría de los platos guisados"
+ },
+ "sub_000633": {
+  "note": "La calabaza calabacera (calebasa) cocida se puede sustituir por calabacín en la misma cantidad, textura y sabor similares una vez cocida",
+  "name": "Calabacín"
+ },
+ "sub_000634": {
+  "note": "A falta de puerro, la cebolla (preferiblemente dulce) puede sustituirlo en la misma cantidad, sabor más pronunciado"
+ },
+ "sub_000635": {
+  "note": "Los champiñones marrones (crimini) se pueden sustituir por champiñones blancos comunes en la misma cantidad, sabor más suave"
+ },
+ "sub_000636": {
+  "note": "Las hojas de nabo se pueden sustituir por col rizada (kale) o espinacas en la misma cantidad"
+ },
+ "sub_000637": {
+  "note": "La calabaza cerera (melón chino) cocida se puede sustituir por calabacín o chayote en la misma cantidad",
+  "name": "Calabacín"
+ },
+ "sub_000638": {
+  "note": "Se puede sustituir por harina integral (textura más densa) o una mezcla al 50/50 para aligerar una receta",
+  "name": "Harina de trigo, semiintegral o integral"
+ },
+ "sub_000639": {
+  "note": "Los fideos al huevo se pueden sustituir por pasta plana clásica (tagliatelle) en la misma cantidad",
+  "name": "Pasta (fideos clásicos)"
+ },
+ "sub_000640": {
+  "note": "Pasta sin gluten (arroz/maíz/quinoa): sustituto práctico para la intolerancia al gluten, o a la inversa, se puede sustituir por pasta de trigo clásica si el sin gluten no es necesario, ajustando la cocción (a menudo más corta)",
+  "name": "Pasta de trigo clásica"
+ },
+ "sub_000641": {
+  "note": "Pasta sin gluten a base de arroz: sustituto para la intolerancia al gluten; si no, sustituir por pasta de trigo clásica en la misma cantidad",
+  "name": "Pasta de trigo clásica"
+ },
+ "sub_000642": {
+  "note": "Pasta sin gluten de maíz/quinoa: sustituto para la intolerancia al gluten; si no, pasta de trigo clásica en la misma cantidad",
+  "name": "Pasta de trigo clásica"
+ },
+ "sub_000643": {
+  "note": "Pasta con 51% de trigo integral: se puede sustituir por pasta integral clásica o pasta blanca en la misma cantidad según el aporte de fibra deseado",
+  "name": "Pasta integral (100% trigo integral)"
+ },
+ "sub_000644": {
+  "note": "Se puede sustituir por pasta integral clásica o pasta blanca en la misma cantidad",
+  "name": "Pasta integral (100% trigo integral)"
+ },
+ "sub_000645": {
+  "note": "Sustituir por coco rallado sin azúcar reduciendo el azúcar de la receta (la versión azucarada aporta azúcar adicional)",
+  "name": "Coco seco sin azúcar"
+ },
+ "sub_000646": {
+  "note": "Las pipas de calabaza/auyama tostadas se pueden sustituir por pipas de girasol tostadas en la misma cantidad",
+  "name": "Pipas de girasol"
+ },
+ "sub_000647": {
+  "note": "Sustituir en la misma cantidad por pipas de girasol tostadas y saladas",
+  "name": "Pipas de girasol"
+ },
+ "sub_000648": {
+  "note": "Las patatas fritas congeladas se pueden sustituir por patatas frescas cortadas en bastones y cocinadas al horno o fritas",
+  "name": "Patatas frescas"
+ },
+ "sub_000649": {
+  "note": "El bacon estilo canadiense (loncha de lomo) se puede sustituir por bacon clásico o jamón en lonchas"
+ },
+ "sub_000650": {
+  "note": "La mantequilla light se puede sustituir por mantequilla clásica reduciendo ligeramente la cantidad (la mantequilla light contiene más agua)"
+ },
+ "sub_000651": {
+  "note": "La mantequilla light sin sal se puede sustituir por mantequilla clásica sin sal, cantidad ligeramente reducida"
+ },
+ "sub_000652": {
+  "note": "La margarina para untar se puede sustituir por mantequilla en la misma cantidad (textura y sabor diferentes, menos adecuada para repostería fina)"
+ },
+ "sub_000653": {
+  "note": "El aceite de soja refinado se puede sustituir por aceite de colza o de girasol en la misma cantidad para la cocina diaria",
+  "name": "Aceite de colza (canola)"
+ },
+ "sub_000654": {
+  "note": "La grasa vegetal (shortening) se puede sustituir por mantequilla fría en la misma cantidad en repostería (textura y sabor ligeramente diferentes)"
+ },
+ "sub_000655": {
+  "note": "La carpa se puede sustituir por tilapia u otro pescado de agua dulce de carne blanca en la misma cantidad"
+ },
+ "sub_000656": {
+  "note": "El brosmio (cusk) puede sustituirse por bacalao o eglefino en la misma cantidad."
+ },
+ "sub_000657": {
+  "note": "La maruca puede sustituirse por bacalao en la misma cantidad, carne blanca similar."
+ },
+ "sub_000658": {
+  "note": "La lota de río (burbot, agua dulce) puede sustituirse por tilapia o bacalao."
+ },
+ "sub_000659": {
+  "note": "El lingcod (bacalao-maruca del Pacífico) puede sustituirse por bacalao o eglefino en la misma cantidad."
+ },
+ "sub_000660": {
+  "note": "La tilapia puede sustituirse por bacalao o cualquier otro pescado blanco de carne firme en la misma cantidad."
+ },
+ "sub_000661": {
+  "note": "El pez azul (bluefish, pescado graso) puede sustituirse por caballa en la misma cantidad."
+ },
+ "sub_000662": {
+  "note": "El mahi-mahi puede sustituirse por atún o pez espada para cocinar a la plancha/parrilla."
+ },
+ "sub_000663": {
+  "note": "El chanos (pez leche) puede sustituirse por tilapia en la misma cantidad."
+ },
+ "sub_000664": {
+  "note": "El rape (monkfish) puede sustituirse por fletán por su carne firme, textura similar."
+ },
+ "sub_000665": {
+  "note": "El tilefish puede sustituirse por pargo o bacalao en la misma cantidad."
+ },
+ "sub_000666": {
+  "note": "El pez espada puede sustituirse por atún (en filete) para cocinar a la parrilla."
+ },
+ "sub_000667": {
+  "note": "El butterfish puede sustituirse por caballa, un pescado graso similar."
+ },
+ "sub_000668": {
+  "note": "El sargo cabeza de oveja (sheepshead) puede sustituirse por pargo o bacalao."
+ },
+ "sub_000669": {
+  "note": "El spot (pequeño pescado de carne blanca) puede sustituirse por pargo."
+ },
+ "sub_000670": {
+  "note": "El scup (besugo moteado) puede sustituirse por pargo o dorada en la misma cantidad."
+ },
+ "sub_000671": {
+  "note": "El suero de leche en polvo reconstituido (polvo + agua) puede sustituirse por suero de leche líquido embotellado."
+ },
+ "sub_000672": {
+  "note": "El half and half se obtiene mezclando a partes iguales leche entera y nata líquida.",
+  "name": "Mezcla de leche entera y nata líquida (1:1)"
+ },
+ "sub_000673": {
+  "note": "El Queso Fresco puede sustituirse por feta desmenuzada o queso cottage escurrido, sabor más salado."
+ },
+ "sub_000674": {
+  "note": "El Queso Blanco puede sustituirse por feta o mozzarella según el uso (para fundir o desmenuzar)."
+ },
+ "sub_000675": {
+  "note": "El Queso Añejo (queso curado para rallar) puede sustituirse por parmesano o cheddar curado."
+ },
+ "sub_000676": {
+  "note": "El Queso Cotija (queso salado para rallar) puede sustituirse por parmesano."
+ },
+ "sub_000677": {
+  "note": "El Queso Asadero (queso fundente) puede sustituirse por mozzarella o provolone.",
+  "name": "Mozzarella o provolone"
+ },
+ "sub_000678": {
+  "note": "El Queso Chihuahua (queso fundente) puede sustituirse por Monterey Jack o mozzarella.",
+  "name": "Queso Monterey Jack"
+ },
+ "sub_000679": {
+  "note": "La preparación de queso americano cold-pack puede sustituirse por cheddar fundido en la misma cantidad."
+ },
+ "sub_000680": {
+  "note": "Los huevos revueltos congelados pueden sustituirse por huevos frescos cocinados en casa.",
+  "name": "Huevos frescos"
+ },
+ "sub_000681": {
+  "note": "La cobertura batida congelada ligera puede sustituirse por nata líquida montada casera.",
+  "name": "Nata montada casera"
+ },
+ "sub_000682": {
+  "note": "La leche de búfala puede sustituirse por leche de vaca entera en la misma cantidad."
+ },
+ "sub_000683": {
+  "note": "La leche de oveja puede sustituirse por leche de vaca entera, sabor menos intenso."
+ },
+ "sub_000684": {
+  "note": "La leche de imitación (no láctea, sin soja) puede sustituirse por leche de vaca o una bebida vegetal según las necesidades."
+ },
+ "sub_000685": {
+  "note": "El sucedáneo de nata líquida ligera puede sustituirse por nata líquida ligera o leche evaporada.",
+  "name": "Nata líquida ligera"
+ },
+ "sub_000686": {
+  "note": "El sucedáneo de crema en polvo ligera puede sustituirse por leche en polvo para el café.",
+  "name": "Leche en polvo"
+ },
+ "sub_000687": {
+  "note": "El sucedáneo de nata líquida aromatizada puede sustituirse por nata líquida ligera con un toque de aroma (vainilla, caramelo).",
+  "name": "Nata líquida ligera"
+ },
+ "sub_000688": {
+  "note": "Sustituir por cheddar auténtico en la misma cantidad para más sabor y mejor fusión."
+ },
+ "sub_000689": {
+  "note": "El cheddar normal (o light) sustituye al cheddar sin materia grasa con mejor sabor y mejor fusión."
+ },
+ "sub_000690": {
+  "note": "Puede sustituirse por cheddar fundido en la misma cantidad para más sabor."
+ },
+ "sub_000691": {
+  "note": "Sustituir la crema en polvo por nata líquida ligera, diluida si es necesario."
+ },
+ "sub_000692": {
+  "note": "Sustituir por un aceite vegetal neutro (girasol, colza) en la misma cantidad."
+ },
+ "sub_000693": {
+  "note": "La mantequilla sustituye a la margarina light en la misma cantidad, pero aporta más grasa y sabor."
+ },
+ "sub_000694": {
+  "note": "Equivalente al aceite de colza (canola) de consumo habitual, en la misma cantidad."
+ },
+ "sub_000695": {
+  "note": "La mantequilla sin sal sustituye a la margarina light sin sal en la misma cantidad."
+ },
+ "sub_000696": {
+  "note": "Sustituir por mantequilla pura en la misma cantidad, sabor más intenso."
+ },
+ "sub_000697": {
+  "note": "Aproximadamente 1/4 de taza de sustituto de huevo líquido equivale a un huevo entero."
+ },
+ "sub_000698": {
+  "note": "Se puede sustituir por aceite de girasol u otro aceite neutro en la misma cantidad."
+ },
+ "sub_000699": {
+  "note": "La mantequilla (o una margarina con alto contenido en grasa) sustituye a esta margarina en tarrina en la misma cantidad."
+ },
+ "sub_000700": {
+  "note": "Sustituir por mayonesa clásica en la misma cantidad."
+ },
+ "sub_000701": {
+  "note": "Diluir nata espesa con un poco de leche (aproximadamente mitad y mitad) para obtener el equivalente de una nata ligera."
+ },
+ "sub_000702": {
+  "note": "Sustituir por aceite de girasol, sabor neutro similar."
+ },
+ "sub_000703": {
+  "note": "La mantequilla es el equivalente más cercano en materia grasa para esta margarina al 80%."
+ },
+ "sub_000704": {
+  "note": "El maíz en conserva escurrido sustituye al maíz fresco cocido en la mayoría de las recetas."
+ },
+ "sub_000705": {
+  "note": "Las judías mantequilla (amarillas) sustituyen a las judías verdes en la misma cantidad, sabor más suave."
+ },
+ "sub_000706": {
+  "note": "Intercambiables; el pimiento verde es más amargo y menos dulce que el rojo."
+ },
+ "sub_000707": {
+  "note": "La calabaza butternut sustituye a la calabaza bellota en puré, sabor ligeramente más dulce."
+ },
+ "sub_000708": {
+  "note": "Sustituto habitual de la calabaza Hubbard, textura y sabor similares."
+ },
+ "sub_000709": {
+  "note": "Sustituir por arroz blanco normal aumentando el tiempo de cocción (15-20 min en lugar de 5 min)."
+ },
+ "sub_000710": {
+  "note": "Sustituir por arroz blanco normal cocido, con un tiempo de cocción más largo."
+ },
+ "sub_000711": {
+  "note": "Las alubias Great Northern sustituyen a las alubias blancas (navy) en sopas y cazuelas."
+ },
+ "sub_000712": {
+  "note": "Las alubias rojas sustituyen a las alubias pintas en el chili y los burritos."
+ },
+ "sub_000713": {
+  "note": "Las alubias pintas sustituyen a las alubias negras en la mayoría de los platos mexicanos."
+ },
+ "sub_000714": {
+  "note": "Usar harina de maíz natural añadiendo 1,5 cucharaditas de levadura química y 1/4 de cucharadita de sal por taza."
+ },
+ "sub_000715": {
+  "note": "Usar harina de maíz amarillo natural añadiendo 1,5 cucharaditas de levadura química y 1/4 de cucharadita de sal por taza."
+ },
+ "sub_000716": {
+  "note": "Sustituir por jamón cocido clásico en la misma cantidad."
+ },
+ "sub_000717": {
+  "note": "El jamón cocido en lonchas sustituye al bacon canadiense en la mayoría de las recetas (sándwiches, guarniciones)."
+ },
+ "sub_000718": {
+  "note": "La codorniz es un sustituto habitual de esta pequeña ave de caza, cocción similar."
+ },
+ "sub_000719": {
+  "note": "Pescado blanco de carne firme; el bacalao del Atlántico es un buen sustituto."
+ },
+ "sub_000720": {
+  "note": "Las variedades de salmón del Pacífico son intercambiables, textura y sabor similares."
+ },
+ "sub_000721": {
+  "note": "Pescado de agua dulce de carne blanca; el walleye (lucioperca americana) es un buen sustituto."
+ },
+ "sub_000722": {
+  "note": "Pescado de agua dulce de carne firme, sustituto habitual con walleye."
+ },
+ "sub_000723": {
+  "note": "Pescado blanco suave, sustituir en la misma cantidad (bacalao)."
+ },
+ "sub_000724": {
+  "note": "Otra variedad de salmón (salmón rojo), usar en la misma cantidad."
+ },
+ "sub_000725": {
+  "note": "Pescado blanco de carne firme, buen sustituto del bacalao en la misma cantidad."
+ },
+ "sub_000726": {
+  "note": "El bacalao del Pacífico y el bacalao del Atlántico son intercambiables."
+ },
+ "sub_000727": {
+  "note": "El arenque del Pacífico y el arenque del Atlántico son intercambiables en la misma cantidad."
+ },
+ "sub_000728": {
+  "note": "Pescado plano de carne delicada; el lenguado puede sustituir al rodaballo en la misma cantidad."
+ },
+ "sub_000729": {
+  "note": "Pescado blanco suave, sustituye al brosmio en la misma cantidad."
+ },
+ "sub_000730": {
+  "note": "La caballa española y la caballa del Atlántico son intercambiables."
+ },
+ "sub_000731": {
+  "note": "Pescado azul pequeño; la sardina puede sustituir a la anchoa con un sabor un poco más suave."
+ },
+ "sub_000732": {
+  "note": "El cangrejo de las nieves puede sustituir al cangrejo azul, carne un poco más fina."
+ },
+ "sub_000733": {
+  "note": "Pescado blanco firme; el bacalao sustituye a la maruca en la misma cantidad."
+ },
+ "sub_000734": {
+  "note": "El abadejo del Atlántico y el bacalao son intercambiables en la mayoría de las recetas."
+ },
+ "sub_000735": {
+  "note": "El kéfir natural bajo en grasa puede sustituirse por yogur griego natural bajo en grasa (textura más espesa, diluir un poco si es necesario)."
+ },
+ "sub_000736": {
+  "note": "El fletán de Groenlandia y el fletán clásico son intercambiables en la misma cantidad."
+ },
+ "sub_000737": {
+  "note": "Pescado graso de carne rica; el salmón puede sustituir a la anguila en numerosas preparaciones."
+ },
+ "sub_000738": {
+  "note": "1 taza de leche + 1 cucharada de zumo de limón o vinagre, dejar reposar 5 min para sustituir el suero de leche.",
+  "name": "Leche + zumo de limón o vinagre (casero)"
+ },
+ "sub_000739": {
+  "note": "El calamar puede sustituir al pulpo, cocción más rápida."
+ },
+ "sub_000740": {
+  "note": "Las variedades de ostras son intercambiables en la misma cantidad."
+ },
+ "sub_000741": {
+  "note": "Pescado de agua dulce de carne suave; la tilapia es un buen sustituto de la perca."
+ },
+ "sub_000742": {
+  "note": "Carne firme similar; el pez espada puede sustituir al tiburón en filete."
+ },
+ "sub_000743": {
+  "note": "El eglefino y el bacalao son clásicamente intercambiables."
+ },
+ "sub_000744": {
+  "note": "Pescado blanco suave; el bacalao es un buen sustituto de la tilapia."
+ },
+ "sub_000745": {
+  "note": "Carne firme y densa; el pez espada puede sustituir al mahi-mahi."
+ },
+ "sub_000746": {
+  "note": "La tilapia es un buen sustituto del chanos (milkfish), carne suave similar."
+ },
+ "sub_000747": {
+  "note": "El pargo puede sustituir al mero, carne blanca firme similar."
+ },
+ "sub_000748": {
+  "note": "Otros cangrejos (cangrejo genérico) son intercambiables en la misma cantidad."
+ },
+ "sub_000749": {
+  "note": "Pescado de carne firme cocinado en filete; el atún puede sustituir al pez espada."
+ },
+ "sub_000750": {
+  "note": "Pescado blanco suave; el bacalao sustituye a la merluza (whiting) en la misma cantidad."
+ },
+ "sub_000751": {
+  "note": "Pescado rico y graso; el salmón puede sustituir al sablefish (bacalao negro)."
+ },
+ "sub_000752": {
+  "note": "Aceite neutro con un punto de humo similar, lo sustituye en la misma cantidad."
+ },
+ "sub_000753": {
+  "note": "El yogur griego natural bajo en grasa sustituye a la crema agria light en la misma cantidad."
+ },
+ "sub_000754": {
+  "note": "El mejillón puede sustituir a la almeja en la mayoría de las recetas de marisco."
+ },
+ "sub_000755": {
+  "note": "La ricotta puede sustituir al queso cottage bajo en grasa en preparaciones saladas o dulces."
+ },
+ "sub_000756": {
+  "note": "La langosta puede sustituir al bogavante, textura y sabor similares."
+ },
+ "sub_000757": {
+  "note": "El cangrejo azul puede sustituir al cangrejo real de Alaska en la misma cantidad."
+ },
+ "sub_000758": {
+  "note": "Cualquier aceite vegetal neutro puede sustituir al aceite de soja para freír ligeramente."
+ },
+ "sub_000759": {
+  "note": "El atún puede sustituir a la seriola (yellowtail), pescados grasos similares."
+ },
+ "sub_000760": {
+  "note": "Alternativa mucho más económica al caviar, sabor más salado y textura un poco más firme.",
+  "name": "Huevas de lumpo (caviar de lumpo)"
+ },
+ "sub_000761": {
+  "note": "Bacalao fresco (requiere desalado y rehidratación si se parte de bacalao seco-salado)."
+ },
+ "sub_000762": {
+  "note": "La gamba puede sustituir a la vieira en numerosas preparaciones de marisco."
+ },
+ "sub_000763": {
+  "note": "El salmón ahumado puede sustituir al esturión ahumado, más fácil de encontrar."
+ },
+ "sub_000764": {
+  "note": "La leche de vaca entera puede sustituir a la leche de cabra, sabor más neutro."
+ },
+ "sub_000765": {
+  "note": "El calamar puede sustituir a la sepia, textura y sabor similares."
+ },
+ "sub_000766": {
+  "note": "La mantequilla puede sustituir a la margarina en la misma cantidad (sabor más rico, textura un poco diferente en repostería)."
+ },
+ "sub_000767": {
+  "note": "La vinagreta casera (aceite + vinagre) puede sustituir al aliño francés comercial."
+ },
+ "sub_000768": {
+  "note": "La mayonesa clásica puede sustituir a la mayonesa light (ajustar la cantidad de grasa según la receta)."
+ },
+ "sub_000769": {
+  "note": "El bogavante puede sustituir a la langosta, textura y sabor similares."
+ },
+ "sub_000770": {
+  "note": "El lenguado puede sustituir a la platija (pescado plano) en la misma cantidad."
+ },
+ "sub_000771": {
+  "note": "Las judías mantequilla amarillas (wax beans) pueden sustituirse por judías verdes, mismas proporciones."
+ },
+ "sub_000772": {
+  "note": "El pimiento verde puede sustituir al pimiento rojo (sabor más verde y ligeramente amargo, misma cantidad)."
+ },
+ "sub_000773": {
+  "note": "Las alubias rojas (kidney) pueden sustituir a las alubias pintas en chilis y guisos."
+ },
+ "sub_000774": {
+  "note": "El maíz dulce amarillo puede sustituir al maíz dulce blanco en la misma cantidad (sabor ligeramente más dulce)."
+ },
+ "sub_000775": {
+  "note": "El edamame puede sustituir a las habas de Lima inmaduras, textura similar."
+ },
+ "sub_000776": {
+  "note": "Puede sustituir a las habas de Lima en la misma cantidad en guisos, sabor más suave y textura similar."
+ },
+ "sub_000777": {
+  "note": "Los frijoles de ojo negro (caupí) pueden sustituirse por alubias rojas o garbanzos, proporción 1:1, en ensaladas y guisos.",
+  "name": "Alubias rojas en conserva"
+ },
+ "sub_000778": {
+  "note": "La carne picada de emú es muy magra; sustituir por carne picada de ternera en la misma cantidad, reducir ligeramente el tiempo de cocción para evitar que se reseque."
+ },
+ "sub_000779": {
+  "note": "El avestruz (carne roja muy magra) sustituye a la ternera en la misma cantidad, cocción corta para evitar que se endurezca."
+ },
+ "sub_000780": {
+  "note": "Sustituye a la ternera picada en la misma cantidad, sabor un poco más intenso."
+ },
+ "sub_000781": {
+  "note": "El pavo picado y el pollo picado son intercambiables en la misma cantidad en la mayoría de las recetas."
+ },
+ "sub_000782": {
+  "note": "El pollo picado y el pavo picado son intercambiables en la misma cantidad."
+ },
+ "sub_000783": {
+  "note": "El wapití (caza) puede sustituirse por ternera en la misma cantidad, carne más magra, por lo que requiere cocción más corta."
+ },
+ "sub_000784": {
+  "note": "El venado se sustituye por ternera en la misma cantidad, sabor más intenso y a caza."
+ },
+ "sub_000785": {
+  "note": "La cabra se sustituye por cordero en la misma cantidad en guisos y curris."
+ },
+ "sub_000786": {
+  "note": "El alce (caza) se sustituye por ternera en la misma cantidad."
+ },
+ "sub_000787": {
+  "note": "La carne de caballo se sustituye por ternera en la misma cantidad en la mayoría de las preparaciones."
+ },
+ "sub_000788": {
+  "note": "El caribú (caza) se sustituye por ternera en la misma cantidad."
+ },
+ "sub_000789": {
+  "note": "El antílope (caza) se sustituye por ternera o cordero en la misma cantidad."
+ },
+ "sub_000790": {
+  "note": "El hígado de oca crudo puede sustituirse por foie gras de pato crudo en la misma cantidad, sabor y textura muy similares.",
+  "name": "Foie gras de pato crudo"
+ },
+ "sub_000791": {
+  "note": "La codorniz se sustituye por pollo (carne y piel) en la misma cantidad, ajustar el tiempo de cocción (la codorniz es más pequeña y se cocina más rápido)."
+ },
+ "sub_000792": {
+  "note": "El faisán se sustituye por pollo en la misma cantidad, sabor más delicado pero textura similar."
+ },
+ "sub_000793": {
+  "note": "La pintada se sustituye por pollo en la misma cantidad."
+ },
+ "sub_000794": {
+  "note": "1 huevo de pata ≈ 1,5 huevos de gallina; ajustar los líquidos en repostería.",
+  "name": "Huevo de gallina"
+ },
+ "sub_000795": {
+  "note": "1 huevo de oca ≈ 2 huevos de gallina; textura más rica.",
+  "name": "Huevo de gallina"
+ },
+ "sub_000796": {
+  "note": "4 a 5 huevos de codorniz ≈ 1 huevo de gallina.",
+  "name": "Huevo de gallina"
+ },
+ "sub_000797": {
+  "note": "1 huevo de pava ≈ 1,5 huevos de gallina.",
+  "name": "Huevo de gallina"
+ },
+ "sub_000798": {
+  "note": "Sustituto cercano en sabor y textura, en la misma cantidad.",
+  "name": "Foie gras de pato ahumado"
+ },
+ "sub_000799": {
+  "note": "1 taza de leche + 1 cucharada de vinagre/limón (reposar 5-10 min) sustituye al suero de leche en la misma cantidad.",
+  "name": "Leche + zumo de limón o vinagre"
+ },
+ "sub_000800": {
+  "note": "Sustituto clásico del suero de leche, en la misma cantidad.",
+  "name": "Leche + zumo de limón o vinagre"
+ },
+ "sub_000801": {
+  "note": "La margarina se sustituye por mantequilla salada en la misma cantidad, sabor más rico."
+ },
+ "sub_000802": {
+  "note": "La margarina sin sal se sustituye por mantequilla sin sal en la misma cantidad."
+ },
+ "sub_000803": {
+  "note": "El aceite vegetal/canola especializado puede sustituirse por aceite de colza (canola) estándar en la misma cantidad para la cocina habitual."
+ },
+ "sub_000804": {
+  "note": "El salmón coho puede sustituir al salmón del Atlántico en la misma cantidad, carne ligeramente menos grasa."
+ },
+ "sub_000805": {
+  "note": "La trucha arcoíris se sustituye por salmón en la misma cantidad, sabor más suave."
+ },
+ "sub_000806": {
+  "note": "El atún blanco (albacora) y el listado (bonito de vientre rayado) son intercambiables en la misma cantidad, especialmente para conservas."
+ },
+ "sub_000807": {
+  "note": "El bacalao del Atlántico se sustituye por eglefino crudo en la misma cantidad, carnes blancas similares."
+ },
+ "sub_000808": {
+  "note": "El reloj anaranjado (orange roughy) se sustituye por bacalao o eglefino en la misma cantidad, pescado blanco suave similar."
+ },
+ "sub_000809": {
+  "note": "La carite (king mackerel) se sustituye por caballa del Atlántico en la misma cantidad."
+ },
+ "sub_000810": {
+  "note": "El fletán de Groenlandia se sustituye por fletán del Atlántico/Pacífico en la misma cantidad."
+ },
+ "sub_000811": {
+  "note": "El bogavante puede sustituirse por langosta en la misma cantidad en guisos o bisques."
+ },
+ "sub_000812": {
+  "note": "Las anchoas se sustituyen por sardinas en conserva al aceite en la misma cantidad, sabor menos salado."
+ },
+ "sub_000813": {
+  "note": "El cangrejo de las nieves se sustituye por cangrejo azul en la misma cantidad."
+ },
+ "sub_000814": {
+  "note": "El cangrejo dormilón del Pacífico se sustituye por cangrejo azul en la misma cantidad."
+ },
+ "sub_000815": {
+  "note": "El cangrejo real de Alaska se sustituye por cangrejo azul en la misma cantidad (textura un poco menos firme)."
+ },
+ "sub_000816": {
+  "note": "Sustituir por gambas cocidas reales: sabor más intenso, mismas proporciones."
+ },
+ "sub_000817": {
+  "note": "Atún en conserva en lugar de salmón en conserva, en ensaladas y sándwiches."
+ },
+ "sub_000818": {
+  "note": "Atún en conserva en lugar de sardinas, sabor más suave."
+ },
+ "sub_000819": {
+  "note": "Leche evaporada sin azúcar en versión entera, un poco más rica en materia grasa."
+ },
+ "sub_000820": {
+  "note": "Merluza, pescado blanco similar, cocción idéntica."
+ },
+ "sub_000821": {
+  "note": "Bacalao, pescado blanco similar, cocción idéntica."
+ },
+ "sub_000822": {
+  "note": "Cheddar clásico en lugar de queso fundido light, funde con menos facilidad."
+ },
+ "sub_000823": {
+  "note": "Pimiento verde fresco cortado en lugar de congelado, reducir el tiempo de cocción en agua."
+ },
+ "sub_000824": {
+  "note": "Maíz fresco desgranado en lugar de congelado, cocción un poco más corta."
+ },
+ "sub_000825": {
+  "note": "Mantequilla (o margarina) en lugar de manteca vegetal industrial para hojaldre."
+ },
+ "sub_000826": {
+  "note": "Calabacín fresco en lugar de congelado, cocción un poco más corta."
+ },
+ "sub_000827": {
+  "note": "Alubia roja en lugar de frijol de ojo negro (caupí), textura similar."
+ },
+ "sub_000828": {
+  "note": "Cerdo clásico en lugar de jabalí, sabor menos intenso."
+ },
+ "sub_000829": {
+  "note": "Ternera picada en lugar de wapití picado, carne más grasa."
+ },
+ "sub_000830": {
+  "note": "Ternera picada en lugar de venado picado, carne más grasa."
+ },
+ "sub_000831": {
+  "note": "Conejo de granja en lugar de conejo salvaje, carne más tierna."
+ },
+ "sub_000832": {
+  "note": "Pollo (muslo) en lugar de faisán, sabor más suave."
+ },
+ "sub_000833": {
+  "note": "Pollo (pechuga) en lugar de codorniz, ajustar el tiempo de cocción (pieza más grande)."
+ },
+ "sub_000834": {
+  "note": "Ternera picada clásica en lugar de bisonte picado, carne más grasa."
+ },
+ "sub_000835": {
+  "note": "Pato de granja en lugar de pato salvaje, carne menos firme."
+ },
+ "sub_000836": {
+  "note": "Ternera magra en lugar de emú, carne exótica poco habitual."
+ },
+ "sub_000837": {
+  "note": "Ternera en lugar de búfalo de agua, carne exótica poco habitual."
+ },
+ "sub_000838": {
+  "note": "Pollo en lugar de pichón, ajustar el tiempo de cocción (pieza más grande)."
+ },
+ "sub_000839": {
+  "note": "Cordero en lugar de cabra (cabrito), sabor similar."
+ },
+ "sub_000840": {
+  "note": "Mantequilla en lugar de grasa de bacon fundida para cocinar."
+ },
+ "sub_000841": {
+  "note": "Ternera en lugar de alce, carne exótica poco habitual."
+ },
+ "sub_000842": {
+  "note": "Ternera en lugar de caballo, sabor más suave."
+ },
+ "sub_000843": {
+  "note": "Ternera picada magra en lugar de avestruz picado."
+ },
+ "sub_000844": {
+  "note": "Bacon de cerdo clásico en lugar de bacon de ternera."
+ },
+ "sub_000845": {
+  "note": "Pollo en conserva en lugar de pavo en conserva."
+ },
+ "sub_000846": {
+  "note": "Tiras de pollo empanadas en lugar de palitos de pavo empanados."
+ },
+ "sub_000847": {
+  "note": "Pollo en lugar de gallo lira (grévol), ave de caza poco habitual."
+ },
+ "sub_000848": {
+  "note": "Ternera picada en lugar de beefalo (cruce de bisonte y vaca)."
+ },
+ "sub_000849": {
+  "note": "Oca doméstica en lugar de barnacla canadiense."
+ },
+ "sub_000850": {
+  "note": "Manteca de cerdo (o mantequilla) en lugar de grasa de riñón de ternera (sebo)."
+ },
+ "sub_000851": {
+  "note": "Hígado de ternera en lugar de hígado de vaca, sabor más suave."
+ },
+ "sub_000852": {
+  "note": "Siluro salvaje: sustituir por tilapia cocida, sabor suave similar."
+ },
+ "sub_000853": {
+  "note": "Siluro de granja: sustituir por tilapia cocida."
+ },
+ "sub_000854": {
+  "note": "Perca de agua dulce: sustituir por lubina de mar o un pescado blanco similar."
+ },
+ "sub_000855": {
+  "note": "Gallineta del Pacífico: sustituir por gallineta del Atlántico o un pescado blanco firme."
+ },
+ "sub_000856": {
+  "note": "Caballa del Pacífico/jurel: sustituir por caballa del Atlántico"
+ },
+ "sub_000857": {
+  "note": "Atún rojo fresco cocido: en su defecto, usar atún claro en lata escurrido"
+ },
+ "sub_000858": {
+  "note": "Atún listado fresco cocido: en su defecto, usar atún claro en lata escurrido"
+ },
+ "sub_000859": {
+  "note": "Atún blanco fresco cocido: en su defecto, usar atún claro en lata escurrido"
+ },
+ "sub_000860": {
+  "note": "Cangrejo de río salvaje cocido: sustituir por gambas cocidas, textura y uso similares"
+ },
+ "sub_000861": {
+  "note": "Cangrejo de río de piscifactoría cocido: sustituir por gambas cocidas"
+ },
+ "sub_000862": {
+  "note": "Yema de huevo congelada salada/pasteurizada: sustituir por una yema de huevo fresca (sin la sal añadida)",
+  "name": "Huevo, yema, crudo, fresco"
+ },
+ "sub_000863": {
+  "note": "Huevo entero congelado salado/pasteurizado: sustituir por huevos enteros frescos"
+ },
+ "sub_000864": {
+  "note": "Yema de huevo congelada azucarada/pasteurizada: sustituir por una yema de huevo fresca (sin el azúcar añadido)",
+  "name": "Huevo, yema, crudo, fresco"
+ },
+ "sub_000865": {
+  "note": "Clara de huevo deshidratada en copos: sustituir por clara de huevo fresca (ajustar la proporción, producto deshidratado)",
+  "name": "Huevo, clara, crudo, fresco"
+ },
+ "sub_000866": {
+  "note": "Clara de huevo deshidratada en polvo: sustituir por clara de huevo fresca",
+  "name": "Huevo, clara, crudo, fresco"
+ },
+ "sub_000867": {
+  "note": "Margarina salada en tarrina: sustituir por mantequilla salada, sabor más intenso"
+ },
+ "sub_000868": {
+  "note": "Margarina salada en barra: sustituir por mantequilla salada"
+ },
+ "sub_000869": {
+  "note": "Margarina sin sal en barra: sustituir por mantequilla sin sal"
+ },
+ "sub_000870": {
+  "note": "Requesón seco sin grasa: sustituir por requesón clásico (textura más cremosa)"
+ },
+ "sub_000871": {
+  "note": "Leche con chocolate light: sustituir por leche con chocolate baja en grasa comercial, o leche + cacao en polvo"
+ },
+ "sub_000872": {
+  "note": "Leche con chocolate entera: en su defecto, leche con chocolate baja en grasa o leche + cacao y azúcar"
+ },
+ "sub_000873": {
+  "note": "Leche con chocolate light enriquecida con vitaminas: sustituir por leche con chocolate baja en grasa estándar"
+ },
+ "sub_000874": {
+  "note": "Pechuga de pavo cruda: sustituir por pechuga de pollo cruda, cocción similar pero algo más rápida"
+ },
+ "sub_000875": {
+  "note": "Pavo picado 85/15 crudo: sustituir por carne de vacuno picada 85/15, o pollo picado para seguir con ave"
+ },
+ "sub_000876": {
+  "note": "Carne oscura de pavo cruda: sustituir por muslo de pollo crudo",
+  "name": "Pollo, muslo"
+ },
+ "sub_000877": {
+  "note": "Jabalí asado: sustituir por cerdo (paleta o asado), sabor más suave",
+  "name": "Cerdo, paleta, asado"
+ },
+ "sub_000878": {
+  "note": "Hígado de cordero crudo: sustituir por hígado de pollo crudo, sabor más suave"
+ },
+ "sub_000879": {
+  "note": "Conejo estofado: sustituir por pollo estofado, textura y cocción similares"
+ },
+ "sub_000880": {
+  "note": "Búfalo de agua asado: sustituir por ternera asada, carne magra similar",
+  "name": "Ternera, asado"
+ },
+ "sub_000881": {
+  "note": "Alce (wapiti) picado a la sartén: sustituir por carne de vacuno picada 85/15 a la sartén"
+ },
+ "sub_000882": {
+  "note": "Venado picado a la sartén: sustituir por carne de vacuno picada 85/15 a la sartén"
+ },
+ "sub_000883": {
+  "note": "Bisonte picado a la sartén: sustituir por carne de vacuno picada 85/15 a la sartén, algo más grasa"
+ },
+ "sub_000884": {
+  "note": "Hígado de pavo estofado: sustituir por hígado de pollo estofado, más habitual",
+  "name": "Pollo, hígado, cocido, estofado"
+ },
+ "sub_000885": {
+  "note": "Cordero picado crudo: sustituir por carne de vacuno picada para un sabor más neutro"
+ },
+ "sub_000886": {
+  "note": "Pollo picado cocido y desmenuzado: sustituir por pavo picado cocido",
+  "name": "Pavo picado cocido"
+ },
+ "sub_000887": {
+  "note": "Pato entero asado (solo la carne): sustituir por pollo asado, menos grasa y más fácil de encontrar"
+ },
+ "sub_000888": {
+  "note": "Pechuga de pato salvaje cruda: sustituir por pato doméstico (solo la carne), más fácil de encontrar"
+ },
+ "sub_000889": {
+  "note": "Ganso asado (solo la carne): sustituir por pato asado, sabor y textura similares"
+ },
+ "sub_000890": {
+  "note": "Ganso asado con piel: sustituir por pato asado con piel"
+ },
+ "sub_000891": {
+  "note": "Ternera (mezcla de cortes magros, cruda): en su defecto, sustituir por escalopes de pollo o de pavo",
+  "name": "Escalope de pavo o de pollo"
+ },
+ "sub_000892": {
+  "note": "Sustituir por un asado de ternera magro (p. ej., aguja); el bisonte es más magro, vigilar la cocción para que no se seque."
+ },
+ "sub_000893": {
+  "note": "El pollo es el sustituto clásico del conejo en guisos y salteados."
+ },
+ "sub_000894": {
+  "note": "Lengua de ternera: textura similar, tiempo de cocción parecido."
+ },
+ "sub_000895": {
+  "note": "Riñones de ternera: sabor más suave que los riñones de cerdo, mismo uso."
+ },
+ "sub_000896": {
+  "note": "La carne de vacuno picada sustituye al pavo picado en la mayoría de las recetas, con un sabor más intenso."
+ },
+ "sub_000897": {
+  "note": "El hígado de ternera es más tierno y de sabor más suave que el hígado de vacuno."
+ },
+ "sub_000898": {
+  "note": "El hígado de ternera puede sustituir al hígado de cordero, sabor más suave."
+ },
+ "sub_000899": {
+  "note": "Las mollejas de ternera son la versión clásica y más fina; sustituto habitual de las mollejas de vacuno."
+ },
+ "sub_000900": {
+  "note": "Riñones de ternera: textura y uso similares, sabor más suave que el cordero."
+ },
+ "sub_000901": {
+  "note": "Bacon comercial: sabor y textura similares al bacon salado precortado."
+ },
+ "sub_000902": {
+  "note": "Jamón curado (tipo Parma/Serrano) para un sabor salado-ahumado similar al jamón salado graso."
+ },
+ "sub_000903": {
+  "note": "Un pollo de granja entero sustituye al capón, reduciendo ligeramente el tiempo de cocción (pieza más pequeña)."
+ },
+ "sub_000904": {
+  "note": "Pollo entero para caldos y potajes; la carne quedará algo menos firme que la gallina de cocido."
+ },
+ "sub_000905": {
+  "note": "Un pollo de granja entero pequeño sustituye al pollo de Cornualles; ajustar la ración y el tiempo de cocción."
+ },
+ "sub_000906": {
+  "note": "El codillo de cerdo es una alternativa económica al jarrete de ternera (osso buco)."
+ },
+ "sub_000907": {
+  "note": "Sustituir por un filete de ternera magro (solomillo o entrecot) a falta de venado."
+ },
+ "sub_000908": {
+  "note": "La chuleta de cerdo es un sustituto habitual y económico de la chuleta de ternera a la parrilla.",
+  "name": "Chuleta de cerdo"
+ },
+ "sub_000909": {
+  "note": "La ternera suele ser difícil de encontrar: sustituir por aguja de vacuno (braseado/estofado), misma textura tras cocción larga"
+ },
+ "sub_000910": {
+  "note": "Sustituto: aguja de vacuno, cocción similar (asado/braseado)"
+ },
+ "sub_000911": {
+  "note": "Paleta de ternera braseada: sustituir por aguja de vacuno braseada"
+ },
+ "sub_000912": {
+  "note": "Paleta de ternera asada: sustituir por aguja de vacuno o paleta de cerdo"
+ },
+ "sub_000913": {
+  "note": "Osso buco de ternera: sustituir por jarrete de vacuno braseado, tiempo de cocción similar",
+  "name": "Vacuno, jarrete, cocido, braseado"
+ },
+ "sub_000914": {
+  "note": "Chuleta de ternera a la parrilla: la pechuga de pollo es un sustituto habitual y económico",
+  "name": "Pollo, escalope, cocido"
+ },
+ "sub_000915": {
+  "note": "Osso buco de ternera (magro y graso): sustituir por jarrete de vacuno braseado",
+  "name": "Vacuno, jarrete, cocido, braseado"
+ },
+ "sub_000916": {
+  "note": "Chuleta de ternera a la parrilla: sustituto habitual, pechuga de pollo",
+  "name": "Pollo, escalope, cocido"
+ },
+ "sub_000917": {
+  "note": "Escalope de ternera empanado: sustituto clásico, escalope de pollo empanado (a la milanesa)",
+  "name": "Pollo, escalope empanado, cocido"
+ },
+ "sub_000918": {
+  "note": "Escalope de ternera empanado: sustituir por escalope de pollo empanado",
+  "name": "Pollo, escalope empanado, cocido"
+ },
+ "sub_000919": {
+  "note": "Escalope de ternera a la sartén: sustituir por escalope de pollo",
+  "name": "Pollo, escalope, cocido"
+ },
+ "sub_000920": {
+  "note": "Paleta de ternera entera braseada: sustituir por aguja de vacuno braseada"
+ },
+ "sub_000921": {
+  "note": "Bisonte (redondo), poco común: sustituir por redondo de vacuno"
+ },
+ "sub_000922": {
+  "note": "Bisonte (aguja): sustituir por aguja de vacuno para guisar"
+ },
+ "sub_000923": {
+  "note": "Solomillo de alce (wapiti, caza), poco común: sustituir por solomillo de ternera, sabor más suave"
+ },
+ "sub_000924": {
+  "note": "Solomillo de venado (caza), poco común: sustituir por solomillo de ternera"
+ },
+ "sub_000925": {
+  "note": "Paletilla de venado braseada: sustituir por aguja de vacuno braseada"
+ },
+ "sub_000926": {
+  "note": "Entrecot de bisonte, poco común: sustituir por entrecot de vacuno"
+ },
+ "sub_000927": {
+  "note": "Solomillo bajo de bisonte, poco común: sustituir por solomillo bajo (entrecot) de vacuno"
+ },
+ "sub_000928": {
+  "note": "Conejo estofado, poco común/caro: sustituir por pollo (muslo/variado), tiempo de cocción similar"
+ },
+ "sub_000929": {
+  "note": "Conejo asado, poco común/caro: sustituir por pollo asado"
+ },
+ "sub_000930": {
+  "note": "Ternera desmenuzada para sándwich (tipo cheesesteak): sustituir por entrecot o solomillo bajo cortado fino",
+  "name": "Vacuno, entrecot, deshuesado, selecto, crudo"
+ },
+ "sub_000931": {
+  "note": "Asado de pavo deshuesado y sazonado congelado: sustituir por pechuga de pavo natural si no está disponible",
+  "name": "Pavo, pechuga, solo carne"
+ },
+ "sub_000932": {
+  "note": "Pavo ahumado en lonchas (fiambre): sustituto habitual, jamón cocido en lonchas",
+  "name": "Jamón, cocido, en lonchas"
+ },
+ "sub_000933": {
+  "note": "Bisonte, poco común: sustituir por carne de vacuno para brasear (aguja) para un guiso, sabor más suave y menos silvestre"
+ },
+ "sub_000934": {
+  "note": "Filete de bisonte, poco común: sustituir por un filete de vacuno (entrecot), misma cocción a la parrilla"
+ },
+ "sub_000935": {
+  "note": "Filete de bisonte (redondo), poco común: sustituir por el mismo corte de vacuno, cocción similar"
+ },
+ "sub_000936": {
+  "note": "Bisonte braseado, poco común: sustituir por aguja de vacuno braseada, textura y uso idénticos (a la borgoñona, desmenuzado)"
+ },
+ "sub_000937": {
+  "note": "Venado, difícil de encontrar: sustituir por un filete de vacuno, cocción a la parrilla similar"
+ },
+ "sub_000938": {
+  "note": "Venado, poco común: sustituir por el mismo corte de vacuno a la parrilla"
+ },
+ "sub_000939": {
+  "note": "Ternera Wagyu muy jaspeada y cara: sustituir por carne de vacuno picada estándar 85/15 si no está disponible"
+ },
+ "sub_000940": {
+  "note": "Ternera Wagyu cara y poco común: sustituir por carne de vacuno picada estándar"
+ },
+ "sub_000941": {
+  "note": "Ternera Wagyu (grasa externa), poco común: sustituir por vacuno normal"
+ },
+ "sub_000942": {
+  "note": "Ternera Wagyu cara: sustituir por vacuno normal si no está disponible"
+ },
+ "sub_000943": {
+  "note": "Pepperoni de pavo no disponible: sustituir por pepperoni clásico de vacuno/cerdo, mismo uso en lonchas"
+ },
+ "sub_000944": {
+  "note": "Bacon bajo en sodio, poco común: sustituir por bacon clásico (ajustar la sal de la receta)"
+ },
+ "sub_000945": {
+  "note": "Paté para untar de pollo no disponible: sustituir por ensalada de jamón o de pavo para untar, mismo uso en sándwich",
+  "name": "Ensalada de jamón para untar"
+ },
+ "sub_000946": {
+  "note": "Ensalada de ave para untar no disponible: sustituir por paté para untar de pollo o de pavo, mismo uso",
+  "name": "Paté para untar de pollo"
+ },
+ "sub_000947": {
+  "note": "Ensalada de jamón para untar no disponible: sustituir por otro paté para untar a base de carne (pollo, pavo), mismo uso en sándwich",
+  "name": "Paté para untar de pollo"
+ },
+ "sub_000948": {
+  "note": "Bisonte, menos común: sustituir por un filete de vacuno (parte alta del lomo bajo) en la misma cantidad, cocción similar a la parrilla."
+ },
+ "sub_000949": {
+  "note": "Sustituir por jamón cocido cortado en dados o picado"
+ },
+ "sub_000950": {
+  "note": "Bologna (fiambre estadounidense) similar a la mortadela clásica"
+ },
+ "sub_000951": {
+  "note": "Variante de pavo, sustituible por la mortadela clásica (bologna de cerdo/vacuno)"
+ },
+ "sub_000952": {
+  "note": "Variante de pavo, sustituible por pastrami de vacuno"
+ },
+ "sub_000953": {
+  "note": "Variante de pavo, sustituible por la salchicha de Fráncfort de cerdo clásica"
+ },
+ "sub_000954": {
+  "note": "Variante de pollo, sustituible por la salchicha de Fráncfort de cerdo clásica"
+ },
+ "sub_000955": {
+  "note": "Variante baja en sodio, sustituible por la salchicha de Fráncfort clásica"
+ },
+ "sub_000956": {
+  "note": "Kielbasa no encontrada: sustituir por una ristra de salchicha ahumada"
+ },
+ "sub_000957": {
+  "note": "Beerwurst no disponible en Francia: sustituir por una salchicha ahumada de cerdo/vacuno"
+ },
+ "sub_000958": {
+  "note": "Sustituir por corned beef cocido clásico"
+ },
+ "sub_000959": {
+  "note": "Marca estadounidense: sustituir por salami seco en lonchas genérico"
+ },
+ "sub_000960": {
+  "note": "Marca estadounidense: sustituir por mortadela (bologna) de vacuno"
+ },
+ "sub_000961": {
+  "note": "Marca estadounidense: sustituir por una salchicha de Fráncfort (hot dog) de vacuno genérica"
+ },
+ "sub_000962": {
+  "note": "Salchicha de hígado (Braunschweiger) similar al paté de hígado para untar"
+ },
+ "sub_000963": {
+  "note": "Marca estadounidense: sustituir por paté de hígado para untar"
+ },
+ "sub_000964": {
+  "note": "Marca estadounidense: sustituir por pechuga de pollo en lonchas natural (sin glaseado de miel)"
+ },
+ "sub_000965": {
+  "note": "Marca estadounidense: sustituir por jamón cocido picado"
+ },
+ "sub_000966": {
+  "note": "Paté aromatizado con trufa: sustituible por un paté de hígado natural"
+ },
+ "sub_000967": {
+  "note": "A falta de caldo de pescado, usar caldo de verduras (sabor menos marino)"
+ },
+ "sub_000968": {
+  "note": "Escalope de ternera, sustituible por un escalope de pollo o de pavo",
+  "name": "Escalope de pollo"
+ },
+ "sub_000969": {
+  "note": "Gajos de patata congelados, sustituibles por patatas fritas congeladas"
+ },
+ "sub_000970": {
+  "note": "La aguja y la espaldilla son cortes para brasear casi idénticos, intercambiables (a la borgoñona, cocido)"
+ },
+ "sub_000971": {
+  "note": "Corte equivalente a la espaldilla para una cocción braseada/estofada"
+ },
+ "sub_000972": {
+  "note": "A falta de solomillo, entrecot (más barato, algo menos tierno, vigilar la cocción)"
+ },
+ "sub_000973": {
+  "note": "Alternativa al solomillo para un asado, más económica pero menos tierna"
+ },
+ "sub_000974": {
+  "note": "El bistec de falda y la entraña se sustituyen entre sí para grillados rápidos a la sartén"
+ },
+ "sub_000975": {
+  "note": "El bistec de falda es sustituible por la entraña para un grillado rápido"
+ },
+ "sub_000976": {
+  "note": "El lomo bajo corresponde al contra, cortes intercambiables para la parrilla"
+ },
+ "sub_000977": {
+  "note": "Puede sustituirse por contra, un corte equivalente"
+ },
+ "sub_000978": {
+  "note": "A falta de chuleta de lomo, aguja de cerdo (más grasa, prever una cocción algo más larga)"
+ },
+ "sub_000979": {
+  "note": "Aguja de cerdo como sustituto, textura más grasa y untuosa"
+ },
+ "sub_000980": {
+  "note": "Equivalente al solomillo de cerdo natural (sin solución añadida)"
+ },
+ "sub_000981": {
+  "note": "Sustituible por pechuga de pollo natural; reducir la sal añadida en la receta"
+ },
+ "sub_000982": {
+  "note": "A falta de pecho de vacuno, la espaldilla se cocina braseada de forma similar para un cocido o un braseado",
+  "name": "Espaldilla de vacuno (para brasear)"
+ },
+ "sub_000983": {
+  "note": "El bacon de cerdo clásico puede sustituir al bacon de pavo (sabor más intenso, más grasa)"
+ },
+ "sub_000984": {
+  "note": "El bacon de cerdo clásico puede sustituir al bacon de pavo (sabor más intenso, más grasa)"
+ },
+ "sub_000985": {
+  "note": "El bacon de cerdo clásico puede sustituir al bacon de pavo (sabor más intenso, más grasa)"
+ },
+ "sub_000986": {
+  "note": "La mantequilla de almendra sustituye a la mantequilla de cacahuete para un sabor más suave (alergia al cacahuete); atención, contiene frutos secos."
+ },
+ "sub_000987": {
+  "note": "Jamón en lonchas fresco en lugar de jamón picado en conserva para un uso similar en sándwich"
+ },
+ "sub_000988": {
+  "note": "Mezcla habitual para sustituir la salsa Worcestershire en marinadas y salsas",
+  "name": "Salsa de soja + un chorrito de vinagre balsámico"
+ },
+ "sub_000989": {
+  "note": "La mortadela (bologna) clásica es el equivalente directo en fiambre en lonchas."
+ },
+ "sub_000990": {
+  "note": "La mortadela (bologna) clásica es el equivalente directo en fiambre en lonchas."
+ },
+ "sub_000991": {
+  "note": "El corned beef en lata es sustituible por pecho de vacuno salado cocido casero."
+ },
+ "sub_000992": {
+  "note": "La carne en gelatina para sándwich puede sustituirse por corned beef cocido, uso similar como fiambre."
+ },
+ "sub_000993": {
+  "note": "El jamón cocido es un sustituto habitual del pavo en lonchas para los sándwiches."
+ },
+ "sub_000994": {
+  "note": "Paté de hígado sin especificar como alternativa más económica al paté de hígado de oca ahumado."
+ },
+ "sub_000995": {
+  "note": "En caso de alergia a los cacahuetes, sustituir por mantequilla de semillas de girasol en la misma cantidad."
+ },
+ "sub_000996": {
+  "note": "Sustituible por mantequilla de cacahuete en la misma cantidad (salvo alergia)."
+ },
+ "sub_000997": {
+  "note": "Para una versión sin lactosa/vegana, sustituir la proteína de suero (whey) por aislado de proteína de soja."
+ },
+ "sub_000998": {
+  "note": "Para una versión sin lactosa/vegana, sustituir el aislado de suero (whey) por aislado de proteína de soja."
+ },
+ "sub_000999": {
+  "note": "Puede sustituirse por proteína de suero (whey) en polvo si la intolerancia a la soja no es un problema."
+ },
+ "sub_001000": {
+  "note": "Para una versión vegetariana, sustituir la salsa de pescado (nuoc-mâm) por salsa de soja."
+ },
+ "sub_001001": {
+  "note": "La salsa para filetes a base de tomate puede sustituirse por salsa Worcestershire diluida con un poco de kétchup."
+ },
+ "sub_001002": {
+  "note": "La salsa sriracha es sustituible por salsa tabasco u otra salsa picante embotellada (ajustar la cantidad, es más fuerte)."
+ },
+ "sub_001003": {
+  "note": "La salsa picante lista para servir es sustituible por salsa tabasco."
+ },
+ "sub_001004": {
+  "note": "El arroz integral puede sustituirse por arroz blanco de grano largo (tiempo de cocción más corto)."
+ },
+ "sub_001005": {
+  "note": "El arroz integral puede sustituirse por arroz blanco de grano largo (tiempo de cocción más corto)."
+ },
+ "sub_001006": {
+  "note": "El arroz integral cocido es sustituible por arroz blanco cocido de grano largo."
+ },
+ "sub_001007": {
+  "note": "El arroz integral cocido es sustituible por arroz blanco cocido de grano largo."
+ },
+ "sub_001008": {
+  "note": "La pasta integral es sustituible por pasta clásica (espaguetis) si no está disponible."
+ },
+ "sub_001009": {
+  "note": "La pasta integral cocida es sustituible por pasta clásica cocida."
+ },
+ "sub_001010": {
+  "note": "Las alubias pintas son sustituibles por alubias rojas en la mayoría de las recetas (chili, guisos)."
+ },
+ "sub_001011": {
+  "note": "Las alubias Great Northern son sustituibles por alubias blancas (navy) o cannellini."
+ },
+ "sub_001012": {
+  "note": "Las guindas secas son sustituibles por arándanos rojos secos en la misma cantidad."
+ },
+ "sub_001013": {
+  "note": "Las guindas congeladas son sustituibles por arándanos rojos congelados sin azúcar.",
+  "name": "Arándanos rojos, congelados, sin azúcar"
+ },
+ "sub_001014": {
+  "note": "El dip de alubias es sustituible por hummus para el aperitivo o las tostadas."
+ },
+ "sub_001015": {
+  "note": "El caldo de verduras comercial es sustituible por caldo de pollo listo para usar si el plato no necesita ser vegetariano."
+ },
+ "sub_001016": {
+  "note": "Marca específica, sustituir por una salsa barbacoa genérica"
+ },
+ "sub_001017": {
+  "note": "Marca específica, sustituir por una salsa barbacoa genérica"
+ },
+ "sub_001018": {
+  "note": "Marca específica, sustituir por una salsa barbacoa genérica"
+ },
+ "sub_001019": {
+  "note": "Marca específica, sustituir por una salsa barbacoa genérica"
+ },
+ "sub_001020": {
+  "note": "Marca específica, sustituir por una salsa sriracha genérica"
+ },
+ "sub_001021": {
+  "note": "Marca específica, sustituir por una salsa sriracha genérica"
+ },
+ "sub_001022": {
+  "note": "Tabasco, sustituible por cualquier salsa picante lista para servir"
+ },
+ "sub_001023": {
+  "note": "Sopa de queso en conserva, sustituible por salsa de queso lista para servir"
+ },
+ "sub_001024": {
+  "note": "Sopa de queso en conserva, sustituible por salsa de queso lista para servir"
+ },
+ "sub_001025": {
+  "note": "Dip de queso picante, sustituible por salsa de queso natural (ajustar el picante)"
+ },
+ "sub_001026": {
+  "note": "Versión baja en sodio, sustituible por una salsa teriyaki clásica"
+ },
+ "sub_001027": {
+  "note": "Cola sin azúcar de marca, sustituible por una cola light genérica"
+ },
+ "sub_001028": {
+  "note": "Bebida energética de marca, sustituible por una bebida energética genérica"
+ },
+ "sub_001029": {
+  "note": "Bebida energética de marca, sustituible por una bebida energética genérica"
+ },
+ "sub_001030": {
+  "note": "Bebida energética de marca, sustituible por una bebida energética genérica"
+ },
+ "sub_001031": {
+  "note": "Bebida energética de marca, sustituible por una bebida energética genérica"
+ },
+ "sub_001032": {
+  "note": "Bebida energética de marca, sustituible por una bebida energética genérica"
+ },
+ "sub_001033": {
+  "note": "Crema de pollo en conserva, sustituible por una bechamel casera con caldo de pollo añadido"
+ },
+ "sub_001034": {
+  "note": "Crema de champiñones en conserva, sustituible por una bechamel casera con champiñones añadidos"
+ },
+ "sub_001035": {
+  "note": "Crema de apio en conserva, sustituible por una bechamel casera con apio añadido"
+ },
+ "sub_001036": {
+  "note": "Crema de patata en conserva, sustituible por una bechamel casera"
+ },
+ "sub_001037": {
+  "note": "Crema de gambas en conserva, sustituible por una bechamel casera con fumet de gambas añadido"
+ },
+ "sub_001038": {
+  "note": "Crema de cebolla en conserva, sustituible por una bechamel casera con cebolla añadida"
+ },
+ "sub_001039": {
+  "note": "Crema de espárragos en conserva, sustituible por una bechamel casera"
+ },
+ "sub_001040": {
+  "note": "Bisque de tomate en conserva, sustituible por una salsa de tomate mezclada con nata"
+ },
+ "sub_001041": {
+  "note": "Sopa crema de champiñones en conserva, un sustituto habitual cuando no hay gambas disponibles en las recetas de cazuela"
+ },
+ "sub_001042": {
+  "note": "Sopa crema de pollo, intercambiable con la crema de champiñones en la mayoría de las recetas de cazuela"
+ },
+ "sub_001043": {
+  "note": "Sopa de tomate en conserva concentrada, sustituye a la mezcla deshidratada preparada con agua"
+ },
+ "sub_001044": {
+  "note": "Maíz en conserva escurrido, sustituto habitual del maíz congelado"
+ },
+ "sub_001045": {
+  "note": "Maíz congelado, sustituto habitual del maíz en conserva"
+ },
+ "sub_001046": {
+  "note": "Otra base de salsa de cacahuete (coco) utilizable para las mismas recetas tipo satay"
+ },
+ "sub_001047": {
+  "note": "Otra base de salsa de cacahuete (mantequilla de cacahuete) utilizable para las mismas recetas tipo satay"
+ },
+ "sub_001048": {
+  "note": "Salsa de chile verde, sustituto de la salsa de chile rojo según el color/picante deseado"
+ },
+ "sub_001049": {
+  "note": "Salsa de chile rojo, sustituto de la salsa de chile verde según el color/picante deseado"
+ },
+ "sub_001050": {
+  "note": "Salchicha ahumada de pavo, baja en grasa, alternativa más ligera a la salchicha ahumada clásica"
+ },
+ "sub_001051": {
+  "note": "Cerveza ligera genérica, sustituto de la marca Bud Light en las recetas"
+ },
+ "sub_001052": {
+  "note": "Cerveza ligera genérica, sustituto de la marca Budweiser Select en las recetas"
+ },
+ "sub_001053": {
+  "note": "Cerveza normal genérica, sustituto de la marca Budweiser en las recetas"
+ },
+ "sub_001054": {
+  "note": "Vino tinto de cuerpo intenso (Syrah), sustituible por un Zinfandel para braseados y salsas"
+ },
+ "sub_001055": {
+  "note": "Merlot y Cabernet Sauvignon: vinos tintos tánicos intercambiables en la cocina"
+ },
+ "sub_001056": {
+  "note": "El Claret (ensamblaje de Burdeos) se acerca al Cabernet Sauvignon para cocinar"
+ },
+ "sub_001057": {
+  "note": "Pinot Noir y Merlot: vinos tintos más ligeros, intercambiables"
+ },
+ "sub_001058": {
+  "note": "El Cabernet Franc se parece al Merlot, intercambiable para cocinar"
+ },
+ "sub_001059": {
+  "note": "El Fumé Blanc es otro nombre comercial del Sauvignon Blanc"
+ },
+ "sub_001060": {
+  "note": "Chardonnay y Pinot Blanc: vinos blancos secos intercambiables"
+ },
+ "sub_001061": {
+  "note": "Pinot Gris y Chardonnay: vinos blancos secos intercambiables para cocinar"
+ },
+ "sub_001062": {
+  "note": "Chenin Blanc y Sauvignon Blanc: vinos blancos secos similares"
+ },
+ "sub_001063": {
+  "note": "Gewürztraminer y Riesling: vinos blancos aromáticos intercambiables"
+ },
+ "sub_001064": {
+  "note": "Sopa de almejas estilo Manhattan (tomate) y Nueva Inglaterra (nata): intercambiables según preferencia"
+ },
+ "sub_001065": {
+  "note": "Dos marcas de salsa pesto de albahaca, equivalentes"
+ },
+ "sub_001066": {
+  "note": "Cereales calientes de trigo Wheatena y Cream of Wheat: intercambiables"
+ },
+ "sub_001067": {
+  "note": "Cream of Rice y Cream of Wheat: cereales calientes intercambiables"
+ },
+ "sub_001068": {
+  "note": "Mismo producto sin soja añadida; misma cantidad, misma cocción."
+ },
+ "sub_001069": {
+  "note": "Nuggets de aves en lugar de pollo solo, textura y cocción muy similares."
+ },
+ "sub_001070": {
+  "note": "Sustituir la ternera por pollo empanado; misma cantidad, misma cocción."
+ },
+ "sub_001071": {
+  "note": "El pavo y el pollo empanados son intercambiables en la misma cantidad."
+ },
+ "sub_001072": {
+  "note": "Caldo de pollo en lugar de ternera, sabor algo menos pronunciado pero base equivalente."
+ },
+ "sub_001073": {
+  "note": "Caldo de verduras para una versión más ligera (o vegetariana), misma cantidad."
+ },
+ "sub_001074": {
+  "note": "Sustituir el cordero por un cuscús con carne clásico, mismas verduras y sémola."
+ },
+ "sub_001075": {
+  "note": "Versión ligera con carne o pollo, mismo principio y misma cantidad."
+ },
+ "sub_001076": {
+  "note": "Rollito de ave en lugar de ternera, preparación y cocción idénticas."
+ },
+ "sub_001077": {
+  "note": "Tajín de pollo en lugar de cordero, mismas especias y verduras, cocción un poco más corta."
+ },
+ "sub_001078": {
+  "note": "Cassoulet enlatado clásico en lugar de la versión con cerdo, misma base de alubias."
+ },
+ "sub_001079": {
+  "note": "Cassoulet de cerdo en lugar de pato/oca; misma base, sabor menos intenso."
+ },
+ "sub_001080": {
+  "note": "Versión deshidratada para reconstituir, mismo sabor, diluir según el sobre."
+ },
+ "sub_001081": {
+  "note": "Sobre deshidratado para reconstituir, resultado muy parecido a la versión fresca."
+ },
+ "sub_001082": {
+  "note": "Versión deshidratada para reconstituir, sabor muy parecido."
+ },
+ "sub_001083": {
+  "note": "Versión deshidratada reconstituida, mismo tipo de verduras, diluir según el sobre."
+ },
+ "sub_001084": {
+  "note": "Sobre deshidratado para reconstituir, misma receta de puerro y patata."
+ },
+ "sub_001085": {
+  "note": "Versión deshidratada para reconstituir, misma base de ave y verduras."
+ },
+ "sub_001086": {
+  "note": "Minestrone deshidratado para reconstituir, misma receta."
+ },
+ "sub_001087": {
+  "note": "Sopa de calabaza deshidratada para reconstituir, sabor muy parecido."
+ },
+ "sub_001088": {
+  "note": "Pescado blanco cocido al natural, napado con una salsa casera si es necesario; misma base."
+ },
+ "sub_001089": {
+  "note": "Pescado blanco cocido al natural, acompañado de salsa de tomate casera si es necesario."
+ },
+ "sub_001090": {
+  "note": "Pescado blanco cocido al natural; añadir un poco de mostaza a la preparación si es necesario."
+ },
+ "sub_001091": {
+  "note": "Pescado blanco cocido al natural, sin el pan rallado ni el aceite de la versión bordelesa."
+ },
+ "sub_001092": {
+  "note": "Ensalada de apio-zanahoria a la remolacha en lugar de apio solo, textura y salsa casi idénticas."
+ },
+ "sub_001093": {
+  "note": "Ensalada de patata piamontesa en lugar de la casera, misma base de patata y mayonesa."
+ },
+ "sub_001094": {
+  "note": "Coleslaw (col blanca/zanahoria) en lugar de col roja, mismo principio de ensalada de col."
+ },
+ "sub_001095": {
+  "note": "Tabulé con pollo en lugar de tabulé de verduras; retirar el pollo si se necesita una versión vegetariana."
+ },
+ "sub_001096": {
+  "note": "Mismo producto, en versión preenvasada en lugar de para llevar."
+ },
+ "sub_001097": {
+  "note": "Versión vegetariana del mismo plato (raviolis en salsa de tomate en conserva)."
+ },
+ "sub_001098": {
+  "note": "Versión vegetariana sin carne, mismo formato preenvasado."
+ },
+ "sub_001099": {
+  "note": "Sustituir por puré de patata clásico, sin el queso tomme fresco."
+ },
+ "sub_001100": {
+  "note": "Gratín de patatas similar, sin reblochon ni tacos de beicon."
+ },
+ "sub_001101": {
+  "note": "Mismo cereal, para cocinar en casa en lugar de en bolsa para microondas."
+ },
+ "sub_001102": {
+  "note": "Sémola de cuscús natural, para acompañar en casa con verduras."
+ },
+ "sub_001103": {
+  "note": "Cordon bleu clásico a base de carne, misma preparación empanada."
+ },
+ "sub_001104": {
+  "note": "Nuggets clásicos de pollo, misma cantidad."
+ },
+ "sub_001105": {
+  "note": "Alternativa sin soja, mismo formato empanado."
+ },
+ "sub_001106": {
+  "note": "Misma cantidad, versión preenvasada del croque-monsieur."
+ },
+ "sub_001107": {
+  "note": "Misma cantidad, versión casera."
+ },
+ "sub_001108": {
+  "note": "Retirar el huevo para obtener un croque-monsieur clásico."
+ },
+ "sub_001109": {
+  "note": "Mismo sándwich, versión para llevar."
+ },
+ "sub_001110": {
+  "note": "Mismo sándwich, versión para llevar."
+ },
+ "sub_001111": {
+  "note": "Mismo sándwich, versión para llevar."
+ },
+ "sub_001112": {
+  "note": "Mismo sándwich, versión para llevar."
+ },
+ "sub_001113": {
+  "note": "Mismo sándwich, versión para llevar."
+ },
+ "sub_001114": {
+  "note": "Mismo sándwich, versión para llevar."
+ },
+ "sub_001115": {
+  "note": "Mismo tipo de preparación, casera en lugar de preenvasada."
+ },
+ "sub_001116": {
+  "note": "Versión vegetariana del buñuelo, sin carne ni pescado."
+ },
+ "sub_001117": {
+  "note": "Sustituir las gambas por un relleno de carne y verduras, misma base de fideos salteados."
+ },
+ "sub_001118": {
+  "note": "Fideos asiáticos no instantáneos, para cocinar en casa en lugar de la versión instantánea."
+ },
+ "sub_001119": {
+  "note": "Retirar el jamón para obtener una pizza de queso/margarita."
+ },
+ "sub_001120": {
+  "note": "Mismo producto, versión sin garantía de estar libre de ingredientes de origen animal."
+ },
+ "sub_001121": {
+  "note": "Mismo producto, en versión apta para veganos."
+ },
+ "sub_001122": {
+  "note": "Mismo producto, en versión apta para veganos."
+ },
+ "sub_001123": {
+  "note": "Mismo producto, versión sin garantía de estar libre de ingredientes de origen animal."
+ },
+ "sub_001124": {
+  "note": "Mismo producto, en versión apta para veganos."
+ },
+ "sub_001125": {
+  "note": "Sustituir por judías verdes frescas, misma cantidad, ajustando el tiempo de cocción."
+ },
+ "sub_001126": {
+  "note": "Sustituir por coliflor fresca, misma cantidad."
+ },
+ "sub_001127": {
+  "note": "Sustituir por guisantes frescos desgranados, misma cantidad."
+ },
+ "sub_001128": {
+  "note": "Sustituir por zanahoria fresca, misma cantidad."
+ },
+ "sub_001129": {
+  "note": "Sustituir por brócoli fresco, misma cantidad."
+ },
+ "sub_001130": {
+  "note": "Sustituir por espinacas frescas crudas, prever el doble de peso aproximadamente ya que reducen mucho al cocinar."
+ },
+ "sub_001131": {
+  "note": "Sustituir por una mezcla de guisantes y zanahorias en conserva, bien escurrida."
+ },
+ "sub_001132": {
+  "note": "Sustituir por champiñones en conserva, bien escurridos."
+ },
+ "sub_001133": {
+  "note": "Sustituir por judías mantequeras en conserva, bien escurridas."
+ },
+ "sub_001134": {
+  "note": "Sustituir por fondos de alcachofa en conserva, bien escurridos."
+ },
+ "sub_001135": {
+  "note": "Sustituir por salsifíes en conserva, bien escurridos."
+ },
+ "sub_001136": {
+  "note": "Sustituir por macedonia de verduras en conserva, bien escurrida."
+ },
+ "sub_001137": {
+  "note": "Usar aproximadamente la mitad de concentrado doble y diluir con un poco de agua."
+ },
+ "sub_001138": {
+  "note": "Usar aproximadamente el doble de concentrado simple y reducir el agua añadida."
+ },
+ "sub_001139": {
+  "note": "Misma cantidad, resultado muy similar (tomate pelado o troceado en conserva)."
+ },
+ "sub_001140": {
+  "note": "Sustituir por brotes de bambú en conserva, bien escurridos, misma cantidad."
+ },
+ "sub_001141": {
+  "note": "Sustituir por brotes de soja en conserva, bien escurridos."
+ },
+ "sub_001142": {
+  "note": "Sustituir por calabaza butternut, misma cantidad, sabor ligeramente menos dulce."
+ },
+ "sub_001143": {
+  "note": "Sustituir por puerros cocidos en rodajas, misma cantidad."
+ },
+ "sub_001144": {
+  "note": "Sustituir por champiñones frescos, menos aromáticos pero un buen sustituto económico."
+ },
+ "sub_001145": {
+  "note": "Sustituir por setas ostra frescas, misma cantidad, sabor más suave."
+ },
+ "sub_001146": {
+  "note": "Sustituir por salsifí blanco, misma cantidad, misma preparación."
+ },
+ "sub_001147": {
+  "note": "Sustituir por maíz dulce fresco desgranado, misma cantidad."
+ },
+ "sub_001148": {
+  "note": "Rehidratar y usar en cantidad equivalente; textura más firme, sabor menos pronunciado que la oreja de Judas."
+ },
+ "sub_001149": {
+  "note": "Añadir un poco de aceite de oliva para compensar la falta de marinada."
+ },
+ "sub_001150": {
+  "note": "Usar aproximadamente 3 veces más cebolla fresca picada que cebolla seca."
+ },
+ "sub_001151": {
+  "note": "Rehidratar y cocinar, o sustituir directamente por zanahoria fresca cocida en cantidad equivalente."
+ },
+ "sub_001152": {
+  "note": "Misma verdura (pak choi/bok choy), misma cantidad."
+ },
+ "sub_001153": {
+  "note": "Misma verdura (chayote/christophine), misma cantidad."
+ },
+ "sub_001154": {
+  "note": "Misma verdura, misma cantidad."
+ },
+ "sub_001155": {
+  "note": "Textura similar, sabor más dulce; misma cantidad."
+ },
+ "sub_001156": {
+  "note": "Textura más harinosa; misma cantidad, ajustar la cocción."
+ },
+ "sub_001157": {
+  "note": "Misma cantidad, sabor más neutro."
+ },
+ "sub_001158": {
+  "note": "Misma cantidad, textura ligeramente más pegajosa con el taro."
+ },
+ "sub_001159": {
+  "note": "Alubias blancas muy similares, misma cantidad."
+ },
+ "sub_001160": {
+  "note": "Para sopas o purés, misma cantidad."
+ },
+ "sub_001161": {
+  "note": "Cocción y textura muy similares, misma cantidad."
+ },
+ "sub_001162": {
+  "note": "Cocción y textura muy similares, misma cantidad."
+ },
+ "sub_001163": {
+  "note": "Misma cantidad, sabor ligeramente menos ácido."
+ },
+ "sub_001164": {
+  "note": "Misma cantidad, sabor ligeramente más ácido."
+ },
+ "sub_001165": {
+  "note": "Misma cantidad, sabor un poco menos dulce."
+ },
+ "sub_001166": {
+  "note": "Misma cantidad, sabor un poco más dulce."
+ },
+ "sub_001167": {
+  "note": "Misma cantidad, la ciruela claudia es un poco más dulce."
+ },
+ "sub_001168": {
+  "note": "Misma cantidad, la ciruela mirabel es un poco más ácida."
+ },
+ "sub_001169": {
+  "note": "Misma fruta fresca o congelada, misma cantidad."
+ },
+ "sub_001170": {
+  "note": "Misma fruta fresca o congelada, misma cantidad."
+ },
+ "sub_001171": {
+  "note": "Misma cantidad, la manzana Gala es más dulce y menos ácida."
+ },
+ "sub_001172": {
+  "note": "Misma cantidad, la manzana Golden aguanta mejor la cocción."
+ },
+ "sub_001173": {
+  "note": "Misma cantidad, el pomelo rosa es un poco más dulce."
+ },
+ "sub_001174": {
+  "note": "Misma cantidad, el pomelo amarillo es un poco más ácido."
+ },
+ "sub_001175": {
+  "note": "Misma cantidad, pulpa un poco menos aromática."
+ },
+ "sub_001176": {
+  "note": "Misma cantidad, pulpa un poco más aromática."
+ },
+ "sub_001177": {
+  "note": "La cereza es más dulce: reducir un poco el azúcar añadido en la receta."
+ },
+ "sub_001178": {
+  "note": "Puré de manzana sin azúcares añadidos, menos dulce pero misma textura, misma cantidad."
+ },
+ "sub_001179": {
+  "note": "Compota de manzana clásica, ligeramente más dulce, misma cantidad."
+ },
+ "sub_001180": {
+  "note": "Compota de manzana, sabor más neutro, misma cantidad en repostería."
+ },
+ "sub_001181": {
+  "note": "Compota de manzana, sabor más neutro, misma cantidad."
+ },
+ "sub_001182": {
+  "note": "Versión en almíbar ligero, menos dulce, misma cantidad."
+ },
+ "sub_001183": {
+  "note": "Versión en almíbar ligero, menos dulce, misma cantidad."
+ },
+ "sub_001184": {
+  "note": "Versión en almíbar ligero, menos dulce, misma cantidad."
+ },
+ "sub_001185": {
+  "note": "Versión en almíbar ligero, menos dulce, misma cantidad."
+ },
+ "sub_001186": {
+  "note": "Piña en su jugo, menos dulce, escurrir bien antes de usar."
+ },
+ "sub_001187": {
+  "note": "Pera en almíbar ligero, textura y dulzor similares, misma cantidad."
+ },
+ "sub_001188": {
+  "note": "Arándano rojo seco, más ácido, misma cantidad en pasteles o ensaladas."
+ },
+ "sub_001189": {
+  "note": "Versión sin sal añadida, para reducir la sal; misma cantidad, salar de nuevo al gusto."
+ },
+ "sub_001190": {
+  "note": "Versión sin sal añadida, misma cantidad, salar de nuevo al gusto."
+ },
+ "sub_001191": {
+  "note": "Versión sin sal añadida, misma cantidad, salar de nuevo al gusto."
+ },
+ "sub_001192": {
+  "note": "Buen sustituto en mezclas de aperitivo o repostería, misma cantidad."
+ },
+ "sub_001193": {
+  "note": "Semillas peladas, algo más digestivas, misma cantidad."
+ },
+ "sub_001194": {
+  "note": "Mismo uso como espesante (gel con agua) en repostería o gachas, misma cantidad."
+ },
+ "sub_001195": {
+  "note": "Textura similar para salsas y repostería, sabor más dulce e intenso."
+ },
+ "sub_001196": {
+  "note": "Sabor más tostado, misma cantidad, textura un poco más seca."
+ },
+ "sub_001197": {
+  "note": "Arroz basmati, granos intercambiables, misma cantidad."
+ },
+ "sub_001198": {
+  "note": "Arroz basmati, granos largos similares, misma cantidad."
+ },
+ "sub_001199": {
+  "note": "Arroz blanco clásico, misma cantidad y cocción similar."
+ },
+ "sub_001200": {
+  "note": "Versión integral, más rica en fibra, misma cantidad."
+ },
+ "sub_001201": {
+  "note": "Versión integral, más rica en fibra, misma cantidad."
+ },
+ "sub_001202": {
+  "note": "Bulgur cocido, textura un poco más firme, mismo uso en ensaladas o guarnición."
+ },
+ "sub_001203": {
+  "note": "Bulgur crudo, cocción similar, mismo uso."
+ },
+ "sub_001204": {
+  "note": "Fideos de soja, textura similar, misma cantidad."
+ },
+ "sub_001205": {
+  "note": "Fideos de soja, textura similar, misma cantidad."
+ },
+ "sub_001206": {
+  "note": "Ñoquis de sémola, textura un poco más firme, misma cantidad."
+ },
+ "sub_001207": {
+  "note": "Pasta normal si no hay restricción de gluten, misma cantidad y cocción."
+ },
+ "sub_001208": {
+  "note": "Pasta sin gluten para una comida adaptada, misma cantidad y cocción similar."
+ },
+ "sub_001209": {
+  "note": "Misma cantidad, poder aglutinante muy similar."
+ },
+ "sub_001210": {
+  "note": "Misma cantidad, poder espesante similar."
+ },
+ "sub_001211": {
+  "note": "Misma cantidad, sabor un poco más neutro."
+ },
+ "sub_001212": {
+  "note": "Misma cantidad, resultado menos rústico."
+ },
+ "sub_001213": {
+  "note": "Misma cantidad, miga un poco más ligera."
+ },
+ "sub_001214": {
+  "note": "Misma cantidad, sabor más intenso (mantequilla pura)."
+ },
+ "sub_001215": {
+  "note": "Misma cantidad, versión sin mantequilla (útil en caso de intolerancia)."
+ },
+ "sub_001216": {
+  "note": "Misma cantidad, masa más quebradiza y sabor más intenso."
+ },
+ "sub_001217": {
+  "note": "Misma cantidad, alternativa sin mantequilla."
+ },
+ "sub_001218": {
+  "note": "Misma cantidad, sabor más rico (mantequilla pura)."
+ },
+ "sub_001219": {
+  "note": "Superponer unas 2 hojas de pasta filo para sustituir una hoja de pasta brick."
+ },
+ "sub_001220": {
+  "note": "Una hoja de pasta brick sustituye a unas 2 hojas de pasta filo."
+ },
+ "sub_001221": {
+  "note": "Misma cantidad, textura más suave, sabor más neutro."
+ },
+ "sub_001222": {
+  "note": "Misma cantidad, opción sin gluten."
+ },
+ "sub_001223": {
+  "note": "Mismo uso para bocadillo relleno, forma alargada."
+ },
+ "sub_001224": {
+  "note": "Mismo modo de cocción, sabor más intenso."
+ },
+ "sub_001225": {
+  "note": "Misma cantidad, carne más magra."
+ },
+ "sub_001226": {
+  "note": "Misma cantidad, sabor y textura muy similares."
+ },
+ "sub_001227": {
+  "note": "Misma cantidad, carne un poco más seca, vigilar la cocción."
+ },
+ "sub_001228": {
+  "note": "Mismo producto, versión no ecológica."
+ },
+ "sub_001229": {
+  "note": "Mismo modo de cocción, corte un poco más tierno."
+ },
+ "sub_001230": {
+  "note": "Misma familia de corte, cocción similar."
+ },
+ "sub_001231": {
+  "note": "Mismo modo de cocción, resultado similar."
+ },
+ "sub_001232": {
+  "note": "Escalope de pavo, misma preparación, sabor un poco más neutro."
+ },
+ "sub_001233": {
+  "note": "Escalope de ternera, misma cantidad, textura similar."
+ },
+ "sub_001234": {
+  "note": "Carne de pavo, misma cantidad, sabor muy similar."
+ },
+ "sub_001235": {
+  "note": "Carne de pollo, misma cantidad, sabor muy similar."
+ },
+ "sub_001236": {
+  "note": "Pollo de corral, misma cantidad, sabor menos pronunciado."
+ },
+ "sub_001237": {
+  "note": "Carne de pato, misma cantidad, sabor similar (ave grasa)."
+ },
+ "sub_001238": {
+  "note": "Pollo de corral, misma cantidad, sin el sabor a caza."
+ },
+ "sub_001239": {
+  "note": "Filete de ternera, misma cantidad, resultado similar."
+ },
+ "sub_001240": {
+  "note": "Tapa de ternera, misma cantidad, resultado similar."
+ },
+ "sub_001241": {
+  "note": "Solomillo bajo de ternera, misma cantidad, resultado similar."
+ },
+ "sub_001242": {
+  "note": "Entrecot de ternera, misma cantidad, resultado similar."
+ },
+ "sub_001243": {
+  "note": "Pierna de cordero, misma cantidad, sabor similar."
+ },
+ "sub_001244": {
+  "note": "Solomillo de ternera, carne roja magra, misma cantidad."
+ },
+ "sub_001245": {
+  "note": "Ternera magra (solomillo), misma cantidad, sin el sabor a caza."
+ },
+ "sub_001246": {
+  "note": "Carne de conejo, misma cantidad, sabor más suave."
+ },
+ "sub_001247": {
+  "note": "Hígado de ternera (novilla), misma cantidad, sabor muy similar."
+ },
+ "sub_001248": {
+  "note": "Hígado de ternera, misma cantidad, sabor muy similar."
+ },
+ "sub_001249": {
+  "note": "Corazón de ternera, misma cantidad, textura un poco más tierna."
+ },
+ "sub_001250": {
+  "note": "Sesos de ternera, misma cantidad, textura idéntica."
+ },
+ "sub_001251": {
+  "note": "Carne picada al 10% de materia grasa, ligeramente más grasa."
+ },
+ "sub_001252": {
+  "note": "Carne picada al 15% de materia grasa, ligeramente menos grasa."
+ },
+ "sub_001253": {
+  "note": "Carne picada de ternera al 15% de materia grasa, ligeramente menos grasa."
+ },
+ "sub_001254": {
+  "note": "Paletilla de cerdo, misma cantidad, un poco menos jugosa (menos veteada)."
+ },
+ "sub_001255": {
+  "note": "Paletilla de cordero, misma cantidad, un poco más grasa."
+ },
+ "sub_001256": {
+  "note": "Aguja de ternera, mismo uso para un guiso largo."
+ },
+ "sub_001257": {
+  "note": "Cuello de ternera, mismo uso para un guiso largo."
+ },
+ "sub_001258": {
+  "note": "Muslo de pollo deshuesado, misma cantidad, ajustar el tiempo de cocción."
+ },
+ "sub_001259": {
+  "note": "Muslo de pollo, misma cantidad, sabor similar."
+ },
+ "sub_001260": {
+  "note": "Paletilla de cordero asada, mismo uso, un poco más grasa y tierna."
+ },
+ "sub_001261": {
+  "note": "Hígado de pavo cocido, misma cantidad, sabor muy similar."
+ },
+ "sub_001262": {
+  "note": "Corazón de pavo cocido, misma cantidad, sabor muy similar."
+ },
+ "sub_001263": {
+  "note": "Hígado de pavo, textura y sabor muy similares."
+ },
+ "sub_001264": {
+  "note": "Hígado de pollo, se sustituye fácilmente, sabor un poco más pronunciado."
+ },
+ "sub_001265": {
+  "note": "Mollejas de cordero, misma preparación, piezas más pequeñas."
+ },
+ "sub_001266": {
+  "note": "Mollejas de ternera, más comunes, misma preparación."
+ },
+ "sub_001267": {
+  "note": "Riñón de cordero, mismo método de cocción, sabor un poco más marcado."
+ },
+ "sub_001268": {
+  "note": "Riñón de ternera, más suave, misma preparación."
+ },
+ "sub_001269": {
+  "note": "Lengua de ternera, más grande pero misma preparación (escalfada y luego braseada)."
+ },
+ "sub_001270": {
+  "note": "Lengua de ternera lechal, más pequeña y tierna, misma preparación."
+ },
+ "sub_001271": {
+  "note": "Panceta ahumada en tacos, mismo uso culinario (salteado, quiche, ensalada)."
+ },
+ "sub_001272": {
+  "note": "Panceta natural en tacos, como sustituto de la panceta italiana para dar sabor a un guiso."
+ },
+ "sub_001273": {
+  "note": "Cecina de los Grisones, mismo tipo de embutido seco en lonchas finas."
+ },
+ "sub_001274": {
+  "note": "Bresaola, carne de ternera curada similar, en lonchas finas."
+ },
+ "sub_001275": {
+  "note": "Jamón de Bayona, a falta de jamón de Parma, misma familia de jamón curado."
+ },
+ "sub_001276": {
+  "note": "Jamón de Bayona, a falta de jamón serrano, jamón curado similar."
+ },
+ "sub_001277": {
+  "note": "Jamón curado genérico, misma textura y uso."
+ },
+ "sub_001278": {
+  "note": "Rillettes de cerdo puro, a falta de pato, textura similar."
+ },
+ "sub_001279": {
+  "note": "Rillettes de pato, más fáciles de encontrar, sabor cercano al de oca."
+ },
+ "sub_001280": {
+  "note": "Rillettes de pato, a falta de rillettes de oca pura."
+ },
+ "sub_001281": {
+  "note": "Paté de hígado de ave, a falta de hígado de oca, más habitual."
+ },
+ "sub_001282": {
+  "note": "Salami, embutido seco similar, mismo uso en lonchas."
+ },
+ "sub_001283": {
+  "note": "Salchichón seco de cerdo puro, mismo tipo de embutido seco."
+ },
+ "sub_001284": {
+  "note": "Merguez cruda, a falta de chorizo, para un sabor picante similar en la barbacoa."
+ },
+ "sub_001285": {
+  "note": "Chipolata cruda, mismo uso a la barbacoa o a la sartén."
+ },
+ "sub_001286": {
+  "note": "Salchicha de Toulouse cruda, mismo uso, sabor un poco más intenso."
+ },
+ "sub_001287": {
+  "note": "Salchicha de Toulouse cruda, a falta de merguez (menos picante, ajustar las especias)."
+ },
+ "sub_001288": {
+  "note": "Salchicha de Fráncfort, textura y uso idénticos (perrito caliente, chucrut)."
+ },
+ "sub_001289": {
+  "note": "Salchicha de Estrasburgo/knack, mismo tipo de salchicha para cocer en agua."
+ },
+ "sub_001290": {
+  "note": "Salchicha de Estrasburgo/knack de cerdo puro, a falta de la versión de ave."
+ },
+ "sub_001291": {
+  "note": "Cervelas, embutido cocido en lonchas, uso similar como aperitivo o en ensalada."
+ },
+ "sub_001292": {
+  "note": "Morro de ternera, otro fiambre de cabeza en gelatina, a menudo servido con vinagreta."
+ },
+ "sub_001293": {
+  "note": "Queso de cabeza, preparación en gelatina similar."
+ },
+ "sub_001294": {
+  "note": "Bacalao cocido, carne blanca firme, textura similar."
+ },
+ "sub_001295": {
+  "note": "Bacalao cocido, pescado blanco magro de sabor similar."
+ },
+ "sub_001296": {
+  "note": "Eglefino cocido al vapor, pescado blanco magro similar."
+ },
+ "sub_001297": {
+  "note": "Pescados blancos de carne firme, sustitución habitual en filete al horno."
+ },
+ "sub_001298": {
+  "note": "Pescados de agua dulce de carne firme, preparación al horno similar."
+ },
+ "sub_001299": {
+  "note": "Pescados pequeños enteros al horno, preparación equivalente."
+ },
+ "sub_001300": {
+  "note": "Pescados planos finos, cocción al vapor equivalente."
+ },
+ "sub_001301": {
+  "note": "Pescados blancos magros, cocción al vapor intercambiable."
+ },
+ "sub_001302": {
+  "note": "Pescados grasos rosados, cocción al vapor similar."
+ },
+ "sub_001303": {
+  "note": "El bacalao salado y el bacalao fresco comparten la misma carne; rehidratar el bacalao salado antes de sustituir."
+ },
+ "sub_001304": {
+  "note": "Pescados blancos magros, cocción suave equivalente."
+ },
+ "sub_001305": {
+  "note": "Pescados blancos de la familia de los gádidos, preparación a la parrilla similar."
+ },
+ "sub_001306": {
+  "note": "Pescados azules pequeños, parrilla similar (sardina/caballa)."
+ },
+ "sub_001307": {
+  "note": "Truchas, preparación a la sartén/al horno equivalente."
+ },
+ "sub_001308": {
+  "note": "Lubinas, carnes similares utilizables de forma intercambiable en crudo."
+ },
+ "sub_001309": {
+  "note": "Pescados blancos de la familia de los gádidos, carne similar en crudo."
+ },
+ "sub_001310": {
+  "note": "Halibut, carnes similares e intercambiables."
+ },
+ "sub_001311": {
+  "note": "Pescados planos similares, carne fina similar."
+ },
+ "sub_001312": {
+  "note": "Salmón salvaje y salmón de piscifactoría, carne similar en crudo."
+ },
+ "sub_001313": {
+  "note": "Salmones de diferentes especies, carne similar en crudo."
+ },
+ "sub_001314": {
+  "note": "Gambas de diferentes especies, cocidas, a menudo intercambiables en recetas."
+ },
+ "sub_001315": {
+  "note": "Langosta y bogavante, carnes similares, cocciones en agua equivalentes."
+ },
+ "sub_001316": {
+  "note": "Cigala y gamba, carne similar, cocción en agua similar."
+ },
+ "sub_001317": {
+  "note": "Mariscos similares, preparación en agua equivalente."
+ },
+ "sub_001318": {
+  "note": "Pequeños gasterópodos marinos, cocción y uso culinario equivalentes."
+ },
+ "sub_001319": {
+  "note": "Calamar y pulpo, carnes de cefalópodos a menudo sustituidas entre sí."
+ },
+ "sub_001320": {
+  "note": "Rillettes de pescado, a menudo intercambiables según el pescado disponible."
+ },
+ "sub_001321": {
+  "note": "Tarama, receta y uso idénticos según la hueva de pescado utilizada."
+ },
+ "sub_001322": {
+  "note": "Huevas de lumpo, sustituto habitual y mucho más económico del caviar, mismo uso como guarnición."
+ },
+ "sub_001323": {
+  "note": "Pescado blanco empanado, textura y uso similares (fish and chips, salteado empanado)."
+ },
+ "sub_001324": {
+  "note": "Pescado blanco empanado, se sustituye fácilmente en la cocina."
+ },
+ "sub_001325": {
+  "note": "Atún al natural en lata puede sustituir a la sardina en aceite en ensaladas y patés."
+ },
+ "sub_001326": {
+  "note": "Conservas de pescado en salsa de tomate intercambiables (caballa/sardina)."
+ },
+ "sub_001327": {
+  "note": "Pescado ahumado, sabor y textura similares, utilizable como sustituto más económico."
+ },
+ "sub_001328": {
+  "note": "El eglefino ahumado puede sustituir al salmón ahumado en ensaladas, quiches y huevos revueltos."
+ },
+ "sub_001329": {
+  "note": "Las conservas de salmón y de atún se usan de forma intercambiable (rillettes, ensaladas)."
+ },
+ "sub_001330": {
+  "note": "La trucha ahumada es un sustituto clásico y más económico del salmón ahumado."
+ },
+ "sub_001331": {
+  "note": "A falta de este, sustituir por unos 4 huevos de gallina (equivalencia de volumen)."
+ },
+ "sub_001332": {
+  "note": "A falta de este, sustituir por 1,5 huevos de gallina aproximadamente (equivalencia de volumen)."
+ },
+ "sub_001333": {
+  "note": "Huevo en polvo reconstituido con agua sustituye al huevo fresco en repostería."
+ },
+ "sub_001334": {
+  "note": "Yema de huevo en polvo reconstituida sustituye a la yema fresca."
+ },
+ "sub_001335": {
+  "note": "Clara de huevo en polvo reconstituida sustituye a la clara fresca."
+ },
+ "sub_001336": {
+  "note": "Leche de vaca entera como sustituto si no hay leche de cabra, o para suavizar el sabor."
+ },
+ "sub_001337": {
+  "note": "Leche de vaca entera como sustituto si no hay leche de cabra disponible."
+ },
+ "sub_001338": {
+  "note": "Leche de vaca entera como sustituto si no hay leche de oveja disponible."
+ },
+ "sub_001339": {
+  "note": "Leche de vaca entera como sustituto si no hay leche de búfala disponible."
+ },
+ "sub_001340": {
+  "note": "Reconstituida con agua, sustituye a la leche fresca entera."
+ },
+ "sub_001341": {
+  "note": "Diluida con agua (a partes iguales), sustituye a la leche entera."
+ },
+ "sub_001342": {
+  "note": "El queso fresco batido natural puede sustituir al yogur griego, textura algo menos cremosa."
+ },
+ "sub_001343": {
+  "note": "Yogur estilo griego clásico como sustituto si no hay leche de oveja disponible."
+ },
+ "sub_001344": {
+  "note": "Yogur natural de leche de vaca como sustituto si no hay leche de oveja disponible."
+ },
+ "sub_001345": {
+  "note": "Yogur natural de leche de vaca como sustituto si no hay leche de cabra disponible."
+ },
+ "sub_001346": {
+  "note": "El kéfir de leche puede sustituir a un yogur líquido natural en las recetas."
+ },
+ "sub_001347": {
+  "note": "El queso fresco escurrido tiene una textura cercana al queso fresco batido 0% M.G."
+ },
+ "sub_001348": {
+  "note": "El queso fresco escurrido tiene una textura cercana al queso fresco batido natural con un contenido en M.G. comparable."
+ },
+ "sub_001349": {
+  "note": "Postre similar a base de huevos y leche, textura y uso similares al flan."
+ },
+ "sub_001350": {
+  "note": "Textura cremosa y untuosa similar, sustituye a la panna cotta como postre lácteo."
+ },
+ "sub_001351": {
+  "note": "Batido estándar equivalente al formato de comida rápida."
+ },
+ "sub_001352": {
+  "note": "Versión básica del arroz con leche, sin aroma añadido."
+ },
+ "sub_001353": {
+  "note": "Postre lácteo a base de cereal similar (sémola sustituida por arroz)."
+ },
+ "sub_001354": {
+  "note": "Crema pastelera casera equivalente a la versión instantánea reconstituida."
+ },
+ "sub_001355": {
+  "note": "Equivalente lácteo natural, si no hay ninguna restricción vegetal."
+ },
+ "sub_001356": {
+  "note": "Alternativa láctea aromatizada equivalente, si no hay ninguna restricción vegetal."
+ },
+ "sub_001357": {
+  "note": "Versión láctea clásica equivalente a la mousse de chocolate vegetal."
+ },
+ "sub_001358": {
+  "note": "Un solo queso rallado (emmental) en lugar de la mezcla especial para gratinar/pizza."
+ },
+ "sub_001359": {
+  "note": "Queso de pasta blanda y corteza enmohecida similar, tipo brie."
+ },
+ "sub_001360": {
+  "note": "Queso de pasta blanda cremoso similar al chaource."
+ },
+ "sub_001361": {
+  "note": "Queso azul de leche de vaca equivalente."
+ },
+ "sub_001362": {
+  "note": "Queso de pasta prensada suave similar, a falta de mimolette."
+ },
+ "sub_001363": {
+  "note": "Queso para raclette genérico equivalente."
+ },
+ "sub_001364": {
+  "note": "Queso fundido genérico equivalente, fuera del formato en lonchas individuales."
+ },
+ "sub_001365": {
+  "note": "Feta genérica equivalente."
+ },
+ "sub_001366": {
+  "note": "Mozzarella genérica equivalente de leche de vaca."
+ },
+ "sub_001367": {
+  "note": "Nata espesa clásica del mismo contenido en materia grasa."
+ },
+ "sub_001368": {
+  "note": "Nata líquida clásica equivalente."
+ },
+ "sub_001369": {
+  "note": "Nata líquida entera para montar uno mismo en chantilly."
+ },
+ "sub_001370": {
+  "note": "La especialidad culinaria ligera aromatizada para cocinar puede sustituirse por nata líquida clásica en preparaciones calientes."
+ },
+ "sub_001371": {
+  "note": "La nata ligera 12-20% M.G. puede sustituirse por nata líquida entera (resultado más cremoso, reducir ligeramente la cantidad)."
+ },
+ "sub_001372": {
+  "note": "El agua del grifo puede sustituirse por agua mineral sin gas en cocina y repostería."
+ },
+ "sub_001373": {
+  "note": "El zumo de limón casero puede sustituirse por zumo de limón puro embotellado."
+ },
+ "sub_001374": {
+  "note": "El zumo de lima fresco puede sustituirse por zumo de limón, en la misma cantidad, sabor ligeramente diferente."
+ },
+ "sub_001375": {
+  "note": "El zumo de lima puro puede sustituirse por zumo de limón puro."
+ },
+ "sub_001376": {
+  "note": "El zumo de piña a base de concentrado puede sustituirse por zumo de piña puro."
+ },
+ "sub_001377": {
+  "note": "El zumo de naranja a base de concentrado puede sustituirse por zumo de naranja recién exprimido."
+ },
+ "sub_001378": {
+  "note": "El zumo de manzana a base de concentrado puede sustituirse por zumo de manzana puro."
+ },
+ "sub_001379": {
+  "note": "El zumo de pomelo a base de concentrado puede sustituirse por zumo de pomelo puro."
+ },
+ "sub_001380": {
+  "note": "El zumo de uva a base de concentrado puede sustituirse por zumo de uva puro."
+ },
+ "sub_001381": {
+  "note": "El zumo de fruta puro puede sustituirse por un zumo a base de concentrado, la disponibilidad y el coste suelen ser diferentes."
+ },
+ "sub_001382": {
+  "note": "El néctar de manzana puede sustituirse por zumo de manzana puro, reduciendo el azúcar añadido de una receta."
+ },
+ "sub_001383": {
+  "note": "El néctar de naranja puede sustituirse por zumo de naranja puro, más concentrado en fruta y menos azucarado."
+ },
+ "sub_001384": {
+  "note": "El néctar de piña puede sustituirse por zumo de piña puro."
+ },
+ "sub_001385": {
+  "note": "La cola azucarada puede sustituirse por una cola sin azúcares añadidos con edulcorantes para una versión ligera."
+ },
+ "sub_001386": {
+  "note": "La limonada azucarada puede sustituirse por una limonada sin azúcares añadidos con edulcorantes."
+ },
+ "sub_001387": {
+  "note": "La tónica azucarada con edulcorantes puede sustituirse por una tónica sin azúcares añadidos con edulcorantes."
+ },
+ "sub_001388": {
+  "note": "Las bebidas vegetales naturales son intercambiables en cocina (repostería, salsas): avena sustituida por soja natural."
+ },
+ "sub_001389": {
+  "note": "La bebida de soja natural puede sustituirse por bebida de almendra natural en la mayoría de las recetas."
+ },
+ "sub_001390": {
+  "note": "La bebida de arroz, más fluida, puede sustituirse por bebida de almendra natural en la cocina cotidiana."
+ },
+ "sub_001391": {
+  "note": "La bebida de coco puede sustituirse por bebida de almendra natural cuando se quiere atenuar el sabor a coco."
+ },
+ "sub_001392": {
+  "note": "El té negro y el té verde infusionados se usan a menudo el uno por el otro según el sabor buscado."
+ },
+ "sub_001393": {
+  "note": "El café no instantáneo listo para beber puede sustituirse por café instantáneo reconstituido."
+ },
+ "sub_001394": {
+  "note": "El café molido para infusionar puede sustituirse por café soluble diluido en agua caliente."
+ },
+ "sub_001395": {
+  "note": "La fructosa puede sustituirse por azúcar normal en repostería (ajustar ligeramente la cantidad)."
+ },
+ "sub_001396": {
+  "note": "El edulcorante de sacarina puede sustituirse por azúcar para recuperar un sabor más natural."
+ },
+ "sub_001397": {
+  "note": "El edulcorante de aspartamo en polvo puede sustituirse por azúcar en cocina y repostería."
+ },
+ "sub_001398": {
+  "note": "El edulcorante de stevia puede sustituirse por azúcar normal (sabor más cercano, ajustar la cantidad)."
+ },
+ "sub_001399": {
+  "note": "La melaza de caña puede sustituirse por sirope de arce en repostería para un sabor dulce similar."
+ },
+ "sub_001400": {
+  "note": "El caramelo líquido usado como cobertura puede sustituirse por miel."
+ },
+ "sub_001401": {
+  "note": "El chocolate negro 50% en tableta puede sustituirse por chocolate negro estándar en cocina/repostería."
+ },
+ "sub_001402": {
+  "note": "El chocolate negro 70% de degustación puede sustituirse por chocolate negro estándar para la cocción."
+ },
+ "sub_001403": {
+  "note": "El chocolate negro de repostería (40%+) puede sustituirse por chocolate negro estándar."
+ },
+ "sub_001404": {
+  "note": "El chocolate con leche sin azúcares añadidos puede sustituirse por chocolate con leche clásico."
+ },
+ "sub_001405": {
+  "note": "El aguardiente tipo coñac/armañac puede sustituirse por un aguardiente tipo calvados en un flambeado o una salsa."
+ },
+ "sub_001406": {
+  "note": "El ron (alimento medio) puede sustituirse por ron blanco en la mayoría de los usos culinarios."
+ },
+ "sub_001407": {
+  "note": "La mermelada de fresa (extra o clásica) es equivalente a la mermelada de fresa estándar del catálogo."
+ },
+ "sub_001408": {
+  "note": "La mermelada de albaricoque (extra o clásica) es equivalente a la mermelada de albaricoque estándar del catálogo."
+ },
+ "sub_001409": {
+  "note": "La mermelada de fresa baja en azúcares puede sustituirse por mermelada de fresa clásica (más azucarada)."
+ },
+ "sub_001410": {
+  "note": "La mermelada de albaricoque baja en azúcares puede sustituirse por mermelada de albaricoque clásica."
+ },
+ "sub_001411": {
+  "note": "La jalea de grosella puede sustituirse por mermelada de frambuesa (otra fruta roja) en rellenos, tostadas o fondos de tarta."
+ },
+ "sub_001412": {
+  "note": "El croissant artesanal ordinario puede sustituirse por un croissant artesanal de mantequilla pura, sabor más rico pero uso idéntico."
+ },
+ "sub_001413": {
+  "note": "El panecillo de leche puede sustituirse por un brioche natural artesanal para el desayuno o la merienda."
+ },
+ "sub_001414": {
+  "note": "El panettone puede sustituirse por un brioche natural clásico si no hay frutas confitadas disponibles."
+ },
+ "sub_001415": {
+  "note": "El pan de pasas puede sustituirse por un brioche relleno de frutas, bollería dulce con fruta similar."
+ },
+ "sub_001416": {
+  "note": "El pain au chocolat puede sustituirse por un croissant de mantequilla pura cuando no hay bollería de chocolate."
+ },
+ "sub_001417": {
+  "note": "El brioche con pepitas de chocolate puede sustituirse por un brioche natural envasado, versión sin chocolate."
+ },
+ "sub_001418": {
+  "note": "La galleta petit beurre puede sustituirse por una galleta seca natural, misma base para un cheesecake o desmenuzada en un postre."
+ },
+ "sub_001419": {
+  "note": "El bizcocho de cuatro cuartos artesanal y el envasado son directamente intercambiables, misma receta base."
+ },
+ "sub_001420": {
+  "note": "El babá al ron de la sección de frescos puede sustituirse por un babá al ron artesanal, misma pastelería."
+ },
+ "sub_001421": {
+  "note": "El kouign amann envasado puede sustituirse por un kouign amann artesanal, misma especialidad bretona."
+ },
+ "sub_001422": {
+  "note": "El petisú y el eclair comparten la misma pasta choux y un relleno de crema pastelera similar."
+ },
+ "sub_001423": {
+  "note": "El petisú de crema pastelera puede sustituirse por un petisú de nata montada (tipo Saint-Honoré) según el relleno deseado."
+ },
+ "sub_001424": {
+  "note": "El cuerno de gacela y el baklava son dos pastelerías orientales a base de almendras y azúcar, intercambiables en una bandeja oriental."
+ },
+ "sub_001425": {
+  "note": "El brownie con frutos secos puede sustituirse por un brownie natural, sobre todo en caso de alergia a los frutos secos."
+ },
+ "sub_001426": {
+  "note": "El pastel bretón relleno de ciruelas pasas puede sustituirse por un far bretón de ciruelas, especialidades bretonas con los mismos sabores."
+ },
+ "sub_001427": {
+  "note": "El pastel de mousse de frutas sobre bizcocho (bávaro/espejo) y el fresier/framboisier comparten una estructura similar (bizcocho, crema, frutas)."
+ },
+ "sub_001428": {
+  "note": "El macaron seco puede sustituirse por un macaron tierno relleno para variar una bandeja de mignardises dulces."
+ },
+ "sub_001429": {
+  "note": "El ketchup envasado puede sustituirse por salsa de tomate natural."
+ },
+ "sub_001430": {
+  "note": "El ketchup ligero puede sustituirse por ketchup clásico."
+ },
+ "sub_001431": {
+  "note": "La mayonesa ligera puede sustituirse por mayonesa clásica."
+ },
+ "sub_001432": {
+  "note": "La salsa barbacoa puede sustituirse por ketchup, base de tomate dulce-picante similar."
+ },
+ "sub_001433": {
+  "note": "La salsa de soja puede sustituirse por salsa nuoc-mâm en cocina asiática."
+ },
+ "sub_001434": {
+  "note": "La salsa de soja dulce puede sustituirse por salsa de soja clásica."
+ },
+ "sub_001435": {
+  "note": "La salsa teriyaki puede sustituirse por salsa de soja dulce."
+ },
+ "sub_001436": {
+  "note": "La vinagreta de aceite de oliva es equivalente a una vinagreta clásica con 50-75% de aceite."
+ },
+ "sub_001437": {
+  "note": "La harissa puede sustituirse por guindilla picante utilizada con moderación."
+ },
+ "sub_001438": {
+  "note": "La salsa de mostaza puede sustituirse por mostaza de Dijon diluida con un poco de nata."
+ },
+ "sub_001439": {
+  "note": "La salsa César puede sustituirse por mayonesa con parmesano y anchoas añadidos."
+ },
+ "sub_001440": {
+  "note": "La salsa bechamel envasada puede sustituirse por una bechamel casera de mantequilla."
+ },
+ "sub_001441": {
+  "note": "La salsa bearnesa y la salsa holandesa son intercambiables, bases similares."
+ },
+ "sub_001442": {
+  "note": "La salsa de Madeira puede sustituirse por una salsa de vino tinto casera."
+ },
+ "sub_001443": {
+  "note": "El aceite o la mantequilla concentrada pueden sustituirse por mantequilla dulce clásica."
+ },
+ "sub_001444": {
+  "note": "La mantequilla ligera dulce puede sustituirse por mantequilla dulce clásica."
+ },
+ "sub_001445": {
+  "note": "La mantequilla ligera semisalada puede sustituirse por mantequilla semisalada clásica."
+ },
+ "sub_001446": {
+  "note": "El aceite de coco sólido puede sustituirse por mantequilla dulce en repostería, textura similar en frío."
+ },
+ "sub_001447": {
+  "note": "El aceite de palma puede sustituirse por aceite de colza, alternativa vegetal habitual."
+ },
+ "sub_001448": {
+  "note": "El aceite para freír no especificado puede sustituirse por aceite de girasol."
+ },
+ "sub_001449": {
+  "note": "El aceite de oliva virgen extra es equivalente al aceite de oliva extra virgen."
+ },
+ "sub_001450": {
+  "note": "El tocino graso crudo puede sustituirse por manteca de cerdo en la cocina."
+ },
+ "sub_001451": {
+  "note": "El pesto rosso puede sustituirse por pesto de albahaca clásico si no está disponible."
+ },
+ "sub_001452": {
+  "note": "El pepinillo picado como sustituto ácido y crujiente de las alcaparras."
+ },
+ "sub_001453": {
+  "note": "El pepinillo en vinagre sustituye a la cebolla en vinagre para dar acidez como acompañamiento."
+ },
+ "sub_001454": {
+  "note": "Los pepinillos en vinagre clásicos como alternativa menos dulce al pepinillo agridulce."
+ },
+ "sub_001455": {
+  "note": "La aceituna verde en salmuera es intercambiable con la aceituna negra en la mayoría de las recetas."
+ },
+ "sub_001456": {
+  "note": "Las aceitunas negras en salmuera son intercambiables con las aceitunas verdes en la mayoría de las recetas."
+ },
+ "sub_001457": {
+  "note": "Las aceitunas negras en salmuera son una buena alternativa a las aceitunas negras en aceite si no están disponibles."
+ },
+ "sub_001458": {
+  "note": "El salvado de trigo es un sustituto habitual de fibra para el salvado de maíz."
+ },
+ "sub_001459": {
+  "note": "El salvado de trigo es un sustituto habitual de fibra para el salvado de arroz."
+ },
+ "sub_001460": {
+  "note": "El caldo de ternera listo para usar puede sustituir al caldo deshidratado (reconstituir según la dosis)."
+ },
+ "sub_001461": {
+  "note": "Los copos de levadura de cerveza son intercambiables con la levadura de cerveza estándar."
+ },
+ "sub_001462": {
+  "note": "La levadura de panadería seca puede sustituir a la fresca (aproximadamente la mitad del peso)."
+ },
+ "sub_001463": {
+  "note": "La levadura de panadería fresca puede sustituir a la seca (aproximadamente el doble del peso)."
+ },
+ "sub_001464": {
+  "note": "Una vaina de vainilla raspada puede sustituir al extracto de vainilla alcohólico."
+ },
+ "sub_001465": {
+  "note": "El fondo de ternera listo para usar puede sustituir al fondo deshidratado (reconstituir según la dosis)."
+ },
+ "sub_001466": {
+  "note": "El fumet de pescado listo para usar es una buena alternativa al caldo corto deshidratado."
+ },
+ "sub_001467": {
+  "note": "La salsa de soja aporta una nota umami similar y puede sustituir al extracto de levadura para untar en la cocina."
+ },
+ "sub_001468": {
+  "note": "La pectina es un sustituto clásico del gelificante para mermeladas."
+ },
+ "sub_001469": {
+  "note": "El extracto de vainilla (aproximadamente 1 cucharadita) puede sustituir a una vaina de vainilla."
+ },
+ "sub_001470": {
+  "note": "La menta fresca puede sustituir a la menta seca (triplicar la cantidad)."
+ },
+ "sub_001471": {
+  "note": "El romero fresco puede sustituir al romero seco (triplicar la cantidad)."
+ },
+ "sub_001472": {
+  "note": "La salvia fresca puede sustituir a la salvia seca (triplicar la cantidad)."
+ },
+ "sub_001473": {
+  "note": "El estragón fresco puede sustituir al estragón seco (triplicar la cantidad)."
+ },
+ "sub_001474": {
+  "note": "El eneldo fresco puede sustituir al eneldo seco (triplicar la cantidad)."
+ },
+ "sub_001475": {
+  "note": "El cebollino fresco puede sustituir al cebollino seco (triplicar la cantidad)."
+ },
+ "sub_001476": {
+  "note": "Una alternativa vegetal clásica a la crème fraîche en la cocina (preparaciones, salsas)."
+ },
+ "sub_001477": {
+  "note": "El tofu natural es un sustituto vegetal habitual de la pechuga de pollo en salteados y currys."
+ },
+ "sub_001478": {
+  "note": "El seitán es un sustituto vegetal habitual de la carne picada de ternera en guisos y boloñesas."
+ },
+ "sub_001479": {
+  "note": "Una untable de verduras similar, intercambiable con el caviar de berenjena para el aperitivo."
+ }
 }

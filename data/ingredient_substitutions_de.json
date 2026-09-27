@@ -1,170 +1,4560 @@
 {
-  "sub_000001": {
-    "note": "Gleiche Menge, sehr ähnliches Ergebnis."
-  },
-  "sub_000002": {
-    "note": "Menge um etwa 25% reduzieren."
-  },
-  "sub_000003": {
-    "note": "In Kuchen, für eine leichtere Version.",
-    "name": "Apfelmus"
-  },
-  "sub_000004": {
-    "note": "Etwa 60 g Apfelmus pro Ei, in Kuchen.",
-    "name": "Apfelmus"
-  },
-  "sub_000005": {
-    "note": "1 EL gemahlen + 3 EL Wasser pro Ei, 5 Min. quellen lassen.",
-    "name": "Gemahlener Leinsamen"
-  },
-  "sub_000006": {
-    "note": "Neutralerer Geschmack, etwas flüssiger."
-  },
-  "sub_000007": {
-    "note": "Guter Ersatz sowohl zum Kochen als auch zum Trinken."
-  },
-  "sub_000008": {
-    "note": "Von Natur aus leicht süß."
-  },
-  "sub_000009": {
-    "note": "Leichter, weniger fetthaltig."
-  },
-  "sub_000010": {
-    "note": "Für eine laktosefreie Version, bringt einen leichten Kokosgeschmack."
-  },
-  "sub_000011": {
-    "note": "Für eine glutenfreie Version."
-  },
-  "sub_000012": {
-    "note": "Zum Andicken einer Sauce; ersetzt nicht das Mehl, um einen Kuchen aufgehen zu lassen."
-  },
-  "sub_000013": {
-    "note": "Verändert Textur und Geschmack, dichter und reichhaltiger."
-  },
-  "sub_000014": {
-    "note": "Die Flüssigkeitsmenge im Rezept etwas reduzieren (Honig ist feucht)."
-  },
-  "sub_000015": {
-    "note": "Ausgeprägterer Geschmack, die Flüssigkeit im Rezept leicht reduzieren."
-  },
-  "sub_000016": {
-    "note": "Karamelligerer Geschmack, gleiche Menge."
-  },
-  "sub_000017": {
-    "note": "Mit einer säurehaltigen Zutat (Essig, Zitronensaft) kombinieren, damit es wirkt."
-  },
-  "sub_000018": {
-    "note": "Etwas Zitronensaft hinzufügen, um die Säure des Weins wiederherzustellen."
-  },
-  "sub_000019": {
-    "note": "Etwas Balsamico-Essig für die Säure und die Farbe hinzufügen."
-  },
-  "sub_000020": {
-    "note": "Neutralerer Geschmack."
-  },
-  "sub_000021": {
-    "note": "Guter Omega-3-Gehalt, neutraler Geschmack."
-  },
-  "sub_000022": {
-    "note": "Etwas dichter, leicht weniger säuerlich."
-  },
-  "sub_000023": {
-    "note": "Reichhaltiger, in etwas reduzierter Menge verwenden.",
-    "name": "Leichte dicke Crème fraîche"
-  },
-  "sub_000024": {
-    "note": "Salzigerer und ausgeprägterer Geschmack."
-  },
-  "sub_000025": {
-    "note": "Für eine vegane Version, bringt einen ähnlichen Umami-Geschmack."
-  },
-  "sub_000026": {
-    "note": "Vor Gebrauch grob mixen."
-  },
-  "sub_000027": {
-    "note": "Fein zerbröseln."
-  },
-  "sub_000028": {
-    "note": "Schärfer, vorsichtig dosieren."
-  },
-  "sub_000029": {
-    "note": "Mit etwas Essig kombinieren, um die Säure wiederherzustellen."
-  },
-  "sub_000030": {
-    "note": "Etwa 1/8 Teelöffel pro frischer Knoblauchzehe."
-  },
-  "sub_000031": {
-    "note": "Milderer und süßerer Geschmack."
-  },
-  "sub_000032": {
-    "note": "Milderer Geschmack, gart schneller."
-  },
-  "sub_000033": {
-    "note": "Das Weiße verwenden, feinerer Geschmack."
-  },
-  "sub_000034": {
-    "note": "Nur für die Säure, ohne den Zitrusgeschmack."
-  },
-  "sub_000035": {
-    "note": "Etwas kräftigerer Geschmack."
-  },
-  "sub_000036": {
-    "note": "Eine Prise Zucker hinzufügen, um die leicht süße Seite wiederherzustellen."
-  },
-  "sub_000037": {
-    "note": "Gleiche Verwendung, oft weniger salzig."
-  },
-  "sub_000038": {
-    "note": "In Wasser verdünnt, bringt salzigen und umami Geschmack."
-  },
-  "sub_000039": {
-    "note": "Etwas weniger reichhaltig, aber eine ähnliche Textur."
-  },
-  "sub_000040": {
-    "note": "Für eine laktosefreie Version."
-  },
-  "sub_000041": {
-    "note": "Mit etwas dicker Crème fraîche für die Reichhaltigkeit mischen.",
-    "name": "Frischkäse"
-  },
-  "sub_000042": {
-    "note": "Mit Butter und Zucker mischen, um eine ähnliche Textur wiederherzustellen."
-  },
-  "sub_000043": {
-    "note": "Ausgeprägterer Geschmack."
-  },
-  "sub_000044": {
-    "note": "Milderer und cremigerer Geschmack."
-  },
-  "sub_000045": {
-    "note": "Proteinreicher, leicht andere Textur."
-  },
-  "sub_000046": {
-    "note": "Kürzere Kochzeit."
-  },
-  "sub_000047": {
-    "note": "Für eine glutenfreie Version."
-  },
-  "sub_000048": {
-    "note": "Für eine glutenfreie Version, schnellere Zubereitung."
-  },
-  "sub_000049": {
-    "note": "Ein paar Tropfen reichen, zum normalen Zucker hinzufügen."
-  },
-  "sub_000050": {
-    "note": "Anderer Geschmack, aber ähnliche Textur."
-  },
-  "sub_000051": {
-    "note": "Etwas mehr Flüssigkeit hinzufügen, um auszugleichen (Honig ist feucht)."
-  },
-  "sub_000052": {
-    "note": "Etwas flüssiger."
-  },
-  "sub_000053": {
-    "note": "Für eine glutenfreie Version, sehr ähnlicher Geschmack.",
-    "name": "Tamari"
-  },
-  "sub_000054": {
-    "note": "In etwas Wasser verdünnt; der Umami-Geschmack wird weniger präsent sein."
-  }
+ "sub_000001": {
+  "note": "Gleiche Menge, sehr ähnliches Ergebnis."
+ },
+ "sub_000002": {
+  "note": "Menge um etwa 25% reduzieren."
+ },
+ "sub_000003": {
+  "note": "In Kuchen, für eine leichtere Version.",
+  "name": "Apfelmus"
+ },
+ "sub_000004": {
+  "note": "Etwa 60 g Apfelmus pro Ei, in Kuchen.",
+  "name": "Apfelmus"
+ },
+ "sub_000005": {
+  "note": "1 EL gemahlen + 3 EL Wasser pro Ei, 5 Min. quellen lassen.",
+  "name": "Gemahlener Leinsamen"
+ },
+ "sub_000006": {
+  "note": "Neutralerer Geschmack, etwas flüssiger."
+ },
+ "sub_000007": {
+  "note": "Guter Ersatz sowohl zum Kochen als auch zum Trinken."
+ },
+ "sub_000008": {
+  "note": "Von Natur aus leicht süß."
+ },
+ "sub_000009": {
+  "note": "Leichter, weniger fetthaltig."
+ },
+ "sub_000010": {
+  "note": "Für eine laktosefreie Version, bringt einen leichten Kokosgeschmack."
+ },
+ "sub_000011": {
+  "note": "Für eine glutenfreie Version."
+ },
+ "sub_000012": {
+  "note": "Zum Andicken einer Sauce; ersetzt nicht das Mehl, um einen Kuchen aufgehen zu lassen."
+ },
+ "sub_000013": {
+  "note": "Verändert Textur und Geschmack, dichter und reichhaltiger."
+ },
+ "sub_000014": {
+  "note": "Die Flüssigkeitsmenge im Rezept etwas reduzieren (Honig ist feucht)."
+ },
+ "sub_000015": {
+  "note": "Ausgeprägterer Geschmack, die Flüssigkeit im Rezept leicht reduzieren."
+ },
+ "sub_000016": {
+  "note": "Karamelligerer Geschmack, gleiche Menge."
+ },
+ "sub_000017": {
+  "note": "Mit einer säurehaltigen Zutat (Essig, Zitronensaft) kombinieren, damit es wirkt."
+ },
+ "sub_000018": {
+  "note": "Etwas Zitronensaft hinzufügen, um die Säure des Weins wiederherzustellen."
+ },
+ "sub_000019": {
+  "note": "Etwas Balsamico-Essig für die Säure und die Farbe hinzufügen."
+ },
+ "sub_000020": {
+  "note": "Neutralerer Geschmack."
+ },
+ "sub_000021": {
+  "note": "Guter Omega-3-Gehalt, neutraler Geschmack."
+ },
+ "sub_000022": {
+  "note": "Etwas dichter, leicht weniger säuerlich."
+ },
+ "sub_000023": {
+  "note": "Reichhaltiger, in etwas reduzierter Menge verwenden.",
+  "name": "Leichte dicke Crème fraîche"
+ },
+ "sub_000024": {
+  "note": "Salzigerer und ausgeprägterer Geschmack."
+ },
+ "sub_000025": {
+  "note": "Für eine vegane Version, bringt einen ähnlichen Umami-Geschmack."
+ },
+ "sub_000026": {
+  "note": "Vor Gebrauch grob mixen."
+ },
+ "sub_000027": {
+  "note": "Fein zerbröseln."
+ },
+ "sub_000028": {
+  "note": "Schärfer, vorsichtig dosieren."
+ },
+ "sub_000029": {
+  "note": "Mit etwas Essig kombinieren, um die Säure wiederherzustellen."
+ },
+ "sub_000030": {
+  "note": "Etwa 1/8 Teelöffel pro frischer Knoblauchzehe."
+ },
+ "sub_000031": {
+  "note": "Milderer und süßerer Geschmack."
+ },
+ "sub_000032": {
+  "note": "Milderer Geschmack, gart schneller."
+ },
+ "sub_000033": {
+  "note": "Das Weiße verwenden, feinerer Geschmack."
+ },
+ "sub_000034": {
+  "note": "Nur für die Säure, ohne den Zitrusgeschmack."
+ },
+ "sub_000035": {
+  "note": "Etwas kräftigerer Geschmack."
+ },
+ "sub_000036": {
+  "note": "Eine Prise Zucker hinzufügen, um die leicht süße Seite wiederherzustellen."
+ },
+ "sub_000037": {
+  "note": "Gleiche Verwendung, oft weniger salzig."
+ },
+ "sub_000038": {
+  "note": "In Wasser verdünnt, bringt salzigen und umami Geschmack."
+ },
+ "sub_000039": {
+  "note": "Etwas weniger reichhaltig, aber eine ähnliche Textur."
+ },
+ "sub_000040": {
+  "note": "Für eine laktosefreie Version."
+ },
+ "sub_000041": {
+  "note": "Mit etwas dicker Crème fraîche für die Reichhaltigkeit mischen.",
+  "name": "Frischkäse"
+ },
+ "sub_000042": {
+  "note": "Mit Butter und Zucker mischen, um eine ähnliche Textur wiederherzustellen."
+ },
+ "sub_000043": {
+  "note": "Ausgeprägterer Geschmack."
+ },
+ "sub_000044": {
+  "note": "Milderer und cremigerer Geschmack."
+ },
+ "sub_000045": {
+  "note": "Proteinreicher, leicht andere Textur."
+ },
+ "sub_000046": {
+  "note": "Kürzere Kochzeit."
+ },
+ "sub_000047": {
+  "note": "Für eine glutenfreie Version."
+ },
+ "sub_000048": {
+  "note": "Für eine glutenfreie Version, schnellere Zubereitung."
+ },
+ "sub_000049": {
+  "note": "Ein paar Tropfen reichen, zum normalen Zucker hinzufügen."
+ },
+ "sub_000050": {
+  "note": "Anderer Geschmack, aber ähnliche Textur."
+ },
+ "sub_000051": {
+  "note": "Etwas mehr Flüssigkeit hinzufügen, um auszugleichen (Honig ist feucht)."
+ },
+ "sub_000052": {
+  "note": "Etwas flüssiger."
+ },
+ "sub_000053": {
+  "note": "Für eine glutenfreie Version, sehr ähnlicher Geschmack.",
+  "name": "Tamari"
+ },
+ "sub_000054": {
+  "note": "In etwas Wasser verdünnt; der Umami-Geschmack wird weniger präsent sein."
+ },
+ "sub_000055": {
+  "note": "Weiße Rüben und Steckrüben sind in Eintöpfen und Pürees in gleicher Menge austauschbar."
+ },
+ "sub_000056": {
+  "note": "Blumenkohl und Brokkoli lassen sich in den meisten Rezepten in gleicher Menge austauschen (Gratins, Pfannengerichte, Blumenkohl-/Brokkoli-Reis)."
+ },
+ "sub_000057": {
+  "note": "Rotkohl und Weißkohl sind in gleicher Menge austauschbar, die Farbe des Gerichts ändert sich."
+ },
+ "sub_000058": {
+  "note": "Rote Zwiebel kann in gleicher Menge durch gelbe Zwiebel ersetzt werden, etwas weniger süßer Geschmack."
+ },
+ "sub_000059": {
+  "note": "Weiße und gelbe Zwiebeln sind in gleicher Menge austauschbar."
+ },
+ "sub_000060": {
+  "note": "Eisbergsalat und Römersalat sind in Salaten austauschbar, Römersalat ist knackiger und nährstoffreicher."
+ },
+ "sub_000061": {
+  "note": "Roter und grüner Blattsalat sind in Salaten in gleicher Menge austauschbar."
+ },
+ "sub_000062": {
+  "note": "Rote Paprika kann in gleicher Menge durch grüne Paprika ersetzt werden, bitterer und weniger süßer Geschmack."
+ },
+ "sub_000063": {
+  "note": "Gelbe und orange Paprika sind in gleicher Menge austauschbar (gleiche Süße)."
+ },
+ "sub_000064": {
+  "note": "Weiße Champignons können in gleicher Menge durch braune (Cremini) ersetzt werden, kräftigerer Geschmack."
+ },
+ "sub_000065": {
+  "note": "Braune Champignons (Cremini) und Portobello sind dieselbe Art in unterschiedlicher Reife und austauschbar (Portobello ist fleischiger)."
+ },
+ "sub_000066": {
+  "note": "Shiitake kann in Pfannengerichten in gleicher Menge durch Portobello ersetzt werden, für eine ähnlich fleischige Textur."
+ },
+ "sub_000067": {
+  "note": "Enoki kann bei Nichtverfügbarkeit durch weiße Champignons ersetzt werden, weniger knackige Textur."
+ },
+ "sub_000068": {
+  "note": "Shimeji kann in gleicher Menge durch weiße Champignons ersetzt werden."
+ },
+ "sub_000069": {
+  "note": "Austernpilz kann in Pfannengerichten und Brühen in gleicher Menge durch Shiitake ersetzt werden."
+ },
+ "sub_000070": {
+  "note": "Grünkohl und Kohlblätter (Collard Greens) sind in Schmorgerichten in gleicher Menge austauschbar."
+ },
+ "sub_000071": {
+  "note": "Cantaloupe- und Honigmelone sind im Obstsalat in gleicher Menge austauschbar."
+ },
+ "sub_000072": {
+  "note": "Rote Kartoffeln können durch Russet-Kartoffeln ersetzt werden, die mehliger sind (besser für Püree/Pommes)."
+ },
+ "sub_000073": {
+  "note": "Kartoffeln mit gelbem Fleisch können durch rote Kartoffeln ersetzt werden, ähnlich feste Textur."
+ },
+ "sub_000074": {
+  "note": "Fuji- und Gala-Äpfel sind in gleicher Menge austauschbar, beide süß und fest."
+ },
+ "sub_000075": {
+  "note": "Granny-Smith-Äpfel können durch Red Delicious ersetzt werden, das Ergebnis ist jedoch weniger säuerlich (Zucker beim Backen anpassen)."
+ },
+ "sub_000076": {
+  "note": "Honeycrisp-Äpfel können in gleicher Menge durch Gala ersetzt werden, etwas weniger saftig."
+ },
+ "sub_000077": {
+  "note": "Ataulfo-Mango kann in gleicher Menge durch Tommy-Atkins-Mango ersetzt werden, etwas faserigere Textur."
+ },
+ "sub_000078": {
+  "note": "Jalapeño und Serrano sind austauschbar; Serrano ist schärfer, daher die Menge leicht reduzieren."
+ },
+ "sub_000079": {
+  "note": "Poblano kann durch Jalapeño ersetzt werden, dabei die Menge halbieren (Poblano ist deutlich milder)."
+ },
+ "sub_000080": {
+  "note": "Bananenpfeffer (ungarischer Wachspaprika) kann durch Jalapeño ersetzt werden; da milder, mehr davon verwenden."
+ },
+ "sub_000081": {
+  "note": "Cannellini-Bohnen und weiße Bohnen (Navy Beans) sind in Suppen und Salaten in gleicher Menge austauschbar."
+ },
+ "sub_000082": {
+  "note": "Schwarze Bohnen und Pinto-Bohnen sind in mexikanischen Gerichten/Chili in gleicher Menge austauschbar."
+ },
+ "sub_000083": {
+  "note": "Erdnussbutter kann in gleicher Menge durch Mandelbutter ersetzt werden (erdnussfreie Option), milderer Geschmack."
+ },
+ "sub_000084": {
+  "note": "Tahini kann in gleicher Menge durch Mandelbutter ersetzt werden für einen weniger bitteren Geschmack (außer bei Hummus)."
+ },
+ "sub_000085": {
+  "note": "Getrocknete Feigen und Trockenpflaumen sind beim Backen/in Kompott in gleicher Menge austauschbar."
+ },
+ "sub_000086": {
+  "note": "Dunkle Rosinen und goldene Rosinen (Sultaninen) sind in gleicher Menge austauschbar, goldene schmecken etwas milder."
+ },
+ "sub_000087": {
+  "note": "Kürbiskerne können als Topping (Pesto, Salate) in gleicher Menge durch Pinienkerne ersetzt werden."
+ },
+ "sub_000088": {
+  "note": "Maisöl kann in gleicher Menge durch Rapsöl (Canola) ersetzt werden, ähnlich neutraler Geschmack."
+ },
+ "sub_000089": {
+  "note": "Distelöl kann in gleicher Menge durch Sonnenblumenöl ersetzt werden, ähnlich neutraler Geschmack."
+ },
+ "sub_000090": {
+  "note": "Erdnussöl kann bei Allergie zum Frittieren durch Rapsöl ersetzt werden, ähnlicher Rauchpunkt."
+ },
+ "sub_000091": {
+  "note": "Gelbe Zwiebel in gleicher Menge, milderer und süßerer Geschmack."
+ },
+ "sub_000092": {
+  "note": "Zucchini und gelber Sommerkürbis sind in gleicher Menge austauschbar."
+ },
+ "sub_000093": {
+  "note": "Urgetreide kann durch rohe Quinoa ersetzt werden, ähnliche Kochzeit."
+ },
+ "sub_000094": {
+  "note": "Urweizen kann durch geschälten Farro ersetzt werden, ähnlich feste Textur."
+ },
+ "sub_000095": {
+  "note": "Kamut kann durch Farro ersetzt werden, gleiche Urweizen-Familie."
+ },
+ "sub_000096": {
+  "note": "Schwarzer Reis kann in gleicher Menge durch braunen Reis ersetzt werden, andere Farbe."
+ },
+ "sub_000097": {
+  "note": "Roter Reis kann in gleicher Menge durch braunen Reis ersetzt werden."
+ },
+ "sub_000098": {
+  "note": "Brauner Reis kann durch weißen Reis ersetzt werden; Kochzeit verkürzen."
+ },
+ "sub_000099": {
+  "note": "Sorghum-Korn kann in Getreide-Bowls durch braunen Reis ersetzt werden."
+ },
+ "sub_000100": {
+  "note": "Klassische und Vollkorn-Spaghetti sind in gleicher Menge austauschbar."
+ },
+ "sub_000101": {
+  "note": "Allzweckmehl statt Gebäckmehl; für ein leichteres Ergebnis 2 Esslöffel pro Tasse durch Speisestärke ersetzen."
+ },
+ "sub_000102": {
+  "note": "Version mit Schweinefleisch statt der vegetarischen Version für mehr rauchigen Geschmack."
+ },
+ "sub_000103": {
+  "note": "Schwarzaugenbohnen können durch Pinto-Bohnen ersetzt werden, ähnliche Textur."
+ },
+ "sub_000104": {
+  "note": "Schwarze Bohnen und Pinto-Bohnen sind in mexikanischen Gerichten austauschbar."
+ },
+ "sub_000105": {
+  "note": "Weiße Bohnen (Navy Beans) können in gleicher Menge durch Cannellini-Bohnen ersetzt werden."
+ },
+ "sub_000106": {
+  "note": "Great-Northern- und Cannellini-Bohnen sind zwei austauschbare weiße Bohnensorten."
+ },
+ "sub_000107": {
+  "note": "Nativ extra hat einen kräftigeren Geschmack; extra mild eignet sich besser zum Kochen bei hoher Hitze."
+ },
+ "sub_000108": {
+  "note": "Weißweinessig in gleicher Menge für Säure in Dressings."
+ },
+ "sub_000109": {
+  "note": "Kurkumapulver als preiswerter Ersatz für die Farbe; die halbe Menge verwenden, anderer Geschmack."
+ },
+ "sub_000110": {
+  "note": "Ungesalzene Butter + etwa 1/4 Teelöffel Salz pro 115 g hinzufügen."
+ },
+ "sub_000111": {
+  "note": "Gesalzene Butter, dabei das im Rezept zugegebene Salz weglassen."
+ },
+ "sub_000112": {
+  "note": "Griechischer Naturjoghurt statt saurer Sahne, in gleicher Menge, weniger fetthaltig."
+ },
+ "sub_000113": {
+  "note": "Milch + 1 Esslöffel Zitronensaft oder Essig pro Tasse, 5-10 Minuten ruhen lassen",
+  "name": "Milch + Zitronensaft oder Essig"
+ },
+ "sub_000114": {
+  "note": "Frisches ganzes Ei statt rekonstituiertem Trockenei (Rehydrierungsverhältnis beachten)."
+ },
+ "sub_000115": {
+  "note": "Frisches Eigelb statt rekonstituiertem Trockeneigelb."
+ },
+ "sub_000116": {
+  "note": "Frisches Eiweiß statt rekonstituiertem Trockeneiweiß."
+ },
+ "sub_000117": {
+  "note": "Magere Weißfische sind austauschbar (Alaska-Seelachs und Schellfisch)."
+ },
+ "sub_000118": {
+  "note": "Seelachs kann durch Kabeljau ersetzt werden, ähnliche Weißfische."
+ },
+ "sub_000119": {
+  "note": "Feste Weißfische sind bei gegrilltem oder gebratenem Filet austauschbar."
+ },
+ "sub_000120": {
+  "note": "Schwertfisch und Mahi-Mahi, feste Fische für Steaks, sind austauschbar."
+ },
+ "sub_000121": {
+  "note": "Chilenischer Seebarsch (Zahnfisch) kann durch Heilbutt ersetzt werden, ähnlich feste, buttrige Textur."
+ },
+ "sub_000122": {
+  "note": "Rotlachs (Sockeye) und Atlantiklachs sind austauschbar, Letzterer ist fettreicher."
+ },
+ "sub_000123": {
+  "note": "Tilapia und Wels, milde Zuchtfische, sind austauschbar."
+ },
+ "sub_000124": {
+  "note": "Schneekrabbe und Blaukrabbe sind in den meisten Rezepten austauschbar."
+ },
+ "sub_000125": {
+  "note": "Gruyère statt Emmentaler, ähnlich nussiger Geschmack."
+ },
+ "sub_000126": {
+  "note": "Schweizer Käse (Emmentaler) statt Cheddar für ein milderes Schmelzergebnis."
+ },
+ "sub_000127": {
+  "note": "Mozzarella mit niedrigem Feuchtigkeitsgehalt statt Oaxaca-Käse, ähnliches Schmelzverhalten."
+ },
+ "sub_000128": {
+  "note": "Geriebener Parmesan statt Cotija als salziges Topping."
+ },
+ "sub_000129": {
+  "note": "Zerbröckelter Feta statt Queso Fresco, ähnlich krümelige, salzige Textur."
+ },
+ "sub_000130": {
+  "note": "Queso Seco kann durch Cotija ersetzt werden, ähnlich trockene, salzige Käsesorten."
+ },
+ "sub_000131": {
+  "note": "Mozzarella statt Monterey Jack für ein ähnlich mildes Schmelzergebnis."
+ },
+ "sub_000132": {
+  "note": "Schweizer Käse (Emmentaler) statt Provolone, ähnlich halbfestes Schmelzverhalten."
+ },
+ "sub_000133": {
+  "note": "Im Mixer pürierter Hüttenkäse statt Ricotta, ähnliche Textur."
+ },
+ "sub_000134": {
+  "note": "Cheddar statt American Cheese für Burger und Sandwiches."
+ },
+ "sub_000135": {
+  "note": "Rinderhackfleisch statt Schweinehackfleisch, in gleicher Menge."
+ },
+ "sub_000136": {
+  "note": "Rinderhackfleisch statt Lammhackfleisch, weniger intensiver Geschmack."
+ },
+ "sub_000137": {
+  "note": "Rinderhackfleisch statt Bisonhackfleisch, fetthaltiger, Garzeit verkürzen."
+ },
+ "sub_000138": {
+  "note": "Putenhackfleisch statt Hähnchenhackfleisch, austauschbares weißes Fleisch."
+ },
+ "sub_000139": {
+  "note": "Hähnchenschenkel statt Brust, saftiger, Garzeit anpassen."
+ },
+ "sub_000140": {
+  "note": "Entbeinter, hautloser Schenkel statt entbeinter Brust, zarter."
+ },
+ "sub_000141": {
+  "note": "Geschnittener Putenbraten statt Hähnchen-Aufschnitt."
+ },
+ "sub_000142": {
+  "note": "Geschnittener Putenbraten statt Roastbeef-Aufschnitt."
+ },
+ "sub_000143": {
+  "note": "Geschnittene Pepperoni statt trockener Salami auf Pizza oder Sandwich."
+ },
+ "sub_000144": {
+  "note": "Schweinechorizo statt milder italienischer Wurst, schärfer und rauchiger."
+ },
+ "sub_000145": {
+  "note": "Rindfleisch-Frühstückswurst statt Putenwurst."
+ },
+ "sub_000146": {
+  "note": "Magermilch statt Vollmilch, weniger cremige Textur."
+ },
+ "sub_000147": {
+  "note": "Mandeldrink statt Haferdrink, austauschbare Pflanzenmilch."
+ },
+ "sub_000148": {
+  "note": "Ungesüßter Mandeldrink statt Sojamilch, milch- und sojafrei."
+ },
+ "sub_000149": {
+  "note": "Weizentortilla statt Maistortilla, geschmeidiger, enthält jedoch Gluten."
+ },
+ "sub_000150": {
+  "note": "Durch getrockneten Rosmarin ersetzen: 1/3 der Menge verwenden (getrocknete Kräuter sind konzentrierter)."
+ },
+ "sub_000151": {
+  "note": "Durch frischen Rosmarin ersetzen: die dreifache Menge verwenden."
+ },
+ "sub_000152": {
+  "note": "Etwa 1/3 der Menge an getrocknetem Dill verwenden."
+ },
+ "sub_000153": {
+  "note": "Die dreifache Menge an frischem Dill verwenden."
+ },
+ "sub_000154": {
+  "note": "Die dreifache Menge an frischer Minze verwenden."
+ },
+ "sub_000155": {
+  "note": "Etwa 1/3 der Menge an getrockneter Minze verwenden."
+ },
+ "sub_000156": {
+  "note": "Ähnlicher Ersatz in gleicher Menge, etwas milderer Geschmack."
+ },
+ "sub_000157": {
+  "note": "Die dreifache Menge an gehackter frischer Petersilie verwenden."
+ },
+ "sub_000158": {
+  "note": "Etwa 1/3 der Menge an getrockneter Petersilie verwenden."
+ },
+ "sub_000159": {
+  "note": "Etwa 1/3 der Menge an gefriergetrocknetem Schnittlauch verwenden."
+ },
+ "sub_000160": {
+  "note": "Einige Minuten rehydrieren; etwa 1/3 der Menge verwenden."
+ },
+ "sub_000161": {
+  "note": "Ersatz in gleicher Menge, sehr ähnlicher Geschmack (vom selben Gewürzbaum)."
+ },
+ "sub_000162": {
+  "note": "Ersatz in gleicher Menge, etwas zarterer Geschmack."
+ },
+ "sub_000163": {
+  "note": "Ersatz in gleicher Menge, milderer Geschmack, in hellen Gerichten weniger sichtbar."
+ },
+ "sub_000164": {
+  "note": "Etwa die 6-fache Menge an geriebenem frischem Ingwer verwenden."
+ },
+ "sub_000165": {
+  "note": "Etwa 1/6 der Menge an gemahlenem Ingwer verwenden."
+ },
+ "sub_000166": {
+  "note": "Ersatz in gleicher Menge; Piment erinnert an Gewürznelke, Zimt und Muskat."
+ },
+ "sub_000167": {
+  "note": "Ersatz in gleicher Menge, milderer und leicht süßlicher Geschmack."
+ },
+ "sub_000168": {
+  "note": "Ersatz in gleicher Menge, kräftigerer Geschmack."
+ },
+ "sub_000169": {
+  "note": "Ersatz in gleicher Menge, ähnliche Aromafamilie."
+ },
+ "sub_000170": {
+  "note": "Ersatz in gleicher Menge, milder Geschmack ähnlich Petersilie."
+ },
+ "sub_000171": {
+  "note": "Direkter Ersatz in gleicher Menge (alkoholfreie Version)."
+ },
+ "sub_000172": {
+  "note": "Direkter Ersatz in gleicher Menge (alkoholische Version)."
+ },
+ "sub_000173": {
+  "note": "Ersatz in gleicher Menge für Säure in herzhaften Gerichten, weniger runder Geschmack."
+ },
+ "sub_000174": {
+  "note": "Etwa 1/4 der Menge verwenden; Cayennepfeffer ist deutlich schärfer und enthält nicht die übrigen Gewürze der Mischung."
+ },
+ "sub_000175": {
+  "note": "Gemahlenen Zimt, Ingwer und Muskat zu gleichen Teilen mischen und eine Prise gemahlenen Piment hinzufügen",
+  "name": "Hausgemachte Mischung aus gemahlenem Zimt, Ingwer und Muskat mit einer Prise Piment"
+ },
+ "sub_000176": {
+  "note": "Direkter Ersatz in gleicher Menge, weniger salzige Version."
+ },
+ "sub_000177": {
+  "note": "Menge reduzieren und leicht rehydrieren; konzentrierterer und süßerer Geschmack."
+ },
+ "sub_000178": {
+  "note": "Menge reduzieren und leicht rehydrieren; konzentrierterer Geschmack."
+ },
+ "sub_000179": {
+  "note": "Vor Gebrauch in Wasser rehydrieren; etwa 1/3 der Menge verwenden."
+ },
+ "sub_000180": {
+  "note": "Direkter Ersatz in gleicher Menge; vor Gebrauch abtropfen lassen und abspülen."
+ },
+ "sub_000181": {
+  "note": "Direkter Ersatz; abspülen, um überschüssige Lake zu entfernen."
+ },
+ "sub_000182": {
+  "note": "Ersatz in gleicher Menge, festere und weniger süße Textur."
+ },
+ "sub_000183": {
+  "note": "Ersatz in gleicher Menge, weichere und süßere Textur."
+ },
+ "sub_000184": {
+  "note": "Ersatz in gleicher Menge für Säure, leicht abweichender Geschmack."
+ },
+ "sub_000185": {
+  "note": "Ersatz in gleicher Menge für Säure, leicht abweichender Geschmack."
+ },
+ "sub_000186": {
+  "note": "Direkter Ersatz in gleicher Menge."
+ },
+ "sub_000187": {
+  "note": "Ersatz in gleicher Menge (Hybridfrucht aus Brombeere und Himbeere), etwas säuerlicher."
+ },
+ "sub_000188": {
+  "note": "Ersatz in gleicher Menge in Salaten, ähnliche Bitterkeit."
+ },
+ "sub_000189": {
+  "note": "Ersatz in gleicher Menge in Salaten, ähnlich pfeffriger Geschmack."
+ },
+ "sub_000190": {
+  "note": "Ersatz in gleicher Menge in Salaten oder Pfannengerichten."
+ },
+ "sub_000191": {
+  "note": "Ersatz in gleicher Menge in Salaten, milderer Geschmack."
+ },
+ "sub_000192": {
+  "note": "Ersatz in gleicher Menge, sehr ähnlich in Geschmack und Textur."
+ },
+ "sub_000193": {
+  "note": "Ersatz in gleicher Menge, ähnliche Garzeit."
+ },
+ "sub_000194": {
+  "note": "Ersatz in gleicher Menge, kurz anbraten."
+ },
+ "sub_000195": {
+  "note": "Ersatz in gleicher Menge (sehr ähnliche Knollen); vor dem Verzehr stets gründlich garen."
+ },
+ "sub_000196": {
+  "note": "Ersatz in gleicher Menge; vor dem Verzehr stets gründlich garen."
+ },
+ "sub_000197": {
+  "note": "Gekochter Malabar-Spinat kann in gleicher Menge durch gewöhnlichen gekochten Spinat ersetzt werden, etwas weniger schleimige Konsistenz."
+ },
+ "sub_000198": {
+  "note": "Naher Ersatz für gewöhnlichen rohen Spinat, in gleicher Menge."
+ },
+ "sub_000199": {
+  "note": "Als schnelle Lösung für Umami-/Salzgeschmack (nicht derselbe fermentierte Geschmack): etwa die halbe Menge Tamari verwenden und sparsam salzen."
+ },
+ "sub_000200": {
+  "note": "Kartoffel in gleicher Menge, nach dem Garen ähnliche Textur, neutralerer Geschmack."
+ },
+ "sub_000201": {
+  "note": "1 Esslöffel getrocknete Flocken = etwa 1/4 einer frischen fein gehackten gelben Zwiebel."
+ },
+ "sub_000202": {
+  "note": "Ungesüßter Cranberrysaft in gleicher Menge, ähnliche Säure, Zucker anpassen."
+ },
+ "sub_000203": {
+  "note": "Zitronenschale für das Zitrusaroma, falls kein Zitronengras vorhanden ist: etwa 1 Teelöffel Schale pro Stange Zitronengras."
+ },
+ "sub_000204": {
+  "note": "Normaler Milchjoghurt in gleicher Menge, falls keine pflanzliche Option benötigt wird."
+ },
+ "sub_000205": {
+  "note": "Klassischer Ersatz beim Backen: Kakaopulver in gleicher Menge, etwas mehr Zucker hinzufügen, da Johannisbrot von Natur aus süß ist."
+ },
+ "sub_000206": {
+  "note": "Glatte Petersilie für alle, die Koriander nicht mögen, in gleicher Menge, anderer Geschmack, aber ähnliche aromatische Rolle."
+ },
+ "sub_000207": {
+  "note": "Speisestärke in gleicher oder etwas geringerer Menge zum Binden (2 Teelöffel Speisestärke = 1 Esslöffel Arrowroot)."
+ },
+ "sub_000208": {
+  "note": "Shoyu (enthält Weizen) in gleicher Menge, falls Gluten kein Problem darstellt."
+ },
+ "sub_000209": {
+  "note": "Ein zertifiziertes glutenfreies Tamari verwenden (Etikett prüfen, nicht alle sind glutenfrei) für eine glutenfreie Version, in gleicher Menge."
+ },
+ "sub_000210": {
+  "note": "Klassische Birne in gleicher Menge, weichere Textur als die knackige Nashi-Birne."
+ },
+ "sub_000211": {
+  "note": "Meerrettich in reduzierter Menge (Wasabi ist schärfer): etwa die halbe Menge."
+ },
+ "sub_000212": {
+  "note": "Roher Spinat in gleicher Menge, kürzere Garzeit als Mangold."
+ },
+ "sub_000213": {
+  "note": "Rucola in gleicher Menge, pfeffrigerer Geschmack als Brunnenkresse."
+ },
+ "sub_000214": {
+  "note": "Gelatine in entsprechender Menge für eine nicht-vegetarische Option (Agar-Agar geliert stärker, Menge nach unten anpassen)."
+ },
+ "sub_000215": {
+  "note": "Klassische Frühlingszwiebel in gleicher Menge."
+ },
+ "sub_000216": {
+  "note": "Honigmelone in gleicher Menge, ähnliche Textur und Süße."
+ },
+ "sub_000217": {
+  "note": "Gewöhnlicher Weißkohl in gleicher Menge, weniger krause Blätter, aber ähnlicher Geschmack."
+ },
+ "sub_000218": {
+  "note": "Zucchini in gleicher Menge, etwas kürzere Garzeit."
+ },
+ "sub_000219": {
+  "note": "Getrockneter Shiitake-Pilz (rehydriert) in gleicher Menge für einen ähnlich waldigen Geschmack."
+ },
+ "sub_000220": {
+  "note": "Jalapeño-Chili in gleicher Menge, etwas weniger scharf."
+ },
+ "sub_000221": {
+  "note": "Frischer Poblano-Chili in gleicher Menge (Ancho ist ein getrockneter Poblano); alternativ süßes Paprikapulver für das Aroma ohne Schärfe."
+ },
+ "sub_000222": {
+  "note": "Escarole in gleicher Menge, etwas weniger bitter als Chicorée."
+ },
+ "sub_000223": {
+  "note": "Grüner Blattsalat in gleicher Menge, gleiche Textur, andere Farbe."
+ },
+ "sub_000224": {
+  "note": "Weißer Champignon in gleicher Menge, festere Textur."
+ },
+ "sub_000225": {
+  "note": "Klassischer Brokkoli in gleicher Menge; die Stiele des Kai-lan sind dünner und etwas bitterer."
+ },
+ "sub_000226": {
+  "note": "Kalifornische Avocado (Hass) in gleicher Menge, fettreicher und cremiger als die Florida-Avocado."
+ },
+ "sub_000227": {
+  "note": "Gewöhnliche Rosinen in gleicher Menge, etwas weniger süß/säuerlich als Korinthen."
+ },
+ "sub_000228": {
+  "note": "Rohe weiße Rübe in gleicher Menge, schärferer und weniger süßer Geschmack als Daikon."
+ },
+ "sub_000229": {
+  "note": "Agar-Agar-Pulver, etwa 1/8 Teelöffel pro Esslöffel Irisches Moos verwenden, stärkere Gelierkraft."
+ },
+ "sub_000230": {
+  "note": "Getrockneter Ancho-Chili in gleicher Menge, etwas milderer und fruchtigerer Geschmack als Pasilla."
+ },
+ "sub_000231": {
+  "note": "Klassischer weißer Blumenkohl in gleicher Menge, gleiche Textur, weniger dekorativ."
+ },
+ "sub_000232": {
+  "note": "Shiitake-Pilz in gleicher Menge, festere Textur als Maitake."
+ },
+ "sub_000233": {
+  "note": "Japanische Kaki (Fuyu) in gleicher Menge, festere Textur auch im nicht überreifen Zustand, anders als die heimische Kaki."
+ },
+ "sub_000234": {
+  "note": "Weißer Champignon in gleicher Menge, milderer Geschmack als Portobello."
+ },
+ "sub_000235": {
+  "note": "Frische (oder eingemachte) Litschi in gleicher Menge, ähnliche Textur und Süße wie Rambutan."
+ },
+ "sub_000236": {
+  "note": "Gesüßte getrocknete Cranberrys in gleicher Menge beim Backen, säuerlicher als getrocknete Blaubeeren."
+ },
+ "sub_000237": {
+  "note": "Für eine pflanzliche „Pulled“-Textur ohne den süßen Geschmack von Jackfrucht: in gleicher Menge verwenden und länger marinieren",
+  "name": "Zerzupfte Palmherzen oder Austernpilze"
+ },
+ "sub_000238": {
+  "note": "In gleicher Menge, grünes statt gelbes Fruchtfleisch, etwas ausgeprägtere Säure",
+  "name": "Gewöhnliche grüne Kiwi"
+ },
+ "sub_000239": {
+  "note": "Verdünntes Tomatenmark (1 Teil Mark auf 2-3 Teile Wasser) als Ersatz für Tomatensauce aus der Dose."
+ },
+ "sub_000240": {
+  "note": "Quinoa in gleicher Menge, etwas kürzere Garzeit als Hirse."
+ },
+ "sub_000241": {
+  "note": "Rohe grüne Erbsen in gleicher Menge, süßerer Geschmack und zartere Textur als frische Saubohnen."
+ },
+ "sub_000242": {
+  "note": "Rohe Quinoa in gleicher Menge (schnellere Garzeit), glutenfreie Alternative zu Bulgur."
+ },
+ "sub_000243": {
+  "note": "Topinambur in gleicher Menge, ähnliche Textur und erdig-süßer Geschmack wie Schwarzwurzel."
+ },
+ "sub_000244": {
+  "note": "Ein ähnlich neutral schmeckendes glutenfreies Getreide; in gleicher Menge ersetzen (gekochte Quinoa)."
+ },
+ "sub_000245": {
+  "note": "Ein ähnliches glutenfreies Getreide; in gleicher Menge ersetzen (rohe Quinoa)."
+ },
+ "sub_000246": {
+  "note": "Haselnüsse: ähnliche Textur und Verwendung beim Backen, in gleicher Menge."
+ },
+ "sub_000247": {
+  "note": "Frische gekochte Süßkartoffel statt der Dosenversion verwenden, entsprechende Menge nach dem Garen."
+ },
+ "sub_000248": {
+  "note": "Frischer, wenige Minuten gegarter Spargel ersetzt die Dosenversion, festere Textur."
+ },
+ "sub_000249": {
+  "note": "Frische Champignons, einige Minuten angebraten, in gleicher Menge."
+ },
+ "sub_000250": {
+  "note": "Trockener roher Bulgur kann trockenen Couscous ersetzen (etwas längere Garzeit)."
+ },
+ "sub_000251": {
+  "note": "Gekochter Bulgur und gekochter Couscous sind in den meisten Rezepten in gleicher Menge austauschbar."
+ },
+ "sub_000252": {
+  "note": "Gekochter brauner Reis als Alternative zu gekochtem Dinkel in Salaten oder Beilagen."
+ },
+ "sub_000253": {
+  "note": "Vollkornweizenmehl als Ersatz für rohen Dinkel beim Brotbacken, im Verhältnis 1:1."
+ },
+ "sub_000254": {
+  "note": "Tiefgekühlter gehackter Spinat statt tiefgekühltem Rübenkraut (Navet-Blätter), milderer Geschmack."
+ },
+ "sub_000255": {
+  "note": "Tiefkühlspinat statt tiefgekühlter Senfblätter, milderer Geschmack."
+ },
+ "sub_000256": {
+  "note": "Roher Spinat statt Tendergreen-Senfspinat, milderer Geschmack."
+ },
+ "sub_000257": {
+  "note": "Rohe grüne Bohnen statt Flügelbohnen (junge Hülsen), ähnliche Textur."
+ },
+ "sub_000258": {
+  "note": "Rohe grüne Bohnen statt junger Augenbohnenschoten, ähnliche Garzeit."
+ },
+ "sub_000259": {
+  "note": "Rohe grüne Bohnen als Ersatz für unreife Helmbohnen."
+ },
+ "sub_000260": {
+  "note": "Rohe grüne Bohnen statt gelber Buschbohnen, Verhältnis 1:1."
+ },
+ "sub_000261": {
+  "note": "Tiefgekühlte Heidelbeeren als Alternative zu tiefgekühlten Brombeeren in Desserts und Smoothies."
+ },
+ "sub_000262": {
+  "note": "Rohe Zucchini statt Schwammkürbis (Luffa), ähnliche Textur und Garzeit."
+ },
+ "sub_000263": {
+  "note": "Rohe Zucchini als Ersatz für Flaschenkürbis, in gleicher Menge."
+ },
+ "sub_000264": {
+  "note": "Rohe Zucchini statt Wachskürbis (chinesische Wintermelone)."
+ },
+ "sub_000265": {
+  "note": "Gekochter Quinoa als Alternative zu gekochter Hirse, ähnliche Textur und Verwendung."
+ },
+ "sub_000266": {
+  "note": "Roher Langkorn-Naturreis statt roher Wildreis, kürzere Garzeit."
+ },
+ "sub_000267": {
+  "note": "Frische rohe Zwiebeln, angebraten, statt Zwiebeln aus der Dose."
+ },
+ "sub_000268": {
+  "note": "Fester Tofu statt gekochtem Tempeh, neutralerer Geschmack, gleiche Proteinquelle."
+ },
+ "sub_000269": {
+  "note": "Frischer fester Tofu statt gefriergetrocknetem Tofu (Koyadofu) nach dem Einweichen."
+ },
+ "sub_000270": {
+  "note": "Orangen statt Mandarinen, etwas weniger süßer und säuerlicherer Geschmack."
+ },
+ "sub_000271": {
+  "note": "Weizenvollkornmehl statt (dunklem) Roggenmehl, leichtere Krumenstruktur."
+ },
+ "sub_000272": {
+  "note": "Weizenvollkornmehl als Alternative zu hellem Roggenmehl."
+ },
+ "sub_000273": {
+  "note": "Weizenvollkornmehl als Alternative zu mittlerem Roggenmehl."
+ },
+ "sub_000274": {
+  "note": "Weizenvollkornmehl statt Sorghummehl, für alle, die keine glutenfreie Option benötigen."
+ },
+ "sub_000275": {
+  "note": "Weizenvollkornmehl als Alternative zu Triticalemehl, Verhältnis 1:1."
+ },
+ "sub_000276": {
+  "note": "Weizenvollkornmehl statt Buchweizenmehl (außerhalb einer glutenfreien Ernährung)."
+ },
+ "sub_000277": {
+  "note": "Weißes Reismehl statt Vollkorn-Reismehl, feinere Textur."
+ },
+ "sub_000278": {
+  "note": "Chiasamen als Alternative zu Leinsamen, ähnliche verdickende und nährstoffliche Eigenschaften.",
+  "name": "Chiasamen"
+ },
+ "sub_000279": {
+  "note": "Frische oder eingemachte Süßkirschen statt Cocktailkirschen, weniger süß und weniger gefärbt."
+ },
+ "sub_000280": {
+  "note": "Frischer Spargel als grober Ersatz für Farnsprossen (Fiddleheads), ein grünes Frühlingsgemüse."
+ },
+ "sub_000281": {
+  "note": "Hähnchen (gegarte Brust) statt pflanzlichem Hähnchenersatz für ein nicht-vegetarisches Gericht."
+ },
+ "sub_000282": {
+  "note": "Klassische Schweinswurst statt pflanzlicher Wurst, für eine nicht-vegetarische Version.",
+  "name": "Schweinswurst"
+ },
+ "sub_000283": {
+  "note": "Frankfurter Würstchen (Schwein) statt der pflanzlichen Version."
+ },
+ "sub_000284": {
+  "note": "Gekochter, zerbröckelter Bacon statt pflanzlicher Bacon-Bits."
+ },
+ "sub_000285": {
+  "note": "Gekochter Schinken in Scheiben statt pflanzlichem Aufschnitt."
+ },
+ "sub_000286": {
+  "note": "Frische (pürierte) Bananen statt getrocknetem Bananenpulver, die Flüssigkeitsmenge im Rezept anpassen."
+ },
+ "sub_000287": {
+  "note": "Medjool-Datteln statt geschmorter Backpflaumen, ähnlich süßer Geschmack."
+ },
+ "sub_000288": {
+  "note": "Datteln statt roher getrockneter Backpflaumen, in süßen Zubereitungen oder Gebäck."
+ },
+ "sub_000289": {
+  "note": "Rohe Zwiebeln (reduzierte Menge, kräftigerer Geschmack) statt Lauch, falls nicht vorhanden."
+ },
+ "sub_000290": {
+  "note": "Reisnudeln als Alternative zu Sojanudeln (Harusame) in asiatischen Suppen und Salaten.",
+  "name": "Reisnudeln"
+ },
+ "sub_000291": {
+  "note": "Gekochtes Rinderhack als klassische Frikadellen statt pflanzlicher Bällchen, für eine nicht-vegetarische Version."
+ },
+ "sub_000292": {
+  "note": "Falls kein fertiges Mandelmark erhältlich ist, gemahlene Mandeln mit Puderzucker und etwas Eiweiß mischen.",
+  "name": "Gemischte gemahlene Mandeln und Puderzucker"
+ },
+ "sub_000293": {
+  "note": "Römersalat statt Eisbergsalat, zartere Blätter mit etwas mehr Geschmack."
+ },
+ "sub_000294": {
+  "note": "Vollmilch statt angereicherter Sojamilch, für alle ohne vegane Einschränkung."
+ },
+ "sub_000295": {
+  "note": "Butter statt Pflanzenfett (Shortening), gleiche Menge, in Gebäck leicht abweichende Textur."
+ },
+ "sub_000296": {
+  "note": "Roher gelber Zuckermais ist mit weißem Zuckermais austauschbar, es unterscheidet sich nur die Farbe."
+ },
+ "sub_000297": {
+  "note": "Weißer und gelber Zuckermais sind in gleicher Menge austauschbar, mit leicht unterschiedlicher Süße."
+ },
+ "sub_000299": {
+  "note": "Rohe rote Paprika statt grüner Paprika, milderer, süßerer Geschmack."
+ },
+ "sub_000300": {
+  "note": "Süßkirschen statt Sauerkirschen, den zugesetzten Zucker im Rezept reduzieren."
+ },
+ "sub_000301": {
+  "note": "Normale Zucchini statt Baby-Zucchini, die Garzeit an die Größe anpassen."
+ },
+ "sub_000302": {
+  "note": "Frische Erbsen statt roher Saubohnen in der Schote, falls diese nicht erhältlich sind, milderer Geschmack.",
+  "name": "Frische Erbsen"
+ },
+ "sub_000303": {
+  "note": "Gelbe Paprika kann durch rote Paprika in gleicher Menge ersetzt werden, etwas milderer Geschmack"
+ },
+ "sub_000304": {
+  "note": "Kann auch durch grüne Paprika ersetzt werden, kräftigerer und leicht bitterer Geschmack"
+ },
+ "sub_000305": {
+  "note": "Rote und grüne Paprika sind in gleicher Menge austauschbar (grün ist weniger süß)"
+ },
+ "sub_000306": {
+  "note": "Reife rote Chilischote kann durch grüne Chilischote in gleicher Menge ersetzt werden, etwas weniger süß und manchmal schärfer"
+ },
+ "sub_000307": {
+  "note": "Grüne Chilischote kann durch reife rote Chilischote ersetzt werden, süßerer Geschmack"
+ },
+ "sub_000308": {
+  "note": "Jeder Winterkürbis (Hubbard) kann durch Butternusskürbis in gleicher Menge ersetzt werden",
+  "name": "Butternusskürbis"
+ },
+ "sub_000309": {
+  "note": "Winterkürbisse sind zwischen Sorten (Hubbard, Butternut, Kürbis) in gleicher Menge austauschbar",
+  "name": "Butternusskürbis"
+ },
+ "sub_000310": {
+  "note": "Patisson-Kürbis (Sommerkürbis) kann durch Zucchini in gleicher Menge ersetzt werden"
+ },
+ "sub_000311": {
+  "note": "Sommerkürbis jeder Sorte kann durch Zucchini in gleicher Menge ersetzt werden"
+ },
+ "sub_000312": {
+  "note": "Sommerkürbis mit krummem/geradem Hals kann durch Zucchini in gleicher Menge ersetzt werden"
+ },
+ "sub_000313": {
+  "note": "Blumenkohl kann in den meisten Rezepten durch Brokkoli in gleicher Menge ersetzt werden (kräftigerer Geschmack)"
+ },
+ "sub_000314": {
+  "note": "Blumenkohl kann durch Brokkoli in gleicher Menge ersetzt werden"
+ },
+ "sub_000315": {
+  "note": "Tiefkühlbrokkoli kann durch rohen/frischen Blumenkohl ersetzt werden, ähnliche Garzeit"
+ },
+ "sub_000316": {
+  "note": "Tiefkühlzwiebel kann durch frisch gehackte Zwiebel in gleicher Menge ersetzt werden (weniger Kochwasser)"
+ },
+ "sub_000317": {
+  "note": "Gehackte Tiefkühlzwiebel kann durch frisch gehackte Zwiebel in gleicher Menge ersetzt werden"
+ },
+ "sub_000318": {
+  "note": "Walnüsse können in Gebäck und Salaten durch Pekannüsse in gleicher Menge ersetzt werden"
+ },
+ "sub_000319": {
+  "note": "Sesampaste (Tahini) kann in Saucen durch Erdnussbutter in gleicher Menge ersetzt werden (anderer Geschmack)",
+  "name": "Erdnussbutter"
+ },
+ "sub_000320": {
+  "note": "Perltapioka kann zum Andicken durch Maisstärke ersetzt werden (etwa die halbe Menge verwenden)"
+ },
+ "sub_000321": {
+  "note": "Rohe Perlgraupen können in Suppen und Eintöpfen durch Langkorn-Naturreis in gleicher Menge ersetzt werden (etwas andere Textur)"
+ },
+ "sub_000322": {
+  "note": "Gekochte Perlgraupen können durch gekochten Naturreis in gleicher Menge ersetzt werden"
+ },
+ "sub_000323": {
+  "note": "Buchweizengrütze (Kasha) kann als Beilagengetreide durch rohen Quinoa in gleicher Menge ersetzt werden"
+ },
+ "sub_000324": {
+  "note": "Roher KAMUT-Weizen kann durch Dinkel in gleicher Menge ersetzt werden (ähnliche Urgetreidesorten)"
+ },
+ "sub_000325": {
+  "note": "Gekochter KAMUT-Weizen kann durch gekochten Dinkel in gleicher Menge ersetzt werden"
+ },
+ "sub_000326": {
+  "note": "Angereicherte und nicht angereicherte Nudeln sind in gleicher Menge austauschbar (nur ein Nährwertunterschied)"
+ },
+ "sub_000327": {
+  "note": "Rosa/rote Linsen (schnell gar, zerfallende Textur) können durch grüne Linsen mit etwas längerer Garzeit für eine festere Textur ersetzt werden",
+  "name": "Grüne oder braune Linsen"
+ },
+ "sub_000328": {
+  "note": "Rohe Mungbohnen (zum Keimen) können durch gekeimte Mungbohnen aus der Dose ersetzt werden, die bereits verzehrfertig sind"
+ },
+ "sub_000329": {
+  "note": "Mungbohnensprossen können in Salaten und Pfannengerichten durch Sojasprossen in gleicher Menge ersetzt werden"
+ },
+ "sub_000330": {
+  "note": "Sojasprossen können durch Mungbohnensprossen ersetzt werden, die im Handel gängiger sind"
+ },
+ "sub_000331": {
+  "note": "Gekochte Süßkartoffel kann durch Kartoffel in gleicher Menge ersetzt werden, ähnliche Textur, aber weniger süß"
+ },
+ "sub_000332": {
+  "note": "Kandierte Süßkartoffel kann in herzhaften Rezepten durch Kartoffel ersetzt werden (weniger süßer Geschmack)"
+ },
+ "sub_000333": {
+  "note": "Tomatenmark (konzentriert), mit etwas Wasser verdünnt, kann Tomatensauce aus der Dose ersetzen"
+ },
+ "sub_000334": {
+  "note": "Ungesalzenes Tomatenmark, mit Wasser verdünnt, kann Tomatensauce aus der Dose ersetzen"
+ },
+ "sub_000335": {
+  "note": "Tomatensauce mit Zwiebeln kann durch Tomatenmark mit angebratenen Zwiebeln ersetzt werden"
+ },
+ "sub_000336": {
+  "note": "Tomatensauce mit Pilzen kann durch Tomatenmark mit angebratenen Pilzen ersetzt werden"
+ },
+ "sub_000337": {
+  "note": "Shiitake-Pilze können durch Champignons in gleicher Menge ersetzt werden, weniger ausgeprägter Geschmack",
+  "name": "Champignons"
+ },
+ "sub_000338": {
+  "note": "Shiitake-Pilze können durch Champignons in gleicher Menge ersetzt werden, weniger ausgeprägter Geschmack",
+  "name": "Champignons"
+ },
+ "sub_000339": {
+  "note": "Stroh-Pilze aus der Dose können durch Champignons aus der Dose in gleicher Menge ersetzt werden",
+  "name": "Champignons aus der Dose"
+ },
+ "sub_000340": {
+  "note": "Karotten aus der Dose ohne Salzzusatz können durch normale Dosenkarotten ersetzt werden (zum Salzreduzieren abspülen)"
+ },
+ "sub_000341": {
+  "note": "Gemischtes Gemüse aus der Dose kann durch tiefgekühltes Gemischtes Gemüse in gleicher Menge ersetzt werden"
+ },
+ "sub_000342": {
+  "note": "Gemischtes Gemüse aus der Dose kann durch tiefgekühltes Gemischtes Gemüse ersetzt werden (etwas kürzere Garzeit)"
+ },
+ "sub_000343": {
+  "note": "Spinat aus der Dose kann durch gekochten frischen Spinat ersetzt werden (etwa das 3-Fache an Frischgewicht verwenden)"
+ },
+ "sub_000344": {
+  "note": "Spinat aus der Dose kann durch gekochten frischen Spinat ersetzt werden (etwa das 3-Fache an Frischgewicht verwenden)"
+ },
+ "sub_000345": {
+  "note": "Ungesalzener Spinat aus der Dose kann durch gekochten frischen Spinat in angepasster Menge ersetzt werden (etwa das 3-Fache an Frischgewicht)"
+ },
+ "sub_000346": {
+  "note": "Saure Gurken können durch Dillgurken in gleicher Menge ersetzt werden, leicht unterschiedlicher Geschmack"
+ },
+ "sub_000347": {
+  "note": "Dillgurken können durch saure Gurken in gleicher Menge ersetzt werden"
+ },
+ "sub_000348": {
+  "note": "Chiasamen können durch gemahlene Leinsamen in gleicher Menge ersetzt werden (ähnliche Binde-/Verdickungswirkung)",
+  "name": "Gemahlene Leinsamen"
+ },
+ "sub_000349": {
+  "note": "Weiße Grapefruit kann durch rosa/rote Grapefruit in gleicher Menge ersetzt werden, süßer und weniger bitter"
+ },
+ "sub_000350": {
+  "note": "Rosa/rote Grapefruit kann durch weiße Grapefruit in gleicher Menge ersetzt werden, bitterer"
+ },
+ "sub_000351": {
+  "note": "Gesüßte tiefgekühlte Himbeeren können durch ungesüßte tiefgekühlte Himbeeren ersetzt werden, dabei nach Geschmack Zucker hinzufügen"
+ },
+ "sub_000352": {
+  "note": "Getrocknete Äpfel können in Kompott und Gebäck durch getrocknete Birnen in gleicher Menge ersetzt werden"
+ },
+ "sub_000353": {
+  "note": "Ginkgonüsse können beim Kochen durch Macadamianüsse in gleicher Menge ersetzt werden (ähnliche Textur/Verwendung, anderer Geschmack)"
+ },
+ "sub_000354": {
+  "note": "Glutenfreies Mehl; bei fehlender Einschränkung durch Weizenmehl ersetzen und das Bindemittel anpassen (Sorghummehl geht nicht auf)."
+ },
+ "sub_000355": {
+  "note": "Dichteres Vollkornmehl; für eine leichtere Textur durch Weißmehl in gleicher Menge ersetzen (oder 50/50 mischen)."
+ },
+ "sub_000356": {
+  "note": "Ersetzt blaues Maismehl in gleicher Menge, andere Farbe, aber identische Verwendung.",
+  "name": "Gelbes oder weißes Maismehl"
+ },
+ "sub_000357": {
+  "note": "Kasha (gekochter gerösteter Buchweizen) kann für eine ähnliche Textur durch gekochten Quinoa in gleicher Menge ersetzt werden."
+ },
+ "sub_000358": {
+  "note": "Durch rohe ganze Mandeln in gleicher Menge ersetzen, leichte Texturveränderung."
+ },
+ "sub_000359": {
+  "note": "Übliche Austausch zwischen Sonnenblumen- und Kürbiskernen in Salaten/Granolas, gleiche Menge.",
+  "name": "Geschälte Kürbiskerne"
+ },
+ "sub_000360": {
+  "note": "Können in Salaten und Gebäck durch geschälte Sonnenblumenkerne in gleicher Menge ersetzt werden."
+ },
+ "sub_000361": {
+  "note": "Distelsamen sind weniger gebräuchlich; durch geschälte Sonnenblumenkerne in gleicher Menge ersetzen."
+ },
+ "sub_000362": {
+  "note": "Erdnussfreie Alternative in gleicher Menge; Achtung, Mandelmus enthält Schalenfrüchte – je nach Allergie prüfen.",
+  "name": "Kürbiskernmus oder Mandelmus"
+ },
+ "sub_000363": {
+  "note": "Bei Erdnussallergie durch Sonnenblumenkernmus in gleicher Menge ersetzen (neutralerer Geschmack)."
+ },
+ "sub_000364": {
+  "note": "Bei Erdnussallergie durch Sonnenblumenkernmus in gleicher Menge ersetzen."
+ },
+ "sub_000365": {
+  "note": "Bei Erdnussallergie durch Sonnenblumenkernmus in gleicher Menge ersetzen."
+ },
+ "sub_000366": {
+  "note": "Bei Erdnussallergie durch Sonnenblumenkernmus in gleicher Menge ersetzen."
+ },
+ "sub_000367": {
+  "note": "Bei Erdnussallergie durch Sonnenblumenkernmus in gleicher Menge ersetzen."
+ },
+ "sub_000368": {
+  "note": "Durch klassische, ungesüßte Sojamilch in gleicher Menge ersetzen."
+ },
+ "sub_000369": {
+  "note": "Ohne Kokos: durch Soja- oder Mandelmilch in gleicher Menge ersetzen (weniger cremige Textur)."
+ },
+ "sub_000370": {
+  "note": "Ohne Kokos: durch Soja- oder Mandelmilch in gleicher Menge ersetzen (weniger cremige Textur)."
+ },
+ "sub_000371": {
+  "note": "In nicht-veganen herzhaften Rezepten Kokosmilch aus der Dose durch Sahne in gleicher Menge ersetzen.",
+  "name": "Dicke Crème fraîche oder Sahne"
+ },
+ "sub_000372": {
+  "note": "Ein nicht-veganer Ersatz für Kokoscreme, in gleicher Menge, in Desserts und Saucen.",
+  "name": "Dicke Crème fraîche"
+ },
+ "sub_000373": {
+  "note": "Dulce de leche kann durch gekochte gesüßte Kondensmilch (im Wasserbad) oder in manchen Rezepten auch unverändert ersetzt werden."
+ },
+ "sub_000374": {
+  "note": "Rohe Saubohnen können in Eintöpfen durch getrocknete weiße Bohnen (Navy Beans) in gleicher Menge ersetzt werden."
+ },
+ "sub_000375": {
+  "note": "Saubohnen aus der Dose können durch weiße Bohnen aus der Dose in gleicher Menge ersetzt werden."
+ },
+ "sub_000376": {
+  "note": "Rohe Straucherbsen (Pigeon Peas) können durch getrocknete Linsen in gleicher Menge ersetzt werden, Garzeit anpassen."
+ },
+ "sub_000377": {
+  "note": "Rohe Spargelbohne (Langbohne) kann durch getrocknete Kichererbsen oder schwarze Bohnen in gleicher Menge ersetzt werden."
+ },
+ "sub_000378": {
+  "note": "Helmbohne kann durch getrocknete weiße Bohnen in gleicher Menge ersetzt werden."
+ },
+ "sub_000379": {
+  "note": "Falls keine tiefgekühlten Augenbohnen verfügbar sind, durch weiße Bohnen in gleicher Menge ersetzen.",
+  "name": "Tiefgekühlte oder eingemachte weiße Bohnen"
+ },
+ "sub_000380": {
+  "note": "Fertige Refried Beans können durch ein hausgemachtes Püree aus gekochten, zerdrückten Pinto-Bohnen ersetzt werden.",
+  "name": "Hausgemachtes Pinto-Bohnen-Püree"
+ },
+ "sub_000381": {
+  "note": "Frijoles rojos volteados können durch klassische Refried Beans in gleicher Menge ersetzt werden.",
+  "name": "Refried Beans"
+ },
+ "sub_000382": {
+  "note": "Rohe gekeimte weiße Bohnen; falls nicht vorhanden, durch gekochte getrocknete weiße Bohnen in entsprechender Menge ersetzen."
+ },
+ "sub_000383": {
+  "note": "Rohe gekeimte Pinto-Bohnen; falls nicht vorhanden, durch gekochte getrocknete Pinto-Bohnen ersetzen."
+ },
+ "sub_000384": {
+  "note": "Rohe gekeimte Kidneybohnen; falls nicht vorhanden, durch gekochte getrocknete Kidney-/weiße Bohnen ersetzen."
+ },
+ "sub_000385": {
+  "note": "Haferöl, eine seltene Zutat: durch ein neutrales Pflanzenöl in gleicher Menge ersetzen."
+ },
+ "sub_000386": {
+  "note": "Zum Frittieren durch ein neutrales Pflanzenöl (Sonnenblumen-, Rapsöl) in gleicher Menge ersetzen."
+ },
+ "sub_000387": {
+  "note": "Walnussöl (kräftiger Geschmack): zum Anmachen durch Olivenöl in gleicher Menge ersetzen."
+ },
+ "sub_000388": {
+  "note": "Mandelöl, durch ein neutrales Pflanzenöl in gleicher Menge ersetzen."
+ },
+ "sub_000389": {
+  "note": "Haselnussöl (kräftiger Geschmack): zum Anmachen durch Olivenöl in gleicher Menge ersetzen."
+ },
+ "sub_000390": {
+  "note": "Avocadoöl kann zum Anmachen oder sanften Garen durch Olivenöl in gleicher Menge ersetzt werden."
+ },
+ "sub_000391": {
+  "note": "Reiskleieöl, durch ein neutrales Pflanzenöl in gleicher Menge ersetzen."
+ },
+ "sub_000392": {
+  "note": "Traubenkernöl, durch ein neutrales Pflanzenöl oder mildes Olivenöl in gleicher Menge ersetzen."
+ },
+ "sub_000393": {
+  "note": "Weizenkeimöl (kräftiger Geschmack), außerhalb des ernährungsbezogenen Einsatzes durch ein neutrales Pflanzenöl in gleicher Menge ersetzen."
+ },
+ "sub_000394": {
+  "note": "Mais-Raps-Ölmischung, durch reines Rapsöl in gleicher Menge ersetzen."
+ },
+ "sub_000395": {
+  "note": "Gänsefett kann zum Braten von Kartoffeln durch Entenfett in gleicher Menge ersetzt werden."
+ },
+ "sub_000396": {
+  "note": "Putenfett kann durch Entenfett oder Butter in gleicher Menge ersetzt werden."
+ },
+ "sub_000397": {
+  "note": "Hühnerfett kann durch Entenfett oder Pflanzenöl in gleicher Menge ersetzt werden."
+ },
+ "sub_000398": {
+  "note": "Rindertalg kann zum Kochen/Braten durch Schweineschmalz in gleicher Menge ersetzt werden."
+ },
+ "sub_000399": {
+  "note": "Bacon-Fett kann durch Schweineschmalz in gleicher Menge ersetzt werden."
+ },
+ "sub_000400": {
+  "note": "Eingelegter Ingwer aus der Dose, durch frisch geriebenen Ingwer (reduzierte Menge, kräftigerer Geschmack) oder klassisch eingelegten Ingwer ersetzen."
+ },
+ "sub_000401": {
+  "note": "Natriumarme süße Gurken können durch klassische Essiggurken in gleicher Menge ersetzt werden (Salz anpassen)."
+ },
+ "sub_000402": {
+  "note": "Ananas aus der Dose in Sirup, durch frisch geschnittene Ananas ersetzen (zugesetzten Zucker im Rezept reduzieren)."
+ },
+ "sub_000403": {
+  "note": "Ananas aus der Dose in dickflüssigem Sirup, durch frische Ananas ersetzen (zugesetzten Zucker reduzieren)."
+ },
+ "sub_000404": {
+  "note": "Ananas aus der Dose in sehr dickflüssigem Sirup, durch frische Ananas ersetzen (zugesetzten Zucker deutlich reduzieren)."
+ },
+ "sub_000405": {
+  "note": "Heidelbeeren aus der Dose in Sirup, durch frische oder tiefgekühlte Heidelbeeren ersetzen (Zucker anpassen)."
+ },
+ "sub_000406": {
+  "note": "Brombeeren aus der Dose in Sirup, durch frische oder tiefgekühlte Brombeeren ersetzen (Zucker anpassen)."
+ },
+ "sub_000407": {
+  "note": "Erdbeeren aus der Dose in Sirup, durch frische oder tiefgekühlte Erdbeeren ersetzen (Zucker anpassen)."
+ },
+ "sub_000408": {
+  "note": "Feigen aus der Dose in Sirup, durch frische Feigen oder eingeweichte Trockenfeigen ersetzen (Zucker anpassen)."
+ },
+ "sub_000409": {
+  "note": "Birnen aus der Dose in sehr dickflüssigem Sirup, durch frische pochierte Birnen ersetzen (Zucker anpassen)."
+ },
+ "sub_000410": {
+  "note": "Stachelbeeren aus der Dose, durch frische Stachelbeeren oder ersatzweise Heidelbeeren ersetzen."
+ },
+ "sub_000411": {
+  "note": "Mandarinen aus der Dose, durch frische Mandarinenfilets oder frische Orangen ersetzen."
+ },
+ "sub_000412": {
+  "note": "Sauerkirschen aus der Dose, durch frische entsteinte Süßkirschen ersetzen (Zucker je nach Säure anpassen)."
+ },
+ "sub_000413": {
+  "note": "Backpflaumen aus der Dose in Sirup können durch in warmem Wasser eingeweichte getrocknete Backpflaumen ersetzt werden (weniger süß).",
+  "name": "Eingeweichte getrocknete Backpflaumen"
+ },
+ "sub_000414": {
+  "note": "Zu Kompott gekochte getrocknete Aprikosen und getrocknete Pfirsiche sind in Kompott und Gebäck in gleicher Menge austauschbar.",
+  "name": "Getrocknete Pfirsiche"
+ },
+ "sub_000415": {
+  "note": "Rohe getrocknete Aprikosen und getrocknete Pfirsiche sind beim Kochen und Backen in gleicher Menge austauschbar.",
+  "name": "Getrocknete Pfirsiche"
+ },
+ "sub_000416": {
+  "note": "Portobello-Pilze können durch braune Champignons (Cremini) in gleicher Menge ersetzt werden, festere Textur."
+ },
+ "sub_000417": {
+  "note": "Gegrillte Portobello-Pilze können durch braune Champignons (Cremini) in gleicher Menge ersetzt werden."
+ },
+ "sub_000418": {
+  "note": "Braune Champignons (Cremini) können durch weiße Champignons in gleicher Menge ersetzt werden, milderer Geschmack.",
+  "name": "Weiße Champignons"
+ },
+ "sub_000419": {
+  "note": "Im Ofen gebackener Hubbard-Kürbis kann durch Butternusskürbis in gleicher Menge ersetzt werden."
+ },
+ "sub_000420": {
+  "note": "Im Ofen gebackener Hubbard-Kürbis (ungesalzen) kann durch Butternusskürbis in gleicher Menge ersetzt werden."
+ },
+ "sub_000421": {
+  "note": "Tiefgekühlter Butternusskürbis kann durch gekochten frischen Butternusskürbis oder Hubbard-Kürbis in gleicher Menge ersetzt werden."
+ },
+ "sub_000422": {
+  "note": "Gekochter Kürbis kann durch gekochten Butternusskürbis in gleicher Menge ersetzt werden (Pürees, Suppen, Kuchen)."
+ },
+ "sub_000423": {
+  "note": "Rohe Zucchini mit Schale, eine Referenzvariante identisch mit der klassischen Zucchini im Katalog."
+ },
+ "sub_000424": {
+  "note": "Gekochter Grünkohl kann durch gekochten Spinat in gleicher Menge ersetzt werden (kürzere Garzeit)."
+ },
+ "sub_000425": {
+  "note": "Gekochter, ungesalzener Grünkohl kann durch gekochten Spinat in gleicher Menge ersetzt werden."
+ },
+ "sub_000426": {
+  "note": "Gekochter Kohlblattgemüse (Collard Greens) kann durch gekochten Grünkohl in gleicher Menge ersetzt werden."
+ },
+ "sub_000427": {
+  "note": "Gekochter Wilder Sauerampfer kann durch gekochten Spinat in gleicher Menge ersetzt werden, weniger säuerlicher Geschmack."
+ },
+ "sub_000428": {
+  "note": "Gekochter, ungesalzener Wilder Sauerampfer kann durch gekochten Spinat in gleicher Menge ersetzt werden."
+ },
+ "sub_000429": {
+  "note": "Gekochter Borretsch kann durch gekochten Spinat in gleicher Menge ersetzt werden, milderer Geschmack."
+ },
+ "sub_000430": {
+  "note": "Gekochter Portulak kann durch gekochten Spinat oder Feldsalat in gleicher Menge ersetzt werden."
+ },
+ "sub_000431": {
+  "note": "Gekochte Kardone kann durch gekochten Stangensellerie in gleicher Menge ersetzt werden, ähnliche Textur."
+ },
+ "sub_000432": {
+  "note": "Gekochter Schwarzwurzel kann durch gekochte Pastinake in gleicher Menge ersetzt werden, ähnlicher Geschmack."
+ },
+ "sub_000433": {
+  "note": "Gekochte Pastinaken können durch gekochte Karotten in gleicher Menge ersetzt werden, etwas weniger süß.",
+  "name": "Gekochte Karotten"
+ },
+ "sub_000434": {
+  "note": "Gekochter Kohlrabi kann durch gekochte Speiserübe in gleicher Menge ersetzt werden, ähnlicher Geschmack."
+ },
+ "sub_000435": {
+  "note": "Gekochte Speiserüben können durch gekochten Kohlrabi in gleicher Menge ersetzt werden, oder durch Steckrübe."
+ },
+ "sub_000436": {
+  "note": "Gekochter Sellerie (Knolle) kann in Pürees und Suppen durch gekochte Pastinake in gleicher Menge ersetzt werden."
+ },
+ "sub_000437": {
+  "note": "Gekochter Brokkoli kann durch gekochten Blumenkohl in gleicher Menge ersetzt werden.",
+  "name": "Gekochter Blumenkohl"
+ },
+ "sub_000438": {
+  "note": "Geschälte, gekochte Äpfel können zerdrückt werden, um fertiges Apfelmus zu ersetzen, in gleicher Menge.",
+  "name": "Ungesüßtes Apfelmus"
+ },
+ "sub_000439": {
+  "note": "In der Mikrowelle gegarte Äpfel und gekochte Äpfel sind in gleicher Menge austauschbar."
+ },
+ "sub_000440": {
+  "note": "Geröstete Brotfruchtkerne, eine seltene Zutat: durch geröstete Kastanien in gleicher Menge ersetzen (ähnlich mehlige Textur).",
+  "name": "Geröstete Kastanien"
+ },
+ "sub_000441": {
+  "note": "Getrocknete Brotnusskerne, eine seltene Zutat: durch getrocknete Kastanien in gleicher Menge ersetzen.",
+  "name": "Getrocknete Kastanien"
+ },
+ "sub_000442": {
+  "note": "Rosa/rote Grapefruit kann für einen weniger bitteren Geschmack durch frische Orange in gleicher Menge ersetzt werden."
+ },
+ "sub_000443": {
+  "note": "Fermentierter Fuyu-Tofu (kräftiger Geschmack) kann in Pfannengerichten durch klassisch mariniertem festem Tofu ersetzt werden.",
+  "name": "Marinierter fester Tofu"
+ },
+ "sub_000444": {
+  "note": "Speiserübe kann Steckrübe in gleicher Menge ersetzen, etwas milderer Geschmack"
+ },
+ "sub_000445": {
+  "note": "Speiserübe kann Steckrübe in gleicher Menge ersetzen, etwas milderer Geschmack"
+ },
+ "sub_000446": {
+  "note": "Kohlrabi wird durch Speiserübe in gleicher Menge ersetzt, ähnliche Textur nach dem Garen"
+ },
+ "sub_000447": {
+  "note": "Pastinake ersetzt Schwarzwurzel in gleicher Menge, etwas süßerer Geschmack"
+ },
+ "sub_000448": {
+  "note": "Klettenwurzel wird durch Pastinake ersetzt, ähnliche Textur und Garzeit"
+ },
+ "sub_000449": {
+  "note": "Klettenwurzel wird durch Pastinake ersetzt, ähnliche Textur und Garzeit"
+ },
+ "sub_000450": {
+  "note": "Pastinake kann in Schmorgerichten durch Karotte in gleicher Menge ersetzt werden"
+ },
+ "sub_000451": {
+  "note": "Jicama wird für die Knusprigkeit durch Wasserkastanie ersetzt, neutralerer Geschmack",
+  "name": "Wasserkastanie"
+ },
+ "sub_000452": {
+  "note": "Jicama wird für die Knusprigkeit durch Wasserkastanie ersetzt, neutralerer Geschmack",
+  "name": "Wasserkastanie"
+ },
+ "sub_000453": {
+  "note": "Bambussprossen werden in Pfannengerichten für die Knusprigkeit durch Wasserkastanie ersetzt",
+  "name": "Wasserkastanie"
+ },
+ "sub_000454": {
+  "note": "Bambussprossen werden in Pfannengerichten für die Knusprigkeit durch Wasserkastanie ersetzt",
+  "name": "Wasserkastanie"
+ },
+ "sub_000455": {
+  "note": "Lotuswurzel wird für die Knusprigkeit durch Wasserkastanie ersetzt",
+  "name": "Wasserkastanie"
+ },
+ "sub_000456": {
+  "note": "Lotuswurzel kann durch Wasserkastanie ersetzt werden, um die Knusprigkeit zu erhalten",
+  "name": "Wasserkastanie"
+ },
+ "sub_000457": {
+  "note": "Pfeilkraut (Knolle) kann durch Wasserkastanie ersetzt werden, ähnlich knackige Textur",
+  "name": "Wasserkastanie"
+ },
+ "sub_000458": {
+  "note": "Pfeilkraut (Knolle) kann durch Wasserkastanie ersetzt werden, ähnlich knackige Textur",
+  "name": "Wasserkastanie"
+ },
+ "sub_000459": {
+  "note": "Weißer Gänsefuß kann in gleicher Menge durch Spinat ersetzt werden"
+ },
+ "sub_000460": {
+  "note": "Weißer Gänsefuß kann in gleicher Menge durch Spinat ersetzt werden"
+ },
+ "sub_000461": {
+  "note": "Portulak kann durch Spinat ersetzt werden, milderer und weniger säuerlicher Geschmack"
+ },
+ "sub_000462": {
+  "note": "Rote-Bete-Blätter können in gleicher Menge durch Spinat ersetzt werden"
+ },
+ "sub_000463": {
+  "note": "Rote-Bete-Blätter können in gleicher Menge durch Spinat ersetzt werden"
+ },
+ "sub_000464": {
+  "note": "Borretsch kann durch Spinat ersetzt werden, milderer Geschmack"
+ },
+ "sub_000465": {
+  "note": "Löwenzahnblätter können durch Spinat ersetzt werden, weniger bitter"
+ },
+ "sub_000466": {
+  "note": "Löwenzahnblätter können durch Spinat ersetzt werden, weniger bitter"
+ },
+ "sub_000467": {
+  "note": "Amarantblätter können in gleicher Menge durch Spinat ersetzt werden"
+ },
+ "sub_000468": {
+  "note": "Amarantblätter können in gleicher Menge durch Spinat ersetzt werden"
+ },
+ "sub_000469": {
+  "note": "Neuseelandspinat kann in gleicher Menge durch Spinat ersetzt werden, sehr ähnlicher Geschmack"
+ },
+ "sub_000470": {
+  "note": "Neuseelandspinat kann in gleicher Menge durch Spinat ersetzt werden, sehr ähnlicher Geschmack"
+ },
+ "sub_000471": {
+  "note": "Wasserspinat kann durch Spinat ersetzt werden, ähnlicher Geschmack und Textur nach dem Kochen"
+ },
+ "sub_000472": {
+  "note": "Wasserspinat kann durch Spinat ersetzt werden, ähnlicher Geschmack und Textur nach dem Kochen"
+ },
+ "sub_000473": {
+  "note": "Moringablätter können in gleicher Menge durch Spinat ersetzt werden"
+ },
+ "sub_000474": {
+  "note": "Moringablätter können in gleicher Menge durch Spinat ersetzt werden"
+ },
+ "sub_000475": {
+  "note": "Kürbisblätter können durch Spinat ersetzt werden, milderer Geschmack"
+ },
+ "sub_000476": {
+  "note": "Kürbisblätter können durch Spinat ersetzt werden, milderer Geschmack"
+ },
+ "sub_000477": {
+  "note": "Rübenblätter können durch Grünkohl (Collard) ersetzt werden, etwas längere Garzeit"
+ },
+ "sub_000478": {
+  "note": "Rübenblätter können durch Grünkohl (Collard) ersetzt werden, etwas längere Garzeit"
+ },
+ "sub_000479": {
+  "note": "Senfblätter können durch Grünkohl (Collard) ersetzt werden, weniger scharf"
+ },
+ "sub_000480": {
+  "note": "Senfblätter können durch Grünkohl (Collard) ersetzt werden, weniger scharf"
+ },
+ "sub_000481": {
+  "note": "Escarolensalat kann durch Chicorée oder krause Endivie ersetzt werden, ähnliche Bitterkeit"
+ },
+ "sub_000482": {
+  "note": "Kardone kann durch Stangensellerie ersetzt werden, ohne den Artischockengeschmack"
+ },
+ "sub_000483": {
+  "note": "Sellerieknolle kann in Pürees und Suppen durch Pastinake ersetzt werden"
+ },
+ "sub_000484": {
+  "note": "Spargelbohnen können in gleicher Menge durch grüne Bohnen ersetzt werden"
+ },
+ "sub_000485": {
+  "note": "Spargelbohnen können in gleicher Menge durch grüne Bohnen ersetzt werden"
+ },
+ "sub_000486": {
+  "note": "Schwarze Bohnen können in gleicher Menge durch Kidneybohnen ersetzt werden"
+ },
+ "sub_000487": {
+  "note": "Schwarze Bohnen (Black Turtle) können in gleicher Menge durch Kidneybohnen ersetzt werden"
+ },
+ "sub_000488": {
+  "note": "Rosa Bohnen können in gleicher Menge durch Kidneybohnen oder Pintobohnen ersetzt werden"
+ },
+ "sub_000489": {
+  "note": "Pintobohnen können in gleicher Menge durch Kidneybohnen ersetzt werden"
+ },
+ "sub_000490": {
+  "note": "Pintobohnen können in gleicher Menge durch Kidneybohnen ersetzt werden"
+ },
+ "sub_000491": {
+  "note": "Adzukibohnen können durch Kidneybohnen ersetzt werden, milderer Geschmack"
+ },
+ "sub_000492": {
+  "note": "Reife French-Bohnen können in gleicher Menge durch weiße Bohnen (Navy) ersetzt werden"
+ },
+ "sub_000493": {
+  "note": "Reife gelbe Bohnen können in gleicher Menge durch weiße Bohnen ersetzt werden"
+ },
+ "sub_000494": {
+  "note": "Kleine weiße Bohnen können in gleicher Menge durch weiße Bohnen (Navy) ersetzt werden"
+ },
+ "sub_000495": {
+  "note": "Limabohnen können in gleicher Menge durch dicke Bohnen ersetzt werden"
+ },
+ "sub_000496": {
+  "note": "Limabohnen können in gleicher Menge durch dicke Bohnen ersetzt werden"
+ },
+ "sub_000497": {
+  "note": "Unreife Limabohnen können durch frische dicke Bohnen ersetzt werden"
+ },
+ "sub_000498": {
+  "note": "Unreife Limabohnen (Fordhook) können durch frische dicke Bohnen ersetzt werden"
+ },
+ "sub_000499": {
+  "note": "Catjang-Kuhbohnen können in gleicher Menge durch Kichererbsen oder weiße Bohnen ersetzt werden"
+ },
+ "sub_000500": {
+  "note": "Eiernudeln können in gleicher Menge durch Tagliatelle ersetzt werden"
+ },
+ "sub_000501": {
+  "note": "Eiernudeln können in gleicher Menge durch Tagliatelle ersetzt werden"
+ },
+ "sub_000502": {
+  "note": "Eiernudeln können in gleicher Menge durch Tagliatelle ersetzt werden"
+ },
+ "sub_000503": {
+  "note": "Soba-Nudeln können durch Reisnudeln oder Vollkorn-Spaghetti ersetzt werden"
+ },
+ "sub_000504": {
+  "note": "Soba-Nudeln können durch Reisnudeln oder Vollkorn-Spaghetti ersetzt werden"
+ },
+ "sub_000505": {
+  "note": "Somen-Nudeln können in gleicher Menge durch Reisnudeln ersetzt werden"
+ },
+ "sub_000506": {
+  "note": "Somen-Nudeln können in gleicher Menge durch Reisnudeln ersetzt werden"
+ },
+ "sub_000507": {
+  "note": "Glutenfreie Maisnudeln können durch Reisnudeln oder Reispasta ersetzt werden"
+ },
+ "sub_000508": {
+  "note": "Glutenfreie Maisnudeln können durch Reisnudeln oder Reispasta ersetzt werden"
+ },
+ "sub_000509": {
+  "note": "Backmehl (Feinmehl) kann durch Allzweckmehl (T55) ersetzt werden, etwas dichtere Textur"
+ },
+ "sub_000510": {
+  "note": "Brotmehl kann durch Allzweckmehl (T55) ersetzt werden, etwas geringeres Aufgehen"
+ },
+ "sub_000511": {
+  "note": "Chinesische Kastanien können in gleicher Menge durch europäische Kastanien ersetzt werden"
+ },
+ "sub_000512": {
+  "note": "Chinesische Kastanien können in gleicher Menge durch europäische Kastanien ersetzt werden"
+ },
+ "sub_000513": {
+  "note": "Chinesische Kastanien können in gleicher Menge durch europäische Kastanien ersetzt werden"
+ },
+ "sub_000514": {
+  "note": "Japanische Kastanien können in gleicher Menge durch europäische Kastanien ersetzt werden"
+ },
+ "sub_000515": {
+  "note": "Japanische Kastanien können in gleicher Menge durch europäische Kastanien ersetzt werden"
+ },
+ "sub_000516": {
+  "note": "Japanische Kastanien können in gleicher Menge durch europäische Kastanien ersetzt werden"
+ },
+ "sub_000517": {
+  "note": "Schwarze Walnüsse können in gleicher Menge durch gewöhnliche Walnüsse ersetzt werden, kräftigerer Geschmack"
+ },
+ "sub_000518": {
+  "note": "Pinienkerne können durch Cashewkerne ersetzt werden (Pesto, Topping), weniger harziger Geschmack"
+ },
+ "sub_000519": {
+  "note": "Paranüsse können in gleicher Menge durch Mandeln oder Cashewkerne ersetzt werden"
+ },
+ "sub_000520": {
+  "note": "Spanische Erdnüsse können durch normale geröstete gesalzene Erdnüsse ersetzt werden"
+ },
+ "sub_000521": {
+  "note": "Valencia-Erdnüsse können durch normale geröstete gesalzene Erdnüsse ersetzt werden"
+ },
+ "sub_000522": {
+  "note": "Pflanzliches Hähnchen-Imitat kann durch paniertem festem Tofu als pflanzliche Alternative ersetzt werden"
+ },
+ "sub_000523": {
+  "note": "Gesüßte Kokoscreme kann durch Kokosmilch mit zugesetztem Zucker ersetzt werden"
+ },
+ "sub_000524": {
+  "note": "Berg-Yamswurzel (Hawaii) kann in gleicher Menge durch Süßkartoffel ersetzt werden"
+ },
+ "sub_000525": {
+  "note": "Berg-Yamswurzel (Hawaii) kann in gleicher Menge durch Süßkartoffel ersetzt werden"
+ },
+ "sub_000526": {
+  "note": "Moringaschoten (Drumstick) können in Currys durch grüne Bohnen ersetzt werden"
+ },
+ "sub_000527": {
+  "note": "Moringaschoten (Drumstick) können in Currys durch grüne Bohnen ersetzt werden"
+ },
+ "sub_000528": {
+  "note": "Gedünstete getrocknete Birnen können durch gedünstete getrocknete Äpfel ersetzt werden, ähnliche Textur"
+ },
+ "sub_000529": {
+  "note": "Gedünstete getrocknete Birnen können durch gedünstete getrocknete Äpfel ersetzt werden, ähnliche Textur"
+ },
+ "sub_000530": {
+  "note": "Gedünstete getrocknete Pfirsiche können durch gedünstete getrocknete Aprikosen ersetzt werden, ähnlicher Geschmack"
+ },
+ "sub_000531": {
+  "note": "Gedünstete getrocknete Pfirsiche können durch gedünstete getrocknete Aprikosen ersetzt werden, ähnlicher Geschmack"
+ },
+ "sub_000532": {
+  "note": "Mandarinen aus der Dose können durch filetierte Orangen ersetzt werden, säuerlicherer Geschmack",
+  "name": "Navelorangen, aus der Dose oder frisch"
+ },
+ "sub_000533": {
+  "note": "Grapefruit aus der Dose kann durch filetierte Orangen ersetzt werden, weniger bitter",
+  "name": "Navelorangen, aus der Dose oder frisch"
+ },
+ "sub_000534": {
+  "note": "Grapefruit aus der Dose kann durch filetierte Orangen ersetzt werden, weniger bitter",
+  "name": "Navelorangen, aus der Dose oder frisch"
+ },
+ "sub_000535": {
+  "note": "Süßkirschen aus der Dose können durch frische entkernte Kirschen (oder tiefgekühlte) ersetzt werden"
+ },
+ "sub_000536": {
+  "note": "Süßkirschen aus der Dose können durch frische entkernte Kirschen (oder tiefgekühlte) ersetzt werden"
+ },
+ "sub_000537": {
+  "note": "Margarine-Brotaufstrich (SMART BALANCE) kann durch klassische pflanzliche Margarine ersetzt werden"
+ },
+ "sub_000538": {
+  "note": "Gemüsemakkaroni können durch normale Nudeln (Makkaroni oder Tagliatelle) ersetzt werden"
+ },
+ "sub_000539": {
+  "note": "Gemüsemakkaroni können durch normale Nudeln (Makkaroni oder Tagliatelle) ersetzt werden"
+ },
+ "sub_000540": {
+  "note": "Schwarze Bohnen (Black Turtle) aus der Dose können normale schwarze Bohnen in gleicher Menge ersetzen."
+ },
+ "sub_000541": {
+  "note": "Great-Northern-Bohnen können durch Cannellini-Bohnen ersetzt werden, sehr ähnliche Textur und Geschmack."
+ },
+ "sub_000542": {
+  "note": "Rohe Cranberry-Bohnen (Roman) können in gleicher Menge durch Pintobohnen ersetzt werden."
+ },
+ "sub_000543": {
+  "note": "Cranberry-Bohnen (Roman) aus der Dose können durch Pintobohnen aus der Dose ersetzt werden."
+ },
+ "sub_000544": {
+  "note": "Kann in gleicher Menge durch klassische gebratene Pintobohnen (Refried Beans) ersetzt werden.",
+  "name": "Gebratene Bohnen (Refried Beans), Pinto, aus der Dose"
+ },
+ "sub_000545": {
+  "note": "Mandelmus kann durch Cashewmus ersetzt werden, milderer und süßerer Geschmack."
+ },
+ "sub_000546": {
+  "note": "Ungesalzenes Mandelmus kann in gleicher Menge durch Cashewmus ersetzt werden."
+ },
+ "sub_000547": {
+  "note": "Cashewmus kann in gleicher Menge durch Mandelmus ersetzt werden."
+ },
+ "sub_000548": {
+  "note": "Tahini kann im Notfall durch Erdnussbutter ersetzt werden (anderer Geschmack, weniger bitter)."
+ },
+ "sub_000549": {
+  "note": "Tahini kann durch Cashew- oder Mandelmus für einen milderen Geschmack ersetzt werden."
+ },
+ "sub_000550": {
+  "note": "Geröstete Erdnüsse können in herzhaften Rezepten oder Pfannengerichten durch Cashewkerne ersetzt werden."
+ },
+ "sub_000551": {
+  "note": "Trocken geröstete Erdnüsse können in gleicher Menge durch trocken geröstete Cashewkerne ersetzt werden."
+ },
+ "sub_000552": {
+  "note": "Pekannüsse können in der Backwerken durch Haselnüsse oder Walnüsse ersetzt werden, leicht abweichender Geschmack."
+ },
+ "sub_000553": {
+  "note": "Walnüsse können in Backrezepten in gleicher Menge durch Pekannüsse ersetzt werden."
+ },
+ "sub_000554": {
+  "note": "Haselnüsse können in den meisten Backrezepten durch Walnüsse oder Mandeln ersetzt werden."
+ },
+ "sub_000555": {
+  "note": "Geschälte Sonnenblumenkerne können in gleicher Menge durch Kürbiskerne (Pepitas) ersetzt werden."
+ },
+ "sub_000556": {
+  "note": "Geröstete Kürbiskerne können in gleicher Menge durch geschälte Sonnenblumenkerne ersetzt werden."
+ },
+ "sub_000557": {
+  "note": "Nicht angereichertes Allzweckmehl kann in gleicher Menge durch die angereicherte Version ersetzt werden.",
+  "name": "Weizenmehl, Allzweck, angereichert"
+ },
+ "sub_000558": {
+  "note": "Fertigmehl für Tortillas kann in gleicher Menge durch normales Weizen-Allzweckmehl ersetzt werden."
+ },
+ "sub_000559": {
+  "note": "Glutenfreie Nudeln (Mais und Reis) können für ein ähnliches Gericht durch Reisnudeln ersetzt werden."
+ },
+ "sub_000560": {
+  "note": "Chinesische Glasnudeln (Mungbohnen) können durch Reisnudeln ersetzt werden, nach dem Kochen ähnliche Textur."
+ },
+ "sub_000561": {
+  "note": "Erdnussöl kann durch Sonnenblumenöl ersetzt werden, neutraler Geschmack, geeignet zum Kochen und Frittieren."
+ },
+ "sub_000562": {
+  "note": "Sesamöl (zum Kochen, ungeröstet) kann für Pfannengerichte durch Erdnussöl ersetzt werden."
+ },
+ "sub_000563": {
+  "note": "Sojaöl kann in gleicher Menge durch Sonnenblumenöl ersetzt werden, ähnlich neutraler Geschmack."
+ },
+ "sub_000564": {
+  "note": "Baumwollsamenöl, schwer erhältlich, kann in gleicher Menge durch Sonnenblumen- oder Sojaöl ersetzt werden."
+ },
+ "sub_000565": {
+  "note": "Streichmargarine kann Butter in gleicher Menge für die meisten Verwendungen ersetzen, außer bei feinem Gebäck."
+ },
+ "sub_000566": {
+  "note": "Gesalzene Butter kann durch ungesalzene Butter mit einer Prise Salz ersetzt werden."
+ },
+ "sub_000567": {
+  "note": "Ungesalzene Butter kann durch gesalzene Butter ersetzt werden, wobei das zugesetzte Salz im Rezept reduziert wird."
+ },
+ "sub_000568": {
+  "note": "Buttersubstitut in Pulverform kann durch geschmolzene Butter oder Margarine ersetzt werden, in angepasster Menge."
+ },
+ "sub_000569": {
+  "note": "Herkömmlicher Blauschimmelkäse kann durch Roquefort ersetzt werden, kräftigerer Geschmack."
+ },
+ "sub_000570": {
+  "note": "Roquefort kann durch einen anderen Blauschimmelkäse ersetzt werden, etwas milderer Geschmack."
+ },
+ "sub_000571": {
+  "note": "Brie kann in gleicher Menge durch Camembert ersetzt werden, sehr ähnlicher Geschmack."
+ },
+ "sub_000572": {
+  "note": "Camembert (USDA-Variante) kann in gleicher Menge durch den Standard-Camembert des Katalogs ersetzt werden."
+ },
+ "sub_000573": {
+  "note": "Edamer kann durch Gouda ersetzt werden, sehr ähnliche Textur und Geschmack."
+ },
+ "sub_000574": {
+  "note": "Gouda kann durch Edamer ersetzt werden, etwas weniger fettig."
+ },
+ "sub_000575": {
+  "note": "Gruyère kann durch Emmentaler ersetzt werden, etwas milderer Geschmack."
+ },
+ "sub_000576": {
+  "note": "Gruyère kann für einen Gratin auch durch Cheddar ersetzt werden, anderer Geschmack, aber ähnliches Schmelzverhalten.",
+  "name": "Cheddar"
+ },
+ "sub_000577": {
+  "note": "Monterey Jack kann in gleicher Menge durch milden Cheddar ersetzt werden, ähnliches Schmelzverhalten."
+ },
+ "sub_000578": {
+  "note": "Mexikanische Käsemischung kann durch Cheddar allein oder kombiniert mit Monterey Jack ersetzt werden."
+ },
+ "sub_000579": {
+  "note": "Muenster kann durch Gouda oder Edamer für ähnliches Schmelzverhalten und milden Geschmack ersetzt werden."
+ },
+ "sub_000580": {
+  "note": "Feta kann durch zerbröckelten frischen Ziegenkäse ersetzt werden, milderer und weniger salziger Geschmack."
+ },
+ "sub_000581": {
+  "note": "Neufchâtel kann durch klassischen Frischkäse ersetzt werden, ähnliche Textur, etwas weniger fettig."
+ },
+ "sub_000582": {
+  "note": "Frischkäse kann in gleicher Menge durch Neufchâtel ersetzt werden, etwas weniger fettig."
+ },
+ "sub_000583": {
+  "note": "Romano kann zum Reiben über Pasta durch Parmesan ersetzt werden, ähnlicher Geschmack."
+ },
+ "sub_000584": {
+  "note": "Fettreduzierte Saure Sahne kann in gleicher Menge durch fettarmen griechischen Naturjoghurt ersetzt werden."
+ },
+ "sub_000585": {
+  "note": "Fettfreie Saure Sahne kann durch fettfreien griechischen Naturjoghurt ersetzt werden."
+ },
+ "sub_000586": {
+  "note": "Saure Sahne mit reduziertem Fettgehalt kann durch griechischen Naturjoghurt ersetzt werden."
+ },
+ "sub_000587": {
+  "note": "Aprikosen aus der Dose können in Desserts durch Pfirsiche aus der Dose ersetzt werden, ähnlicher Geschmack.",
+  "name": "Pfirsiche, aus der Dose, in Wasser, mit Flüssigkeit"
+ },
+ "sub_000588": {
+  "note": "Aprikosen aus der Dose in Sirup können durch Pfirsiche aus der Dose in Saft ersetzt werden, ähnlicher Geschmack."
+ },
+ "sub_000589": {
+  "note": "Obstsalat aus der Dose in Wasser kann durch Fruchtcocktail in Wasser ersetzt werden, sehr ähnliche Zusammensetzung."
+ },
+ "sub_000590": {
+  "note": "Obstsalat aus der Dose in Saft kann durch Fruchtcocktail in Saft ersetzt werden, sehr ähnliche Zusammensetzung."
+ },
+ "sub_000591": {
+  "note": "Geröstete gesalzene Sesamsamen können durch ungesalzene Sesamsamen ersetzt werden, wobei das Salz im Rezept angepasst wird."
+ },
+ "sub_000592": {
+  "note": "Trocken geröstete Sonnenblumenkerne können in gleicher Menge durch geröstete Kürbiskerne ersetzt werden."
+ },
+ "sub_000593": {
+  "note": "Schokoladen-Sojamilch kann durch Schokoladen-Mandelmilch oder Natur-Mandelmilch mit zugesetztem Kakao ersetzt werden."
+ },
+ "sub_000594": {
+  "note": "Naturbelassene Sojamilch kann durch Mandelmilch ersetzt werden, neutralerer und leichterer Geschmack."
+ },
+ "sub_000595": {
+  "note": "Fettarme Sojamilch kann in gleicher Menge durch Mandelmilch ersetzt werden."
+ },
+ "sub_000596": {
+  "note": "Limabohnen aus der Dose können in gleicher Menge durch grüne Bohnen ersetzt werden, festere Textur.",
+  "name": "Grüne Bohnen, roh"
+ },
+ "sub_000597": {
+  "note": "Fester Tofu kann durch normalen (weniger festen) Tofu ersetzt werden, bei angepasster Garzeit, cremigere Textur."
+ },
+ "sub_000598": {
+  "note": "Normaler Tofu kann durch festen Tofu ersetzt werden, wenn eine festere Textur gewünscht ist (Anbraten, Grillen)."
+ },
+ "sub_000599": {
+  "note": "Grapefruitsaftkonzentrat kann durch Orangensaftkonzentrat ersetzt werden, milderer Geschmack."
+ },
+ "sub_000600": {
+  "note": "Leichte Mayonnaise kann durch normale Mayonnaise ersetzt werden, wobei die verwendete Menge reduziert wird."
+ },
+ "sub_000601": {
+  "note": "Normale Mayonnaise kann durch leichte Mayonnaise ersetzt werden, um den Fettgehalt zu senken."
+ },
+ "sub_000602": {
+  "note": "Surimi kann durch echtes Krabbenfleisch ersetzt werden, feinerer Geschmack, andere Textur."
+ },
+ "sub_000603": {
+  "note": "In gleicher Menge durch Butter ersetzen (oder ein neutrales Pflanzenöl für ein leichteres Ergebnis)."
+ },
+ "sub_000604": {
+  "note": "Milchpulver kann im Kaffee oder in einem Rezept Kaffeeweißer ersetzen, mit einem milchigeren Geschmack."
+ },
+ "sub_000605": {
+  "note": "Sahne aus der Sprühdose durch selbstgemachte Schlagsahne (geschlagene Vollmilchsahne) in gleicher Menge ersetzen."
+ },
+ "sub_000606": {
+  "note": "Echter Mozzarella ersetzt den Käseersatz in gleicher Menge, mit besserem Schmelzverhalten und kräftigerem Geschmack."
+ },
+ "sub_000607": {
+  "note": "Normale Butter ersetzt Ghee/geklärte Butter in gleicher Menge, verbrennt beim Kochen aber schneller (weniger geeignet für hohe Temperaturen)."
+ },
+ "sub_000608": {
+  "note": "Durch klassischen Frischkäse in gleicher Menge ersetzen."
+ },
+ "sub_000609": {
+  "note": "Durch klassischen geriebenen Parmesan in gleicher Menge ersetzen (leicht mehr Fett und Geschmack)."
+ },
+ "sub_000610": {
+  "note": "Durch reine Butter in gleicher Menge ersetzen, oder durch Margarine bei pflanzlicher Präferenz."
+ },
+ "sub_000611": {
+  "note": "Durch standardmäßiges nicht gehärtetes Rapsöl (Canola) in gleicher Menge ersetzen."
+ },
+ "sub_000612": {
+  "note": "Süßkartoffel kann in den meisten Rezepten Yamswurzel in gleicher Menge ersetzen (ähnliche Textur und Geschmack, etwas süßer)."
+ },
+ "sub_000613": {
+  "note": "Zucchini (oder Gurke für eine Rohkostzubereitung) kann Chayote in gleicher Menge ersetzen."
+ },
+ "sub_000614": {
+  "note": "Rübe kann in gekochten Gerichten Daikon-Rettich in gleicher Menge ersetzen (etwas kräftigerer Geschmack)."
+ },
+ "sub_000615": {
+  "note": "Naturbelassene Eiernudeln können Spinat-Eiernudeln in gleicher Menge ersetzen (weniger Farbe und Gemüseanteil)."
+ },
+ "sub_000616": {
+  "note": "Gelbe geschälte Erbsen ersetzen grüne geschälte Erbsen in gleicher Menge, nahezu identischer Geschmack.",
+  "name": "Gelbe geschälte Erbsen"
+ },
+ "sub_000617": {
+  "note": "Frische Sojasprossen können Mungbohnensprossen aus der Dose ersetzen, mit mehr Knackigkeit (abspülen und in gleicher Menge verwenden)."
+ },
+ "sub_000618": {
+  "note": "Durch klassischen braunen Reis (nicht instant) ersetzen; Garzeit verlängern, da dieser Reis nicht vorgedämpft ist."
+ },
+ "sub_000619": {
+  "note": "Klebreis und klassischer Rundkornreis sind austauschbar; ersatzweise kann ein Rundkornreis vom Typ Arborio für ein klebrigeres Ergebnis verwendet werden."
+ },
+ "sub_000620": {
+  "note": "Klassische grüne Bohnen ersetzen Flügelbohnen in gleicher Menge, ähnliche Textur.",
+  "name": "Grüne Bohnen"
+ },
+ "sub_000621": {
+  "note": "Zucchini kann Schwammkürbis (Luffa) in gleicher Menge in gebratenen oder gekochten Gerichten ersetzen."
+ },
+ "sub_000622": {
+  "note": "Geröstete Erdnüsse können gekochte Erdnüsse ersetzen, mit knackigerer und weniger zarter Textur.",
+  "name": "Geröstete gesalzene Erdnüsse"
+ },
+ "sub_000623": {
+  "note": "Klassische grüne Bohnen können junge Kuhbohnenschoten in gleicher Menge ersetzen."
+ },
+ "sub_000624": {
+  "note": "Limabohnen (oder Edamame) können Helmbohnen in gleicher Menge ersetzen."
+ },
+ "sub_000625": {
+  "note": "Ohne gesüßte Adzukibohnen aus der Dose getrocknete Adzukibohnen kochen und selbst süßen.",
+  "name": "Adzukibohnen, reif, roh (selbst gekocht und gesüßt)"
+ },
+ "sub_000626": {
+  "note": "Kichererbsen können Lupinen in gleicher Menge in den meisten mediterranen Rezepten ersetzen."
+ },
+ "sub_000627": {
+  "note": "Ohne selbstaufgehendes Maismehl normales Maismehl verwenden und pro 150 g 1,5 TL Backpulver sowie 1/2 TL Salz hinzufügen.",
+  "name": "Normales Maismehl + Backpulver + Salz"
+ },
+ "sub_000628": {
+  "note": "Zucchini kann Flaschenkürbis in gleicher Menge in geschmorten Gerichten ersetzen."
+ },
+ "sub_000629": {
+  "note": "Jalapeño-Schoten aus der Dose können scharfe rote Chilis aus der Dose ersetzen, mit etwas weniger Schärfe."
+ },
+ "sub_000630": {
+  "note": "Ohne tiefgekühlte Rösti rohe Kartoffeln reiben und zu Talern formen, um sie selbst in der Pfanne zu braten.",
+  "name": "Selbstgemachte geriebene Kartoffeltaler"
+ },
+ "sub_000631": {
+  "note": "Naturbelassene Tomatensauce mit fein gehackten und angeschwitzten Zwiebeln, grüner Paprika und Sellerie in entsprechender Menge verwenden."
+ },
+ "sub_000632": {
+  "note": "Schwarze Bohnen oder andere getrocknete Bohnen können Kuhbohnen in gleicher Menge in den meisten Schmorgerichten ersetzen"
+ },
+ "sub_000633": {
+  "note": "Gekochter Flaschenkürbis kann in gleicher Menge durch Zucchini ersetzt werden, ähnliche Textur und Geschmack nach dem Kochen",
+  "name": "Zucchini"
+ },
+ "sub_000634": {
+  "note": "Ohne Lauch kann Zwiebel (vorzugsweise mild) sie in gleicher Menge ersetzen, kräftigerer Geschmack"
+ },
+ "sub_000635": {
+  "note": "Braune Champignons (Cremini) können in gleicher Menge durch weiße Champignons ersetzt werden, milderer Geschmack"
+ },
+ "sub_000636": {
+  "note": "Rübenblätter können in gleicher Menge durch Grünkohl oder Spinat ersetzt werden"
+ },
+ "sub_000637": {
+  "note": "Gekochter Wachskürbis (Wintermelone) kann in gleicher Menge durch Zucchini oder Chayote ersetzt werden",
+  "name": "Zucchini"
+ },
+ "sub_000638": {
+  "note": "Kann durch Vollkornmehl (dichtere Textur) oder eine 50/50-Mischung ersetzt werden, um ein Rezept leichter zu machen",
+  "name": "Weizenmehl, halbvoll oder Vollkorn"
+ },
+ "sub_000639": {
+  "note": "Eiernudeln können in gleicher Menge durch klassische Bandnudeln (Tagliatelle) ersetzt werden",
+  "name": "Nudeln (klassische Nudeln)"
+ },
+ "sub_000640": {
+  "note": "Glutenfreie Nudeln (Reis/Mais/Quinoa): praktischer Ersatz bei Glutenunverträglichkeit, oder umgekehrt durch klassische Weizennudeln ersetzbar, wenn glutenfrei nicht nötig ist, Garzeit anpassen (oft kürzer)",
+  "name": "Klassische Weizennudeln"
+ },
+ "sub_000641": {
+  "note": "Glutenfreie Nudeln auf Reisbasis: Ersatz bei Glutenunverträglichkeit; andernfalls in gleicher Menge durch klassische Weizennudeln ersetzen",
+  "name": "Klassische Weizennudeln"
+ },
+ "sub_000642": {
+  "note": "Glutenfreie Mais-/Quinoa-Nudeln: Ersatz bei Glutenunverträglichkeit; andernfalls klassische Weizennudeln in gleicher Menge",
+  "name": "Klassische Weizennudeln"
+ },
+ "sub_000643": {
+  "note": "Nudeln mit 51% Vollkornweizen: können je nach gewünschtem Ballaststoffgehalt in gleicher Menge durch klassische Vollkornnudeln oder weiße Nudeln ersetzt werden",
+  "name": "Vollkornnudeln (100% Vollkornweizen)"
+ },
+ "sub_000644": {
+  "note": "Kann in gleicher Menge durch klassische Vollkornnudeln oder weiße Nudeln ersetzt werden",
+  "name": "Vollkornnudeln (100% Vollkornweizen)"
+ },
+ "sub_000645": {
+  "note": "Durch ungesüßte Kokosraspeln ersetzen und dabei den Zucker im Rezept reduzieren (die gesüßte Version liefert zusätzlichen Zucker)",
+  "name": "Ungesüßte getrocknete Kokosraspeln"
+ },
+ "sub_000646": {
+  "note": "Geröstete Kürbiskerne können in gleicher Menge durch geröstete Sonnenblumenkerne ersetzt werden",
+  "name": "Sonnenblumenkerne"
+ },
+ "sub_000647": {
+  "note": "In gleicher Menge durch geröstete gesalzene Sonnenblumenkerne ersetzen",
+  "name": "Sonnenblumenkerne"
+ },
+ "sub_000648": {
+  "note": "Tiefgekühlte Pommes können durch frische, in Streifen geschnittene und im Ofen gebackene oder frittierte Kartoffeln ersetzt werden",
+  "name": "Frische Kartoffeln"
+ },
+ "sub_000649": {
+  "note": "Kanadischer Speck (Rückenscheibe) kann durch normalen Bacon oder Schinkenscheiben ersetzt werden"
+ },
+ "sub_000650": {
+  "note": "Leichte Butter kann durch klassische Butter ersetzt werden, wobei die Menge leicht reduziert wird (leichte Butter enthält mehr Wasser)"
+ },
+ "sub_000651": {
+  "note": "Ungesalzene leichte Butter kann durch klassische ungesalzene Butter ersetzt werden, leicht reduzierte Menge"
+ },
+ "sub_000652": {
+  "note": "Streichmargarine kann in gleicher Menge durch Butter ersetzt werden (andere Textur und Geschmack, weniger geeignet für feines Gebäck)"
+ },
+ "sub_000653": {
+  "note": "Raffiniertes Sojaöl kann für die alltägliche Küche in gleicher Menge durch Raps- oder Sonnenblumenöl ersetzt werden",
+  "name": "Rapsöl (Canola)"
+ },
+ "sub_000654": {
+  "note": "Pflanzliches Backfett (Shortening) kann beim Backen in gleicher Menge durch kalte Butter ersetzt werden (leicht abweichende Textur und Geschmack)"
+ },
+ "sub_000655": {
+  "note": "Karpfen kann in gleicher Menge durch Tilapia oder einen anderen weißfleischigen Süßwasserfisch ersetzt werden"
+ },
+ "sub_000656": {
+  "note": "Lengfisch (Cusk) kann durch Kabeljau oder Schellfisch in gleicher Menge ersetzt werden."
+ },
+ "sub_000657": {
+  "note": "Leng kann durch Kabeljau in gleicher Menge ersetzt werden, ähnliches weißes Fleisch."
+ },
+ "sub_000658": {
+  "note": "Quappe (Süßwasser) kann durch Tilapia oder Kabeljau ersetzt werden."
+ },
+ "sub_000659": {
+  "note": "Lingcod (pazifischer Leng-Kabeljau) kann durch Kabeljau oder Schellfisch in gleicher Menge ersetzt werden."
+ },
+ "sub_000660": {
+  "note": "Tilapia kann durch Kabeljau oder einen anderen festfleischigen Weißfisch in gleicher Menge ersetzt werden."
+ },
+ "sub_000661": {
+  "note": "Blaubarsch (fettreicher Fisch) kann durch Makrele in gleicher Menge ersetzt werden."
+ },
+ "sub_000662": {
+  "note": "Mahi-Mahi kann für die Zubereitung in der Pfanne/auf dem Grill durch Thunfisch oder Schwertfisch ersetzt werden."
+ },
+ "sub_000663": {
+  "note": "Milchfisch kann durch Tilapia in gleicher Menge ersetzt werden."
+ },
+ "sub_000664": {
+  "note": "Seeteufel (Monkfish) kann wegen seines festen Fleisches durch Heilbutt ersetzt werden, ähnliche Textur."
+ },
+ "sub_000665": {
+  "note": "Tilefish kann durch Schnapper oder Kabeljau in gleicher Menge ersetzt werden."
+ },
+ "sub_000666": {
+  "note": "Schwertfisch kann zum Grillen durch Thunfisch (Steak) ersetzt werden."
+ },
+ "sub_000667": {
+  "note": "Butterfisch kann durch Makrele ersetzt werden, einen ähnlichen fettreichen Fisch."
+ },
+ "sub_000668": {
+  "note": "Sheepshead (Schafskopf-Brasse) kann durch Schnapper oder Kabeljau ersetzt werden."
+ },
+ "sub_000669": {
+  "note": "Spot (kleiner Weißfisch) kann durch Schnapper ersetzt werden."
+ },
+ "sub_000670": {
+  "note": "Scup (gefleckte Brasse) kann durch Schnapper oder Dorade in gleicher Menge ersetzt werden."
+ },
+ "sub_000671": {
+  "note": "Rekonstituierte Buttermilch aus Pulver (Pulver + Wasser) kann durch abgefüllte flüssige Buttermilch ersetzt werden."
+ },
+ "sub_000672": {
+  "note": "Half and Half erhält man durch Mischen gleicher Teile Vollmilch und flüssiger Sahne.",
+  "name": "Vollmilch + Sahne-Mischung (1:1)"
+ },
+ "sub_000673": {
+  "note": "Queso Fresco kann durch zerbröckelten Feta oder abgetropften Hüttenkäse ersetzt werden, salzigerer Geschmack."
+ },
+ "sub_000674": {
+  "note": "Queso Blanco kann je nach Verwendung (zum Schmelzen oder Zerbröckeln) durch Feta oder Mozzarella ersetzt werden."
+ },
+ "sub_000675": {
+  "note": "Queso Añejo (gereifter Reibekäse) kann durch Parmesan oder gereiften Cheddar ersetzt werden."
+ },
+ "sub_000676": {
+  "note": "Queso Cotija (salziger Reibekäse) kann durch Parmesan ersetzt werden."
+ },
+ "sub_000677": {
+  "note": "Queso Asadero (Schmelzkäse) kann durch Mozzarella oder Provolone ersetzt werden.",
+  "name": "Mozzarella oder Provolone"
+ },
+ "sub_000678": {
+  "note": "Queso Chihuahua (Schmelzkäse) kann durch Monterey Jack oder Mozzarella ersetzt werden.",
+  "name": "Monterey-Jack-Käse"
+ },
+ "sub_000679": {
+  "note": "Cold-Pack-Käsezubereitung (American Cheese) kann durch geschmolzenen Cheddar in gleicher Menge ersetzt werden."
+ },
+ "sub_000680": {
+  "note": "Tiefgekühltes Rührei kann durch frisch selbst zubereitetes Rührei ersetzt werden.",
+  "name": "Frische Eier"
+ },
+ "sub_000681": {
+  "note": "Leichter gefrorener Schlagsahne-Belag kann durch selbstgemachte geschlagene Sahne ersetzt werden.",
+  "name": "Hausgemachte Schlagsahne"
+ },
+ "sub_000682": {
+  "note": "Büffelmilch kann durch Vollmilch von der Kuh in gleicher Menge ersetzt werden."
+ },
+ "sub_000683": {
+  "note": "Schafsmilch kann durch Vollmilch von der Kuh ersetzt werden, milderer Geschmack."
+ },
+ "sub_000684": {
+  "note": "Kunstmilch (nicht auf Milchbasis, ohne Soja) kann je nach Bedarf durch Kuhmilch oder einen Pflanzendrink ersetzt werden."
+ },
+ "sub_000685": {
+  "note": "Leichter flüssiger Kaffeeweißer-Ersatz kann durch leichte flüssige Sahne oder Kondensmilch ersetzt werden.",
+  "name": "Leichte flüssige Sahne"
+ },
+ "sub_000686": {
+  "note": "Leichter Kaffeeweißer in Pulverform kann durch Milchpulver für Kaffee ersetzt werden.",
+  "name": "Milchpulver"
+ },
+ "sub_000687": {
+  "note": "Aromatisierter flüssiger Kaffeeweißer-Ersatz kann durch leichte flüssige Sahne mit einem Aroma (Vanille, Karamell) ersetzt werden.",
+  "name": "Leichte flüssige Sahne"
+ },
+ "sub_000688": {
+  "note": "Durch echten Cheddar in gleicher Menge ersetzen, für mehr Geschmack und besseres Schmelzverhalten."
+ },
+ "sub_000689": {
+  "note": "Normaler (oder fettreduzierter) Cheddar ersetzt fettfreien Cheddar mit besserem Geschmack und Schmelzverhalten."
+ },
+ "sub_000690": {
+  "note": "Kann durch geschmolzenen Cheddar in gleicher Menge ersetzt werden, für mehr Geschmack."
+ },
+ "sub_000691": {
+  "note": "Sahnepulver durch leichte flüssige Sahne ersetzen, bei Bedarf verdünnt."
+ },
+ "sub_000692": {
+  "note": "Durch ein neutrales Pflanzenöl (Sonnenblumen- oder Rapsöl) in gleicher Menge ersetzen."
+ },
+ "sub_000693": {
+  "note": "Butter ersetzt fettreduzierte Margarine in gleicher Menge, bringt aber mehr Fett und Geschmack mit."
+ },
+ "sub_000694": {
+  "note": "Entspricht handelsüblichem Raps-(Canola-)Öl, in gleicher Menge."
+ },
+ "sub_000695": {
+  "note": "Ungesalzene Butter ersetzt ungesalzene fettreduzierte Margarine in gleicher Menge."
+ },
+ "sub_000696": {
+  "note": "Durch reine Butter in gleicher Menge ersetzen, kräftigerer Geschmack."
+ },
+ "sub_000697": {
+  "note": "Etwa 1/4 Tasse flüssiger Eiersatz entspricht einem ganzen Ei."
+ },
+ "sub_000698": {
+  "note": "Kann durch Sonnenblumenöl oder ein anderes neutrales Öl in gleicher Menge ersetzt werden."
+ },
+ "sub_000699": {
+  "note": "Butter (oder eine Margarine mit hohem Fettgehalt) ersetzt diese Becher-Margarine in gleicher Menge."
+ },
+ "sub_000700": {
+  "note": "Durch normale Mayonnaise in gleicher Menge ersetzen."
+ },
+ "sub_000701": {
+  "note": "Dicke Sahne mit etwas Milch verdünnen (etwa zu gleichen Teilen), um das Äquivalent von leichter Sahne zu erhalten."
+ },
+ "sub_000702": {
+  "note": "Durch Sonnenblumenöl ersetzen, ähnlich neutraler Geschmack."
+ },
+ "sub_000703": {
+  "note": "Butter ist beim Fettgehalt das nächstliegende Äquivalent für diese 80%ige Margarine."
+ },
+ "sub_000704": {
+  "note": "Abgetropfter Dosenmais ersetzt gekochten frischen Mais in den meisten Rezepten."
+ },
+ "sub_000705": {
+  "note": "Wachsbohnen (gelb) ersetzen grüne Bohnen in gleicher Menge, milderer Geschmack."
+ },
+ "sub_000706": {
+  "note": "Austauschbar; grüne Paprika ist bitterer und weniger süß als rote."
+ },
+ "sub_000707": {
+  "note": "Butternusskürbis ersetzt Eichelkürbis als Püree, etwas süßerer Geschmack."
+ },
+ "sub_000708": {
+  "note": "Gängiger Ersatz für Hubbard-Kürbis, ähnliche Textur und Geschmack."
+ },
+ "sub_000709": {
+  "note": "Durch gewöhnlichen weißen Reis ersetzen und die Kochzeit verlängern (15-20 Min. statt 5 Min.)."
+ },
+ "sub_000710": {
+  "note": "Durch gekochten gewöhnlichen weißen Reis ersetzen, mit längerer Kochzeit."
+ },
+ "sub_000711": {
+  "note": "Great-Northern-Bohnen ersetzen weiße Bohnen (Navy) in Suppen und Eintöpfen."
+ },
+ "sub_000712": {
+  "note": "Kidneybohnen ersetzen Pintobohnen in Chili und Burritos."
+ },
+ "sub_000713": {
+  "note": "Pintobohnen ersetzen schwarze Bohnen in den meisten mexikanischen Gerichten."
+ },
+ "sub_000714": {
+  "note": "Naturbelassenes Maismehl verwenden und pro Tasse 1,5 TL Backpulver sowie 1/4 TL Salz hinzufügen."
+ },
+ "sub_000715": {
+  "note": "Naturbelassenes gelbes Maismehl verwenden und pro Tasse 1,5 TL Backpulver sowie 1/4 TL Salz hinzufügen."
+ },
+ "sub_000716": {
+  "note": "Durch klassischen gekochten Schinken in gleicher Menge ersetzen."
+ },
+ "sub_000717": {
+  "note": "Aufgeschnittener gekochter Schinken ersetzt kanadischen Speck in den meisten Rezepten (Sandwiches, Beilagen)."
+ },
+ "sub_000718": {
+  "note": "Wachtel ist ein gängiger Ersatz für dieses kleine Federwild, ähnliche Garmethode."
+ },
+ "sub_000719": {
+  "note": "Festfleischiger Weißfisch; atlantischer Kabeljau ist ein guter Ersatz."
+ },
+ "sub_000720": {
+  "note": "Pazifische Lachsarten sind austauschbar, ähnliche Textur und Geschmack."
+ },
+ "sub_000721": {
+  "note": "Süßwasserfisch mit weißem Fleisch; Walleye (Glasaugenbarsch) ist ein guter Ersatz."
+ },
+ "sub_000722": {
+  "note": "Festfleischiger Süßwasserfisch, wird üblicherweise durch Walleye ersetzt."
+ },
+ "sub_000723": {
+  "note": "Milder Weißfisch, in gleicher Menge ersetzen (Kabeljau)."
+ },
+ "sub_000724": {
+  "note": "Eine andere Lachsart (Rotlachs), in gleicher Menge verwenden."
+ },
+ "sub_000725": {
+  "note": "Festfleischiger Weißfisch, guter Ersatz für Kabeljau in gleicher Menge."
+ },
+ "sub_000726": {
+  "note": "Pazifischer Kabeljau und Atlantik-Kabeljau sind austauschbar."
+ },
+ "sub_000727": {
+  "note": "Pazifischer Hering und Atlantik-Hering sind in gleicher Menge austauschbar."
+ },
+ "sub_000728": {
+  "note": "Plattfisch mit zartem Fleisch; Seezunge kann Steinbutt in gleicher Menge ersetzen."
+ },
+ "sub_000729": {
+  "note": "Milder Weißfisch, ersetzt Lengfisch (Cusk) in gleicher Menge."
+ },
+ "sub_000730": {
+  "note": "Spanische Makrele und Atlantik-Makrele sind austauschbar."
+ },
+ "sub_000731": {
+  "note": "Kleiner fettreicher Fisch; Sardine kann Sardelle mit etwas milderem Geschmack ersetzen."
+ },
+ "sub_000732": {
+  "note": "Schneekrabbe kann Blaukrabbe ersetzen, etwas feineres Fleisch."
+ },
+ "sub_000733": {
+  "note": "Fester Weißfisch; Kabeljau ersetzt Leng in gleicher Menge."
+ },
+ "sub_000734": {
+  "note": "Atlantischer Pollack und Kabeljau sind in den meisten Rezepten austauschbar."
+ },
+ "sub_000735": {
+  "note": "Fettarmer Naturkefir kann durch fettarmen griechischen Naturjoghurt ersetzt werden (dickere Textur, bei Bedarf leicht verdünnen)."
+ },
+ "sub_000736": {
+  "note": "Grönlandheilbutt und gewöhnlicher Heilbutt sind in gleicher Menge austauschbar."
+ },
+ "sub_000737": {
+  "note": "Fettreicher Fisch mit kräftigem Fleisch; Lachs kann Aal in vielen Zubereitungen ersetzen."
+ },
+ "sub_000738": {
+  "note": "1 Tasse Milch + 1 EL Zitronensaft oder Essig, 5 Min. ruhen lassen, um Buttermilch zu ersetzen.",
+  "name": "Milch + Zitronensaft oder Essig (selbstgemacht)"
+ },
+ "sub_000739": {
+  "note": "Tintenfisch kann Oktopus ersetzen, kürzere Garzeit."
+ },
+ "sub_000740": {
+  "note": "Austernsorten sind in gleicher Menge austauschbar."
+ },
+ "sub_000741": {
+  "note": "Süßwasserfisch mit mildem Fleisch; Tilapia ist ein guter Ersatz für Barsch."
+ },
+ "sub_000742": {
+  "note": "Ähnlich festes Fleisch; Schwertfisch kann Hai-Steak ersetzen."
+ },
+ "sub_000743": {
+  "note": "Schellfisch und Kabeljau sind klassisch austauschbar."
+ },
+ "sub_000744": {
+  "note": "Milder Weißfisch; Kabeljau ist ein guter Ersatz für Tilapia."
+ },
+ "sub_000745": {
+  "note": "Festes, dichtes Fleisch; Schwertfisch kann Mahi-Mahi ersetzen."
+ },
+ "sub_000746": {
+  "note": "Tilapia ist ein guter Ersatz für Milchfisch, ähnlich mildes Fleisch."
+ },
+ "sub_000747": {
+  "note": "Schnapper kann Zackenbarsch ersetzen, ähnlich festes weißes Fleisch."
+ },
+ "sub_000748": {
+  "note": "Andere Krabben (generische Krabbe) sind in gleicher Menge austauschbar."
+ },
+ "sub_000749": {
+  "note": "Festfleischiger Fisch, als Steak zubereitet; Thunfisch kann Schwertfisch ersetzen."
+ },
+ "sub_000750": {
+  "note": "Milder Weißfisch; Kabeljau ersetzt Wittling in gleicher Menge."
+ },
+ "sub_000751": {
+  "note": "Reichhaltiger, fettreicher Fisch; Lachs kann Kohlefisch (Sablefish) ersetzen."
+ },
+ "sub_000752": {
+  "note": "Neutrales Öl mit ähnlichem Rauchpunkt, ersetzt es in gleicher Menge."
+ },
+ "sub_000753": {
+  "note": "Fettarmer griechischer Naturjoghurt ersetzt fettreduzierte saure Sahne in gleicher Menge."
+ },
+ "sub_000754": {
+  "note": "Miesmuschel kann Venusmuschel in den meisten Meeresfrüchte-Rezepten ersetzen."
+ },
+ "sub_000755": {
+  "note": "Ricotta kann fettarmen Hüttenkäse in herzhaften oder süßen Zubereitungen ersetzen."
+ },
+ "sub_000756": {
+  "note": "Languste kann Hummer ersetzen, ähnliche Textur und Geschmack."
+ },
+ "sub_000757": {
+  "note": "Blaukrabbe kann Alaska-Königskrabbe in gleicher Menge ersetzen."
+ },
+ "sub_000758": {
+  "note": "Jedes neutrale Pflanzenöl kann Sojaöl zum leichten Braten ersetzen."
+ },
+ "sub_000759": {
+  "note": "Thunfisch kann Yellowtail (Bernsteinmakrele) ersetzen, ähnlich fettreiche Fische."
+ },
+ "sub_000760": {
+  "note": "Eine deutlich günstigere Alternative zu Kaviar, salzigerer Geschmack und etwas festere Textur.",
+  "name": "Lumpenfischrogen (Lumpenkaviar)"
+ },
+ "sub_000761": {
+  "note": "Frischer Kabeljau (erfordert Entsalzen und Einweichen, wenn man von getrocknetem Salzkabeljau ausgeht)."
+ },
+ "sub_000762": {
+  "note": "Garnele kann Jakobsmuschel in vielen Meeresfrüchte-Zubereitungen ersetzen."
+ },
+ "sub_000763": {
+  "note": "Räucherlachs kann geräucherten Stör ersetzen, leichter erhältlich."
+ },
+ "sub_000764": {
+  "note": "Vollmilch von der Kuh kann Ziegenmilch ersetzen, neutralerer Geschmack."
+ },
+ "sub_000765": {
+  "note": "Tintenfisch kann Sepia ersetzen, ähnliche Textur und Geschmack."
+ },
+ "sub_000766": {
+  "note": "Butter kann Margarine in gleicher Menge ersetzen (reichhaltigerer Geschmack, beim Backen etwas andere Textur)."
+ },
+ "sub_000767": {
+  "note": "Hausgemachte Vinaigrette (Öl + Essig) kann das gekaufte French Dressing ersetzen."
+ },
+ "sub_000768": {
+  "note": "Normale Mayonnaise kann leichte Mayonnaise ersetzen (Fettmenge je nach Rezept anpassen)."
+ },
+ "sub_000769": {
+  "note": "Hummer kann Languste ersetzen, ähnliche Textur und Geschmack."
+ },
+ "sub_000770": {
+  "note": "Seezunge kann Flunder (Plattfisch) in gleicher Menge ersetzen."
+ },
+ "sub_000771": {
+  "note": "Gelbe Wachsbohnen können durch grüne Bohnen ersetzt werden, gleiche Mengenverhältnisse."
+ },
+ "sub_000772": {
+  "note": "Grüne Paprika kann rote Paprika ersetzen (grasigerer, leicht bitterer Geschmack, gleiche Menge)."
+ },
+ "sub_000773": {
+  "note": "Kidneybohnen können Pintobohnen in Chili und Schmorgerichten ersetzen."
+ },
+ "sub_000774": {
+  "note": "Gelber Zuckermais kann weißen Zuckermais in gleicher Menge ersetzen (etwas süßerer Geschmack)."
+ },
+ "sub_000775": {
+  "note": "Edamame kann unreife Limabohnen ersetzen, ähnliche Textur."
+ },
+ "sub_000776": {
+  "note": "Kann Limabohnen in gleicher Menge in Schmorgerichten ersetzen, milderer Geschmack und ähnliche Textur."
+ },
+ "sub_000777": {
+  "note": "Schwarzaugenbohnen können durch Kidneybohnen oder Kichererbsen ersetzt werden, Verhältnis 1:1, in Salaten und Schmorgerichten.",
+  "name": "Kidneybohnen aus der Dose"
+ },
+ "sub_000778": {
+  "note": "Emu-Hack ist sehr mager; durch Rinderhack in gleicher Menge ersetzen und die Garzeit leicht verkürzen, um ein Austrocknen zu vermeiden."
+ },
+ "sub_000779": {
+  "note": "Strauß (sehr mageres rotes Fleisch) ersetzt Rindfleisch in gleicher Menge, kurze Garzeit, damit es nicht zäh wird."
+ },
+ "sub_000780": {
+  "note": "Ersetzt Kalbshack in gleicher Menge, etwas kräftigerer Geschmack."
+ },
+ "sub_000781": {
+  "note": "Putenhack und Hühnerhack sind in den meisten Rezepten in gleicher Menge austauschbar."
+ },
+ "sub_000782": {
+  "note": "Hühnerhack und Putenhack sind in gleicher Menge austauschbar."
+ },
+ "sub_000783": {
+  "note": "Wapiti (Wildbret) kann durch Rindfleisch in gleicher Menge ersetzt werden, magereres Fleisch, daher kürzere Garzeit."
+ },
+ "sub_000784": {
+  "note": "Rehfleisch (Wildbret) ersetzt Rindfleisch in gleicher Menge, kräftigerer, wildtypischer Geschmack."
+ },
+ "sub_000785": {
+  "note": "Ziegenfleisch ersetzt Lammfleisch in gleicher Menge in Schmorgerichten und Currys."
+ },
+ "sub_000786": {
+  "note": "Elchfleisch (Wildbret) ersetzt Rindfleisch in gleicher Menge."
+ },
+ "sub_000787": {
+  "note": "Pferdefleisch ersetzt Rindfleisch in gleicher Menge in den meisten Zubereitungen."
+ },
+ "sub_000788": {
+  "note": "Karibu (Wildbret) ersetzt Rindfleisch in gleicher Menge."
+ },
+ "sub_000789": {
+  "note": "Antilope (Wildbret) ersetzt Rind- oder Lammfleisch in gleicher Menge."
+ },
+ "sub_000790": {
+  "note": "Rohe Gänseleber kann durch rohe Entenstopfleber (Foie gras) in gleicher Menge ersetzt werden, sehr ähnlicher Geschmack und Textur.",
+  "name": "Rohe Entenstopfleber (Foie gras)"
+ },
+ "sub_000791": {
+  "note": "Wachtel kann durch Hühnerfleisch (mit Haut) in gleicher Menge ersetzt werden, Garzeit anpassen (Wachtel ist kleiner und gart schneller)."
+ },
+ "sub_000792": {
+  "note": "Fasan kann durch Hühnchen in gleicher Menge ersetzt werden, feinerer Geschmack, aber ähnliche Textur."
+ },
+ "sub_000793": {
+  "note": "Perlhuhn kann durch Hühnchen in gleicher Menge ersetzt werden."
+ },
+ "sub_000794": {
+  "note": "1 Entenei ≈ 1,5 Hühnereier; Flüssigkeitsmengen beim Backen anpassen.",
+  "name": "Hühnerei"
+ },
+ "sub_000795": {
+  "note": "1 Gänseei ≈ 2 Hühnereier; reichhaltigere Textur.",
+  "name": "Hühnerei"
+ },
+ "sub_000796": {
+  "note": "4 bis 5 Wachteleier ≈ 1 Hühnerei.",
+  "name": "Hühnerei"
+ },
+ "sub_000797": {
+  "note": "1 Putenei ≈ 1,5 Hühnereier.",
+  "name": "Hühnerei"
+ },
+ "sub_000798": {
+  "note": "Geschmacklich und texturell naher Ersatz, in gleicher Menge.",
+  "name": "Geräucherte Entenstopfleber (Foie gras)"
+ },
+ "sub_000799": {
+  "note": "1 Tasse Milch + 1 EL Essig/Zitronensaft (5-10 Min. ruhen lassen) ersetzt Buttermilch in gleicher Menge.",
+  "name": "Milch + Zitronensaft oder Essig"
+ },
+ "sub_000800": {
+  "note": "Klassischer Buttermilch-Ersatz, in gleicher Menge.",
+  "name": "Milch + Zitronensaft oder Essig"
+ },
+ "sub_000801": {
+  "note": "Margarine kann durch gesalzene Butter in gleicher Menge ersetzt werden, reichhaltigerer Geschmack."
+ },
+ "sub_000802": {
+  "note": "Ungesalzene Margarine kann durch ungesalzene Butter in gleicher Menge ersetzt werden."
+ },
+ "sub_000803": {
+  "note": "Spezielles Pflanzen-/Rapsöl kann für die alltägliche Küche durch handelsübliches Rapsöl (Canola) in gleicher Menge ersetzt werden."
+ },
+ "sub_000804": {
+  "note": "Coho-Lachs kann Atlantiklachs in gleicher Menge ersetzen, etwas weniger fettes Fleisch."
+ },
+ "sub_000805": {
+  "note": "Regenbogenforelle ersetzt Lachs in gleicher Menge, milderer Geschmack."
+ },
+ "sub_000806": {
+  "note": "Weißer Thun (Albacore) und Echter Bonito (Skipjack) sind in gleicher Menge austauschbar, besonders für Konserven."
+ },
+ "sub_000807": {
+  "note": "Atlantik-Kabeljau kann durch rohen Schellfisch in gleicher Menge ersetzt werden, ähnlich weißes Fleisch."
+ },
+ "sub_000808": {
+  "note": "Granatbarsch (Orange Roughy) kann durch Kabeljau oder Schellfisch in gleicher Menge ersetzt werden, ähnlich milder Weißfisch."
+ },
+ "sub_000809": {
+  "note": "Königsmakrele kann durch Atlantik-Makrele in gleicher Menge ersetzt werden."
+ },
+ "sub_000810": {
+  "note": "Grönlandheilbutt kann durch Atlantik-/Pazifik-Heilbutt in gleicher Menge ersetzt werden."
+ },
+ "sub_000811": {
+  "note": "Hummer kann in Schmorgerichten oder Bisques durch Languste in gleicher Menge ersetzt werden."
+ },
+ "sub_000812": {
+  "note": "Sardellen können durch Ölsardinen aus der Dose in gleicher Menge ersetzt werden, weniger salziger Geschmack."
+ },
+ "sub_000813": {
+  "note": "Schneekrabbe kann durch Blaukrabbe in gleicher Menge ersetzt werden."
+ },
+ "sub_000814": {
+  "note": "Pazifische Taschenkrabbe (Dungeness) kann durch Blaukrabbe in gleicher Menge ersetzt werden."
+ },
+ "sub_000815": {
+  "note": "Alaska-Königskrabbe kann durch Blaukrabbe in gleicher Menge ersetzt werden (etwas weniger feste Textur)."
+ },
+ "sub_000816": {
+  "note": "Durch echte gekochte Garnelen ersetzen: kräftigerer Geschmack, gleiche Mengenverhältnisse."
+ },
+ "sub_000817": {
+  "note": "Thunfisch aus der Dose anstelle von Lachs aus der Dose, in Salaten und Sandwiches."
+ },
+ "sub_000818": {
+  "note": "Thunfisch aus der Dose anstelle von Sardinen, milderer Geschmack."
+ },
+ "sub_000819": {
+  "note": "Ungesüßte Kondensmilch in Vollfett-Variante, etwas fettreicher."
+ },
+ "sub_000820": {
+  "note": "Seehecht, ähnlicher Weißfisch, identische Garmethode."
+ },
+ "sub_000821": {
+  "note": "Kabeljau, ähnlicher Weißfisch, identische Garmethode."
+ },
+ "sub_000822": {
+  "note": "Klassischer Cheddar anstelle von fettreduziertem Schmelzkäse, schmilzt weniger leicht."
+ },
+ "sub_000823": {
+  "note": "Frische in Scheiben geschnittene grüne Paprika anstelle von tiefgekühlter, Kochzeit im Wasser verkürzen."
+ },
+ "sub_000824": {
+  "note": "Frische Maiskörner anstelle von tiefgekühlten, etwas kürzere Garzeit."
+ },
+ "sub_000825": {
+  "note": "Butter (oder Margarine) anstelle von industriellem Backfett für Blätterteig."
+ },
+ "sub_000826": {
+  "note": "Frische Zucchini anstelle von tiefgekühlter, etwas kürzere Garzeit."
+ },
+ "sub_000827": {
+  "note": "Kidneybohne anstelle von Schwarzaugenbohne, ähnliche Textur."
+ },
+ "sub_000828": {
+  "note": "Gewöhnliches Schweinefleisch anstelle von Wildschwein, milderer Geschmack."
+ },
+ "sub_000829": {
+  "note": "Rinderhack anstelle von Wapiti-Hack, fettreicheres Fleisch."
+ },
+ "sub_000830": {
+  "note": "Rinderhack anstelle von Rehhack, fettreicheres Fleisch."
+ },
+ "sub_000831": {
+  "note": "Zuchtkaninchen anstelle von Wildkaninchen, zarteres Fleisch."
+ },
+ "sub_000832": {
+  "note": "Hühnchen (Keule) anstelle von Fasan, milderer Geschmack."
+ },
+ "sub_000833": {
+  "note": "Hühnchen (Brust) anstelle von Wachtel, Garzeit anpassen (größeres Stück)."
+ },
+ "sub_000834": {
+  "note": "Gewöhnliches Rinderhack anstelle von Bison-Hack, fettreicheres Fleisch."
+ },
+ "sub_000835": {
+  "note": "Zuchtente anstelle von Wildente, weniger festes Fleisch."
+ },
+ "sub_000836": {
+  "note": "Mageres Rindfleisch anstelle von Emu, einem seltenen exotischen Fleisch."
+ },
+ "sub_000837": {
+  "note": "Rindfleisch anstelle von Wasserbüffel, einem seltenen exotischen Fleisch."
+ },
+ "sub_000838": {
+  "note": "Hühnchen anstelle von Täubchen, Garzeit anpassen (größeres Stück)."
+ },
+ "sub_000839": {
+  "note": "Lammfleisch anstelle von Ziege (Zicklein), ähnlicher Geschmack."
+ },
+ "sub_000840": {
+  "note": "Butter anstelle von ausgelassenem Speckfett zum Kochen."
+ },
+ "sub_000841": {
+  "note": "Rindfleisch anstelle von Elch, einem seltenen exotischen Fleisch."
+ },
+ "sub_000842": {
+  "note": "Rindfleisch anstelle von Pferdefleisch, milderer Geschmack."
+ },
+ "sub_000843": {
+  "note": "Mageres Rinderhack anstelle von Straußenhack."
+ },
+ "sub_000844": {
+  "note": "Klassischer Schweinespeck anstelle von Rinderspeck."
+ },
+ "sub_000845": {
+  "note": "Hühnchen aus der Dose anstelle von Pute aus der Dose."
+ },
+ "sub_000846": {
+  "note": "Panierte Hähnchenstreifen anstelle von panierten Putensticks."
+ },
+ "sub_000847": {
+  "note": "Hühnchen anstelle von Kragenhuhn, einem seltenen Federwild."
+ },
+ "sub_000848": {
+  "note": "Rinderhack anstelle von Beefalo (Bison-Rind-Kreuzung)."
+ },
+ "sub_000849": {
+  "note": "Hausgans anstelle von Kanadagans."
+ },
+ "sub_000850": {
+  "note": "Schmalz (oder Butter) anstelle von Rindernierenfett (Talg)."
+ },
+ "sub_000851": {
+  "note": "Kalbsleber anstelle von Rinderleber, milderer Geschmack."
+ },
+ "sub_000852": {
+  "note": "Wilder Wels: durch gekochte Tilapia ersetzen, ähnlich milder Geschmack."
+ },
+ "sub_000853": {
+  "note": "Zuchtwels: durch gekochte Tilapia ersetzen."
+ },
+ "sub_000854": {
+  "note": "Süßwasserbarsch: durch Wolfsbarsch oder einen ähnlichen Weißfisch ersetzen."
+ },
+ "sub_000855": {
+  "note": "Pazifischer Rotbarsch: durch atlantischen Rotbarsch oder einen festen Weißfisch ersetzen."
+ },
+ "sub_000856": {
+  "note": "Pazifik-Makrele/Stöcker: durch Atlantik-Makrele ersetzen"
+ },
+ "sub_000857": {
+  "note": "Gekochter frischer Roter Thun: ersatzweise abgetropften hellen Thunfisch aus der Dose verwenden"
+ },
+ "sub_000858": {
+  "note": "Gekochter frischer Echter Bonito: ersatzweise abgetropften hellen Thunfisch aus der Dose verwenden"
+ },
+ "sub_000859": {
+  "note": "Gekochter frischer Weißer Thun: ersatzweise abgetropften hellen Thunfisch aus der Dose verwenden"
+ },
+ "sub_000860": {
+  "note": "Gekochter wilder Flusskrebs: durch gekochte Garnelen ersetzen, ähnliche Textur und Verwendung"
+ },
+ "sub_000861": {
+  "note": "Gekochter Zucht-Flusskrebs: durch gekochte Garnelen ersetzen"
+ },
+ "sub_000862": {
+  "note": "Gefrorenes gesalzenes/pasteurisiertes Eigelb: durch frisches Eigelb ersetzen (zugesetztes Salz weglassen)",
+  "name": "Ei, Eigelb, roh, frisch"
+ },
+ "sub_000863": {
+  "note": "Gefrorenes gesalzenes/pasteurisiertes Vollei: durch frische ganze Eier ersetzen"
+ },
+ "sub_000864": {
+  "note": "Gefrorenes gezuckertes/pasteurisiertes Eigelb: durch frisches Eigelb ersetzen (ohne zugesetzten Zucker)",
+  "name": "Ei, Eigelb, roh, frisch"
+ },
+ "sub_000865": {
+  "note": "Getrocknetes Eiweiß in Flocken: durch frisches Eiweiß ersetzen (Menge anpassen, dehydriertes Produkt)",
+  "name": "Ei, Eiweiß, roh, frisch"
+ },
+ "sub_000866": {
+  "note": "Eiweißpulver (getrocknet): durch frisches Eiweiß ersetzen",
+  "name": "Ei, Eiweiß, roh, frisch"
+ },
+ "sub_000867": {
+  "note": "Gesalzene Margarine im Becher: durch gesalzene Butter ersetzen, kräftigerer Geschmack"
+ },
+ "sub_000868": {
+  "note": "Gesalzene Margarine am Stück: durch gesalzene Butter ersetzen"
+ },
+ "sub_000869": {
+  "note": "Ungesalzene Margarine am Stück: durch ungesalzene Butter ersetzen"
+ },
+ "sub_000870": {
+  "note": "Trockener fettfreier Hüttenkäse: durch klassischen Hüttenkäse ersetzen (cremigere Konsistenz)"
+ },
+ "sub_000871": {
+  "note": "Fettarme Kakaomilch: durch handelsübliche fettarme Kakaomilch ersetzen, oder Milch + Kakaopulver"
+ },
+ "sub_000872": {
+  "note": "Kakaomilch aus Vollmilch: ersatzweise fettarme Kakaomilch oder Milch + Kakao und Zucker"
+ },
+ "sub_000873": {
+  "note": "Vitaminangereicherte fettarme Kakaomilch: durch normale fettarme Kakaomilch ersetzen"
+ },
+ "sub_000874": {
+  "note": "Rohe Putenbrust: durch rohe Hähnchenbrust ersetzen, ähnliche Garzeit, aber etwas schneller"
+ },
+ "sub_000875": {
+  "note": "Rohes Putenhack 85/15: durch Rinderhack 85/15 ersetzen, oder Hähnchenhack, um bei Geflügel zu bleiben"
+ },
+ "sub_000876": {
+  "note": "Rohes dunkles Putenfleisch: durch rohe Hähnchenoberkeule ersetzen",
+  "name": "Hähnchen, Oberkeule"
+ },
+ "sub_000877": {
+  "note": "Gebratenes Wildschwein: durch Schweinefleisch (Schulter oder Braten) ersetzen, milderer Geschmack",
+  "name": "Schwein, Schulter, Braten"
+ },
+ "sub_000878": {
+  "note": "Rohe Lammleber: durch rohe Hühnerleber ersetzen, milderer Geschmack"
+ },
+ "sub_000879": {
+  "note": "Geschmortes Kaninchen: durch geschmortes Hähnchen ersetzen, ähnliche Textur und Garzeit"
+ },
+ "sub_000880": {
+  "note": "Gebratener Wasserbüffel: durch Rinderbraten ersetzen, ähnlich mageres Fleisch",
+  "name": "Rind, Braten"
+ },
+ "sub_000881": {
+  "note": "In der Pfanne gebratenes Wapiti-Hack: durch in der Pfanne gebratenes Rinderhack 85/15 ersetzen"
+ },
+ "sub_000882": {
+  "note": "In der Pfanne gebratenes Hirschhack: durch in der Pfanne gebratenes Rinderhack 85/15 ersetzen"
+ },
+ "sub_000883": {
+  "note": "In der Pfanne gebratenes Bison-Hack: durch in der Pfanne gebratenes Rinderhack 85/15 ersetzen, etwas fettiger"
+ },
+ "sub_000884": {
+  "note": "Geschmorte Putenleber: durch geschmorte Hühnerleber ersetzen, gebräuchlicher",
+  "name": "Hähnchen, Leber, gegart, geschmort"
+ },
+ "sub_000885": {
+  "note": "Rohes Lammhack: durch Rinderhack für einen neutraleren Geschmack ersetzen"
+ },
+ "sub_000886": {
+  "note": "Gekochtes, zerkleinertes Hähnchenhack: durch gekochtes Putenhack ersetzen",
+  "name": "Gekochtes Putenhack"
+ },
+ "sub_000887": {
+  "note": "Ganzer gebratener Entenbraten (nur Fleisch): durch Brathähnchen ersetzen, fettärmer und leichter erhältlich"
+ },
+ "sub_000888": {
+  "note": "Rohe Wildentenbrust: durch Hausente (nur Fleisch) ersetzen, leichter erhältlich"
+ },
+ "sub_000889": {
+  "note": "Gebratene Gans (nur Fleisch): durch gebratene Ente ersetzen, ähnlicher Geschmack und Textur"
+ },
+ "sub_000890": {
+  "note": "Gebratene Gans mit Haut: durch gebratene Ente mit Haut ersetzen"
+ },
+ "sub_000891": {
+  "note": "Kalb (Mischung magerer Stücke, roh): ersatzweise durch Hähnchen- oder Putenschnitzel ersetzen",
+  "name": "Puten- oder Hähnchenschnitzel"
+ },
+ "sub_000892": {
+  "note": "Durch einen mageren Rinderbraten ersetzen (z. B. Schulter); Bison ist magerer, daher die Garzeit im Auge behalten, damit es nicht austrocknet."
+ },
+ "sub_000893": {
+  "note": "Hähnchen ist der klassische Ersatz für Kaninchen in Eintöpfen und Pfannengerichten."
+ },
+ "sub_000894": {
+  "note": "Rinderzunge: ähnliche Textur, vergleichbare Garzeit."
+ },
+ "sub_000895": {
+  "note": "Kalbsnieren: milderer Geschmack als Schweinenieren, gleiche Verwendung."
+ },
+ "sub_000896": {
+  "note": "Rinderhack ersetzt Putenhack in den meisten Rezepten, mit einem kräftigeren Geschmack."
+ },
+ "sub_000897": {
+  "note": "Kalbsleber ist zarter und milder im Geschmack als Rinderleber."
+ },
+ "sub_000898": {
+  "note": "Kalbsleber kann Lammleber ersetzen, milderer Geschmack."
+ },
+ "sub_000899": {
+  "note": "Kalbsbries ist die klassische, feinere Variante; der übliche Ersatz für Rinderbries."
+ },
+ "sub_000900": {
+  "note": "Kalbsnieren: ähnliche Textur und Verwendung, milderer Geschmack als Lamm."
+ },
+ "sub_000901": {
+  "note": "Handelsüblicher Bacon: Geschmack und Textur ähnlich dem vorgeschnittenen gesalzenen Bacon."
+ },
+ "sub_000902": {
+  "note": "Rohschinken (Typ Parma/Serrano) für einen salzig-rauchigen Geschmack, ähnlich dem fetten gesalzenen Schinken."
+ },
+ "sub_000903": {
+  "note": "Ein ganzes Freilandhuhn ersetzt Kapaun, mit etwas kürzerer Garzeit (kleineres Stück)."
+ },
+ "sub_000904": {
+  "note": "Ganzes Hähnchen für Brühen und Eintöpfe; das Fleisch wird etwas weniger fest als bei einem Suppenhuhn."
+ },
+ "sub_000905": {
+  "note": "Ein kleines ganzes Freilandhuhn ersetzt Cornish Hen; Portion und Garzeit entsprechend anpassen."
+ },
+ "sub_000906": {
+  "note": "Schweinshaxe ist eine preiswerte Alternative zur Kalbshaxe (Ossobuco)."
+ },
+ "sub_000907": {
+  "note": "Ersatzweise durch ein mageres Rindersteak (Filet oder Roastbeef) ersetzen, wenn kein Wild verfügbar ist."
+ },
+ "sub_000908": {
+  "note": "Schweinekotelett ist ein gängiger, preiswerter Ersatz für gegrilltes Kalbskotelett.",
+  "name": "Schweinekotelett"
+ },
+ "sub_000909": {
+  "note": "Kalb oft schwer zu finden: durch Rinderschulter ersetzen (geschmort), gleiche Textur nach langer Garzeit"
+ },
+ "sub_000910": {
+  "note": "Ersatz: Rinderschulter, ähnliche Zubereitung (Braten/Schmoren)"
+ },
+ "sub_000911": {
+  "note": "Geschmorte Kalbsschulter: durch geschmorte Rinderschulter ersetzen"
+ },
+ "sub_000912": {
+  "note": "Gebratene Kalbsschulter: durch Rinderschulter oder Schweineschulter ersetzen"
+ },
+ "sub_000913": {
+  "note": "Kalbs-Ossobuco: durch geschmorte Rinderhaxe ersetzen, ähnliche Garzeit",
+  "name": "Rind, Haxe, gegart, geschmort"
+ },
+ "sub_000914": {
+  "note": "Gegrilltes Kalbskotelett: Hähnchenbrust ist ein gängiger, preiswerter Ersatz",
+  "name": "Hähnchen, Schnitzel, gegart"
+ },
+ "sub_000915": {
+  "note": "Kalbs-Ossobuco (mager und fett): durch geschmorte Rinderhaxe ersetzen",
+  "name": "Rind, Haxe, gegart, geschmort"
+ },
+ "sub_000916": {
+  "note": "Gegrilltes Kalbskotelett: gängiger Ersatz durch Hähnchenbrust",
+  "name": "Hähnchen, Schnitzel, gegart"
+ },
+ "sub_000917": {
+  "note": "Paniertes Kalbsschnitzel: klassischer Ersatz, paniertes Hähnchenschnitzel (Mailänder Art)",
+  "name": "Hähnchen, paniertes Schnitzel, gegart"
+ },
+ "sub_000918": {
+  "note": "Paniertes Kalbsschnitzel: Ersatz durch paniertes Hähnchenschnitzel",
+  "name": "Hähnchen, paniertes Schnitzel, gegart"
+ },
+ "sub_000919": {
+  "note": "In der Pfanne gebratenes Kalbsschnitzel: Ersatz durch Hähnchenschnitzel",
+  "name": "Hähnchen, Schnitzel, gegart"
+ },
+ "sub_000920": {
+  "note": "Ganze geschmorte Kalbsschulter: durch geschmorte Rinderschulter ersetzen"
+ },
+ "sub_000921": {
+  "note": "Bison (Kugel), selten erhältlich: durch Rinderkugel ersetzen"
+ },
+ "sub_000922": {
+  "note": "Bison (Schulter): durch Rinderschulter für Schmorgerichte ersetzen"
+ },
+ "sub_000923": {
+  "note": "Wapiti-Filet (Wild), selten erhältlich: durch Rinderfilet ersetzen, milderer Geschmack"
+ },
+ "sub_000924": {
+  "note": "Hirschfilet (Wild), selten erhältlich: durch Rinderfilet ersetzen"
+ },
+ "sub_000925": {
+  "note": "Geschmorte Hirschschulter: durch geschmorte Rinderschulter ersetzen"
+ },
+ "sub_000926": {
+  "note": "Bison-Entrecôte, selten erhältlich: durch Rinder-Entrecôte ersetzen"
+ },
+ "sub_000927": {
+  "note": "Bison-Roastbeef, selten erhältlich: durch Rinder-Roastbeef ersetzen"
+ },
+ "sub_000928": {
+  "note": "Geschmortes Kaninchen, selten/teuer: durch Hähnchen (Schenkel/gemischt) ersetzen, ähnliche Garzeit"
+ },
+ "sub_000929": {
+  "note": "Gebratenes Kaninchen, selten/teuer: durch Brathähnchen ersetzen"
+ },
+ "sub_000930": {
+  "note": "Zerkleinertes Rindfleisch für Sandwiches (Cheesesteak-Art): durch dünn geschnittenes Entrecôte oder Roastbeef ersetzen",
+  "name": "Rind, Entrecôte, ohne Knochen, Choice-Qualität, roh"
+ },
+ "sub_000931": {
+  "note": "Gefrorener gewürzter, entbeinter Putenbraten: durch naturbelassene Putenbrust ersetzen, falls nicht verfügbar",
+  "name": "Pute, Brust, nur Fleisch"
+ },
+ "sub_000932": {
+  "note": "Geräucherte Putenbrust in Scheiben (Aufschnitt): gängiger Ersatz, gekochter Schinken in Scheiben",
+  "name": "Schinken, gekocht, in Scheiben"
+ },
+ "sub_000933": {
+  "note": "Bison, selten erhältlich: durch Schmorrindfleisch (Schulter) für einen Eintopf ersetzen, milderer und weniger wilder Geschmack"
+ },
+ "sub_000934": {
+  "note": "Bison-Steak, selten erhältlich: durch ein Rindersteak (Entrecôte) ersetzen, gleiche Zubereitung auf dem Grill"
+ },
+ "sub_000935": {
+  "note": "Bison-Steak (Kugel), selten erhältlich: durch das gleiche Rindfleischstück ersetzen, ähnliche Zubereitung"
+ },
+ "sub_000936": {
+  "note": "Geschmortes Bison, selten erhältlich: durch geschmorte Rinderschulter ersetzen, identische Textur und Verwendung (Bourguignon, gezupft)"
+ },
+ "sub_000937": {
+  "note": "Hirsch (Wild), schwer erhältlich: durch ein Rindersteak ersetzen, ähnliche Grillzubereitung"
+ },
+ "sub_000938": {
+  "note": "Hirsch (Wild), selten erhältlich: durch das gleiche gegrillte Rindfleischstück ersetzen"
+ },
+ "sub_000939": {
+  "note": "Stark marmoriertes, teures Wagyu-Rindfleisch: durch Standard-Rinderhack 85/15 ersetzen, falls nicht verfügbar"
+ },
+ "sub_000940": {
+  "note": "Teures, selten erhältliches Wagyu-Rindfleisch: durch Standard-Rinderhack ersetzen"
+ },
+ "sub_000941": {
+  "note": "Wagyu-Rindfleisch (Außenfett), selten erhältlich: durch normales Rindfleisch ersetzen"
+ },
+ "sub_000942": {
+  "note": "Teures Wagyu-Rindfleisch: durch normales Rindfleisch ersetzen, falls nicht verfügbar"
+ },
+ "sub_000943": {
+  "note": "Puten-Pepperoni nicht erhältlich: durch klassische Pepperoni aus Rind/Schwein ersetzen, gleiche Verwendung in Scheiben"
+ },
+ "sub_000944": {
+  "note": "Natriumreduzierter Bacon, selten erhältlich: durch klassischen Bacon ersetzen (Salzmenge im Rezept anpassen)"
+ },
+ "sub_000945": {
+  "note": "Hähnchen-Brotaufstrich nicht verfügbar: durch Schinken- oder Putensalat zum Streichen ersetzen, gleiche Verwendung im Sandwich",
+  "name": "Schinkensalat zum Streichen"
+ },
+ "sub_000946": {
+  "note": "Geflügelsalat zum Streichen nicht verfügbar: durch Hähnchen- oder Puten-Brotaufstrich ersetzen, gleiche Verwendung",
+  "name": "Hähnchen-Brotaufstrich"
+ },
+ "sub_000947": {
+  "note": "Schinkensalat zum Streichen nicht verfügbar: durch einen anderen fleischbasierten Brotaufstrich ersetzen (Hähnchen, Pute), gleiche Verwendung im Sandwich",
+  "name": "Hähnchen-Brotaufstrich"
+ },
+ "sub_000948": {
+  "note": "Bison, seltener erhältlich: durch ein Rindersteak (Hüfte) in gleicher Menge ersetzen, ähnliche Grillzubereitung."
+ },
+ "sub_000949": {
+  "note": "Durch gekochten Schinken ersetzen, gewürfelt oder gehackt"
+ },
+ "sub_000950": {
+  "note": "Bologna (US-Aufschnitt) ähnlich der klassischen Mortadella"
+ },
+ "sub_000951": {
+  "note": "Puten-Variante, ersetzbar durch klassische Mortadella (Bologna aus Schwein/Rind)"
+ },
+ "sub_000952": {
+  "note": "Puten-Variante, ersetzbar durch Rinder-Pastrami"
+ },
+ "sub_000953": {
+  "note": "Puten-Variante, ersetzbar durch klassisches Frankfurter Würstchen aus Schwein"
+ },
+ "sub_000954": {
+  "note": "Hähnchen-Variante, ersetzbar durch klassisches Frankfurter Würstchen aus Schwein"
+ },
+ "sub_000955": {
+  "note": "Natriumarme Variante, ersetzbar durch klassisches Frankfurter Würstchen"
+ },
+ "sub_000956": {
+  "note": "Kielbasa nicht gefunden: durch eine Kette Räucherwurst ersetzen"
+ },
+ "sub_000957": {
+  "note": "Beerwurst in Frankreich nicht erhältlich: durch eine Räucherwurst aus Schwein/Rind ersetzen"
+ },
+ "sub_000958": {
+  "note": "Durch klassisches gekochtes Corned Beef ersetzen"
+ },
+ "sub_000959": {
+  "note": "US-Marke: durch handelsübliche geschnittene Salami ersetzen"
+ },
+ "sub_000960": {
+  "note": "US-Marke: durch Rinder-Mortadella (Bologna) ersetzen"
+ },
+ "sub_000961": {
+  "note": "US-Marke: durch ein handelsübliches Rindfleisch-Frankfurter Würstchen (Hot Dog) ersetzen"
+ },
+ "sub_000962": {
+  "note": "Leberwurst (Braunschweiger) ähnlich der streichfähigen Leberpastete"
+ },
+ "sub_000963": {
+  "note": "US-Marke: durch streichfähige Leberpastete ersetzen"
+ },
+ "sub_000964": {
+  "note": "US-Marke: durch naturbelassene, geschnittene Hähnchenbrust ersetzen (ohne Honigglasur)"
+ },
+ "sub_000965": {
+  "note": "US-Marke: durch gehackten gekochten Schinken ersetzen"
+ },
+ "sub_000966": {
+  "note": "Trüffel-Pastete: ersetzbar durch naturbelassene Leberpastete"
+ },
+ "sub_000967": {
+  "note": "Falls kein Fischfond vorhanden ist, Gemüsebrühe verwenden (weniger maritimer Geschmack)"
+ },
+ "sub_000968": {
+  "note": "Kalbsschnitzel, ersetzbar durch ein Hähnchen- oder Putenschnitzel",
+  "name": "Hähnchenschnitzel"
+ },
+ "sub_000969": {
+  "note": "Tiefkühl-Kartoffelspalten, ersetzbar durch tiefgekühlte Pommes frites"
+ },
+ "sub_000970": {
+  "note": "Schulter und Blatt sind fast identische Schmorstücke, austauschbar (Bourguignon, Rindfleischeintopf)"
+ },
+ "sub_000971": {
+  "note": "Ein dem Blatt gleichwertiges Stück zum Schmoren/Schmorgaren"
+ },
+ "sub_000972": {
+  "note": "Falls kein Filet vorhanden ist, Roastbeef verwenden (günstiger, etwas weniger zart, Garzeit im Auge behalten)"
+ },
+ "sub_000973": {
+  "note": "Alternative zum Filet für einen Braten, günstiger, aber weniger zart"
+ },
+ "sub_000974": {
+  "note": "Bavette und Onglet können sich gegenseitig für schnelles Braten in der Pfanne ersetzen"
+ },
+ "sub_000975": {
+  "note": "Bavette (Dünnung) ersetzbar durch Onglet für ein schnelles Grillgericht"
+ },
+ "sub_000976": {
+  "note": "Die Hüfte entspricht dem Rumpsteak, austauschbare Stücke zum Grillen"
+ },
+ "sub_000977": {
+  "note": "Kann durch Rumpsteak ersetzt werden, ein gleichwertiges Stück"
+ },
+ "sub_000978": {
+  "note": "Falls kein Lendenkotelett vorhanden ist, Schweinenacken verwenden (fettiger, etwas längere Garzeit einplanen)"
+ },
+ "sub_000979": {
+  "note": "Schweinenacken als Ersatz, fettigere, zartschmelzendere Textur"
+ },
+ "sub_000980": {
+  "note": "Entspricht naturbelassenem Schweinefilet (ohne zugesetzte Lösung)"
+ },
+ "sub_000981": {
+  "note": "Ersetzbar durch naturbelassene Hähnchenbrust; das zugesetzte Salz im Rezept reduzieren"
+ },
+ "sub_000982": {
+  "note": "Falls keine Rinderbrust vorhanden ist, lässt sich die Schulter ähnlich für einen Eintopf oder Schmorbraten schmoren",
+  "name": "Rinderschulter (zum Schmoren)"
+ },
+ "sub_000983": {
+  "note": "Klassischer Schweinebacon kann Putenbacon ersetzen (kräftigerer Geschmack, mehr Fett)"
+ },
+ "sub_000984": {
+  "note": "Klassischer Schweinebacon kann Putenbacon ersetzen (kräftigerer Geschmack, mehr Fett)"
+ },
+ "sub_000985": {
+  "note": "Klassischer Schweinebacon kann Putenbacon ersetzen (kräftigerer Geschmack, mehr Fett)"
+ },
+ "sub_000986": {
+  "note": "Mandelmus ersetzt Erdnussbutter für einen milderen Geschmack (Erdnussallergie); Achtung, es enthält Schalenfrüchte."
+ },
+ "sub_000987": {
+  "note": "Frischer Schinken in Scheiben statt gehacktem Dosenschinken für eine ähnliche Verwendung im Sandwich"
+ },
+ "sub_000988": {
+  "note": "Gängige Mischung als Ersatz für Worcestershiresauce in Marinaden und Saucen",
+  "name": "Sojasauce + ein Schuss Balsamico-Essig"
+ },
+ "sub_000989": {
+  "note": "Klassische Mortadella (Bologna) ist das direkte Äquivalent bei geschnittenem Aufschnitt."
+ },
+ "sub_000990": {
+  "note": "Klassische Mortadella (Bologna) ist das direkte Äquivalent bei geschnittenem Aufschnitt."
+ },
+ "sub_000991": {
+  "note": "Corned Beef aus der Dose ist ersetzbar durch selbst gekochte gepökelte Rinderbrust."
+ },
+ "sub_000992": {
+  "note": "Sandwichfleisch in Aspik kann durch gekochtes Corned Beef ersetzt werden, ähnliche Verwendung als Aufschnitt."
+ },
+ "sub_000993": {
+  "note": "Gekochter Schinken ist ein gängiger Ersatz für Putenaufschnitt in Sandwiches."
+ },
+ "sub_000994": {
+  "note": "Nicht näher bezeichnete Leberpastete als preiswertere Alternative zu geräucherter Gänseleberpastete."
+ },
+ "sub_000995": {
+  "note": "Bei Erdnussallergie durch Sonnenblumenkernmus in gleicher Menge ersetzen."
+ },
+ "sub_000996": {
+  "note": "Ersetzbar durch Erdnussbutter in gleicher Menge (außer bei Allergie)."
+ },
+ "sub_000997": {
+  "note": "Für eine laktosefreie/vegane Version Molkenprotein (Whey) durch Sojaproteinisolat ersetzen."
+ },
+ "sub_000998": {
+  "note": "Für eine laktosefreie/vegane Version Whey-Isolat durch Sojaproteinisolat ersetzen."
+ },
+ "sub_000999": {
+  "note": "Kann durch Whey-Proteinpulver ersetzt werden, wenn eine Sojaunverträglichkeit kein Problem darstellt."
+ },
+ "sub_001000": {
+  "note": "Für eine vegetarische Version Fischsauce (Nuoc-mâm) durch Sojasauce ersetzen."
+ },
+ "sub_001001": {
+  "note": "Tomatenbasierte Steaksauce kann durch mit etwas Ketchup verdünnte Worcestershiresauce ersetzt werden."
+ },
+ "sub_001002": {
+  "note": "Sriracha-Sauce ist ersetzbar durch Tabasco oder eine andere scharfe Flaschensauce (Menge anpassen, ist stärker)."
+ },
+ "sub_001003": {
+  "note": "Servierfertige scharfe Sauce ist ersetzbar durch Tabasco-Sauce."
+ },
+ "sub_001004": {
+  "note": "Naturreis kann durch langkörnigen weißen Reis ersetzt werden (kürzere Garzeit)."
+ },
+ "sub_001005": {
+  "note": "Naturreis kann durch langkörnigen weißen Reis ersetzt werden (kürzere Garzeit)."
+ },
+ "sub_001006": {
+  "note": "Gekochter Naturreis ist ersetzbar durch gekochten langkörnigen weißen Reis."
+ },
+ "sub_001007": {
+  "note": "Gekochter Naturreis ist ersetzbar durch gekochten langkörnigen weißen Reis."
+ },
+ "sub_001008": {
+  "note": "Vollkornnudeln sind ersetzbar durch klassische Nudeln (Spaghetti), falls nicht verfügbar."
+ },
+ "sub_001009": {
+  "note": "Gekochte Vollkornnudeln sind ersetzbar durch gekochte klassische Nudeln."
+ },
+ "sub_001010": {
+  "note": "Pinto-Bohnen sind ersetzbar durch Kidneybohnen in den meisten Rezepten (Chili, Schmorgerichte)."
+ },
+ "sub_001011": {
+  "note": "Great-Northern-Bohnen sind ersetzbar durch weiße Bohnen (Navy) oder Cannellini-Bohnen."
+ },
+ "sub_001012": {
+  "note": "Getrocknete Sauerkirschen sind ersetzbar durch getrocknete Cranberries in gleicher Menge."
+ },
+ "sub_001013": {
+  "note": "Gefrorene Sauerkirschen sind ersetzbar durch ungesüßte gefrorene Cranberries.",
+  "name": "Cranberries, gefroren, ungesüßt"
+ },
+ "sub_001014": {
+  "note": "Bohnendip ist ersetzbar durch Hummus für Häppchen oder Brotaufstriche."
+ },
+ "sub_001015": {
+  "note": "Handelsübliche Gemüsebrühe ist ersetzbar durch servierfertige Hühnerbrühe, wenn das Gericht nicht vegetarisch sein muss."
+ },
+ "sub_001016": {
+  "note": "Bestimmte Marke, durch eine handelsübliche Barbecue-Sauce ersetzen"
+ },
+ "sub_001017": {
+  "note": "Bestimmte Marke, durch eine handelsübliche Barbecue-Sauce ersetzen"
+ },
+ "sub_001018": {
+  "note": "Bestimmte Marke, durch eine handelsübliche Barbecue-Sauce ersetzen"
+ },
+ "sub_001019": {
+  "note": "Bestimmte Marke, durch eine handelsübliche Barbecue-Sauce ersetzen"
+ },
+ "sub_001020": {
+  "note": "Bestimmte Marke, durch eine handelsübliche Sriracha-Sauce ersetzen"
+ },
+ "sub_001021": {
+  "note": "Bestimmte Marke, durch eine handelsübliche Sriracha-Sauce ersetzen"
+ },
+ "sub_001022": {
+  "note": "Tabasco, ersetzbar durch jede servierfertige scharfe Sauce"
+ },
+ "sub_001023": {
+  "note": "Käsesuppe aus der Dose, ersetzbar durch servierfertige Käsesauce"
+ },
+ "sub_001024": {
+  "note": "Käsesuppe aus der Dose, ersetzbar durch servierfertige Käsesauce"
+ },
+ "sub_001025": {
+  "note": "Scharfer Käsedip, ersetzbar durch naturbelassene Käsesauce (Schärfe anpassen)"
+ },
+ "sub_001026": {
+  "note": "Natriumarme Version, ersetzbar durch klassische Teriyakisauce"
+ },
+ "sub_001027": {
+  "note": "Zuckerfreie Markencola, ersetzbar durch eine handelsübliche Diät-Cola"
+ },
+ "sub_001028": {
+  "note": "Marken-Energydrink, ersetzbar durch einen handelsüblichen Energydrink"
+ },
+ "sub_001029": {
+  "note": "Marken-Energydrink, ersetzbar durch einen handelsüblichen Energydrink"
+ },
+ "sub_001030": {
+  "note": "Marken-Energydrink, ersetzbar durch einen handelsüblichen Energydrink"
+ },
+ "sub_001031": {
+  "note": "Marken-Energydrink, ersetzbar durch einen handelsüblichen Energydrink"
+ },
+ "sub_001032": {
+  "note": "Marken-Energydrink, ersetzbar durch einen handelsüblichen Energydrink"
+ },
+ "sub_001033": {
+  "note": "Hühnercremesuppe aus der Dose, ersetzbar durch selbstgemachte Béchamel mit zugesetzter Hühnerbrühe"
+ },
+ "sub_001034": {
+  "note": "Champignoncremesuppe aus der Dose, ersetzbar durch selbstgemachte Béchamel mit zugesetzten Champignons"
+ },
+ "sub_001035": {
+  "note": "Selleriecremesuppe aus der Dose, ersetzbar durch selbstgemachte Béchamel mit zugesetztem Sellerie"
+ },
+ "sub_001036": {
+  "note": "Kartoffelcremesuppe aus der Dose, ersetzbar durch selbstgemachte Béchamel"
+ },
+ "sub_001037": {
+  "note": "Garnelencremesuppe aus der Dose, ersetzbar durch selbstgemachte Béchamel mit zugesetztem Garnelenfond"
+ },
+ "sub_001038": {
+  "note": "Zwiebelcremesuppe aus der Dose, ersetzbar durch selbstgemachte Béchamel mit zugesetzter Zwiebel"
+ },
+ "sub_001039": {
+  "note": "Spargelcremesuppe aus der Dose, ersetzbar durch selbstgemachte Béchamel"
+ },
+ "sub_001040": {
+  "note": "Tomatenbisque aus der Dose, ersetzbar durch mit Sahne vermischte Tomatensauce"
+ },
+ "sub_001041": {
+  "note": "Champignoncremesuppe aus der Dose, ein gängiger Ersatz, wenn in Auflaufrezepten keine Garnelen verfügbar sind"
+ },
+ "sub_001042": {
+  "note": "Hühnercremesuppe, austauschbar mit Champignoncremesuppe in den meisten Auflaufrezepten"
+ },
+ "sub_001043": {
+  "note": "Konzentrierte Tomatensuppe aus der Dose ersetzt die mit Wasser angerührte Trockenmischung"
+ },
+ "sub_001044": {
+  "note": "Abgetropfter Mais aus der Dose, gängiger Ersatz für Tiefkühlmais"
+ },
+ "sub_001045": {
+  "note": "Tiefkühlmais, gängiger Ersatz für Mais aus der Dose"
+ },
+ "sub_001046": {
+  "note": "Eine andere Erdnusssaucenbasis (Kokosnuss), einsetzbar für dieselben Satay-Rezepte"
+ },
+ "sub_001047": {
+  "note": "Eine andere Erdnusssaucenbasis (Erdnussbutter), einsetzbar für dieselben Satay-Rezepte"
+ },
+ "sub_001048": {
+  "note": "Grüne Chilisauce, Ersatz für rote Chilisauce je nach gewünschter Farbe/Schärfe"
+ },
+ "sub_001049": {
+  "note": "Rote Chilisauce, Ersatz für grüne Chilisauce je nach gewünschter Farbe/Schärfe"
+ },
+ "sub_001050": {
+  "note": "Geräucherte Putenwurst, fettarm, leichtere Alternative zur klassischen Räucherwurst"
+ },
+ "sub_001051": {
+  "note": "Handelsübliches Leichtbier, Ersatz für die Marke Bud Light in Rezepten"
+ },
+ "sub_001052": {
+  "note": "Handelsübliches Leichtbier, Ersatz für die Marke Budweiser Select in Rezepten"
+ },
+ "sub_001053": {
+  "note": "Handelsübliches normales Bier, Ersatz für die Marke Budweiser in Rezepten"
+ },
+ "sub_001054": {
+  "note": "Kräftiger Rotwein (Syrah), ersetzbar durch einen Zinfandel für Schmorgerichte und Saucen"
+ },
+ "sub_001055": {
+  "note": "Merlot und Cabernet Sauvignon: tanninreiche Rotweine, in der Küche austauschbar"
+ },
+ "sub_001056": {
+  "note": "Claret (Bordeaux-Verschnitt) kommt dem Cabernet Sauvignon zum Kochen nahe"
+ },
+ "sub_001057": {
+  "note": "Pinot Noir und Merlot: leichtere Rotweine, austauschbar"
+ },
+ "sub_001058": {
+  "note": "Cabernet Franc ähnelt dem Merlot, zum Kochen austauschbar"
+ },
+ "sub_001059": {
+  "note": "Fumé Blanc ist ein anderer Handelsname für Sauvignon Blanc"
+ },
+ "sub_001060": {
+  "note": "Chardonnay und Pinot Blanc: austauschbare trockene Weißweine"
+ },
+ "sub_001061": {
+  "note": "Pinot Gris und Chardonnay: zum Kochen austauschbare trockene Weißweine"
+ },
+ "sub_001062": {
+  "note": "Chenin Blanc und Sauvignon Blanc: ähnliche trockene Weißweine"
+ },
+ "sub_001063": {
+  "note": "Gewürztraminer und Riesling: austauschbare aromatische Weißweine"
+ },
+ "sub_001064": {
+  "note": "Muschelsuppe Manhattan-Art (Tomate) und New-England-Art (Sahne): austauschbar je nach Geschmack"
+ },
+ "sub_001065": {
+  "note": "Zwei Marken Basilikum-Pesto, gleichwertig"
+ },
+ "sub_001066": {
+  "note": "Warme Weizenflocken Wheatena und Cream of Wheat: austauschbar"
+ },
+ "sub_001067": {
+  "note": "Cream of Rice und Cream of Wheat: austauschbare warme Getreidebreie"
+ },
+ "sub_001068": {
+  "note": "Gleiches Produkt ohne zugesetztes Soja; gleiche Menge, gleiche Zubereitung."
+ },
+ "sub_001069": {
+  "note": "Geflügel-Nuggets statt reinem Hühnchen, sehr ähnliche Textur und Garzeit."
+ },
+ "sub_001070": {
+  "note": "Kalbfleisch durch paniertes Hähnchen ersetzen; gleiche Menge, gleiche Garzeit."
+ },
+ "sub_001071": {
+  "note": "Paniertes Puten- und Hähnchenfleisch sind in gleicher Menge austauschbar."
+ },
+ "sub_001072": {
+  "note": "Hühnerbrühe statt Rinderbrühe, etwas milderer Geschmack, aber gleichwertige Basis."
+ },
+ "sub_001073": {
+  "note": "Gemüsebrühe für eine leichtere (oder vegetarische) Variante, gleiche Menge."
+ },
+ "sub_001074": {
+  "note": "Hammelfleisch durch klassisches Couscous mit Fleisch ersetzen, gleiches Gemüse und Grieß."
+ },
+ "sub_001075": {
+  "note": "Leichtere Variante mit Fleisch oder Hähnchen, gleiches Prinzip und gleiche Menge."
+ },
+ "sub_001076": {
+  "note": "Geflügelröllchen statt Kalbfleisch, gleiche Zubereitung und Garzeit."
+ },
+ "sub_001077": {
+  "note": "Hähnchen-Tajine statt Hammelfleisch, gleiche Gewürze und gleiches Gemüse, etwas kürzere Garzeit."
+ },
+ "sub_001078": {
+  "note": "Klassisches Cassoulet aus der Dose statt der Schweinefleisch-Version, gleiche Bohnenbasis."
+ },
+ "sub_001079": {
+  "note": "Cassoulet mit Schweinefleisch statt Ente/Gans; gleiche Basis, milderer Geschmack."
+ },
+ "sub_001080": {
+  "note": "Getrocknete Variante zum Anrühren, gleicher Geschmack, nach Packungsangabe verdünnen."
+ },
+ "sub_001081": {
+  "note": "Trockenpackung zum Anrühren, Ergebnis sehr nah an der frischen Variante."
+ },
+ "sub_001082": {
+  "note": "Getrocknete Variante zum Anrühren, sehr ähnlicher Geschmack."
+ },
+ "sub_001083": {
+  "note": "Angerührte Trockenvariante, gleiche Gemüseart, nach Packungsangabe verdünnen."
+ },
+ "sub_001084": {
+  "note": "Trockenpackung zum Anrühren, gleiches Rezept aus Lauch und Kartoffeln."
+ },
+ "sub_001085": {
+  "note": "Getrocknete Variante zum Anrühren, gleiche Basis aus Geflügel und Gemüse."
+ },
+ "sub_001086": {
+  "note": "Getrocknete Minestrone zum Anrühren, gleiches Rezept."
+ },
+ "sub_001087": {
+  "note": "Getrocknete Kürbissuppe zum Anrühren, sehr ähnlicher Geschmack."
+ },
+ "sub_001088": {
+  "note": "Naturgegarter Weißfisch, bei Bedarf mit einer selbstgemachten Sauce; gleiche Basis."
+ },
+ "sub_001089": {
+  "note": "Naturgegarter Weißfisch, bei Bedarf mit hausgemachter Tomatensauce."
+ },
+ "sub_001090": {
+  "note": "Naturgegarter Weißfisch; bei Bedarf etwas Senf zur Zubereitung geben."
+ },
+ "sub_001091": {
+  "note": "Naturgegarter Weißfisch, ohne die Panade und das Öl der Bordeaux-Art."
+ },
+ "sub_001092": {
+  "note": "Sellerie-Karotten-Remoulade statt reinem Sellerie, Textur und Sauce fast identisch."
+ },
+ "sub_001093": {
+  "note": "Kartoffelsalat piemontesisch statt hausgemacht, gleiche Basis aus Kartoffeln und Mayonnaise."
+ },
+ "sub_001094": {
+  "note": "Krautsalat (Weißkohl/Karotte) statt Rotkohl, gleiches Prinzip des Krautsalats."
+ },
+ "sub_001095": {
+  "note": "Taboulé mit Hähnchen statt Gemüse-Taboulé; bei Bedarf das Hähnchen für eine vegetarische Variante weglassen."
+ },
+ "sub_001096": {
+  "note": "Gleiches Produkt, vorverpackte Variante statt zum Mitnehmen."
+ },
+ "sub_001097": {
+  "note": "Vegetarische Version desselben Gerichts (Ravioli in Tomatensauce, Konserve)."
+ },
+ "sub_001098": {
+  "note": "Vegetarische, fleischlose Variante, gleiches vorverpacktes Format."
+ },
+ "sub_001099": {
+  "note": "Durch klassisches Kartoffelpüree ersetzen, ohne den jungen Tomme-Käse."
+ },
+ "sub_001100": {
+  "note": "Ähnlicher Kartoffelgratin, ohne Reblochon-Käse und Speckwürfel."
+ },
+ "sub_001101": {
+  "note": "Gleiches Getreide, selbst gekocht statt im Mikrowellenbeutel."
+ },
+ "sub_001102": {
+  "note": "Naturbelassener Couscous-Grieß, selbst mit Gemüse verfeinern."
+ },
+ "sub_001103": {
+  "note": "Klassisches Cordon Bleu aus Fleisch, gleiche panierte Zubereitung."
+ },
+ "sub_001104": {
+  "note": "Klassische Hähnchen-Nuggets, gleiche Menge."
+ },
+ "sub_001105": {
+  "note": "Sojafreie Alternative, gleiches paniertes Format."
+ },
+ "sub_001106": {
+  "note": "Gleiche Menge, vorverpackte Variante des Croque-Monsieur."
+ },
+ "sub_001107": {
+  "note": "Gleiche Menge, hausgemachte Variante."
+ },
+ "sub_001108": {
+  "note": "Das Ei weglassen für ein klassisches Croque-Monsieur."
+ },
+ "sub_001109": {
+  "note": "Gleiches Sandwich, Variante zum Mitnehmen."
+ },
+ "sub_001110": {
+  "note": "Gleiches Sandwich, Variante zum Mitnehmen."
+ },
+ "sub_001111": {
+  "note": "Gleiches Sandwich, Variante zum Mitnehmen."
+ },
+ "sub_001112": {
+  "note": "Gleiches Sandwich, Variante zum Mitnehmen."
+ },
+ "sub_001113": {
+  "note": "Gleiches Sandwich, Variante zum Mitnehmen."
+ },
+ "sub_001114": {
+  "note": "Gleiches Sandwich, Variante zum Mitnehmen."
+ },
+ "sub_001115": {
+  "note": "Gleiche Art der Zubereitung, hausgemacht statt vorverpackt."
+ },
+ "sub_001116": {
+  "note": "Vegetarische Version des Frühlingsrolle-ähnlichen Gerichts, ohne Fleisch oder Fisch."
+ },
+ "sub_001117": {
+  "note": "Die Garnelen durch eine Fleisch-Gemüse-Füllung ersetzen, gleiche Basis aus gebratenen Nudeln."
+ },
+ "sub_001118": {
+  "note": "Nicht-instant asiatische Nudeln, selbst gekocht statt der Instant-Variante."
+ },
+ "sub_001119": {
+  "note": "Den Schinken weglassen für eine Käse-/Margherita-Pizza."
+ },
+ "sub_001120": {
+  "note": "Gleiches Produkt, Variante ohne Garantie, frei von tierischen Zutaten zu sein."
+ },
+ "sub_001121": {
+  "note": "Gleiches Produkt, in einer veganen Variante."
+ },
+ "sub_001122": {
+  "note": "Gleiches Produkt, in einer veganen Variante."
+ },
+ "sub_001123": {
+  "note": "Gleiches Produkt, Variante ohne Garantie, frei von tierischen Zutaten zu sein."
+ },
+ "sub_001124": {
+  "note": "Gleiches Produkt, in einer veganen Variante."
+ },
+ "sub_001125": {
+  "note": "Durch frische grüne Bohnen ersetzen, gleiche Menge, Garzeit anpassen."
+ },
+ "sub_001126": {
+  "note": "Durch frischen Blumenkohl ersetzen, gleiche Menge."
+ },
+ "sub_001127": {
+  "note": "Durch frische ausgelöste Erbsen ersetzen, gleiche Menge."
+ },
+ "sub_001128": {
+  "note": "Durch frische Karotten ersetzen, gleiche Menge."
+ },
+ "sub_001129": {
+  "note": "Durch frischen Brokkoli ersetzen, gleiche Menge."
+ },
+ "sub_001130": {
+  "note": "Durch frischen rohen Spinat ersetzen, etwa die doppelte Menge einplanen, da er beim Garen stark einkocht."
+ },
+ "sub_001131": {
+  "note": "Durch eine Erbsen-Karotten-Mischung aus der Dose ersetzen, gut abgetropft."
+ },
+ "sub_001132": {
+  "note": "Durch Champignons aus der Dose ersetzen, gut abgetropft."
+ },
+ "sub_001133": {
+  "note": "Durch weiße Dicke Bohnen aus der Dose ersetzen, gut abgetropft."
+ },
+ "sub_001134": {
+  "note": "Durch Artischockenböden aus der Dose ersetzen, gut abgetropft."
+ },
+ "sub_001135": {
+  "note": "Durch Schwarzwurzeln aus der Dose ersetzen, gut abgetropft."
+ },
+ "sub_001136": {
+  "note": "Durch gemischtes Gemüse aus der Dose ersetzen, gut abgetropft."
+ },
+ "sub_001137": {
+  "note": "Etwa die Hälfte an doppelt konzentriertem Mark verwenden und mit etwas Wasser verdünnen."
+ },
+ "sub_001138": {
+  "note": "Etwa die doppelte Menge einfach konzentriertes Mark verwenden und weniger Wasser zugeben."
+ },
+ "sub_001139": {
+  "note": "Gleiche Menge, sehr ähnliches Ergebnis (geschälte oder gehackte Tomaten aus der Dose)."
+ },
+ "sub_001140": {
+  "note": "Durch Bambussprossen aus der Dose ersetzen, gut abgetropft, gleiche Menge."
+ },
+ "sub_001141": {
+  "note": "Durch Sojasprossen aus der Dose ersetzen, gut abgetropft."
+ },
+ "sub_001142": {
+  "note": "Durch Butternusskürbis ersetzen, gleiche Menge, etwas weniger süßer Geschmack."
+ },
+ "sub_001143": {
+  "note": "Durch gekochten, geschnittenen Lauch ersetzen, gleiche Menge."
+ },
+ "sub_001144": {
+  "note": "Durch frische Champignons ersetzen, weniger aromatisch, aber ein guter, günstiger Ersatz."
+ },
+ "sub_001145": {
+  "note": "Durch frische Austernpilze ersetzen, gleiche Menge, milderer Geschmack."
+ },
+ "sub_001146": {
+  "note": "Durch weiße Schwarzwurzel ersetzen, gleiche Menge, gleiche Zubereitung."
+ },
+ "sub_001147": {
+  "note": "Durch frischen Zuckermais ersetzen, gleiche Menge."
+ },
+ "sub_001148": {
+  "note": "Einweichen und in entsprechender Menge verwenden; festere Textur, milderer Geschmack als der schwarze Mu-Err-Pilz."
+ },
+ "sub_001149": {
+  "note": "Etwas Olivenöl hinzufügen, um die fehlende Marinade auszugleichen."
+ },
+ "sub_001150": {
+  "note": "Etwa die dreifache Menge frisch gehackte Zwiebel statt getrockneter Zwiebel verwenden."
+ },
+ "sub_001151": {
+  "note": "Einweichen und garen, oder direkt durch eine entsprechende Menge gekochter frischer Karotten ersetzen."
+ },
+ "sub_001152": {
+  "note": "Gleiches Gemüse (Pak Choi/Bok Choy), gleiche Menge."
+ },
+ "sub_001153": {
+  "note": "Gleiches Gemüse (Chayote/Christophine), gleiche Menge."
+ },
+ "sub_001154": {
+  "note": "Gleiches Gemüse, gleiche Menge."
+ },
+ "sub_001155": {
+  "note": "Ähnliche Textur, süßerer Geschmack; gleiche Menge."
+ },
+ "sub_001156": {
+  "note": "Mehligere Textur; gleiche Menge, Garzeit anpassen."
+ },
+ "sub_001157": {
+  "note": "Gleiche Menge, neutralerer Geschmack."
+ },
+ "sub_001158": {
+  "note": "Gleiche Menge, mit Taro etwas klebrigere Textur."
+ },
+ "sub_001159": {
+  "note": "Sehr ähnliche weiße Bohnen, gleiche Menge."
+ },
+ "sub_001160": {
+  "note": "Für Suppen/Pürees, gleiche Menge."
+ },
+ "sub_001161": {
+  "note": "Sehr ähnliche Garzeit und Textur, gleiche Menge."
+ },
+ "sub_001162": {
+  "note": "Sehr ähnliche Garzeit und Textur, gleiche Menge."
+ },
+ "sub_001163": {
+  "note": "Gleiche Menge, etwas weniger säuerlicher Geschmack."
+ },
+ "sub_001164": {
+  "note": "Gleiche Menge, etwas säuerlicherer Geschmack."
+ },
+ "sub_001165": {
+  "note": "Gleiche Menge, etwas weniger süßer Geschmack."
+ },
+ "sub_001166": {
+  "note": "Gleiche Menge, etwas süßerer Geschmack."
+ },
+ "sub_001167": {
+  "note": "Gleiche Menge, die Reneklode ist etwas süßer."
+ },
+ "sub_001168": {
+  "note": "Gleiche Menge, die Mirabelle ist etwas säuerlicher."
+ },
+ "sub_001169": {
+  "note": "Gleiche Frucht, frisch oder tiefgekühlt, gleiche Menge."
+ },
+ "sub_001170": {
+  "note": "Gleiche Frucht, frisch oder tiefgekühlt, gleiche Menge."
+ },
+ "sub_001171": {
+  "note": "Gleiche Menge, der Gala-Apfel ist süßer und weniger säuerlich."
+ },
+ "sub_001172": {
+  "note": "Gleiche Menge, der Golden Delicious behält beim Garen besser die Form."
+ },
+ "sub_001173": {
+  "note": "Gleiche Menge, die rosa Pampelmuse ist etwas süßer."
+ },
+ "sub_001174": {
+  "note": "Gleiche Menge, die gelbe Pampelmuse ist etwas säuerlicher."
+ },
+ "sub_001175": {
+  "note": "Gleiche Menge, etwas weniger aromatisches Fruchtfleisch."
+ },
+ "sub_001176": {
+  "note": "Gleiche Menge, etwas aromatischeres Fruchtfleisch."
+ },
+ "sub_001177": {
+  "note": "Kirschen sind süßer: den zugesetzten Zucker im Rezept etwas reduzieren."
+ },
+ "sub_001178": {
+  "note": "Apfelmus ohne Zuckerzusatz, weniger süß, aber gleiche Textur, gleiche Menge."
+ },
+ "sub_001179": {
+  "note": "Klassisches Apfelmus, etwas süßer, gleiche Menge."
+ },
+ "sub_001180": {
+  "note": "Apfelmus, neutralerer Geschmack, gleiche Menge beim Backen."
+ },
+ "sub_001181": {
+  "note": "Apfelmus, neutralerer Geschmack, gleiche Menge."
+ },
+ "sub_001182": {
+  "note": "Variante in leichtem Sirup, weniger süß, gleiche Menge."
+ },
+ "sub_001183": {
+  "note": "Variante in leichtem Sirup, weniger süß, gleiche Menge."
+ },
+ "sub_001184": {
+  "note": "Variante in leichtem Sirup, weniger süß, gleiche Menge."
+ },
+ "sub_001185": {
+  "note": "Variante in leichtem Sirup, weniger süß, gleiche Menge."
+ },
+ "sub_001186": {
+  "note": "Ananas im eigenen Saft, weniger süß, vor der Verwendung gut abtropfen lassen."
+ },
+ "sub_001187": {
+  "note": "Birne in leichtem Sirup, ähnliche Textur und Süße, gleiche Menge."
+ },
+ "sub_001188": {
+  "note": "Getrocknete Cranberries, säuerlicher, gleiche Menge in Kuchen oder Salaten."
+ },
+ "sub_001189": {
+  "note": "Variante ohne Salzzusatz, um Salz zu reduzieren; gleiche Menge, nach Geschmack nachsalzen."
+ },
+ "sub_001190": {
+  "note": "Variante ohne Salzzusatz, gleiche Menge, nach Geschmack nachsalzen."
+ },
+ "sub_001191": {
+  "note": "Variante ohne Salzzusatz, gleiche Menge, nach Geschmack nachsalzen."
+ },
+ "sub_001192": {
+  "note": "Guter Ersatz in Knabbermischungen oder beim Backen, gleiche Menge."
+ },
+ "sub_001193": {
+  "note": "Geschälte Kerne, etwas bekömmlicher, gleiche Menge."
+ },
+ "sub_001194": {
+  "note": "Gleiche Verwendung als Bindemittel (gelbildend mit Wasser) beim Backen/in Porridge, gleiche Menge."
+ },
+ "sub_001195": {
+  "note": "Ähnliche Textur für Saucen und Gebäck, süßerer, intensiverer Geschmack."
+ },
+ "sub_001196": {
+  "note": "Gerösteterer Geschmack, gleiche Menge, etwas trockenere Textur."
+ },
+ "sub_001197": {
+  "note": "Basmatireis, austauschbare Körner, gleiche Menge."
+ },
+ "sub_001198": {
+  "note": "Basmatireis, ähnliche Langkornreis-Sorte, gleiche Menge."
+ },
+ "sub_001199": {
+  "note": "Klassischer weißer Reis, gleiche Menge und ähnliche Garzeit."
+ },
+ "sub_001200": {
+  "note": "Vollkornvariante, ballaststoffreicher, gleiche Menge."
+ },
+ "sub_001201": {
+  "note": "Vollkornvariante, ballaststoffreicher, gleiche Menge."
+ },
+ "sub_001202": {
+  "note": "Gekochter Bulgur, etwas festere Textur, gleiche Verwendung in Salaten oder als Beilage."
+ },
+ "sub_001203": {
+  "note": "Roher Bulgur, ähnliche Garzeit, gleiche Verwendung."
+ },
+ "sub_001204": {
+  "note": "Soja-Glasnudeln, ähnliche Textur, gleiche Menge."
+ },
+ "sub_001205": {
+  "note": "Soja-Glasnudeln, ähnliche Textur, gleiche Menge."
+ },
+ "sub_001206": {
+  "note": "Grießnocken, etwas festere Textur, gleiche Menge."
+ },
+ "sub_001207": {
+  "note": "Normale Nudeln, wenn keine Glutenfreiheit nötig ist, gleiche Menge und Garzeit."
+ },
+ "sub_001208": {
+  "note": "Glutenfreie Nudeln für eine passende Mahlzeit, gleiche Menge und ähnliche Garzeit."
+ },
+ "sub_001209": {
+  "note": "Gleiche Menge, sehr ähnliche Bindekraft."
+ },
+ "sub_001210": {
+  "note": "Gleiche Menge, ähnliche Bindekraft zum Andicken."
+ },
+ "sub_001211": {
+  "note": "Gleiche Menge, etwas neutralerer Geschmack."
+ },
+ "sub_001212": {
+  "note": "Gleiche Menge, weniger rustikales Ergebnis."
+ },
+ "sub_001213": {
+  "note": "Gleiche Menge, etwas lockere Krume."
+ },
+ "sub_001214": {
+  "note": "Gleiche Menge, kräftigerer Geschmack (reine Butter)."
+ },
+ "sub_001215": {
+  "note": "Gleiche Menge, butterfreie Variante (nützlich bei Unverträglichkeit)."
+ },
+ "sub_001216": {
+  "note": "Gleiche Menge, mürberer Teig und kräftigerer Geschmack."
+ },
+ "sub_001217": {
+  "note": "Gleiche Menge, butterfreie Alternative."
+ },
+ "sub_001218": {
+  "note": "Gleiche Menge, reichhaltigerer Geschmack (reine Butter)."
+ },
+ "sub_001219": {
+  "note": "Etwa 2 Filoteigblätter übereinanderlegen, um ein Blatt Brick-Teig zu ersetzen."
+ },
+ "sub_001220": {
+  "note": "Ein Blatt Brick-Teig ersetzt etwa 2 Filoteigblätter."
+ },
+ "sub_001221": {
+  "note": "Gleiche Menge, weichere Textur, neutralerer Geschmack."
+ },
+ "sub_001222": {
+  "note": "Gleiche Menge, glutenfreie Option."
+ },
+ "sub_001223": {
+  "note": "Gleiche Verwendung für ein belegtes Sandwich, längliche Form."
+ },
+ "sub_001224": {
+  "note": "Gleiche Garmethode, kräftigerer Geschmack."
+ },
+ "sub_001225": {
+  "note": "Gleiche Menge, magereres Fleisch."
+ },
+ "sub_001226": {
+  "note": "Gleiche Menge, sehr ähnlicher Geschmack und Textur."
+ },
+ "sub_001227": {
+  "note": "Gleiche Menge, etwas trockeneres Fleisch, Garzeit im Auge behalten."
+ },
+ "sub_001228": {
+  "note": "Gleiches Produkt, nicht-biologische Variante."
+ },
+ "sub_001229": {
+  "note": "Gleiche Garmethode, etwas zarteres Stück."
+ },
+ "sub_001230": {
+  "note": "Gleiche Fleischstückfamilie, ähnliche Garzeit."
+ },
+ "sub_001231": {
+  "note": "Gleiche Garmethode, ähnliches Ergebnis."
+ },
+ "sub_001232": {
+  "note": "Putenschnitzel, gleiche Zubereitung, etwas neutralerer Geschmack."
+ },
+ "sub_001233": {
+  "note": "Kalbsschnitzel, gleiche Menge, ähnliche Textur."
+ },
+ "sub_001234": {
+  "note": "Putenfleisch, gleiche Menge, sehr ähnlicher Geschmack."
+ },
+ "sub_001235": {
+  "note": "Hähnchenfleisch, gleiche Menge, sehr ähnlicher Geschmack."
+ },
+ "sub_001236": {
+  "note": "Freilandhähnchen, gleiche Menge, weniger ausgeprägter Geschmack."
+ },
+ "sub_001237": {
+  "note": "Entenfleisch, gleiche Menge, ähnlicher Geschmack (fettreiches Geflügel)."
+ },
+ "sub_001238": {
+  "note": "Freilandhähnchen, gleiche Menge, ohne den Wildgeschmack."
+ },
+ "sub_001239": {
+  "note": "Rindersteak, gleiche Menge, ähnliches Ergebnis."
+ },
+ "sub_001240": {
+  "note": "Rinderoberschale, gleiche Menge, ähnliches Ergebnis."
+ },
+ "sub_001241": {
+  "note": "Rinderroastbeef, gleiche Menge, ähnliches Ergebnis."
+ },
+ "sub_001242": {
+  "note": "Rinderentrecôte, gleiche Menge, ähnliches Ergebnis."
+ },
+ "sub_001243": {
+  "note": "Lammkeule, gleiche Menge, ähnlicher Geschmack."
+ },
+ "sub_001244": {
+  "note": "Rinderfilet, mageres rotes Fleisch, gleiche Menge."
+ },
+ "sub_001245": {
+  "note": "Mageres Rindfleisch (Filet), gleiche Menge, ohne den Wildgeschmack."
+ },
+ "sub_001246": {
+  "note": "Kaninchenfleisch, gleiche Menge, milderer Geschmack."
+ },
+ "sub_001247": {
+  "note": "Rinderleber (Färse), gleiche Menge, sehr ähnlicher Geschmack."
+ },
+ "sub_001248": {
+  "note": "Kalbsleber, gleiche Menge, sehr ähnlicher Geschmack."
+ },
+ "sub_001249": {
+  "note": "Kalbsherz, gleiche Menge, etwas zartere Textur."
+ },
+ "sub_001250": {
+  "note": "Kalbshirn, gleiche Menge, identische Textur."
+ },
+ "sub_001251": {
+  "note": "Hackfleisch mit 10% Fettanteil, etwas fettreicher."
+ },
+ "sub_001252": {
+  "note": "Hackfleisch mit 15% Fettanteil, etwas magerer."
+ },
+ "sub_001253": {
+  "note": "Kalbshackfleisch mit 15% Fettanteil, etwas magerer."
+ },
+ "sub_001254": {
+  "note": "Schweineschulter, gleiche Menge, etwas weniger marmoriert."
+ },
+ "sub_001255": {
+  "note": "Lammschulter, gleiche Menge, etwas fettreicher."
+ },
+ "sub_001256": {
+  "note": "Rinderschulter, gleiche Verwendung für einen langen Schmorbraten."
+ },
+ "sub_001257": {
+  "note": "Rinderhals, gleiche Verwendung für einen langen Schmorbraten."
+ },
+ "sub_001258": {
+  "note": "Hähnchenschenkel ohne Knochen, gleiche Menge, Garzeit anpassen."
+ },
+ "sub_001259": {
+  "note": "Hähnchenschenkel, gleiche Menge, ähnlicher Geschmack."
+ },
+ "sub_001260": {
+  "note": "Gebratene Lammschulter, gleiche Verwendung, etwas fetter und zarter."
+ },
+ "sub_001261": {
+  "note": "Gekochte Putenleber, gleiche Menge, sehr ähnlicher Geschmack."
+ },
+ "sub_001262": {
+  "note": "Gekochtes Putenherz, gleiche Menge, sehr ähnlicher Geschmack."
+ },
+ "sub_001263": {
+  "note": "Putenleber, sehr ähnliche Textur und Geschmack."
+ },
+ "sub_001264": {
+  "note": "Hühnerleber, lässt sich leicht ersetzen, etwas kräftigerer Geschmack."
+ },
+ "sub_001265": {
+  "note": "Lammbries, gleiche Zubereitung, kleinere Stücke."
+ },
+ "sub_001266": {
+  "note": "Kalbsbries, gebräuchlicher, gleiche Zubereitung."
+ },
+ "sub_001267": {
+  "note": "Lammniere, gleiche Zubereitungsart, etwas kräftigerer Geschmack."
+ },
+ "sub_001268": {
+  "note": "Kalbsniere, milder, gleiche Zubereitung."
+ },
+ "sub_001269": {
+  "note": "Rinderzunge, größer, aber gleiche Zubereitung (pochiert und dann geschmort)."
+ },
+ "sub_001270": {
+  "note": "Kalbszunge, kleiner und zarter, gleiche Zubereitung."
+ },
+ "sub_001271": {
+  "note": "Geräucherter Speckwürfel, gleiche Verwendung (Pfanne, Quiche, Salat)."
+ },
+ "sub_001272": {
+  "note": "Naturbelassener Speckwürfel, als Ersatz für Pancetta zum Würzen eines Schmorgerichts."
+ },
+ "sub_001273": {
+  "note": "Bündnerfleisch, gleiche Art von dünn geschnittenem Trockenfleisch."
+ },
+ "sub_001274": {
+  "note": "Bresaola, ähnliches getrocknetes Rindfleisch, dünn geschnitten."
+ },
+ "sub_001275": {
+  "note": "Bayonne-Schinken, als Ersatz für Parmaschinken, gleiche Familie von rohem Schinken."
+ },
+ "sub_001276": {
+  "note": "Bayonne-Schinken, als Ersatz für Serrano, ähnlicher roher Schinken."
+ },
+ "sub_001277": {
+  "note": "Allgemeiner Rohschinken, gleiche Textur und Verwendung."
+ },
+ "sub_001278": {
+  "note": "Reines Schweinerillette, als Ersatz für Ente, ähnliche Textur."
+ },
+ "sub_001279": {
+  "note": "Entenrillette, leichter zu finden, Geschmack ähnlich wie Gans."
+ },
+ "sub_001280": {
+  "note": "Entenrillette, als Ersatz für reines Gänserillette."
+ },
+ "sub_001281": {
+  "note": "Geflügelleberpastete, als Ersatz für Gänseleber, gebräuchlicher."
+ },
+ "sub_001282": {
+  "note": "Salami, ähnliche Trockenwurst, gleiche Verwendung in Scheiben."
+ },
+ "sub_001283": {
+  "note": "Reine Schweine-Trockenwurst, gleiche Art von Trockenwurst."
+ },
+ "sub_001284": {
+  "note": "Rohe Merguez, als Ersatz für Chorizo, für einen ähnlich würzigen Geschmack beim Grillen."
+ },
+ "sub_001285": {
+  "note": "Rohes Chipolata-Würstchen, gleiche Verwendung auf dem Grill oder in der Pfanne."
+ },
+ "sub_001286": {
+  "note": "Rohe Toulouse-Wurst, gleiche Verwendung, etwas kräftigerer Geschmack."
+ },
+ "sub_001287": {
+  "note": "Rohe Toulouse-Wurst, als Ersatz für Merguez (weniger scharf, Gewürze anpassen)."
+ },
+ "sub_001288": {
+  "note": "Frankfurter Würstchen, identische Textur und Verwendung (Hot Dog, Sauerkraut)."
+ },
+ "sub_001289": {
+  "note": "Straßburger Würstchen/Knacker, gleiche Art von Brühwurst."
+ },
+ "sub_001290": {
+  "note": "Reines Schweine-Straßburger/Knacker, als Ersatz für die Geflügelversion."
+ },
+ "sub_001291": {
+  "note": "Cervelatwurst, gekochte Wurst in Scheiben, ähnliche Verwendung als Vorspeise oder im Salat."
+ },
+ "sub_001292": {
+  "note": "Rindermaul, eine weitere Sülzwurst, oft mit Vinaigrette serviert."
+ },
+ "sub_001293": {
+  "note": "Sülze, ähnliche Zubereitung in Gelee."
+ },
+ "sub_001294": {
+  "note": "Gekochter Kabeljau, festes weißes Fleisch, ähnliche Textur."
+ },
+ "sub_001295": {
+  "note": "Gekochter Kabeljau, magerer weißer Fisch mit ähnlichem Geschmack."
+ },
+ "sub_001296": {
+  "note": "Gedämpfter Schellfisch, ähnlicher magerer weißer Fisch."
+ },
+ "sub_001297": {
+  "note": "Weißfische mit festem Fleisch, übliche Alternative für im Ofen gebackenes Filet."
+ },
+ "sub_001298": {
+  "note": "Süßwasserfische mit festem Fleisch, ähnliche Zubereitung im Ofen."
+ },
+ "sub_001299": {
+  "note": "Kleine ganze Fische aus dem Ofen, gleichwertige Zubereitung."
+ },
+ "sub_001300": {
+  "note": "Dünne Plattfische, gleichwertiges Dämpfen."
+ },
+ "sub_001301": {
+  "note": "Magere Weißfische, austauschbares Dämpfen."
+ },
+ "sub_001302": {
+  "note": "Rosafarbene Fettfische, ähnliches Dämpfen."
+ },
+ "sub_001303": {
+  "note": "Salzkabeljau und frischer Kabeljau haben das gleiche Fleisch; den Salzkabeljau vor dem Austausch einweichen."
+ },
+ "sub_001304": {
+  "note": "Magere Weißfische, gleichwertiges schonendes Garen."
+ },
+ "sub_001305": {
+  "note": "Weißfische aus der Familie der Dorsche, ähnliche Zubereitung gegrillt."
+ },
+ "sub_001306": {
+  "note": "Kleine Fettfische, ähnliches Grillen (Sardine/Makrele)."
+ },
+ "sub_001307": {
+  "note": "Forellen, gleichwertige Zubereitung gebraten/im Ofen."
+ },
+ "sub_001308": {
+  "note": "Wolfsbarsche, ähnliches Fleisch, roh austauschbar."
+ },
+ "sub_001309": {
+  "note": "Weißfische aus der Familie der Dorsche, ähnliches Fleisch roh."
+ },
+ "sub_001310": {
+  "note": "Heilbutt, ähnliches austauschbares Fleisch."
+ },
+ "sub_001311": {
+  "note": "Ähnliche Plattfische, ähnliches feines Fleisch."
+ },
+ "sub_001312": {
+  "note": "Wild- und Zuchtlachs, ähnliches Fleisch roh."
+ },
+ "sub_001313": {
+  "note": "Lachs verschiedener Arten, ähnliches Fleisch roh."
+ },
+ "sub_001314": {
+  "note": "Gekochte Garnelen verschiedener Arten, in Rezepten oft austauschbar."
+ },
+ "sub_001315": {
+  "note": "Languste und Hummer, ähnliches Fleisch, gleichwertiges Kochen in Wasser."
+ },
+ "sub_001316": {
+  "note": "Kaisergranat und Garnele, ähnliches Fleisch, ähnliches Kochen in Wasser."
+ },
+ "sub_001317": {
+  "note": "Ähnliche Muscheln/Schalentiere, gleichwertige Zubereitung in Wasser."
+ },
+ "sub_001318": {
+  "note": "Kleine Meeresschnecken, gleichwertige Zubereitung und Verwendung."
+ },
+ "sub_001319": {
+  "note": "Kalmar und Oktopus, Tintenfischfleisch, oft gegeneinander ausgetauscht."
+ },
+ "sub_001320": {
+  "note": "Fischrillette, oft austauschbar je nach verfügbarem Fisch."
+ },
+ "sub_001321": {
+  "note": "Taramas, gleiches Rezept und gleiche Verwendung je nach verwendetem Fischrogen."
+ },
+ "sub_001322": {
+  "note": "Lumpenfischrogen ist ein gängiger und deutlich günstigerer Ersatz für Kaviar, gleiche Verwendung als Garnitur."
+ },
+ "sub_001323": {
+  "note": "Panierter Weißfisch, ähnliche Textur und Verwendung (Fish and Chips, panierte Pfanne)."
+ },
+ "sub_001324": {
+  "note": "Panierter Weißfisch, lässt sich beim Kochen leicht ersetzen."
+ },
+ "sub_001325": {
+  "note": "Thunfisch aus der Dose (Eigensaft) kann Sardinen in Öl in Salaten und Pasteten ersetzen."
+ },
+ "sub_001326": {
+  "note": "Fischkonserven in Tomatensauce sind austauschbar (Makrele/Sardine)."
+ },
+ "sub_001327": {
+  "note": "Räucherfisch, ähnlicher Geschmack und Textur, als günstigerer Ersatz verwendbar."
+ },
+ "sub_001328": {
+  "note": "Räucherschellfisch kann Räucherlachs in Salaten, Quiches und Rührei ersetzen."
+ },
+ "sub_001329": {
+  "note": "Lachs- und Thunfischkonserven werden austauschbar verwendet (Rillette, Salate)."
+ },
+ "sub_001330": {
+  "note": "Räucherforelle ist ein klassischer und günstigerer Ersatz für Räucherlachs."
+ },
+ "sub_001331": {
+  "note": "Ersatzweise etwa 4 Hühnereier verwenden (Mengenäquivalent)."
+ },
+ "sub_001332": {
+  "note": "Ersatzweise etwa 1,5 Hühnereier verwenden (Mengenäquivalent)."
+ },
+ "sub_001333": {
+  "note": "Mit Wasser angerührtes Eipulver ersetzt frisches Ei beim Backen."
+ },
+ "sub_001334": {
+  "note": "Angerührtes Eigelbpulver ersetzt frisches Eigelb."
+ },
+ "sub_001335": {
+  "note": "Angerührtes Eiweißpulver ersetzt frisches Eiweiß."
+ },
+ "sub_001336": {
+  "note": "Vollmilch von der Kuh als Ersatz, wenn keine Ziegenmilch verfügbar ist, oder um den Geschmack milder zu machen."
+ },
+ "sub_001337": {
+  "note": "Vollmilch von der Kuh als Ersatz, wenn keine Ziegenmilch verfügbar ist."
+ },
+ "sub_001338": {
+  "note": "Vollmilch von der Kuh als Ersatz, wenn keine Schafmilch verfügbar ist."
+ },
+ "sub_001339": {
+  "note": "Vollmilch von der Kuh als Ersatz, wenn keine Büffelmilch verfügbar ist."
+ },
+ "sub_001340": {
+  "note": "Mit Wasser angerührt, ersetzt frische Vollmilch."
+ },
+ "sub_001341": {
+  "note": "Mit Wasser verdünnt (zu gleichen Teilen), ersetzt Vollmilch."
+ },
+ "sub_001342": {
+  "note": "Naturjoghurt-Quark kann griechischen Joghurt ersetzen, etwas weniger cremige Textur."
+ },
+ "sub_001343": {
+  "note": "Klassischer griechischer Joghurt als Ersatz, wenn keine Schafmilch verfügbar ist."
+ },
+ "sub_001344": {
+  "note": "Naturjoghurt aus Kuhmilch als Ersatz, wenn keine Schafmilch verfügbar ist."
+ },
+ "sub_001345": {
+  "note": "Naturjoghurt aus Kuhmilch als Ersatz, wenn keine Ziegenmilch verfügbar ist."
+ },
+ "sub_001346": {
+  "note": "Milchkefir kann in Rezepten einen naturbelassenen Trinkjoghurt ersetzen."
+ },
+ "sub_001347": {
+  "note": "Abgetropfter Frischkäse hat eine Textur ähnlich wie 0%-Fett-Quark."
+ },
+ "sub_001348": {
+  "note": "Abgetropfter Frischkäse hat eine Textur ähnlich wie Naturquark mit vergleichbarem Fettgehalt."
+ },
+ "sub_001349": {
+  "note": "Ähnliches Dessert aus Eiern und Milch, ähnliche Textur und Verwendung wie Karamellcreme."
+ },
+ "sub_001350": {
+  "note": "Ähnlich cremige, samtige Textur, ersetzt Panna Cotta als Milchdessert."
+ },
+ "sub_001351": {
+  "note": "Standard-Milchshake, entspricht der Fast-Food-Variante."
+ },
+ "sub_001352": {
+  "note": "Basisversion des Milchreises, ohne zugesetztes Aroma."
+ },
+ "sub_001353": {
+  "note": "Milchdessert mit ähnlichem Getreide (Grieß durch Reis ersetzt)."
+ },
+ "sub_001354": {
+  "note": "Selbstgemachte Konditorcreme, entspricht der angerührten Instantversion."
+ },
+ "sub_001355": {
+  "note": "Naturbelassenes Milchäquivalent, sofern keine pflanzliche Einschränkung besteht."
+ },
+ "sub_001356": {
+  "note": "Gleichwertige aromatisierte Milchalternative, sofern keine pflanzliche Einschränkung besteht."
+ },
+ "sub_001357": {
+  "note": "Gleichwertige klassische Milchversion der pflanzlichen Schokoladenmousse."
+ },
+ "sub_001358": {
+  "note": "Nur ein geriebener Käse (Emmentaler) statt der speziellen Gratin-/Pizza-Mischung."
+ },
+ "sub_001359": {
+  "note": "Ähnlicher Weichkäse mit weißem Edelschimmel, Brie-Typ."
+ },
+ "sub_001360": {
+  "note": "Cremiger Weichkäse ähnlich wie Chaource."
+ },
+ "sub_001361": {
+  "note": "Gleichwertiger Blauschimmelkäse aus Kuhmilch."
+ },
+ "sub_001362": {
+  "note": "Ähnlicher milder Schnittkäse, als Ersatz für Mimolette."
+ },
+ "sub_001363": {
+  "note": "Gleichwertiger allgemeiner Raclettekäse."
+ },
+ "sub_001364": {
+  "note": "Gleichwertiger allgemeiner Schmelzkäse, außerhalb des Scheibenformats."
+ },
+ "sub_001365": {
+  "note": "Gleichwertiger allgemeiner Feta."
+ },
+ "sub_001366": {
+  "note": "Gleichwertige allgemeine Kuhmilch-Mozzarella."
+ },
+ "sub_001367": {
+  "note": "Klassische dicke Crème fraîche mit gleichem Fettgehalt."
+ },
+ "sub_001368": {
+  "note": "Gleichwertige klassische flüssige Crème fraîche."
+ },
+ "sub_001369": {
+  "note": "Vollfette Sahne, selbst zu Schlagsahne aufgeschlagen."
+ },
+ "sub_001370": {
+  "note": "Die leichte aromatisierte Kochspezialität kann in warmen Zubereitungen durch klassische flüssige Crème fraîche ersetzt werden."
+ },
+ "sub_001371": {
+  "note": "Leichte Sahne mit 12-20% Fett kann durch vollfette flüssige Crème fraîche ersetzt werden (cremigeres Ergebnis, Menge leicht reduzieren)."
+ },
+ "sub_001372": {
+  "note": "Leitungswasser kann in der Küche und beim Backen durch stilles Mineralwasser ersetzt werden."
+ },
+ "sub_001373": {
+  "note": "Selbstgepresster Zitronensaft kann durch reinen Flaschenzitronensaft ersetzt werden."
+ },
+ "sub_001374": {
+  "note": "Frischer Limettensaft kann durch Zitronensaft ersetzt werden, in gleicher Menge, leicht anderer Geschmack."
+ },
+ "sub_001375": {
+  "note": "Reiner Limettensaft kann durch reinen Zitronensaft ersetzt werden."
+ },
+ "sub_001376": {
+  "note": "Ananassaft aus Konzentrat kann durch reinen Ananassaft ersetzt werden."
+ },
+ "sub_001377": {
+  "note": "Orangensaft aus Konzentrat kann durch frisch gepressten Orangensaft ersetzt werden."
+ },
+ "sub_001378": {
+  "note": "Apfelsaft aus Konzentrat kann durch reinen Apfelsaft ersetzt werden."
+ },
+ "sub_001379": {
+  "note": "Grapefruitsaft aus Konzentrat kann durch reinen Grapefruitsaft ersetzt werden."
+ },
+ "sub_001380": {
+  "note": "Traubensaft aus Konzentrat kann durch reinen Traubensaft ersetzt werden."
+ },
+ "sub_001381": {
+  "note": "Reiner Fruchtsaft kann durch Saft aus Konzentrat ersetzt werden, Verfügbarkeit und Preis unterscheiden sich oft."
+ },
+ "sub_001382": {
+  "note": "Apfelnektar kann durch reinen Apfelsaft ersetzt werden, dabei den zugesetzten Zucker eines Rezepts reduzieren."
+ },
+ "sub_001383": {
+  "note": "Orangennektar kann durch reinen Orangensaft ersetzt werden, fruchtiger konzentriert und weniger süß."
+ },
+ "sub_001384": {
+  "note": "Ananasnektar kann durch reinen Ananassaft ersetzt werden."
+ },
+ "sub_001385": {
+  "note": "Gesüßte Cola kann durch eine zuckerfreie Cola mit Süßstoffen für eine leichtere Version ersetzt werden."
+ },
+ "sub_001386": {
+  "note": "Gesüßte Limonade kann durch eine zuckerfreie Limonade mit Süßstoffen ersetzt werden."
+ },
+ "sub_001387": {
+  "note": "Gesüßtes Tonic Water mit Süßstoffen kann durch ein zuckerfreies Tonic mit Süßstoffen ersetzt werden."
+ },
+ "sub_001388": {
+  "note": "Naturbelassene Pflanzendrinks sind beim Kochen austauschbar (Backen, Saucen): Hafer durch naturbelassenes Soja ersetzt."
+ },
+ "sub_001389": {
+  "note": "Naturbelassener Sojadrink kann in den meisten Rezepten durch naturbelassenen Mandeldrink ersetzt werden."
+ },
+ "sub_001390": {
+  "note": "Reisdrink, flüssiger: kann beim Alltagskochen durch naturbelassenen Mandeldrink ersetzt werden."
+ },
+ "sub_001391": {
+  "note": "Kokosdrink kann durch naturbelassenen Mandeldrink ersetzt werden, wenn der Kokosgeschmack gemildert werden soll."
+ },
+ "sub_001392": {
+  "note": "Aufgebrühter schwarzer und grüner Tee werden oft je nach gewünschtem Geschmack füreinander verwendet."
+ },
+ "sub_001393": {
+  "note": "Nicht-instant, trinkfertiger Kaffee kann durch angerührten löslichen Kaffee ersetzt werden."
+ },
+ "sub_001394": {
+  "note": "Gemahlener Kaffee zum Aufbrühen kann durch löslichen Kaffee, in heißem Wasser aufgelöst, ersetzt werden."
+ },
+ "sub_001395": {
+  "note": "Fruktose kann beim Backen durch normalen Zucker ersetzt werden (Menge leicht anpassen)."
+ },
+ "sub_001396": {
+  "note": "Saccharin-Süßstoff kann durch Zucker ersetzt werden, um einen natürlicheren Geschmack zu erhalten."
+ },
+ "sub_001397": {
+  "note": "Aspartam-Süßstoff in Pulverform kann in der Küche und beim Backen durch Zucker ersetzt werden."
+ },
+ "sub_001398": {
+  "note": "Stevia-Süßstoff kann durch normalen Zucker ersetzt werden (näherer Geschmack, Menge anpassen)."
+ },
+ "sub_001399": {
+  "note": "Zuckerrohrmelasse kann beim Backen durch Ahornsirup ersetzt werden, für einen ähnlich süßen Geschmack."
+ },
+ "sub_001400": {
+  "note": "Flüssiges Karamell als Topping kann durch Honig ersetzt werden."
+ },
+ "sub_001401": {
+  "note": "50%-Zartbitterschokoladentafel kann in der Küche/beim Backen durch Standard-Zartbitterschokolade ersetzt werden."
+ },
+ "sub_001402": {
+  "note": "70%-Zartbitterschokolade zum Genießen kann zum Backen durch Standard-Zartbitterschokolade ersetzt werden."
+ },
+ "sub_001403": {
+  "note": "Zartbitter-Backschokolade (40%+) kann durch Standard-Zartbitterschokolade ersetzt werden."
+ },
+ "sub_001404": {
+  "note": "Zuckerfreie Milchschokolade kann durch klassische Milchschokolade ersetzt werden."
+ },
+ "sub_001405": {
+  "note": "Weinbrand vom Typ Cognac/Armagnac kann bei einem Flambieren oder in einer Sauce durch Calvados-Weinbrand ersetzt werden."
+ },
+ "sub_001406": {
+  "note": "Rum (Durchschnittsprodukt) kann in den meisten kulinarischen Anwendungen durch weißen Rum ersetzt werden."
+ },
+ "sub_001407": {
+  "note": "Erdbeermarmelade (Extra oder klassisch) entspricht der Standard-Erdbeermarmelade im Katalog."
+ },
+ "sub_001408": {
+  "note": "Aprikosenmarmelade (Extra oder klassisch) entspricht der Standard-Aprikosenmarmelade im Katalog."
+ },
+ "sub_001409": {
+  "note": "Zuckerreduzierte Erdbeermarmelade kann durch klassische Erdbeermarmelade ersetzt werden (süßer)."
+ },
+ "sub_001410": {
+  "note": "Zuckerreduzierte Aprikosenmarmelade kann durch klassische Aprikosenmarmelade ersetzt werden."
+ },
+ "sub_001411": {
+  "note": "Johannisbeergelee kann durch Himbeermarmelade (eine andere rote Frucht) in Füllungen, auf Toast oder als Tortenboden-Belag ersetzt werden."
+ },
+ "sub_001412": {
+  "note": "Ein handwerkliches Standard-Croissant kann durch ein handwerkliches Butter-Croissant ersetzt werden, reichhaltigerer Geschmack, aber gleiche Verwendung."
+ },
+ "sub_001413": {
+  "note": "Milchbrötchen kann zum Frühstück oder als Snack durch eine naturbelassene handwerkliche Brioche ersetzt werden."
+ },
+ "sub_001414": {
+  "note": "Panettone kann durch eine klassische naturbelassene Brioche ersetzt werden, falls kandierte Früchte nicht verfügbar sind."
+ },
+ "sub_001415": {
+  "note": "Rosinenschnecke kann durch eine fruchtgefüllte Brioche ersetzt werden, ein ähnliches süßes Fruchtgebäck."
+ },
+ "sub_001416": {
+  "note": "Schokocroissant kann bei Fehlen des Schokoladengebäcks durch ein Butter-Croissant ersetzt werden."
+ },
+ "sub_001417": {
+  "note": "Brioche mit Schokoladenstückchen kann durch eine naturbelassene abgepackte Brioche ersetzt werden, die schokofreie Version."
+ },
+ "sub_001418": {
+  "note": "Petit-beurre-Keks kann durch einen naturbelassenen trockenen Keks ersetzt werden, gleiche Basis für einen Cheesecake oder zerbröselt in einem Dessert."
+ },
+ "sub_001419": {
+  "note": "Handwerklicher und abgepackter Vierviertelkuchen sind direkt austauschbar, gleiches Grundrezept."
+ },
+ "sub_001420": {
+  "note": "Rumbaba aus der Kühltheke kann durch einen handwerklichen Rumbaba ersetzt werden, gleiches Gebäck."
+ },
+ "sub_001421": {
+  "note": "Abgepackter Kouign-amann kann durch einen handwerklichen Kouign-amann ersetzt werden, gleiche bretonische Spezialität."
+ },
+ "sub_001422": {
+  "note": "Windbeutel und Eclair teilen sich den gleichen Brandteig und eine ähnliche Konditorcreme-Füllung."
+ },
+ "sub_001423": {
+  "note": "Ein mit Konditorcreme gefüllter Windbeutel kann je nach gewünschter Füllung durch einen mit Schlagsahne gefüllten (Saint-Honoré-Typ) ersetzt werden."
+ },
+ "sub_001424": {
+  "note": "Gazellenhörnchen und Baklava sind zwei orientalische Gebäcksorten aus Mandeln und Zucker, auf einer orientalischen Platte austauschbar."
+ },
+ "sub_001425": {
+  "note": "Brownie mit Nüssen kann durch einen naturbelassenen Brownie ersetzt werden, insbesondere bei einer Nussallergie."
+ },
+ "sub_001426": {
+  "note": "Bretonischer Kuchen mit Pflaumenfüllung kann durch ein bretonisches Far mit Pflaumen ersetzt werden, bretonische Spezialitäten mit den gleichen Aromen."
+ },
+ "sub_001427": {
+  "note": "Fruchtmousse-Torte auf Biskuitboden (Bayerische Creme/Spiegelglasur) und Erdbeer-/Himbeertorte haben eine ähnliche Struktur (Biskuit, Creme, Früchte)."
+ },
+ "sub_001428": {
+  "note": "Knuspriges Macaron kann durch ein weiches gefülltes Macaron ersetzt werden, um eine Platte süßer Petit-fours abzuwechseln."
+ },
+ "sub_001429": {
+  "note": "Verpackter Ketchup kann durch naturbelassene Tomatensauce ersetzt werden."
+ },
+ "sub_001430": {
+  "note": "Leichter Ketchup kann durch klassischen Ketchup ersetzt werden."
+ },
+ "sub_001431": {
+  "note": "Leichte Mayonnaise kann durch klassische Mayonnaise ersetzt werden."
+ },
+ "sub_001432": {
+  "note": "BBQ-Sauce kann durch Ketchup ersetzt werden, ähnliche süß-scharfe Tomatenbasis."
+ },
+ "sub_001433": {
+  "note": "Sojasauce kann in der asiatischen Küche durch Fischsauce (Nuoc-mâm) ersetzt werden."
+ },
+ "sub_001434": {
+  "note": "Süße Sojasauce kann durch klassische Sojasauce ersetzt werden."
+ },
+ "sub_001435": {
+  "note": "Teriyaki-Sauce kann durch süße Sojasauce ersetzt werden."
+ },
+ "sub_001436": {
+  "note": "Olivenöl-Vinaigrette entspricht einer klassischen Vinaigrette mit 50-75% Öl."
+ },
+ "sub_001437": {
+  "note": "Harissa kann durch sparsam verwendete scharfe Chilischote ersetzt werden."
+ },
+ "sub_001438": {
+  "note": "Senfsauce kann durch Dijon-Senf, mit etwas Sahne verdünnt, ersetzt werden."
+ },
+ "sub_001439": {
+  "note": "Caesar-Dressing kann durch Mayonnaise mit Parmesan und Sardellen ersetzt werden."
+ },
+ "sub_001440": {
+  "note": "Verpackte Béchamelsauce kann durch selbstgemachte Béchamel mit Butter ersetzt werden."
+ },
+ "sub_001441": {
+  "note": "Sauce béarnaise und Sauce hollandaise sind austauschbar, ähnliche Grundlagen."
+ },
+ "sub_001442": {
+  "note": "Madeirasauce kann durch eine selbstgemachte Rotweinsauce ersetzt werden."
+ },
+ "sub_001443": {
+  "note": "Öl oder konzentrierte Butter können durch klassische ungesalzene Butter ersetzt werden."
+ },
+ "sub_001444": {
+  "note": "Leichte ungesalzene Butter kann durch klassische ungesalzene Butter ersetzt werden."
+ },
+ "sub_001445": {
+  "note": "Leichte gesalzene Butter kann durch klassische gesalzene Butter ersetzt werden."
+ },
+ "sub_001446": {
+  "note": "Festes Kokosöl kann beim Backen durch ungesalzene Butter ersetzt werden, ähnliche Textur in kaltem Zustand."
+ },
+ "sub_001447": {
+  "note": "Palmöl kann durch Rapsöl ersetzt werden, eine gängige pflanzliche Alternative."
+ },
+ "sub_001448": {
+  "note": "Nicht näher bezeichnetes Frittieröl kann durch Sonnenblumenöl ersetzt werden."
+ },
+ "sub_001449": {
+  "note": "Natives Olivenöl extra entspricht Olivenöl extra vergine."
+ },
+ "sub_001450": {
+  "note": "Roher fetter Speck kann beim Kochen durch Schweineschmalz ersetzt werden."
+ },
+ "sub_001451": {
+  "note": "Pesto rosso kann bei Nichtverfügbarkeit durch klassisches Basilikumpesto ersetzt werden."
+ },
+ "sub_001452": {
+  "note": "Gehackte Gewürzgurke als säuerlicher, knackiger Ersatz für Kapern."
+ },
+ "sub_001453": {
+  "note": "Essiggurke ersetzt Essigzwiebel für die Säure als Beilage."
+ },
+ "sub_001454": {
+  "note": "Klassische Essiggurken als weniger süße Alternative zur süß-sauren Gewürzgurke."
+ },
+ "sub_001455": {
+  "note": "Grüne Olive in Salzlake ist in den meisten Rezepten mit schwarzer Olive austauschbar."
+ },
+ "sub_001456": {
+  "note": "Schwarze Oliven in Salzlake lassen sich in den meisten Rezepten durch grüne Oliven ersetzen."
+ },
+ "sub_001457": {
+  "note": "Schwarze Oliven in Salzlake sind eine gute Alternative zu in Öl eingelegten schwarzen Oliven, falls diese nicht erhältlich sind."
+ },
+ "sub_001458": {
+  "note": "Weizenkleie ist ein gängiger Ballaststoff-Ersatz für Maiskleie."
+ },
+ "sub_001459": {
+  "note": "Weizenkleie ist ein gängiger Ballaststoff-Ersatz für Reiskleie."
+ },
+ "sub_001460": {
+  "note": "Fertiger Rinderfond kann getrockneten Brühwürfel ersetzen (nach Dosierungsangabe anrühren)."
+ },
+ "sub_001461": {
+  "note": "Bierhefeflocken lassen sich problemlos durch herkömmliche Bierhefe ersetzen."
+ },
+ "sub_001462": {
+  "note": "Getrocknete Backhefe kann frische Hefe ersetzen (etwa die Hälfte des Gewichts)."
+ },
+ "sub_001463": {
+  "note": "Frische Backhefe kann getrocknete Hefe ersetzen (etwa das Doppelte des Gewichts)."
+ },
+ "sub_001464": {
+  "note": "Eine ausgekratzte Vanilleschote kann alkoholischen Vanilleextrakt ersetzen."
+ },
+ "sub_001465": {
+  "note": "Fertiger Kalbsfond kann getrockneten Fond ersetzen (nach Dosierungsangabe anrühren)."
+ },
+ "sub_001466": {
+  "note": "Fertiger Fischfond ist eine gute Alternative zu getrocknetem Fischsud (Court-Bouillon)."
+ },
+ "sub_001467": {
+  "note": "Sojasauce bringt eine ähnliche umami-Note und kann streichfähigen Hefeextrakt beim Kochen ersetzen."
+ },
+ "sub_001468": {
+  "note": "Pektin ist ein klassischer Ersatz für Gelierhilfe bei Marmelade."
+ },
+ "sub_001469": {
+  "note": "Vanilleextrakt (etwa 1 TL) kann eine Vanilleschote ersetzen."
+ },
+ "sub_001470": {
+  "note": "Frische Minze kann getrocknete Minze ersetzen (die Menge verdreifachen)."
+ },
+ "sub_001471": {
+  "note": "Frischer Rosmarin kann getrockneten Rosmarin ersetzen (die Menge verdreifachen)."
+ },
+ "sub_001472": {
+  "note": "Frischer Salbei kann getrockneten Salbei ersetzen (die Menge verdreifachen)."
+ },
+ "sub_001473": {
+  "note": "Frischer Estragon kann getrockneten Estragon ersetzen (die Menge verdreifachen)."
+ },
+ "sub_001474": {
+  "note": "Frischer Dill kann getrockneten Dill ersetzen (die Menge verdreifachen)."
+ },
+ "sub_001475": {
+  "note": "Frischer Schnittlauch kann getrockneten Schnittlauch ersetzen (die Menge verdreifachen)."
+ },
+ "sub_001476": {
+  "note": "Eine klassische pflanzliche Alternative zu Crème fraîche beim Kochen (Gerichte, Saucen)."
+ },
+ "sub_001477": {
+  "note": "Naturtofu ist ein gängiger pflanzlicher Ersatz für Hähnchenbrust in Pfannengerichten und Currys."
+ },
+ "sub_001478": {
+  "note": "Seitan ist ein gängiger pflanzlicher Ersatz für Hackfleisch in Schmorgerichten und Bolognese."
+ },
+ "sub_001479": {
+  "note": "Ein ähnlicher Gemüseaufstrich, der sich beim Aperitif mit Auberginenkaviar austauschen lässt."
+ }
 }
