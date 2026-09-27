@@ -83,9 +83,9 @@ def main():
 
         print("=== Nombre total d'ingrédients de référence ===\n")
         count = page.evaluate("() => Object.keys(NUTRITION_DB).length")
-        ok = count == 9861
+        ok = count == 9859
         status = "✅ OK" if ok else "❌ ÉCHEC"
-        print(f"{status}  {count} ingrédients (attendu 9861)")
+        print(f"{status}  {count} ingrédients (attendu 9859)")
         if not ok:
             all_ok = False
         print()

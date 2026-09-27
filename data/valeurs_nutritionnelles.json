@@ -10983,19 +10983,6 @@
    "url": "https://fdc.nal.usda.gov/food-details/171027/nutrients"
   }
  },
- "ing_004403": {
-  "kcal": 430.0,
-  "protein_g": 1.32,
-  "carbs_g": 5.9,
-  "fat_g": 44.5,
-  "_usda": {
-   "dataset": "USDA FDC",
-   "fdc_id": "fdcId 173592 / ndbNumber 4639",
-   "food": "Salad dressing, ranch dressing, regular",
-   "basis": "100g",
-   "url": "https://fdc.nal.usda.gov/food-details/173592/nutrients"
-  }
- },
  "ing_004404": {
   "kcal": 680.0,
   "protein_g": 0.96,
@@ -73422,20 +73409,6 @@
    "release": "2018-04",
    "fdc_id": "171833",
    "food": "Sauce, horseradish",
-   "basis": "100g",
-   "url": "https://fdc.nal.usda.gov/"
-  }
- },
- "ing_008903": {
-  "kcal": 77.0,
-  "protein_g": 0.0,
-  "carbs_g": 19.17,
-  "fat_g": 0.0,
-  "_usda": {
-   "dataset": "SR Legacy",
-   "release": "2018-04",
-   "fdc_id": "171610",
-   "food": "Sauce, worcestershire",
    "basis": "100g",
    "url": "https://fdc.nal.usda.gov/"
   }

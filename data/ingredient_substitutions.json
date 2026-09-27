@@ -6039,7 +6039,7 @@
  },
  {
   "substitutionId": "sub_000988",
-  "ingredientId": "ing_008903",
+  "ingredientId": "ing_000882",
   "targetIngredientId": null,
   "note": "Mélange courant pour remplacer la sauce Worcestershire dans les marinades et sauces",
   "name": "Sauce soja + un trait de vinaigre balsamique"
@@ -6119,7 +6119,7 @@
  {
   "substitutionId": "sub_001001",
   "ingredientId": "ing_009253",
-  "targetIngredientId": "ing_008903",
+  "targetIngredientId": "ing_000882",
   "note": "La sauce à steak à base de tomate peut être remplacée par de la sauce Worcestershire diluée avec un peu de ketchup."
  },
  {
