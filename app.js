@@ -6800,8 +6800,15 @@ async function ensureIngredientListLoaded() {
   // catalogue (voir TESTS_NON_REGRESSION.md).
   state.ingredientCatalogIds = {};
   state.ingredientNameByCatalogId = {};
+  const seedItems = INGREDIENT_CATALOGUE.map((entry) => ({ name: entry.fr, catalogId: entry.id }));
+  // Une seule transaction pour les ~6800 entrées (voir
+  // storePutAndDeleteMany) plutôt qu'autant de transactions séparées
+  // qu'd'ingrédients : au-delà du millier d'entrées, l'attente
+  // séquentielle de chaque storePut() rendait le tout premier
+  // lancement perceptiblement lent (voire incomplet si l'utilisateur
+  // navigue avant la fin).
+  await storePutAndDeleteMany("ingredients", seedItems, []);
   for (const entry of INGREDIENT_CATALOGUE) {
-    await storePut("ingredients", { name: entry.fr, catalogId: entry.id });
     state.ingredientCatalogIds[normalize(entry.fr)] = entry.id;
     state.ingredientNameByCatalogId[entry.id] = entry.fr;
   }
