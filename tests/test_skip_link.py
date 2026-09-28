@@ -129,13 +129,24 @@ def main():
         check("toujours présent après plusieurs render()", r5 is True, str(r5))
 
         print("\n=== 6. Texte traduit selon la langue choisie ===")
+        # setLang() charge désormais les textes d'interface de la langue À
+        # LA DEMANDE (voir ensureUiTranslationsLoaded dans i18n.js) plutôt
+        # que tous embarqués au démarrage. Précharge explicitement chaque
+        # langue AVANT d'appeler setLang() (plutôt qu'après) : une fois
+        # les données déjà en mémoire, la mise à jour du texte par
+        # setLang() redevient synchrone (voir applyDocumentChrome, appelé
+        # immédiatement), sans dépendre de l'ordre d'exécution entre deux
+        # chaînes de promesses distinctes.
         r6 = page.evaluate(
             """
-            () => {
+            async () => {
+                await ensureUiTranslationsLoaded('en');
                 setLang('en');
                 const textEn = document.getElementById('skip-link').textContent;
+                await ensureUiTranslationsLoaded('es');
                 setLang('es');
                 const textEs = document.getElementById('skip-link').textContent;
+                await ensureUiTranslationsLoaded('de');
                 setLang('de');
                 const textDe = document.getElementById('skip-link').textContent;
                 setLang('fr');
