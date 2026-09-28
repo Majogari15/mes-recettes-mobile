@@ -2773,6 +2773,21 @@ function setLang(lang) {
   if (typeof state !== "undefined" && state.ingredientNames && typeof compareIngredientNamesForDisplay === "function") {
     state.ingredientNames.sort(compareIngredientNamesForDisplay);
   }
+  // Traductions d'ingrédients/substitutions de CETTE langue (voir
+  // ensureIngredientTranslationsLoaded dans app.js, chargé après ce
+  // fichier — d'où cette vérification défensive, comme les autres
+  // ci-dessus) : chargées à la demande plutôt que toutes ensemble au
+  // démarrage (voir loadReferenceData). Mise au bon endroit — DANS
+  // setLang() plutôt qu'à chaque site d'appel — pour que tout appel à
+  // setLang(), y compris depuis les tests ou un futur appelant qui
+  // l'ignore, déclenche bien ce chargement sans avoir à y penser à
+  // chaque fois. Si cette langue est nouvelle pour la session, les noms
+  // d'ingrédients restent temporairement affichés en français le temps
+  // du téléchargement, puis se corrigent tout seuls via ce second
+  // render() une fois prêt.
+  if (typeof ensureIngredientTranslationsLoaded === "function" && typeof render === "function") {
+    ensureIngredientTranslationsLoaded(lang).then(() => render());
+  }
 }
 function translateCategory(cat) {
   return t(CATEGORY_KEYS[cat] || "cat_autre");

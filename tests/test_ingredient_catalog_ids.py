@@ -154,7 +154,13 @@ def main():
             all("nom" in s and "note" in s for s in subs_fr),
             str(subs_fr),
         )
-        page.evaluate("() => setLang('es')")
+        # setLang() charge désormais les traductions d'ingrédients/substitutions
+        # de la langue À LA DEMANDE (voir ensureIngredientTranslationsLoaded
+        # dans app.js) plutôt que toutes au démarrage — attend explicitement
+        # ce chargement avant de lire un résultat qui en dépend, sans quoi
+        # cette vérification tomberait sur le repli français (pas encore
+        # arrivé) plutôt qu'une vraie traduction.
+        page.evaluate("async () => { setLang('es'); await ensureIngredientTranslationsLoaded('es'); }")
         subs_es = page.evaluate("() => getDisplaySubstitutes('Beurre doux')")
         page.evaluate("() => setLang('fr')")
         check(
@@ -202,7 +208,7 @@ def main():
         print("\n=== Saisie bilingue après renommage : résout vers le nom ACTUEL, pas l'ancien nom du catalogue ===\n")
         page.evaluate("() => setLang('fr')")
         page.evaluate("async () => { await renameIngredientName('Tomate', 'Tomate ronde'); }")
-        page.evaluate("() => setLang('en')")
+        page.evaluate("async () => { setLang('en'); await ensureIngredientTranslationsLoaded('en'); }")
         resolved = page.evaluate("() => resolveIngredientInput('Tomato')")
         page.evaluate("() => setLang('fr')")
         check(
@@ -216,7 +222,7 @@ def main():
         # Cacahuète (vraie collision du fichier de traduction actuel) —
         # une saisie ambiguë ne doit jamais être associée silencieusement
         # à l'un des deux au hasard.
-        page.evaluate("() => setLang('en')")
+        page.evaluate("async () => { setLang('en'); await ensureIngredientTranslationsLoaded('en'); }")
         collision_resolved = page.evaluate("() => resolveIngredientInput('Peanut')")
         page.evaluate("() => setLang('fr')")
         check(

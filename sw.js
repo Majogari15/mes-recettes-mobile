@@ -11,7 +11,7 @@
 // application, donc caches.keys() y voit potentiellement les caches
 // de tout le monde sur ce domaine.
 const CACHE_PREFIX = "mes-recettes-cache-";
-const CACHE_NAME = `${CACHE_PREFIX}v286`;
+const CACHE_NAME = `${CACHE_PREFIX}v287`;
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -36,13 +36,17 @@ const FILES_TO_CACHE = [
   "./data/ingredients_catalogue.json",
   "./data/ingredient_allergenes.json",
   "./data/valeurs_nutritionnelles.json",
-  "./data/ingredient_translations_en.json",
-  "./data/ingredient_translations_es.json",
-  "./data/ingredient_translations_de.json",
   "./data/ingredient_substitutions.json",
-  "./data/ingredient_substitutions_en.json",
-  "./data/ingredient_substitutions_es.json",
-  "./data/ingredient_substitutions_de.json",
+  // Les traductions/notes de substitution PAR LANGUE (ingredient_translations_XX.json,
+  // ingredient_substitutions_XX.json) ne sont volontairement PAS
+  // préchargées ici : app.js ne demande plus désormais que celles de la
+  // langue effectivement choisie (voir ensureIngredientTranslationsLoaded)
+  // — les précharger toutes reviendrait à retélécharger ~800 Ko par
+  // langue jamais utilisée dès l'installation, ce que ce changement vise
+  // justement à éviter. Elles passent par la branche "fichiers JSON de
+  // référence" ci-dessous (stale-while-revalidate) au premier usage réel
+  // de chaque langue, puis restent en cache comme n'importe quel autre
+  // fichier de référence.
   "./lib/qrcode-generator.js",
   "./lib/jsQR.js",
   "./lib/jspdf.umd.min.js",

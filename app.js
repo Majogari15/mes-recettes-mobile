@@ -6612,43 +6612,30 @@ async function loadReferenceData() {
   });
 
   try {
-    const [allergenRes, nutritionRes, enRes, esRes, deRes, subRes, subEnRes, subEsRes, subDeRes] = await Promise.all([
+    const [allergenRes, nutritionRes, subRes] = await Promise.all([
       fetch("./data/ingredient_allergenes.json"),
       fetch("./data/valeurs_nutritionnelles.json"),
-      fetch("./data/ingredient_translations_en.json"),
-      fetch("./data/ingredient_translations_es.json"),
-      fetch("./data/ingredient_translations_de.json"),
+      // Fichier de base (relations substitutionId -> ingrédients), commun
+      // à toutes les langues — seules les NOTES traduites qui
+      // l'accompagnent (ingredient_substitutions_XX.json) dépendent de la
+      // langue, voir ensureIngredientTranslationsLoaded ci-dessous.
       fetch("./data/ingredient_substitutions.json"),
-      fetch("./data/ingredient_substitutions_en.json"),
-      fetch("./data/ingredient_substitutions_es.json"),
-      fetch("./data/ingredient_substitutions_de.json"),
     ]);
     ALLERGEN_DB = allergenRes.ok ? await allergenRes.json() : {};
     NUTRITION_DB = nutritionRes.ok ? await nutritionRes.json() : {};
-    INGREDIENT_TRANSLATIONS = {
-      en: enRes.ok ? await enRes.json() : {},
-      es: esRes.ok ? await esRes.json() : {},
-      de: deRes.ok ? await deRes.json() : {},
-    };
-    INGREDIENT_REVERSE_TRANSLATIONS = {};
-    Object.keys(INGREDIENT_TRANSLATIONS).forEach((lang) => {
-      INGREDIENT_REVERSE_TRANSLATIONS[lang] = {};
-      Object.entries(INGREDIENT_TRANSLATIONS[lang]).forEach(([id, translated]) => {
-        if (!CATALOGUE_BY_ID[id]) return;
-        const key = normalize(translated);
-        (INGREDIENT_REVERSE_TRANSLATIONS[lang][key] = INGREDIENT_REVERSE_TRANSLATIONS[lang][key] || []).push(id);
-      });
-    });
     SUBSTITUTIONS_DB = subRes.ok ? await subRes.json() : [];
     SUBSTITUTIONS_BY_INGREDIENT_ID = {};
     SUBSTITUTIONS_DB.forEach((rel) => {
       (SUBSTITUTIONS_BY_INGREDIENT_ID[rel.ingredientId] = SUBSTITUTIONS_BY_INGREDIENT_ID[rel.ingredientId] || []).push(rel);
     });
-    SUBSTITUTIONS_TRANSLATIONS = {
-      en: subEnRes.ok ? await subEnRes.json() : {},
-      es: subEsRes.ok ? await subEsRes.json() : {},
-      de: subDeRes.ok ? await subDeRes.json() : {},
-    };
+    // Seule la langue actuellement affichée est chargée ici (pas les 3
+    // autres en même temps comme avant) — voir ensureIngredientTranslationsLoaded.
+    // Avec ~10 000 ingrédients, chaque paire traductions+substitutions
+    // pèse environ 800 Ko : télécharger systématiquement les langues que
+    // la personne n'utilise jamais coûtait déjà ~2,4 Mo en trop à chaque
+    // premier lancement avec 4 langues, et deviendrait un vrai problème
+    // sur mobile à mesure que d'autres langues s'ajoutent.
+    await ensureIngredientTranslationsLoaded(CURRENT_LANG);
   } catch (e) {
     // Hors connexion au tout premier lancement (avant mise en cache) :
     // l'application continue de fonctionner, simplement sans détection
@@ -6664,6 +6651,52 @@ async function loadReferenceData() {
     SUBSTITUTIONS_BY_INGREDIENT_ID = {};
     SUBSTITUTIONS_TRANSLATIONS = {};
   }
+}
+
+// Charge les traductions d'ingrédients/substitutions d'UNE langue à la
+// demande (appelée avec CURRENT_LANG dans loadReferenceData au démarrage,
+// et avec la langue nouvellement choisie dans openLanguagePickerModal) —
+// jamais les 4 langues d'un coup comme avant cette fonction. Sans effet
+// pour le français, langue native du catalogue (data/ingredients_catalogue.json
+// lui-même), qui n'a donc pas de fichier de traduction dédié.
+// Mémorise en cache mémoire (INGREDIENT_TRANSLATIONS[lang]) : un
+// changement de langue déjà visité pendant cette session ne retélécharge
+// rien. _ingredientTranslationLoadPromises évite aussi un double
+// téléchargement si cette fonction est appelée deux fois de suite pour
+// la même langue avant que la première requête n'ait fini (peu probable
+// en pratique, mais peu coûteux à garantir).
+const _ingredientTranslationLoadPromises = {};
+async function ensureIngredientTranslationsLoaded(lang) {
+  if (lang === "fr" || INGREDIENT_TRANSLATIONS[lang]) return;
+  if (_ingredientTranslationLoadPromises[lang]) return _ingredientTranslationLoadPromises[lang];
+  _ingredientTranslationLoadPromises[lang] = (async () => {
+    try {
+      const [transRes, subRes] = await Promise.all([
+        fetch(`./data/ingredient_translations_${lang}.json`),
+        fetch(`./data/ingredient_substitutions_${lang}.json`),
+      ]);
+      INGREDIENT_TRANSLATIONS[lang] = transRes.ok ? await transRes.json() : {};
+      SUBSTITUTIONS_TRANSLATIONS[lang] = subRes.ok ? await subRes.json() : {};
+      const reverse = {};
+      Object.entries(INGREDIENT_TRANSLATIONS[lang]).forEach(([id, translated]) => {
+        if (!CATALOGUE_BY_ID[id]) return;
+        const key = normalize(translated);
+        (reverse[key] = reverse[key] || []).push(id);
+      });
+      INGREDIENT_REVERSE_TRANSLATIONS[lang] = reverse;
+    } catch (e) {
+      // Hors connexion : cette langue reste simplement sans traduction
+      // d'ingrédient/substitution (repli sur le nom français, déjà géré
+      // partout où ces dictionnaires sont consultés) plutôt que de faire
+      // échouer tout le chargement de référence.
+      INGREDIENT_TRANSLATIONS[lang] = INGREDIENT_TRANSLATIONS[lang] || {};
+      SUBSTITUTIONS_TRANSLATIONS[lang] = SUBSTITUTIONS_TRANSLATIONS[lang] || {};
+      INGREDIENT_REVERSE_TRANSLATIONS[lang] = INGREDIENT_REVERSE_TRANSLATIONS[lang] || {};
+    } finally {
+      delete _ingredientTranslationLoadPromises[lang];
+    }
+  })();
+  return _ingredientTranslationLoadPromises[lang];
 }
 
 // Retrouve l'id catalogue lié au nom ACTUEL (potentiellement renommé)
@@ -9647,6 +9680,9 @@ function openLanguagePickerModal() {
     </button>`);
     row.addEventListener("click", () => {
       closeModal();
+      // setLang() se charge lui-même de récupérer, si besoin, les
+      // traductions d'ingrédients/substitutions de cette langue et de
+      // réafficher une fois prêtes (voir i18n.js) — pas seulement ici.
       if (!isCurrent) { setLang(langMeta.code); render(); }
     });
     listHolder.appendChild(row);
