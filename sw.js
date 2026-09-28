@@ -11,7 +11,7 @@
 // application, donc caches.keys() y voit potentiellement les caches
 // de tout le monde sur ce domaine.
 const CACHE_PREFIX = "mes-recettes-cache-";
-const CACHE_NAME = `${CACHE_PREFIX}v287`;
+const CACHE_NAME = `${CACHE_PREFIX}v288`;
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -164,7 +164,12 @@ self.addEventListener("fetch", (event) => {
   // silencieuse en arrière-plan rafraîchit le cache pour la PROCHAINE
   // ouverture ("stale-while-revalidate") — sans jamais bloquer
   // l'affichage sur cette requête réseau.
-  const isReferenceDataFile = pathname.includes("/data/") && pathname.endsWith(".json");
+  // "/i18n/" : fichiers de traduction d'interface par langue (en.json,
+  // es.json...), chargés à la demande — voir ensureUiTranslationsLoaded
+  // dans i18n.js — mais qui doivent rester utilisables hors connexion
+  // une fois qu'une langue a été visitée au moins une fois, comme le
+  // reste des données de référence ci-dessous.
+  const isReferenceDataFile = (pathname.includes("/data/") || pathname.includes("/i18n/")) && pathname.endsWith(".json");
   if (isReferenceDataFile) {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
