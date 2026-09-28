@@ -478,6 +478,40 @@ a { color: inherit; }
 }
 .empty-state p { white-space: pre-line; line-height: 1.5; margin: 0 0 20px; }
 
+/* ---------- Chargement au lancement ---------- */
+/* Statique, présent dans le HTML brut (pas généré par render()) : visible
+   dès le premier affichage de la page, avant même que app.js n'ait fini de
+   s'exécuter — initInner() peut prendre plusieurs secondes sur un mobile
+   lent (chargement du catalogue d'ingrédients, lecture d'IndexedDB,
+   migrations) pendant lesquelles #app restait vide jusqu'ici, donnant
+   l'impression d'une application plantée plutôt qu'en cours de chargement.
+   Remplacé automatiquement au tout premier appel de render(), qui vide
+   #app avant de le reconstruire. */
+.boot-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+.boot-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: boot-loading-spin 0.8s linear infinite;
+}
+@keyframes boot-loading-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .boot-loading-spinner { animation: none; }
+}
+
 /* ---------- Fiche recette ---------- */
 .recipe-hero {
   position: relative;
