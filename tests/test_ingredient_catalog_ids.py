@@ -127,8 +127,8 @@ def main():
                 return { total: all.length, withId: all.filter((i) => i.catalogId).length };
             }"""
         )
-        check("9993 ingrédients chargés", r["total"] == 9993, str(r["total"]))
-        check("Tous rattachés au catalogue (catalogId)", r["withId"] == 9993, str(r["withId"]))
+        check("9992 ingrédients chargés", r["total"] == 9992, str(r["total"]))
+        check("Tous rattachés au catalogue (catalogId)", r["withId"] == 9992, str(r["withId"]))
 
         print("\n=== Renommage : allergènes/nutrition/catalogId survivent ===\n")
         before = page.evaluate(

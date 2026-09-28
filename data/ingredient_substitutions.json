@@ -8990,5 +8990,317 @@
   "targetIngredientId": "ing_004169",
   "note": "Tartinade à base de légumes similaire, interchangeable avec le caviar d'aubergine à l'apéritif.",
   "substitutionId": "sub_001479"
+ },
+ {
+  "ingredientId": "ing_010001",
+  "targetIngredientId": "ing_000448",
+  "note": "Huile au goût doux et neutre, avec un point de fumée élevé similaire ; bon substitut en cuisson comme en assaisonnement.",
+  "substitutionId": "sub_001480"
+ },
+ {
+  "ingredientId": "ing_010003",
+  "targetIngredientId": "ing_000462",
+  "note": "Huile de sésame classique, goût moins prononcé mais du même registre asiatique ; convient dans les plats coréens/japonais.",
+  "substitutionId": "sub_001481"
+ },
+ {
+  "ingredientId": "ing_010004",
+  "targetIngredientId": "ing_000459",
+  "note": "Huile de palme raffinée, couleur et goût moins intenses (moins de bêta-carotène), mais même texture et usage en cuisson.",
+  "substitutionId": "sub_001482"
+ },
+ {
+  "ingredientId": "ing_010005",
+  "targetIngredientId": "ing_000555",
+  "note": "Margarine classique, teneur en matières grasses plus élevée ; réduire légèrement la quantité.",
+  "substitutionId": "sub_001483"
+ },
+ {
+  "ingredientId": "ing_000555",
+  "targetIngredientId": "ing_010005",
+  "note": "Version allégée en matières grasses, utile pour une cuisson ou des tartines plus légères.",
+  "substitutionId": "sub_001484"
+ },
+ {
+  "ingredientId": "ing_010006",
+  "targetIngredientId": "ing_004308",
+  "note": "Beurre d'amande onctueux, texture et usage similaires (tartines, pâtisserie), saveur d'amande à la place de la noisette.",
+  "substitutionId": "sub_001485"
+ },
+ {
+  "ingredientId": "ing_010007",
+  "targetIngredientId": "ing_000456",
+  "note": "Huile de maïs classique, goût et usage quasiment identiques.",
+  "substitutionId": "sub_001486"
+ },
+ {
+  "ingredientId": "ing_000456",
+  "targetIngredientId": "ing_010007",
+  "note": "Huile de germe de maïs, très proche en goût, peut remplacer l'huile de maïs classique.",
+  "substitutionId": "sub_001487"
+ },
+ {
+  "ingredientId": "ing_010011",
+  "targetIngredientId": "ing_000458",
+  "note": "Huile de noix, autre huile de fruit à coque, saveur différente mais rôle similaire en assaisonnement et finition.",
+  "substitutionId": "sub_001488"
+ },
+ {
+  "ingredientId": "ing_010012",
+  "targetIngredientId": "ing_000458",
+  "note": "Huile de noix, profil aromatique proche (fruit à coque), bon substitut pour vinaigrettes et finitions.",
+  "substitutionId": "sub_001489"
+ },
+ {
+  "ingredientId": "ing_010013",
+  "targetIngredientId": "ing_000462",
+  "note": "Huile de sésame classique, goût moins torréfié et moins intense ; augmenter légèrement la quantité pour compenser.",
+  "substitutionId": "sub_001490"
+ },
+ {
+  "ingredientId": "ing_000462",
+  "targetIngredientId": "ing_010013",
+  "note": "Huile de sésame grillée, saveur plus intense et torréfiée ; à utiliser en quantité réduite.",
+  "substitutionId": "sub_001491"
+ },
+ {
+  "ingredientId": "ing_010014",
+  "targetIngredientId": "ing_000464",
+  "note": "Huile de tournesol raffinée classique, goût plus neutre, convient aussi bien à froid qu'à la cuisson.",
+  "substitutionId": "sub_001492"
+ },
+ {
+  "ingredientId": "ing_000464",
+  "targetIngredientId": "ing_010014",
+  "note": "Version vierge pressée à froid, goût de graines plus prononcé, à privilégier pour les assaisonnements crus.",
+  "substitutionId": "sub_001493"
+ },
+ {
+  "ingredientId": "ing_010015",
+  "targetIngredientId": "ing_000453",
+  "note": "Huile de colza raffinée classique, goût moins prononcé, meilleure tenue à la cuisson.",
+  "substitutionId": "sub_001494"
+ },
+ {
+  "ingredientId": "ing_000453",
+  "targetIngredientId": "ing_010015",
+  "note": "Version vierge pressée à froid, goût de noisette plus marqué, à réserver aux préparations froides.",
+  "substitutionId": "sub_001495"
+ },
+ {
+  "ingredientId": "ing_010016",
+  "targetIngredientId": "ing_005532",
+  "note": "Graisse de bœuf (suif), texture et usage en friture/pâtisserie très proches, saveur un peu moins prononcée.",
+  "substitutionId": "sub_001496"
+ },
+ {
+  "ingredientId": "ing_010017",
+  "targetIngredientId": "ing_000066",
+  "note": "Beurre classique, teneur en matières grasses plus élevée ; utiliser une quantité légèrement réduite.",
+  "substitutionId": "sub_001497"
+ },
+ {
+  "ingredientId": "ing_000066",
+  "targetIngredientId": "ing_010017",
+  "note": "Version allégée en matières grasses, pour une cuisson ou des tartines moins riches.",
+  "substitutionId": "sub_001498"
+ },
+ {
+  "ingredientId": "ing_010018",
+  "targetIngredientId": "ing_000066",
+  "note": "Beurre pasteurisé du commerce, convient très bien en cuisson, avec une saveur moins fermière et fruitée.",
+  "substitutionId": "sub_001499"
+ },
+ {
+  "ingredientId": "ing_010019",
+  "targetIngredientId": "ing_000450",
+  "note": "Huile d'olive extra vierge filtrée, goût un peu moins rustique mais qualité comparable.",
+  "substitutionId": "sub_001500"
+ },
+ {
+  "ingredientId": "ing_000449",
+  "targetIngredientId": "ing_010019",
+  "note": "Version vierge non filtrée, goût plus rustique et texture légèrement trouble, idéale à cru.",
+  "substitutionId": "sub_001501"
+ },
+ {
+  "ingredientId": "ing_010020",
+  "targetIngredientId": "ing_000462",
+  "note": "Huile de sésame classique, couleur claire et goût un peu moins corsé.",
+  "substitutionId": "sub_001502"
+ },
+ {
+  "ingredientId": "ing_000462",
+  "targetIngredientId": "ing_010020",
+  "note": "Huile de sésame noire, saveur plus corsée et couleur plus foncée, pour une touche plus marquée.",
+  "substitutionId": "sub_001503"
+ },
+ {
+  "ingredientId": "ing_010022",
+  "targetIngredientId": "ing_000563",
+  "note": "Mayonnaise classique, à enrichir idéalement d'œuf dur et de câpres hachés pour se rapprocher du goût de la gribiche.",
+  "substitutionId": "sub_001504"
+ },
+ {
+  "ingredientId": "ing_010023",
+  "targetIngredientId": "ing_000881",
+  "note": "Vinaigrette classique additionnée de câpres, cornichons et fines herbes hachées pour se rapprocher de la ravigote.",
+  "substitutionId": "sub_001505"
+ },
+ {
+  "ingredientId": "ing_010026",
+  "targetIngredientId": "ing_000856",
+  "note": "Sauce béchamel additionnée de fromage râpé, ce qui constitue justement la base d'une sauce Mornay maison.",
+  "substitutionId": "sub_001506"
+ },
+ {
+  "ingredientId": "ing_010027",
+  "targetIngredientId": "ing_004018",
+  "note": "Sauce béarnaise additionnée d'un peu de concentré de tomate, ce qui donne une sauce Choron maison.",
+  "substitutionId": "sub_001507"
+ },
+ {
+  "ingredientId": "ing_010029",
+  "targetIngredientId": "ing_000869",
+  "note": "Sauce salsa fraîche, texture et usage très proches (tacos, grillades, œufs).",
+  "substitutionId": "sub_001508"
+ },
+ {
+  "ingredientId": "ing_010033",
+  "targetIngredientId": "ing_000392",
+  "note": "Gelée de groseille, condiment acidulé traditionnellement servi avec volaille et gibier, bon substitut à la sauce cranberry.",
+  "substitutionId": "sub_001509"
+ },
+ {
+  "ingredientId": "ing_000392",
+  "targetIngredientId": "ing_010033",
+  "note": "Sauce cranberry, condiment sucré-acidulé similaire pour accompagner volaille et gibier.",
+  "substitutionId": "sub_001510"
+ },
+ {
+  "ingredientId": "ing_010034",
+  "targetIngredientId": "ing_005441",
+  "note": "Chowchow (relish de légumes au vinaigre, à la moutarde), très proche du piccalilli anglais.",
+  "substitutionId": "sub_001511"
+ },
+ {
+  "ingredientId": "ing_005441",
+  "targetIngredientId": "ing_010034",
+  "note": "Piccalilli, relish anglais de légumes à la moutarde et au curcuma, très proche du chowchow.",
+  "substitutionId": "sub_001512"
+ },
+ {
+  "ingredientId": "ing_010035",
+  "targetIngredientId": "ing_000073",
+  "note": "Beurre noisette additionné de jus de citron et de persil haché, ce qui reconstitue une sauce meunière maison.",
+  "substitutionId": "sub_001513"
+ },
+ {
+  "ingredientId": "ing_010036",
+  "targetIngredientId": "ing_000859",
+  "note": "Sauce curry classique, saveur moins complexe (sans les épices spécifiques du colombo antillais) mais usage identique.",
+  "substitutionId": "sub_001514"
+ },
+ {
+  "ingredientId": "ing_010037",
+  "targetIngredientId": "ing_000857",
+  "note": "Sauce chimichurri, sauce à base d'herbes et d'huile pour accompagner les grillades, saveur moins citronnée mais usage similaire.",
+  "substitutionId": "sub_001515"
+ },
+ {
+  "ingredientId": "ing_010039",
+  "targetIngredientId": "ing_004165",
+  "note": "Tzatziki à base de yaourt, sauce yaourt-concombre très proche du raita, en général un peu moins épicée.",
+  "substitutionId": "sub_001516"
+ },
+ {
+  "ingredientId": "ing_004165",
+  "targetIngredientId": "ing_010039",
+  "note": "Sauce raita, sauce yaourt-concombre indienne très proche du tzatziki, souvent plus épicée.",
+  "substitutionId": "sub_001517"
+ },
+ {
+  "ingredientId": "ing_010045",
+  "targetIngredientId": "ing_000879",
+  "note": "Sauce tomate classique additionnée de piment (frais, en poudre ou en flocons) pour se rapprocher de l'arrabbiata.",
+  "substitutionId": "sub_001518"
+ },
+ {
+  "ingredientId": "ing_010046",
+  "targetIngredientId": "ing_000879",
+  "note": "Sauce tomate additionnée d'olives, de câpres et d'anchois hachés pour se rapprocher de la puttanesca.",
+  "substitutionId": "sub_001519"
+ },
+ {
+  "ingredientId": "ing_010047",
+  "targetIngredientId": "ing_000679",
+  "note": "Pâte de curry vert à diluer avec du lait de coco, base classique pour reconstituer une sauce curry vert thaï.",
+  "substitutionId": "sub_001520"
+ },
+ {
+  "ingredientId": "ing_010048",
+  "targetIngredientId": "ing_000678",
+  "note": "Pâte de curry rouge à diluer avec du lait de coco, base classique pour reconstituer une sauce curry rouge thaï.",
+  "substitutionId": "sub_001521"
+ },
+ {
+  "ingredientId": "ing_010049",
+  "targetIngredientId": "ing_000563",
+  "note": "Mayonnaise additionnée d'ail écrasé, texture crémeuse proche du toum, en plus doux.",
+  "substitutionId": "sub_001522"
+ },
+ {
+  "ingredientId": "ing_010050",
+  "targetIngredientId": "ing_000878",
+  "note": "Sauce teriyaki, également sucrée-salée à base de soja, bon substitut pour mariner ou napper des grillades.",
+  "substitutionId": "sub_001523"
+ },
+ {
+  "ingredientId": "ing_000878",
+  "targetIngredientId": "ing_010050",
+  "note": "Sauce yakiniku, également sucrée-salée à base de soja, bon substitut pour la teriyaki.",
+  "substitutionId": "sub_001524"
+ },
+ {
+  "ingredientId": "ing_010051",
+  "targetIngredientId": "ing_000864",
+  "note": "Sauce nuoc-mâm pure, plus salée et sans les autres arômes (citron vert, sucre, piment) ; à diluer et sucrer légèrement.",
+  "substitutionId": "sub_001525"
+ },
+ {
+  "ingredientId": "ing_010054",
+  "targetIngredientId": "ing_003991",
+  "note": "Harissa, pâte de piment nord-africaine plus épaisse, usage similaire pour relever grillades et marinades.",
+  "substitutionId": "sub_001526"
+ },
+ {
+  "ingredientId": "ing_003991",
+  "targetIngredientId": "ing_010054",
+  "note": "Sauce piri-piri, également pimentée mais plus liquide, bon substitut pour relever un plat ou une marinade.",
+  "substitutionId": "sub_001527"
+ },
+ {
+  "ingredientId": "ing_010055",
+  "targetIngredientId": "ing_000857",
+  "note": "Chimichurri, sauce aux herbes et à l'huile (persil plutôt que coriandre), rôle culinaire proche pour accompagner les grillades.",
+  "substitutionId": "sub_001528"
+ },
+ {
+  "ingredientId": "ing_010058",
+  "targetIngredientId": "ing_009651",
+  "note": "Sauce enchilada rouge à base de tomate, saveur moins acidulée que la version au tomatillo, mais usage identique.",
+  "substitutionId": "sub_001529"
+ },
+ {
+  "ingredientId": "ing_009651",
+  "targetIngredientId": "ing_010058",
+  "note": "Sauce enchilada verte à base de tomatillo, plus acidulée, mais usage identique pour napper les enchiladas.",
+  "substitutionId": "sub_001530"
+ },
+ {
+  "ingredientId": "ing_010060",
+  "targetIngredientId": "ing_005980",
+  "note": "Sauce salade miel et moutarde du commerce, produit quasiment identique.",
+  "substitutionId": "sub_001531"
  }
 ]

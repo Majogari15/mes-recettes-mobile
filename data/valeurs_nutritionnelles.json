@@ -133276,5 +133276,145 @@
    "url": "https://fdc.nal.usda.gov/food-details/171043/nutrients",
    "note": "Fiche USDA correspond à une version 'salad dressing' riche en huile; le condiment français type moutarde+miel (sauce à tremper/badigeonner) est en général moins gras que cette vinaigrette du commerce - valeur à considérer comme un majorant."
   }
+ },
+ "ing_010001": {
+  "kcal": 900.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3291960010988",
+   "food": "HUILE DE MACADAMIA (Emile Noël)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3291960010988/huile-de-macadamia-emile-noel",
+   "note": "Huile pure (100% lipides). Recoupé avec 4 autres huiles de macadamia vierges françaises sur Open Food Facts, toutes identiques à 900 kcal / 100 g de matière grasse : Cauvin 'Huile vierge de macadamia' (3336590104154), La Vie Claire 'Huile vierge macadamia' (3266191010823), Vigean 'Huile De Macadamia Vierge Bio' (3452010002111), producteurs & commerçants 'l'inestimable huile de noix' — même gamme (0254492257217)."
+  }
+ },
+ "ing_010003": {
+  "kcal": 857.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 92.86,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "8801045448503",
+   "food": "Perilla Oil (Ottogi)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/8801045448503/perilla-oil-ottogi",
+   "note": "Huile pure de périlla (marque coréenne majeure). Recoupé avec Hansang 'Perilla Seed Oil' (0761898765548 : 800 kcal / 93.3 g fat pour 100 g) et avec Wikipedia (884 kcal / 100 g fat, citant une table nutritionnelle type USDA). Les 3 sources convergent dans la fourchette 800-884 kcal pour une huile ~93-100% lipides."
+  }
+ },
+ "ing_010006": {
+  "kcal": 693.0,
+  "protein_g": 16.4,
+  "carbs_g": 5.5,
+  "fat_g": 63.5,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3390390000061",
+   "food": "Purée de noisette (Jean Hervé, 100% noisettes, sans sucre ajouté)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3390390000061/puree-de-noisette-jean-herve",
+   "note": "Recoupé avec 5 autres purées de noisette 100% pures (sans sucre ajouté) sur Open Food Facts, toutes très proches : L'Amandaie 'Purée de noisette toastée' (3267110004732, 702 kcal), La Fourche 'Purée 100% Noisettes Bio' (3760324840566, 702 kcal), Damiano 'Purée de noisettes grillées' (8002352304005, 703 kcal), U 'Purée de noisettes' (3256228125620, 691 kcal), Senfas 'Crème de Noisettes' (3412940200032, 691 kcal). Fourchette resserrée 691-703 kcal, valeur retenue = médiane/marque de référence bio."
+  }
+ },
+ "ing_010008": {
+  "kcal": 866.67,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 93.33,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0033674108956",
+   "food": "Organic MCT Oil 100% MCTS (Nature's Way)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0033674108956/organic-mct-oil-100-mcts-nature-s-way",
+   "note": "Convergence exceptionnellement forte : au moins 6 marques indépendantes d'huile MCT pure (Nature's Way x2, Sprouts Farmers Market, Sports Research, Onnit, Bulletproof, California Gold Nutrition) affichent exactement la même valeur 866.67 kcal / 93.33 g de lipides pour 100 g, cohérent avec la densité énergétique connue des triglycérides à chaîne moyenne (~8.3 kcal/g, inférieure aux 9 kcal/g des acides gras à longue chaîne)."
+  }
+ },
+ "ing_010010": {
+  "kcal": 900.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3291960004925",
+   "food": "Huile De Bourrache (Emile Noël)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3291960004925/huile-de-bourrache-emile-noel",
+   "note": "Huile alimentaire pure (100% lipides), même marque et même profil (900 kcal/100g) que ses huiles de macadamia, pistache et noix vendues en parallèle sur Open Food Facts, cohérent avec le référentiel constant des huiles végétales pures françaises (900 kcal/100g). Un autre produit générique 'Borage Oil' (0705875100045) affichait 1000 kcal, valeur jugée aberrante/isolée et donc écartée au profit de la valeur convergente à 900 kcal."
+  }
+ },
+ "ing_010011": {
+  "kcal": 900.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3245270000672",
+   "food": "Huile De Pistache (La Tourangelle)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3245270000672/huile-de-pistache-250-ml-la-tourangelle",
+   "note": "Recoupé avec un second producteur indépendant, Huilerie Croix Verte 'Huile de Pistache' (3245270000917), qui affiche exactement la même valeur : 900 kcal / 100 g de matière grasse."
+  }
+ },
+ "ing_010012": {
+  "kcal": 929.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0032982591504",
+   "food": "100% Virgin Pecan Oil (Panola)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0032982591504/100-virgin-pecan-oil-panola",
+   "note": "Recoupé avec Kinloch Plantation Products 'Kinloch Pecan Oil' (0182202000191 : 130 kcal / 14 g de lipides par portion de 15 ml, soit 866.7 kcal pour 93.33 g de lipides) : la densité énergétique calculée est identique dans les deux cas (~9.29 kcal par gramme de lipides), ce qui confirme la cohérence malgré la différence de teneur en lipides déclarée par 100 g (100 g vs 93.33 g, écart de présentation/arrondi)."
+  }
+ },
+ "ing_010028": {
+  "kcal": 60.8,
+  "protein_g": 1.6,
+  "carbs_g": 5.6,
+  "fat_g": 3.2,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3033710036943",
+   "food": "Sauce échalote (Chef)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3033710036943/sauce-echalote-chef",
+   "note": "Produit du commerce portant exactement le nom recherché, fiche nutritionnelle complète issue de l'étiquette officielle."
+  }
+ },
+ "ing_010037": {
+  "kcal": 238.0,
+  "protein_g": 1.5,
+  "carbs_g": 5.2,
+  "fat_g": 23.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3450864650144",
+   "food": "Sauce chien (Leader Price)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3450864650144/sauce-chien-leader-price",
+   "note": "Produit du commerce antillais portant exactement le nom recherché ('Sauce chien'), fiche nutritionnelle complète issue de l'étiquette officielle."
+  }
+ },
+ "ing_010039": {
+  "kcal": 52.0,
+  "protein_g": 1.9,
+  "carbs_g": 8.1,
+  "fat_g": 1.2,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0069276980003",
+   "food": "Raita (Patak's)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0069276980003/raita-patak-s",
+   "note": "Marque de référence indienne, profil pauvre en matière grasse cohérent avec une sauce base yaourt + concombre traditionnelle. Recoupé avec 'Indian savory yogurt raita' (0869080000108 : 89 kcal, 3.33 g fat, 8.89 g carbs, 6.67 g protein), également de type yaourt-concombre allégé. D'autres produits commerciaux nommés 'raita' au Royaume-Uni (ex. Sainsbury's 161 kcal, générique 214-238 kcal) se sont révélés être des sauces à base de mayonnaise et ont été écartés car non représentatifs de la préparation traditionnelle recherchée."
+  }
  }
 }

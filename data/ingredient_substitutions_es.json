@@ -4556,5 +4556,161 @@
  },
  "sub_001479": {
   "note": "Una untable de verduras similar, intercambiable con el caviar de berenjena para el aperitivo."
+ },
+ "sub_001480": {
+  "note": "Aceite de sabor suave y neutro, con un punto de humo igualmente alto; buen sustituto tanto para cocinar como para aliñar."
+ },
+ "sub_001481": {
+  "note": "Aceite de sésamo clásico, sabor menos marcado pero del mismo registro asiático; adecuado para platos coreanos/japoneses."
+ },
+ "sub_001482": {
+  "note": "Aceite de palma refinado, color y sabor menos intensos (menos betacaroteno), pero misma textura y uso en cocción."
+ },
+ "sub_001483": {
+  "note": "Margarina clásica, mayor contenido graso; usar una cantidad ligeramente menor."
+ },
+ "sub_001484": {
+  "note": "Versión light, baja en grasa, útil para cocinar o untar de forma más ligera."
+ },
+ "sub_001485": {
+  "note": "Crema de almendra untuosa, textura y uso similares (untar, repostería), sabor a almendra en lugar de avellana."
+ },
+ "sub_001486": {
+  "note": "Aceite de maíz clásico, sabor y uso casi idénticos."
+ },
+ "sub_001487": {
+  "note": "Aceite de germen de maíz, muy similar en sabor, puede sustituir al aceite de maíz clásico."
+ },
+ "sub_001488": {
+  "note": "Aceite de nuez, otro aceite de fruto seco, sabor diferente pero función similar para aliñar y dar el toque final."
+ },
+ "sub_001489": {
+  "note": "Aceite de nuez, perfil aromático similar (fruto seco), buen sustituto para aliños y toques finales."
+ },
+ "sub_001490": {
+  "note": "Aceite de sésamo clásico, sabor menos tostado y menos intenso; usar algo más de cantidad para compensar."
+ },
+ "sub_001491": {
+  "note": "Aceite de sésamo tostado, sabor más intenso y tostado; usar en menor cantidad."
+ },
+ "sub_001492": {
+  "note": "Aceite de girasol refinado clásico, sabor más neutro, apto tanto en frío como en cocción."
+ },
+ "sub_001493": {
+  "note": "Versión virgen prensada en frío, sabor a semillas más marcado, preferible para aliños en crudo."
+ },
+ "sub_001494": {
+  "note": "Aceite de colza refinado clásico, sabor más suave, mejor comportamiento en cocción."
+ },
+ "sub_001495": {
+  "note": "Versión virgen prensada en frío, sabor a fruto seco más marcado, mejor reservada para preparaciones frías."
+ },
+ "sub_001496": {
+  "note": "Grasa de vacuno (sebo), textura y uso muy similares para freír/repostería, sabor algo menos marcado."
+ },
+ "sub_001497": {
+  "note": "Mantequilla clásica, mayor contenido graso; usar una cantidad ligeramente menor."
+ },
+ "sub_001498": {
+  "note": "Versión light, baja en grasa, para cocinar o untar de forma más ligera."
+ },
+ "sub_001499": {
+  "note": "Mantequilla pasteurizada comercial, funciona muy bien en cocción, con un sabor menos artesanal y afrutado."
+ },
+ "sub_001500": {
+  "note": "Aceite de oliva virgen extra filtrado, sabor algo menos rústico pero calidad comparable."
+ },
+ "sub_001501": {
+  "note": "Versión virgen sin filtrar, sabor más rústico y textura ligeramente turbia, ideal en crudo."
+ },
+ "sub_001502": {
+  "note": "Aceite de sésamo clásico, color más claro y sabor algo menos intenso."
+ },
+ "sub_001503": {
+  "note": "Aceite de sésamo negro, sabor más intenso y color más oscuro, para un toque más marcado."
+ },
+ "sub_001504": {
+  "note": "Mayonesa clásica, idealmente enriquecida con huevo duro y alcaparras picadas para acercarse al sabor de la gribiche."
+ },
+ "sub_001505": {
+  "note": "Vinagreta clásica con alcaparras, pepinillos y hierbas picadas añadidas para acercarse a la ravigote."
+ },
+ "sub_001506": {
+  "note": "Salsa bechamel con queso rallado añadido, que es precisamente la base de una salsa Mornay casera."
+ },
+ "sub_001507": {
+  "note": "Salsa bearnesa con un poco de concentrado de tomate añadido, lo que da una salsa Choron casera."
+ },
+ "sub_001508": {
+  "note": "Salsa fresca, textura y uso muy similares (tacos, carnes a la parrilla, huevos)."
+ },
+ "sub_001509": {
+  "note": "Jalea de grosella, condimento ácido servido tradicionalmente con aves y caza, buen sustituto de la salsa de arándanos."
+ },
+ "sub_001510": {
+  "note": "Salsa de arándanos, condimento agridulce similar para acompañar aves y caza."
+ },
+ "sub_001511": {
+  "note": "Chowchow (relish de verduras al vinagre y mostaza), muy similar al piccalilli inglés."
+ },
+ "sub_001512": {
+  "note": "Piccalilli, relish inglés de verduras con mostaza y cúrcuma, muy similar al chowchow."
+ },
+ "sub_001513": {
+  "note": "Mantequilla avellana con zumo de limón y perejil picado añadidos, lo que recrea una salsa meunière casera."
+ },
+ "sub_001514": {
+  "note": "Salsa de curry clásica, sabor menos complejo (sin las especias específicas del colombo antillano) pero mismo uso."
+ },
+ "sub_001515": {
+  "note": "Salsa chimichurri, salsa de hierbas y aceite para acompañar carnes a la parrilla, sabor menos cítrico pero uso similar."
+ },
+ "sub_001516": {
+  "note": "Tzatziki a base de yogur, salsa de yogur y pepino muy similar al raita, generalmente algo menos especiada."
+ },
+ "sub_001517": {
+  "note": "Salsa raita, salsa india de yogur y pepino muy similar al tzatziki, a menudo más especiada."
+ },
+ "sub_001518": {
+  "note": "Salsa de tomate clásica con guindilla añadida (fresca, en polvo o en copos) para acercarse a la arrabbiata."
+ },
+ "sub_001519": {
+  "note": "Salsa de tomate con aceitunas, alcaparras y anchoas picadas añadidas para acercarse a la puttanesca."
+ },
+ "sub_001520": {
+  "note": "Pasta de curry verde para diluir con leche de coco, base clásica para recrear la salsa de curry verde tailandés."
+ },
+ "sub_001521": {
+  "note": "Pasta de curry rojo para diluir con leche de coco, base clásica para recrear la salsa de curry rojo tailandés."
+ },
+ "sub_001522": {
+  "note": "Mayonesa con ajo machacado añadido, textura cremosa cercana al toum, pero más suave."
+ },
+ "sub_001523": {
+  "note": "Salsa teriyaki, también agridulce a base de soja, buen sustituto para marinar o glasear carnes a la parrilla."
+ },
+ "sub_001524": {
+  "note": "Salsa yakiniku, también agridulce a base de soja, buen sustituto de la teriyaki."
+ },
+ "sub_001525": {
+  "note": "Salsa de pescado pura (nuoc-mâm), más salada y sin los otros aromas (lima, azúcar, guindilla); diluir y endulzar ligeramente."
+ },
+ "sub_001526": {
+  "note": "Harissa, pasta de guindilla norteafricana más espesa, uso similar para dar sabor a parrilladas y marinadas."
+ },
+ "sub_001527": {
+  "note": "Salsa piri-piri, también picante pero más líquida, buen sustituto para dar sabor a un plato o marinada."
+ },
+ "sub_001528": {
+  "note": "Chimichurri, salsa de hierbas y aceite (perejil en lugar de cilantro), función culinaria similar para acompañar carnes a la parrilla."
+ },
+ "sub_001529": {
+  "note": "Salsa de enchilada roja a base de tomate, sabor menos ácido que la versión de tomatillo, pero mismo uso."
+ },
+ "sub_001530": {
+  "note": "Salsa de enchilada verde a base de tomatillo, más ácida, pero mismo uso para cubrir enchiladas."
+ },
+ "sub_001531": {
+  "note": "Aliño de miel y mostaza comercial, un producto casi idéntico."
  }
 }

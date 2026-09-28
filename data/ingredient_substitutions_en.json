@@ -4556,5 +4556,161 @@
  },
  "sub_001479": {
   "note": "A similar vegetable-based spread, interchangeable with eggplant caviar for appetizers."
+ },
+ "sub_001480": {
+  "note": "Mild, neutral-tasting oil with a similarly high smoke point; good substitute for both cooking and dressing."
+ },
+ "sub_001481": {
+  "note": "Regular sesame oil, less pronounced flavor but same Asian character; works in Korean/Japanese dishes."
+ },
+ "sub_001482": {
+  "note": "Refined palm oil, less intense color and flavor (less beta-carotene), but same texture and cooking use."
+ },
+ "sub_001483": {
+  "note": "Regular margarine, higher fat content; use a slightly smaller amount."
+ },
+ "sub_001484": {
+  "note": "Light, reduced-fat version, useful for lighter cooking or spreads."
+ },
+ "sub_001485": {
+  "note": "Smooth almond butter, similar texture and use (spreads, baking), almond flavor instead of hazelnut."
+ },
+ "sub_001486": {
+  "note": "Regular corn oil, almost identical flavor and use."
+ },
+ "sub_001487": {
+  "note": "Corn germ oil, very close in flavor, can replace regular corn oil."
+ },
+ "sub_001488": {
+  "note": "Walnut oil, another nut oil, different flavor but similar role for dressing and finishing."
+ },
+ "sub_001489": {
+  "note": "Walnut oil, similar nutty aromatic profile, good substitute for dressings and finishing touches."
+ },
+ "sub_001490": {
+  "note": "Regular sesame oil, less toasted and less intense flavor; use slightly more to compensate."
+ },
+ "sub_001491": {
+  "note": "Toasted sesame oil, more intense and roasted flavor; use in smaller amounts."
+ },
+ "sub_001492": {
+  "note": "Regular refined sunflower oil, more neutral flavor, suitable both cold and for cooking."
+ },
+ "sub_001493": {
+  "note": "Cold-pressed virgin version, more pronounced seed flavor, best for raw dressings."
+ },
+ "sub_001494": {
+  "note": "Regular refined rapeseed oil, milder flavor, holds up better to cooking heat."
+ },
+ "sub_001495": {
+  "note": "Cold-pressed virgin version, more pronounced nutty flavor, best kept for cold preparations."
+ },
+ "sub_001496": {
+  "note": "Beef fat (tallow), very similar texture and use for frying/baking, slightly milder flavor."
+ },
+ "sub_001497": {
+  "note": "Regular butter, higher fat content; use a slightly smaller amount."
+ },
+ "sub_001498": {
+  "note": "Light, reduced-fat version, for lighter cooking or spreads."
+ },
+ "sub_001499": {
+  "note": "Regular pasteurized dairy butter, works very well for cooking, with a less farmhouse, fruity flavor."
+ },
+ "sub_001500": {
+  "note": "Filtered extra virgin olive oil, slightly less rustic flavor but comparable quality."
+ },
+ "sub_001501": {
+  "note": "Unfiltered virgin version, more rustic flavor and slightly cloudy texture, ideal raw."
+ },
+ "sub_001502": {
+  "note": "Regular sesame oil, lighter color and slightly less bold flavor."
+ },
+ "sub_001503": {
+  "note": "Black sesame oil, bolder flavor and darker color, for a more pronounced touch."
+ },
+ "sub_001504": {
+  "note": "Regular mayonnaise, ideally enriched with chopped hard-boiled egg and capers to get closer to gribiche."
+ },
+ "sub_001505": {
+  "note": "Regular vinaigrette with added capers, gherkins and chopped herbs to get closer to ravigote."
+ },
+ "sub_001506": {
+  "note": "Béchamel sauce with added grated cheese, which is exactly the base of a homemade Mornay sauce."
+ },
+ "sub_001507": {
+  "note": "Béarnaise sauce with a little added tomato paste, which makes a homemade Choron sauce."
+ },
+ "sub_001508": {
+  "note": "Fresh salsa sauce, very similar texture and use (tacos, grilled meats, eggs)."
+ },
+ "sub_001509": {
+  "note": "Redcurrant jelly, a tangy condiment traditionally served with poultry and game, a good substitute for cranberry sauce."
+ },
+ "sub_001510": {
+  "note": "Cranberry sauce, a similar sweet-tart condiment to accompany poultry and game."
+ },
+ "sub_001511": {
+  "note": "Chowchow (a vinegar-and-mustard vegetable relish), very close to English piccalilli."
+ },
+ "sub_001512": {
+  "note": "Piccalilli, an English vegetable relish with mustard and turmeric, very close to chowchow."
+ },
+ "sub_001513": {
+  "note": "Brown butter with added lemon juice and chopped parsley, which recreates a homemade meunière sauce."
+ },
+ "sub_001514": {
+  "note": "Regular curry sauce, less complex flavor (without the specific Caribbean colombo spices) but same use."
+ },
+ "sub_001515": {
+  "note": "Chimichurri sauce, an herb-and-oil sauce to go with grilled meats, less lemony flavor but similar use."
+ },
+ "sub_001516": {
+  "note": "Yogurt-based tzatziki, a yogurt-and-cucumber sauce very close to raita, usually a bit less spiced."
+ },
+ "sub_001517": {
+  "note": "Raita sauce, an Indian yogurt-and-cucumber sauce very close to tzatziki, often more spiced."
+ },
+ "sub_001518": {
+  "note": "Regular tomato sauce with added chili (fresh, powdered or flaked) to get closer to arrabbiata."
+ },
+ "sub_001519": {
+  "note": "Tomato sauce with added olives, capers and chopped anchovies to get closer to puttanesca."
+ },
+ "sub_001520": {
+  "note": "Green curry paste to dilute with coconut milk, the classic base for recreating Thai green curry sauce."
+ },
+ "sub_001521": {
+  "note": "Red curry paste to dilute with coconut milk, the classic base for recreating Thai red curry sauce."
+ },
+ "sub_001522": {
+  "note": "Mayonnaise with crushed garlic added, creamy texture close to toum, but milder."
+ },
+ "sub_001523": {
+  "note": "Teriyaki sauce, also sweet-savory and soy-based, a good substitute for marinating or glazing grilled meats."
+ },
+ "sub_001524": {
+  "note": "Yakiniku sauce, also sweet-savory and soy-based, a good substitute for teriyaki."
+ },
+ "sub_001525": {
+  "note": "Plain fish sauce (nuoc-mâm), saltier and without the other flavors (lime, sugar, chili); dilute and sweeten slightly."
+ },
+ "sub_001526": {
+  "note": "Harissa, a thicker North African chili paste, similar use for spicing up grilled meats and marinades."
+ },
+ "sub_001527": {
+  "note": "Piri-piri sauce, also spicy but more liquid, a good substitute for spicing up a dish or marinade."
+ },
+ "sub_001528": {
+  "note": "Chimichurri, an herb-and-oil sauce (parsley instead of coriander), similar culinary role for accompanying grilled meats."
+ },
+ "sub_001529": {
+  "note": "Tomato-based red enchilada sauce, less tangy flavor than the tomatillo version, but same use."
+ },
+ "sub_001530": {
+  "note": "Tomatillo-based green enchilada sauce, tangier, but same use for topping enchiladas."
+ },
+ "sub_001531": {
+  "note": "Store-bought honey mustard salad dressing, an almost identical product."
  }
 }
