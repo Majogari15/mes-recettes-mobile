@@ -865,6 +865,11 @@ const SUPPORTED_LANGUAGES = [
   { code: "en", flag: "🇬🇧", nativeName: "English" },
   { code: "es", flag: "🇪🇸", nativeName: "Español" },
   { code: "de", flag: "🇩🇪", nativeName: "Deutsch" },
+  { code: "id", flag: "🇮🇩", nativeName: "Bahasa Indonesia" },
+  { code: "pt", flag: "🇵🇹", nativeName: "Português" },
+  { code: "it", flag: "🇮🇹", nativeName: "Italiano" },
+  { code: "sv", flag: "🇸🇪", nativeName: "Svenska" },
+  { code: "no", flag: "🇳🇴", nativeName: "Norsk" },
 ];
 
 // Textes de l'interface des langues autres que le français : chargés à

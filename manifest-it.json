@@ -1,0 +1,39 @@
+{
+  "id": "./index.html",
+  "name": "Le Mie Ricette, La Mia Spesa",
+  "short_name": "Le Mie Ricette",
+  "description": "Ricette, spesa e pianificazione dei pasti — tutto sul tuo telefono",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FBF6EF",
+  "theme_color": "#2F5233",
+  "lang": "it",
+  "categories": ["food", "lifestyle", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  },
+  "shortcuts": [
+    {
+      "name": "Nuova ricetta",
+      "short_name": "Nuova ricetta",
+      "description": "Aggiungi una nuova ricetta",
+      "url": "./index.html?screen=form",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Lista della spesa",
+      "short_name": "Spesa",
+      "description": "Vedi la lista della spesa",
+      "url": "./index.html?screen=shopping",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

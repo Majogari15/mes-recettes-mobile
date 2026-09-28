@@ -1,0 +1,39 @@
+{
+  "id": "./index.html",
+  "name": "Resep Saya, Belanja Saya",
+  "short_name": "Resep Saya",
+  "description": "Resep, belanja, dan rencana makan — semua di ponsel Anda",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FBF6EF",
+  "theme_color": "#2F5233",
+  "lang": "id",
+  "categories": ["food", "lifestyle", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  },
+  "shortcuts": [
+    {
+      "name": "Resep baru",
+      "short_name": "Resep baru",
+      "description": "Tambah resep baru",
+      "url": "./index.html?screen=form",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Daftar belanja",
+      "short_name": "Belanja",
+      "description": "Lihat daftar belanja",
+      "url": "./index.html?screen=shopping",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

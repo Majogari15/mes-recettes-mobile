@@ -1,0 +1,39 @@
+{
+  "id": "./index.html",
+  "name": "Mine Oppskrifter, Min Handleliste",
+  "short_name": "Mine Oppskrifter",
+  "description": "Oppskrifter, handling og måltidsplanlegging — alt på telefonen din",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FBF6EF",
+  "theme_color": "#2F5233",
+  "lang": "no",
+  "categories": ["food", "lifestyle", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  },
+  "shortcuts": [
+    {
+      "name": "Ny oppskrift",
+      "short_name": "Ny oppskrift",
+      "description": "Legg til en ny oppskrift",
+      "url": "./index.html?screen=form",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Handleliste",
+      "short_name": "Handling",
+      "description": "Vis handlelisten",
+      "url": "./index.html?screen=shopping",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}
