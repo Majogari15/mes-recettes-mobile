@@ -3861,7 +3861,14 @@ function renderIngredientDuplicates() {
     // découpée), hors de portée d'un simple retour visuel ici.
     listHolder.appendChild(el(`<div class="empty-state"><div class="emoji">⏳</div><p>${escapeHtml(t("ingredient_duplicates_loading"))}</p></div>`));
     setTimeout(() => {
-      if (state.screen !== "ingredientDuplicates") return; // écran quitté entre-temps
+      // listHolder.isConnected (pas state.screen) : si l'écran est quitté
+      // PUIS rouvert avant que ce setTimeout ne se déclenche, state.screen
+      // redevient "ingredientDuplicates" mais désigne une NOUVELLE visite
+      // (nouvelle fermeture, nouveau cachedAllPairs) — comparer le seul nom
+      // d'écran laisserait alors ce calcul obsolète s'exécuter quand même
+      // et geler le thread principal une seconde fois, sur l'écran
+      // actuellement affiché.
+      if (!listHolder.isConnected) return;
       cachedAllPairs = findSimilarIngredientPairs(state.ingredientNames, 0.9);
       renderPairs();
     }, 0);
