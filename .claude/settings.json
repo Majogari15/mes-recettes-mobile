@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 tests/test_ingredient_catalog_ids.py)",
+      "Bash(python3 tests/test_ingredient_duplicates.py)",
+      "Bash(python3 tests/test_ingredient_reference_data.py)"
+    ]
+  }
+}
