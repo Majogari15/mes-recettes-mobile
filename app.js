@@ -3836,7 +3836,17 @@ function renderIngredientDuplicates() {
   const listHolder = el(`<div id="dup-list-holder"></div>`);
   wrap.appendChild(listHolder);
 
+  // Résultat brut (avant filtrage des paires ignorées) mis en cache pour
+  // la durée de cette visite d'écran : "Ignorer" une paire ne change en
+  // rien la liste d'ingrédients elle-même, donc ça ne justifie pas de
+  // relancer tout le calcul (5-7 s à l'échelle de ~10 000 ingrédients) —
+  // seule une fusion, qui modifie réellement la liste, invalide ce
+  // cache. Variable de fermeture (pas globale) : automatiquement
+  // réinitialisée à chaque nouvelle visite de cet écran.
+  let cachedAllPairs = null;
+
   function fillList() {
+    if (cachedAllPairs) { renderPairs(); return; }
     listHolder.innerHTML = "";
     // findSimilarIngredientPairs balaie tout le catalogue (comparaison
     // deux à deux) : quelques millisecondes à l'échelle des ~1000
@@ -3852,13 +3862,13 @@ function renderIngredientDuplicates() {
     listHolder.appendChild(el(`<div class="empty-state"><div class="emoji">⏳</div><p>${escapeHtml(t("ingredient_duplicates_loading"))}</p></div>`));
     setTimeout(() => {
       if (state.screen !== "ingredientDuplicates") return; // écran quitté entre-temps
+      cachedAllPairs = findSimilarIngredientPairs(state.ingredientNames, 0.9);
       renderPairs();
     }, 0);
   }
   function renderPairs() {
     listHolder.innerHTML = "";
-    const allPairs = findSimilarIngredientPairs(state.ingredientNames, 0.9);
-    const pairs = allPairs.filter(([a, b]) => !isPairDismissed(a, b));
+    const pairs = cachedAllPairs.filter(([a, b]) => !isPairDismissed(a, b));
     if (!pairs.length) {
       listHolder.appendChild(el(`<div class="empty-state"><div class="emoji">✅</div><p>${escapeHtml(t("ingredient_duplicates_none_found"))}</p></div>`));
       return;
@@ -3874,10 +3884,18 @@ function renderIngredientDuplicates() {
       </div>`);
       card.querySelector(".dismiss-btn").addEventListener("click", async () => {
         await dismissPair(nameA, nameB);
-        fillList();
+        // Ignorer ne modifie pas state.ingredientNames : on réaffiche
+        // directement depuis le cache (juste un re-filtrage, immédiat),
+        // sans repasser par l'état de chargement ni relancer le calcul.
+        renderPairs();
       });
       card.querySelector(".merge-btn").addEventListener("click", () => {
-        openMergeChoiceModal(nameA, nameB, fillList);
+        openMergeChoiceModal(nameA, nameB, () => {
+          // La fusion, elle, retire réellement un nom de la liste —
+          // le cache doit être invalidé pour refléter la liste à jour.
+          cachedAllPairs = null;
+          fillList();
+        });
       });
       listHolder.appendChild(card);
     });
