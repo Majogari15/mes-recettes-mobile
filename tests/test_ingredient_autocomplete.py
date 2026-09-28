@@ -80,9 +80,19 @@ def main():
             on_click is not None and len(on_click) > 0,
             str(on_click),
         )
+        # Comparé à l'ordre que l'app elle-même utilise partout ailleurs
+        # (compareIngredientNamesForDisplay, basé sur localeCompare) —
+        # PAS au tri Python naïf (sorted()), qui trie par valeur brute
+        # des caractères et diverge de la collation FR dès qu'un nom
+        # contient de la ponctuation (virgules, parenthèses), devenu
+        # courant depuis l'extension du catalogue aux bases USDA/CIQUAL.
+        sorted_by_app = page.evaluate(
+            "(names) => [...names].sort((a, b) => a.localeCompare(b, 'fr'))",
+            on_click,
+        )
         check(
             "les suggestions sont triées par ordre alphabétique (même ordre que partout ailleurs)",
-            on_click == sorted(on_click) if on_click else False,
+            on_click == sorted_by_app if on_click else False,
             str(on_click),
         )
         print()

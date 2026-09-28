@@ -3791,17 +3791,25 @@ function renderManageSubstitutions() {
   const listHolder = el(`<div id="subs-list-holder"></div>`);
   wrap.appendChild(listHolder);
 
+  // Même plafond que renderIngredientManage (voir DEFAULT_LIST_LIMIT
+  // là-bas) : sans lui, l'écran sans recherche rendait d'un coup une
+  // ligne DOM par ingrédient ayant un substitut — resté rare (une
+  // cinquantaine) tant que le catalogue faisait ~1000 ingrédients, mais
+  // devenu près de 1500 après son extension à ~10 000 ingrédients.
+  const DEFAULT_LIST_LIMIT = 200;
   function fillList(query) {
     listHolder.innerHTML = "";
     const key = normalize(query || "");
-    const names = (key
+    const allMatches = (key
       ? state.ingredientNames.filter((n) => normalize(n).includes(key))
       : state.ingredientNames.filter((n) => getIngredientSubstitutes(n).length > 0)
     ).sort(compareIngredientNamesForDisplay);
-    if (!names.length) {
+    if (!allMatches.length) {
       listHolder.appendChild(el(`<div class="empty-state"><div class="emoji">🔄</div><p>${escapeHtml(key ? t("no_recipes_found") : t("manage_substitutions_none"))}</p></div>`));
       return;
     }
+    const truncated = !key && allMatches.length > DEFAULT_LIST_LIMIT;
+    const names = truncated ? allMatches.slice(0, DEFAULT_LIST_LIMIT) : allMatches;
     const card = el(`<div class="card" style="padding:2px 16px;"></div>`);
     names.forEach((name) => {
       const subs = getIngredientSubstitutes(name);
@@ -3813,6 +3821,9 @@ function renderManageSubstitutions() {
       card.appendChild(row);
     });
     listHolder.appendChild(card);
+    if (truncated) {
+      listHolder.appendChild(el(`<p style="font-size:12px;color:var(--text-muted);text-align:center;margin:12px 0 0;">${escapeHtml(t("ingredient_list_truncated_hint", { shown: String(names.length), total: String(allMatches.length) }))}</p>`));
+    }
   }
   searchBar.querySelector("input").addEventListener("input", (e) => fillList(e.target.value));
   fillList("");
@@ -3826,6 +3837,25 @@ function renderIngredientDuplicates() {
   wrap.appendChild(listHolder);
 
   function fillList() {
+    listHolder.innerHTML = "";
+    // findSimilarIngredientPairs balaie tout le catalogue (comparaison
+    // deux à deux) : quelques millisecondes à l'échelle des ~1000
+    // ingrédients d'origine, mais plusieurs secondes de calcul bloquant
+    // le thread principal une fois le catalogue étendu à ~10 000
+    // ingrédients (mesuré : jusqu'à 7 s), pendant lesquelles l'écran
+    // restait figé sans aucun retour visuel. On affiche donc d'abord un
+    // état de chargement, puis on reporte le calcul au tick suivant
+    // (setTimeout) pour laisser le navigateur peindre ce message avant
+    // de bloquer — un indicateur de progression pendant le calcul
+    // lui-même nécessiterait de le fragmenter (Web Worker ou boucle
+    // découpée), hors de portée d'un simple retour visuel ici.
+    listHolder.appendChild(el(`<div class="empty-state"><div class="emoji">⏳</div><p>${escapeHtml(t("ingredient_duplicates_loading"))}</p></div>`));
+    setTimeout(() => {
+      if (state.screen !== "ingredientDuplicates") return; // écran quitté entre-temps
+      renderPairs();
+    }, 0);
+  }
+  function renderPairs() {
     listHolder.innerHTML = "";
     const allPairs = findSimilarIngredientPairs(state.ingredientNames, 0.9);
     const pairs = allPairs.filter(([a, b]) => !isPairDismissed(a, b));
@@ -7469,11 +7499,34 @@ async function migrateMergedContainerUnits() {
 function findClosestIngredientMatch(typedName) {
   const key = normalize(typedName);
   if (key.length < 3) return null;
+  // Filtre rapide (coefficient de Dice sur les bigrammes) AVANT le calcul
+  // exact (sequenceMatcherRatio, bien plus coûteux) — même principe que
+  // findSimilarIngredientPairs. Indispensable ici : contrairement à la
+  // détection de doublons (lancée une fois, à l'ouverture d'un écran),
+  // cette fonction tourne à CHAQUE frappe dans le champ ingrédient d'une
+  // recette. Sans ce filtre, elle balayait les ~10 000 noms du catalogue
+  // avec le calcul exact à chaque caractère tapé — mesuré à plus de
+  // 300 ms par frappe une fois le catalogue étendu, largement perceptible
+  // à la saisie (contre quelques ms avant l'extension à ~10 000
+  // ingrédients).
+  const threshold = 0.85;
+  const maxLenFactor = 2 / threshold - 1;
+  const maxLen = Math.floor(key.length * maxLenFactor);
+  const minLen = Math.ceil(key.length / maxLenFactor);
+  const keyBigrams = key.length >= 15 ? bigramCounts(key) : null;
+  const cheapThreshold = Math.max(0, threshold - 0.2);
   let best = null;
   state.ingredientNames.forEach((name) => {
     const nk = normalize(name);
     if (nk === key) return;
     const isPluralVariant = key === nk + "s" || key === nk + "x" || nk === key + "s" || nk === key + "x";
+    if (!isPluralVariant) {
+      // Borne supérieure du ratio exact (2*min(len)/(len_a+len_b)) : une
+      // longueur trop différente ne peut de toute façon jamais atteindre
+      // le seuil, pas besoin de calculer quoi que ce soit.
+      if (nk.length > maxLen || nk.length < minLen) return;
+      if (keyBigrams && nk.length >= 15 && diceCoefficient(keyBigrams, key.length, bigramCounts(nk), nk.length) < cheapThreshold) return;
+    }
     const ratio = sequenceMatcherRatio(key, nk);
     const effectiveRatio = isPluralVariant ? Math.max(ratio, 0.9) : ratio;
     if (effectiveRatio >= 0.85 && (!best || effectiveRatio > best.ratio)) {

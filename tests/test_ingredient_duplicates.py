@@ -150,7 +150,14 @@ def main():
                 render();
             }"""
         )
-        page.wait_for_timeout(300)
+        # Le calcul (findSimilarIngredientPairs sur tout le catalogue) est
+        # désormais différé d'un tick pour laisser peindre l'état de
+        # chargement (voir renderIngredientDuplicates) : sur le catalogue
+        # réel (~10 000 ingrédients), il peut prendre plusieurs secondes,
+        # donc on attend le résultat plutôt qu'un délai fixe trop court.
+        page.wait_for_function(
+            "() => !document.getElementById('dup-list-holder').innerText.includes('…')", timeout=15000
+        )
         before = page.evaluate("() => document.body.innerText.includes('Testinga')")
         check("La paire de test apparaît bien dans l'écran de vérification", before)
         page.evaluate(
@@ -159,7 +166,9 @@ def main():
                 if (idx >= 0) document.querySelectorAll('.card')[idx].querySelector('.dismiss-btn').click();
             }"""
         )
-        page.wait_for_timeout(300)
+        page.wait_for_function(
+            "() => !document.getElementById('dup-list-holder').innerText.includes('…')", timeout=15000
+        )
         after_dismiss = page.evaluate("() => document.body.innerText.includes('Testinga')")
         check("Ignorer la paire la fait disparaître de l'écran", not after_dismiss)
 
