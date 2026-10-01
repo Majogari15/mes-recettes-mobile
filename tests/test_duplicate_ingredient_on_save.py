@@ -31,6 +31,7 @@ import http.server
 import json
 import socket
 import threading
+import time
 
 from playwright.sync_api import sync_playwright
 
@@ -79,10 +80,13 @@ def main():
             page.wait_for_selector("#custom-two-choice-message", timeout=10000)
 
         def wait_recipe_saved():
-            page.wait_for_function(
-                "async () => (await storeAll('recipes')).some((x) => x.name === 'Test doublon')",
-                timeout=10000,
-            )
+            # Boucle Python : page.wait_for_function juge une fonction async
+            # vraie immédiatement, sans attendre la promesse.
+            deadline = time.time() + 10
+            while time.time() < deadline:
+                if page.evaluate("async () => (await storeAll('recipes')).some((x) => x.name === 'Test doublon')"):
+                    return
+                time.sleep(0.1)
 
         def open_form_with_ingredients(ings):
             page.evaluate(

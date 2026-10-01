@@ -11,7 +11,7 @@
 // application, donc caches.keys() y voit potentiellement les caches
 // de tout le monde sur ce domaine.
 const CACHE_PREFIX = "mes-recettes-cache-";
-const CACHE_NAME = `${CACHE_PREFIX}v292`;
+const CACHE_NAME = `${CACHE_PREFIX}v293`;
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -81,7 +81,10 @@ const FILES_TO_CACHE = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
+    // cache: "reload" contourne le cache HTTP du navigateur (GitHub Pages
+    // autorise 10 min) : sans lui, une nouvelle version pouvait
+    // enregistrer un app.js de la version précédente.
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE.map((url) => new Request(url, { cache: "reload" }))))
   );
   self.skipWaiting();
 });
@@ -123,7 +126,9 @@ self.addEventListener("fetch", (event) => {
 
   if (isCriticalFile) {
     event.respondWith(
-      fetch(event.request)
+      // "no-cache" : revalide auprès du serveur plutôt que de resservir
+      // une copie du cache HTTP du navigateur, possiblement périmée.
+      fetch(event.request, { cache: "no-cache" })
         .then((res) => {
           // "fetch" ne rejette QUE sur un échec réseau (pas de
           // connexion, DNS...), jamais sur un code d'erreur HTTP — une
