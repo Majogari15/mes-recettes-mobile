@@ -156,8 +156,10 @@ def main():
         # chargement (voir renderIngredientDuplicates) : sur le catalogue
         # réel (~10 000 ingrédients), il peut prendre plusieurs secondes,
         # donc on attend le résultat plutôt qu'un délai fixe trop court.
+        # Plafond large : ~6 s sur une machine de dev, ~27 s avec un
+        # processeur 4 fois plus lent (ordre de grandeur d'un téléphone).
         page.wait_for_function(
-            "() => !document.getElementById('dup-list-holder').innerText.includes('…')", timeout=15000
+            "() => !document.getElementById('dup-list-holder').innerText.includes('…')", timeout=90000
         )
         before = page.evaluate("() => document.body.innerText.includes('Testinga')")
         check("La paire de test apparaît bien dans l'écran de vérification", before)
@@ -168,7 +170,7 @@ def main():
             }"""
         )
         page.wait_for_function(
-            "() => !document.getElementById('dup-list-holder').innerText.includes('…')", timeout=15000
+            "() => !document.getElementById('dup-list-holder').innerText.includes('…')", timeout=90000
         )
         after_dismiss = page.evaluate("() => document.body.innerText.includes('Testinga')")
         check("Ignorer la paire la fait disparaître de l'écran", not after_dismiss)
