@@ -6882,6 +6882,7 @@ async function ensureIngredientListLoaded() {
         state.ingredientNameByCatalogId[catalogId] = record.name;
       }
     }
+    await addNewCatalogueEntries(existing);
     return;
   }
   // Première utilisation : préremplit avec le catalogue développeur
@@ -6904,6 +6905,60 @@ async function ensureIngredientListLoaded() {
     state.ingredientNameByCatalogId[entry.id] = entry.fr;
   }
   state.ingredientNames = INGREDIENT_CATALOGUE.map((e) => e.fr).sort(compareIngredientNamesForDisplay);
+  await kvSet(KNOWN_CATALOGUE_IDS_KEY, INGREDIENT_CATALOGUE.map((e) => e.id));
+}
+
+// Ids du catalogue déjà proposés à cet utilisateur. Un id absent de sa
+// liste mais présent ici a été supprimé (ou renommé hors catalogue)
+// volontairement : il n'est jamais réajouté. Seuls les ids apparus dans
+// le catalogue depuis sont ajoutés — sans ça, une installation antérieure
+// à l'extension du catalogue restait bloquée sur ~1000 ingrédients.
+const KNOWN_CATALOGUE_IDS_KEY = "knownCatalogueIds";
+// Taille du catalogue d'origine (ing_000001 à ing_001030), dont toute
+// installation antérieure au suivi ci-dessus a été préremplie.
+const ORIGINAL_CATALOGUE_MAX_ID = 1030;
+async function addNewCatalogueEntries(existingRecords) {
+  let known = await kvGet(KNOWN_CATALOGUE_IDS_KEY);
+  if (!Array.isArray(known)) {
+    // Installation antérieure à ce suivi : on ne sait pas lesquels de
+    // ses ids d'origine ont été supprimés, donc on considère comme déjà
+    // proposés le catalogue d'origine et tout ce que la liste contient.
+    known = INGREDIENT_CATALOGUE
+      .map((e) => e.id)
+      .filter((id) => Number(id.slice(4)) <= ORIGINAL_CATALOGUE_MAX_ID || state.ingredientNameByCatalogId[id]);
+  }
+  const knownSet = new Set(known);
+  const recordByKey = new Map(existingRecords.map((r) => [normalize(r.name), r]));
+  const toPut = [];
+  const addedNames = [];
+  for (const entry of INGREDIENT_CATALOGUE) {
+    if (knownSet.has(entry.id) || state.ingredientNameByCatalogId[entry.id]) continue;
+    const key = normalize(entry.fr);
+    const sameName = recordByKey.get(key);
+    if (sameName) {
+      // Même nom déjà présent : on le relie à ce nouvel id plutôt que de
+      // créer un doublon — sauf s'il est déjà relié à une autre entrée.
+      if (!state.ingredientCatalogIds[key]) {
+        toPut.push({ ...sameName, catalogId: entry.id });
+        state.ingredientCatalogIds[key] = entry.id;
+        state.ingredientNameByCatalogId[entry.id] = sameName.name;
+      }
+      continue;
+    }
+    toPut.push({ name: entry.fr, catalogId: entry.id });
+    recordByKey.set(key, { name: entry.fr });
+    state.ingredientCatalogIds[key] = entry.id;
+    state.ingredientNameByCatalogId[entry.id] = entry.fr;
+    addedNames.push(entry.fr);
+  }
+  if (toPut.length) await storePutAndDeleteMany("ingredients", toPut, []);
+  if (addedNames.length) {
+    state.ingredientNames = state.ingredientNames.concat(addedNames).sort(compareIngredientNamesForDisplay);
+  }
+  const allIds = INGREDIENT_CATALOGUE.map((e) => e.id);
+  if (known.length !== allIds.length || allIds.some((id) => !knownSet.has(id))) {
+    await kvSet(KNOWN_CATALOGUE_IDS_KEY, Array.from(new Set(known.concat(allIds))));
+  }
 }
 async function addIngredientName(name) {
   const trimmed = (name || "").trim();

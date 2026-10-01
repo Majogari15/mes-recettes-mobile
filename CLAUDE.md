@@ -42,6 +42,8 @@ Le lien nom↔id d'un utilisateur (qui peut renommer ses ingrédients localement
 
 Point important pour toute évolution du catalogue : ne jamais réutiliser un id déjà attribué, même après suppression d'une entrée — le lien nom↔id d'un utilisateur existant en dépend.
 
+Les nouvelles entrées du catalogue arrivent automatiquement chez les utilisateurs existants au démarrage (`addNewCatalogueEntries`) : la clé kv `knownCatalogueIds` mémorise les ids déjà proposés, pour ne jamais réajouter un ingrédient supprimé volontairement. Ne pas vider cette clé.
+
 ### Rendu : `render()` + `state.screen`
 Un seul point d'entrée de rendu (`function render()`, ligne ~952) qui vide `app.innerHTML` puis dispatche sur `state.screen` via un `switch` (`home`, `recipes`, `recipe`, `form`, `shopping`, `pantry`, `ingredients`, `ingredientDuplicates`, `backup`, `diagnostic`, etc.), chaque cas appelant une fonction `renderXxx()` dédiée qui retourne un élément DOM. Changer d'écran = modifier `state.screen` puis rappeler `render()`. Pas de framework, pas de virtual DOM : chaque `render()` reconstruit tout le contenu de `<main>`.
 
