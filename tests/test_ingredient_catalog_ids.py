@@ -198,6 +198,7 @@ def main():
         print("\n=== Rétrocompatibilité : ancien enregistrement sans catalogId, relié au prochain chargement ===\n")
         page.evaluate("async () => { await storePut('ingredients', { name: 'Farine' }); }")
         page.reload()
+        page.evaluate("() => appReady")
         page.wait_for_timeout(3000)
         backfilled = page.evaluate("() => state.ingredientCatalogIds[normalize('Farine')]")
         check("catalogId retrouvé par correspondance de nom au chargement", bool(backfilled), str(backfilled))

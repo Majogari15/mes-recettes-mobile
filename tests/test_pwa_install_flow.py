@@ -118,6 +118,7 @@ def main():
         # Rechargement de la page : même avec un nouvel événement
         # beforeinstallprompt, le bandeau ne doit plus s'afficher.
         page2.reload()
+        page2.evaluate("() => appReady")
         page2.wait_for_timeout(1000)
         dispatch_fake_prompt(page2)
         page2.wait_for_timeout(200)

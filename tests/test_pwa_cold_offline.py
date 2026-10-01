@@ -122,6 +122,7 @@ def main():
         print("\n=== Coupure réseau, puis rechargement complet de la page (simule une réouverture) ===\n")
         context.set_offline(True)
         page.reload(timeout=8000)
+        page.evaluate("() => appReady")
         page.wait_for_timeout(1000)
 
         app_shell_loaded = page.evaluate("() => !!document.getElementById('app') && document.getElementById('app').innerHTML.length > 0")

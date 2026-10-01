@@ -289,6 +289,7 @@ def main():
         page6.evaluate("async () => { const c = await caches.open('another-app-cache'); await c.put('/foo', new Response('bar')); }")
         page6.evaluate("async () => { const reg = await navigator.serviceWorker.getRegistration(); await reg.unregister(); }")
         page6.reload()
+        page6.evaluate("() => appReady")
         for _ in range(20):
             if page6.evaluate("async () => { const r = await navigator.serviceWorker.ready; return !!r.active; }"):
                 break

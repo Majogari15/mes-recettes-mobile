@@ -20,7 +20,7 @@ python3 tests/test_nom_du_fichier.py     # exécute un seul test
 Code de sortie 0 = tout passe, 1 = échec. Aucune commande "run all" : chaque fichier `tests/test_*.py` s'exécute individuellement. En session web, `.claude/hooks/session-start.sh` installe déjà les dépendances.
 
 Écrire un test robuste (sinon il échoue au hasard sous charge) :
-- Après `page.goto(...)`, attendre `page.evaluate("() => appReady")` (promesse de fin de `init()`, app.js) plutôt qu'un délai fixe.
+- Après `page.goto(...)` ou `page.reload()`, attendre `page.evaluate("() => appReady")` (promesse de fin de `init()`, app.js) plutôt qu'un délai fixe.
 - Attendre une condition (`wait_for_selector`, `wait_for_function` sur une expression synchrone) plutôt que `wait_for_timeout`.
 - `wait_for_function` n'attend PAS une fonction `async` (la promesse est jugée vraie immédiatement) : pour une condition asynchrone (IndexedDB, Cache API), boucler côté Python sur `page.evaluate`.
 

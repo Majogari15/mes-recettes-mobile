@@ -134,6 +134,7 @@ def main():
 
         print("\n=== Le nouvel ordre survit à un rechargement de page (IndexedDB) ===\n")
         page.reload()
+        page.evaluate("() => appReady")
         page.wait_for_timeout(1200)
         page.evaluate("() => setLang('fr')")
         page.evaluate("() => { state.screen = 'pantry'; render(); }")

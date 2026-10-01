@@ -111,6 +111,7 @@ def main():
             """
         )
         page.reload(timeout=8000)
+        page.evaluate("() => appReady")
         page.wait_for_function("() => document.body.innerText.trim().length > 20", timeout=15000)
         page.wait_for_timeout(800)
         result = page.evaluate(
@@ -153,6 +154,7 @@ def main():
             """
         )
         page.reload(timeout=8000)
+        page.evaluate("() => appReady")
         page.wait_for_function("() => document.body.innerText.trim().length > 20", timeout=15000)
         page.wait_for_timeout(800)
         dup_result = page.evaluate(
