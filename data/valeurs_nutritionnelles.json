@@ -11491,6 +11491,19 @@
    "url": "https://fdc.nal.usda.gov/"
   }
  },
+ "ing_004441": {
+  "kcal": 884.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_usda_extra": {
+   "provider": "USDA FDC",
+   "code": "171413",
+   "food": "Oil, olive, salad or cooking (valeur la plus proche disponible : la fiche Foundation Foods « Oil, olive, extra light » (1750351) ne contient aucune valeur nutritionnelle ; « extra light » désigne une couleur et un goût plus légers, pas une composition différente — toutes les huiles d'olive ont les mêmes calories, source : North American Olive Oil Association, https://www.aboutoliveoil.org/olive-oil-myths-facts)",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/171413/nutrients"
+  }
+ },
  "ing_004443": {
   "kcal": 335.893,
   "protein_g": 2.018,
