@@ -179,11 +179,12 @@ def main():
                 state.recipes = [];
                 state.screen = 'home';
                 render();
-                await new Promise((r) => setTimeout(r, 150));
-                const reminder = [...document.querySelectorAll('div')].find((d) => d.textContent.includes('Riz') && d.style.cursor === 'pointer');
+                // Attentes de condition (plafond 10 s) plutôt que 150 ms fixes,
+                // trop courts sur processeur lent.
+                const waitFor = async (fn) => { const end = Date.now() + 10000; let v; while (!(v = fn()) && Date.now() < end) await new Promise((r) => setTimeout(r, 50)); return v; };
+                const reminder = await waitFor(() => [...document.querySelectorAll('div')].find((d) => d.textContent.includes('Riz') && d.style.cursor === 'pointer'));
                 if (reminder) reminder.click();
-                await new Promise((r) => setTimeout(r, 150));
-                const item = state.shopping.find((i) => normalize(i.name) === normalize('Riz'));
+                const item = await waitFor(() => state.shopping.find((i) => normalize(i.name) === normalize('Riz')));
                 return item ? { quantity: item.quantity, partial: !!item.partialQuantity } : null;
             }
             """
