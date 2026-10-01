@@ -3863,19 +3863,35 @@ function renderIngredientDuplicates() {
     // de bloquer — un indicateur de progression pendant le calcul
     // lui-même nécessiterait de le fragmenter (Web Worker ou boucle
     // découpée), hors de portée d'un simple retour visuel ici.
-    listHolder.appendChild(el(`<div class="empty-state"><div class="emoji">⏳</div><p>${escapeHtml(t("ingredient_duplicates_loading"))}</p></div>`));
-    setTimeout(() => {
-      // listHolder.isConnected (pas state.screen) : si l'écran est quitté
-      // PUIS rouvert avant que ce setTimeout ne se déclenche, state.screen
-      // redevient "ingredientDuplicates" mais désigne une NOUVELLE visite
-      // (nouvelle fermeture, nouveau cachedAllPairs) — comparer le seul nom
-      // d'écran laisserait alors ce calcul obsolète s'exécuter quand même
-      // et geler le thread principal une seconde fois, sur l'écran
-      // actuellement affiché.
-      if (!listHolder.isConnected) return;
-      cachedAllPairs = findSimilarIngredientPairs(state.ingredientNames, 0.9);
+    // Calcul par tranches (findSimilarIngredientPairsAsync) : l'écran reste
+    // réactif et la barre avance, au lieu d'un écran figé plusieurs
+    // secondes sur téléphone lent.
+    const loading = el(`<div class="empty-state dup-loading">
+      <div class="boot-loading-spinner" aria-hidden="true"></div>
+      <p>${escapeHtml(t("ingredient_duplicates_loading"))}</p>
+      <progress max="100" value="0" aria-label="${escapeHtml(t("ingredient_duplicates_loading"))}"></progress>
+      <p class="dup-loading-pct">0 %</p>
+    </div>`);
+    listHolder.appendChild(loading);
+    const bar = loading.querySelector("progress");
+    const pct = loading.querySelector(".dup-loading-pct");
+    // listHolder.isConnected (pas state.screen) : si l'écran est quitté
+    // PUIS rouvert pendant le calcul, state.screen redevient
+    // "ingredientDuplicates" mais désigne une NOUVELLE visite (nouvelle
+    // fermeture, nouveau cachedAllPairs) — ce calcul obsolète doit
+    // s'arrêter plutôt que de continuer en parallèle du nouveau.
+    findSimilarIngredientPairsAsync(state.ingredientNames, 0.9, {
+      onProgress: (progress) => {
+        const value = Math.round(progress * 100);
+        bar.value = value;
+        pct.textContent = `${value} %`;
+      },
+      shouldContinue: () => listHolder.isConnected,
+    }).then((pairs) => {
+      if (!pairs || !listHolder.isConnected) return;
+      cachedAllPairs = pairs;
       renderPairs();
-    }, 0);
+    });
   }
   function renderPairs() {
     listHolder.innerHTML = "";
@@ -7390,14 +7406,20 @@ function isIrregularPluralVariant(keyA, keyB) {
     (singular(keyB) !== null && singular(keyB) === plural(keyA))
   );
 }
-function findSimilarIngredientPairs(names, threshold) {
-  threshold = threshold || 0.9;
+// Générateur partagé par findSimilarIngredientPairs (exécution d'un bloc)
+// et findSimilarIngredientPairsAsync (exécution par tranches, pour
+// l'écran des doublons) : même code de comparaison, donc mêmes résultats.
+// Rend la main après chaque nom traité en indiquant la progression (0 à 1),
+// et remplit "pairs" (trié à la fin).
+function* similarIngredientPairsSteps(names, threshold, pairs) {
   // Bigrammes précalculés une seule fois par nom (pas à chaque paire
   // comparée) — voir diceCoefficient, le filtre rapide utilisé plus bas.
-  const normalized = names.map((n) => {
-    const key = normalize(n);
-    return [n, key, bigramCounts(key), charCounts(key)];
-  });
+  const normalized = [];
+  for (let n = 0; n < names.length; n++) {
+    const key = normalize(names[n]);
+    normalized.push([names[n], key, bigramCounts(key), charCounts(key)]);
+    if (n % 500 === 499) yield (0.1 * n) / names.length;
+  }
   // Regroupe par PREMIÈRE lettre seulement (pas les deux premières
   // comme avant) : un ingrédient mal orthographié dès la deuxième
   // lettre ("Mozzarella"/"Mzzarella", ratio réel 94,7%) tombait dans un
@@ -7408,8 +7430,8 @@ function findSimilarIngredientPairs(names, threshold) {
     const prefix = entry[1].length >= 1 ? entry[1].slice(0, 1) : entry[1];
     (buckets[prefix] = buckets[prefix] || []).push(entry);
   });
-  const pairs = [];
-  Object.values(buckets).forEach((bucket) => {
+  let done = 0;
+  for (const bucket of Object.values(buckets)) {
     // Trié par longueur croissante : pour chaque élément, seuls ceux
     // suffisamment proches en longueur peuvent encore être comparés
     // (fenêtre glissante qui s'arrête dès que la borne est dépassée,
@@ -7447,10 +7469,39 @@ function findSimilarIngredientPairs(names, threshold) {
           pairs.push([nameA, nameB, isPluralVariant ? Math.max(ratio, 0.9) : ratio]);
         }
       }
+      done++;
+      yield 0.1 + (0.9 * done) / normalized.length;
     }
-  });
+  }
   pairs.sort((a, b) => b[2] - a[2]);
+}
+function findSimilarIngredientPairs(names, threshold) {
+  const pairs = [];
+  for (const _ of similarIngredientPairsSteps(names, threshold || 0.9, pairs)) { /* exécution d'un bloc */ }
   return pairs;
+}
+// Même calcul, par tranches de ~25 ms en rendant la main au navigateur
+// entre deux tranches : l'écran reste réactif (défilement, retour,
+// animation) et onProgress(0..1) peut afficher l'avancement. Renvoie null
+// si shouldContinue() devient faux (écran quitté entre-temps).
+async function findSimilarIngredientPairsAsync(names, threshold, { onProgress, shouldContinue } = {}) {
+  const pairs = [];
+  const steps = similarIngredientPairsSteps(names, threshold || 0.9, pairs);
+  let sliceStart = performance.now();
+  for (const progress of steps) {
+    if (performance.now() - sliceStart < 25) continue;
+    if (onProgress) onProgress(progress);
+    await yieldToBrowser();
+    if (shouldContinue && !shouldContinue()) return null;
+    sliceStart = performance.now();
+  }
+  return pairs;
+}
+// scheduler.yield() quand disponible ; sinon setTimeout, dont le délai
+// minimal (~4 ms) reste négligeable devant des tranches de 25 ms.
+function yieldToBrowser() {
+  if (typeof scheduler !== "undefined" && typeof scheduler.yield === "function") return scheduler.yield();
+  return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 let DISMISSED_PAIRS = new Set();
@@ -13421,7 +13472,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 297;
+const APP_VERSION = 298;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

@@ -263,6 +263,22 @@ def main():
             f"{perf_result['ms']:.0f} ms pour {perf_result['count']} noms, {perf_result['pairsFound']} paires trouvées",
         )
 
+        print("\n=== Calcul par tranches (écran des doublons) : même résultat qu'en un bloc ===\n")
+        same = page.evaluate(
+            """async () => {
+                const names = state.ingredientNames.slice();
+                const sync = findSimilarIngredientPairs(names, 0.9);
+                let progressCalls = 0;
+                const sliced = await findSimilarIngredientPairsAsync(names, 0.9, { onProgress: () => { progressCalls++; } });
+                return { identical: JSON.stringify(sync) === JSON.stringify(sliced), pairs: sync.length, progressCalls };
+            }"""
+        )
+        check(
+            "findSimilarIngredientPairsAsync identique à findSimilarIngredientPairs, avec progression signalée",
+            same["identical"] and same["progressCalls"] > 0,
+            str(same),
+        )
+
         browser.close()
 
     httpd.shutdown()
