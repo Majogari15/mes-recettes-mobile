@@ -56,7 +56,8 @@ externe. Chacune conserve sa licence d'origine.
 - Format : tessdata, version 4.0.0, palier qualité "standard" (meilleure
   précision, au prix d'un fichier plus volumineux qu'un palier "rapide")
 - Langues incluses : français (`fra`), anglais (`eng`), espagnol
-  (`spa`), allemand (`deu`)
+  (`spa`), allemand (`deu`), indonésien (`ind`), portugais (`por`),
+  italien (`ita`), suédois (`swe`), norvégien (`nor`)
 - Licence : Apache License 2.0, projet Tesseract OCR
   (https://github.com/tesseract-ocr/tessdata)
 - Ces fichiers ne sont volontairement PAS inclus dans le

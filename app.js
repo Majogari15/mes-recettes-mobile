@@ -10682,7 +10682,10 @@ function loadTesseractLib() {
   });
   return tesseractLibPromise;
 }
-const TESSERACT_LANG_MAP = { fr: "fra", en: "eng", es: "spa", de: "deu" };
+const TESSERACT_LANG_MAP = {
+  fr: "fra", en: "eng", es: "spa", de: "deu",
+  id: "ind", pt: "por", it: "ita", sv: "swe", no: "nor",
+};
 
 // Vrai si le modèle de langue Tesseract nécessaire (plusieurs Mo) est
 // déjà en cache — donc si l'import photo à venir ne va PAS déclencher
