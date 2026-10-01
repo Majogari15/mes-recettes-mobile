@@ -17,12 +17,27 @@ pip install -r tests/requirements.txt
 python3 -m playwright install chromium   # une seule fois
 python3 tests/test_nom_du_fichier.py     # exécute un seul test
 ```
-Code de sortie 0 = tout passe, 1 = échec. Aucune commande "run all" : chaque fichier `tests/test_*.py` s'exécute individuellement.
+Code de sortie 0 = tout passe, 1 = échec. Aucune commande "run all" : chaque fichier `tests/test_*.py` s'exécute individuellement. En session web, `.claude/hooks/session-start.sh` installe déjà les dépendances.
+
+Écrire un test robuste (sinon il échoue au hasard sous charge) :
+- Après `page.goto(...)`, attendre `page.evaluate("() => appReady")` (promesse de fin de `init()`, app.js) plutôt qu'un délai fixe.
+- Attendre une condition (`wait_for_selector`, `wait_for_function` sur une expression synchrone) plutôt que `wait_for_timeout`.
+- `wait_for_function` n'attend PAS une fonction `async` (la promesse est jugée vraie immédiatement) : pour une condition asynchrone (IndexedDB, Cache API), boucler côté Python sur `page.evaluate`.
 
 ## Architecture
 
 ### Fichier unique de logique
-Toute la logique applicative vit dans `app.js` (~700 Ko, aucun découpage en modules). `i18n.js` contient les traductions (fr/en/es/de). Ne pas chercher de structure par dossiers/composants : tout est dans ces deux fichiers.
+Toute la logique applicative vit dans `app.js` (~700 Ko, aucun découpage en modules) et `i18n.js` (moteur de traduction). Ne pas chercher de structure par dossiers/composants : tout est dans ces deux fichiers.
+
+### Langues (9) et chargement à la demande
+`SUPPORTED_LANGUAGES` (i18n.js) est la seule liste de référence des langues : fr, en, es, de, id, pt, it, sv, no. Ajouter une langue touche tous les points ci-dessous — un oubli ne plante pas, il retombe silencieusement sur le français/l'anglais :
+- Textes d'interface : le français est intégré à `i18n.js` (`TRANSLATIONS.fr`), les autres dans `i18n/<lang>.json` (mêmes clés, mêmes `{placeholders}`), chargés par `ensureUiTranslationsLoaded(lang)`.
+- Ingrédients/substitutions : `data/ingredient_translations_<lang>.json` et `data/ingredient_substitutions_<lang>.json`, chargés par `ensureIngredientTranslationsLoaded(lang)` (app.js).
+- Tables toujours intégrées à `i18n.js` : `ALLERGEN_TRANSLATIONS`, `RAYON_TRANSLATIONS`.
+- app.js : `TESSERACT_LANG_MAP` (+ fichier `lib/tesseract/lang/<code>.traineddata.gz`, voir `lib/LICENSES.md`) et `langMap` de `speakText()` (synthèse vocale).
+- `manifest-<lang>.json`, `manifest-loader.js` (liste `supported`), et `FILES_TO_CACHE` de `sw.js` pour le manifeste.
+
+`setLang()` déclenche lui-même les deux chargements puis un nouveau `render()` : l'interface s'affiche brièvement en français le temps du téléchargement. Dans un test, appeler `await ensureUiTranslationsLoaded(lang)` / `ensureIngredientTranslationsLoaded(lang)` AVANT `setLang(lang)` pour lire un résultat traduit sans course.
 
 ### Stockage : IndexedDB
 `DB_NAME = "mes-recettes-db"`, `DB_VERSION = 7`, ouverture via `openDB()` (singleton `dbInstance`). Object stores créés dans `onupgradeneeded` :
@@ -31,14 +46,14 @@ Toute la logique applicative vit dans `app.js` (~700 Ko, aucun découpage en mod
 ### Catalogue d'ingrédients basé sur des id stables
 Système central, construit sur plusieurs fichiers `data/*.json` liés entre eux par un `id` numérique stable (jamais recyclé, même si un ingrédient est renommé ou supprimé) :
 - `data/ingredients_catalogue.json` — `[{id, fr}]`, ~10 000 entrées, source de vérité des noms français.
-- `data/ingredient_translations_{en,es,de}.json` — traductions par id.
+- `data/ingredient_translations_<lang>.json` (8 langues hors français) — traductions par id.
 - `data/ingredient_allergenes.json` — taxonomie stricte à 14 valeurs, par id.
 - `data/valeurs_nutritionnelles.json` — kcal/protéines/glucides/lipides par id (+ métadonnées de provenance optionnelles).
-- `data/ingredient_substitutions.json` + 3 fichiers de langue — substitutions par id.
+- `data/ingredient_substitutions.json` + un fichier par langue (`_<lang>.json`) — substitutions par id.
 
 Chargés en globals côté app : `INGREDIENT_CATALOGUE`, `CATALOGUE_BY_ID`, `CATALOGUE_ID_BY_NAME`, `ALLERGEN_DB`, `NUTRITION_DB`, `SUBSTITUTIONS_DB`/`SUBSTITUTIONS_BY_INGREDIENT_ID`, `INGREDIENT_TRANSLATIONS`/`INGREDIENT_REVERSE_TRANSLATIONS`.
 
-Le lien nom↔id d'un utilisateur (qui peut renommer ses ingrédients localement) est maintenu séparément dans `state.ingredientCatalogIds` (nom normalisé → id) et `state.ingredientNameByCatalogId` (id → nom actuel), reconstruit/mis à jour par les fonctions autour de la ligne ~6820 de `app.js`. Un renommage met à jour ce lien sans casser l'association aux données du catalogue (allergènes, nutrition, substitutions restent attachées au même id).
+Le lien nom↔id d'un utilisateur (qui peut renommer ses ingrédients localement) est maintenu séparément dans `state.ingredientCatalogIds` (nom normalisé → id) et `state.ingredientNameByCatalogId` (id → nom actuel), reconstruit/mis à jour par les fonctions entre les lignes ~6700 et ~7050 de `app.js` (`getIngredientCatalogId`, `ensureIngredientListLoaded`, `addIngredientName`, `renameIngredientName`, `deleteIngredientName`). Un renommage met à jour ce lien sans casser l'association aux données du catalogue (allergènes, nutrition, substitutions restent attachées au même id).
 
 Point important pour toute évolution du catalogue : ne jamais réutiliser un id déjà attribué, même après suppression d'une entrée — le lien nom↔id d'un utilisateur existant en dépend.
 
