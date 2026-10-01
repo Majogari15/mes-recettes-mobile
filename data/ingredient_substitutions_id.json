@@ -1,0 +1,4716 @@
+{
+ "sub_000001": {
+  "note": "Jumlah sama, hasil sangat mirip."
+ },
+ "sub_000002": {
+  "note": "Kurangi jumlahnya sekitar 25%."
+ },
+ "sub_000003": {
+  "note": "Untuk kue, sebagai versi yang lebih ringan.",
+  "name": "Saus apel"
+ },
+ "sub_000004": {
+  "note": "Sekitar 60 g saus apel per butir telur, pada kue.",
+  "name": "Saus apel"
+ },
+ "sub_000005": {
+  "note": "1 sdm bubuk + 3 sdm air per butir telur, biarkan mengembang 5 menit.",
+  "name": "Biji rami (flaxseed)"
+ },
+ "sub_000006": {
+  "note": "Rasa lebih netral, sedikit lebih cair."
+ },
+ "sub_000007": {
+  "note": "Pengganti yang baik baik untuk dimasak maupun diminum."
+ },
+ "sub_000008": {
+  "note": "Sedikit manis secara alami."
+ },
+ "sub_000009": {
+  "note": "Lebih ringan, kadar lemak lebih rendah."
+ },
+ "sub_000010": {
+  "note": "Untuk versi bebas laktosa, memberi sedikit rasa kelapa."
+ },
+ "sub_000011": {
+  "note": "Untuk versi bebas gluten."
+ },
+ "sub_000012": {
+  "note": "Untuk mengentalkan saus; tidak menggantikan tepung untuk mengembangkan kue."
+ },
+ "sub_000013": {
+  "note": "Mengubah tekstur dan rasa, menjadi lebih padat dan lebih kaya."
+ },
+ "sub_000014": {
+  "note": "Kurangi sedikit jumlah cairan pada resep (madu bersifat lembap)."
+ },
+ "sub_000015": {
+  "note": "Rasa lebih kuat, kurangi sedikit cairan pada resep."
+ },
+ "sub_000016": {
+  "note": "Rasa lebih karamel, jumlah sama."
+ },
+ "sub_000017": {
+  "note": "Padukan dengan bahan asam (cuka, air jeruk lemon) agar bereaksi."
+ },
+ "sub_000018": {
+  "note": "Tambahkan sedikit air jeruk lemon untuk mendapatkan keasaman ala anggur."
+ },
+ "sub_000019": {
+  "note": "Tambahkan sedikit cuka balsamico untuk keasaman dan warnanya."
+ },
+ "sub_000020": {
+  "note": "Rasa lebih netral."
+ },
+ "sub_000021": {
+  "note": "Sumber omega-3 yang baik, rasa netral."
+ },
+ "sub_000022": {
+  "note": "Sedikit lebih padat, sedikit kurang asam."
+ },
+ "sub_000023": {
+  "note": "Lebih kaya rasa, gunakan dalam jumlah yang sedikit dikurangi.",
+  "name": "Krim kental rendah lemak"
+ },
+ "sub_000024": {
+  "note": "Rasa lebih asin dan lebih kuat."
+ },
+ "sub_000025": {
+  "note": "Untuk versi vegan, memberi rasa umami yang mirip."
+ },
+ "sub_000026": {
+  "note": "Haluskan kasar sebelum digunakan."
+ },
+ "sub_000027": {
+  "note": "Remukkan hingga halus."
+ },
+ "sub_000028": {
+  "note": "Lebih pedas, gunakan dengan hati-hati."
+ },
+ "sub_000029": {
+  "note": "Padukan dengan sedikit cuka untuk mendapatkan keasaman."
+ },
+ "sub_000030": {
+  "note": "Sekitar 1/8 sdt untuk setiap siung bawang putih segar."
+ },
+ "sub_000031": {
+  "note": "Rasa lebih lembut dan lebih manis."
+ },
+ "sub_000032": {
+  "note": "Rasa lebih lembut, matang lebih cepat."
+ },
+ "sub_000033": {
+  "note": "Gunakan bagian putihnya, rasa lebih lembut."
+ },
+ "sub_000034": {
+  "note": "Hanya untuk keasaman, tanpa rasa jeruk."
+ },
+ "sub_000035": {
+  "note": "Rasa sedikit lebih tajam."
+ },
+ "sub_000036": {
+  "note": "Tambahkan sejumput gula untuk mendapatkan sedikit rasa manis."
+ },
+ "sub_000037": {
+  "note": "Pemakaian sama, sering kali kurang asin."
+ },
+ "sub_000038": {
+  "note": "Diencerkan dalam air, memberi rasa asin dan umami."
+ },
+ "sub_000039": {
+  "note": "Sedikit kurang kaya rasa, tapi tekstur mirip."
+ },
+ "sub_000040": {
+  "note": "Untuk versi bebas laktosa."
+ },
+ "sub_000041": {
+  "note": "Campur dengan sedikit krim kental untuk menambah kekayaan rasa.",
+  "name": "Keju krim segar (fromage frais)"
+ },
+ "sub_000042": {
+  "note": "Campur dengan mentega dan gula untuk mendapatkan tekstur yang mirip."
+ },
+ "sub_000043": {
+  "note": "Rasa lebih kuat."
+ },
+ "sub_000044": {
+  "note": "Rasa lebih lembut dan lebih creamy."
+ },
+ "sub_000045": {
+  "note": "Lebih kaya protein, tekstur sedikit berbeda."
+ },
+ "sub_000046": {
+  "note": "Waktu masak lebih singkat."
+ },
+ "sub_000047": {
+  "note": "Untuk versi bebas gluten."
+ },
+ "sub_000048": {
+  "note": "Untuk versi bebas gluten, waktu masak lebih cepat."
+ },
+ "sub_000049": {
+  "note": "Beberapa tetes saja sudah cukup, tambahkan ke gula biasa."
+ },
+ "sub_000050": {
+  "note": "Rasa berbeda tapi tekstur mirip."
+ },
+ "sub_000051": {
+  "note": "Tambahkan sedikit cairan tambahan untuk mengimbangi (madu bersifat lembap)."
+ },
+ "sub_000052": {
+  "note": "Sedikit lebih cair."
+ },
+ "sub_000053": {
+  "note": "Untuk versi bebas gluten, rasa sangat mirip.",
+  "name": "Tamari"
+ },
+ "sub_000054": {
+  "note": "Diencerkan dalam sedikit air; rasa umami akan kurang terasa."
+ },
+ "sub_000055": {
+  "note": "Lobak putih dan rutabaga bisa saling menggantikan pada masakan berkuah dan puree, dalam jumlah sama."
+ },
+ "sub_000056": {
+  "note": "Kembang kol dan brokoli bisa saling menggantikan dalam jumlah sama pada sebagian besar resep (gratin, tumis, nasi kembang kol/brokoli)."
+ },
+ "sub_000057": {
+  "note": "Kubis merah dan kubis hijau bisa saling menggantikan dalam jumlah sama, warna hidangan akan berubah."
+ },
+ "sub_000058": {
+  "note": "Bawang bombay merah bisa diganti bawang bombay kuning dalam jumlah sama, rasa sedikit kurang manis."
+ },
+ "sub_000059": {
+  "note": "Bawang bombay putih dan kuning bisa saling menggantikan dalam jumlah sama."
+ },
+ "sub_000060": {
+  "note": "Selada iceberg dan romaine bisa saling menggantikan pada salad, romaine lebih renyah dan bergizi."
+ },
+ "sub_000061": {
+  "note": "Selada daun merah dan daun hijau bisa saling menggantikan pada salad dalam jumlah sama."
+ },
+ "sub_000062": {
+  "note": "Paprika merah bisa diganti paprika hijau dalam jumlah sama, rasa lebih pahit dan kurang manis."
+ },
+ "sub_000063": {
+  "note": "Paprika kuning dan paprika oranye bisa saling menggantikan dalam jumlah sama (tingkat manis sama)."
+ },
+ "sub_000064": {
+  "note": "Jamur kancing putih bisa diganti jamur cokelat (crimini), rasa lebih kuat, dalam jumlah sama."
+ },
+ "sub_000065": {
+  "note": "Jamur cokelat (crimini) dan portobello adalah spesies yang sama pada tingkat kematangan berbeda, bisa saling menggantikan (portobello lebih berdaging)."
+ },
+ "sub_000066": {
+  "note": "Shiitake bisa diganti portobello untuk tekstur berdaging yang mirip pada tumisan, dalam jumlah sama."
+ },
+ "sub_000067": {
+  "note": "Enoki bisa diganti jamur kancing putih jika tidak tersedia, tekstur kurang renyah."
+ },
+ "sub_000068": {
+  "note": "Shimeji bisa diganti jamur kancing putih, dalam jumlah sama."
+ },
+ "sub_000069": {
+  "note": "Jamur tiram bisa diganti shiitake pada tumisan dan kaldu, dalam jumlah sama."
+ },
+ "sub_000070": {
+  "note": "Kale dan collard greens bisa saling menggantikan pada masakan berkuah, dalam jumlah sama."
+ },
+ "sub_000071": {
+  "note": "Melon cantaloupe dan melon madu bisa saling menggantikan pada salad buah, dalam jumlah sama."
+ },
+ "sub_000072": {
+  "note": "Kentang merah bisa diganti Russet, lebih bertepung (lebih cocok untuk puree/kentang goreng)."
+ },
+ "sub_000073": {
+  "note": "Kentang kuning bisa diganti kentang merah, tekstur mirip dan padat."
+ },
+ "sub_000074": {
+  "note": "Apel Fuji dan Gala bisa saling menggantikan dalam jumlah sama, keduanya manis dan padat."
+ },
+ "sub_000075": {
+  "note": "Apel Granny Smith bisa diganti Red Delicious, tapi hasilnya kurang asam (sesuaikan gula pada kue)."
+ },
+ "sub_000076": {
+  "note": "Apel Honeycrisp bisa diganti Gala dalam jumlah sama, sedikit kurang berair."
+ },
+ "sub_000077": {
+  "note": "Mangga Ataulfo bisa diganti Tommy Atkins dalam jumlah sama, tekstur sedikit lebih berserat."
+ },
+ "sub_000078": {
+  "note": "Jalapeño dan serrano bisa saling menggantikan; serrano lebih pedas, kurangi sedikit jumlahnya."
+ },
+ "sub_000079": {
+  "note": "Cabai poblano bisa diganti jalapeño dengan mengurangi jumlahnya setengah (poblano jauh lebih lembut)."
+ },
+ "sub_000080": {
+  "note": "Cabai banana (cabai lilin Hungaria) bisa diganti jalapeño, rasanya lebih lembut jadi gunakan lebih banyak."
+ },
+ "sub_000081": {
+  "note": "Kacang cannellini dan kacang putih (Navy) bisa saling menggantikan dalam jumlah sama pada sup dan salad."
+ },
+ "sub_000082": {
+  "note": "Kacang hitam dan kacang pinto bisa saling menggantikan pada hidangan Meksiko/chili, dalam jumlah sama."
+ },
+ "sub_000083": {
+  "note": "Selai kacang tanah bisa diganti selai almond dalam jumlah sama (opsi bebas kacang tanah), rasa lebih lembut."
+ },
+ "sub_000084": {
+  "note": "Tahini bisa diganti selai almond dalam jumlah sama untuk rasa kurang pahit (di luar hummus)."
+ },
+ "sub_000085": {
+  "note": "Buah ara kering dan plum kering bisa saling menggantikan pada kue/kompot, dalam jumlah sama."
+ },
+ "sub_000086": {
+  "note": "Kismis gelap dan kismis keemasan (sultana) bisa saling menggantikan dalam jumlah sama, kismis keemasan rasanya sedikit lebih lembut."
+ },
+ "sub_000087": {
+  "note": "Biji labu (pepitas) bisa diganti kacang pinus untuk taburan (pesto, salad), dalam jumlah sama."
+ },
+ "sub_000088": {
+  "note": "Minyak jagung bisa diganti minyak kanola dalam jumlah sama, rasa netral yang mirip."
+ },
+ "sub_000089": {
+  "note": "Minyak safflower bisa diganti minyak bunga matahari dalam jumlah sama, rasa netral yang mirip."
+ },
+ "sub_000090": {
+  "note": "Minyak kacang tanah bisa diganti minyak kanola untuk menggoreng jika alergi, titik asap mirip."
+ },
+ "sub_000091": {
+  "note": "Bawang bombay kuning dalam jumlah sama, rasa lebih lembut dan manis"
+ },
+ "sub_000092": {
+  "note": "Zucchini dan labu musim panas kuning bisa saling menggantikan dalam jumlah sama"
+ },
+ "sub_000093": {
+  "note": "Biji-bijian kuno bisa diganti quinoa mentah, waktu masak mirip"
+ },
+ "sub_000094": {
+  "note": "Gandum kuno bisa diganti farro giling, tekstur padat yang mirip"
+ },
+ "sub_000095": {
+  "note": "Kamut bisa diganti farro, dari keluarga gandum kuno yang sama"
+ },
+ "sub_000096": {
+  "note": "Beras hitam bisa diganti beras cokelat dalam jumlah sama, warna berbeda"
+ },
+ "sub_000097": {
+  "note": "Beras merah bisa diganti beras cokelat dalam jumlah sama"
+ },
+ "sub_000098": {
+  "note": "Beras cokelat bisa diganti beras putih, kurangi waktu masak"
+ },
+ "sub_000099": {
+  "note": "Sorgum butiran bisa diganti beras cokelat pada mangkuk sereal"
+ },
+ "sub_000100": {
+  "note": "Spageti biasa dan gandum utuh bisa saling menggantikan dalam jumlah sama"
+ },
+ "sub_000101": {
+  "note": "Tepung serbaguna sebagai pengganti tepung kue; untuk hasil lebih ringan, ganti 2 sdm per gelas dengan tepung maizena"
+ },
+ "sub_000102": {
+  "note": "Versi dengan daging babi sebagai pengganti versi vegetarian untuk rasa asap yang lebih kuat"
+ },
+ "sub_000103": {
+  "note": "Kacang tunggak (black-eyed peas) bisa diganti kacang pinto, tekstur mirip"
+ },
+ "sub_000104": {
+  "note": "Kacang hitam dan pinto bisa saling menggantikan pada hidangan Meksiko"
+ },
+ "sub_000105": {
+  "note": "Kacang putih (navy) bisa diganti cannellini dalam jumlah sama"
+ },
+ "sub_000106": {
+  "note": "Great northern dan cannellini adalah dua jenis kacang putih yang bisa saling menggantikan"
+ },
+ "sub_000107": {
+  "note": "Extra virgin punya rasa lebih kuat; extra ringan lebih cocok untuk memasak suhu tinggi"
+ },
+ "sub_000108": {
+  "note": "Cuka anggur putih dalam jumlah sama untuk keasaman pada vinaigrette"
+ },
+ "sub_000109": {
+  "note": "Kunyit bubuk sebagai pengganti murah untuk warna; gunakan setengah takaran, rasa berbeda"
+ },
+ "sub_000110": {
+  "note": "Mentega tawar + tambahkan sekitar 1/4 sdt garam per 115 g"
+ },
+ "sub_000111": {
+  "note": "Mentega asin dengan menghilangkan tambahan garam pada resep"
+ },
+ "sub_000112": {
+  "note": "Yogurt Yunani tawar sebagai pengganti krim asam, dalam jumlah sama, lebih rendah lemak"
+ },
+ "sub_000113": {
+  "note": "Susu + 1 sdm air jeruk lemon atau cuka per gelas, diamkan 5-10 menit",
+  "name": "Susu + air jeruk lemon atau cuka"
+ },
+ "sub_000114": {
+  "note": "Telur utuh segar sebagai pengganti telur kering yang dilarutkan (ikuti rasio pelarutan)"
+ },
+ "sub_000115": {
+  "note": "Kuning telur segar sebagai pengganti kuning telur kering yang dilarutkan"
+ },
+ "sub_000116": {
+  "note": "Putih telur segar menggantikan putih telur kering yang dilarutkan"
+ },
+ "sub_000117": {
+  "note": "Ikan putih rendah lemak bisa saling menggantikan (pollock Alaska dan haddock)"
+ },
+ "sub_000118": {
+  "note": "Ikan pollock hitam bisa diganti kod, ikan putih yang mirip"
+ },
+ "sub_000119": {
+  "note": "Ikan berdaging putih padat bisa saling menggantikan untuk fillet panggang atau goreng wajan"
+ },
+ "sub_000120": {
+  "note": "Ikan pedang dan mahi-mahi, ikan padat untuk steak, bisa saling menggantikan"
+ },
+ "sub_000121": {
+  "note": "Bar Chili (Patagonian toothfish) bisa diganti dengan halibut, tekstur padat dan berlemak mirip"
+ },
+ "sub_000122": {
+  "note": "Salmon merah (sockeye) dan salmon Atlantik bisa saling menggantikan, yang terakhir lebih berlemak"
+ },
+ "sub_000123": {
+  "note": "Nila dan lele, ikan ternak berdaging lembut yang bisa saling menggantikan"
+ },
+ "sub_000124": {
+  "note": "Kepiting salju dan kepiting biru bisa saling menggantikan pada sebagian besar resep"
+ },
+ "sub_000125": {
+  "note": "Gruyère sebagai pengganti emmental, rasa hazelnut yang mirip"
+ },
+ "sub_000126": {
+  "note": "Keju Swiss (emmental) sebagai pengganti cheddar untuk fondue yang lebih lembut"
+ },
+ "sub_000127": {
+  "note": "Mozzarella rendah kadar air sebagai pengganti keju Oaxaca, daya leleh mirip"
+ },
+ "sub_000128": {
+  "note": "Parmesan parut sebagai pengganti cotija untuk taburan gurih"
+ },
+ "sub_000129": {
+  "note": "Feta remuk sebagai pengganti queso fresco, tekstur rapuh dan asin yang mirip"
+ },
+ "sub_000130": {
+  "note": "Queso seco bisa diganti cotija, keju kering dan asin yang mirip"
+ },
+ "sub_000131": {
+  "note": "Mozzarella sebagai pengganti Monterey Jack untuk leleh yang lembut serupa"
+ },
+ "sub_000132": {
+  "note": "Keju Swiss (emmental) sebagai pengganti provolone, keju semi-keras yang meleleh mirip"
+ },
+ "sub_000133": {
+  "note": "Cottage cheese yang dihaluskan dengan blender sebagai pengganti ricotta, tekstur mirip"
+ },
+ "sub_000134": {
+  "note": "Cheddar sebagai pengganti keju Amerika untuk burger dan sandwich"
+ },
+ "sub_000135": {
+  "note": "Daging sapi cincang sebagai pengganti daging babi cincang, dalam jumlah sama"
+ },
+ "sub_000136": {
+  "note": "Daging sapi cincang sebagai pengganti daging domba cincang, rasa kurang kuat"
+ },
+ "sub_000137": {
+  "note": "Daging sapi cincang sebagai pengganti bison cincang, lebih berlemak, kurangi waktu masak"
+ },
+ "sub_000138": {
+  "note": "Kalkun cincang sebagai pengganti ayam cincang, daging putih yang bisa saling menggantikan"
+ },
+ "sub_000139": {
+  "note": "Paha ayam sebagai pengganti dada, lebih juicy, sesuaikan waktu masak"
+ },
+ "sub_000140": {
+  "note": "Paha tanpa tulang tanpa kulit sebagai pengganti dada tanpa tulang, lebih empuk"
+ },
+ "sub_000141": {
+  "note": "Kalkun panggang iris sebagai pengganti olahan daging ayam"
+ },
+ "sub_000142": {
+  "note": "Kalkun panggang iris sebagai pengganti roast beef sebagai olahan daging"
+ },
+ "sub_000143": {
+  "note": "Pepperoni iris sebagai pengganti salami kering pada pizza atau sandwich"
+ },
+ "sub_000144": {
+  "note": "Chorizo babi sebagai pengganti sosis Italia manis, lebih pedas dan berasap"
+ },
+ "sub_000145": {
+  "note": "Sosis sapi untuk sarapan sebagai pengganti sosis kalkun"
+ },
+ "sub_000146": {
+  "note": "Susu skim sebagai pengganti susu full cream, tekstur kurang lembut"
+ },
+ "sub_000147": {
+  "note": "Susu almond sebagai pengganti susu oat, susu nabati yang saling bisa menggantikan"
+ },
+ "sub_000148": {
+  "note": "Susu almond tanpa gula sebagai pengganti susu kedelai, bebas produk susu maupun kedelai"
+ },
+ "sub_000149": {
+  "note": "Tortilla gandum sebagai pengganti tortilla jagung, lebih lentur tapi mengandung gluten"
+ },
+ "sub_000150": {
+  "note": "Ganti dengan rosemary kering: gunakan 1/3 jumlahnya (bumbu kering lebih pekat)"
+ },
+ "sub_000151": {
+  "note": "Ganti dengan rosemary segar: gunakan 3 kali lipat jumlahnya"
+ },
+ "sub_000152": {
+  "note": "Gunakan sekitar 1/3 jumlahnya untuk dill kering"
+ },
+ "sub_000153": {
+  "note": "Gunakan 3 kali lipat jumlahnya untuk dill segar"
+ },
+ "sub_000154": {
+  "note": "Gunakan 3 kali lipat jumlahnya untuk mint segar"
+ },
+ "sub_000155": {
+  "note": "Gunakan sekitar 1/3 jumlahnya untuk mint kering"
+ },
+ "sub_000156": {
+  "note": "Pengganti mirip dalam jumlah sama, rasa sedikit lebih lembut"
+ },
+ "sub_000157": {
+  "note": "Gunakan 3 kali lipat jumlahnya untuk peterseli segar cincang"
+ },
+ "sub_000158": {
+  "note": "Gunakan sekitar 1/3 jumlahnya untuk peterseli kering"
+ },
+ "sub_000159": {
+  "note": "Gunakan sekitar 1/3 jumlahnya untuk kucai beku-kering"
+ },
+ "sub_000160": {
+  "note": "Rendam beberapa menit; gunakan sekitar 1/3 jumlahnya"
+ },
+ "sub_000161": {
+  "note": "Pengganti dalam jumlah sama, rasa sangat mirip (dari pohon rempah yang sama)"
+ },
+ "sub_000162": {
+  "note": "Pengganti dalam jumlah sama, rasa sedikit lebih halus"
+ },
+ "sub_000163": {
+  "note": "Pengganti dalam jumlah sama, rasa lebih lembut, kurang terlihat pada masakan berwarna terang"
+ },
+ "sub_000164": {
+  "note": "Gunakan sekitar 6 kali lipat jumlahnya untuk jahe segar parut"
+ },
+ "sub_000165": {
+  "note": "Gunakan sekitar 1/6 jumlahnya untuk jahe bubuk"
+ },
+ "sub_000166": {
+  "note": "Pengganti dalam jumlah sama, allspice mengingatkan pada cengkih, kayu manis, dan pala"
+ },
+ "sub_000167": {
+  "note": "Pengganti dalam jumlah sama, rasa lebih lembut dan sedikit manis"
+ },
+ "sub_000168": {
+  "note": "Pengganti dalam jumlah sama, rasa lebih kuat"
+ },
+ "sub_000169": {
+  "note": "Pengganti dalam jumlah sama, dari keluarga aromatik yang mirip"
+ },
+ "sub_000170": {
+  "note": "Pengganti dalam jumlah sama, rasa lembut mirip peterseli"
+ },
+ "sub_000171": {
+  "note": "Pengganti langsung dalam jumlah sama (versi tanpa alkohol)"
+ },
+ "sub_000172": {
+  "note": "Pengganti langsung dalam jumlah sama (versi beralkohol)"
+ },
+ "sub_000173": {
+  "note": "Pengganti dalam jumlah sama untuk keasaman pada masakan gurih, rasa kurang bulat"
+ },
+ "sub_000174": {
+  "note": "Gunakan sekitar 1/4 jumlahnya, cabai rawit (cayenne) jauh lebih pedas dan tanpa rempah lain dari campurannya"
+ },
+ "sub_000175": {
+  "note": "Campur dalam jumlah sama kayu manis, jahe, dan pala bubuk, tambahkan sejumput bubuk allspice",
+  "name": "Campuran buatan sendiri berupa kayu manis, jahe, dan pala bubuk dengan sejumput allspice"
+ },
+ "sub_000176": {
+  "note": "Pengganti langsung dalam jumlah sama, versi kurang asin"
+ },
+ "sub_000177": {
+  "note": "Kurangi jumlahnya dan rendam sedikit air; rasa lebih pekat dan manis"
+ },
+ "sub_000178": {
+  "note": "Kurangi jumlahnya dan rendam sedikit air; rasa lebih pekat"
+ },
+ "sub_000179": {
+  "note": "Rendam dalam air sebelum digunakan; gunakan sekitar 1/3 jumlahnya"
+ },
+ "sub_000180": {
+  "note": "Pengganti langsung dalam jumlah sama, tiriskan dan bilas sebelum dipakai"
+ },
+ "sub_000181": {
+  "note": "Pengganti langsung, bilas untuk menghilangkan kelebihan air garam"
+ },
+ "sub_000182": {
+  "note": "Pengganti dalam jumlah sama, tekstur lebih padat dan kurang manis"
+ },
+ "sub_000183": {
+  "note": "Pengganti dalam jumlah sama, tekstur lebih lembut dan lebih manis"
+ },
+ "sub_000184": {
+  "note": "Pengganti dalam jumlah sama untuk keasaman, rasa sedikit berbeda"
+ },
+ "sub_000185": {
+  "note": "Pengganti dalam jumlah sama untuk keasaman, rasa sedikit berbeda"
+ },
+ "sub_000186": {
+  "note": "Pengganti langsung dalam jumlah sama"
+ },
+ "sub_000187": {
+  "note": "Pengganti dalam jumlah sama (buah hibrida blackberry-raspberi), sedikit lebih asam"
+ },
+ "sub_000188": {
+  "note": "Pengganti dalam jumlah sama untuk salad, rasa pahit yang mirip"
+ },
+ "sub_000189": {
+  "note": "Pengganti dalam jumlah sama untuk salad, rasa pedas yang mirip"
+ },
+ "sub_000190": {
+  "note": "Pengganti dalam jumlah sama untuk salad atau tumisan"
+ },
+ "sub_000191": {
+  "note": "Pengganti dalam jumlah sama untuk salad, rasa lebih lembut"
+ },
+ "sub_000192": {
+  "note": "Pengganti dalam jumlah sama, rasa dan tekstur sangat mirip"
+ },
+ "sub_000193": {
+  "note": "Pengganti dalam jumlah sama, cara masak mirip"
+ },
+ "sub_000194": {
+  "note": "Pengganti dalam jumlah sama, tumis sebentar"
+ },
+ "sub_000195": {
+  "note": "Pengganti dalam jumlah sama (umbi yang sangat mirip), selalu masak matang sebelum dikonsumsi"
+ },
+ "sub_000196": {
+  "note": "Pengganti dalam jumlah sama, selalu masak matang sebelum dikonsumsi"
+ },
+ "sub_000197": {
+  "note": "Bayam Malabar matang bisa diganti bayam biasa matang dalam jumlah sama, rasa sedikit kurang berlendir"
+ },
+ "sub_000198": {
+  "note": "Pengganti yang mirip untuk bayam mentah biasa, dalam jumlah sama"
+ },
+ "sub_000199": {
+  "note": "Untuk rasa umami/asin sebagai solusi darurat (rasa fermentasi tidak sama): gunakan sekitar setengah takaran tamari, beri garam secukupnya"
+ },
+ "sub_000200": {
+  "note": "Kentang dalam jumlah sama, tekstur mirip setelah dimasak, rasa lebih netral"
+ },
+ "sub_000201": {
+  "note": "1 sdm serpihan kering = sekitar 1/4 bawang bombay kuning segar cincang"
+ },
+ "sub_000202": {
+  "note": "Jus cranberry tanpa gula dalam jumlah sama, keasaman mirip, sesuaikan gula"
+ },
+ "sub_000203": {
+  "note": "Kulit jeruk lemon untuk aroma jeruk, jika tidak ada serai: sekitar 1 sdt kulit jeruk untuk 1 batang serai"
+ },
+ "sub_000204": {
+  "note": "Yogurt susu tawar biasa dalam jumlah sama jika opsi nabati tidak diperlukan"
+ },
+ "sub_000205": {
+  "note": "Pengganti klasik pada kue: bubuk kakao dalam jumlah sama, tambahkan sedikit lebih banyak gula karena carob secara alami manis"
+ },
+ "sub_000206": {
+  "note": "Peterseli daun datar untuk yang tidak suka ketumbar, dalam jumlah sama, rasa berbeda tapi fungsi aromatik mirip"
+ },
+ "sub_000207": {
+  "note": "Tepung maizena dalam jumlah sama atau sedikit lebih sedikit untuk mengentalkan (2 sdt maizena = 1 sdm arrowroot)"
+ },
+ "sub_000208": {
+  "note": "Shoyu (mengandung gandum) dalam jumlah sama jika gluten bukan masalah"
+ },
+ "sub_000209": {
+  "note": "Gunakan tamari bersertifikat bebas gluten (periksa label, tidak semuanya) untuk versi bebas gluten, dalam jumlah sama."
+ },
+ "sub_000210": {
+  "note": "Pir biasa dalam jumlah sama, tekstur lebih lembut dibanding pir nashi yang renyah"
+ },
+ "sub_000211": {
+  "note": "Lobak pedas (horseradish) dalam jumlah dikurangi (wasabi lebih pedas): sekitar setengah takaran"
+ },
+ "sub_000212": {
+  "note": "Bayam mentah dalam jumlah sama, waktu masak lebih singkat dibanding bit swiss (blette)"
+ },
+ "sub_000213": {
+  "note": "Arugula dalam jumlah sama, rasa lebih pedas dibanding selada air (cress)."
+ },
+ "sub_000214": {
+  "note": "Gelatin dalam jumlah setara sebagai opsi non-vegetarian (agar-agar mengeras lebih kuat, kurangi sedikit takarannya)"
+ },
+ "sub_000215": {
+  "note": "Daun bawang biasa dalam jumlah sama"
+ },
+ "sub_000216": {
+  "note": "Melon madu (Honeydew) dalam jumlah sama, tekstur dan tingkat manis mirip"
+ },
+ "sub_000217": {
+  "note": "Kubis hijau biasa dalam jumlah sama, daun kurang berkerut tapi rasa mirip"
+ },
+ "sub_000218": {
+  "note": "Zucchini dalam jumlah sama, waktu masak sedikit lebih cepat"
+ },
+ "sub_000219": {
+  "note": "Jamur shiitake kering (direndam kembali) dalam jumlah sama untuk rasa berkayu yang mirip"
+ },
+ "sub_000220": {
+  "note": "Cabai jalapeño dalam jumlah sama, sedikit kurang pedas"
+ },
+ "sub_000221": {
+  "note": "Cabai poblano segar dalam jumlah sama (ancho adalah poblano kering); jika tidak ada, paprika bubuk manis untuk aromanya tanpa pedas"
+ },
+ "sub_000222": {
+  "note": "Selada escarole dalam jumlah sama, rasa pahit sedikit kurang kuat dibanding endive"
+ },
+ "sub_000223": {
+  "note": "Selada daun hijau dalam jumlah sama, tekstur sama, warna berbeda"
+ },
+ "sub_000224": {
+  "note": "Jamur kancing putih dalam jumlah sama, tekstur lebih padat"
+ },
+ "sub_000225": {
+  "note": "Brokoli biasa dalam jumlah sama, batang kailan lebih ramping dan sedikit pahit"
+ },
+ "sub_000226": {
+  "note": "Alpukat California (Hass) dalam jumlah sama, lebih berlemak dan creamy dibanding alpukat Florida"
+ },
+ "sub_000227": {
+  "note": "Kismis biasa dalam jumlah sama, sedikit kurang manis/asam dibanding kismis Korintus"
+ },
+ "sub_000228": {
+  "note": "Lobak putih mentah dalam jumlah sama, rasa lebih tajam dan kurang manis dibanding daikon"
+ },
+ "sub_000229": {
+  "note": "Agar-agar bubuk, gunakan sekitar 1/8 sdt untuk 1 sdm lumut Irlandia (Irish moss), daya gelasi lebih kuat"
+ },
+ "sub_000230": {
+  "note": "Cabai ancho kering dalam jumlah sama, rasa sedikit lebih lembut dan berbuah dibanding pasilla"
+ },
+ "sub_000231": {
+  "note": "Kembang kol putih biasa dalam jumlah sama, tekstur sama, kurang dekoratif"
+ },
+ "sub_000232": {
+  "note": "Jamur shiitake dalam jumlah sama, tekstur lebih padat dibanding maitake"
+ },
+ "sub_000233": {
+  "note": "Kesemek Jepang (Fuyu) dalam jumlah sama, tekstur lebih padat meski belum terlalu matang, berbeda dari kesemek lokal"
+ },
+ "sub_000234": {
+  "note": "Jamur kancing putih dalam jumlah sama, rasa kurang kuat dibanding portobello"
+ },
+ "sub_000235": {
+  "note": "Leci mentah (atau kalengan) dalam jumlah sama, tekstur dan rasa manis mirip rambutan"
+ },
+ "sub_000236": {
+  "note": "Cranberry kering manis dalam jumlah sama untuk kue, lebih asam dibanding blueberi kering"
+ },
+ "sub_000237": {
+  "note": "Untuk tekstur \"daging suwir\" nabati (pulled pork) tanpa rasa manis nangka: dalam jumlah sama, marinasi lebih lama",
+  "name": "Umbut kelapa atau jamur tiram yang disuwir"
+ },
+ "sub_000238": {
+  "note": "Dalam jumlah sama, daging hijau alih-alih kuning, keasaman sedikit lebih kuat",
+  "name": "Kiwi hijau biasa"
+ },
+ "sub_000239": {
+  "note": "Pasta tomat yang diencerkan (1 bagian pasta untuk 2-3 bagian air) untuk menggantikan saus tomat kalengan"
+ },
+ "sub_000240": {
+  "note": "Quinoa dalam jumlah sama, waktu masak sedikit lebih singkat dibanding millet"
+ },
+ "sub_000241": {
+  "note": "Kapri hijau mentah dalam jumlah sama, rasa lebih manis dan tekstur lebih empuk dibanding kacang fava segar"
+ },
+ "sub_000242": {
+  "note": "Quinoa mentah dalam jumlah sama (waktu masak lebih cepat), alternatif bebas gluten untuk bulgur"
+ },
+ "sub_000243": {
+  "note": "Jerusalem artichoke (topinambour) dalam jumlah sama, tekstur dan rasa manis-tanah yang mirip salsify"
+ },
+ "sub_000244": {
+  "note": "Biji-bijian bebas gluten dengan rasa netral yang mirip; ganti dalam jumlah sama (quinoa matang)."
+ },
+ "sub_000245": {
+  "note": "Biji-bijian bebas gluten yang mirip; ganti dalam jumlah sama (quinoa mentah)."
+ },
+ "sub_000246": {
+  "note": "Hazelnut: tekstur dan pemakaian pada kue mirip, dalam jumlah sama."
+ },
+ "sub_000247": {
+  "note": "Gunakan ubi jalar segar yang dimasak sebagai pengganti versi kalengan, jumlah setara setelah dimasak."
+ },
+ "sub_000248": {
+  "note": "Asparagus segar dimasak beberapa menit menggantikan versi kalengan, tekstur lebih padat."
+ },
+ "sub_000249": {
+  "note": "Jamur kancing segar, ditumis beberapa menit, dalam jumlah sama."
+ },
+ "sub_000250": {
+  "note": "Bulgur kering mentah bisa menggantikan kuskus kering (waktu masak sedikit lebih lama)."
+ },
+ "sub_000251": {
+  "note": "Bulgur matang dan kuskus matang bisa saling menggantikan dalam jumlah sama pada sebagian besar resep."
+ },
+ "sub_000252": {
+  "note": "Beras cokelat matang sebagai alternatif spelt matang pada salad atau pendamping."
+ },
+ "sub_000253": {
+  "note": "Tepung terigu utuh sebagai pengganti spelt mentah untuk membuat roti, rasio 1:1."
+ },
+ "sub_000254": {
+  "note": "Bayam beku cincang sebagai pengganti daun lobak putih beku, rasa lebih lembut."
+ },
+ "sub_000255": {
+  "note": "Bayam beku sebagai pengganti daun sawi beku, rasa kurang pedas."
+ },
+ "sub_000256": {
+  "note": "Bayam mentah sebagai pengganti sawi tendergreen, rasa lebih lembut."
+ },
+ "sub_000257": {
+  "note": "Buncis mentah sebagai pengganti kacang bersayap (winged bean, polong muda), tekstur mirip."
+ },
+ "sub_000258": {
+  "note": "Buncis mentah sebagai pengganti kacang tunggak berupa polong muda, cara masak mirip."
+ },
+ "sub_000259": {
+  "note": "Buncis mentah sebagai pengganti kacang hyacinth yang belum matang."
+ },
+ "sub_000260": {
+  "note": "Buncis mentah sebagai pengganti kapri kuning (snap pea), rasio 1:1."
+ },
+ "sub_000261": {
+  "note": "Blueberi beku sebagai alternatif blackberry beku pada dessert dan smoothie."
+ },
+ "sub_000262": {
+  "note": "Zucchini mentah sebagai pengganti gambas (luffa), tekstur dan cara masak mirip."
+ },
+ "sub_000263": {
+  "note": "Zucchini mentah sebagai pengganti labu botol (calabash), dalam jumlah sama."
+ },
+ "sub_000264": {
+  "note": "Zucchini mentah sebagai pengganti labu lilin (winter melon)."
+ },
+ "sub_000265": {
+  "note": "Quinoa matang sebagai alternatif millet matang, tekstur dan pemakaian mirip."
+ },
+ "sub_000266": {
+  "note": "Beras putih butir panjang mentah sebagai pengganti beras liar (wild rice) mentah, waktu masak lebih singkat."
+ },
+ "sub_000267": {
+  "note": "Bawang bombay mentah segar, ditumis, sebagai pengganti bawang bombay kalengan."
+ },
+ "sub_000268": {
+  "note": "Tahu keras sebagai pengganti tempe matang, rasa lebih netral, pemakaian protein yang sama."
+ },
+ "sub_000269": {
+  "note": "Tahu keras segar sebagai pengganti tahu kering-beku (koyadofu) setelah direndam air."
+ },
+ "sub_000270": {
+  "note": "Jeruk sebagai pengganti mandarin, rasa sedikit kurang manis dan lebih asam."
+ },
+ "sub_000271": {
+  "note": "Tepung terigu utuh sebagai pengganti tepung rye (gelap), tekstur remah lebih ringan."
+ },
+ "sub_000272": {
+  "note": "Tepung terigu utuh sebagai alternatif tepung rye terang."
+ },
+ "sub_000273": {
+  "note": "Tepung terigu utuh sebagai alternatif tepung rye sedang."
+ },
+ "sub_000274": {
+  "note": "Tepung terigu utuh sebagai pengganti tepung sorgum bagi yang tidak mencari opsi bebas gluten."
+ },
+ "sub_000275": {
+  "note": "Tepung terigu utuh sebagai alternatif tepung triticale, rasio 1:1."
+ },
+ "sub_000276": {
+  "note": "Tepung terigu utuh sebagai pengganti tepung soba (di luar kebutuhan bebas gluten)."
+ },
+ "sub_000277": {
+  "note": "Tepung beras putih sebagai pengganti tepung beras merah, tekstur lebih halus."
+ },
+ "sub_000278": {
+  "note": "Biji chia sebagai alternatif biji rami, sifat pengental dan nutrisi yang mirip.",
+  "name": "Biji chia"
+ },
+ "sub_000279": {
+  "note": "Ceri manis segar atau kalengan sebagai pengganti ceri maraschino, kurang manis dan kurang berwarna."
+ },
+ "sub_000280": {
+  "note": "Asparagus segar sebagai pengganti kasar fiddlehead (pakis muda), sayuran musim semi berwarna hijau."
+ },
+ "sub_000281": {
+  "note": "Ayam (dada matang) sebagai pengganti ayam nabati untuk hidangan non-vegetarian."
+ },
+ "sub_000282": {
+  "note": "Sosis babi biasa sebagai pengganti sosis nabati, untuk versi non-vegetarian.",
+  "name": "Sosis babi"
+ },
+ "sub_000283": {
+  "note": "Sosis frankfurter (babi) sebagai pengganti versi nabati."
+ },
+ "sub_000284": {
+  "note": "Bacon matang yang diremukkan sebagai pengganti bacon nabati remuk."
+ },
+ "sub_000285": {
+  "note": "Ham putih iris sebagai pengganti irisan olahan daging nabati."
+ },
+ "sub_000286": {
+  "note": "Pisang segar (dihaluskan) menggantikan bubuk pisang kering, sesuaikan cairan pada resep."
+ },
+ "sub_000287": {
+  "note": "Kurma Medjool sebagai pengganti plum kering yang direbus, rasa manis yang mirip."
+ },
+ "sub_000288": {
+  "note": "Kurma sebagai pengganti plum kering mentah, pada olahan manis atau kue."
+ },
+ "sub_000289": {
+  "note": "Bawang bombay mentah (jumlah dikurangi, rasa lebih kuat) sebagai pengganti daun bawang leek jika tidak ada."
+ },
+ "sub_000290": {
+  "note": "Bihun beras sebagai alternatif bihun kedelai (harusame) pada sup dan salad Asia.",
+  "name": "Bihun beras"
+ },
+ "sub_000291": {
+  "note": "Daging sapi cincang matang berbentuk bakso biasa sebagai pengganti bakso nabati, untuk versi non-vegetarian."
+ },
+ "sub_000292": {
+  "note": "Jika tidak ada pasta almond kemasan, campur tepung almond dan gula halus dengan sedikit putih telur.",
+  "name": "Campuran tepung almond dan gula halus"
+ },
+ "sub_000293": {
+  "note": "Selada romaine sebagai pengganti selada iceberg, daun lebih lembut dan sedikit lebih beraroma."
+ },
+ "sub_000294": {
+  "note": "Susu sapi full cream sebagai pengganti susu kedelai yang difortifikasi, bagi yang tidak memiliki batasan vegan."
+ },
+ "sub_000295": {
+  "note": "Mentega sebagai pengganti lemak nabati (shortening), jumlah sama, tekstur sedikit berbeda pada kue."
+ },
+ "sub_000296": {
+  "note": "Jagung manis kuning mentah bisa saling menggantikan dengan jagung manis putih, hanya beda warna."
+ },
+ "sub_000297": {
+  "note": "Jagung manis putih dan kuning bisa saling menggantikan dalam jumlah sama, sedikit beda rasa manis."
+ },
+ "sub_000299": {
+  "note": "Paprika merah mentah sebagai pengganti paprika hijau, rasa lebih lembut dan manis."
+ },
+ "sub_000300": {
+  "note": "Ceri manis sebagai pengganti ceri asam, kurangi tambahan gula pada resep."
+ },
+ "sub_000301": {
+  "note": "Zucchini biasa sebagai pengganti zucchini mini, sesuaikan waktu masak dengan ukurannya."
+ },
+ "sub_000302": {
+  "note": "Kapri segar sebagai pengganti kacang fava dalam polong mentah jika tidak tersedia, rasa lebih lembut.",
+  "name": "Kapri segar"
+ },
+ "sub_000303": {
+  "note": "Paprika kuning bisa diganti paprika merah dalam jumlah sama, rasa sedikit lebih lembut"
+ },
+ "sub_000304": {
+  "note": "Bisa juga diganti paprika hijau, rasa lebih kuat dan sedikit pahit"
+ },
+ "sub_000305": {
+  "note": "Paprika merah dan paprika hijau bisa saling menggantikan dalam jumlah sama (hijau kurang manis)"
+ },
+ "sub_000306": {
+  "note": "Cabai merah besar (matang) bisa diganti cabai hijau besar dalam jumlah sama, sedikit kurang manis dan kadang lebih pedas"
+ },
+ "sub_000307": {
+  "note": "Cabai hijau besar bisa diganti cabai merah matang, rasa lebih manis"
+ },
+ "sub_000308": {
+  "note": "Semua labu musim dingin (Hubbard) bisa diganti labu butternut dalam jumlah sama",
+  "name": "Labu butternut"
+ },
+ "sub_000309": {
+  "note": "Labu musim dingin bisa saling menggantikan antar varietas (Hubbard, butternut, labu kuning) dalam jumlah sama",
+  "name": "Labu butternut"
+ },
+ "sub_000310": {
+  "note": "Labu pattypan (labu musim panas) bisa diganti zucchini dalam jumlah sama"
+ },
+ "sub_000311": {
+  "note": "Labu musim panas semua varietas bisa diganti zucchini dalam jumlah sama"
+ },
+ "sub_000312": {
+  "note": "Labu musim panas leher bengkok/lurus bisa diganti zucchini dalam jumlah sama"
+ },
+ "sub_000313": {
+  "note": "Kembang kol bisa diganti brokoli dalam jumlah sama pada sebagian besar resep (rasa lebih kuat)"
+ },
+ "sub_000314": {
+  "note": "Kembang kol bisa diganti brokoli dalam jumlah sama"
+ },
+ "sub_000315": {
+  "note": "Brokoli beku bisa diganti kembang kol mentah/segar, waktu masak mirip"
+ },
+ "sub_000316": {
+  "note": "Bawang bombay beku bisa diganti bawang bombay segar cincang dalam jumlah sama (air masak lebih sedikit)"
+ },
+ "sub_000317": {
+  "note": "Bawang bombay cincang beku bisa diganti bawang bombay segar cincang dalam jumlah sama"
+ },
+ "sub_000318": {
+  "note": "Kenari Prancis (Grenoble) bisa diganti kacang pecan dalam jumlah sama pada kue dan salad"
+ },
+ "sub_000319": {
+  "note": "Selai wijen (tahini) bisa diganti selai kacang tanah dalam jumlah sama untuk saus (rasa berbeda)",
+  "name": "Selai kacang tanah"
+ },
+ "sub_000320": {
+  "note": "Tapioka mutiara bisa diganti tepung maizena untuk mengentalkan (gunakan sekitar setengah jumlahnya)"
+ },
+ "sub_000321": {
+  "note": "Barli mutiara mentah bisa diganti beras cokelat butir panjang dalam jumlah sama pada sup dan masakan berkuah (tekstur sedikit berbeda)"
+ },
+ "sub_000322": {
+  "note": "Barli mutiara matang bisa diganti beras cokelat matang dalam jumlah sama"
+ },
+ "sub_000323": {
+  "note": "Kasha (soba sangrai) bisa diganti quinoa mentah dalam jumlah sama sebagai sereal pendamping"
+ },
+ "sub_000324": {
+  "note": "Gandum KAMUT mentah bisa diganti spelt dalam jumlah sama (biji-bijian kuno yang mirip)"
+ },
+ "sub_000325": {
+  "note": "Gandum KAMUT matang bisa diganti spelt matang dalam jumlah sama"
+ },
+ "sub_000326": {
+  "note": "Pasta yang difortifikasi dan tidak bisa saling menggantikan dalam jumlah sama (hanya beda nutrisi)"
+ },
+ "sub_000327": {
+  "note": "Kacang lentil merah muda/merah (cepat matang, teksturnya hancur) bisa diganti lentil hijau dengan waktu masak sedikit lebih lama untuk tekstur yang lebih padat",
+  "name": "Lentil hijau atau cokelat"
+ },
+ "sub_000328": {
+  "note": "Kacang hijau mentah (untuk dikecambahkan) bisa diganti tauge kacang hijau kalengan, sudah siap pakai"
+ },
+ "sub_000329": {
+  "note": "Tauge kacang hijau bisa diganti tauge kedelai dalam jumlah sama pada salad dan tumisan"
+ },
+ "sub_000330": {
+  "note": "Tauge kedelai bisa diganti tauge kacang hijau, lebih umum ditemukan di toko"
+ },
+ "sub_000331": {
+  "note": "Ubi jalar rebus bisa diganti kentang dalam jumlah sama, tekstur mirip tapi kurang manis"
+ },
+ "sub_000332": {
+  "note": "Ubi jalar manisan bisa diganti kentang pada resep gurih (rasa kurang manis)"
+ },
+ "sub_000333": {
+  "note": "Pasta tomat (pekat) yang diencerkan sedikit air bisa menggantikan saus tomat kalengan"
+ },
+ "sub_000334": {
+  "note": "Pasta tomat tanpa garam yang diencerkan air bisa menggantikan saus tomat kalengan"
+ },
+ "sub_000335": {
+  "note": "Saus tomat bawang bisa diganti pasta tomat yang ditambah bawang tumis"
+ },
+ "sub_000336": {
+  "note": "Saus tomat jamur bisa diganti pasta tomat yang ditambah jamur tumis"
+ },
+ "sub_000337": {
+  "note": "Jamur shiitake bisa diganti jamur kancing/putih dalam jumlah sama, rasa kurang kuat",
+  "name": "Jamur kancing"
+ },
+ "sub_000338": {
+  "note": "Jamur shiitake bisa diganti jamur kancing/putih dalam jumlah sama, rasa kurang kuat",
+  "name": "Jamur kancing"
+ },
+ "sub_000339": {
+  "note": "Jamur merang kalengan bisa diganti jamur kancing kalengan dalam jumlah sama",
+  "name": "Jamur kancing kalengan"
+ },
+ "sub_000340": {
+  "note": "Wortel kalengan tanpa tambahan garam bisa diganti wortel kalengan biasa (bilas untuk mengurangi garam)"
+ },
+ "sub_000341": {
+  "note": "Sayuran campur kalengan bisa diganti sayuran campur beku dalam jumlah sama"
+ },
+ "sub_000342": {
+  "note": "Sayuran campur kalengan bisa diganti sayuran campur beku (waktu masak sedikit lebih singkat)"
+ },
+ "sub_000343": {
+  "note": "Bayam kalengan bisa diganti bayam segar matang (gunakan sekitar 3 kali lipat berat segarnya)"
+ },
+ "sub_000344": {
+  "note": "Bayam kalengan bisa diganti bayam segar matang (gunakan sekitar 3 kali lipat berat segarnya)"
+ },
+ "sub_000345": {
+  "note": "Bayam kalengan tanpa garam bisa diganti bayam segar matang dalam takaran yang disesuaikan (sekitar 3x berat segar)"
+ },
+ "sub_000346": {
+  "note": "Acar timun asam bisa diganti acar timun dill dalam jumlah sama, rasa sedikit berbeda"
+ },
+ "sub_000347": {
+  "note": "Acar timun dill bisa diganti acar timun asam dalam jumlah sama"
+ },
+ "sub_000348": {
+  "note": "Biji chia bisa diganti biji rami giling dalam jumlah sama (pengikat/pengental yang mirip)",
+  "name": "Biji rami giling"
+ },
+ "sub_000349": {
+  "note": "Jeruk bali putih bisa diganti jeruk bali merah muda/merah dalam jumlah sama, lebih manis dan kurang pahit"
+ },
+ "sub_000350": {
+  "note": "Jeruk bali merah muda/merah bisa diganti jeruk bali putih dalam jumlah sama, lebih pahit"
+ },
+ "sub_000351": {
+  "note": "Raspberi beku manis bisa diganti raspberi beku tanpa gula dengan menambahkan gula sesuai selera"
+ },
+ "sub_000352": {
+  "note": "Apel kering bisa diganti pir kering dalam jumlah sama pada kompot dan kue"
+ },
+ "sub_000353": {
+  "note": "Biji ginkgo bisa diganti kacang macadamia dalam jumlah sama untuk masakan (tekstur/pemakaian mirip, rasa berbeda)"
+ },
+ "sub_000354": {
+  "note": "Tepung bebas gluten; ganti dengan tepung terigu jika tidak ada batasan, sesuaikan pengikatnya (tepung sorgum tidak mengembang)."
+ },
+ "sub_000355": {
+  "note": "Tepung terigu utuh lebih padat; ganti dengan tepung putih dalam jumlah sama untuk tekstur lebih ringan (atau campur 50/50)."
+ },
+ "sub_000356": {
+  "note": "Menggantikan tepung jagung biru dalam jumlah sama, warna berbeda tapi pemakaian sama.",
+  "name": "Tepung jagung kuning atau putih"
+ },
+ "sub_000357": {
+  "note": "Kasha (soba sangrai matang) bisa diganti quinoa matang dalam jumlah sama untuk tekstur yang mirip."
+ },
+ "sub_000358": {
+  "note": "Ganti dengan almond utuh mentah dalam jumlah sama, sedikit perubahan tekstur."
+ },
+ "sub_000359": {
+  "note": "Pengganti umum antara biji bunga matahari dan biji labu pada salad/granola, jumlah sama.",
+  "name": "Biji labu kupas"
+ },
+ "sub_000360": {
+  "note": "Bisa diganti biji bunga matahari kupas dalam jumlah sama pada salad dan kue."
+ },
+ "sub_000361": {
+  "note": "Biji safflower yang kurang umum; ganti dengan biji bunga matahari kupas dalam jumlah sama."
+ },
+ "sub_000362": {
+  "note": "Alternatif bebas kacang tanah dalam jumlah sama; perhatikan, selai almond mengandung kacang pohon, periksa sesuai alergi yang bersangkutan.",
+  "name": "Selai biji labu atau selai almond"
+ },
+ "sub_000363": {
+  "note": "Jika alergi kacang tanah, ganti dengan selai biji bunga matahari dalam jumlah sama (rasa lebih netral)."
+ },
+ "sub_000364": {
+  "note": "Jika alergi kacang tanah, ganti dengan selai biji bunga matahari dalam jumlah sama."
+ },
+ "sub_000365": {
+  "note": "Jika alergi kacang tanah, ganti dengan selai biji bunga matahari dalam jumlah sama."
+ },
+ "sub_000366": {
+  "note": "Jika alergi kacang tanah, ganti dengan selai biji bunga matahari dalam jumlah sama."
+ },
+ "sub_000367": {
+  "note": "Jika alergi kacang tanah, ganti dengan selai biji bunga matahari dalam jumlah sama."
+ },
+ "sub_000368": {
+  "note": "Ganti dengan susu kedelai tawar biasa dalam jumlah sama."
+ },
+ "sub_000369": {
+  "note": "Tanpa kelapa: ganti dengan susu kedelai atau susu almond dalam jumlah sama (tekstur kurang creamy)."
+ },
+ "sub_000370": {
+  "note": "Tanpa kelapa: ganti dengan susu kedelai atau susu almond dalam jumlah sama (tekstur kurang creamy)."
+ },
+ "sub_000371": {
+  "note": "Pada resep gurih non-vegan, ganti santan kalengan dengan krim dalam jumlah sama.",
+  "name": "Krim kental atau krim cair full cream"
+ },
+ "sub_000372": {
+  "note": "Pengganti non-vegan untuk krim kelapa, dalam jumlah sama, untuk dessert dan saus.",
+  "name": "Krim kental"
+ },
+ "sub_000373": {
+  "note": "Dulce de leche bisa diganti susu kental manis yang dimasak (tim) atau langsung dipakai pada resep tertentu."
+ },
+ "sub_000374": {
+  "note": "Kacang fava mentah bisa diganti kacang putih (Navy) kering dalam jumlah sama pada masakan berkuah."
+ },
+ "sub_000375": {
+  "note": "Kacang fava kalengan bisa diganti kacang putih kalengan dalam jumlah sama."
+ },
+ "sub_000376": {
+  "note": "Kacang gude (pigeon peas) mentah bisa diganti lentil kering dalam jumlah sama, sesuaikan waktu masak."
+ },
+ "sub_000377": {
+  "note": "Kacang panjang mentah bisa diganti kacang arab kering atau kacang hitam dalam jumlah sama."
+ },
+ "sub_000378": {
+  "note": "Kacang hyacinth (dolique d'Égypte) bisa diganti kacang putih kering dalam jumlah sama."
+ },
+ "sub_000379": {
+  "note": "Jika tidak ada kacang tunggak (black-eyed peas) beku, ganti dengan kacang putih dalam jumlah sama.",
+  "name": "Kacang putih beku atau kalengan"
+ },
+ "sub_000380": {
+  "note": "Kacang goreng kemasan bisa diganti pure kacang pinto matang tumbuk buatan sendiri.",
+  "name": "Puree kacang pinto buatan sendiri"
+ },
+ "sub_000381": {
+  "note": "Frijoles rojos volteados (kacang merah tumbuk goreng) bisa diganti kacang goreng biasa dalam jumlah sama.",
+  "name": "Kacang goreng (refritos)"
+ },
+ "sub_000382": {
+  "note": "Kecambah kacang putih mentah, jika tidak ada ganti dengan kacang putih kering matang dalam jumlah setara."
+ },
+ "sub_000383": {
+  "note": "Kecambah kacang pinto mentah, jika tidak ada ganti dengan kacang pinto kering matang."
+ },
+ "sub_000384": {
+  "note": "Kecambah kacang merah mentah, jika tidak ada ganti dengan kacang merah/putih kering matang."
+ },
+ "sub_000385": {
+  "note": "Minyak oat, bahan langka: ganti dengan minyak nabati netral dalam jumlah sama."
+ },
+ "sub_000386": {
+  "note": "Ganti dengan minyak nabati netral (bunga matahari, kanola) dalam jumlah sama untuk menggoreng."
+ },
+ "sub_000387": {
+  "note": "Minyak kenari (rasa kuat): ganti dengan minyak zaitun untuk bumbu, jumlah sama."
+ },
+ "sub_000388": {
+  "note": "Minyak almond, ganti dengan minyak nabati netral dalam jumlah sama."
+ },
+ "sub_000389": {
+  "note": "Minyak hazelnut (rasa kuat): ganti dengan minyak zaitun untuk bumbu, jumlah sama."
+ },
+ "sub_000390": {
+  "note": "Minyak alpukat bisa diganti minyak zaitun dalam jumlah sama untuk bumbu atau masak ringan."
+ },
+ "sub_000391": {
+  "note": "Minyak dedak padi, ganti dengan minyak nabati netral dalam jumlah sama."
+ },
+ "sub_000392": {
+  "note": "Minyak biji anggur, ganti dengan minyak nabati netral atau minyak zaitun ringan dalam jumlah sama."
+ },
+ "sub_000393": {
+  "note": "Minyak lembaga gandum (rasa kuat), ganti dengan minyak nabati netral dalam jumlah sama di luar kebutuhan gizi khusus."
+ },
+ "sub_000394": {
+  "note": "Minyak jagung dan kanola, ganti dengan minyak kanola saja dalam jumlah sama."
+ },
+ "sub_000395": {
+  "note": "Lemak angsa bisa diganti lemak bebek dalam jumlah sama untuk memanggang kentang."
+ },
+ "sub_000396": {
+  "note": "Lemak kalkun bisa diganti lemak bebek atau mentega dalam jumlah sama."
+ },
+ "sub_000397": {
+  "note": "Lemak ayam bisa diganti lemak bebek atau minyak nabati dalam jumlah sama."
+ },
+ "sub_000398": {
+  "note": "Lemak sapi (suif) bisa diganti lemak babi (saindoux) dalam jumlah sama untuk memasak/menggoreng."
+ },
+ "sub_000399": {
+  "note": "Lemak bacon bisa diganti lemak babi (saindoux) dalam jumlah sama."
+ },
+ "sub_000400": {
+  "note": "Jahe acar kalengan, ganti dengan jahe segar parut (jumlah dikurangi, rasa lebih kuat) atau jahe acar biasa."
+ },
+ "sub_000401": {
+  "note": "Acar timun manis rendah sodium bisa diganti acar timun cuka biasa dalam jumlah sama (sesuaikan garam)."
+ },
+ "sub_000402": {
+  "note": "Nanas kalengan dengan sirup, ganti dengan nanas segar potong (kurangi gula tambahan pada resep)."
+ },
+ "sub_000403": {
+  "note": "Nanas kalengan dengan sirup kental, ganti dengan nanas segar (kurangi gula tambahan)."
+ },
+ "sub_000404": {
+  "note": "Nanas kalengan dengan sirup sangat kental, ganti dengan nanas segar (kurangi banyak gula tambahan)."
+ },
+ "sub_000405": {
+  "note": "Blueberi kalengan bersirup, ganti dengan blueberi segar atau beku (sesuaikan gula)."
+ },
+ "sub_000406": {
+  "note": "Blackberry kalengan bersirup, ganti dengan blackberry segar atau beku (sesuaikan gula)."
+ },
+ "sub_000407": {
+  "note": "Stroberi kalengan bersirup, ganti dengan stroberi segar atau beku (sesuaikan gula)."
+ },
+ "sub_000408": {
+  "note": "Buah ara kalengan bersirup, ganti dengan buah ara segar atau kering yang direndam (sesuaikan gula)."
+ },
+ "sub_000409": {
+  "note": "Pir kalengan bersirup sangat kental, ganti dengan pir segar yang direbus (sesuaikan gula)."
+ },
+ "sub_000410": {
+  "note": "Gooseberry kalengan, ganti dengan gooseberry segar atau jika tidak ada, blueberi."
+ },
+ "sub_000411": {
+  "note": "Jeruk mandarin kalengan, ganti dengan mandarin segar potong atau jeruk segar."
+ },
+ "sub_000412": {
+  "note": "Ceri asam kalengan, ganti dengan ceri manis segar yang dibuang bijinya (sesuaikan gula sesuai keasaman)."
+ },
+ "sub_000413": {
+  "note": "Plum kering kalengan bersirup bisa diganti plum kering yang direndam air panas (kurang manis).",
+  "name": "Plum kering yang direndam"
+ },
+ "sub_000414": {
+  "note": "Aprikot kering yang dimasak jadi kompot dan persik kering bisa saling menggantikan dalam jumlah sama pada kompot dan kue.",
+  "name": "Persik kering"
+ },
+ "sub_000415": {
+  "note": "Aprikot kering mentah dan persik kering bisa saling menggantikan dalam jumlah sama untuk masakan dan kue.",
+  "name": "Persik kering"
+ },
+ "sub_000416": {
+  "note": "Jamur portobello bisa diganti jamur cokelat (crimini) dalam jumlah sama, tekstur lebih padat."
+ },
+ "sub_000417": {
+  "note": "Jamur portobello panggang bisa diganti jamur cokelat (crimini) dalam jumlah sama."
+ },
+ "sub_000418": {
+  "note": "Jamur cokelat (crimini) bisa diganti jamur kancing putih dalam jumlah sama, rasa lebih lembut.",
+  "name": "Jamur kancing (putih)"
+ },
+ "sub_000419": {
+  "note": "Labu Hubbard panggang oven bisa diganti labu butternut dalam jumlah sama."
+ },
+ "sub_000420": {
+  "note": "Labu Hubbard panggang oven (tanpa garam) bisa diganti labu butternut dalam jumlah sama."
+ },
+ "sub_000421": {
+  "note": "Labu butternut beku bisa diganti labu butternut segar matang, atau labu Hubbard, dalam jumlah sama."
+ },
+ "sub_000422": {
+  "note": "Labu kuning matang bisa diganti labu butternut matang dalam jumlah sama (puree, sup, pai)."
+ },
+ "sub_000423": {
+  "note": "Zucchini berkulit mentah, varian acuan yang identik dengan zucchini biasa pada katalog."
+ },
+ "sub_000424": {
+  "note": "Kale matang bisa diganti bayam matang dalam jumlah sama (waktu masak lebih cepat)."
+ },
+ "sub_000425": {
+  "note": "Kale matang tanpa garam bisa diganti bayam matang dalam jumlah sama."
+ },
+ "sub_000426": {
+  "note": "Collard greens matang bisa diganti kale matang dalam jumlah sama."
+ },
+ "sub_000427": {
+  "note": "Sorrel liar (patience) matang bisa diganti bayam matang dalam jumlah sama, rasa kurang asam."
+ },
+ "sub_000428": {
+  "note": "Sorrel liar (patience) matang tanpa garam bisa diganti bayam matang dalam jumlah sama."
+ },
+ "sub_000429": {
+  "note": "Borage matang bisa diganti bayam matang dalam jumlah sama, rasa lebih lembut."
+ },
+ "sub_000430": {
+  "note": "Purslane matang bisa diganti bayam matang atau selada mâche dalam jumlah sama."
+ },
+ "sub_000431": {
+  "note": "Cardoon matang bisa diganti seledri batang matang dalam jumlah sama, tekstur mirip."
+ },
+ "sub_000432": {
+  "note": "Salsify matang bisa diganti parsnip matang dalam jumlah sama, rasa mirip."
+ },
+ "sub_000433": {
+  "note": "Parsnip matang bisa diganti wortel matang dalam jumlah sama, sedikit kurang manis.",
+  "name": "Wortel matang"
+ },
+ "sub_000434": {
+  "note": "Kohlrabi matang bisa diganti lobak putih matang dalam jumlah sama, rasa mirip."
+ },
+ "sub_000435": {
+  "note": "Lobak putih matang bisa diganti kohlrabi matang dalam jumlah sama, atau rutabaga."
+ },
+ "sub_000436": {
+  "note": "Seledri umbi (celeriac) matang bisa diganti parsnip matang dalam jumlah sama untuk puree dan sup."
+ },
+ "sub_000437": {
+  "note": "Brokoli matang bisa diganti kembang kol matang dalam jumlah sama.",
+  "name": "Kembang kol matang"
+ },
+ "sub_000438": {
+  "note": "Apel kupas yang direbus bisa dihaluskan untuk menggantikan saus apel kemasan, dalam jumlah sama.",
+  "name": "Saus apel tanpa gula"
+ },
+ "sub_000439": {
+  "note": "Apel yang dimasak microwave dan direbus bisa saling menggantikan dalam jumlah sama."
+ },
+ "sub_000440": {
+  "note": "Biji buah sukun panggang, bahan langka: ganti dengan chestnut panggang dalam jumlah sama (tekstur bertepung yang mirip).",
+  "name": "Chestnut panggang"
+ },
+ "sub_000441": {
+  "note": "Biji breadnut kering, bahan langka: ganti dengan chestnut kering dalam jumlah sama.",
+  "name": "Chestnut kering"
+ },
+ "sub_000442": {
+  "note": "Jeruk bali merah muda/merah bisa diganti jeruk segar untuk rasa yang kurang pahit, jumlah sama."
+ },
+ "sub_000443": {
+  "note": "Tahu fermentasi fuyu (rasa kuat) bisa diganti tahu keras berbumbu biasa pada masakan tumis.",
+  "name": "Tahu keras berbumbu"
+ },
+ "sub_000444": {
+  "note": "Lobak putih bisa menggantikan rutabaga dalam jumlah sama, rasa sedikit lebih lembut"
+ },
+ "sub_000445": {
+  "note": "Lobak putih bisa menggantikan rutabaga dalam jumlah sama, rasa sedikit lebih lembut"
+ },
+ "sub_000446": {
+  "note": "Kohlrabi bisa diganti lobak putih dalam jumlah sama, tekstur mirip setelah dimasak"
+ },
+ "sub_000447": {
+  "note": "Parsnip menggantikan salsify dalam jumlah sama, rasa sedikit lebih manis"
+ },
+ "sub_000448": {
+  "note": "Akar burdock bisa diganti parsnip, tekstur dan cara masak mirip"
+ },
+ "sub_000449": {
+  "note": "Akar burdock bisa diganti parsnip, tekstur dan cara masak mirip"
+ },
+ "sub_000450": {
+  "note": "Parsnip bisa diganti wortel dalam jumlah sama pada masakan berkuah"
+ },
+ "sub_000451": {
+  "note": "Jicama bisa diganti water chestnut untuk kerenyahannya, rasa lebih netral",
+  "name": "Water chestnut"
+ },
+ "sub_000452": {
+  "note": "Jicama bisa diganti water chestnut untuk kerenyahannya, rasa lebih netral",
+  "name": "Water chestnut"
+ },
+ "sub_000453": {
+  "note": "Rebung bisa diganti water chestnut untuk kerenyahan pada tumisan",
+  "name": "Water chestnut"
+ },
+ "sub_000454": {
+  "note": "Rebung bisa diganti water chestnut untuk kerenyahan pada tumisan",
+  "name": "Water chestnut"
+ },
+ "sub_000455": {
+  "note": "Akar teratai bisa diganti water chestnut untuk kerenyahannya",
+  "name": "Water chestnut"
+ },
+ "sub_000456": {
+  "note": "Akar teratai bisa diganti water chestnut untuk kerenyahannya",
+  "name": "Water chestnut"
+ },
+ "sub_000457": {
+  "note": "Sagittaria (umbi) bisa diganti water chestnut, tekstur renyah yang mirip",
+  "name": "Water chestnut"
+ },
+ "sub_000458": {
+  "note": "Sagittaria (umbi) bisa diganti water chestnut, tekstur renyah yang mirip",
+  "name": "Water chestnut"
+ },
+ "sub_000459": {
+  "note": "Bayam liar (chénopode) bisa diganti bayam biasa dalam jumlah sama"
+ },
+ "sub_000460": {
+  "note": "Bayam liar (chénopode) bisa diganti bayam biasa dalam jumlah sama"
+ },
+ "sub_000461": {
+  "note": "Purslane bisa diganti bayam, rasa lebih netral dan kurang asam"
+ },
+ "sub_000462": {
+  "note": "Daun bit bisa diganti bayam dalam jumlah sama"
+ },
+ "sub_000463": {
+  "note": "Daun bit bisa diganti bayam dalam jumlah sama"
+ },
+ "sub_000464": {
+  "note": "Borage bisa diganti bayam, rasa lebih lembut"
+ },
+ "sub_000465": {
+  "note": "Daun dandelion bisa diganti bayam, dengan rasa kurang pahit"
+ },
+ "sub_000466": {
+  "note": "Daun dandelion bisa diganti bayam, dengan rasa kurang pahit"
+ },
+ "sub_000467": {
+  "note": "Daun bayam merah (amaranth) bisa diganti bayam biasa dalam jumlah sama"
+ },
+ "sub_000468": {
+  "note": "Daun bayam merah (amaranth) bisa diganti bayam biasa dalam jumlah sama"
+ },
+ "sub_000469": {
+  "note": "Tétragone (New Zealand spinach) bisa diganti bayam dalam jumlah sama, rasa sangat mirip"
+ },
+ "sub_000470": {
+  "note": "Tétragone (New Zealand spinach) bisa diganti bayam dalam jumlah sama, rasa sangat mirip"
+ },
+ "sub_000471": {
+  "note": "Kangkung bisa diganti bayam, rasa dan tekstur mirip setelah dimasak"
+ },
+ "sub_000472": {
+  "note": "Kangkung bisa diganti bayam, rasa dan tekstur mirip setelah dimasak"
+ },
+ "sub_000473": {
+  "note": "Daun kelor (moringa) bisa diganti bayam dalam jumlah sama"
+ },
+ "sub_000474": {
+  "note": "Daun kelor (moringa) bisa diganti bayam dalam jumlah sama"
+ },
+ "sub_000475": {
+  "note": "Daun labu kuning bisa diganti bayam, rasa lebih netral"
+ },
+ "sub_000476": {
+  "note": "Daun labu kuning bisa diganti bayam, rasa lebih netral"
+ },
+ "sub_000477": {
+  "note": "Daun lobak putih bisa diganti collard greens, waktu masak sedikit lebih lama"
+ },
+ "sub_000478": {
+  "note": "Daun lobak putih bisa diganti collard greens, waktu masak sedikit lebih lama"
+ },
+ "sub_000479": {
+  "note": "Daun sawi bisa diganti collard greens, dengan rasa kurang pedas"
+ },
+ "sub_000480": {
+  "note": "Daun sawi bisa diganti collard greens, dengan rasa kurang pedas"
+ },
+ "sub_000481": {
+  "note": "Escarole bisa diganti endive (witloof) atau frisée, rasa pahit yang mirip"
+ },
+ "sub_000482": {
+  "note": "Cardoon bisa diganti seledri batang, tanpa rasa artichoke"
+ },
+ "sub_000483": {
+  "note": "Seledri umbi (celeriac) bisa diganti parsnip pada puree dan sup"
+ },
+ "sub_000484": {
+  "note": "Kacang panjang (asparagus bean) bisa diganti buncis dalam jumlah sama"
+ },
+ "sub_000485": {
+  "note": "Kacang panjang (asparagus bean) bisa diganti buncis dalam jumlah sama"
+ },
+ "sub_000486": {
+  "note": "Kacang hitam bisa diganti kacang merah dalam jumlah sama"
+ },
+ "sub_000487": {
+  "note": "Kacang hitam (black turtle) bisa diganti kacang merah dalam jumlah sama"
+ },
+ "sub_000488": {
+  "note": "Kacang merah muda bisa diganti kacang merah atau pinto dalam jumlah sama"
+ },
+ "sub_000489": {
+  "note": "Kacang pinto bisa diganti kacang merah dalam jumlah sama"
+ },
+ "sub_000490": {
+  "note": "Kacang pinto bisa diganti kacang merah dalam jumlah sama"
+ },
+ "sub_000491": {
+  "note": "Kacang adzuki bisa diganti kacang merah, rasa lebih netral"
+ },
+ "sub_000492": {
+  "note": "Kacang French (matang) bisa diganti kacang putih (navy) dalam jumlah sama"
+ },
+ "sub_000493": {
+  "note": "Kacang kuning (matang) bisa diganti kacang putih dalam jumlah sama"
+ },
+ "sub_000494": {
+  "note": "Kacang putih kecil bisa diganti kacang putih (navy) dalam jumlah sama"
+ },
+ "sub_000495": {
+  "note": "Kacang lima bisa diganti kacang fava dalam jumlah sama"
+ },
+ "sub_000496": {
+  "note": "Kacang lima bisa diganti kacang fava dalam jumlah sama"
+ },
+ "sub_000497": {
+  "note": "Kacang lima yang belum matang bisa diganti kacang fava segar"
+ },
+ "sub_000498": {
+  "note": "Kacang lima yang belum matang (Fordhook) bisa diganti kacang fava segar"
+ },
+ "sub_000499": {
+  "note": "Kacang catjang (niébé) bisa diganti kacang arab atau kacang putih dalam jumlah sama"
+ },
+ "sub_000500": {
+  "note": "Mi telur bisa diganti tagliatelle dalam jumlah sama"
+ },
+ "sub_000501": {
+  "note": "Mi telur bisa diganti tagliatelle dalam jumlah sama"
+ },
+ "sub_000502": {
+  "note": "Mi telur bisa diganti tagliatelle dalam jumlah sama"
+ },
+ "sub_000503": {
+  "note": "Mi soba bisa diganti bihun beras atau spageti gandum utuh"
+ },
+ "sub_000504": {
+  "note": "Mi soba bisa diganti bihun beras atau spageti gandum utuh"
+ },
+ "sub_000505": {
+  "note": "Mi somen bisa diganti bihun beras dalam jumlah sama"
+ },
+ "sub_000506": {
+  "note": "Mi somen bisa diganti bihun beras dalam jumlah sama"
+ },
+ "sub_000507": {
+  "note": "Pasta bebas gluten berbahan jagung bisa diganti bihun atau pasta beras"
+ },
+ "sub_000508": {
+  "note": "Pasta bebas gluten berbahan jagung bisa diganti bihun atau pasta beras"
+ },
+ "sub_000509": {
+  "note": "Tepung kue bisa diganti tepung serbaguna, tekstur sedikit lebih padat"
+ },
+ "sub_000510": {
+  "note": "Tepung roti bisa diganti tepung serbaguna, daya kembang sedikit kurang kuat"
+ },
+ "sub_000511": {
+  "note": "Chestnut Cina bisa diganti chestnut Eropa dalam jumlah sama"
+ },
+ "sub_000512": {
+  "note": "Chestnut Cina bisa diganti chestnut Eropa dalam jumlah sama"
+ },
+ "sub_000513": {
+  "note": "Chestnut Cina bisa diganti chestnut Eropa dalam jumlah sama"
+ },
+ "sub_000514": {
+  "note": "Chestnut Jepang bisa diganti chestnut Eropa dalam jumlah sama"
+ },
+ "sub_000515": {
+  "note": "Chestnut Jepang bisa diganti chestnut Eropa dalam jumlah sama"
+ },
+ "sub_000516": {
+  "note": "Chestnut Jepang bisa diganti chestnut Eropa dalam jumlah sama"
+ },
+ "sub_000517": {
+  "note": "Kenari hitam bisa diganti kenari biasa dalam jumlah sama, rasa lebih kuat"
+ },
+ "sub_000518": {
+  "note": "Kacang pinus bisa diganti kacang mete (pesto, taburan), rasa kurang beresin"
+ },
+ "sub_000519": {
+  "note": "Kacang Brasil bisa diganti almond atau kacang mete dalam jumlah sama"
+ },
+ "sub_000520": {
+  "note": "Kacang tanah Spanyol bisa diganti kacang tanah sangrai asin biasa"
+ },
+ "sub_000521": {
+  "note": "Kacang tanah Valencia bisa diganti kacang tanah sangrai asin biasa"
+ },
+ "sub_000522": {
+  "note": "Ayam nabati tiruan bisa diganti tahu keras berlapis tepung sebagai alternatif nabati"
+ },
+ "sub_000523": {
+  "note": "Krim kelapa manis bisa diganti santan yang ditambah gula"
+ },
+ "sub_000524": {
+  "note": "Ubi gunung (Hawaii) bisa diganti ubi jalar dalam jumlah sama"
+ },
+ "sub_000525": {
+  "note": "Ubi gunung (Hawaii) bisa diganti ubi jalar dalam jumlah sama"
+ },
+ "sub_000526": {
+  "note": "Polong kelor (drumstick) bisa diganti buncis pada kari"
+ },
+ "sub_000527": {
+  "note": "Polong kelor (drumstick) bisa diganti buncis pada kari"
+ },
+ "sub_000528": {
+  "note": "Pir kering yang direbus bisa diganti apel kering yang direbus, tekstur mirip"
+ },
+ "sub_000529": {
+  "note": "Pir kering yang direbus bisa diganti apel kering yang direbus, tekstur mirip"
+ },
+ "sub_000530": {
+  "note": "Persik kering yang direbus bisa diganti aprikot kering yang direbus, rasa mirip"
+ },
+ "sub_000531": {
+  "note": "Persik kering yang direbus bisa diganti aprikot kering yang direbus, rasa mirip"
+ },
+ "sub_000532": {
+  "note": "Jeruk mandarin kalengan bisa diganti jeruk yang dikupas bersih, rasa lebih asam",
+  "name": "Jeruk navel, kalengan atau segar"
+ },
+ "sub_000533": {
+  "note": "Jeruk bali kalengan bisa diganti jeruk yang dikupas bersih, kurang pahit",
+  "name": "Jeruk navel, kalengan atau segar"
+ },
+ "sub_000534": {
+  "note": "Jeruk bali kalengan bisa diganti jeruk yang dikupas bersih, kurang pahit",
+  "name": "Jeruk navel, kalengan atau segar"
+ },
+ "sub_000535": {
+  "note": "Ceri manis kalengan bisa diganti ceri segar yang dibuang bijinya (atau beku)"
+ },
+ "sub_000536": {
+  "note": "Ceri manis kalengan bisa diganti ceri segar yang dibuang bijinya (atau beku)"
+ },
+ "sub_000537": {
+  "note": "Olesan tipe margarin (SMART BALANCE) bisa diganti margarin nabati biasa"
+ },
+ "sub_000538": {
+  "note": "Makaroni sayur bisa diganti pasta biasa (makaroni atau tagliatelle)"
+ },
+ "sub_000539": {
+  "note": "Makaroni sayur bisa diganti pasta biasa (makaroni atau tagliatelle)"
+ },
+ "sub_000540": {
+  "note": "Kacang hitam (black turtle) kalengan bisa menggantikan kacang hitam biasa dalam jumlah sama."
+ },
+ "sub_000541": {
+  "note": "Kacang great northern bisa diganti kacang cannellini, tekstur dan rasa sangat mirip."
+ },
+ "sub_000542": {
+  "note": "Kacang cranberry (romawi) mentah bisa diganti kacang pinto dalam jumlah sama."
+ },
+ "sub_000543": {
+  "note": "Kacang cranberry (romawi) kalengan bisa diganti kacang pinto kalengan."
+ },
+ "sub_000544": {
+  "note": "Bisa diganti kacang pinto goreng biasa, dalam jumlah sama.",
+  "name": "Kacang goreng (refritos) pinto kalengan"
+ },
+ "sub_000545": {
+  "note": "Selai almond bisa diganti selai kacang mete, rasa lebih lembut dan manis."
+ },
+ "sub_000546": {
+  "note": "Selai almond tawar bisa diganti selai kacang mete, dalam jumlah sama."
+ },
+ "sub_000547": {
+  "note": "Selai kacang mete bisa diganti selai almond, dalam jumlah sama."
+ },
+ "sub_000548": {
+  "note": "Tahini bisa diganti selai kacang tanah sebagai solusi darurat (rasa berbeda, kurang pahit)."
+ },
+ "sub_000549": {
+  "note": "Tahini bisa diganti selai kacang mete atau almond untuk rasa yang lebih lembut."
+ },
+ "sub_000550": {
+  "note": "Kacang tanah sangrai bisa diganti kacang mete pada resep gurih atau tumisan."
+ },
+ "sub_000551": {
+  "note": "Kacang tanah sangrai kering bisa diganti kacang mete sangrai kering, dalam jumlah sama."
+ },
+ "sub_000552": {
+  "note": "Kacang pecan bisa diganti hazelnut atau kenari, rasa sedikit berbeda, pada kue."
+ },
+ "sub_000553": {
+  "note": "Kenari bisa diganti kacang pecan dalam jumlah sama pada resep kue."
+ },
+ "sub_000554": {
+  "note": "Hazelnut bisa diganti kenari atau almond pada sebagian besar resep kue."
+ },
+ "sub_000555": {
+  "note": "Biji bunga matahari kupas bisa diganti biji labu (pepitas) dalam jumlah sama."
+ },
+ "sub_000556": {
+  "note": "Biji labu dan labu kuning panggang bisa diganti biji bunga matahari kupas, dalam jumlah sama."
+ },
+ "sub_000557": {
+  "note": "Tepung serbaguna tanpa fortifikasi bisa diganti versi yang difortifikasi dalam jumlah sama.",
+  "name": "Tepung terigu serbaguna yang difortifikasi"
+ },
+ "sub_000558": {
+  "note": "Tepung khusus tortilla bisa diganti tepung terigu serbaguna biasa, dalam jumlah sama."
+ },
+ "sub_000559": {
+  "note": "Pasta bebas gluten (jagung dan beras) bisa diganti bihun beras untuk hidangan yang mirip."
+ },
+ "sub_000560": {
+  "note": "Bihun cellophane (kacang hijau) bisa diganti bihun beras, tekstur mirip setelah dimasak."
+ },
+ "sub_000561": {
+  "note": "Minyak kacang tanah bisa diganti minyak bunga matahari, rasa netral, cocok untuk memasak dan menggoreng."
+ },
+ "sub_000562": {
+  "note": "Minyak wijen (untuk memasak, tidak disangrai) bisa diganti minyak kacang tanah untuk tumisan."
+ },
+ "sub_000563": {
+  "note": "Minyak kedelai bisa diganti minyak bunga matahari, dalam jumlah sama, rasa netral yang mirip."
+ },
+ "sub_000564": {
+  "note": "Minyak biji kapas, jarang tersedia, bisa diganti minyak bunga matahari atau kedelai dalam jumlah sama."
+ },
+ "sub_000565": {
+  "note": "Margarin olesan bisa menggantikan mentega dalam jumlah sama pada sebagian besar pemakaian, kecuali kue yang halus."
+ },
+ "sub_000566": {
+  "note": "Mentega asin bisa diganti mentega tawar dengan menambahkan sejumput garam."
+ },
+ "sub_000567": {
+  "note": "Mentega tawar bisa diganti mentega asin dengan mengurangi tambahan garam pada resep."
+ },
+ "sub_000568": {
+  "note": "Pengganti mentega bubuk bisa diganti mentega atau margarin cair, dalam jumlah yang disesuaikan."
+ },
+ "sub_000569": {
+  "note": "Keju biru generik bisa diganti Roquefort, rasa lebih kuat."
+ },
+ "sub_000570": {
+  "note": "Keju Roquefort bisa diganti keju biru lain, rasa sedikit lebih lembut."
+ },
+ "sub_000571": {
+  "note": "Keju Brie bisa diganti keju Camembert dalam jumlah sama, rasa sangat mirip."
+ },
+ "sub_000572": {
+  "note": "Keju Camembert (varian USDA) bisa diganti keju Camembert standar pada katalog, dalam jumlah sama."
+ },
+ "sub_000573": {
+  "note": "Keju Edam bisa diganti keju Gouda, tekstur dan rasa sangat mirip."
+ },
+ "sub_000574": {
+  "note": "Keju Gouda bisa diganti keju Edam, sedikit lebih rendah lemak."
+ },
+ "sub_000575": {
+  "note": "Keju Gruyère bisa diganti keju Emmental, rasa sedikit lebih lembut."
+ },
+ "sub_000576": {
+  "note": "Keju Gruyère juga bisa diganti keju Cheddar untuk gratin, rasa berbeda tapi daya leleh mirip.",
+  "name": "Keju Cheddar"
+ },
+ "sub_000577": {
+  "note": "Keju Monterey Jack bisa diganti keju Cheddar lembut dalam jumlah sama, daya leleh mirip."
+ },
+ "sub_000578": {
+  "note": "Campuran keju Meksiko bisa diganti Cheddar saja atau dipadukan dengan Monterey Jack."
+ },
+ "sub_000579": {
+  "note": "Keju Muenster bisa diganti keju Gouda atau Edam untuk daya leleh dan rasa lembut yang mirip."
+ },
+ "sub_000580": {
+  "note": "Feta bisa diganti keju kambing segar yang diremukkan, rasa lebih lembut dan kurang asin."
+ },
+ "sub_000581": {
+  "note": "Keju Neufchâtel bisa diganti keju krim (cream cheese) biasa, tekstur mirip, sedikit lebih rendah lemak."
+ },
+ "sub_000582": {
+  "note": "Keju krim (cream cheese) bisa diganti Neufchâtel dalam jumlah sama, sedikit lebih rendah lemak."
+ },
+ "sub_000583": {
+  "note": "Keju Romano bisa diganti Parmesan untuk taburan pasta, rasa mirip."
+ },
+ "sub_000584": {
+  "note": "Krim asam rendah lemak bisa diganti yogurt Yunani tawar rendah lemak, dalam jumlah sama."
+ },
+ "sub_000585": {
+  "note": "Krim asam tanpa lemak bisa diganti yogurt Yunani tawar tanpa lemak."
+ },
+ "sub_000586": {
+  "note": "Krim asam rendah lemak bisa diganti yogurt Yunani tawar."
+ },
+ "sub_000587": {
+  "note": "Aprikot kalengan bisa diganti persik kalengan pada dessert, rasa mirip.",
+  "name": "Persik kalengan dalam air, dengan cairannya"
+ },
+ "sub_000588": {
+  "note": "Aprikot kalengan bersirup bisa diganti persik kalengan dalam jus, rasa mirip."
+ },
+ "sub_000589": {
+  "note": "Koktail buah kalengan dalam air bisa diganti koktail buah dalam air, komposisi sangat mirip."
+ },
+ "sub_000590": {
+  "note": "Koktail buah kalengan dalam jus bisa diganti koktail buah dalam jus, komposisi sangat mirip."
+ },
+ "sub_000591": {
+  "note": "Biji wijen sangrai asin bisa diganti biji wijen tawar dengan menyesuaikan garam pada resep."
+ },
+ "sub_000592": {
+  "note": "Biji bunga matahari sangrai kering bisa diganti biji labu dan labu kuning panggang, dalam jumlah sama."
+ },
+ "sub_000593": {
+  "note": "Susu kedelai cokelat bisa diganti susu almond cokelat atau tawar yang ditambah kakao."
+ },
+ "sub_000594": {
+  "note": "Susu kedelai tawar bisa diganti susu almond, rasa lebih netral dan ringan."
+ },
+ "sub_000595": {
+  "note": "Susu kedelai rendah lemak bisa diganti susu almond, dalam jumlah sama."
+ },
+ "sub_000596": {
+  "note": "Kacang lima kalengan bisa diganti buncis, tekstur lebih padat, dalam jumlah sama.",
+  "name": "Buncis mentah"
+ },
+ "sub_000597": {
+  "note": "Tahu keras bisa diganti tahu biasa (kurang keras) dengan menyesuaikan cara masak, tekstur lebih lembut."
+ },
+ "sub_000598": {
+  "note": "Tahu biasa bisa diganti tahu keras jika ingin tekstur yang lebih kokoh (tumis, panggangan)."
+ },
+ "sub_000599": {
+  "note": "Jus jeruk bali konsentrat bisa diganti jus jeruk konsentrat, rasa lebih lembut."
+ },
+ "sub_000600": {
+  "note": "Mayones rendah lemak bisa diganti mayones biasa dengan mengurangi jumlah yang dipakai."
+ },
+ "sub_000601": {
+  "note": "Mayones biasa bisa diganti mayones rendah lemak untuk mengurangi kadar lemak."
+ },
+ "sub_000602": {
+  "note": "Surimi bisa diganti daging kepiting asli, rasa lebih halus, tekstur berbeda."
+ },
+ "sub_000603": {
+  "note": "Ganti dalam jumlah sama dengan mentega (atau minyak nabati netral untuk hasil yang lebih ringan)."
+ },
+ "sub_000604": {
+  "note": "Susu bubuk bisa menggantikan krimer bubuk pada kopi atau resep, dengan rasa lebih ke arah susu."
+ },
+ "sub_000605": {
+  "note": "Ganti topping semprot kalengan dengan krim kocok buatan sendiri (krim cair full cream yang dikocok), dalam jumlah sama."
+ },
+ "sub_000606": {
+  "note": "Mozzarella asli menggantikan pengganti berbahan keju dalam jumlah sama, dengan daya leleh yang lebih baik dan rasa lebih kaya."
+ },
+ "sub_000607": {
+  "note": "Mentega biasa menggantikan ghee/mentega jernih dalam jumlah sama, tapi lebih cepat gosong saat dimasak (kurang cocok untuk suhu tinggi)."
+ },
+ "sub_000608": {
+  "note": "Ganti dengan keju krim (cream cheese) biasa dalam jumlah sama."
+ },
+ "sub_000609": {
+  "note": "Ganti dengan parmesan parut biasa dalam jumlah sama (sedikit lebih banyak lemak dan rasa)."
+ },
+ "sub_000610": {
+  "note": "Ganti dengan mentega murni dalam jumlah sama, atau margarin jika lebih suka bahan nabati."
+ },
+ "sub_000611": {
+  "note": "Ganti dengan minyak kanola standar yang tidak terhidrogenasi, dalam jumlah sama."
+ },
+ "sub_000612": {
+  "note": "Ubi jalar bisa menggantikan ubi/yam dalam jumlah sama pada sebagian besar resep (tekstur dan rasa mirip, sedikit lebih manis)."
+ },
+ "sub_000613": {
+  "note": "Zucchini (atau mentimun untuk olahan mentah) bisa menggantikan chayote dalam jumlah sama."
+ },
+ "sub_000614": {
+  "note": "Lobak putih bisa menggantikan lobak daikon pada masakan matang, dalam jumlah sama (rasa sedikit lebih kuat)."
+ },
+ "sub_000615": {
+  "note": "Mi telur polos bisa menggantikan mi telur bayam dalam jumlah sama (kurang warna dan asupan sayur)."
+ },
+ "sub_000616": {
+  "note": "Kacang polong belah kuning menggantikan kacang polong belah hijau dalam jumlah sama, rasa hampir identik.",
+  "name": "Kacang polong belah kuning"
+ },
+ "sub_000617": {
+  "note": "Tauge segar bisa menggantikan tauge kalengan, dengan lebih renyah (bilas dan gunakan dalam jumlah sama)."
+ },
+ "sub_000618": {
+  "note": "Ganti dengan beras cokelat biasa (bukan instan); tambah waktu masak karena beras ini tidak diuapkan sebelumnya."
+ },
+ "sub_000619": {
+  "note": "Beras ketan/beras bundar biasa bisa saling menggantikan; jika tidak ada, beras bundar tipe arborio bisa menggantikan untuk hasil yang lebih lengket."
+ },
+ "sub_000620": {
+  "note": "Buncis biasa menggantikan kacang bersayap (winged bean) dalam jumlah sama, tekstur mirip.",
+  "name": "Buncis"
+ },
+ "sub_000621": {
+  "note": "Zucchini bisa menggantikan gambas (luffa) dalam jumlah sama pada masakan tumis atau matang."
+ },
+ "sub_000622": {
+  "note": "Kacang tanah sangrai bisa menggantikan kacang tanah rebus, dengan tekstur lebih renyah dan tidak selembut.",
+  "name": "Kacang tanah sangrai asin"
+ },
+ "sub_000623": {
+  "note": "Buncis biasa bisa menggantikan polong muda kacang tunggak, dalam jumlah sama."
+ },
+ "sub_000624": {
+  "note": "Kacang lima (atau edamame) bisa menggantikan kacang hyacinth, dalam jumlah sama."
+ },
+ "sub_000625": {
+  "note": "Jika tidak ada kacang adzuki manis kalengan, masak kacang adzuki kering dan manisi sendiri.",
+  "name": "Kacang adzuki, matang, mentah (dimasak dan dimanisi sendiri)"
+ },
+ "sub_000626": {
+  "note": "Kacang arab bisa menggantikan lupin dalam jumlah sama pada sebagian besar resep Mediterania."
+ },
+ "sub_000627": {
+  "note": "Jika tidak ada tepung jagung self-raising, gunakan tepung jagung biasa dengan menambahkan 1,5 sdt baking powder dan 1/2 sdt garam per 150 g.",
+  "name": "Tepung jagung biasa + baking powder + garam"
+ },
+ "sub_000628": {
+  "note": "Zucchini bisa menggantikan labu botol (calabash) dalam jumlah sama pada masakan berkuah."
+ },
+ "sub_000629": {
+  "note": "Cabai jalapeño kalengan bisa menggantikan cabai merah pedas kalengan, dengan tingkat pedas sedikit kurang kuat."
+ },
+ "sub_000630": {
+  "note": "Jika tidak ada perkedel beku, parut kentang mentah dan bentuk sendiri menjadi perkedel untuk digoreng wajan.",
+  "name": "Perkedel kentang parut buatan sendiri"
+ },
+ "sub_000631": {
+  "note": "Gunakan saus tomat polos yang ditambah bawang, paprika hijau, dan seledri cincang halus yang ditumis, dalam jumlah setara."
+ },
+ "sub_000632": {
+  "note": "Kacang tunggak bisa diganti kacang hitam atau kacang kering lain dalam jumlah sama pada sebagian besar masakan berkuah"
+ },
+ "sub_000633": {
+  "note": "Labu botol (calabash) matang bisa diganti zucchini dalam jumlah sama, tekstur dan rasa mirip setelah dimasak",
+  "name": "Zucchini"
+ },
+ "sub_000634": {
+  "note": "Jika tidak ada daun bawang leek, bawang bombay (sebaiknya yang manis) bisa menggantikan dalam jumlah sama, rasa lebih kuat"
+ },
+ "sub_000635": {
+  "note": "Jamur cokelat (crimini) bisa diganti jamur kancing putih dalam jumlah sama, rasa lebih lembut"
+ },
+ "sub_000636": {
+  "note": "Daun lobak putih bisa diganti kale atau bayam dalam jumlah sama"
+ },
+ "sub_000637": {
+  "note": "Labu lilin (winter melon) matang bisa diganti zucchini atau chayote dalam jumlah sama",
+  "name": "Zucchini"
+ },
+ "sub_000638": {
+  "note": "Bisa diganti tepung terigu utuh (tekstur lebih padat) atau campuran 50/50 untuk resep yang lebih ringan",
+  "name": "Tepung terigu, setengah utuh atau utuh"
+ },
+ "sub_000639": {
+  "note": "Mi telur bisa diganti pasta pipih biasa (tagliatelle) dalam jumlah sama",
+  "name": "Pasta (mi biasa)"
+ },
+ "sub_000640": {
+  "note": "Pasta bebas gluten (beras/jagung/quinoa): pengganti praktis untuk intoleransi gluten, atau sebaliknya ganti dengan pasta gandum biasa jika bebas gluten tidak diperlukan, sesuaikan waktu masak (biasanya lebih singkat)",
+  "name": "Pasta gandum biasa"
+ },
+ "sub_000641": {
+  "note": "Pasta bebas gluten berbahan beras: pengganti untuk intoleransi gluten; jika tidak, ganti dengan pasta gandum biasa dalam jumlah sama",
+  "name": "Pasta gandum biasa"
+ },
+ "sub_000642": {
+  "note": "Pasta bebas gluten jagung/quinoa: pengganti untuk intoleransi gluten; jika tidak, pasta gandum biasa dalam jumlah sama",
+  "name": "Pasta gandum biasa"
+ },
+ "sub_000643": {
+  "note": "Pasta gandum utuh 51%: bisa diganti pasta gandum utuh biasa atau pasta putih dalam jumlah sama sesuai kebutuhan serat",
+  "name": "Pasta gandum utuh (100% gandum utuh)"
+ },
+ "sub_000644": {
+  "note": "Bisa diganti pasta gandum utuh biasa atau pasta putih dalam jumlah sama",
+  "name": "Pasta gandum utuh (100% gandum utuh)"
+ },
+ "sub_000645": {
+  "note": "Ganti dengan kelapa tanpa gula dengan mengurangi gula pada resep (versi manis menambah gula ekstra)",
+  "name": "Kelapa parut kering tanpa gula"
+ },
+ "sub_000646": {
+  "note": "Biji labu/labu kuning panggang bisa diganti biji bunga matahari panggang dalam jumlah sama",
+  "name": "Biji bunga matahari"
+ },
+ "sub_000647": {
+  "note": "Ganti dalam jumlah sama dengan biji bunga matahari sangrai asin",
+  "name": "Biji bunga matahari"
+ },
+ "sub_000648": {
+  "note": "Kentang goreng beku bisa diganti kentang segar yang dipotong lalu dipanggang atau digoreng",
+  "name": "Kentang segar"
+ },
+ "sub_000649": {
+  "note": "Bacon ala Kanada (irisan loin) bisa diganti bacon biasa atau ham iris"
+ },
+ "sub_000650": {
+  "note": "Mentega rendah lemak bisa diganti mentega biasa dengan sedikit mengurangi jumlahnya (mentega rendah lemak mengandung lebih banyak air)"
+ },
+ "sub_000651": {
+  "note": "Mentega rendah lemak tawar bisa diganti mentega tawar biasa, jumlah sedikit dikurangi"
+ },
+ "sub_000652": {
+  "note": "Margarin olesan bisa diganti mentega dalam jumlah sama (tekstur dan rasa berbeda, kurang cocok untuk kue yang halus)"
+ },
+ "sub_000653": {
+  "note": "Minyak kedelai olahan bisa diganti minyak kanola atau bunga matahari dalam jumlah sama untuk masakan sehari-hari",
+  "name": "Minyak kanola"
+ },
+ "sub_000654": {
+  "note": "Shortening nabati bisa diganti mentega dingin dalam jumlah sama pada kue (tekstur dan rasa sedikit berbeda)"
+ },
+ "sub_000655": {
+  "note": "Ikan mas (carp) bisa diganti nila atau ikan air tawar berdaging putih lain dalam jumlah sama"
+ },
+ "sub_000656": {
+  "note": "Ikan cusk bisa diganti kod atau haddock dalam jumlah sama"
+ },
+ "sub_000657": {
+  "note": "Ikan ling bisa diganti kod dalam jumlah sama, daging putih yang serupa"
+ },
+ "sub_000658": {
+  "note": "Burbot (ikan air tawar) bisa diganti nila atau kod"
+ },
+ "sub_000659": {
+  "note": "Lingcod (kod-ling Pasifik) bisa diganti kod atau haddock dalam jumlah sama"
+ },
+ "sub_000660": {
+  "note": "Nila bisa diganti kod atau ikan putih berdaging padat lain dalam jumlah sama"
+ },
+ "sub_000661": {
+  "note": "Ikan bluefish (tassergal) bisa diganti makerel dalam jumlah sama"
+ },
+ "sub_000662": {
+  "note": "Mahi-mahi bisa diganti tuna atau ikan pedang untuk dimasak di wajan/panggangan"
+ },
+ "sub_000663": {
+  "note": "Ikan bandeng (chanos) bisa diganti nila dalam jumlah sama"
+ },
+ "sub_000664": {
+  "note": "Monkfish bisa diganti halibut untuk daging padatnya, tekstur mirip"
+ },
+ "sub_000665": {
+  "note": "Tilefish bisa diganti kakap atau kod dalam jumlah sama"
+ },
+ "sub_000666": {
+  "note": "Ikan pedang bisa diganti tuna (steak) untuk dipanggang"
+ },
+ "sub_000667": {
+  "note": "Butterfish bisa diganti makerel, ikan berlemak yang serupa"
+ },
+ "sub_000668": {
+  "note": "Sheepshead (ikan kepala domba) bisa diganti kakap atau kod"
+ },
+ "sub_000669": {
+  "note": "Spot (ikan putih kecil) bisa diganti kakap"
+ },
+ "sub_000670": {
+  "note": "Scup (ikan porgy) bisa diganti kakap atau ikan sejenis dalam jumlah sama"
+ },
+ "sub_000671": {
+  "note": "Buttermilk bubuk yang dilarutkan (bubuk + air) bisa diganti buttermilk cair kemasan botol"
+ },
+ "sub_000672": {
+  "note": "Half and half didapat dengan mencampur susu full cream dan krim cair dalam jumlah sama",
+  "name": "Campuran susu full cream + krim cair (1:1)"
+ },
+ "sub_000673": {
+  "note": "Queso Fresco bisa diganti feta remuk atau cottage cheese yang ditiriskan, rasa lebih asin"
+ },
+ "sub_000674": {
+  "note": "Queso Blanco bisa diganti feta atau mozzarella tergantung pemakaian (meleleh atau diremukkan)"
+ },
+ "sub_000675": {
+  "note": "Queso Añejo (keju matang untuk parutan) bisa diganti parmesan atau cheddar tua"
+ },
+ "sub_000676": {
+  "note": "Queso Cotija (keju parut asin) bisa diganti parmesan"
+ },
+ "sub_000677": {
+  "note": "Queso Asadero (keju leleh) bisa diganti mozzarella atau provolone",
+  "name": "Mozzarella atau provolone"
+ },
+ "sub_000678": {
+  "note": "Queso Chihuahua (keju leleh) bisa diganti Monterey Jack atau mozzarella",
+  "name": "Keju Monterey Jack"
+ },
+ "sub_000679": {
+  "note": "Olahan keju Amerika cold-pack bisa diganti cheddar leleh dalam jumlah sama"
+ },
+ "sub_000680": {
+  "note": "Telur orak-arik beku bisa diganti telur segar yang dimasak sendiri di rumah",
+  "name": "Telur segar"
+ },
+ "sub_000681": {
+  "note": "Whipped topping beku rendah lemak bisa diganti krim cair kocok buatan sendiri",
+  "name": "Krim kocok buatan sendiri"
+ },
+ "sub_000682": {
+  "note": "Susu kerbau bisa diganti susu sapi full cream dalam jumlah sama"
+ },
+ "sub_000683": {
+  "note": "Susu domba bisa diganti susu sapi full cream, rasa kurang kuat"
+ },
+ "sub_000684": {
+  "note": "Susu tiruan (non-susu, non-kedelai) bisa diganti susu sapi atau susu nabati sesuai kebutuhan"
+ },
+ "sub_000685": {
+  "note": "Krimer cair ringan bisa diganti krim cair ringan atau susu kental",
+  "name": "Krim cair ringan"
+ },
+ "sub_000686": {
+  "note": "Krimer bubuk ringan bisa diganti susu bubuk untuk kopi",
+  "name": "Susu bubuk"
+ },
+ "sub_000687": {
+  "note": "Krimer beraroma cair bisa diganti krim cair ringan yang ditambah perisa (vanila, karamel)",
+  "name": "Krim cair ringan"
+ },
+ "sub_000688": {
+  "note": "Ganti dengan cheddar asli dalam jumlah sama untuk rasa lebih kuat dan daya leleh lebih baik"
+ },
+ "sub_000689": {
+  "note": "Cheddar biasa (atau rendah lemak) menggantikan cheddar tanpa lemak dengan rasa dan daya leleh yang lebih baik"
+ },
+ "sub_000690": {
+  "note": "Bisa diganti cheddar leleh dalam jumlah sama untuk rasa lebih kuat"
+ },
+ "sub_000691": {
+  "note": "Ganti bubuk krim dengan krim cair ringan, encerkan jika perlu"
+ },
+ "sub_000692": {
+  "note": "Ganti dengan minyak nabati netral (bunga matahari, kanola) dalam jumlah sama"
+ },
+ "sub_000693": {
+  "note": "Mentega menggantikan margarin rendah lemak dalam jumlah sama tapi memberi lebih banyak lemak dan rasa"
+ },
+ "sub_000694": {
+  "note": "Setara dengan minyak kanola konsumsi biasa, dalam jumlah sama"
+ },
+ "sub_000695": {
+  "note": "Mentega tawar menggantikan margarin rendah lemak tawar dalam jumlah sama"
+ },
+ "sub_000696": {
+  "note": "Ganti dengan mentega murni dalam jumlah sama, rasa lebih kuat"
+ },
+ "sub_000697": {
+  "note": "Sekitar 1/4 gelas pengganti telur cair setara dengan satu butir telur utuh"
+ },
+ "sub_000698": {
+  "note": "Bisa diganti minyak bunga matahari atau minyak netral lain dalam jumlah sama"
+ },
+ "sub_000699": {
+  "note": "Mentega (atau margarin berkadar lemak tinggi) menggantikan margarin dalam kemasan tub ini dalam jumlah sama"
+ },
+ "sub_000700": {
+  "note": "Ganti dengan mayones biasa dalam jumlah sama"
+ },
+ "sub_000701": {
+  "note": "Encerkan krim kental dengan sedikit susu (kira-kira setengah-setengah) untuk mendapatkan setara krim ringan"
+ },
+ "sub_000702": {
+  "note": "Ganti dengan minyak bunga matahari, rasa netral yang mirip"
+ },
+ "sub_000703": {
+  "note": "Mentega adalah padanan lemak terdekat untuk margarin 80% ini"
+ },
+ "sub_000704": {
+  "note": "Jagung kalengan yang ditiriskan menggantikan jagung segar matang pada sebagian besar resep"
+ },
+ "sub_000705": {
+  "note": "Kacang mentega (kuning) menggantikan buncis dalam jumlah sama, rasa lebih lembut"
+ },
+ "sub_000706": {
+  "note": "Bisa saling menggantikan; paprika hijau lebih pahit dan kurang manis dibanding yang merah"
+ },
+ "sub_000707": {
+  "note": "Labu butternut menggantikan labu acorn untuk puree, rasa sedikit lebih manis"
+ },
+ "sub_000708": {
+  "note": "Pengganti umum untuk labu Hubbard, tekstur dan rasa mirip"
+ },
+ "sub_000709": {
+  "note": "Ganti dengan nasi putih biasa dengan menambah waktu masak (15-20 menit alih-alih 5 menit)"
+ },
+ "sub_000710": {
+  "note": "Ganti dengan nasi putih biasa matang, dengan waktu masak lebih lama"
+ },
+ "sub_000711": {
+  "note": "Kacang Great Northern menggantikan kacang putih (navy) pada sup dan cassoulet"
+ },
+ "sub_000712": {
+  "note": "Kacang merah menggantikan kacang pinto pada chili dan burrito"
+ },
+ "sub_000713": {
+  "note": "Kacang pinto menggantikan kacang hitam pada sebagian besar hidangan Meksiko"
+ },
+ "sub_000714": {
+  "note": "Gunakan tepung jagung polos dengan menambahkan 1,5 sdt baking powder dan 1/4 sdt garam per gelas"
+ },
+ "sub_000715": {
+  "note": "Gunakan tepung jagung kuning polos dengan menambahkan 1,5 sdt baking powder dan 1/4 sdt garam per gelas"
+ },
+ "sub_000716": {
+  "note": "Ganti dengan ham matang biasa dalam jumlah sama"
+ },
+ "sub_000717": {
+  "note": "Ham putih iris menggantikan bacon Kanada pada sebagian besar resep (sandwich, taburan)"
+ },
+ "sub_000718": {
+  "note": "Puyuh adalah pengganti umum untuk unggas buruan kecil ini, cara masak mirip"
+ },
+ "sub_000719": {
+  "note": "Ikan putih berdaging padat, kod Atlantik adalah pengganti yang baik"
+ },
+ "sub_000720": {
+  "note": "Varietas salmon Pasifik bisa saling menggantikan, tekstur dan rasa mirip"
+ },
+ "sub_000721": {
+  "note": "Ikan air tawar berdaging putih, walleye adalah pengganti yang baik"
+ },
+ "sub_000722": {
+  "note": "Ikan air tawar berdaging padat, pengganti umum bersama walleye"
+ },
+ "sub_000723": {
+  "note": "Ikan putih lembut, menggantikan dalam jumlah sama (kod)."
+ },
+ "sub_000724": {
+  "note": "Varietas salmon lain (salmon merah/sockeye), gunakan dalam jumlah sama."
+ },
+ "sub_000725": {
+  "note": "Ikan putih berdaging padat, pengganti yang baik untuk kod dalam jumlah sama."
+ },
+ "sub_000726": {
+  "note": "Kod Pasifik dan kod (kod Atlantik) bisa saling menggantikan."
+ },
+ "sub_000727": {
+  "note": "Ikan haring Pasifik dan haring Atlantik bisa saling menggantikan dalam jumlah sama."
+ },
+ "sub_000728": {
+  "note": "Ikan pipih berdaging lembut, sole bisa menggantikan turbot dalam jumlah sama."
+ },
+ "sub_000729": {
+  "note": "Ikan putih lembut, menggantikan cusk dalam jumlah sama."
+ },
+ "sub_000730": {
+  "note": "Makerel Spanyol dan makerel Atlantik bisa saling menggantikan."
+ },
+ "sub_000731": {
+  "note": "Ikan kecil berlemak, sarden bisa menggantikan teri dengan rasa yang sedikit lebih lembut."
+ },
+ "sub_000732": {
+  "note": "Kepiting queen bisa menggantikan kepiting biru, daging sedikit lebih halus."
+ },
+ "sub_000733": {
+  "note": "Ikan putih padat, kod bisa menggantikan ling dalam jumlah sama."
+ },
+ "sub_000734": {
+  "note": "Pollock Atlantik dan kod bisa saling menggantikan pada sebagian besar resep."
+ },
+ "sub_000735": {
+  "note": "Kefir tawar rendah lemak bisa diganti yogurt Yunani tawar rendah lemak (tekstur lebih kental, encerkan sedikit jika perlu)."
+ },
+ "sub_000736": {
+  "note": "Halibut Greenland dan halibut biasa bisa saling menggantikan dalam jumlah sama."
+ },
+ "sub_000737": {
+  "note": "Ikan berlemak dengan daging kaya, salmon bisa menggantikan belut pada banyak olahan."
+ },
+ "sub_000738": {
+  "note": "1 gelas susu + 1 sdm air jeruk lemon atau cuka, diamkan 5 menit untuk menggantikan buttermilk.",
+  "name": "Susu + air jeruk lemon atau cuka (buatan sendiri)"
+ },
+ "sub_000739": {
+  "note": "Cumi bisa menggantikan gurita, waktu masak lebih cepat."
+ },
+ "sub_000740": {
+  "note": "Berbagai jenis tiram bisa saling menggantikan dalam jumlah sama."
+ },
+ "sub_000741": {
+  "note": "Ikan air tawar berdaging lembut, nila adalah pengganti yang baik untuk ikan perch."
+ },
+ "sub_000742": {
+  "note": "Tekstur daging padat yang serupa, ikan pedang bisa menggantikan hiu dalam bentuk steak."
+ },
+ "sub_000743": {
+  "note": "Ikan haddock dan kod secara klasik bisa saling menggantikan."
+ },
+ "sub_000744": {
+  "note": "Ikan putih lembut, kod adalah pengganti yang baik untuk nila."
+ },
+ "sub_000745": {
+  "note": "Daging padat dan pejal, ikan pedang bisa menggantikan mahi-mahi."
+ },
+ "sub_000746": {
+  "note": "Nila adalah pengganti yang baik untuk bandeng (chanos), daging lembut yang mirip."
+ },
+ "sub_000747": {
+  "note": "Kakap bisa menggantikan kerapu, daging putih padat yang serupa."
+ },
+ "sub_000748": {
+  "note": "Kepiting jenis lain (kepiting generik) bisa saling menggantikan dalam jumlah sama."
+ },
+ "sub_000749": {
+  "note": "Ikan berdaging padat yang dimasak sebagai steak, tuna bisa menggantikan ikan pedang."
+ },
+ "sub_000750": {
+  "note": "Ikan putih lembut, kod bisa menggantikan whiting dalam jumlah sama."
+ },
+ "sub_000751": {
+  "note": "Ikan kaya dan berlemak, salmon bisa menggantikan sablefish (morue charbonnière)."
+ },
+ "sub_000752": {
+  "note": "Minyak netral dengan titik asap yang mirip, menggantikan dalam jumlah sama."
+ },
+ "sub_000753": {
+  "note": "Yogurt Yunani tawar rendah lemak menggantikan krim asam rendah lemak dalam jumlah sama."
+ },
+ "sub_000754": {
+  "note": "Kerang mussel bisa menggantikan kerang kupang (clam) pada sebagian besar resep makanan laut."
+ },
+ "sub_000755": {
+  "note": "Ricotta bisa menggantikan cottage cheese rendah lemak pada olahan gurih maupun manis."
+ },
+ "sub_000756": {
+  "note": "Lobster air tawar (langouste) bisa menggantikan lobster, tekstur dan rasa mirip."
+ },
+ "sub_000757": {
+  "note": "Kepiting biru bisa menggantikan kepiting raja Alaska dalam jumlah sama."
+ },
+ "sub_000758": {
+  "note": "Semua minyak nabati netral bisa menggantikan minyak kedelai untuk menggoreng ringan."
+ },
+ "sub_000759": {
+  "note": "Tuna bisa menggantikan yellowtail (sériole), ikan berlemak yang serupa."
+ },
+ "sub_000760": {
+  "note": "Alternatif yang jauh lebih murah dari kaviar, rasa lebih asin dan tekstur sedikit lebih padat.",
+  "name": "Telur ikan lumpfish (kaviar lumpfish)"
+ },
+ "sub_000761": {
+  "note": "Kod segar (perlu direndam dan dilunakkan garamnya jika mulai dari ikan kod asin-kering)."
+ },
+ "sub_000762": {
+  "note": "Udang bisa menggantikan kerang scallop pada banyak olahan makanan laut."
+ },
+ "sub_000763": {
+  "note": "Salmon asap bisa menggantikan sturgeon asap, lebih mudah didapat."
+ },
+ "sub_000764": {
+  "note": "Susu sapi full cream bisa menggantikan susu kambing, rasa lebih netral."
+ },
+ "sub_000765": {
+  "note": "Cumi bisa menggantikan sotong, tekstur dan rasa mirip."
+ },
+ "sub_000766": {
+  "note": "Mentega bisa menggantikan margarin dalam jumlah sama (rasa lebih kaya, tekstur sedikit berbeda pada kue)."
+ },
+ "sub_000767": {
+  "note": "Vinaigrette buatan sendiri (minyak + cuka) bisa menggantikan saus salad Prancis kemasan."
+ },
+ "sub_000768": {
+  "note": "Mayones biasa bisa menggantikan mayones ringan (sesuaikan jumlah lemak sesuai resep)."
+ },
+ "sub_000769": {
+  "note": "Lobster bisa menggantikan lobster air tawar (langouste), tekstur dan rasa mirip."
+ },
+ "sub_000770": {
+  "note": "Ikan sole bisa menggantikan ikan flounder (ikan pipih) dalam jumlah sama."
+ },
+ "sub_000771": {
+  "note": "Kacang mentega kuning (wax beans) bisa diganti buncis, dalam takaran sama."
+ },
+ "sub_000772": {
+  "note": "Paprika hijau bisa menggantikan paprika merah (rasa lebih hijau dan sedikit pahit, jumlah sama)."
+ },
+ "sub_000773": {
+  "note": "Kacang merah (kidney) bisa menggantikan kacang pinto pada chili dan masakan berkuah."
+ },
+ "sub_000774": {
+  "note": "Jagung manis kuning bisa menggantikan jagung manis putih dalam jumlah sama (rasa sedikit lebih manis)."
+ },
+ "sub_000775": {
+  "note": "Edamame bisa menggantikan kacang lima yang belum matang, tekstur mirip."
+ },
+ "sub_000776": {
+  "note": "Bisa menggantikan kacang lima dalam jumlah sama pada masakan berkuah, rasa lebih lembut dan tekstur mirip"
+ },
+ "sub_000777": {
+  "note": "Kacang tunggak (niébé) bisa diganti kacang merah atau kacang arab, rasio 1:1, pada salad dan masakan berkuah",
+  "name": "Kacang merah kalengan"
+ },
+ "sub_000778": {
+  "note": "Daging emu cincang sangat rendah lemak; ganti dengan daging sapi cincang dalam jumlah sama, kurangi sedikit waktu masak agar tidak kering"
+ },
+ "sub_000779": {
+  "note": "Daging burung unta (daging merah yang sangat rendah lemak) bisa menggantikan sapi dalam jumlah sama, masak sebentar saja agar tidak alot"
+ },
+ "sub_000780": {
+  "note": "Menggantikan daging anak sapi cincang dalam jumlah sama, rasa sedikit lebih kuat"
+ },
+ "sub_000781": {
+  "note": "Kalkun cincang dan ayam cincang bisa saling menggantikan dalam jumlah sama pada sebagian besar resep"
+ },
+ "sub_000782": {
+  "note": "Ayam cincang dan kalkun cincang bisa saling menggantikan dalam jumlah sama"
+ },
+ "sub_000783": {
+  "note": "Daging wapiti (buruan) bisa diganti sapi dalam jumlah sama, daging lebih rendah lemak jadi waktu masak lebih singkat"
+ },
+ "sub_000784": {
+  "note": "Daging rusa (venison) bisa menggantikan sapi dalam jumlah sama, rasa lebih kuat khas buruan"
+ },
+ "sub_000785": {
+  "note": "Daging kambing hutan (buruan) bisa menggantikan domba dalam jumlah sama untuk masakan berkuah dan kari"
+ },
+ "sub_000786": {
+  "note": "Daging moose (rusa besar/buruan) bisa menggantikan sapi dalam jumlah sama"
+ },
+ "sub_000787": {
+  "note": "Daging kuda bisa menggantikan sapi dalam jumlah sama pada sebagian besar olahan"
+ },
+ "sub_000788": {
+  "note": "Daging karibu (buruan) bisa menggantikan sapi dalam jumlah sama"
+ },
+ "sub_000789": {
+  "note": "Daging antelop (buruan) bisa menggantikan sapi atau domba dalam jumlah sama"
+ },
+ "sub_000790": {
+  "note": "Hati angsa mentah bisa diganti foie gras bebek mentah dalam jumlah sama, rasa dan tekstur sangat mirip",
+  "name": "Foie gras bebek mentah"
+ },
+ "sub_000791": {
+  "note": "Puyuh bisa diganti ayam (daging dan kulit) dalam jumlah sama, sesuaikan waktu masak (puyuh lebih kecil dan cepat matang)"
+ },
+ "sub_000792": {
+  "note": "Burung pegar bisa diganti ayam dalam jumlah sama, rasa lebih halus tapi tekstur mirip"
+ },
+ "sub_000793": {
+  "note": "Ayam mutiara (guinea fowl) bisa diganti ayam dalam jumlah sama"
+ },
+ "sub_000794": {
+  "note": "1 telur bebek ≈ 1,5 telur ayam; sesuaikan cairan pada kue",
+  "name": "Telur ayam"
+ },
+ "sub_000795": {
+  "note": "1 telur angsa ≈ 2 telur ayam; tekstur lebih kaya",
+  "name": "Telur ayam"
+ },
+ "sub_000796": {
+  "note": "4 sampai 5 telur puyuh ≈ 1 telur ayam",
+  "name": "Telur ayam"
+ },
+ "sub_000797": {
+  "note": "1 telur kalkun ≈ 1,5 telur ayam",
+  "name": "Telur ayam"
+ },
+ "sub_000798": {
+  "note": "Pengganti dengan rasa dan tekstur mirip, dalam jumlah sama",
+  "name": "Foie gras bebek asap"
+ },
+ "sub_000799": {
+  "note": "1 gelas susu + 1 sdm cuka/lemon (diamkan 5-10 menit) menggantikan buttermilk dalam jumlah sama",
+  "name": "Susu + air jeruk lemon atau cuka"
+ },
+ "sub_000800": {
+  "note": "Pengganti klasik buttermilk, dalam jumlah sama",
+  "name": "Susu + air jeruk lemon atau cuka"
+ },
+ "sub_000801": {
+  "note": "Margarin bisa diganti mentega asin dalam jumlah sama, rasa lebih kaya"
+ },
+ "sub_000802": {
+  "note": "Margarin tawar bisa diganti mentega tawar dalam jumlah sama"
+ },
+ "sub_000803": {
+  "note": "Minyak nabati/kanola khusus bisa diganti minyak kanola standar dalam jumlah sama untuk masakan sehari-hari"
+ },
+ "sub_000804": {
+  "note": "Salmon coho bisa menggantikan salmon Atlantik dalam jumlah sama, daging sedikit kurang berlemak"
+ },
+ "sub_000805": {
+  "note": "Trout pelangi bisa menggantikan salmon dalam jumlah sama, rasa lebih lembut"
+ },
+ "sub_000806": {
+  "note": "Tuna albacore dan tuna cakalang (bonito perut bergaris) bisa saling menggantikan dalam jumlah sama, terutama untuk kalengan"
+ },
+ "sub_000807": {
+  "note": "Kod Atlantik bisa diganti haddock mentah dalam jumlah sama, daging putih yang serupa"
+ },
+ "sub_000808": {
+  "note": "Ikan orange roughy bisa diganti kod atau haddock dalam jumlah sama, ikan putih lembut yang mirip"
+ },
+ "sub_000809": {
+  "note": "Ikan tenggiri raja (king mackerel) bisa diganti makerel Atlantik dalam jumlah sama"
+ },
+ "sub_000810": {
+  "note": "Halibut Greenland bisa diganti halibut Atlantik/Pasifik dalam jumlah sama"
+ },
+ "sub_000811": {
+  "note": "Lobster bisa diganti lobster air tawar dalam jumlah sama pada masakan berkuah atau sup krim"
+ },
+ "sub_000812": {
+  "note": "Ikan teri bisa diganti sarden kalengan dalam minyak dalam jumlah sama, rasa kurang asin"
+ },
+ "sub_000813": {
+  "note": "Kepiting salju bisa diganti kepiting biru dalam jumlah sama"
+ },
+ "sub_000814": {
+  "note": "Kepiting Dungeness Pasifik bisa diganti kepiting biru dalam jumlah sama"
+ },
+ "sub_000815": {
+  "note": "Kepiting raja Alaska bisa diganti kepiting biru dalam jumlah sama (tekstur sedikit kurang padat)"
+ },
+ "sub_000816": {
+  "note": "Ganti dengan udang matang sungguhan: rasa lebih kuat, takaran sama"
+ },
+ "sub_000817": {
+  "note": "Tuna kalengan sebagai pengganti salmon kalengan, pada salad dan sandwich"
+ },
+ "sub_000818": {
+  "note": "Tuna kalengan sebagai pengganti sarden, rasa lebih lembut"
+ },
+ "sub_000819": {
+  "note": "Susu kental tawar versi full cream, sedikit lebih kaya lemak"
+ },
+ "sub_000820": {
+  "note": "Colin (hake), ikan putih serupa, cara masak sama"
+ },
+ "sub_000821": {
+  "note": "Kod, ikan putih serupa, cara masak sama"
+ },
+ "sub_000822": {
+  "note": "Cheddar biasa sebagai pengganti keju leleh rendah lemak, kurang mudah meleleh"
+ },
+ "sub_000823": {
+  "note": "Paprika hijau segar iris sebagai pengganti beku, kurangi waktu rebus."
+ },
+ "sub_000824": {
+  "note": "Jagung segar pipil bisa diganti jagung beku, waktu masak sedikit lebih singkat"
+ },
+ "sub_000825": {
+  "note": "Mentega (atau margarin) sebagai pengganti shortening pabrikan untuk adonan puff pastry"
+ },
+ "sub_000826": {
+  "note": "Zucchini segar sebagai pengganti zucchini beku, waktu masak sedikit lebih singkat"
+ },
+ "sub_000827": {
+  "note": "Kacang merah sebagai pengganti kacang tunggak (black-eyed peas), tekstur mirip"
+ },
+ "sub_000828": {
+  "note": "Babi biasa sebagai pengganti babi hutan, rasa kurang kuat"
+ },
+ "sub_000829": {
+  "note": "Daging sapi cincang sebagai pengganti daging wapiti cincang, daging lebih berlemak"
+ },
+ "sub_000830": {
+  "note": "Daging sapi cincang sebagai pengganti daging rusa cincang, daging lebih berlemak"
+ },
+ "sub_000831": {
+  "note": "Kelinci ternak sebagai pengganti kelinci liar, daging lebih empuk"
+ },
+ "sub_000832": {
+  "note": "Ayam (paha) sebagai pengganti burung pegar, rasa lebih lembut"
+ },
+ "sub_000833": {
+  "note": "Ayam (dada) sebagai pengganti puyuh, sesuaikan waktu masak (potongan lebih besar)"
+ },
+ "sub_000834": {
+  "note": "Daging sapi cincang biasa sebagai pengganti bison cincang, daging lebih berlemak"
+ },
+ "sub_000835": {
+  "note": "Bebek ternak sebagai pengganti bebek liar, daging kurang padat"
+ },
+ "sub_000836": {
+  "note": "Daging sapi tanpa lemak sebagai pengganti daging emu, daging eksotis yang jarang ditemukan"
+ },
+ "sub_000837": {
+  "note": "Daging sapi sebagai pengganti daging kerbau air, daging eksotis yang jarang ditemukan"
+ },
+ "sub_000838": {
+  "note": "Ayam sebagai pengganti burung dara muda, sesuaikan waktu masak (potongan lebih besar)"
+ },
+ "sub_000839": {
+  "note": "Daging domba sebagai pengganti daging kambing muda, rasa mirip"
+ },
+ "sub_000840": {
+  "note": "Mentega sebagai pengganti lemak bacon cair untuk memasak"
+ },
+ "sub_000841": {
+  "note": "Daging sapi sebagai pengganti daging moose (rusa besar), daging eksotis yang jarang ditemukan"
+ },
+ "sub_000842": {
+  "note": "Daging sapi sebagai pengganti daging kuda, rasa lebih lembut"
+ },
+ "sub_000843": {
+  "note": "Daging sapi cincang tanpa lemak sebagai pengganti daging burung unta cincang"
+ },
+ "sub_000844": {
+  "note": "Bacon babi biasa sebagai pengganti bacon sapi"
+ },
+ "sub_000845": {
+  "note": "Ayam kalengan sebagai pengganti kalkun kalengan"
+ },
+ "sub_000846": {
+  "note": "Tender poulet lapis tepung sebagai pengganti stik kalkun lapis tepung"
+ },
+ "sub_000847": {
+  "note": "Ayam sebagai pengganti ayam hutan (gélinotte), unggas buruan yang jarang ditemukan"
+ },
+ "sub_000848": {
+  "note": "Daging sapi cincang sebagai pengganti beefalo (silangan bison-sapi)"
+ },
+ "sub_000849": {
+  "note": "Angsa ternak sebagai pengganti angsa Kanada liar"
+ },
+ "sub_000850": {
+  "note": "Lemak babi (saindoux) (atau mentega) sebagai pengganti lemak ginjal sapi (suif)"
+ },
+ "sub_000851": {
+  "note": "Hati anak sapi sebagai pengganti hati sapi, rasa lebih lembut"
+ },
+ "sub_000852": {
+  "note": "Lele liar: ganti dengan nila matang, rasa lembut yang mirip"
+ },
+ "sub_000853": {
+  "note": "Lele ternak: ganti dengan nila matang"
+ },
+ "sub_000854": {
+  "note": "Bass air tawar: ganti dengan bass laut atau ikan putih sejenis"
+ },
+ "sub_000855": {
+  "note": "Ikan rockfish Pasifik: ganti dengan rockfish Atlantik atau ikan putih berdaging padat"
+ },
+ "sub_000856": {
+  "note": "Makerel Pasifik/kembung: ganti dengan makerel Atlantik"
+ },
+ "sub_000857": {
+  "note": "Tuna sirip biru segar matang: jika tidak ada, gunakan tuna putih kalengan yang ditiriskan"
+ },
+ "sub_000858": {
+  "note": "Tuna cakalang segar matang: jika tidak ada, gunakan tuna putih kalengan yang ditiriskan"
+ },
+ "sub_000859": {
+  "note": "Tuna albacore segar matang: jika tidak ada, gunakan tuna putih kalengan yang ditiriskan"
+ },
+ "sub_000860": {
+  "note": "Udang karang (crayfish) liar matang: ganti dengan udang matang, tekstur dan pemakaian mirip"
+ },
+ "sub_000861": {
+  "note": "Udang karang (crayfish) ternak matang: ganti dengan udang matang"
+ },
+ "sub_000862": {
+  "note": "Kuning telur beku asin/pasteurisasi: ganti dengan kuning telur segar (hilangkan tambahan garam)",
+  "name": "Telur, kuning, mentah, segar"
+ },
+ "sub_000863": {
+  "note": "Telur utuh beku asin/pasteurisasi: ganti dengan telur utuh segar"
+ },
+ "sub_000864": {
+  "note": "Kuning telur beku manis/pasteurisasi: ganti dengan kuning telur segar (tanpa tambahan gula)",
+  "name": "Telur, kuning, mentah, segar"
+ },
+ "sub_000865": {
+  "note": "Putih telur kering berbentuk serpihan: ganti dengan putih telur segar (sesuaikan takaran, produk kering)",
+  "name": "Telur, putih, mentah, segar"
+ },
+ "sub_000866": {
+  "note": "Putih telur bubuk kering: ganti dengan putih telur segar",
+  "name": "Telur, putih, mentah, segar"
+ },
+ "sub_000867": {
+  "note": "Margarin asin dalam tub: ganti dengan mentega asin, rasa lebih kaya"
+ },
+ "sub_000868": {
+  "note": "Margarin asin batangan: ganti dengan mentega asin"
+ },
+ "sub_000869": {
+  "note": "Margarin tawar batangan: ganti dengan mentega tawar"
+ },
+ "sub_000870": {
+  "note": "Cottage cheese kering tanpa lemak: ganti dengan cottage cheese biasa (tekstur lebih creamy)"
+ },
+ "sub_000871": {
+  "note": "Susu cokelat rendah lemak: ganti dengan susu cokelat rendah lemak kemasan, atau susu + bubuk kakao"
+ },
+ "sub_000872": {
+  "note": "Susu cokelat full cream: jika tidak ada, susu cokelat rendah lemak atau susu + kakao dan gula"
+ },
+ "sub_000873": {
+  "note": "Susu cokelat rendah lemak yang difortifikasi vitamin: ganti dengan susu cokelat rendah lemak standar"
+ },
+ "sub_000874": {
+  "note": "Dada kalkun mentah: ganti dengan dada ayam mentah, cara masak mirip tapi sedikit lebih cepat"
+ },
+ "sub_000875": {
+  "note": "Kalkun cincang 85/15 mentah: ganti dengan daging sapi cincang 85/15, atau ayam cincang agar tetap dalam kategori unggas"
+ },
+ "sub_000876": {
+  "note": "Daging kalkun gelap mentah: ganti dengan paha atas ayam mentah",
+  "name": "Ayam, paha atas"
+ },
+ "sub_000877": {
+  "note": "Babi hutan panggang: ganti dengan babi (bahu atau daging panggang), rasa lebih lembut",
+  "name": "Babi, bahu, panggang"
+ },
+ "sub_000878": {
+  "note": "Hati domba mentah: ganti dengan hati ayam mentah, rasa lebih lembut"
+ },
+ "sub_000879": {
+  "note": "Kelinci semur: ganti dengan ayam semur, tekstur dan cara masak mirip"
+ },
+ "sub_000880": {
+  "note": "Kerbau air panggang: ganti dengan daging sapi panggang, daging tanpa lemak yang serupa",
+  "name": "Daging sapi panggang"
+ },
+ "sub_000881": {
+  "note": "Wapiti cincang digoreng wajan: ganti dengan daging sapi cincang 85/15 digoreng wajan"
+ },
+ "sub_000882": {
+  "note": "Daging rusa (venison) cincang digoreng: ganti dengan daging sapi cincang 85/15 digoreng"
+ },
+ "sub_000883": {
+  "note": "Bison cincang digoreng: ganti dengan daging sapi cincang 85/15 digoreng, sedikit lebih berlemak"
+ },
+ "sub_000884": {
+  "note": "Hati kalkun yang dimasak lama: ganti dengan hati ayam yang dimasak lama, lebih umum ditemukan",
+  "name": "Ayam, hati, matang, disemur"
+ },
+ "sub_000885": {
+  "note": "Daging domba cincang mentah: ganti dengan daging sapi cincang untuk rasa yang lebih netral"
+ },
+ "sub_000886": {
+  "note": "Ayam cincang matang yang dihancurkan: ganti dengan kalkun cincang matang",
+  "name": "Kalkun cincang matang"
+ },
+ "sub_000887": {
+  "note": "Bebek utuh panggang (dagingnya saja): ganti dengan ayam panggang, lebih rendah lemak dan lebih mudah didapat"
+ },
+ "sub_000888": {
+  "note": "Dada bebek liar mentah: ganti dengan bebek ternak (dagingnya saja), lebih mudah didapat"
+ },
+ "sub_000889": {
+  "note": "Angsa panggang (dagingnya saja): ganti dengan bebek panggang, rasa dan tekstur mirip"
+ },
+ "sub_000890": {
+  "note": "Angsa panggang dengan kulit: ganti dengan bebek panggang dengan kulit"
+ },
+ "sub_000891": {
+  "note": "Anak sapi (campuran potongan rendah lemak, mentah): jika tidak ada, ganti dengan escalope ayam atau kalkun",
+  "name": "Escalope kalkun atau ayam"
+ },
+ "sub_000892": {
+  "note": "Ganti dengan daging sapi panggang rendah lemak (misal paleron); bison lebih rendah lemak, perhatikan masaknya agar tidak kering."
+ },
+ "sub_000893": {
+  "note": "Ayam adalah pengganti klasik kelinci pada semur dan tumisan."
+ },
+ "sub_000894": {
+  "note": "Lidah sapi: tekstur mirip, waktu masak serupa."
+ },
+ "sub_000895": {
+  "note": "Ginjal anak sapi: rasa lebih lembut dibanding ginjal babi, pemakaian sama."
+ },
+ "sub_000896": {
+  "note": "Daging sapi cincang menggantikan kalkun cincang pada sebagian besar resep, dengan rasa lebih kaya."
+ },
+ "sub_000897": {
+  "note": "Hati anak sapi lebih empuk dan rasanya lebih lembut dibanding hati sapi."
+ },
+ "sub_000898": {
+  "note": "Hati anak sapi bisa menggantikan hati domba, rasa lebih lembut."
+ },
+ "sub_000899": {
+  "note": "Timus anak sapi (sweetbread) adalah versi klasik dan lebih halus; pengganti umum untuk timus sapi."
+ },
+ "sub_000900": {
+  "note": "Ginjal anak sapi: tekstur dan pemakaian mirip, rasa lebih lembut dibanding domba."
+ },
+ "sub_000901": {
+  "note": "Bacon kemasan toko: rasa dan tekstur mirip bacon asin iris siap pakai."
+ },
+ "sub_000902": {
+  "note": "Ham mentah (tipe Parma/Serrano) untuk rasa asin-asap yang mirip ham asin berlemak."
+ },
+ "sub_000903": {
+  "note": "Ayam kampung utuh menggantikan ayam capon, dengan sedikit mengurangi waktu masak (potongan lebih kecil)."
+ },
+ "sub_000904": {
+  "note": "Ayam utuh untuk kaldu dan sup; dagingnya akan sedikit kurang padat dibanding ayam kampung tua."
+ },
+ "sub_000905": {
+  "note": "Ayam kampung utuh kecil menggantikan ayam Cornish; sesuaikan porsi dan waktu masak."
+ },
+ "sub_000906": {
+  "note": "Kaki depan babi adalah alternatif ekonomis untuk kaki depan anak sapi (osso bucco)."
+ },
+ "sub_000907": {
+  "note": "Ganti dengan steak sapi rendah lemak (has dalam atau has luar) jika tidak ada daging rusa."
+ },
+ "sub_000908": {
+  "note": "Kotelet babi adalah pengganti umum dan ekonomis untuk kotelet anak sapi panggang.",
+  "name": "Kotelet babi"
+ },
+ "sub_000909": {
+  "note": "Daging anak sapi sering sulit ditemukan: ganti dengan daging bahu sapi (panggang/semur), tekstur mirip setelah dimasak lama"
+ },
+ "sub_000910": {
+  "note": "Pengganti: daging bahu sapi, cara masak mirip (panggang/semur)"
+ },
+ "sub_000911": {
+  "note": "Bahu anak sapi yang disemur: ganti dengan bahu sapi yang disemur"
+ },
+ "sub_000912": {
+  "note": "Bahu anak sapi panggang: ganti dengan bahu sapi atau bahu babi"
+ },
+ "sub_000913": {
+  "note": "Osso buco anak sapi: ganti dengan kaki depan sapi yang disemur, waktu masak mirip",
+  "name": "Daging sapi, kaki depan, matang, disemur"
+ },
+ "sub_000914": {
+  "note": "Kotelet anak sapi panggang: dada ayam adalah pengganti umum dan lebih ekonomis",
+  "name": "Ayam, escalope, matang"
+ },
+ "sub_000915": {
+  "note": "Osso buco anak sapi (bagian kurus dan berlemak): ganti dengan kaki depan sapi yang disemur",
+  "name": "Daging sapi, kaki depan, matang, disemur"
+ },
+ "sub_000916": {
+  "note": "Kotelet anak sapi panggang: pengganti umum berupa dada ayam",
+  "name": "Ayam, escalope, matang"
+ },
+ "sub_000917": {
+  "note": "Escalope anak sapi lapis tepung: pengganti klasik, escalope ayam lapis tepung (ala milanaise)",
+  "name": "Ayam, escalope berlapis tepung, matang"
+ },
+ "sub_000918": {
+  "note": "Escalope anak sapi lapis tepung: diganti escalope ayam lapis tepung",
+  "name": "Ayam, escalope berlapis tepung, matang"
+ },
+ "sub_000919": {
+  "note": "Escalope anak sapi digoreng wajan: diganti escalope ayam",
+  "name": "Ayam, escalope, matang"
+ },
+ "sub_000920": {
+  "note": "Bahu anak sapi utuh yang disemur: ganti dengan bahu sapi yang disemur"
+ },
+ "sub_000921": {
+  "note": "Bison (bagian paha) yang langka: ganti dengan bagian paha bulat sapi"
+ },
+ "sub_000922": {
+  "note": "Bison (daging bahu) : ganti dengan daging bahu sapi untuk semur"
+ },
+ "sub_000923": {
+  "note": "Has daging wapiti (buruan) yang langka: ganti dengan has sapi, rasa lebih lembut"
+ },
+ "sub_000924": {
+  "note": "Has daging rusa (buruan) yang langka: ganti dengan has sapi"
+ },
+ "sub_000925": {
+  "note": "Bahu rusa yang disemur: ganti dengan bahu sapi yang disemur"
+ },
+ "sub_000926": {
+  "note": "Entrecôte bison yang langka: ganti dengan entrecôte sapi"
+ },
+ "sub_000927": {
+  "note": "Contre-filet bison yang langka: ganti dengan contre-filet (has luar) sapi"
+ },
+ "sub_000928": {
+  "note": "Kelinci semur yang langka/mahal: ganti dengan ayam (paha/campuran), waktu masak mirip"
+ },
+ "sub_000929": {
+  "note": "Kelinci panggang yang langka/mahal: ganti dengan ayam panggang"
+ },
+ "sub_000930": {
+  "note": "Daging sapi suwir untuk sandwich (tipe cheesesteak): ganti dengan iga has atau has luar iris tipis",
+  "name": "Daging sapi, entrecôte, tanpa tulang, mentah"
+ },
+ "sub_000931": {
+  "note": "Panggangan kalkun tanpa tulang berbumbu beku: ganti dengan dada kalkun tawar jika tidak tersedia",
+  "name": "Kalkun, dada, dagingnya saja"
+ },
+ "sub_000932": {
+  "note": "Kalkun asap iris (olahan daging): pengganti umum, ham matang iris",
+  "name": "Ham matang, iris"
+ },
+ "sub_000933": {
+  "note": "Bison yang jarang ditemukan: ganti dengan daging sapi rebus/semur (bahu) untuk semur, rasa lebih lembut dan tidak seliar"
+ },
+ "sub_000934": {
+  "note": "Steak bison yang langka: ganti dengan steak sapi (entrecôte), cara panggang identik"
+ },
+ "sub_000935": {
+  "note": "Steak bison (bagian paha) yang langka: ganti dengan potongan sapi yang sama, cara masak mirip"
+ },
+ "sub_000936": {
+  "note": "Bison semur yang jarang ditemukan: ganti dengan daging bahu sapi yang disemur, tekstur dan pemakaian sama (semur, suwir)"
+ },
+ "sub_000937": {
+  "note": "Daging rusa (venison) yang sulit ditemukan: ganti dengan steak sapi, cara panggang mirip"
+ },
+ "sub_000938": {
+  "note": "Daging rusa (venison) yang langka: ganti dengan potongan sapi yang sama, dipanggang"
+ },
+ "sub_000939": {
+  "note": "Sapi Wagyu yang sangat bermarmer dan mahal: ganti dengan daging sapi cincang standar 85/15 jika tidak tersedia"
+ },
+ "sub_000940": {
+  "note": "Sapi Wagyu yang mahal dan langka: ganti dengan daging sapi cincang standar"
+ },
+ "sub_000941": {
+  "note": "Sapi Wagyu (lemak luar) yang langka: ganti dengan daging sapi biasa"
+ },
+ "sub_000942": {
+  "note": "Sapi Wagyu yang mahal: ganti dengan daging sapi biasa jika tidak tersedia"
+ },
+ "sub_000943": {
+  "note": "Pepperoni kalkun yang tidak ditemukan: ganti dengan pepperoni sapi/babi biasa, pemakaian sama untuk irisan"
+ },
+ "sub_000944": {
+  "note": "Bacon rendah sodium yang jarang ditemukan: ganti dengan bacon biasa (sesuaikan garam pada resep)"
+ },
+ "sub_000945": {
+  "note": "Selai olesan ayam tidak tersedia: ganti dengan salad ham atau kalkun untuk olesan, pemakaian sama untuk sandwich",
+  "name": "Salad ham untuk olesan"
+ },
+ "sub_000946": {
+  "note": "Salad unggas untuk olesan tidak tersedia: ganti dengan olesan ayam atau kalkun, pemakaian sama",
+  "name": "Olesan ayam"
+ },
+ "sub_000947": {
+  "note": "Salad ham untuk olesan tidak tersedia: ganti dengan olesan berbahan daging lain (ayam, kalkun), pemakaian sama untuk sandwich",
+  "name": "Olesan ayam"
+ },
+ "sub_000948": {
+  "note": "Bison yang lebih langka: ganti dengan steak sapi (top sirloin) dalam jumlah sama, cara masak mirip panggangan."
+ },
+ "sub_000949": {
+  "note": "Ganti dengan ham putih potong dadu atau cincang"
+ },
+ "sub_000950": {
+  "note": "Bologna (olahan daging AS) mirip mortadela biasa"
+ },
+ "sub_000951": {
+  "note": "Varian kalkun bisa diganti mortadela biasa (bologna babi/sapi)"
+ },
+ "sub_000952": {
+  "note": "Varian kalkun bisa diganti pastrami sapi"
+ },
+ "sub_000953": {
+  "note": "Varian kalkun bisa diganti sosis frankfurter babi biasa"
+ },
+ "sub_000954": {
+  "note": "Varian ayam bisa diganti sosis frankfurter babi biasa"
+ },
+ "sub_000955": {
+  "note": "Varian rendah sodium bisa diganti sosis frankfurter biasa"
+ },
+ "sub_000956": {
+  "note": "Kielbasa tidak ditemukan: ganti dengan sosis asap berbentuk untaian"
+ },
+ "sub_000957": {
+  "note": "Beerwurst tidak ditemukan di Indonesia: ganti dengan sosis asap babi/sapi"
+ },
+ "sub_000958": {
+  "note": "Ganti dengan corned beef matang biasa"
+ },
+ "sub_000959": {
+  "note": "Merek AS: ganti dengan salami kering iris generik"
+ },
+ "sub_000960": {
+  "note": "Merek AS: ganti dengan mortadela (bologna) sapi"
+ },
+ "sub_000961": {
+  "note": "Merek AS: ganti dengan sosis frankfurter (hot dog) sapi generik"
+ },
+ "sub_000962": {
+  "note": "Sosis hati (Braunschweiger) mirip pate hati untuk olesan"
+ },
+ "sub_000963": {
+  "note": "Merek AS: ganti dengan pate hati untuk olesan"
+ },
+ "sub_000964": {
+  "note": "Merek AS: ganti dengan dada ayam iris polos (tanpa lapisan madu)"
+ },
+ "sub_000965": {
+  "note": "Merek AS: ganti dengan ham putih cincang"
+ },
+ "sub_000966": {
+  "note": "Pate beraroma truffle: bisa diganti pate hati polos"
+ },
+ "sub_000967": {
+  "note": "Jika tidak ada kaldu ikan, gunakan kaldu sayur (rasa kurang khas laut)"
+ },
+ "sub_000968": {
+  "note": "Escalope anak sapi bisa diganti escalope ayam atau kalkun",
+  "name": "Escalope ayam"
+ },
+ "sub_000969": {
+  "note": "Potongan kentang beku bisa diganti kentang goreng beku"
+ },
+ "sub_000970": {
+  "note": "Daging bahu (macreuse) dan paleron adalah potongan untuk semur yang hampir identik, bisa saling menggantikan (bourguignon, pot-au-feu)"
+ },
+ "sub_000971": {
+  "note": "Potongan yang setara dengan paleron untuk masakan semur/braise"
+ },
+ "sub_000972": {
+  "note": "Jika tidak ada has dalam, gunakan has luar (lebih murah, sedikit kurang empuk, perhatikan saat dimasak)"
+ },
+ "sub_000973": {
+  "note": "Alternatif untuk daging has dalam panggangan, lebih ekonomis tapi kurang empuk"
+ },
+ "sub_000974": {
+  "note": "Bavette dan onglet bisa saling menggantikan untuk panggangan cepat di wajan"
+ },
+ "sub_000975": {
+  "note": "Bavette (daging sandung lamur) bisa diganti dengan onglet untuk panggangan cepat"
+ },
+ "sub_000976": {
+  "note": "Sirloin setara dengan rump steak, potongan yang bisa saling menggantikan untuk dipanggang"
+ },
+ "sub_000977": {
+  "note": "Bisa diganti rump steak, potongan yang setara"
+ },
+ "sub_000978": {
+  "note": "Jika tidak ada kotelet loin, gunakan bahu babi (lebih berlemak, masak sedikit lebih lama)"
+ },
+ "sub_000979": {
+  "note": "Bahu babi sebagai pengganti, tekstur lebih berlemak dan lembut"
+ },
+ "sub_000980": {
+  "note": "Setara dengan tenderloin babi polos (tanpa larutan tambahan)"
+ },
+ "sub_000981": {
+  "note": "Bisa diganti dada ayam tawar; kurangi tambahan garam pada resep"
+ },
+ "sub_000982": {
+  "note": "Jika tidak ada dada sapi, bahu sapi bisa disemur dengan cara serupa untuk pot-au-feu atau masakan berkuah",
+  "name": "Bahu sapi (untuk disemur)"
+ },
+ "sub_000983": {
+  "note": "Bacon babi biasa bisa menggantikan bacon kalkun (rasa lebih kuat, lebih berlemak)"
+ },
+ "sub_000984": {
+  "note": "Bacon babi biasa bisa menggantikan bacon kalkun (rasa lebih kuat, lebih berlemak)"
+ },
+ "sub_000985": {
+  "note": "Bacon babi biasa bisa menggantikan bacon kalkun (rasa lebih kuat, lebih berlemak)"
+ },
+ "sub_000986": {
+  "note": "Selai almond menggantikan selai kacang tanah untuk rasa lebih lembut (alergi kacang tanah); perhatikan, mengandung kacang pohon."
+ },
+ "sub_000987": {
+  "note": "Ham iris segar sebagai pengganti ham cincang kalengan untuk pemakaian sandwich yang mirip"
+ },
+ "sub_000988": {
+  "note": "Campuran umum untuk menggantikan saus Worcestershire pada marinasi dan saus",
+  "name": "Kecap asin + sedikit cuka balsamico"
+ },
+ "sub_000989": {
+  "note": "Mortadela biasa adalah padanan langsung dalam bentuk olahan daging iris."
+ },
+ "sub_000990": {
+  "note": "Mortadela biasa adalah padanan langsung dalam bentuk olahan daging iris."
+ },
+ "sub_000991": {
+  "note": "Corned beef kalengan bisa diganti dada sapi asin yang dimasak sendiri di rumah."
+ },
+ "sub_000992": {
+  "note": "Daging sandwich dalam gel bisa diganti corned beef matang, pemakaian sama sebagai olahan daging."
+ },
+ "sub_000993": {
+  "note": "Ham putih adalah pengganti umum untuk kalkun iris pada sandwich."
+ },
+ "sub_000994": {
+  "note": "Pate hati tanpa keterangan sebagai alternatif yang lebih ekonomis dari pate hati angsa asap."
+ },
+ "sub_000995": {
+  "note": "Jika alergi kacang tanah, ganti dengan selai biji bunga matahari dalam jumlah sama."
+ },
+ "sub_000996": {
+  "note": "Bisa diganti selai kacang tanah dalam jumlah sama (kecuali alergi)."
+ },
+ "sub_000997": {
+  "note": "Untuk versi bebas laktosa/vegan, ganti protein whey dengan isolat protein kedelai."
+ },
+ "sub_000998": {
+  "note": "Untuk versi bebas laktosa/vegan, ganti isolat whey dengan isolat protein kedelai."
+ },
+ "sub_000999": {
+  "note": "Bisa diganti bubuk protein whey jika intoleransi kedelai bukan masalah."
+ },
+ "sub_001000": {
+  "note": "Untuk versi vegetarian, ganti saus ikan (nuoc-mam) dengan kecap asin."
+ },
+ "sub_001001": {
+  "note": "Saus steak berbahan tomat bisa diganti saus Worcestershire yang diencerkan dengan sedikit saus tomat kemasan."
+ },
+ "sub_001002": {
+  "note": "Saus sriracha bisa diganti saus tabasco atau saus pedas botolan lain (sesuaikan jumlahnya, lebih pedas)."
+ },
+ "sub_001003": {
+  "note": "Saus pedas siap saji bisa diganti saus tabasco."
+ },
+ "sub_001004": {
+  "note": "Beras cokelat bisa diganti beras putih butir panjang (waktu masak lebih singkat)."
+ },
+ "sub_001005": {
+  "note": "Beras cokelat bisa diganti beras putih butir panjang (waktu masak lebih singkat)."
+ },
+ "sub_001006": {
+  "note": "Beras cokelat matang bisa diganti beras putih matang butir panjang."
+ },
+ "sub_001007": {
+  "note": "Beras cokelat matang bisa diganti beras putih matang butir panjang."
+ },
+ "sub_001008": {
+  "note": "Pasta gandum utuh bisa diganti pasta biasa (spageti) jika tidak tersedia."
+ },
+ "sub_001009": {
+  "note": "Pasta gandum utuh matang bisa diganti pasta biasa matang."
+ },
+ "sub_001010": {
+  "note": "Kacang pinto bisa diganti kacang merah pada sebagian besar resep (chili, masakan berkuah)."
+ },
+ "sub_001011": {
+  "note": "Kacang Great Northern bisa diganti kacang putih (Navy) atau cannellini."
+ },
+ "sub_001012": {
+  "note": "Ceri asam kering bisa diganti cranberry kering dalam jumlah sama."
+ },
+ "sub_001013": {
+  "note": "Ceri asam beku bisa diganti cranberry beku tanpa gula.",
+  "name": "Cranberry beku tanpa gula"
+ },
+ "sub_001014": {
+  "note": "Cocolan kacang bisa diganti hummus untuk hidangan pembuka atau olesan."
+ },
+ "sub_001015": {
+  "note": "Kaldu sayur kemasan toko bisa diganti kaldu ayam siap saji jika hidangan tidak perlu vegetarian."
+ },
+ "sub_001016": {
+  "note": "Merek tertentu, ganti dengan saus barbeku generik"
+ },
+ "sub_001017": {
+  "note": "Merek tertentu, ganti dengan saus barbeku generik"
+ },
+ "sub_001018": {
+  "note": "Merek tertentu, ganti dengan saus barbeku generik"
+ },
+ "sub_001019": {
+  "note": "Merek tertentu, ganti dengan saus barbeku generik"
+ },
+ "sub_001020": {
+  "note": "Merek tertentu, ganti dengan saus sriracha generik"
+ },
+ "sub_001021": {
+  "note": "Merek tertentu, ganti dengan saus sriracha generik"
+ },
+ "sub_001022": {
+  "note": "Tabasco bisa diganti saus pedas siap saji apa pun"
+ },
+ "sub_001023": {
+  "note": "Sup keju kalengan bisa diganti saus keju siap saji"
+ },
+ "sub_001024": {
+  "note": "Sup keju kalengan bisa diganti saus keju siap saji"
+ },
+ "sub_001025": {
+  "note": "Cocolan keju pedas bisa diganti saus keju tawar (sesuaikan tingkat pedas)"
+ },
+ "sub_001026": {
+  "note": "Varian rendah sodium bisa diganti saus teriyaki biasa"
+ },
+ "sub_001027": {
+  "note": "Cola bebas gula bermerek, bisa diganti cola diet generik"
+ },
+ "sub_001028": {
+  "note": "Minuman energi bermerek, bisa diganti minuman energi generik"
+ },
+ "sub_001029": {
+  "note": "Minuman energi bermerek, bisa diganti minuman energi generik"
+ },
+ "sub_001030": {
+  "note": "Minuman energi bermerek, bisa diganti minuman energi generik"
+ },
+ "sub_001031": {
+  "note": "Minuman energi bermerek, bisa diganti minuman energi generik"
+ },
+ "sub_001032": {
+  "note": "Minuman energi bermerek, bisa diganti minuman energi generik"
+ },
+ "sub_001033": {
+  "note": "Sup krim ayam kalengan, bisa diganti bechamel buatan sendiri ditambah kaldu ayam"
+ },
+ "sub_001034": {
+  "note": "Sup krim jamur kalengan, bisa diganti bechamel buatan sendiri ditambah jamur"
+ },
+ "sub_001035": {
+  "note": "Sup krim seledri kalengan, bisa diganti bechamel buatan sendiri ditambah seledri"
+ },
+ "sub_001036": {
+  "note": "Sup krim kentang kalengan, bisa diganti bechamel buatan sendiri"
+ },
+ "sub_001037": {
+  "note": "Sup krim udang kalengan, bisa diganti bechamel buatan sendiri ditambah kaldu udang"
+ },
+ "sub_001038": {
+  "note": "Sup krim bawang kalengan, bisa diganti bechamel buatan sendiri ditambah bawang"
+ },
+ "sub_001039": {
+  "note": "Sup krim asparagus kalengan, bisa diganti bechamel buatan sendiri"
+ },
+ "sub_001040": {
+  "note": "Sup tomat kental kalengan bisa diganti saus tomat yang dihaluskan dengan krim"
+ },
+ "sub_001041": {
+  "note": "Sup krim jamur kalengan, pengganti umum saat udang tidak tersedia pada resep casserole"
+ },
+ "sub_001042": {
+  "note": "Sup krim ayam, bisa saling menggantikan dengan krim jamur pada sebagian besar resep casserole"
+ },
+ "sub_001043": {
+  "note": "Sup tomat kalengan kental menggantikan campuran bubuk kering yang dilarutkan air"
+ },
+ "sub_001044": {
+  "note": "Jagung kalengan yang ditiriskan, pengganti umum untuk jagung beku"
+ },
+ "sub_001045": {
+  "note": "Jagung beku, pengganti umum untuk jagung kalengan"
+ },
+ "sub_001046": {
+  "note": "Basis saus kacang lain (kelapa) bisa dipakai untuk resep bertipe satai yang sama"
+ },
+ "sub_001047": {
+  "note": "Basis saus kacang lain (selai kacang tanah) bisa dipakai untuk resep bertipe satai yang sama"
+ },
+ "sub_001048": {
+  "note": "Saus cabai hijau, pengganti saus cabai merah tergantung warna/tingkat pedas yang diinginkan"
+ },
+ "sub_001049": {
+  "note": "Saus cabai merah, pengganti saus cabai hijau tergantung warna/tingkat pedas yang diinginkan"
+ },
+ "sub_001050": {
+  "note": "Sosis asap kalkun, rendah lemak, alternatif yang lebih ringan dari sosis asap biasa"
+ },
+ "sub_001051": {
+  "note": "Bir ringan generik, pengganti merek Bud Light dalam resep"
+ },
+ "sub_001052": {
+  "note": "Bir ringan generik, pengganti merek Budweiser Select dalam resep"
+ },
+ "sub_001053": {
+  "note": "Bir biasa generik, pengganti merek Budweiser dalam resep"
+ },
+ "sub_001054": {
+  "note": "Anggur merah bertubuh penuh (Syrah) bisa diganti Zinfandel untuk masakan berkuah dan saus"
+ },
+ "sub_001055": {
+  "note": "Merlot dan Cabernet Sauvignon: anggur merah bertanin yang bisa saling menggantikan dalam masakan"
+ },
+ "sub_001056": {
+  "note": "Anggur Claret (blend Bordeaux) mendekati Cabernet Sauvignon untuk masakan"
+ },
+ "sub_001057": {
+  "note": "Pinot Noir dan Merlot: anggur merah yang lebih ringan, bisa saling menggantikan"
+ },
+ "sub_001058": {
+  "note": "Cabernet Franc mirip Merlot, bisa digantikan dalam masakan"
+ },
+ "sub_001059": {
+  "note": "Fumé Blanc adalah nama dagang lain untuk Sauvignon Blanc"
+ },
+ "sub_001060": {
+  "note": "Chardonnay dan Pinot Blanc: anggur putih kering yang bisa saling menggantikan"
+ },
+ "sub_001061": {
+  "note": "Pinot Gris dan Chardonnay: anggur putih kering yang bisa saling menggantikan untuk masakan"
+ },
+ "sub_001062": {
+  "note": "Chenin Blanc dan Sauvignon Blanc: anggur putih kering yang serupa"
+ },
+ "sub_001063": {
+  "note": "Gewurztraminer dan Riesling: anggur putih beraroma yang bisa saling menggantikan"
+ },
+ "sub_001064": {
+  "note": "Sup kerang gaya Manhattan (tomat) dan gaya New England (krim): bisa saling menggantikan sesuai selera"
+ },
+ "sub_001065": {
+  "note": "Dua merek saus pesto basil, setara"
+ },
+ "sub_001066": {
+  "note": "Sereal panas gandum (Wheatena) dan Cream of Wheat: bisa saling menggantikan"
+ },
+ "sub_001067": {
+  "note": "Cream of Rice dan Cream of Wheat: sereal panas yang bisa saling menggantikan"
+ },
+ "sub_001068": {
+  "note": "Produk yang sama tanpa tambahan kedelai; jumlah sama, cara masak sama."
+ },
+ "sub_001069": {
+  "note": "Nugget unggas sebagai pengganti ayam saja, tekstur dan cara masak sangat mirip."
+ },
+ "sub_001070": {
+  "note": "Ganti anak sapi dengan ayam berlapis tepung; jumlah sama, cara masak sama."
+ },
+ "sub_001071": {
+  "note": "Kalkun dan ayam berlapis tepung bisa saling menggantikan dalam jumlah sama."
+ },
+ "sub_001072": {
+  "note": "Kaldu ayam sebagai pengganti kaldu sapi, rasa sedikit kurang kuat tapi dasar yang setara."
+ },
+ "sub_001073": {
+  "note": "Kaldu sayur untuk versi yang lebih ringan (atau vegetarian), jumlah sama."
+ },
+ "sub_001074": {
+  "note": "Ganti domba dengan kuskus daging biasa, sayuran dan semolina yang sama."
+ },
+ "sub_001075": {
+  "note": "Versi rendah lemak berbahan daging atau ayam, prinsip dan jumlah yang sama."
+ },
+ "sub_001076": {
+  "note": "Paupiette unggas sebagai pengganti anak sapi, cara olah dan masak identik."
+ },
+ "sub_001077": {
+  "note": "Tajine ayam sebagai pengganti tajine domba, bumbu dan sayuran sama, waktu masak sedikit lebih singkat."
+ },
+ "sub_001078": {
+  "note": "Cassoulet kalengan biasa sebagai pengganti versi daging babi, dasar kacang yang sama."
+ },
+ "sub_001079": {
+  "note": "Cassoulet daging babi sebagai pengganti bebek/angsa; dasar sama, rasa kurang kuat."
+ },
+ "sub_001080": {
+  "note": "Versi kering yang dilarutkan, rasa sama, encerkan sesuai kemasan."
+ },
+ "sub_001081": {
+  "note": "Bumbu kering kemasan yang dilarutkan, hasil sangat mirip dengan versi segar."
+ },
+ "sub_001082": {
+  "note": "Versi kering yang dilarutkan, rasa sangat mirip."
+ },
+ "sub_001083": {
+  "note": "Versi kering yang dilarutkan, jenis sayuran yang sama, encerkan sesuai kemasan."
+ },
+ "sub_001084": {
+  "note": "Bumbu kering kemasan yang dilarutkan, resep leek/kentang yang sama."
+ },
+ "sub_001085": {
+  "note": "Versi kering yang dilarutkan, dasar unggas dan sayuran yang sama."
+ },
+ "sub_001086": {
+  "note": "Minestrone kering yang dilarutkan, resep yang sama."
+ },
+ "sub_001087": {
+  "note": "Sup labu kuning kering yang dilarutkan, rasa sangat mirip."
+ },
+ "sub_001088": {
+  "note": "Ikan putih matang polos, disiram saus buatan sendiri jika perlu; dasar yang sama."
+ },
+ "sub_001089": {
+  "note": "Ikan putih matang polos, disajikan dengan saus tomat buatan sendiri jika perlu."
+ },
+ "sub_001090": {
+  "note": "Ikan putih matang polos; tambahkan sedikit mustard pada olahan jika perlu."
+ },
+ "sub_001091": {
+  "note": "Ikan putih matang polos, tanpa tepung roti/minyak seperti versi bordelaise."
+ },
+ "sub_001092": {
+  "note": "Remoulade seledri-wortel sebagai pengganti seledri saja, tekstur dan saus hampir identik."
+ },
+ "sub_001093": {
+  "note": "Salad kentang ala Piemonte sebagai pengganti versi buatan sendiri, dasar kentang/mayones yang sama."
+ },
+ "sub_001094": {
+  "note": "Coleslaw (kubis putih/wortel) sebagai pengganti kubis merah, prinsip salad kubis yang sama."
+ },
+ "sub_001095": {
+  "note": "Tabouleh dengan ayam sebagai pengganti tabouleh sayur; hilangkan ayam jika perlu versi vegetarian."
+ },
+ "sub_001096": {
+  "note": "Produk yang sama, versi kemasan alih-alih dijual dibawa pulang."
+ },
+ "sub_001097": {
+  "note": "Versi vegetarian dari hidangan yang sama (ravioli dalam saus tomat kalengan)."
+ },
+ "sub_001098": {
+  "note": "Versi vegetarian tanpa daging, format kemasan yang sama."
+ },
+ "sub_001099": {
+  "note": "Ganti dengan puree kentang biasa, tanpa keju tomme segar."
+ },
+ "sub_001100": {
+  "note": "Gratin kentang yang mirip, tanpa keju reblochon maupun potongan bacon."
+ },
+ "sub_001101": {
+  "note": "Sereal yang sama, dimasak sendiri alih-alih dari kemasan microwave."
+ },
+ "sub_001102": {
+  "note": "Semolina kuskus tawar, bisa ditambah sayuran sendiri."
+ },
+ "sub_001103": {
+  "note": "Cordon bleu biasa berbahan daging, cara olah lapis tepung yang sama."
+ },
+ "sub_001104": {
+  "note": "Nugget ayam biasa, jumlah sama."
+ },
+ "sub_001105": {
+  "note": "Alternatif bebas kedelai, ukuran lapis tepung sama."
+ },
+ "sub_001106": {
+  "note": "Jumlah sama, versi kemasan dari croque-monsieur."
+ },
+ "sub_001107": {
+  "note": "Jumlah sama, versi buatan sendiri."
+ },
+ "sub_001108": {
+  "note": "Hilangkan telur untuk mendapatkan croque-monsieur biasa."
+ },
+ "sub_001109": {
+  "note": "Sandwich yang sama, versi dibawa pulang."
+ },
+ "sub_001110": {
+  "note": "Sandwich yang sama, versi dibawa pulang."
+ },
+ "sub_001111": {
+  "note": "Sandwich yang sama, versi dibawa pulang."
+ },
+ "sub_001112": {
+  "note": "Sandwich yang sama, versi dibawa pulang."
+ },
+ "sub_001113": {
+  "note": "Sandwich yang sama, versi dibawa pulang."
+ },
+ "sub_001114": {
+  "note": "Sandwich yang sama, versi dibawa pulang."
+ },
+ "sub_001115": {
+  "note": "Jenis olahan yang sama, dibuat sendiri alih-alih kemasan."
+ },
+ "sub_001116": {
+  "note": "Versi vegetarian dari gorengan, tanpa daging maupun ikan."
+ },
+ "sub_001117": {
+  "note": "Ganti udang dengan isian daging/sayuran, dasar mi goreng yang sama."
+ },
+ "sub_001118": {
+  "note": "Mi Asia non-instan, dimasak sendiri alih-alih versi instan."
+ },
+ "sub_001119": {
+  "note": "Hilangkan ham untuk mendapatkan pizza keju/margherita."
+ },
+ "sub_001120": {
+  "note": "Produk yang sama, versi yang tidak dijamin bebas bahan hewani."
+ },
+ "sub_001121": {
+  "note": "Produk yang sama, versi yang cocok untuk vegan."
+ },
+ "sub_001122": {
+  "note": "Produk yang sama, versi yang cocok untuk vegan."
+ },
+ "sub_001123": {
+  "note": "Produk yang sama, versi yang tidak dijamin bebas bahan hewani."
+ },
+ "sub_001124": {
+  "note": "Produk yang sama, versi yang cocok untuk vegan."
+ },
+ "sub_001125": {
+  "note": "Ganti dengan buncis segar, jumlah sama, sesuaikan waktu masak."
+ },
+ "sub_001126": {
+  "note": "Ganti dengan kembang kol segar, jumlah sama."
+ },
+ "sub_001127": {
+  "note": "Ganti dengan kapri segar yang sudah dikupas, jumlah sama."
+ },
+ "sub_001128": {
+  "note": "Ganti dengan wortel segar, jumlah sama."
+ },
+ "sub_001129": {
+  "note": "Ganti dengan brokoli segar, jumlah sama."
+ },
+ "sub_001130": {
+  "note": "Ganti dengan bayam segar mentah, siapkan sekitar dua kali beratnya karena sangat menyusut saat dimasak."
+ },
+ "sub_001131": {
+  "note": "Ganti dengan campuran kapri-wortel kalengan, tiriskan dengan baik."
+ },
+ "sub_001132": {
+  "note": "Ganti dengan jamur kancing kalengan, tiriskan dengan baik."
+ },
+ "sub_001133": {
+  "note": "Ganti dengan kacang mentega kalengan, tiriskan dengan baik."
+ },
+ "sub_001134": {
+  "note": "Ganti dengan dasar artichoke kalengan, tiriskan dengan baik."
+ },
+ "sub_001135": {
+  "note": "Ganti dengan salsify kalengan, tiriskan dengan baik."
+ },
+ "sub_001136": {
+  "note": "Ganti dengan macedoine sayuran kalengan, tiriskan dengan baik."
+ },
+ "sub_001137": {
+  "note": "Gunakan sekitar setengah jumlah pasta tomat kental dan encerkan dengan sedikit air."
+ },
+ "sub_001138": {
+  "note": "Gunakan sekitar dua kali lipat jumlah pasta tomat biasa dan kurangi air tambahan."
+ },
+ "sub_001139": {
+  "note": "Jumlah sama, hasil sangat mirip (tomat kupas atau potong kalengan)."
+ },
+ "sub_001140": {
+  "note": "Ganti dengan rebung kalengan, tiriskan dengan baik, jumlah sama."
+ },
+ "sub_001141": {
+  "note": "Ganti dengan tauge kedelai kalengan, tiriskan dengan baik."
+ },
+ "sub_001142": {
+  "note": "Ganti dengan labu butternut, jumlah sama, rasa sedikit kurang manis."
+ },
+ "sub_001143": {
+  "note": "Ganti dengan daun bawang leek matang iris, jumlah sama."
+ },
+ "sub_001144": {
+  "note": "Ganti dengan jamur kancing segar, kurang beraroma tapi pengganti ekonomis yang baik."
+ },
+ "sub_001145": {
+  "note": "Ganti dengan jamur tiram segar, jumlah sama, rasa lebih lembut."
+ },
+ "sub_001146": {
+  "note": "Ganti dengan salsify (putih), jumlah sama, cara olah sama."
+ },
+ "sub_001147": {
+  "note": "Ganti dengan jagung manis segar pipil, jumlah sama."
+ },
+ "sub_001148": {
+  "note": "Rendam air lalu gunakan dalam jumlah setara; tekstur lebih padat, rasa kurang kuat dibanding jamur kuping hitam."
+ },
+ "sub_001149": {
+  "note": "Tambahkan sedikit minyak zaitun untuk mengimbangi ketiadaan marinasi."
+ },
+ "sub_001150": {
+  "note": "Gunakan sekitar 3 kali lebih banyak bawang bombay segar cincang dibanding bawang bombay kering."
+ },
+ "sub_001151": {
+  "note": "Rendam air lalu masak, atau ganti langsung dengan wortel segar matang dalam jumlah setara."
+ },
+ "sub_001152": {
+  "note": "Sayuran yang sama (pakcoy/bok choy), jumlah sama."
+ },
+ "sub_001153": {
+  "note": "Sayuran yang sama (chayote/labu siam), jumlah sama."
+ },
+ "sub_001154": {
+  "note": "Sayuran yang sama, jumlah sama."
+ },
+ "sub_001155": {
+  "note": "Tekstur mirip, rasa lebih manis; jumlah sama."
+ },
+ "sub_001156": {
+  "note": "Tekstur lebih bertepung; jumlah sama, sesuaikan cara masak."
+ },
+ "sub_001157": {
+  "note": "Jumlah sama, rasa lebih netral."
+ },
+ "sub_001158": {
+  "note": "Jumlah sama, tekstur sedikit lebih lengket dengan talas."
+ },
+ "sub_001159": {
+  "note": "Kacang putih yang sangat mirip, jumlah sama."
+ },
+ "sub_001160": {
+  "note": "Untuk sup/puree, jumlah sama."
+ },
+ "sub_001161": {
+  "note": "Cara masak dan tekstur sangat mirip, jumlah sama."
+ },
+ "sub_001162": {
+  "note": "Cara masak dan tekstur sangat mirip, jumlah sama."
+ },
+ "sub_001163": {
+  "note": "Jumlah sama, rasa sedikit kurang asam."
+ },
+ "sub_001164": {
+  "note": "Jumlah sama, rasa sedikit lebih asam."
+ },
+ "sub_001165": {
+  "note": "Jumlah sama, rasa sedikit kurang manis."
+ },
+ "sub_001166": {
+  "note": "Jumlah sama, rasa sedikit lebih manis."
+ },
+ "sub_001167": {
+  "note": "Jumlah sama, plum reine-claude sedikit lebih manis."
+ },
+ "sub_001168": {
+  "note": "Jumlah sama, plum mirabelle sedikit lebih asam."
+ },
+ "sub_001169": {
+  "note": "Buah segar/beku yang sama, jumlah sama."
+ },
+ "sub_001170": {
+  "note": "Buah segar/beku yang sama, jumlah sama."
+ },
+ "sub_001171": {
+  "note": "Jumlah sama, apel Gala lebih manis dan kurang asam."
+ },
+ "sub_001172": {
+  "note": "Jumlah sama, apel Golden lebih tahan saat dimasak."
+ },
+ "sub_001173": {
+  "note": "Jumlah sama, jeruk pomelo merah muda sedikit lebih manis."
+ },
+ "sub_001174": {
+  "note": "Jumlah sama, jeruk pomelo kuning sedikit lebih asam."
+ },
+ "sub_001175": {
+  "note": "Jumlah sama, daging sedikit kurang beraroma."
+ },
+ "sub_001176": {
+  "note": "Jumlah sama, daging sedikit lebih beraroma."
+ },
+ "sub_001177": {
+  "note": "Ceri lebih manis: kurangi sedikit tambahan gula pada resep."
+ },
+ "sub_001178": {
+  "note": "Saus apel tanpa tambahan gula, kurang manis tapi tekstur identik, jumlah sama."
+ },
+ "sub_001179": {
+  "note": "Saus apel biasa, sedikit lebih manis, jumlah sama."
+ },
+ "sub_001180": {
+  "note": "Saus apel, rasa lebih netral, jumlah sama untuk kue."
+ },
+ "sub_001181": {
+  "note": "Saus apel, rasa lebih netral, jumlah sama."
+ },
+ "sub_001182": {
+  "note": "Versi bersirup ringan, kurang manis, jumlah sama."
+ },
+ "sub_001183": {
+  "note": "Versi bersirup ringan, kurang manis, jumlah sama."
+ },
+ "sub_001184": {
+  "note": "Versi bersirup ringan, kurang manis, jumlah sama."
+ },
+ "sub_001185": {
+  "note": "Versi bersirup ringan, kurang manis, jumlah sama."
+ },
+ "sub_001186": {
+  "note": "Nanas dalam jus, kurang manis, tiriskan dengan baik sebelum digunakan."
+ },
+ "sub_001187": {
+  "note": "Pir bersirup ringan, tekstur dan tingkat manis mirip, jumlah sama."
+ },
+ "sub_001188": {
+  "note": "Cranberry kering, lebih asam, jumlah sama pada kue atau salad."
+ },
+ "sub_001189": {
+  "note": "Versi tanpa tambahan garam untuk mengurangi garam, jumlah sama, tambahkan garam sesuai selera."
+ },
+ "sub_001190": {
+  "note": "Versi tanpa tambahan garam, jumlah sama, tambahkan garam sesuai selera."
+ },
+ "sub_001191": {
+  "note": "Versi tanpa tambahan garam, jumlah sama, tambahkan garam sesuai selera."
+ },
+ "sub_001192": {
+  "note": "Pengganti yang baik dalam campuran camilan atau kue, jumlah sama."
+ },
+ "sub_001193": {
+  "note": "Biji kupas, sedikit lebih mudah dicerna, jumlah sama."
+ },
+ "sub_001194": {
+  "note": "Pemakaian sama sebagai pengikat (mengental dengan air) pada kue/bubur, jumlah sama."
+ },
+ "sub_001195": {
+  "note": "Tekstur mirip untuk saus dan kue, rasa lebih manis dan kuat."
+ },
+ "sub_001196": {
+  "note": "Rasa lebih panggang, jumlah sama, tekstur sedikit lebih kering."
+ },
+ "sub_001197": {
+  "note": "Beras basmati, butir yang bisa saling menggantikan, jumlah sama."
+ },
+ "sub_001198": {
+  "note": "Beras basmati, butir panjang yang mirip, jumlah sama."
+ },
+ "sub_001199": {
+  "note": "Beras putih biasa, jumlah dan cara masak yang mirip."
+ },
+ "sub_001200": {
+  "note": "Versi utuh, lebih kaya serat, jumlah sama."
+ },
+ "sub_001201": {
+  "note": "Versi utuh, lebih kaya serat, jumlah sama."
+ },
+ "sub_001202": {
+  "note": "Bulgur matang, tekstur sedikit lebih padat, pemakaian sama untuk salad atau pendamping."
+ },
+ "sub_001203": {
+  "note": "Bulgur mentah, cara masak mirip, pemakaian sama."
+ },
+ "sub_001204": {
+  "note": "Bihun kedelai, tekstur mirip, jumlah sama."
+ },
+ "sub_001205": {
+  "note": "Bihun kedelai, tekstur mirip, jumlah sama."
+ },
+ "sub_001206": {
+  "note": "Gnocchi semolina, tekstur sedikit lebih padat, jumlah sama."
+ },
+ "sub_001207": {
+  "note": "Pasta biasa jika tidak ada batasan bebas gluten, jumlah dan cara masak sama."
+ },
+ "sub_001208": {
+  "note": "Pasta bebas gluten untuk makanan yang sesuai kebutuhan, jumlah dan waktu masak mirip."
+ },
+ "sub_001209": {
+  "note": "Jumlah sama, daya pengikat sangat mirip."
+ },
+ "sub_001210": {
+  "note": "Jumlah sama, daya pengental yang mirip."
+ },
+ "sub_001211": {
+  "note": "Jumlah sama, rasa sedikit lebih netral."
+ },
+ "sub_001212": {
+  "note": "Jumlah sama, hasil kurang rustic."
+ },
+ "sub_001213": {
+  "note": "Jumlah sama, remah roti sedikit lebih ringan."
+ },
+ "sub_001214": {
+  "note": "Jumlah sama, rasa lebih kuat (pur beurre/mentega murni)."
+ },
+ "sub_001215": {
+  "note": "Jumlah sama, versi tanpa mentega (berguna untuk intoleransi)."
+ },
+ "sub_001216": {
+  "note": "Jumlah sama, adonan lebih rapuh dan rasa lebih kuat."
+ },
+ "sub_001217": {
+  "note": "Jumlah sama, alternatif tanpa mentega."
+ },
+ "sub_001218": {
+  "note": "Jumlah sama, rasa lebih kaya (pur beurre/mentega murni)."
+ },
+ "sub_001219": {
+  "note": "Tumpuk sekitar 2 lembar kulit filo untuk menggantikan 1 lembar kulit brick."
+ },
+ "sub_001220": {
+  "note": "Satu lembar kulit brick menggantikan sekitar 2 lembar kulit filo."
+ },
+ "sub_001221": {
+  "note": "Jumlah sama, tekstur lebih lembut, rasa lebih netral."
+ },
+ "sub_001222": {
+  "note": "Jumlah sama, opsi bebas gluten."
+ },
+ "sub_001223": {
+  "note": "Pemakaian sama untuk sandwich isi, bentuk memanjang."
+ },
+ "sub_001224": {
+  "note": "Cara masak yang sama, rasa lebih kuat."
+ },
+ "sub_001225": {
+  "note": "Jumlah sama, daging lebih rendah lemak."
+ },
+ "sub_001226": {
+  "note": "Jumlah sama, rasa dan tekstur sangat mirip."
+ },
+ "sub_001227": {
+  "note": "Jumlah sama, daging sedikit lebih kering, perhatikan saat dimasak."
+ },
+ "sub_001228": {
+  "note": "Produk yang sama, versi non-organik."
+ },
+ "sub_001229": {
+  "note": "Cara masak yang sama, potongan sedikit lebih empuk."
+ },
+ "sub_001230": {
+  "note": "Keluarga potongan daging yang sama, cara masak mirip."
+ },
+ "sub_001231": {
+  "note": "Cara masak yang sama, hasil mirip."
+ },
+ "sub_001232": {
+  "note": "Escalope kalkun, cara olah sama, rasa sedikit lebih netral."
+ },
+ "sub_001233": {
+  "note": "Escalope anak sapi, jumlah sama, tekstur mirip."
+ },
+ "sub_001234": {
+  "note": "Daging kalkun, jumlah sama, rasa sangat mirip."
+ },
+ "sub_001235": {
+  "note": "Daging ayam, jumlah sama, rasa sangat mirip."
+ },
+ "sub_001236": {
+  "note": "Ayam kampung, jumlah sama, rasa kurang kuat."
+ },
+ "sub_001237": {
+  "note": "Daging bebek, jumlah sama, rasa mirip (unggas berlemak)."
+ },
+ "sub_001238": {
+  "note": "Ayam kampung, jumlah sama, tanpa rasa liar khas buruan."
+ },
+ "sub_001239": {
+  "note": "Steak sapi, jumlah sama, hasil mirip."
+ },
+ "sub_001240": {
+  "note": "Has luar sapi (tende de tranche), jumlah sama, hasil mirip."
+ },
+ "sub_001241": {
+  "note": "Has luar sapi, jumlah sama, hasil mirip."
+ },
+ "sub_001242": {
+  "note": "Entrecôte sapi, jumlah sama, hasil mirip."
+ },
+ "sub_001243": {
+  "note": "Paha kambing/domba, jumlah sama, rasa mirip."
+ },
+ "sub_001244": {
+  "note": "Has dalam sapi, daging merah rendah lemak, jumlah sama."
+ },
+ "sub_001245": {
+  "note": "Daging sapi tanpa lemak (has dalam), jumlah sama, rasa buruan lebih ringan."
+ },
+ "sub_001246": {
+  "note": "Daging kelinci, jumlah sama, rasa lebih lembut."
+ },
+ "sub_001247": {
+  "note": "Hati sapi muda, jumlah sama, rasa sangat mirip."
+ },
+ "sub_001248": {
+  "note": "Hati anak sapi, jumlah sama, rasa sangat mirip."
+ },
+ "sub_001249": {
+  "note": "Jantung anak sapi, jumlah sama, tekstur sedikit lebih empuk."
+ },
+ "sub_001250": {
+  "note": "Otak anak sapi, jumlah sama, tekstur identik."
+ },
+ "sub_001251": {
+  "note": "Daging cincang 10% lemak, sedikit lebih berlemak."
+ },
+ "sub_001252": {
+  "note": "Daging cincang 15% lemak, sedikit kurang berlemak."
+ },
+ "sub_001253": {
+  "note": "Daging cincang anak sapi 15% lemak, sedikit kurang berlemak."
+ },
+ "sub_001254": {
+  "note": "Bahu babi, jumlah sama, sedikit kurang bermarmer."
+ },
+ "sub_001255": {
+  "note": "Bahu domba, jumlah sama, sedikit lebih berlemak."
+ },
+ "sub_001256": {
+  "note": "Paleron sapi, pemakaian sama untuk semur lama."
+ },
+ "sub_001257": {
+  "note": "Leher sapi, pemakaian sama untuk semur lama."
+ },
+ "sub_001258": {
+  "note": "Paha ayam tanpa tulang, jumlah sama, sesuaikan waktu masak."
+ },
+ "sub_001259": {
+  "note": "Paha ayam, jumlah sama, rasa mirip."
+ },
+ "sub_001260": {
+  "note": "Bahu domba panggang, pemakaian sama, sedikit lebih berlemak dan lembut."
+ },
+ "sub_001261": {
+  "note": "Hati kalkun matang, jumlah sama, rasa sangat mirip."
+ },
+ "sub_001262": {
+  "note": "Hati kalkun matang, jumlah sama, rasa sangat mirip."
+ },
+ "sub_001263": {
+  "note": "Hati kalkun, tekstur dan rasa sangat mirip."
+ },
+ "sub_001264": {
+  "note": "Hati ayam, mudah menggantikan, rasa sedikit lebih kuat."
+ },
+ "sub_001265": {
+  "note": "Timus domba (ris d'agneau), cara olah sama, potongan lebih kecil."
+ },
+ "sub_001266": {
+  "note": "Timus anak sapi (ris de veau), lebih umum, cara olah sama."
+ },
+ "sub_001267": {
+  "note": "Ginjal domba, cara masak sama, rasa sedikit lebih kuat."
+ },
+ "sub_001268": {
+  "note": "Ginjal anak sapi, lebih lembut, cara olah sama."
+ },
+ "sub_001269": {
+  "note": "Lidah sapi, lebih besar tapi cara olah sama (direbus lalu disemur)."
+ },
+ "sub_001270": {
+  "note": "Lidah anak sapi, lebih kecil dan lebih empuk, cara olah sama."
+ },
+ "sub_001271": {
+  "note": "Potongan bacon asap, pemakaian sama dalam masakan (tumisan, quiche, salad)."
+ },
+ "sub_001272": {
+  "note": "Potongan bacon biasa, sebagai pengganti pancetta untuk memberi rasa pada masakan berkuah."
+ },
+ "sub_001273": {
+  "note": "Viande des Grisons, jenis olahan daging kering iris tipis yang sama."
+ },
+ "sub_001274": {
+  "note": "Bresaola, daging sapi kering serupa, dalam irisan tipis."
+ },
+ "sub_001275": {
+  "note": "Ham Bayonne, jika tidak ada ham Parma, dari keluarga ham kering yang sama."
+ },
+ "sub_001276": {
+  "note": "Ham Bayonne, jika tidak ada Serrano, ham mentah kering yang mirip."
+ },
+ "sub_001277": {
+  "note": "Ham kering generik, tekstur dan pemakaian sama."
+ },
+ "sub_001278": {
+  "note": "Rillettes babi murni, jika tidak ada bebek, tekstur mirip."
+ },
+ "sub_001279": {
+  "note": "Rillettes bebek, lebih mudah ditemukan, rasa mirip rillettes angsa."
+ },
+ "sub_001280": {
+  "note": "Rillettes bebek, jika tidak ada rillettes angsa murni."
+ },
+ "sub_001281": {
+  "note": "Pate hati unggas sebagai pengganti pate hati angsa, lebih umum ditemukan."
+ },
+ "sub_001282": {
+  "note": "Salami, olahan daging kering yang mirip, pemakaian sama sebagai irisan."
+ },
+ "sub_001283": {
+  "note": "Sosis kering (saucisson) babi murni, jenis olahan daging kering yang sama."
+ },
+ "sub_001284": {
+  "note": "Merguez mentah, jika tidak ada chorizo, untuk rasa pedas yang mirip saat dibakar."
+ },
+ "sub_001285": {
+  "note": "Chipolata mentah, pemakaian sama untuk barbeku atau digoreng di wajan."
+ },
+ "sub_001286": {
+  "note": "Sosis Toulouse mentah, pemakaian sama, rasa sedikit lebih kuat."
+ },
+ "sub_001287": {
+  "note": "Sosis Toulouse mentah, jika tidak ada merguez (kurang pedas, sesuaikan bumbu)."
+ },
+ "sub_001288": {
+  "note": "Sosis frankfurter, tekstur dan pemakaian identik (hot dog, sauerkraut)."
+ },
+ "sub_001289": {
+  "note": "Sosis Strasbourg/knack, jenis sosis rebus yang sama."
+ },
+ "sub_001290": {
+  "note": "Sosis Strasbourg/knack babi murni, jika tidak ada versi unggas."
+ },
+ "sub_001291": {
+  "note": "Cervelas, olahan daging matang berupa irisan, pemakaian serupa untuk hidangan pembuka atau salad."
+ },
+ "sub_001292": {
+  "note": "Moncong sapi, olahan daging kepala lain berbentuk gel, sering disajikan dengan saus vinaigrette."
+ },
+ "sub_001293": {
+  "note": "Fromage de tête (head cheese), olahan berbentuk gel yang serupa."
+ },
+ "sub_001294": {
+  "note": "Kod matang, daging putih padat, tekstur mirip."
+ },
+ "sub_001295": {
+  "note": "Kod matang, ikan putih rendah lemak dengan rasa mirip."
+ },
+ "sub_001296": {
+  "note": "Haddock kukus, ikan putih rendah lemak yang serupa."
+ },
+ "sub_001297": {
+  "note": "Ikan putih berdaging padat, pengganti umum untuk fillet panggang oven."
+ },
+ "sub_001298": {
+  "note": "Ikan air tawar berdaging padat, cara olah panggang oven yang mirip."
+ },
+ "sub_001299": {
+  "note": "Ikan kecil utuh yang dipanggang oven, cara olah yang setara."
+ },
+ "sub_001300": {
+  "note": "Ikan pipih tipis, cara kukus yang setara."
+ },
+ "sub_001301": {
+  "note": "Ikan putih rendah lemak, cara masak kukus yang bisa saling menggantikan."
+ },
+ "sub_001302": {
+  "note": "Ikan berlemak berwarna merah muda, cara kukus yang mirip."
+ },
+ "sub_001303": {
+  "note": "Kod asin dan kod segar berasal dari daging yang sama, rendam kod asin sebelum menggantikan."
+ },
+ "sub_001304": {
+  "note": "Ikan putih rendah lemak, cara masak ringan yang setara."
+ },
+ "sub_001305": {
+  "note": "Ikan putih dari keluarga gadidae, cara panggang yang mirip."
+ },
+ "sub_001306": {
+  "note": "Ikan kecil berlemak, cara panggang yang mirip (sarden/makerel)."
+ },
+ "sub_001307": {
+  "note": "Ikan trout, cara olah goreng wajan/panggang yang setara."
+ },
+ "sub_001308": {
+  "note": "Ikan bass, daging serupa bisa saling menggantikan dalam keadaan mentah."
+ },
+ "sub_001309": {
+  "note": "Ikan putih dari keluarga gadidae, daging serupa saat mentah."
+ },
+ "sub_001310": {
+  "note": "Halibut, daging serupa yang bisa saling menggantikan."
+ },
+ "sub_001311": {
+  "note": "Ikan pipih yang mirip, daging tipis yang serupa."
+ },
+ "sub_001312": {
+  "note": "Salmon liar dan salmon ternak, daging serupa saat mentah."
+ },
+ "sub_001313": {
+  "note": "Salmon dari berbagai spesies, daging serupa saat mentah."
+ },
+ "sub_001314": {
+  "note": "Udang dari spesies berbeda, matang, sering bisa saling menggantikan dalam resep."
+ },
+ "sub_001315": {
+  "note": "Lobster air tawar dan lobster, daging yang mirip, cara masak rebus air yang setara."
+ },
+ "sub_001316": {
+  "note": "Langoustine dan udang, daging mirip, cara masak rebus air yang serupa."
+ },
+ "sub_001317": {
+  "note": "Kerang-kerangan yang mirip, cara masak rebus air yang setara."
+ },
+ "sub_001318": {
+  "note": "Siput laut kecil, cara masak dan pemakaian kuliner yang setara."
+ },
+ "sub_001319": {
+  "note": "Cumi dan gurita, daging cephalopoda yang sering saling menggantikan."
+ },
+ "sub_001320": {
+  "note": "Rillettes ikan, sering bisa saling menggantikan tergantung ikan yang tersedia."
+ },
+ "sub_001321": {
+  "note": "Tarama, resep dan pemakaian sama tergantung telur ikan yang dipakai."
+ },
+ "sub_001322": {
+  "note": "Telur ikan lumpfish = pengganti umum dan jauh lebih murah dari kaviar, pemakaian sama sebagai taburan"
+ },
+ "sub_001323": {
+  "note": "Ikan putih berlapis tepung, tekstur dan pemakaian mirip (fish and chips, digoreng berlapis tepung)"
+ },
+ "sub_001324": {
+  "note": "Ikan putih berlapis tepung, mudah digantikan dalam masakan"
+ },
+ "sub_001325": {
+  "note": "Tuna kalengan dalam air bisa menggantikan sarden dalam minyak pada salad dan pate"
+ },
+ "sub_001326": {
+  "note": "Ikan kalengan dalam saus tomat bisa saling menggantikan (makerel/sarden)"
+ },
+ "sub_001327": {
+  "note": "Ikan asap, rasa dan tekstur mirip, bisa dipakai sebagai pengganti yang lebih murah"
+ },
+ "sub_001328": {
+  "note": "Haddock asap bisa menggantikan salmon asap pada salad, quiche, telur orak-arik"
+ },
+ "sub_001329": {
+  "note": "Salmon dan tuna kalengan bisa dipakai saling menggantikan (rillettes, salad)"
+ },
+ "sub_001330": {
+  "note": "Trout asap adalah pengganti klasik dan lebih murah dari salmon asap"
+ },
+ "sub_001331": {
+  "note": "Jika tidak ada, ganti dengan sekitar 4 butir telur ayam (setara volume)"
+ },
+ "sub_001332": {
+  "note": "Jika tidak ada, ganti dengan sekitar 1,5 butir telur ayam (setara volume)"
+ },
+ "sub_001333": {
+  "note": "Telur bubuk yang dilarutkan dengan air menggantikan telur segar pada kue"
+ },
+ "sub_001334": {
+  "note": "Kuning telur bubuk yang dilarutkan menggantikan kuning telur segar"
+ },
+ "sub_001335": {
+  "note": "Putih telur bubuk yang dilarutkan menggantikan putih telur segar"
+ },
+ "sub_001336": {
+  "note": "Susu sapi full cream sebagai pengganti jika susu kambing tidak tersedia atau untuk melembutkan rasa"
+ },
+ "sub_001337": {
+  "note": "Susu sapi full cream sebagai pengganti jika susu kambing tidak tersedia"
+ },
+ "sub_001338": {
+  "note": "Susu sapi full cream sebagai pengganti jika susu domba tidak tersedia"
+ },
+ "sub_001339": {
+  "note": "Susu sapi full cream sebagai pengganti jika susu kerbau tidak tersedia"
+ },
+ "sub_001340": {
+  "note": "Dilarutkan dengan air, menggantikan susu segar full cream"
+ },
+ "sub_001341": {
+  "note": "Diencerkan dengan air (bagian sama), menggantikan susu full cream"
+ },
+ "sub_001342": {
+  "note": "Fromage blanc tawar bisa menggantikan yogurt Yunani, tekstur sedikit kurang lembut"
+ },
+ "sub_001343": {
+  "note": "Yogurt Yunani biasa sebagai pengganti jika susu domba tidak tersedia"
+ },
+ "sub_001344": {
+  "note": "Yogurt tawar susu sapi sebagai pengganti jika susu domba tidak tersedia"
+ },
+ "sub_001345": {
+  "note": "Yogurt tawar susu sapi sebagai pengganti jika susu kambing tidak tersedia"
+ },
+ "sub_001346": {
+  "note": "Kefir susu bisa menggantikan yogurt minum tawar dalam resep"
+ },
+ "sub_001347": {
+  "note": "Faisselle yang ditiriskan punya tekstur mirip fromage blanc 0% lemak"
+ },
+ "sub_001348": {
+  "note": "Faisselle yang ditiriskan punya tekstur mirip fromage blanc tawar dengan kadar lemak setara"
+ },
+ "sub_001349": {
+  "note": "Dessert berbahan telur dan susu yang mirip, tekstur dan pemakaian mirip crème caramel."
+ },
+ "sub_001350": {
+  "note": "Tekstur creamy dan lembut yang mirip, menggantikan panna cotta pada dessert susu."
+ },
+ "sub_001351": {
+  "note": "Milkshake biasa yang setara dengan format restoran cepat saji."
+ },
+ "sub_001352": {
+  "note": "Versi dasar nasi susu (riz au lait), tanpa tambahan perisa."
+ },
+ "sub_001353": {
+  "note": "Dessert susu berbahan sereal yang mirip (semolina diganti nasi)."
+ },
+ "sub_001354": {
+  "note": "Krim pastri (crème pâtissière) buatan sendiri setara dengan versi instan yang dilarutkan."
+ },
+ "sub_001355": {
+  "note": "Setara produk susu tawar, jika tidak ada batasan nabati."
+ },
+ "sub_001356": {
+  "note": "Alternatif susu beraroma yang setara jika tidak ada batasan nabati."
+ },
+ "sub_001357": {
+  "note": "Versi susu biasa yang setara dengan mousse cokelat nabati."
+ },
+ "sub_001358": {
+  "note": "Satu jenis keju parut saja (emmental) sebagai pengganti campuran keju khusus gratin/pizza."
+ },
+ "sub_001359": {
+  "note": "Keju lunak berkulit putih yang mirip, tipe brie."
+ },
+ "sub_001360": {
+  "note": "Keju lunak creamy yang mirip chaource."
+ },
+ "sub_001361": {
+  "note": "Keju biru dari susu sapi yang setara."
+ },
+ "sub_001362": {
+  "note": "Keju tekan lembut yang mirip, sebagai pengganti mimolette."
+ },
+ "sub_001363": {
+  "note": "Keju raclette generik yang setara."
+ },
+ "sub_001364": {
+  "note": "Keju leleh generik yang setara, di luar format lembaran."
+ },
+ "sub_001365": {
+  "note": "Feta generik yang setara."
+ },
+ "sub_001366": {
+  "note": "Mozzarella generik yang setara dari susu sapi."
+ },
+ "sub_001367": {
+  "note": "Krim kental biasa dengan kadar lemak yang sama."
+ },
+ "sub_001368": {
+  "note": "Krim cair biasa yang setara."
+ },
+ "sub_001369": {
+  "note": "Krim cair full cream yang dikocok sendiri menjadi krim kocok."
+ },
+ "sub_001370": {
+  "note": "Produk krim masak ringan beraroma bisa diganti krim cair biasa pada olahan panas."
+ },
+ "sub_001371": {
+  "note": "Krim ringan 12-20% lemak bisa diganti krim cair full cream (hasil lebih lembut, kurangi sedikit jumlahnya)."
+ },
+ "sub_001372": {
+  "note": "Air keran bisa diganti air mineral tawar untuk masakan dan kue."
+ },
+ "sub_001373": {
+  "note": "Air jeruk lemon buatan sendiri bisa diganti air jeruk lemon murni kemasan botol."
+ },
+ "sub_001374": {
+  "note": "Air jeruk nipis segar bisa diganti air jeruk lemon kuning dalam jumlah sama, rasa sedikit berbeda."
+ },
+ "sub_001375": {
+  "note": "Air jeruk nipis murni bisa diganti air jeruk lemon kuning murni."
+ },
+ "sub_001376": {
+  "note": "Jus nanas dari konsentrat bisa diganti jus nanas murni."
+ },
+ "sub_001377": {
+  "note": "Jus jeruk dari konsentrat bisa diganti jus jeruk peras segar."
+ },
+ "sub_001378": {
+  "note": "Jus apel dari konsentrat bisa diganti jus apel murni."
+ },
+ "sub_001379": {
+  "note": "Jus jeruk bali dari konsentrat bisa diganti jus jeruk bali murni."
+ },
+ "sub_001380": {
+  "note": "Jus anggur dari konsentrat bisa diganti jus anggur murni."
+ },
+ "sub_001381": {
+  "note": "Jus buah murni bisa diganti jus buah dari konsentrat, ketersediaan dan harga sering berbeda."
+ },
+ "sub_001382": {
+  "note": "Sari apel bisa diganti jus apel murni, dengan mengurangi tambahan gula pada resep."
+ },
+ "sub_001383": {
+  "note": "Sari jeruk bisa diganti jus jeruk murni, lebih kental buahnya dan kurang manis."
+ },
+ "sub_001384": {
+  "note": "Sari nanas bisa diganti jus nanas murni."
+ },
+ "sub_001385": {
+  "note": "Cola manis bisa diganti cola tanpa tambahan gula dengan pemanis untuk versi rendah kalori."
+ },
+ "sub_001386": {
+  "note": "Limun manis bisa diganti limun tanpa tambahan gula dengan pemanis."
+ },
+ "sub_001387": {
+  "note": "Tonic manis dengan pemanis bisa diganti tonic tanpa tambahan gula dengan pemanis."
+ },
+ "sub_001388": {
+  "note": "Susu nabati tawar yang saling bisa menggantikan dalam masakan (kue, saus): oat diganti kedelai tawar."
+ },
+ "sub_001389": {
+  "note": "Susu kedelai tawar bisa diganti susu almond tawar pada sebagian besar resep."
+ },
+ "sub_001390": {
+  "note": "Susu beras yang lebih encer: bisa diganti susu almond tawar untuk masakan sehari-hari."
+ },
+ "sub_001391": {
+  "note": "Susu kelapa bisa diganti susu almond tawar saat ingin mengurangi rasa kelapa."
+ },
+ "sub_001392": {
+  "note": "Teh hitam dan teh hijau yang diseduh sering bisa saling menggantikan tergantung rasa yang diinginkan."
+ },
+ "sub_001393": {
+  "note": "Kopi giling siap minum bisa diganti kopi instan yang dilarutkan."
+ },
+ "sub_001394": {
+  "note": "Kopi bubuk untuk diseduh bisa diganti kopi instan yang dilarutkan dalam air panas."
+ },
+ "sub_001395": {
+  "note": "Fruktosa bisa diganti gula biasa pada kue (sesuaikan sedikit jumlahnya)."
+ },
+ "sub_001396": {
+  "note": "Pemanis sakarin bisa diganti gula untuk mendapatkan rasa yang lebih alami."
+ },
+ "sub_001397": {
+  "note": "Pemanis aspartam bubuk bisa diganti gula pada masakan dan kue."
+ },
+ "sub_001398": {
+  "note": "Pemanis stevia bisa diganti gula biasa (rasa lebih mendekati, sesuaikan jumlahnya)."
+ },
+ "sub_001399": {
+  "note": "Molase tebu bisa diganti sirup maple pada kue untuk rasa manis yang mirip."
+ },
+ "sub_001400": {
+  "note": "Karamel cair yang dipakai sebagai topping bisa diganti madu."
+ },
+ "sub_001401": {
+  "note": "Cokelat hitam 50% batangan bisa diganti cokelat hitam standar untuk masakan/kue."
+ },
+ "sub_001402": {
+  "note": "Cokelat hitam 70% untuk dinikmati langsung bisa diganti cokelat hitam standar untuk dimasak."
+ },
+ "sub_001403": {
+  "note": "Cokelat hitam untuk kue (40%+) bisa diganti cokelat hitam standar."
+ },
+ "sub_001404": {
+  "note": "Cokelat susu tanpa tambahan gula bisa diganti cokelat susu biasa."
+ },
+ "sub_001405": {
+  "note": "Minuman keras jenis cognac/armagnac bisa diganti minuman keras jenis calvados untuk flambe atau saus."
+ },
+ "sub_001406": {
+  "note": "Rum (kualitas sedang) bisa diganti rum putih pada sebagian besar pemakaian masakan."
+ },
+ "sub_001407": {
+  "note": "Selai stroberi (ekstra atau biasa) setara dengan selai stroberi standar pada katalog."
+ },
+ "sub_001408": {
+  "note": "Selai aprikot (ekstra atau biasa) setara dengan selai aprikot standar pada katalog."
+ },
+ "sub_001409": {
+  "note": "Selai stroberi rendah gula bisa diganti selai stroberi biasa (lebih manis)."
+ },
+ "sub_001410": {
+  "note": "Selai aprikot rendah gula bisa diganti selai aprikot biasa."
+ },
+ "sub_001411": {
+  "note": "Jeli kismis merah bisa diganti selai raspberi (buah merah lain) untuk isian, olesan roti, atau alas pai."
+ },
+ "sub_001412": {
+  "note": "Croissant biasa buatan artisan bisa diganti croissant pur beurre buatan artisan, rasa lebih kaya tapi pemakaian sama."
+ },
+ "sub_001413": {
+  "note": "Pain au lait bisa diganti brioche polos buatan artisan untuk sarapan atau camilan sore."
+ },
+ "sub_001414": {
+  "note": "Panettone bisa diganti brioche polos biasa jika buah kering tidak tersedia."
+ },
+ "sub_001415": {
+  "note": "Pain aux raisins bisa diganti brioche isi buah, roti manis berisi buah yang serupa."
+ },
+ "sub_001416": {
+  "note": "Pain au chocolat bisa diganti croissant pur beurre jika roti manis berisi cokelat sedang habis."
+ },
+ "sub_001417": {
+  "note": "Brioche dengan chip cokelat bisa diganti brioche polos kemasan, versi tanpa cokelat."
+ },
+ "sub_001418": {
+  "note": "Biskuit petit beurre bisa diganti biskuit kering polos, dasar yang sama untuk cheesecake atau diremukkan untuk dessert."
+ },
+ "sub_001419": {
+  "note": "Kue bolu (quatre-quarts) buatan artisan dan kemasan bisa langsung saling menggantikan, resep dasar sama."
+ },
+ "sub_001420": {
+  "note": "Baba au rhum dari rak dingin bisa diganti baba au rhum buatan artisan, kue yang sama."
+ },
+ "sub_001421": {
+  "note": "Kouign amann kemasan bisa diganti kouign amann buatan artisan, kue khas Breton yang sama."
+ },
+ "sub_001422": {
+  "note": "Choux à la crème dan eclair memakai adonan choux yang sama dan isian krim pâtissière yang mirip."
+ },
+ "sub_001423": {
+  "note": "Choux à la crème bisa diganti choux dengan krim kocok (tipe Saint-honoré) sesuai isian yang diinginkan."
+ },
+ "sub_001424": {
+  "note": "Corne de gazelle dan baklava adalah dua kue oriental berbahan almond dan gula, bisa saling menggantikan di nampan kue oriental."
+ },
+ "sub_001425": {
+  "note": "Brownie dengan kacang bisa diganti brownie polos, terutama untuk kasus alergi kacang."
+ },
+ "sub_001426": {
+  "note": "Gâteau breton isi plum kering bisa diganti far breton plum kering, kue khas Breton dengan rasa yang sama."
+ },
+ "sub_001427": {
+  "note": "Kue mousse buah di atas génoise (bavarois/miroir) dan fraisier/framboisier punya struktur yang mirip (génoise, krim, buah)."
+ },
+ "sub_001428": {
+  "note": "Macaron kering bisa diganti macaron lembut berisi untuk memvariasikan nampan kue manis kecil."
+ },
+ "sub_001429": {
+  "note": "Kecap saus tomat kemasan bisa diganti saus tomat polos"
+ },
+ "sub_001430": {
+  "note": "Kecap saus tomat rendah gula bisa diganti kecap saus tomat biasa"
+ },
+ "sub_001431": {
+  "note": "Mayones rendah lemak bisa diganti mayones biasa"
+ },
+ "sub_001432": {
+  "note": "Saus barbeku bisa diganti saus tomat kemasan, dasar tomat manis-pedas yang mirip"
+ },
+ "sub_001433": {
+  "note": "Kecap asin bisa diganti saus nuoc-mam untuk masakan Asia"
+ },
+ "sub_001434": {
+  "note": "Kecap manis bisa diganti kecap asin biasa"
+ },
+ "sub_001435": {
+  "note": "Saus teriyaki bisa diganti kecap manis"
+ },
+ "sub_001436": {
+  "note": "Vinaigrette minyak zaitun setara dengan vinaigrette biasa 50-75% minyak"
+ },
+ "sub_001437": {
+  "note": "Harissa bisa diganti cabai pedas yang digunakan secukupnya"
+ },
+ "sub_001438": {
+  "note": "Saus mustard bisa diganti mustard Dijon yang diencerkan dengan sedikit krim"
+ },
+ "sub_001439": {
+  "note": "Saus Caesar bisa diganti mayones yang ditambah parmesan dan teri"
+ },
+ "sub_001440": {
+  "note": "Saus bechamel kemasan bisa diganti bechamel buatan sendiri dengan mentega"
+ },
+ "sub_001441": {
+  "note": "Saus béarnaise dan saus hollandaise bisa saling menggantikan, dasarnya mirip"
+ },
+ "sub_001442": {
+  "note": "Saus madeira bisa diganti saus anggur merah buatan sendiri"
+ },
+ "sub_001443": {
+  "note": "Minyak atau mentega pekat bisa diganti mentega tawar biasa"
+ },
+ "sub_001444": {
+  "note": "Mentega rendah lemak tawar bisa diganti mentega tawar biasa"
+ },
+ "sub_001445": {
+  "note": "Mentega rendah lemak asin bisa diganti mentega asin biasa"
+ },
+ "sub_001446": {
+  "note": "Minyak kelapa padat bisa diganti mentega tawar pada kue, tekstur mirip saat dingin"
+ },
+ "sub_001447": {
+  "note": "Minyak sawit bisa diganti minyak kanola, alternatif nabati yang umum"
+ },
+ "sub_001448": {
+  "note": "Minyak goreng yang tidak disebutkan jenisnya bisa diganti minyak bunga matahari"
+ },
+ "sub_001449": {
+  "note": "Minyak zaitun extra virgin setara dengan minyak zaitun extra virgin"
+ },
+ "sub_001450": {
+  "note": "Lemak babi mentah berlemak bisa diganti lemak babi (saindoux) dalam masakan"
+ },
+ "sub_001451": {
+  "note": "Pesto rosso bisa diganti pesto basil biasa jika tidak tersedia."
+ },
+ "sub_001452": {
+  "note": "Acar timun cincang sebagai pengganti kapri (capers) yang asam dan renyah."
+ },
+ "sub_001453": {
+  "note": "Acar timun bisa menggantikan acar bawang untuk keasaman sebagai pendamping."
+ },
+ "sub_001454": {
+  "note": "Acar timun cuka biasa sebagai alternatif yang kurang manis dari acar timun asam-manis."
+ },
+ "sub_001455": {
+  "note": "Zaitun hijau dalam air garam bisa saling menggantikan dengan zaitun hitam pada sebagian besar resep."
+ },
+ "sub_001456": {
+  "note": "Zaitun hitam dalam air garam bisa saling menggantikan dengan zaitun hijau pada sebagian besar resep."
+ },
+ "sub_001457": {
+  "note": "Zaitun hitam dalam air garam sebagai alternatif zaitun hitam dalam minyak jika tidak tersedia."
+ },
+ "sub_001458": {
+  "note": "Bekatul gandum sebagai pengganti umum sumber serat untuk bekatul jagung."
+ },
+ "sub_001459": {
+  "note": "Bekatul gandum sebagai pengganti umum sumber serat untuk bekatul beras."
+ },
+ "sub_001460": {
+  "note": "Kaldu sapi siap pakai menggantikan kaldu bubuk kering (larutkan sesuai takaran)."
+ },
+ "sub_001461": {
+  "note": "Ragi bir berbentuk serpihan bisa saling menggantikan dengan ragi bir standar."
+ },
+ "sub_001462": {
+  "note": "Ragi roti kering menggantikan ragi segar (sekitar setengah beratnya)."
+ },
+ "sub_001463": {
+  "note": "Ragi roti segar menggantikan ragi kering (sekitar dua kali beratnya)."
+ },
+ "sub_001464": {
+  "note": "Satu batang vanili yang dikerok bisa menggantikan ekstrak vanili beralkohol."
+ },
+ "sub_001465": {
+  "note": "Kaldu anak sapi siap pakai menggantikan kaldu bubuk kering (larutkan sesuai takaran)."
+ },
+ "sub_001466": {
+  "note": "Kaldu ikan siap pakai sebagai alternatif kaldu court-bouillon kering."
+ },
+ "sub_001467": {
+  "note": "Kecap asin memberi rasa umami yang mirip sebagai pengganti ekstrak ragi untuk olesan pada masakan."
+ },
+ "sub_001468": {
+  "note": "Pektin sebagai pengganti klasik bahan pengental untuk selai."
+ },
+ "sub_001469": {
+  "note": "Ekstrak vanila (sekitar 1 sdt) menggantikan satu batang vanili."
+ },
+ "sub_001470": {
+  "note": "Daun mint segar menggantikan mint kering (kalikan tiga jumlahnya)."
+ },
+ "sub_001471": {
+  "note": "Rosemary segar menggantikan rosemary kering (kalikan tiga jumlahnya)."
+ },
+ "sub_001472": {
+  "note": "Daun sage segar menggantikan sage kering (kalikan tiga jumlahnya)."
+ },
+ "sub_001473": {
+  "note": "Tarragon segar menggantikan tarragon kering (kalikan tiga jumlahnya)."
+ },
+ "sub_001474": {
+  "note": "Dill segar menggantikan dill kering (kalikan tiga jumlahnya)."
+ },
+ "sub_001475": {
+  "note": "Daun bawang (kucai) segar menggantikan kucai kering (kalikan tiga jumlahnya)."
+ },
+ "sub_001476": {
+  "note": "Alternatif nabati klasik pengganti crème fraîche dalam masakan (olahan, saus)."
+ },
+ "sub_001477": {
+  "note": "Tahu tawar adalah pengganti nabati umum untuk dada ayam pada tumisan dan kari."
+ },
+ "sub_001478": {
+  "note": "Seitan adalah pengganti nabati umum untuk daging sapi cincang pada masakan berkuah dan bolognaise."
+ },
+ "sub_001479": {
+  "note": "Olesan berbahan sayuran yang mirip, bisa saling menggantikan dengan kaviar terong untuk hidangan pembuka."
+ },
+ "sub_001480": {
+  "note": "Minyak dengan rasa lembut dan netral, titik asap yang tinggi serupa; pengganti yang baik untuk memasak maupun bumbu."
+ },
+ "sub_001481": {
+  "note": "Minyak wijen biasa, rasa kurang kuat tapi masih dalam kategori Asia; cocok untuk masakan Korea/Jepang."
+ },
+ "sub_001482": {
+  "note": "Minyak sawit olahan, warna dan rasa kurang kuat (beta-karoten lebih sedikit), tapi tekstur dan pemakaian untuk memasak sama."
+ },
+ "sub_001483": {
+  "note": "Margarin biasa, kadar lemak lebih tinggi; kurangi sedikit jumlahnya."
+ },
+ "sub_001484": {
+  "note": "Versi rendah lemak, berguna untuk masakan atau olesan roti yang lebih ringan."
+ },
+ "sub_001485": {
+  "note": "Selai almond lembut, tekstur dan pemakaian mirip (olesan roti, kue), rasa almond menggantikan rasa hazelnut."
+ },
+ "sub_001486": {
+  "note": "Minyak jagung biasa, rasa dan pemakaian hampir identik."
+ },
+ "sub_001487": {
+  "note": "Minyak dari lembaga jagung, rasa sangat mirip, bisa menggantikan minyak jagung biasa."
+ },
+ "sub_001488": {
+  "note": "Minyak kenari, minyak kacang pohon lain, rasa berbeda tapi fungsi mirip untuk bumbu dan sentuhan akhir."
+ },
+ "sub_001489": {
+  "note": "Minyak kenari, profil aroma yang mirip (kacang pohon), pengganti yang baik untuk vinaigrette dan sentuhan akhir."
+ },
+ "sub_001490": {
+  "note": "Minyak wijen biasa, rasa kurang sangrai dan kurang kuat; tambahkan sedikit lebih banyak untuk mengimbangi."
+ },
+ "sub_001491": {
+  "note": "Minyak wijen sangrai, rasa lebih kuat dan lebih sangrai; gunakan dalam jumlah yang dikurangi."
+ },
+ "sub_001492": {
+  "note": "Minyak bunga matahari olahan biasa, rasa lebih netral, cocok untuk mentah maupun dimasak."
+ },
+ "sub_001493": {
+  "note": "Versi murni pressed cold, rasa biji lebih kuat, lebih cocok untuk bumbu yang tidak dimasak."
+ },
+ "sub_001494": {
+  "note": "Minyak kanola olahan biasa, rasa kurang kuat, lebih stabil untuk dimasak."
+ },
+ "sub_001495": {
+  "note": "Versi murni pressed cold, rasa hazelnut lebih kuat, sebaiknya untuk olahan dingin."
+ },
+ "sub_001496": {
+  "note": "Lemak sapi (suif), tekstur dan pemakaian untuk menggoreng/kue sangat mirip, rasa sedikit kurang kuat."
+ },
+ "sub_001497": {
+  "note": "Mentega biasa, kadar lemak lebih tinggi; gunakan jumlah yang sedikit dikurangi."
+ },
+ "sub_001498": {
+  "note": "Versi rendah lemak, untuk masakan atau olesan roti yang lebih ringan."
+ },
+ "sub_001499": {
+  "note": "Mentega pasteurisasi kemasan toko, sangat cocok untuk memasak, rasanya kurang khas peternakan dan buah."
+ },
+ "sub_001500": {
+  "note": "Minyak zaitun extra virgin yang disaring, rasa sedikit kurang khas tapi kualitas setara."
+ },
+ "sub_001501": {
+  "note": "Versi murni tanpa saring, rasa lebih rustic dan tekstur sedikit keruh, ideal untuk dipakai mentah."
+ },
+ "sub_001502": {
+  "note": "Minyak wijen biasa, warna terang dan rasa sedikit kurang kuat."
+ },
+ "sub_001503": {
+  "note": "Minyak wijen hitam, rasa lebih kuat dan warna lebih gelap, untuk sentuhan yang lebih terasa."
+ },
+ "sub_001504": {
+  "note": "Mayones biasa, sebaiknya ditambah telur rebus dan kapri cincang agar mendekati rasa gribiche."
+ },
+ "sub_001505": {
+  "note": "Vinaigrette biasa ditambah kapri, acar timun, dan bumbu herba cincang agar mendekati ravigote."
+ },
+ "sub_001506": {
+  "note": "Saus bechamel ditambah keju parut, yang justru menjadi dasar saus Mornay buatan sendiri."
+ },
+ "sub_001507": {
+  "note": "Saus béarnaise ditambah sedikit pasta tomat, sehingga menjadi saus Choron buatan sendiri."
+ },
+ "sub_001508": {
+  "note": "Saus salsa segar, tekstur dan pemakaian sangat mirip (taco, panggangan, telur)."
+ },
+ "sub_001509": {
+  "note": "Jeli kismis merah, kondimen asam yang biasa disajikan dengan unggas dan daging buruan, pengganti yang baik untuk saus cranberry."
+ },
+ "sub_001510": {
+  "note": "Saus cranberry, kondimen manis-asam yang mirip untuk pendamping unggas dan daging buruan."
+ },
+ "sub_001511": {
+  "note": "Chowchow (acar sayur berbumbu cuka dan mustard), sangat mirip piccalilli ala Inggris."
+ },
+ "sub_001512": {
+  "note": "Piccalilli, acar sayur Inggris berbumbu mustard dan kunyit, sangat mirip chowchow."
+ },
+ "sub_001513": {
+  "note": "Beurre noisette ditambah air jeruk lemon dan peterseli cincang, sehingga menjadi saus meunière buatan sendiri."
+ },
+ "sub_001514": {
+  "note": "Saus kari biasa, rasa kurang kompleks (tanpa bumbu khusus colombo khas Karibia) tapi pemakaian sama."
+ },
+ "sub_001515": {
+  "note": "Saus chimichurri, saus berbahan herba dan minyak untuk pendamping panggangan, rasa kurang berlemon tapi pemakaian mirip."
+ },
+ "sub_001516": {
+  "note": "Tzatziki berbahan yogurt, saus yogurt-mentimun yang sangat mirip raita, biasanya sedikit kurang pedas."
+ },
+ "sub_001517": {
+  "note": "Saus raita, saus yogurt-mentimun khas India yang mirip tzatziki, sering lebih pedas."
+ },
+ "sub_001518": {
+  "note": "Saus tomat biasa ditambah cabai (segar, bubuk, atau serpihan) agar mendekati arrabbiata."
+ },
+ "sub_001519": {
+  "note": "Saus tomat ditambah zaitun, kapri, dan teri cincang agar mendekati puttanesca."
+ },
+ "sub_001520": {
+  "note": "Pasta kari hijau yang diencerkan santan, dasar klasik untuk membuat saus kari hijau Thailand."
+ },
+ "sub_001521": {
+  "note": "Pasta kari merah yang diencerkan santan, dasar klasik untuk membuat saus kari merah Thailand."
+ },
+ "sub_001522": {
+  "note": "Mayones ditambah bawang putih yang dihaluskan, tekstur creamy mirip toum, dengan rasa lebih lembut."
+ },
+ "sub_001523": {
+  "note": "Saus teriyaki, juga manis-asin berbahan kedelai, pengganti yang baik untuk marinasi atau menyiram panggangan."
+ },
+ "sub_001524": {
+  "note": "Saus yakiniku, juga manis-asin berbahan kedelai, pengganti yang baik untuk teriyaki."
+ },
+ "sub_001525": {
+  "note": "Saus nuoc-mam murni, lebih asin dan tanpa aroma lain (jeruk nipis, gula, cabai); encerkan dan tambahkan sedikit gula."
+ },
+ "sub_001526": {
+  "note": "Harissa, pasta cabai khas Afrika Utara yang lebih kental, pemakaian mirip untuk membumbui panggangan dan marinasi."
+ },
+ "sub_001527": {
+  "note": "Saus piri-piri, juga pedas tapi lebih encer, pengganti yang baik untuk membumbui hidangan atau marinasi."
+ },
+ "sub_001528": {
+  "note": "Chimichurri, saus herba dan minyak (peterseli, bukan ketumbar), fungsi masakan mirip sebagai pendamping panggangan."
+ },
+ "sub_001529": {
+  "note": "Saus enchilada merah berbahan tomat, rasa kurang asam dibanding versi tomatillo, tapi pemakaian sama."
+ },
+ "sub_001530": {
+  "note": "Saus enchilada hijau berbahan tomatillo, lebih asam, tapi pemakaian sama untuk menyiram enchilada."
+ },
+ "sub_001531": {
+  "note": "Saus salad madu dan mustard kemasan, produk yang hampir identik."
+ }
+}

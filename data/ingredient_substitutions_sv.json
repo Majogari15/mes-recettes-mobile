@@ -1,0 +1,4716 @@
+{
+ "sub_000001": {
+  "note": "Samma mängd, mycket likt resultat."
+ },
+ "sub_000002": {
+  "note": "Minska mängden med ungefär 25 %."
+ },
+ "sub_000003": {
+  "note": "I kakor, för en lättare version.",
+  "name": "Äppelmos"
+ },
+ "sub_000004": {
+  "note": "Cirka 60 g äppelmos per ägg, i kakor.",
+  "name": "Äppelmos"
+ },
+ "sub_000005": {
+  "note": "1 msk malet frö + 3 msk vatten per ägg, låt svälla i 5 min.",
+  "name": "Linfrö"
+ },
+ "sub_000006": {
+  "note": "Mer neutral smak, lite mer flytande."
+ },
+ "sub_000007": {
+  "note": "Bra ersättning både för matlagning och att dricka."
+ },
+ "sub_000008": {
+  "note": "Naturligt lätt sött."
+ },
+ "sub_000009": {
+  "note": "Lättare, mindre fetthaltigt."
+ },
+ "sub_000010": {
+  "note": "För en laktosfri version, ger en lätt kokossmak."
+ },
+ "sub_000011": {
+  "note": "För en glutenfri version."
+ },
+ "sub_000012": {
+  "note": "För att reda en sås; ersätter inte mjöl för att få en kaka att jäsa."
+ },
+ "sub_000013": {
+  "note": "Ändrar konsistens och smak, blir tätare och rikare."
+ },
+ "sub_000014": {
+  "note": "Minska lite på vätskan i receptet (honung är fuktig)."
+ },
+ "sub_000015": {
+  "note": "Kraftigare smak, minska vätskan i receptet något."
+ },
+ "sub_000016": {
+  "note": "Mer karamelliserad smak, samma mängd."
+ },
+ "sub_000017": {
+  "note": "Kombinera med en syrlig ingrediens (vinäger, citronsaft) för att den ska verka."
+ },
+ "sub_000018": {
+  "note": "Tillsätt lite citronsaft för att återge vinets syra."
+ },
+ "sub_000019": {
+  "note": "Tillsätt lite balsamvinäger för syra och färg."
+ },
+ "sub_000020": {
+  "note": "Mer neutral smak."
+ },
+ "sub_000021": {
+  "note": "Bra källa till omega-3, neutral smak."
+ },
+ "sub_000022": {
+  "note": "Något tätare, lite mindre syrlig."
+ },
+ "sub_000023": {
+  "note": "Fylligare, använd en något mindre mängd.",
+  "name": "Lätt tjock crème fraîche"
+ },
+ "sub_000024": {
+  "note": "Saltare och kraftigare smak."
+ },
+ "sub_000025": {
+  "note": "För en vegansk version, ger en liknande umamismak."
+ },
+ "sub_000026": {
+  "note": "Mixas grovt före användning."
+ },
+ "sub_000027": {
+  "note": "Smulas fint."
+ },
+ "sub_000028": {
+  "note": "Starkare, doseras försiktigt."
+ },
+ "sub_000029": {
+  "note": "Kombinera med lite vinäger för att återge syran."
+ },
+ "sub_000030": {
+  "note": "Cirka 1/8 tsk per färsk vitlöksklyfta."
+ },
+ "sub_000031": {
+  "note": "Mildare och sötare smak."
+ },
+ "sub_000032": {
+  "note": "Mildare smak, tillagas snabbare."
+ },
+ "sub_000033": {
+  "note": "Använd det vita, mer delikat smak."
+ },
+ "sub_000034": {
+  "note": "Endast för syran, utan citrussmaken."
+ },
+ "sub_000035": {
+  "note": "Något friskare smak."
+ },
+ "sub_000036": {
+  "note": "Tillsätt en nypa socker för att återge den lätt söta tonen."
+ },
+ "sub_000037": {
+  "note": "Samma användning, ofta mindre salt."
+ },
+ "sub_000038": {
+  "note": "Utspädd i vatten, ger salt och umamismak."
+ },
+ "sub_000039": {
+  "note": "Något mindre fyllig, men liknande konsistens."
+ },
+ "sub_000040": {
+  "note": "För en laktosfri version."
+ },
+ "sub_000041": {
+  "note": "Blanda i lite tjock crème fraîche för fyllighet.",
+  "name": "Färskost"
+ },
+ "sub_000042": {
+  "note": "Blanda med smör och socker för att få en liknande konsistens."
+ },
+ "sub_000043": {
+  "note": "Kraftigare smak."
+ },
+ "sub_000044": {
+  "note": "Mildare och krämigare smak."
+ },
+ "sub_000045": {
+  "note": "Mer proteinrikt, något annorlunda konsistens."
+ },
+ "sub_000046": {
+  "note": "Kortare tillagningstid."
+ },
+ "sub_000047": {
+  "note": "För en glutenfri version."
+ },
+ "sub_000048": {
+  "note": "För en glutenfri version, snabbare tillagning."
+ },
+ "sub_000049": {
+  "note": "Några droppar räcker, tillsätts i det vanliga sockret."
+ },
+ "sub_000050": {
+  "note": "Annorlunda smak men liknande konsistens."
+ },
+ "sub_000051": {
+  "note": "Tillsätt lite extra vätska för att kompensera (honung är fuktig)."
+ },
+ "sub_000052": {
+  "note": "Något mer flytande."
+ },
+ "sub_000053": {
+  "note": "För en glutenfri version, mycket lik smak.",
+  "name": "Tamari"
+ },
+ "sub_000054": {
+  "note": "Utspätt med lite vatten; umamismaken blir mindre framträdande."
+ },
+ "sub_000055": {
+  "note": "Rova och kålrot är utbytbara i grytor och puréer, i samma mängd."
+ },
+ "sub_000056": {
+  "note": "Blomkål och broccoli kan bytas ut mot varandra i samma mängd i de flesta recept (gratänger, wok, blomkåls-/broccoliris)."
+ },
+ "sub_000057": {
+  "note": "Rödkål och vitkål är utbytbara i samma mängd, rättens färg ändras."
+ },
+ "sub_000058": {
+  "note": "Röd lök kan ersättas med gul lök i samma mängd, något mindre söt smak."
+ },
+ "sub_000059": {
+  "note": "Vit lök och gul lök är utbytbara i samma mängd."
+ },
+ "sub_000060": {
+  "note": "Isbergssallad och romansallad är utbytbara i sallad, romansallad är knapprigare och mer näringsrik."
+ },
+ "sub_000061": {
+  "note": "Röd- och grönbladssallad är utbytbara i sallad, i samma mängd."
+ },
+ "sub_000062": {
+  "note": "Röd paprika kan ersättas med grön paprika i samma mängd, mer bitter och mindre söt smak."
+ },
+ "sub_000063": {
+  "note": "Gul paprika och orange paprika är utbytbara i samma mängd (samma sötma)."
+ },
+ "sub_000064": {
+  "note": "Vit champinjon kan ersättas med brun champinjon (cremini), kraftigare smak, i samma mängd."
+ },
+ "sub_000065": {
+  "note": "Brun champinjon (cremini) och portobello är samma art i olika mognadsstadier, utbytbara (portobello är köttigare)."
+ },
+ "sub_000066": {
+  "note": "Shiitake kan ersättas med portobello för en liknande köttig konsistens i wokrätter, i samma mängd."
+ },
+ "sub_000067": {
+  "note": "Enoki kan ersättas med vit champinjon om den inte finns, mindre knaprig konsistens."
+ },
+ "sub_000068": {
+  "note": "Shimeji kan ersättas med vit champinjon, i samma mängd."
+ },
+ "sub_000069": {
+  "note": "Ostronskivling kan ersättas med shiitake i wokrätter och buljonger, i samma mängd."
+ },
+ "sub_000070": {
+  "note": "Grönkål och collardgrönkål är utbytbara i grytor, i samma mängd."
+ },
+ "sub_000071": {
+  "note": "Cantaloupmelon och honungsmelon är utbytbara i fruktsallad, i samma mängd."
+ },
+ "sub_000072": {
+  "note": "Röd potatis kan ersättas med Russet-potatis, mjöligare (bättre för mos/pommes frites)."
+ },
+ "sub_000073": {
+  "note": "Potatis med gult kött kan ersättas med röd potatis, liknande fast konsistens."
+ },
+ "sub_000074": {
+  "note": "Fuji- och Gala-äpplen är utbytbara i samma mängd, båda söta och fasta."
+ },
+ "sub_000075": {
+  "note": "Granny Smith-äpple kan ersättas med Red Delicious, men resultatet blir mindre syrligt (justera sockret vid bakning)."
+ },
+ "sub_000076": {
+  "note": "Honeycrisp-äpple kan ersättas med Gala i samma mängd, något mindre saftigt."
+ },
+ "sub_000077": {
+  "note": "Ataulfomango kan ersättas med Tommy Atkins-mango i samma mängd, något mer trådig konsistens."
+ },
+ "sub_000078": {
+  "note": "Jalapeño och serrano är utbytbara; serrano är starkare, minska mängden något."
+ },
+ "sub_000079": {
+  "note": "Poblano kan ersättas med jalapeño, halvera då mängden (poblano är betydligt mildare)."
+ },
+ "sub_000080": {
+  "note": "Bananchili (ungersk vaxpeppar) kan ersättas med jalapeño, mildare smak så använd gärna mer."
+ },
+ "sub_000081": {
+  "note": "Cannellinibönor och vita bönor (navy) är utbytbara i samma mängd i soppor och sallader."
+ },
+ "sub_000082": {
+  "note": "Svarta bönor och pintobönor är utbytbara i mexikanska rätter/chili, i samma mängd."
+ },
+ "sub_000083": {
+  "note": "Jordnötssmör kan ersättas med mandelsmör i samma mängd (jordnötsfritt alternativ), mildare smak."
+ },
+ "sub_000084": {
+  "note": "Tahini kan ersättas med mandelsmör i samma mängd för en mindre bitter smak (utom i hummus)."
+ },
+ "sub_000085": {
+  "note": "Torkade fikon och torkade plommon är utbytbara i bakning/mos, i samma mängd."
+ },
+ "sub_000086": {
+  "note": "Mörka russin och gyllene russin (sultanrussin) är utbytbara i samma mängd, de gyllene har en något mildare smak."
+ },
+ "sub_000087": {
+  "note": "Pumpakärnor (pepitas) kan ersättas med pinjenötter som garnering (pesto, sallader), i samma mängd."
+ },
+ "sub_000088": {
+  "note": "Majsolja kan ersättas med rapsolja i samma mängd, liknande neutral smak."
+ },
+ "sub_000089": {
+  "note": "Safflorolja kan ersättas med solrosolja i samma mängd, liknande neutral smak."
+ },
+ "sub_000090": {
+  "note": "Jordnötsolja kan ersättas med rapsolja vid fritering om allergi, liknande rykpunkt."
+ },
+ "sub_000091": {
+  "note": "Gul lök i samma mängd, mildare och sötare smak."
+ },
+ "sub_000092": {
+  "note": "Zucchini och gul sommarsquash är utbytbara i samma mängd"
+ },
+ "sub_000093": {
+  "note": "Gammalt sädesslag kan ersättas med rå quinoa, liknande tillagningstid"
+ },
+ "sub_000094": {
+  "note": "Gammal vetesort kan ersättas med pärlfarro, liknande fast konsistens"
+ },
+ "sub_000095": {
+  "note": "Kamut kan ersättas med farro, samma familj av gammalt vete"
+ },
+ "sub_000096": {
+  "note": "Svart ris kan ersättas med brunt ris i samma mängd, annan färg."
+ },
+ "sub_000097": {
+  "note": "Rött ris kan ersättas med brunt ris i samma mängd."
+ },
+ "sub_000098": {
+  "note": "Brunt ris kan ersättas med vitt ris, minska koktiden."
+ },
+ "sub_000099": {
+  "note": "Sorghumkorn kan ersättas med brunt ris i spannmålsbowlar."
+ },
+ "sub_000100": {
+  "note": "Vanlig spaghetti och fullkornsspaghetti är utbytbara i samma mängd."
+ },
+ "sub_000101": {
+  "note": "Vetemjöl (allround) i stället för finmalet bakmjöl; för lättare resultat, byt 2 msk per kopp mot majsstärkelse"
+ },
+ "sub_000102": {
+  "note": "Version med fläsk i stället för den vegetariska versionen för mer rökig smak."
+ },
+ "sub_000103": {
+  "note": "Svartögonbönor kan ersättas med pintobönor, liknande konsistens"
+ },
+ "sub_000104": {
+  "note": "Svarta bönor och pintobönor är utbytbara i mexikanska rätter"
+ },
+ "sub_000105": {
+  "note": "Vita bönor (navy) kan ersättas med cannellinibönor i samma mängd"
+ },
+ "sub_000106": {
+  "note": "Great Northern-bönor och cannellinibönor är två vita bönor som är utbytbara"
+ },
+ "sub_000107": {
+  "note": "Extra jungfru har en kraftigare smak; den lätta (extra light) passar bättre för tillagning vid hög temperatur"
+ },
+ "sub_000108": {
+  "note": "Vitvinsvinäger i samma mängd för syran i vinägretter."
+ },
+ "sub_000109": {
+  "note": "Gurkmeja i pulverform som ett billigt alternativ för färgen; använd hälften så mycket, annorlunda smak"
+ },
+ "sub_000110": {
+  "note": "Osaltat smör + tillsätt cirka 1/4 tsk salt per 115 g"
+ },
+ "sub_000111": {
+  "note": "Saltat smör och uteslut tillsatt salt i receptet"
+ },
+ "sub_000112": {
+  "note": "Naturell grekisk yoghurt i stället för gräddfil, i samma mängd, mindre fet."
+ },
+ "sub_000113": {
+  "note": "Mjölk + 1 msk citronsaft eller vinäger per kopp, låt stå i 5–10 min",
+  "name": "Mjölk + citronsaft eller vinäger"
+ },
+ "sub_000114": {
+  "note": "Färskt helägg i stället för utblandat äggpulver (följ blandningsförhållandet)."
+ },
+ "sub_000115": {
+  "note": "Färsk äggula i stället för återfuktad torkad äggula"
+ },
+ "sub_000116": {
+  "note": "Färsk äggvita i stället för återfuktad torkad äggvita"
+ },
+ "sub_000117": {
+  "note": "Magra vita fiskar som är utbytbara (alaska pollock och kolja)."
+ },
+ "sub_000118": {
+  "note": "Sej kan ersättas med torsk, snarlika vita fiskar."
+ },
+ "sub_000119": {
+  "note": "Fasta vita fiskar utbytbara som grillad eller stekt filé."
+ },
+ "sub_000120": {
+  "note": "Svärdfisk och mahi-mahi, fasta fiskar för steksbitar, utbytbara"
+ },
+ "sub_000121": {
+  "note": "Chilensk havsabborre (Patagonian toothfish) kan ersättas med hälleflundra, liknande fast och smörig konsistens"
+ },
+ "sub_000122": {
+  "note": "Rödlax (sockeye) och Atlantlax är utbytbara, den senare fetare."
+ },
+ "sub_000123": {
+  "note": "Tilapia och malfisk, milda odlade fiskar som är utbytbara."
+ },
+ "sub_000124": {
+  "note": "Snökrabba och blå krabba är utbytbara i de flesta recept"
+ },
+ "sub_000125": {
+  "note": "Gruyère i stället för emmentaler, liknande nötig smak"
+ },
+ "sub_000126": {
+  "note": "Schweizerost (emmentaler) i stället för cheddar för en mildare smältost"
+ },
+ "sub_000127": {
+  "note": "Mozzarella med lägre fukthalt i stället för Oaxacaost, liknande smältegenskaper."
+ },
+ "sub_000128": {
+  "note": "Riven parmesan i stället för cotijaost som salt garnering."
+ },
+ "sub_000129": {
+  "note": "Smulad feta i stället för queso fresco, liknande smulig och salt konsistens"
+ },
+ "sub_000130": {
+  "note": "Queso seco kan ersättas med cotijaost, snarlika torra och salta ostar."
+ },
+ "sub_000131": {
+  "note": "Mozzarella i stället för Monterey Jack för ett liknande milt smältresultat."
+ },
+ "sub_000132": {
+  "note": "Schweizerost (emmentaler) i stället för provolone, liknande halvfast smältegenskap"
+ },
+ "sub_000133": {
+  "note": "Keso mixad i matberedare i stället för ricotta, liknande konsistens"
+ },
+ "sub_000134": {
+  "note": "Cheddar i stället för amerikansk ost till hamburgare och smörgåsar"
+ },
+ "sub_000135": {
+  "note": "Nötfärs i stället för fläskfärs, i samma mängd"
+ },
+ "sub_000136": {
+  "note": "Nötfärs i stället för lammfärs, mildare smak"
+ },
+ "sub_000137": {
+  "note": "Nötfärs i stället för bisonfärs, fetare, minska tillagningstiden"
+ },
+ "sub_000138": {
+  "note": "Kalkonfärs i stället för kycklingfärs, utbytbara vita köttslag"
+ },
+ "sub_000139": {
+  "note": "Kycklinglår i stället för bröst, saftigare, justera tillagningstiden"
+ },
+ "sub_000140": {
+  "note": "Benfritt skinnfritt lår i stället för benfritt bröst, saftigare"
+ },
+ "sub_000141": {
+  "note": "Skivad rostad kalkon i stället för kycklingchark"
+ },
+ "sub_000142": {
+  "note": "Skivad rostad kalkon i stället för rostbiffchark"
+ },
+ "sub_000143": {
+  "note": "Skivad pepperoni i stället för torkad salami på pizza eller smörgås."
+ },
+ "sub_000144": {
+  "note": "Fläskchorizo i stället för mild italiensk korv, kryddigare och rökigare"
+ },
+ "sub_000145": {
+  "note": "Nötkorv till frukost i stället för kalkonkorv."
+ },
+ "sub_000146": {
+  "note": "Skummjölk i stället för standardmjölk, mindre krämig konsistens"
+ },
+ "sub_000147": {
+  "note": "Mandelmjölk i stället för havremjölk, växtbaserade mjölkalternativ som är utbytbara"
+ },
+ "sub_000148": {
+  "note": "Osötad mandelmjölk i stället för sojamjölk, varken mejeri eller soja"
+ },
+ "sub_000149": {
+  "note": "Vetetortilla i stället för majstortilla, mjukare men innehåller gluten."
+ },
+ "sub_000150": {
+  "note": "Ersätt med torkad rosmarin: använd 1/3 av mängden (torkade örter är mer koncentrerade)."
+ },
+ "sub_000151": {
+  "note": "Ersätt med färsk rosmarin: använd tre gånger så mycket."
+ },
+ "sub_000152": {
+  "note": "Använd ungefär 1/3 av mängden torkad dill."
+ },
+ "sub_000153": {
+  "note": "Använd tre gånger så mycket färsk dill."
+ },
+ "sub_000154": {
+  "note": "Använd tre gånger så mycket färsk mynta."
+ },
+ "sub_000155": {
+  "note": "Använd ungefär 1/3 av mängden torkad mynta."
+ },
+ "sub_000156": {
+  "note": "Nära ersättning i samma mängd, något mildare smak."
+ },
+ "sub_000157": {
+  "note": "Använd tre gånger så mycket hackad färsk persilja."
+ },
+ "sub_000158": {
+  "note": "Använd ungefär 1/3 av mängden torkad persilja."
+ },
+ "sub_000159": {
+  "note": "Använd ungefär 1/3 av mängden frystorkad gräslök."
+ },
+ "sub_000160": {
+  "note": "Blötlägg några minuter; använd ungefär 1/3 av mängden."
+ },
+ "sub_000161": {
+  "note": "Ersättning i samma mängd, mycket lik smak (samma kryddträd)."
+ },
+ "sub_000162": {
+  "note": "Ersättning i samma mängd, något mer delikat smak."
+ },
+ "sub_000163": {
+  "note": "Ersättning i samma mängd, mildare smak, syns mindre i ljusa rätter."
+ },
+ "sub_000164": {
+  "note": "Använd ungefär sex gånger så mycket riven färsk ingefära."
+ },
+ "sub_000165": {
+  "note": "Använd ungefär 1/6 av mängden malen ingefära."
+ },
+ "sub_000166": {
+  "note": "Ersättning i samma mängd, kryddpeppar påminner om kryddnejlika, kanel och muskot."
+ },
+ "sub_000167": {
+  "note": "Ersättning i samma mängd, mildare och lätt söt smak."
+ },
+ "sub_000168": {
+  "note": "Ersättning i samma mängd, kraftigare smak."
+ },
+ "sub_000169": {
+  "note": "Ersättning i samma mängd, närbesläktad aromfamilj."
+ },
+ "sub_000170": {
+  "note": "Ersättning i samma mängd, mild smak som liknar persilja."
+ },
+ "sub_000171": {
+  "note": "Direkt ersättning i samma mängd (alkoholfri version)."
+ },
+ "sub_000172": {
+  "note": "Direkt ersättning i samma mängd (version med alkohol)."
+ },
+ "sub_000173": {
+  "note": "Ersättning i samma mängd för syran i salt matlagning, mindre rund smak."
+ },
+ "sub_000174": {
+  "note": "Använd ungefär 1/4 av mängden, cayennepeppar är betydligt starkare och saknar blandningens övriga kryddor."
+ },
+ "sub_000175": {
+  "note": "Blanda lika delar malen kanel, ingefära och muskot, tillsätt en nypa malen kryddpeppar.",
+  "name": "Hemgjord blandning av malen kanel, ingefära och muskot med en nypa malen kryddpeppar"
+ },
+ "sub_000176": {
+  "note": "Direkt ersättning i samma mängd, mindre salt version."
+ },
+ "sub_000177": {
+  "note": "Minska mängden och blötlägg lätt; mer koncentrerad och sötare smak."
+ },
+ "sub_000178": {
+  "note": "Minska mängden och blötlägg lätt; mer koncentrerad smak."
+ },
+ "sub_000179": {
+  "note": "Blötlägg i vatten före användning; använd ungefär 1/3 av mängden."
+ },
+ "sub_000180": {
+  "note": "Direkt ersättning i samma mängd, avrinn och skölj före användning."
+ },
+ "sub_000181": {
+  "note": "Direkt ersättning, skölj för att ta bort överflödig saltlake."
+ },
+ "sub_000182": {
+  "note": "Ersättning i samma mängd, fastare och mindre söt konsistens."
+ },
+ "sub_000183": {
+  "note": "Ersättning i samma mängd, mjukare och sötare konsistens."
+ },
+ "sub_000184": {
+  "note": "Ersättning i samma mängd för syran, något annorlunda smak."
+ },
+ "sub_000185": {
+  "note": "Ersättning i samma mängd för syran, något annorlunda smak."
+ },
+ "sub_000186": {
+  "note": "Direkt ersättning i samma mängd."
+ },
+ "sub_000187": {
+  "note": "Ersättning i samma mängd (hybridfrukt mellan björnbär och hallon), något syrligare."
+ },
+ "sub_000188": {
+  "note": "Ersättning i samma mängd i sallad, liknande beskhet."
+ },
+ "sub_000189": {
+  "note": "Ersättning i samma mängd i sallad, liknande pepprig smak."
+ },
+ "sub_000190": {
+  "note": "Ersättning i samma mängd i sallad eller wokrätt."
+ },
+ "sub_000191": {
+  "note": "Ersättning i samma mängd i sallad, mildare smak."
+ },
+ "sub_000192": {
+  "note": "Ersättning i samma mängd, mycket lik i smak och konsistens."
+ },
+ "sub_000193": {
+  "note": "Ersättning i samma mängd, liknande tillagning."
+ },
+ "sub_000194": {
+  "note": "Ersättning i samma mängd, snabbwokad."
+ },
+ "sub_000195": {
+  "note": "Ersättning i samma mängd (mycket lika rotknölar), tillaga alltid ordentligt före förtäring."
+ },
+ "sub_000196": {
+  "note": "Ersättning i samma mängd, tillaga alltid ordentligt före förtäring."
+ },
+ "sub_000197": {
+  "note": "Kokt malabarspenat kan ersättas med kokt vanlig spenat i samma mängd, något mindre slemmig konsistens."
+ },
+ "sub_000198": {
+  "note": "Nära ersättning för vanlig rå spenat, i samma mängd."
+ },
+ "sub_000199": {
+  "note": "För umami/sälta i en nödsituation (inte samma fermenterade smak): använd ungefär hälften så mycket tamari, salta försiktigt."
+ },
+ "sub_000200": {
+  "note": "Potatis i samma mängd, liknande konsistens efter tillagning, mer neutral smak."
+ },
+ "sub_000201": {
+  "note": "1 msk torkade lökflingor = ungefär 1/4 finhackad gul lök, färsk"
+ },
+ "sub_000202": {
+  "note": "Osötad tranbärsjuice i samma mängd, liknande syra, justera sockret"
+ },
+ "sub_000203": {
+  "note": "Citronskal för citrondoften, i stället för citrongräs: ungefär 1 tsk skal per citrongräs­stjälk."
+ },
+ "sub_000204": {
+  "note": "Naturell mejeriyoghurt i samma mängd om det vegetabiliska alternativet inte behövs."
+ },
+ "sub_000205": {
+  "note": "Klassisk ersättning vid bakning: kakaopulver i samma mängd, tillsätt lite mer socker eftersom johannesbröd är naturligt sött."
+ },
+ "sub_000206": {
+  "note": "Slätbladig persilja för den som inte tycker om koriander, i samma mängd, annan smak men liknande aromatisk roll."
+ },
+ "sub_000207": {
+  "note": "Majsstärkelse i samma mängd eller något mindre för att reda (2 tsk majsstärkelse = 1 msk arrowrot)"
+ },
+ "sub_000208": {
+  "note": "Shoyu (innehåller vete) i samma mängd om gluten inte är ett problem."
+ },
+ "sub_000209": {
+  "note": "Använd en tamari certifierad glutenfri (kontrollera etiketten, alla är inte det) för en glutenfri version, i samma mängd."
+ },
+ "sub_000210": {
+  "note": "Vanligt päron i samma mängd, smältande konsistens jämfört med det knapriga nashipäronet."
+ },
+ "sub_000211": {
+  "note": "Pepparrot i mindre mängd (wasabi är starkare): ungefär hälften så mycket."
+ },
+ "sub_000212": {
+  "note": "Rå spenat i samma mängd, kortare tillagningstid än mangold."
+ },
+ "sub_000213": {
+  "note": "Ruccola i samma mängd, pepprigare smak än vattenkrasse."
+ },
+ "sub_000214": {
+  "note": "Gelatin i motsvarande mängd för ett icke-vegetariskt alternativ (agar-agar gelar starkare, justera ner)"
+ },
+ "sub_000215": {
+  "note": "Vanlig salladslök i samma mängd."
+ },
+ "sub_000216": {
+  "note": "Honungsmelon (Honeydew) i samma mängd, liknande konsistens och sötma."
+ },
+ "sub_000217": {
+  "note": "Vanlig vitkål i samma mängd, mindre bubbliga blad men liknande smak"
+ },
+ "sub_000218": {
+  "note": "Zucchini i samma mängd, något snabbare tillagning"
+ },
+ "sub_000219": {
+  "note": "Torkad shiitake (återfuktad) i samma mängd för en liknande skogsig smak"
+ },
+ "sub_000220": {
+  "note": "Jalapeño i samma mängd, något mildare styrka."
+ },
+ "sub_000221": {
+  "note": "Färsk poblanochili i samma mängd (ancho är en torkad poblano); annars mild paprika för arom utan styrka."
+ },
+ "sub_000222": {
+  "note": "Escarole i samma mängd, något mindre besk än endive."
+ },
+ "sub_000223": {
+  "note": "Grönbladssallad i samma mängd, samma konsistens, annan färg"
+ },
+ "sub_000224": {
+  "note": "Vit champinjon i samma mängd, fastare konsistens"
+ },
+ "sub_000225": {
+  "note": "Vanlig broccoli i samma mängd; kai-lan (kinesisk broccoli) har tunnare och lite bittrare stjälkar"
+ },
+ "sub_000226": {
+  "note": "Kalifornisk avokado (Hass) i samma mängd, fetare och krämigare än Floridaavokado"
+ },
+ "sub_000227": {
+  "note": "Vanliga russin i samma mängd, något mindre söta/syrliga än korinter."
+ },
+ "sub_000228": {
+  "note": "Rå rova i samma mängd, skarpare och mindre söt smak än daikon."
+ },
+ "sub_000229": {
+  "note": "Agar-agar i pulverform, använd cirka 1/8 tsk per matsked irländsk mossa (carrageenmossa); starkare geleringsförmåga"
+ },
+ "sub_000230": {
+  "note": "Torkad anchochili i samma mängd, något mildare och fruktigare smak än pasilla."
+ },
+ "sub_000231": {
+  "note": "Vanlig vit blomkål i samma mängd, samma konsistens, mindre dekorativ"
+ },
+ "sub_000232": {
+  "note": "Shiitake i samma mängd, fastare konsistens än maitake"
+ },
+ "sub_000233": {
+  "note": "Japansk kaki (Fuyu) i samma mängd, fastare konsistens även omogen, till skillnad från den inhemska kakin"
+ },
+ "sub_000234": {
+  "note": "Vit champinjon i samma mängd, mildare smak än portobello"
+ },
+ "sub_000235": {
+  "note": "Rå litchi (eller på burk) i samma mängd, liknande konsistens och sötma som rambutan."
+ },
+ "sub_000236": {
+  "note": "Sötade torkade tranbär i samma mängd i bakning, syrligare än torkade blåbär"
+ },
+ "sub_000237": {
+  "note": "För en vegetabilisk \"pulled pork\"-konsistens utan jackfruktens söta smak: i samma mängd, marinera längre.",
+  "name": "Palmhjärtan eller strimlad ostronskivling"
+ },
+ "sub_000238": {
+  "note": "I samma mängd, grönt kött i stället för gult, något mer markerad syra.",
+  "name": "Vanlig grön kiwi"
+ },
+ "sub_000239": {
+  "note": "Utspädd tomatpuré (1 del puré till 2–3 delar vatten) för att ersätta tomatsås på burk"
+ },
+ "sub_000240": {
+  "note": "Quinoa i samma mängd, något kortare tillagningstid än hirs."
+ },
+ "sub_000241": {
+  "note": "Råa gröna ärtor i samma mängd, sötare smak och mörare konsistens än färska bondbönor."
+ },
+ "sub_000242": {
+  "note": "Rå quinoa i samma mängd (snabbare tillagning), glutenfritt alternativ till bulgur."
+ },
+ "sub_000243": {
+  "note": "Jordärtskocka i samma mängd, liknande jordig-söt konsistens och smak som haverrot."
+ },
+ "sub_000244": {
+  "note": "Liknande glutenfritt sädesslag med neutral smak; ersätt i samma mängd (tillagad quinoa)."
+ },
+ "sub_000245": {
+  "note": "Liknande glutenfritt sädesslag; ersätt i samma mängd (rå quinoa)."
+ },
+ "sub_000246": {
+  "note": "Hasselnötter: liknande konsistens och användning vid bakning, i samma mängd."
+ },
+ "sub_000247": {
+  "note": "Använd kokt färsk sötpotatis i stället för konserverad version, motsvarande mängd efter tillagning."
+ },
+ "sub_000248": {
+  "note": "Färsk sparris kokt några minuter ersätter konserverad sparris, fastare konsistens."
+ },
+ "sub_000249": {
+  "note": "Färska champinjoner, stek några minuter, i samma mängd."
+ },
+ "sub_000250": {
+  "note": "Rå torr bulgur kan ersätta torr couscous (något längre tillagningstid)."
+ },
+ "sub_000251": {
+  "note": "Tillagad bulgur och tillagad couscous är utbytbara i samma mängd i de flesta recept."
+ },
+ "sub_000252": {
+  "note": "Kokt brunt ris som alternativ till kokt spelt i sallader eller tillbehör."
+ },
+ "sub_000253": {
+  "note": "Fullkornsvetemjöl som substitut för rått speltmjöl vid brödbakning, förhållande 1:1."
+ },
+ "sub_000254": {
+  "note": "Fryst hackad spenat i stället för frysta rovblad, mildare smak."
+ },
+ "sub_000255": {
+  "note": "Fryst spenat i stället för frysta senapskålsblad, mindre skarp smak."
+ },
+ "sub_000256": {
+  "note": "Rå spenat i stället för senapsspenat (tendergreen), mildare smak."
+ },
+ "sub_000257": {
+  "note": "Råa gröna bönor i stället för vingbönor (unga baljor), liknande konsistens."
+ },
+ "sub_000258": {
+  "note": "Råa gröna bönor i stället för svartögonbönor i unga baljor, liknande tillagning."
+ },
+ "sub_000259": {
+  "note": "Råa gröna bönor som substitut för omogna hyacintbönor."
+ },
+ "sub_000260": {
+  "note": "Råa gröna bönor i stället för gula sockerärtor, förhållande 1:1."
+ },
+ "sub_000261": {
+  "note": "Frysta blåbär som alternativ till frysta björnbär i efterrätter och smoothies."
+ },
+ "sub_000262": {
+  "note": "Rå zucchini i stället för luffasquash, liknande konsistens och tillagning."
+ },
+ "sub_000263": {
+  "note": "Rå zucchini som substitut för flaskkurbits, i samma mängd."
+ },
+ "sub_000264": {
+  "note": "Rå zucchini i stället för vaxgurka (kinesisk vintermelon)."
+ },
+ "sub_000265": {
+  "note": "Kokt quinoa som alternativ till kokt hirs, liknande konsistens och användning."
+ },
+ "sub_000266": {
+  "note": "Rått långkornigt brunt ris i stället för rått vildris, kortare koktid."
+ },
+ "sub_000267": {
+  "note": "Färsk rå lök, som fräses, i stället för lök på burk."
+ },
+ "sub_000268": {
+  "note": "Fast tofu i stället för tillagad tempeh, mer neutral smak, samma användning som proteinkälla."
+ },
+ "sub_000269": {
+  "note": "Färsk fast tofu i stället för fryst torkad tofu (koyadofu) efter blötläggning."
+ },
+ "sub_000270": {
+  "note": "Apelsin i stället för mandarin, något mindre söt och syrligare smak."
+ },
+ "sub_000271": {
+  "note": "Fullkornsvetemjöl i stället för mörkt rågmjöl, lättare konsistens på brödet."
+ },
+ "sub_000272": {
+  "note": "Fullkornsvetemjöl som alternativ till ljust rågmjöl."
+ },
+ "sub_000273": {
+  "note": "Fullkornsvetemjöl som alternativ till mellanmörkt rågmjöl."
+ },
+ "sub_000274": {
+  "note": "Fullkornsvetemjöl i stället för sorghummjöl för den som inte söker ett glutenfritt alternativ."
+ },
+ "sub_000275": {
+  "note": "Fullkornsvetemjöl som alternativ till rågvetemjöl (triticale), förhållande 1:1."
+ },
+ "sub_000276": {
+  "note": "Fullkornsvetemjöl i stället för bovetemjöl (ej vid glutenfri kost)."
+ },
+ "sub_000277": {
+  "note": "Vitt rismjöl i stället för fullkornsrismjöl, finare konsistens."
+ },
+ "sub_000278": {
+  "note": "Chiafrön som alternativ till linfrön, liknande förtjockande och näringsmässiga egenskaper.",
+  "name": "Chiafrön"
+ },
+ "sub_000279": {
+  "note": "Färska eller konserverade söta körsbär i stället för maraschinokörsbär, mindre söta och färgade."
+ },
+ "sub_000280": {
+  "note": "Färsk sparris som ett ungefärligt substitut för ormbunksskott (fiddleheads), en grön vårgrönsak."
+ },
+ "sub_000281": {
+  "note": "Tillagat kycklingbröst i stället för vegetarisk kyckling för en icke-vegetarisk rätt."
+ },
+ "sub_000282": {
+  "note": "Vanlig fläskkorv i stället för vegetabilisk korv, för en icke-vegetarisk version.",
+  "name": "Fläskkorv"
+ },
+ "sub_000283": {
+  "note": "Frankfurterkorv (fläsk) i stället för den vegetabiliska versionen."
+ },
+ "sub_000284": {
+  "note": "Tillagad smulad bacon i stället för vegetariska baconbitar."
+ },
+ "sub_000285": {
+  "note": "Skivad kokt skinka i stället för skivor av vegetarisk chark."
+ },
+ "sub_000286": {
+  "note": "Färska (mixade) bananer i stället för bananpulver, justera vätskan i receptet."
+ },
+ "sub_000287": {
+  "note": "Medjool-dadlar i stället för sjudna torkade plommon, liknande söt smak."
+ },
+ "sub_000288": {
+  "note": "Dadlar i stället för råa torkade plommon, i söta rätter eller bakverk."
+ },
+ "sub_000289": {
+  "note": "Rå lök (mindre mängd, starkare smak) i stället för purjolök om den saknas."
+ },
+ "sub_000290": {
+  "note": "Risvermicelli som alternativ till sojavermicelli (harusame) i asiatiska soppor och sallader.",
+  "name": "Risvermicelli"
+ },
+ "sub_000291": {
+  "note": "Tillagade klassiska köttbullar av nötfärs i stället för vegetariska bullar, för en icke-vegetarisk version."
+ },
+ "sub_000292": {
+  "note": "Om köpt marsipan/mandelmassa saknas, blanda mandelmjöl och florsocker med lite äggvita.",
+  "name": "Mandelmjöl och florsocker, blandat"
+ },
+ "sub_000293": {
+  "note": "Romansallad i stället för isbergssallad, mörare blad och något mer smak."
+ },
+ "sub_000294": {
+  "note": "Standardmjölk i stället för berikad sojamjölk, för den som inte har veganska krav."
+ },
+ "sub_000295": {
+  "note": "Smör i stället för vegetabiliskt bakfett, samma mängd, något annorlunda konsistens i bakverk."
+ },
+ "sub_000296": {
+  "note": "Rå gul sockermajs är utbytbar mot vit sockermajs, enda skillnaden är färgen."
+ },
+ "sub_000297": {
+  "note": "Vit och gul sockermajs är utbytbara i samma mängd, liten skillnad i sötma."
+ },
+ "sub_000299": {
+  "note": "Rå röd paprika i stället för grön paprika, mildare och sötare smak."
+ },
+ "sub_000300": {
+  "note": "Söta körsbär i stället för syrliga körsbär, minska tillsatt socker i receptet."
+ },
+ "sub_000301": {
+  "note": "Vanlig zucchini i stället för minizucchini, justera tillagningstiden efter storleken."
+ },
+ "sub_000302": {
+  "note": "Färska gröna ärtor i stället för råa bondbönor i skida om dessa inte finns, mildare smak.",
+  "name": "Färska gröna ärtor"
+ },
+ "sub_000303": {
+  "note": "Gul paprika kan ersättas med röd paprika i samma mängd, något mildare smak."
+ },
+ "sub_000304": {
+  "note": "Kan även ersättas med grön paprika, kraftigare och lätt bitter smak."
+ },
+ "sub_000305": {
+  "note": "Röd paprika och grön paprika är utbytbara i samma mängd (den gröna är mindre söt)."
+ },
+ "sub_000306": {
+  "note": "Röd (mogen) stark chili kan ersättas med grön stark chili i samma mängd, något mindre söt och ibland starkare."
+ },
+ "sub_000307": {
+  "note": "Grön stark chili kan ersättas med mogen röd chili, sötare smak."
+ },
+ "sub_000308": {
+  "note": "All vinterpumpa (Hubbard) kan ersättas med butternutpumpa i samma mängd.",
+  "name": "Butternutpumpa"
+ },
+ "sub_000309": {
+  "note": "Vinterpumpor är utbytbara mellan sorter (Hubbard, butternut, kürbis) i samma mängd",
+  "name": "Butternutpumpa"
+ },
+ "sub_000310": {
+  "note": "Patisson (sommarsquash) kan ersättas med zucchini i samma mängd."
+ },
+ "sub_000311": {
+  "note": "Sommarsquash av alla sorter kan ersättas med zucchini i samma mängd"
+ },
+ "sub_000312": {
+  "note": "Sommarsquash med böjd/rak hals kan ersättas med zucchini i samma mängd"
+ },
+ "sub_000313": {
+  "note": "Blomkål kan ersättas med broccoli i samma mängd i de flesta recept (kraftigare smak)"
+ },
+ "sub_000314": {
+  "note": "Blomkål kan ersättas med broccoli i samma mängd"
+ },
+ "sub_000315": {
+  "note": "Fryst broccoli kan ersättas med rå/färsk blomkål, liknande tillagningstid"
+ },
+ "sub_000316": {
+  "note": "Fryst lök kan ersättas med färsk hackad lök i samma mängd (mindre vätska vid tillagning)."
+ },
+ "sub_000317": {
+  "note": "Fryst hackad lök kan ersättas med färsk hackad lök i samma mängd."
+ },
+ "sub_000318": {
+  "note": "Valnötter kan ersättas med pekannötter i samma mängd i bakverk och sallader."
+ },
+ "sub_000319": {
+  "note": "Sesamsmör (tahini) kan ersättas med jordnötssmör i samma mängd i såser (annorlunda smak)",
+  "name": "Jordnötssmör"
+ },
+ "sub_000320": {
+  "note": "Tapiokapärlor kan ersättas med majsstärkelse för att reda (använd ungefär hälften så mycket)."
+ },
+ "sub_000321": {
+  "note": "Rått pärlkorn kan ersättas med långkornigt brunt ris i samma mängd i soppor och grytor (något annorlunda konsistens)."
+ },
+ "sub_000322": {
+  "note": "Kokt pärlkorn kan ersättas med kokt brunt ris i samma mängd."
+ },
+ "sub_000323": {
+  "note": "Bovetegryn (kasha) kan ersättas med rå quinoa i samma mängd som tillbehörssädesslag"
+ },
+ "sub_000324": {
+  "note": "Rått kamutvete kan ersättas med spelt i samma mängd (liknande gamla sädesslag)"
+ },
+ "sub_000325": {
+  "note": "Tillagat kamutvete kan ersättas med tillagad spelt i samma mängd"
+ },
+ "sub_000326": {
+  "note": "Berikad och icke berikad pasta är utbytbara i samma mängd (endast näringsmässig skillnad)."
+ },
+ "sub_000327": {
+  "note": "Rosa/röda linser (snabb tillagning, faller lätt sönder) kan ersättas med gröna linser med något längre tillagningstid för en fastare konsistens",
+  "name": "Gröna eller bruna linser"
+ },
+ "sub_000328": {
+  "note": "Råa mungbönor (för groddning) kan ersättas med groddade mungbönor på burk, redan klara att använda"
+ },
+ "sub_000329": {
+  "note": "Mungbönsgroddar kan ersättas med sojabönsgroddar i samma mängd i sallader och wokrätter."
+ },
+ "sub_000330": {
+  "note": "Sojabönsgroddar kan ersättas med mungbönsgroddar, vanligare i butik."
+ },
+ "sub_000331": {
+  "note": "Kokt sötpotatis kan ersättas med potatis i samma mängd, liknande konsistens men mindre sött."
+ },
+ "sub_000332": {
+  "note": "Sockerkokt sötpotatis kan ersättas med potatis i salta rätter (mindre söt smak)."
+ },
+ "sub_000333": {
+  "note": "Tomatpuré (koncentrerad) utspädd med lite vatten kan ersätta tomatsås på burk."
+ },
+ "sub_000334": {
+  "note": "Osaltad tomatpuré utspädd med vatten kan ersätta tomatsås på burk."
+ },
+ "sub_000335": {
+  "note": "Tomatsås med lök kan ersättas med tomatpuré blandad med stekt lök."
+ },
+ "sub_000336": {
+  "note": "Tomatsås med svamp kan ersättas med tomatpuré blandad med stekt svamp."
+ },
+ "sub_000337": {
+  "note": "Shiitake kan ersättas med champinjoner/vita champinjoner i samma mängd, mildare smak",
+  "name": "Champinjoner"
+ },
+ "sub_000338": {
+  "note": "Shiitake kan ersättas med champinjoner/vita champinjoner i samma mängd, mildare smak",
+  "name": "Champinjoner"
+ },
+ "sub_000339": {
+  "note": "Halmchampinjoner på burk kan ersättas med champinjoner på burk i samma mängd",
+  "name": "Champinjoner på burk"
+ },
+ "sub_000340": {
+  "note": "Morötter på burk utan tillsatt salt kan ersättas med vanliga morötter på burk (skölj för att minska saltet)"
+ },
+ "sub_000341": {
+  "note": "Blandade grönsaker på burk kan ersättas med frysta blandade grönsaker i samma mängd."
+ },
+ "sub_000342": {
+  "note": "Blandade grönsaker på burk kan ersättas med frysta blandade grönsaker (något kortare tillagningstid)."
+ },
+ "sub_000343": {
+  "note": "Konserverad spenat kan ersättas med kokt färsk spenat (använd ungefär tre gånger så mycket färsk vikt)."
+ },
+ "sub_000344": {
+  "note": "Konserverad spenat kan ersättas med kokt färsk spenat (använd ungefär tre gånger så mycket färsk vikt)."
+ },
+ "sub_000345": {
+  "note": "Osaltad konserverad spenat kan ersättas med kokt färsk spenat i justerad mängd (ungefär 3x färsk vikt)."
+ },
+ "sub_000346": {
+  "note": "Sura ättiksgurkor kan ersättas med dillgurkor i samma mängd, något annorlunda smak"
+ },
+ "sub_000347": {
+  "note": "Dillgurkor kan ersättas med sura ättiksgurkor i samma mängd"
+ },
+ "sub_000348": {
+  "note": "Chiafrön kan ersättas med malet linfrö i samma mängd (liknande bindande/förtjockande egenskap)",
+  "name": "Malet linfrö"
+ },
+ "sub_000349": {
+  "note": "Vit grapefrukt kan ersättas med rosa/röd grapefrukt i samma mängd, sötare och mindre bitter."
+ },
+ "sub_000350": {
+  "note": "Rosa/röd grapefrukt kan ersättas med vit grapefrukt i samma mängd, mer bitter."
+ },
+ "sub_000351": {
+  "note": "Sötade frysta hallon kan ersättas med osötade frysta hallon och sockras efter smak"
+ },
+ "sub_000352": {
+  "note": "Torkade äpplen kan ersättas med torkade päron i samma mängd i kompotter och bakverk."
+ },
+ "sub_000353": {
+  "note": "Ginkgonötter kan ersättas med macadamianötter i samma mängd i matlagning (liknande konsistens/användning, annan smak)."
+ },
+ "sub_000354": {
+  "note": "Glutenfritt mjöl; ersätt med vetemjöl om inga restriktioner finns, justera bindemedlet (sorghummjöl jäser inte)."
+ },
+ "sub_000355": {
+  "note": "Fullkornsmjöl är tätare; ersätt med vitt mjöl i samma mängd för en lättare konsistens (eller blanda 50/50)."
+ },
+ "sub_000356": {
+  "note": "Ersätter blått majsmjöl i samma mängd, annan färg men samma användning.",
+  "name": "Majsmjöl, gult eller vitt"
+ },
+ "sub_000357": {
+  "note": "Kasha (rostat kokt bovete) kan ersättas med tillagad quinoa i samma mängd för en liknande konsistens."
+ },
+ "sub_000358": {
+  "note": "Ersätt med hela råa mandlar i samma mängd, lätt förändring i konsistens."
+ },
+ "sub_000359": {
+  "note": "Vanlig ersättning mellan solrosfrön och pumpafrön i sallader/granola, samma mängd.",
+  "name": "Skalade pumpafrön"
+ },
+ "sub_000360": {
+  "note": "Kan ersättas med skalade solrosfrön i samma mängd i sallader och bakverk."
+ },
+ "sub_000361": {
+  "note": "Mindre vanliga safflorfrön; ersätt med skalade solrosfrön i samma mängd."
+ },
+ "sub_000362": {
+  "note": "Jordnötsfritt alternativ i samma mängd; observera att mandelsmör innehåller nötter, kontrollera med hänsyn till eventuella allergier.",
+  "name": "Pumpafrösmör eller mandelsmör"
+ },
+ "sub_000363": {
+  "note": "Vid jordnötsallergi, ersätt med solrosfrösmör i samma mängd (mer neutral smak)."
+ },
+ "sub_000364": {
+  "note": "Vid jordnötsallergi, ersätt med solrosfrösmör i samma mängd."
+ },
+ "sub_000365": {
+  "note": "Vid jordnötsallergi, ersätt med solrosfrösmör i samma mängd."
+ },
+ "sub_000366": {
+  "note": "Vid jordnötsallergi, ersätt med solrosfrösmör i samma mängd."
+ },
+ "sub_000367": {
+  "note": "Vid jordnötsallergi, ersätt med solrosfrösmör i samma mängd."
+ },
+ "sub_000368": {
+  "note": "Ersätt med vanlig naturell sojamjölk i samma mängd."
+ },
+ "sub_000369": {
+  "note": "Utan kokos: ersätt med sojamjölk eller mandelmjölk i samma mängd (mindre krämig konsistens)."
+ },
+ "sub_000370": {
+  "note": "Utan kokos: ersätt med sojamjölk eller mandelmjölk i samma mängd (mindre krämig konsistens)."
+ },
+ "sub_000371": {
+  "note": "I salta icke-veganska recept, ersätt kokosmjölk på burk med grädde i samma mängd.",
+  "name": "Tjock crème fraîche eller vispgrädde"
+ },
+ "sub_000372": {
+  "note": "Icke-vegansk ersättning för kokosgrädde, i samma mängd, i desserter och såser.",
+  "name": "Tjock crème fraîche"
+ },
+ "sub_000373": {
+  "note": "Dulce de leche kan ersättas med kokt sockrad kondenserad mjölk (vattenbad) eller användas som den är i vissa recept."
+ },
+ "sub_000374": {
+  "note": "Råa bondbönor kan ersättas med torra vita bönor (navy) i samma mängd i grytor."
+ },
+ "sub_000375": {
+  "note": "Bondbönor på burk kan ersättas med vita bönor på burk i samma mängd."
+ },
+ "sub_000376": {
+  "note": "Råa duvärtor (pigeon peas) kan ersättas med torkade linser i samma mängd, justera tillagningstiden."
+ },
+ "sub_000377": {
+  "note": "Rå sparrisböna (långböna) kan ersättas med torra kikärtor eller svarta bönor i samma mängd."
+ },
+ "sub_000378": {
+  "note": "Hyacintböna kan ersättas med torra vita bönor i samma mängd."
+ },
+ "sub_000379": {
+  "note": "Om frysta ögonbönor saknas, ersätt med vita bönor i samma mängd.",
+  "name": "Vita bönor, frysta eller på burk"
+ },
+ "sub_000380": {
+  "note": "Köpta stekta bönor kan ersättas med en hemgjord puré av tillagade och mosade pintobönor.",
+  "name": "Hemgjord pintobönspuré"
+ },
+ "sub_000381": {
+  "note": "Frijoles rojos volteados kan ersättas med vanliga stekta bönor i samma mängd.",
+  "name": "Friterade bönor (refritos)"
+ },
+ "sub_000382": {
+  "note": "Rå groddade vita bönor, om de saknas ersätt med tillagade torra vita bönor i motsvarande mängd."
+ },
+ "sub_000383": {
+  "note": "Råa groddade pintobönor, om de saknas ersätt med tillagade torra pintobönor."
+ },
+ "sub_000384": {
+  "note": "Råa groddade röda bönor, om de saknas ersätt med tillagade torra röda/vita bönor."
+ },
+ "sub_000385": {
+  "note": "Havreolja, ovanlig ingrediens: ersätt med en neutral vegetabilisk olja i samma mängd."
+ },
+ "sub_000386": {
+  "note": "Ersätt med en neutral vegetabilisk olja (solros, raps) i samma mängd för fritering."
+ },
+ "sub_000387": {
+  "note": "Valnötsolja (stark smak): ersätt med olivolja som smaksättning, samma mängd."
+ },
+ "sub_000388": {
+  "note": "Mandelolja, ersätt med en neutral vegetabilisk olja i samma mängd."
+ },
+ "sub_000389": {
+  "note": "Hasselnötsolja (stark smak): ersätt med olivolja som smaksättning, samma mängd."
+ },
+ "sub_000390": {
+  "note": "Avokadoolja kan ersättas med olivolja i samma mängd som smaksättning eller vid mild tillagning."
+ },
+ "sub_000391": {
+  "note": "Risklidolja, ersätt med en neutral vegetabilisk olja i samma mängd."
+ },
+ "sub_000392": {
+  "note": "Druvkärnolja, ersätt med en neutral vegetabilisk olja eller lätt olivolja i samma mängd."
+ },
+ "sub_000393": {
+  "note": "Vetegroddolja (stark smak), ersätt med en neutral vegetabilisk olja i samma mängd utanför nutritionellt bruk."
+ },
+ "sub_000394": {
+  "note": "Majs- och rapsolja, ersätt med enbart rapsolja i samma mängd."
+ },
+ "sub_000395": {
+  "note": "Gåsfett kan ersättas med ankfett i samma mängd för att steka potatis."
+ },
+ "sub_000396": {
+  "note": "Kalkonfett kan ersättas med ankfett eller smör i samma mängd."
+ },
+ "sub_000397": {
+  "note": "Kycklingfett kan ersättas med ankfett eller vegetabilisk olja i samma mängd."
+ },
+ "sub_000398": {
+  "note": "Nötfett (talg) kan ersättas med ister i samma mängd för tillagning/fritering."
+ },
+ "sub_000399": {
+  "note": "Baconfett kan ersättas med ister i samma mängd."
+ },
+ "sub_000400": {
+  "note": "Konserverad marinerad ingefära, ersätt med riven färsk ingefära (mindre mängd, kraftigare smak) eller vanlig marinerad ingefära."
+ },
+ "sub_000401": {
+  "note": "Natriumfattiga söta gurkor kan ersättas med vanliga ättiksgurkor i samma mängd (justera saltet)."
+ },
+ "sub_000402": {
+  "note": "Ananas på burk i sirap, ersätt med skuren färsk ananas (minska tillsatt socker i receptet)."
+ },
+ "sub_000403": {
+  "note": "Ananas på burk i sirap, ersätt med färsk ananas (minska tillsatt socker)."
+ },
+ "sub_000404": {
+  "note": "Ananas på burk i tjock sirap, ersätt med färsk ananas (minska tillsatt socker rejält)."
+ },
+ "sub_000405": {
+  "note": "Blåbär på burk i sirap, ersätt med färska eller frysta blåbär (justera sockret)."
+ },
+ "sub_000406": {
+  "note": "Björnbär på burk i sirap, ersätt med färska eller frysta björnbär (justera sockret)."
+ },
+ "sub_000407": {
+  "note": "Jordgubbar på burk i sirap, ersätt med färska eller frysta jordgubbar (justera sockret)."
+ },
+ "sub_000408": {
+  "note": "Fikon på burk i sirap, ersätt med färska fikon eller återfuktade torkade fikon (justera sockret)."
+ },
+ "sub_000409": {
+  "note": "Päron på burk i tjock sirap, ersätt med färska pocherade päron (justera sockret)."
+ },
+ "sub_000410": {
+  "note": "Krusbär på burk, ersätt med färska krusbär eller i andra hand blåbär."
+ },
+ "sub_000411": {
+  "note": "Mandariner på burk, ersätt med färska mandarinklyftor eller färsk apelsin."
+ },
+ "sub_000412": {
+  "note": "Syrliga körsbär på burk, ersätt med färska söta urkärnade körsbär (justera sockret efter syrlighet)."
+ },
+ "sub_000413": {
+  "note": "Plommon på burk i sirap kan ersättas med torkade plommon uppblötta i varmt vatten (mindre sött).",
+  "name": "Torkade plommon, uppblötta"
+ },
+ "sub_000414": {
+  "note": "Torkade aprikoser kokta till mos och torkade persikor är utbytbara i samma mängd i mos och bakverk.",
+  "name": "Torkade persikor"
+ },
+ "sub_000415": {
+  "note": "Torkade råa aprikoser och torkade persikor är utbytbara i samma mängd i matlagning och bakning.",
+  "name": "Torkade persikor"
+ },
+ "sub_000416": {
+  "note": "Portobello kan ersättas med bruna champinjoner (cremini) i samma mängd, fastare konsistens."
+ },
+ "sub_000417": {
+  "note": "Grillad portobello kan ersättas med bruna champinjoner (cremini) i samma mängd."
+ },
+ "sub_000418": {
+  "note": "Bruna champinjoner (cremini) kan ersättas med vita champinjoner i samma mängd, mildare smak.",
+  "name": "Champinjoner (vita)"
+ },
+ "sub_000419": {
+  "note": "Ugnsbakad Hubbardpumpa kan ersättas med butternutpumpa i samma mängd."
+ },
+ "sub_000420": {
+  "note": "Ugnsbakad Hubbardpumpa (osaltad) kan ersättas med butternutpumpa i samma mängd."
+ },
+ "sub_000421": {
+  "note": "Fryst butternutpumpa kan ersättas med tillagad färsk muskotpumpa eller Hubbardpumpa, i samma mängd."
+ },
+ "sub_000422": {
+  "note": "Tillagad pumpa kan ersättas med tillagad butternutpumpa i samma mängd (puréer, soppor, pajer)."
+ },
+ "sub_000423": {
+  "note": "Zucchini med skal, rå, identisk referensvariant till den vanliga zucchinin i katalogen."
+ },
+ "sub_000424": {
+  "note": "Tillagad grönkål kan ersättas med tillagad spenat i samma mängd (snabbare tillagning)."
+ },
+ "sub_000425": {
+  "note": "Osaltad tillagad grönkål kan ersättas med tillagad spenat i samma mängd."
+ },
+ "sub_000426": {
+  "note": "Tillagad collardgrönkål kan ersättas med tillagad grönkål i samma mängd."
+ },
+ "sub_000427": {
+  "note": "Kokt ängssyra kan ersättas med kokt spenat i samma mängd, mindre syrlig smak."
+ },
+ "sub_000428": {
+  "note": "Osaltad kokt ängssyra kan ersättas med kokt spenat i samma mängd."
+ },
+ "sub_000429": {
+  "note": "Tillagad gurkört kan ersättas med tillagad spenat i samma mängd, mildare smak."
+ },
+ "sub_000430": {
+  "note": "Kokt portlak kan ersättas med kokt spenat eller vintersallat i samma mängd."
+ },
+ "sub_000431": {
+  "note": "Tillagad kardon kan ersättas med tillagad blekselleri i samma mängd, liknande konsistens."
+ },
+ "sub_000432": {
+  "note": "Kokt haverrot kan ersättas med kokt palsternacka i samma mängd, liknande smak."
+ },
+ "sub_000433": {
+  "note": "Kokt palsternacka kan ersättas med kokt morot i samma mängd, något mindre sött.",
+  "name": "Kokt morot"
+ },
+ "sub_000434": {
+  "note": "Tillagad kålrabbi kan ersättas med tillagad rova i samma mängd, liknande smak."
+ },
+ "sub_000435": {
+  "note": "Kokt rova kan ersättas med kokt kålrabbi i samma mängd, eller kålrot."
+ },
+ "sub_000436": {
+  "note": "Tillagad rotselleri kan ersättas med tillagad palsternacka i samma mängd i puréer och soppor."
+ },
+ "sub_000437": {
+  "note": "Tillagad broccoli kan ersättas med tillagad blomkål i samma mängd.",
+  "name": "Kokt blomkål"
+ },
+ "sub_000438": {
+  "note": "Skalade kokta äpplen kan mosas för att ersätta köpt äppelmos, i samma mängd.",
+  "name": "Osötat äppelmos"
+ },
+ "sub_000439": {
+  "note": "Mikrovågskokta äpplen och kokta äpplen är utbytbara i samma mängd."
+ },
+ "sub_000440": {
+  "note": "Rostade brödfruktsfrön, ovanlig ingrediens: ersätt med rostade kastanjer i samma mängd (liknande mjölig konsistens).",
+  "name": "Rostad kastanj"
+ },
+ "sub_000441": {
+  "note": "Torkade breadnutfrön, ovanlig ingrediens: ersätt med torkade kastanjer i samma mängd.",
+  "name": "Torkad kastanj"
+ },
+ "sub_000442": {
+  "note": "Rosa/röd grapefrukt kan ersättas med färsk apelsin för en mindre bitter smak, samma mängd."
+ },
+ "sub_000443": {
+  "note": "Fermenterad fuyu-tofu (kraftig smak) kan ersättas med vanlig marinerad fast tofu i wokrätter.",
+  "name": "Marinerad fast tofu"
+ },
+ "sub_000444": {
+  "note": "Rova kan ersätta kålrot i samma mängd, något mildare smak"
+ },
+ "sub_000445": {
+  "note": "Rova kan ersätta kålrot i samma mängd, något mildare smak"
+ },
+ "sub_000446": {
+  "note": "Kålrabbi kan ersättas med rova i samma mängd, liknande konsistens när den är tillagad"
+ },
+ "sub_000447": {
+  "note": "Palsternacka ersätter haverrot i samma mängd, något sötare smak"
+ },
+ "sub_000448": {
+  "note": "Kardborrerot kan ersättas med palsternacka, liknande konsistens och tillagning"
+ },
+ "sub_000449": {
+  "note": "Kardborrerot kan ersättas med palsternacka, liknande konsistens och tillagning"
+ },
+ "sub_000450": {
+  "note": "Palsternacka kan ersättas med morot i samma mängd i grytor"
+ },
+ "sub_000451": {
+  "note": "Jicama kan ersättas med vattenkastanj för knaprigheten, mer neutral smak",
+  "name": "Vattenkastanj"
+ },
+ "sub_000452": {
+  "note": "Jicama kan ersättas med vattenkastanj för knaprigheten, mer neutral smak",
+  "name": "Vattenkastanj"
+ },
+ "sub_000453": {
+  "note": "Bambuskott ersätts med vattenkastanj för knaprigheten i wokrätter.",
+  "name": "Vattenkastanj"
+ },
+ "sub_000454": {
+  "note": "Bambuskott ersätts med vattenkastanj för knaprigheten i wokrätter.",
+  "name": "Vattenkastanj"
+ },
+ "sub_000455": {
+  "note": "Lotusrot kan ersättas med vattenkastanj för knaprighetens skull",
+  "name": "Vattenkastanj"
+ },
+ "sub_000456": {
+  "note": "Lotusrot kan ersättas med vattenkastanj för knaprighetens skull",
+  "name": "Vattenkastanj"
+ },
+ "sub_000457": {
+  "note": "Pilblad (rotknöl) kan ersättas med vattenkastanj, liknande knaprig konsistens",
+  "name": "Vattenkastanj"
+ },
+ "sub_000458": {
+  "note": "Pilblad (rotknöl) kan ersättas med vattenkastanj, liknande knaprig konsistens",
+  "name": "Vattenkastanj"
+ },
+ "sub_000459": {
+  "note": "Mjölmålla kan ersättas med spenat i samma mängd"
+ },
+ "sub_000460": {
+  "note": "Mjölmålla kan ersättas med spenat i samma mängd"
+ },
+ "sub_000461": {
+  "note": "Portlak kan ersättas med spenat, mer neutral och mindre syrlig smak"
+ },
+ "sub_000462": {
+  "note": "Rödbetsblast kan ersättas med spenat i samma mängd"
+ },
+ "sub_000463": {
+  "note": "Rödbetsblast kan ersättas med spenat i samma mängd"
+ },
+ "sub_000464": {
+  "note": "Gurkört kan ersättas med spenat, mildare smak"
+ },
+ "sub_000465": {
+  "note": "Maskrosblad kan ersättas med spenat, med mindre bitterhet"
+ },
+ "sub_000466": {
+  "note": "Maskrosblad kan ersättas med spenat, med mindre bitterhet"
+ },
+ "sub_000467": {
+  "note": "Amarantblad kan ersättas med spenat i samma mängd"
+ },
+ "sub_000468": {
+  "note": "Amarantblad kan ersättas med spenat i samma mängd"
+ },
+ "sub_000469": {
+  "note": "Nyzeeländsk spenat kan ersättas med vanlig spenat i samma mängd, mycket lik smak"
+ },
+ "sub_000470": {
+  "note": "Nyzeeländsk spenat kan ersättas med vanlig spenat i samma mängd, mycket lik smak"
+ },
+ "sub_000471": {
+  "note": "Vattenspenat (liseron) kan ersättas med spenat, liknande smak och konsistens när den är tillagad"
+ },
+ "sub_000472": {
+  "note": "Vattenspenat (liseron) kan ersättas med spenat, liknande smak och konsistens när den är tillagad"
+ },
+ "sub_000473": {
+  "note": "Moringablad kan ersättas med spenat i samma mängd"
+ },
+ "sub_000474": {
+  "note": "Moringablad kan ersättas med spenat i samma mängd"
+ },
+ "sub_000475": {
+  "note": "Pumpablad kan ersättas med spenat, mer neutral smak"
+ },
+ "sub_000476": {
+  "note": "Pumpablad kan ersättas med spenat, mer neutral smak"
+ },
+ "sub_000477": {
+  "note": "Rovblast kan ersättas med collardgrönkål, något längre tillagningstid"
+ },
+ "sub_000478": {
+  "note": "Rovblast kan ersättas med collardgrönkål, något längre tillagningstid"
+ },
+ "sub_000479": {
+  "note": "Senapskål kan ersättas med collardgrönkål, med mindre skärpa"
+ },
+ "sub_000480": {
+  "note": "Senapskål kan ersättas med collardgrönkål, med mindre skärpa"
+ },
+ "sub_000481": {
+  "note": "Escarole kan ersättas med endive (chicorée) eller frisésallad, liknande bitterhet"
+ },
+ "sub_000482": {
+  "note": "Kardon kan ersättas med blekselleri, utan kronärtskocksmaken"
+ },
+ "sub_000483": {
+  "note": "Rotselleri kan ersättas med palsternacka i puréer och soppor"
+ },
+ "sub_000484": {
+  "note": "Sparrisböna (långböna) kan ersättas med gröna bönor i samma mängd"
+ },
+ "sub_000485": {
+  "note": "Sparrisböna (långböna) kan ersättas med gröna bönor i samma mängd"
+ },
+ "sub_000486": {
+  "note": "Svarta bönor ersätts med röda bönor i samma mängd."
+ },
+ "sub_000487": {
+  "note": "Svarta bönor (black turtle) ersätts med röda bönor i samma mängd."
+ },
+ "sub_000488": {
+  "note": "Rosa bönor ersätts med röda bönor eller pintobönor i samma mängd."
+ },
+ "sub_000489": {
+  "note": "Pintobönor ersätts med röda bönor i samma mängd."
+ },
+ "sub_000490": {
+  "note": "Pintobönor ersätts med röda bönor i samma mängd."
+ },
+ "sub_000491": {
+  "note": "Adzukibönor kan ersättas med röda bönor, mer neutral smak"
+ },
+ "sub_000492": {
+  "note": "Mogna franska bönor kan ersättas med vita bönor (navy) i samma mängd"
+ },
+ "sub_000493": {
+  "note": "Gula bönor (mogna) ersätts med vita bönor i samma mängd."
+ },
+ "sub_000494": {
+  "note": "Små vita bönor ersätts med vita bönor (navy) i samma mängd."
+ },
+ "sub_000495": {
+  "note": "Limabönor kan ersättas med bondbönor i samma mängd."
+ },
+ "sub_000496": {
+  "note": "Limabönor kan ersättas med bondbönor i samma mängd."
+ },
+ "sub_000497": {
+  "note": "Omogna limabönor kan ersättas med färska bondbönor."
+ },
+ "sub_000498": {
+  "note": "Omogna limabönor (Fordhook) kan ersättas med färska bondbönor."
+ },
+ "sub_000499": {
+  "note": "Catjangbönor (niébé) kan ersättas med kikärtor eller vita bönor i samma mängd"
+ },
+ "sub_000500": {
+  "note": "Äggnudlar ersätts med tagliatelle i samma mängd."
+ },
+ "sub_000501": {
+  "note": "Äggnudlar ersätts med tagliatelle i samma mängd."
+ },
+ "sub_000502": {
+  "note": "Äggnudlar ersätts med tagliatelle i samma mängd."
+ },
+ "sub_000503": {
+  "note": "Sobanudlar ersätts med risvermicelli eller fullkornsspaghetti."
+ },
+ "sub_000504": {
+  "note": "Sobanudlar ersätts med risvermicelli eller fullkornsspaghetti."
+ },
+ "sub_000505": {
+  "note": "Somennudlar ersätts med risvermicelli i samma mängd."
+ },
+ "sub_000506": {
+  "note": "Somennudlar ersätts med risvermicelli i samma mängd."
+ },
+ "sub_000507": {
+  "note": "Glutenfri majspasta ersätts med risvermicelli eller rispasta."
+ },
+ "sub_000508": {
+  "note": "Glutenfri majspasta ersätts med risvermicelli eller rispasta."
+ },
+ "sub_000509": {
+  "note": "Bakmjöl (fint siktat) kan ersättas med vanligt vetemjöl, något tätare konsistens"
+ },
+ "sub_000510": {
+  "note": "Brödmjöl kan ersättas med vanligt vetemjöl, något svagare jäsning"
+ },
+ "sub_000511": {
+  "note": "Kinesiska kastanjer kan ersättas med europeiska kastanjer i samma mängd"
+ },
+ "sub_000512": {
+  "note": "Kinesiska kastanjer kan ersättas med europeiska kastanjer i samma mängd"
+ },
+ "sub_000513": {
+  "note": "Kinesiska kastanjer kan ersättas med europeiska kastanjer i samma mängd"
+ },
+ "sub_000514": {
+  "note": "Japanska kastanjer kan ersättas med europeiska kastanjer i samma mängd"
+ },
+ "sub_000515": {
+  "note": "Japanska kastanjer kan ersättas med europeiska kastanjer i samma mängd"
+ },
+ "sub_000516": {
+  "note": "Japanska kastanjer kan ersättas med europeiska kastanjer i samma mängd"
+ },
+ "sub_000517": {
+  "note": "Svarta valnötter ersätts med vanliga valnötter i samma mängd, kraftigare smak."
+ },
+ "sub_000518": {
+  "note": "Pinjenötter ersätts med cashewnötter (pesto, garnering), mindre kådig smak."
+ },
+ "sub_000519": {
+  "note": "Paranötter ersätts med mandel eller cashewnötter i samma mängd."
+ },
+ "sub_000520": {
+  "note": "Spanska jordnötter kan ersättas med vanliga rostade saltade jordnötter"
+ },
+ "sub_000521": {
+  "note": "Valenciajordnötter kan ersättas med vanliga rostade saltade jordnötter"
+ },
+ "sub_000522": {
+  "note": "Vegetabilisk kycklingersättning kan ersättas med panerad fast tofu som ett vegetabiliskt alternativ"
+ },
+ "sub_000523": {
+  "note": "Sötad kokosgrädde kan ersättas med kokosmjölk med tillsatt socker"
+ },
+ "sub_000524": {
+  "note": "Bergsjams (Hawaii) kan ersättas med sötpotatis i samma mängd"
+ },
+ "sub_000525": {
+  "note": "Bergsjams (Hawaii) kan ersättas med sötpotatis i samma mängd"
+ },
+ "sub_000526": {
+  "note": "Moringabaljor (drumstick) kan ersättas med gröna bönor i curryrätter"
+ },
+ "sub_000527": {
+  "note": "Moringabaljor (drumstick) kan ersättas med gröna bönor i curryrätter"
+ },
+ "sub_000528": {
+  "note": "Kokta torkade päron ersätts med kokta torkade äpplen, liknande konsistens."
+ },
+ "sub_000529": {
+  "note": "Kokta torkade päron ersätts med kokta torkade äpplen, liknande konsistens."
+ },
+ "sub_000530": {
+  "note": "Kokta torkade persikor ersätts med kokta torkade aprikoser, liknande smak."
+ },
+ "sub_000531": {
+  "note": "Kokta torkade persikor ersätts med kokta torkade aprikoser, liknande smak."
+ },
+ "sub_000532": {
+  "note": "Mandariner på burk ersätts med filead apelsin, syrligare smak.",
+  "name": "Navelapelsiner, på burk eller färska"
+ },
+ "sub_000533": {
+  "note": "Grapefrukt på burk kan ersättas med skalade apelsinklyftor, mindre bittert",
+  "name": "Navelapelsiner, på burk eller färska"
+ },
+ "sub_000534": {
+  "note": "Grapefrukt på burk kan ersättas med skalade apelsinklyftor, mindre bittert",
+  "name": "Navelapelsiner, på burk eller färska"
+ },
+ "sub_000535": {
+  "note": "Söta körsbär på burk kan ersättas med färska urkärnade körsbär (eller frysta)"
+ },
+ "sub_000536": {
+  "note": "Söta körsbär på burk kan ersättas med färska urkärnade körsbär (eller frysta)"
+ },
+ "sub_000537": {
+  "note": "Bredbart margarin av typen Smart Balance kan ersättas med vanligt vegetabiliskt margarin"
+ },
+ "sub_000538": {
+  "note": "Grönsaksmakaroner ersätts med vanlig pasta (makaroner eller tagliatelle)."
+ },
+ "sub_000539": {
+  "note": "Grönsaksmakaroner ersätts med vanlig pasta (makaroner eller tagliatelle)."
+ },
+ "sub_000540": {
+  "note": "Svarta bönor (black turtle) på burk kan ersätta vanliga svarta bönor i samma mängd."
+ },
+ "sub_000541": {
+  "note": "Great northern-bönor kan ersättas med cannellinibönor, mycket lik konsistens och smak."
+ },
+ "sub_000542": {
+  "note": "Råa cranberrybönor (romerska bönor) kan ersättas med pintobönor i samma mängd."
+ },
+ "sub_000543": {
+  "note": "Cranberrybönor (romerska bönor) på burk kan ersättas med pintobönor på burk."
+ },
+ "sub_000544": {
+  "note": "Kan ersättas med vanliga friterade pintobönor, i samma mängd.",
+  "name": "Friterade pintobönor (refritos), på burk"
+ },
+ "sub_000545": {
+  "note": "Mandelsmör kan ersättas med cashewsmör, mildare och sötare smak."
+ },
+ "sub_000546": {
+  "note": "Osaltat mandelsmör kan ersättas med cashewsmör, i samma mängd."
+ },
+ "sub_000547": {
+  "note": "Cashewsmör kan ersättas med mandelsmör, i samma mängd."
+ },
+ "sub_000548": {
+  "note": "Tahini kan ersättas med jordnötssmör i nödfall (annorlunda smak, mindre bitter)."
+ },
+ "sub_000549": {
+  "note": "Tahini kan ersättas med cashew- eller mandelsmör för en mildare smak."
+ },
+ "sub_000550": {
+  "note": "Rostade jordnötter kan ersättas med cashewnötter i salta rätter eller wokrätter."
+ },
+ "sub_000551": {
+  "note": "Torrostade jordnötter kan ersättas med torrostade cashewnötter, i samma mängd."
+ },
+ "sub_000552": {
+  "note": "Pekannötter kan ersättas med hasselnötter eller valnötter, något annorlunda smak, vid bakning."
+ },
+ "sub_000553": {
+  "note": "Valnötter kan ersättas med pekannötter i samma mängd i bakrecept."
+ },
+ "sub_000554": {
+  "note": "Hasselnötter kan ersättas med valnötter eller mandel i de flesta bakrecept."
+ },
+ "sub_000555": {
+  "note": "Skalade solrosfrön kan ersättas med pumpakärnor (pepitas) i samma mängd."
+ },
+ "sub_000556": {
+  "note": "Rostade pumpa- och gresskarfrön kan ersättas med skalade solrosfrön, i samma mängd."
+ },
+ "sub_000557": {
+  "note": "Oberikat vetemjöl kan ersättas med den berikade versionen i samma mängd.",
+  "name": "Vetemjöl, allroundmjöl, berikat"
+ },
+ "sub_000558": {
+  "note": "Färdig tortillamjölblandning kan ersättas med vanligt vetemjöl, i samma mängd."
+ },
+ "sub_000559": {
+  "note": "Glutenfri pasta (majs och ris) kan ersättas med risnudlar för en liknande rätt."
+ },
+ "sub_000560": {
+  "note": "Kinesiska glasnudlar (cellofan, mungböna) kan ersättas med risnudlar, liknande konsistens efter tillagning."
+ },
+ "sub_000561": {
+  "note": "Jordnötsolja kan ersättas med solrosolja, neutral smak, lämplig för tillagning och fritering."
+ },
+ "sub_000562": {
+  "note": "Sesamolja (för tillagning, ej rostad) kan ersättas med jordnötsolja för wokning."
+ },
+ "sub_000563": {
+  "note": "Sojaolja kan ersättas med solrosolja, i samma mängd, liknande neutral smak."
+ },
+ "sub_000564": {
+  "note": "Bomullsfröolja, svår att få tag på, kan ersättas med solros- eller sojaolja i samma mängd."
+ },
+ "sub_000565": {
+  "note": "Bredbart margarin kan ersätta smör i samma mängd i de flesta användningar, utom fint bakverk."
+ },
+ "sub_000566": {
+  "note": "Saltat smör kan ersättas med osaltat smör genom att tillsätta en nypa salt."
+ },
+ "sub_000567": {
+  "note": "Osaltat smör kan ersättas med saltat smör genom att minska tillsatt salt i receptet."
+ },
+ "sub_000568": {
+  "note": "Smörersättning i pulverform kan ersättas med smör eller smält margarin, i justerad mängd."
+ },
+ "sub_000569": {
+  "note": "Generisk blåmögelost kan ersättas med Roquefort, kraftigare smak."
+ },
+ "sub_000570": {
+  "note": "Roquefort kan ersättas med en annan blåmögelost, något mildare smak."
+ },
+ "sub_000571": {
+  "note": "Brie kan ersättas med camembert i samma mängd, mycket lik smak."
+ },
+ "sub_000572": {
+  "note": "Camembert (USDA-variant) kan ersättas med standardcamemberten i katalogen, i samma mängd."
+ },
+ "sub_000573": {
+  "note": "Edamerost kan ersättas med gouda, mycket lik konsistens och smak."
+ },
+ "sub_000574": {
+  "note": "Gouda kan ersättas med Edamerost, något magrare."
+ },
+ "sub_000575": {
+  "note": "Gruyère kan ersättas med emmentaler, något mildare smak."
+ },
+ "sub_000576": {
+  "note": "Gruyère kan även ersättas med cheddar till en gratäng, annorlunda smak men liknande smältegenskap.",
+  "name": "Cheddar"
+ },
+ "sub_000577": {
+  "note": "Monterey Jack kan ersättas med mild cheddar i samma mängd, liknande smältegenskap."
+ },
+ "sub_000578": {
+  "note": "Mexikansk ostblandning kan ersättas med enbart cheddar eller cheddar tillsammans med Monterey Jack."
+ },
+ "sub_000579": {
+  "note": "Muensterost kan ersättas med gouda eller Edamerost för liknande smältegenskap och mild smak."
+ },
+ "sub_000580": {
+  "note": "Feta kan ersättas med smulad färsk getost, mildare och mindre salt smak."
+ },
+ "sub_000581": {
+  "note": "Neufchâtel kan ersättas med vanlig färskost (cream cheese), liknande konsistens, något magrare."
+ },
+ "sub_000582": {
+  "note": "Färskost (cream cheese) kan ersättas med Neufchâtel i samma mängd, något magrare."
+ },
+ "sub_000583": {
+  "note": "Romano kan ersättas med parmesan att riva över pasta, liknande smak."
+ },
+ "sub_000584": {
+  "note": "Lätt gräddfil kan ersättas med lätt naturell grekisk yoghurt, i samma mängd."
+ },
+ "sub_000585": {
+  "note": "Fettfri gräddfil kan ersättas med fettfri naturell grekisk yoghurt."
+ },
+ "sub_000586": {
+  "note": "Gräddfil med reducerad fetthalt kan ersättas med naturell grekisk yoghurt."
+ },
+ "sub_000587": {
+  "note": "Aprikoser på burk kan ersättas med persikor på burk i efterrätter, liknande smak.",
+  "name": "Persikor, på burk, i vatten, med spad"
+ },
+ "sub_000588": {
+  "note": "Aprikoser på burk i sirap kan ersättas med persikor på burk i juice, liknande smak."
+ },
+ "sub_000589": {
+  "note": "Fruktsallad på burk i vatten kan ersättas med fruktcocktail i vatten, mycket lik sammansättning."
+ },
+ "sub_000590": {
+  "note": "Fruktsallad på burk i juice kan ersättas med fruktcocktail i juice, mycket lik sammansättning."
+ },
+ "sub_000591": {
+  "note": "Rostade saltade sesamfrön kan ersättas med osaltade sesamfrön genom att justera saltet i receptet."
+ },
+ "sub_000592": {
+  "note": "Torrostade solrosfrön kan ersättas med rostade pumpa- och gresskarfrön, i samma mängd."
+ },
+ "sub_000593": {
+  "note": "Chokladsojamjölk kan ersättas med chokladmandelmjölk eller naturell mandelmjölk med tillsatt kakao."
+ },
+ "sub_000594": {
+  "note": "Naturell sojamjölk kan ersättas med mandelmjölk, mer neutral och lättare smak."
+ },
+ "sub_000595": {
+  "note": "Lätt sojamjölk kan ersättas med mandelmjölk, i samma mängd."
+ },
+ "sub_000596": {
+  "note": "Limabönor på burk kan ersättas med gröna bönor, fastare konsistens, i samma mängd.",
+  "name": "Gröna bönor, råa"
+ },
+ "sub_000597": {
+  "note": "Fast tofu kan ersättas med vanlig (mindre fast) tofu genom att justera tillagningen, mjukare konsistens."
+ },
+ "sub_000598": {
+  "note": "Vanlig tofu kan ersättas med fast tofu om en fastare konsistens önskas (stekning, grillning)."
+ },
+ "sub_000599": {
+  "note": "Koncentrerad grapefruktjuice kan ersättas med koncentrerad apelsinjuice, mildare smak."
+ },
+ "sub_000600": {
+  "note": "Lätt majonnäs kan ersättas med vanlig majonnäs genom att minska den använda mängden."
+ },
+ "sub_000601": {
+  "note": "Vanlig majonnäs kan ersättas med lätt majonnäs för att minska fettet."
+ },
+ "sub_000602": {
+  "note": "Surimi kan ersättas med äkta krabbkött, finare smak, annorlunda konsistens."
+ },
+ "sub_000603": {
+  "note": "Ersätt i samma mängd med smör (eller en neutral vegetabilisk olja för ett lättare resultat)."
+ },
+ "sub_000604": {
+  "note": "Mjölkpulver kan ersätta pulvergrädde i kaffe eller ett recept, med en mer mjölkig smak."
+ },
+ "sub_000605": {
+  "note": "Ersätt sprejgrädde med hemvispad grädde (vispad vispgrädde), i samma mängd."
+ },
+ "sub_000606": {
+  "note": "Äkta mozzarella ersätter ostbaserad ersättning i samma mängd, med bättre smältegenskap och rikare smak."
+ },
+ "sub_000607": {
+  "note": "Vanligt smör ersätter ghee/klarat smör i samma mängd, men bränns snabbare vid tillagning (mindre lämpligt för höga temperaturer)."
+ },
+ "sub_000608": {
+  "note": "Ersätt med vanlig färskost i samma mängd."
+ },
+ "sub_000609": {
+  "note": "Ersätt med vanlig riven parmesan i samma mängd (något mer fett och smak)."
+ },
+ "sub_000610": {
+  "note": "Ersätt med rent smör i samma mängd, eller margarin vid vegetabilisk preferens."
+ },
+ "sub_000611": {
+  "note": "Ersätt med vanlig icke-hydrerad rapsolja, i samma mängd."
+ },
+ "sub_000612": {
+  "note": "Sötpotatis kan ersätta jams i samma mängd i de flesta recept (liknande konsistens och smak, något sötare)."
+ },
+ "sub_000613": {
+  "note": "Zucchini (eller gurka för en rå tillagning) kan ersätta chayote i samma mängd."
+ },
+ "sub_000614": {
+  "note": "Rova kan ersätta daikon i tillagade rätter, i samma mängd (något kraftigare smak)."
+ },
+ "sub_000615": {
+  "note": "Vanliga äggnudlar kan ersätta ägg- och spenatnudlar i samma mängd (mindre färg och grönsaksinnehåll)."
+ },
+ "sub_000616": {
+  "note": "Gula delade ärtor ersätter gröna delade ärtor i samma mängd, nästan identisk smak.",
+  "name": "Gula delade ärtor"
+ },
+ "sub_000617": {
+  "note": "Färska sojagroddar kan ersätta groddade mungbönor på burk, med mer knaprighet (skölj och använd i samma mängd)."
+ },
+ "sub_000618": {
+  "note": "Ersätt med vanligt brunt ris (ej snabbkokt); öka koktiden eftersom detta ris inte är förångat."
+ },
+ "sub_000619": {
+  "note": "Klibbris/vanligt rundkornigt ris är utbytbara; annars kan ett rundkornigt ris av arborio-typ ersätta för ett klibbigare resultat."
+ },
+ "sub_000620": {
+  "note": "Vanliga gröna bönor ersätter vingböna i samma mängd, liknande konsistens.",
+  "name": "Gröna bönor"
+ },
+ "sub_000621": {
+  "note": "Zucchini kan ersätta luffasquash i samma mängd i wokade eller tillagade rätter."
+ },
+ "sub_000622": {
+  "note": "Rostade jordnötter kan ersätta kokta jordnötter, med en knapprigare och mindre mör konsistens.",
+  "name": "Rostade saltade jordnötter"
+ },
+ "sub_000623": {
+  "note": "Vanliga gröna bönor kan ersätta unga skidor av ögonbönor, i samma mängd."
+ },
+ "sub_000624": {
+  "note": "Limabönor (eller edamame) kan ersätta dolique lablab (hyacintböna) i samma mängd."
+ },
+ "sub_000625": {
+  "note": "Om sötade adzukibönor på burk saknas, koka torkade adzukibönor och sockra dem själv.",
+  "name": "Adzukibönor, mogna, råa (kokas och sockras hemma)"
+ },
+ "sub_000626": {
+  "note": "Kikärtor kan ersätta lupinbönor i samma mängd i de flesta medelhavsrecept."
+ },
+ "sub_000627": {
+  "note": "Om självjäsande majsmjöl saknas, använd vanligt majsmjöl och tillsätt 1,5 tsk bakpulver och 1/2 tsk salt per 150 g.",
+  "name": "Vanligt majsmjöl + bakpulver + salt"
+ },
+ "sub_000628": {
+  "note": "Zucchini kan ersätta flaskkurbits i samma mängd i grytor."
+ },
+ "sub_000629": {
+  "note": "Jalapeño på burk kan ersätta starka röda chilifrukter på burk, med något mildare styrka."
+ },
+ "sub_000630": {
+  "note": "Om frysta rösti-biffar saknas, riv rå potatis och forma egna biffar att steka.",
+  "name": "Hemgjorda rivna potatisbiffar (rösti)"
+ },
+ "sub_000631": {
+  "note": "Använd naturell tomatsås blandad med finhackad och stekt lök, grön paprika och blekselleri, i motsvarande mängd."
+ },
+ "sub_000632": {
+  "note": "Ögonbönor kan ersättas med svarta bönor eller andra torkade bönor i samma mängd i de flesta grytor."
+ },
+ "sub_000633": {
+  "note": "Tillagad flaskkurbits kan ersättas med zucchini i samma mängd, liknande konsistens och smak när den är tillagad",
+  "name": "Zucchini"
+ },
+ "sub_000634": {
+  "note": "Om purjolök saknas kan lök (helst mild) ersätta den i samma mängd, kraftigare smak."
+ },
+ "sub_000635": {
+  "note": "Bruna champinjoner (cremini) kan ersättas i samma mängd med vita champinjoner, mildare smak"
+ },
+ "sub_000636": {
+  "note": "Rovblast kan ersättas med grönkål eller spenat i samma mängd"
+ },
+ "sub_000637": {
+  "note": "Tillagad vaxgurka (kinesisk vintermelon) kan ersättas med zucchini eller chayote i samma mängd",
+  "name": "Zucchini"
+ },
+ "sub_000638": {
+  "note": "Kan ersättas med fullkornsmjöl (tätare konsistens) eller en 50/50-blandning för att göra receptet lättare.",
+  "name": "Vetemjöl, halvfullkorn eller fullkorn"
+ },
+ "sub_000639": {
+  "note": "Äggnudlar ersätts med vanlig bandpasta (tagliatelle) i samma mängd.",
+  "name": "Pasta (vanliga nudlar)"
+ },
+ "sub_000640": {
+  "note": "Glutenfri pasta (ris/majs/quinoa): praktisk ersättning vid glutenintolerans, eller omvänt ersätt med vanlig vetepasta om glutenfritt inte krävs, justera tillagningstiden (oftast kortare).",
+  "name": "Vanlig vetepasta"
+ },
+ "sub_000641": {
+  "note": "Glutenfri rispasta: ersättning vid glutenintolerans; annars ersätt med vanlig vetepasta i samma mängd.",
+  "name": "Vanlig vetepasta"
+ },
+ "sub_000642": {
+  "note": "Glutenfri majs-/quinoapasta: ersättning vid glutenintolerans; annars vanlig vetepasta i samma mängd.",
+  "name": "Vanlig vetepasta"
+ },
+ "sub_000643": {
+  "note": "Pasta med 51% fullkornsvete: kan ersättas med vanlig fullkornspasta eller vit pasta i samma mängd beroende på önskat fiberinnehåll.",
+  "name": "Fullkornspasta (100 % fullkornsvete)"
+ },
+ "sub_000644": {
+  "note": "Kan ersättas med vanlig fullkornspasta eller vit pasta i samma mängd.",
+  "name": "Fullkornspasta (100 % fullkornsvete)"
+ },
+ "sub_000645": {
+  "note": "Ersätt med osötad kokos och minska sockret i receptet (den sötade versionen tillför extra socker).",
+  "name": "Osötad torkad kokos"
+ },
+ "sub_000646": {
+  "note": "Rostade pumpafrön kan ersättas med rostade solrosfrön i samma mängd",
+  "name": "Solrosfrön"
+ },
+ "sub_000647": {
+  "note": "Ersätt i samma mängd med rostade och saltade solrosfrön.",
+  "name": "Solrosfrön"
+ },
+ "sub_000648": {
+  "note": "Frysta pommes frites kan ersättas med färsk potatis skuren i stavar och sedan ugnsbakad eller friterad",
+  "name": "Färsk potatis"
+ },
+ "sub_000649": {
+  "note": "Kanadensisk bacon (skiva av karré) kan ersättas med vanlig bacon eller skivad skinka"
+ },
+ "sub_000650": {
+  "note": "Lätt smör kan ersättas med vanligt smör genom att minska mängden något (lätt smör innehåller mer vatten)"
+ },
+ "sub_000651": {
+  "note": "Lätt osaltat smör kan ersättas med vanligt osaltat smör, något mindre mängd"
+ },
+ "sub_000652": {
+  "note": "Bredbart margarin kan ersättas med smör i samma mängd (annorlunda konsistens och smak, mindre lämpligt för fint bakverk)"
+ },
+ "sub_000653": {
+  "note": "Raffinerad sojaolja kan ersättas med raps- eller solrosolja i samma mängd för vardaglig tillagning",
+  "name": "Rapsolja"
+ },
+ "sub_000654": {
+  "note": "Vegetabiliskt bakfett kan ersättas med kallt smör i samma mängd i bakning (något annorlunda konsistens och smak)"
+ },
+ "sub_000655": {
+  "note": "Karp kan ersättas med tilapia eller en annan vit sötvattensfisk i samma mängd"
+ },
+ "sub_000656": {
+  "note": "Brosme kan ersättas med torsk eller kolja i samma mängd"
+ },
+ "sub_000657": {
+  "note": "Långa kan ersättas med torsk i samma mängd, liknande vitt kött"
+ },
+ "sub_000658": {
+  "note": "Lake (sötvattensfisk) kan ersättas med tilapia eller torsk"
+ },
+ "sub_000659": {
+  "note": "Lingcod (Stillahavslånga) kan ersättas med torsk eller kolja i samma mängd"
+ },
+ "sub_000660": {
+  "note": "Tilapia kan ersättas med torsk eller annan fast vit fisk i samma mängd"
+ },
+ "sub_000661": {
+  "note": "Tassergal (bluefish, fet fisk) kan ersättas med makrill i samma mängd"
+ },
+ "sub_000662": {
+  "note": "Mahi-mahi kan ersättas med tonfisk eller svärdfisk för stekning i panna/grill"
+ },
+ "sub_000663": {
+  "note": "Milkfish (chanos) kan ersättas med tilapia i samma mängd"
+ },
+ "sub_000664": {
+  "note": "Marulk kan ersättas med hälleflundra för sitt fasta kött, liknande konsistens"
+ },
+ "sub_000665": {
+  "note": "Tilefish kan ersättas med snapper eller torsk i samma mängd"
+ },
+ "sub_000666": {
+  "note": "Svärdfisk kan ersättas med tonfisk (biff) för grillning"
+ },
+ "sub_000667": {
+  "note": "Smörfisk (butterfish) kan ersättas med makrill, liknande fet fisk"
+ },
+ "sub_000668": {
+  "note": "Sheepshead (fårhuvudfisk) kan ersättas med snapper eller torsk"
+ },
+ "sub_000669": {
+  "note": "Spot (liten vit fisk) kan ersättas med snapper"
+ },
+ "sub_000670": {
+  "note": "Scup (fläckig havsruda) kan ersättas med snapper eller havsruda i samma mängd"
+ },
+ "sub_000671": {
+  "note": "Återfuktat kärnmjölkspulver (pulver + vatten) kan ersättas med flytande kärnmjölk på flaska"
+ },
+ "sub_000672": {
+  "note": "Half and half (mellangrädde) fås genom att blanda lika delar standardmjölk och vispgrädde",
+  "name": "Blandning av helmjölk + vispgrädde (1:1)"
+ },
+ "sub_000673": {
+  "note": "Queso Fresco kan ersättas med smulad feta eller avrunnen keso, saltare smak"
+ },
+ "sub_000674": {
+  "note": "Queso Blanco kan ersättas med feta eller mozzarella beroende på användning (smältning eller smulning)"
+ },
+ "sub_000675": {
+  "note": "Queso Añejo (lagrad rivost) kan ersättas med parmesan eller lagrad cheddar"
+ },
+ "sub_000676": {
+  "note": "Queso Cotija (salt rivost) kan ersättas med parmesan"
+ },
+ "sub_000677": {
+  "note": "Queso Asadero (smältost) kan ersättas med mozzarella eller provolone",
+  "name": "Mozzarella eller provolone"
+ },
+ "sub_000678": {
+  "note": "Queso Chihuahua (smältost) kan ersättas med Monterey Jack eller mozzarella",
+  "name": "Monterey Jack-ost"
+ },
+ "sub_000679": {
+  "note": "Amerikansk kall ostblandning (cold-pack) kan ersättas med smält cheddar i samma mängd"
+ },
+ "sub_000680": {
+  "note": "Frysta äggröror kan ersättas med hemlagade äggröror av färska ägg.",
+  "name": "Färska ägg"
+ },
+ "sub_000681": {
+  "note": "Fryst lätt vispad topping kan ersättas med hemmavispad grädde",
+  "name": "Hemvispad grädde"
+ },
+ "sub_000682": {
+  "note": "Buffelmjölk kan ersättas med standardmjölk i samma mängd"
+ },
+ "sub_000683": {
+  "note": "Fårmjölk kan ersättas med standardmjölk, mildare smak"
+ },
+ "sub_000684": {
+  "note": "Mjölkimitation (varken mejeri eller soja) kan ersättas med komjölk eller en växtbaserad dryck efter behov"
+ },
+ "sub_000685": {
+  "note": "Lätt flytande gräddersättning kan ersättas med lätt vispgrädde eller kondenserad mjölk",
+  "name": "Lätt vispgrädde"
+ },
+ "sub_000686": {
+  "note": "Lätt gräddpulverersättning kan ersättas med mjölkpulver till kaffet",
+  "name": "Mjölkpulver"
+ },
+ "sub_000687": {
+  "note": "Flytande smaksatt gräddersättning kan ersättas med lätt vispgrädde med tillsatt arom (vanilj, kola)",
+  "name": "Lätt vispgrädde"
+ },
+ "sub_000688": {
+  "note": "Ersätt med riktig cheddar i samma mängd för mer smak och bättre smältegenskaper."
+ },
+ "sub_000689": {
+  "note": "Vanlig (eller lätt) cheddar ersätter fettfri cheddar med bättre smak och smältegenskap"
+ },
+ "sub_000690": {
+  "note": "Kan ersättas med smält cheddar i samma mängd för mer smak."
+ },
+ "sub_000691": {
+  "note": "Ersätt gräddpulver med lätt vispgrädde, utspädd vid behov."
+ },
+ "sub_000692": {
+  "note": "Ersätt med en neutral vegetabilisk olja (solros, raps) i samma mängd."
+ },
+ "sub_000693": {
+  "note": "Smör ersätter lätt margarin i samma mängd men ger mer fett och smak"
+ },
+ "sub_000694": {
+  "note": "Motsvarar vanlig rapsolja för hushållsbruk, i samma mängd."
+ },
+ "sub_000695": {
+  "note": "Osaltat smör ersätter lätt osaltat margarin i samma mängd"
+ },
+ "sub_000696": {
+  "note": "Ersätt med rent smör i samma mängd, kraftigare smak."
+ },
+ "sub_000697": {
+  "note": "Cirka 1/4 kopp flytande äggersättning motsvarar ett helt ägg"
+ },
+ "sub_000698": {
+  "note": "Kan ersättas med solrosolja eller en annan neutral olja i samma mängd."
+ },
+ "sub_000699": {
+  "note": "Smör (eller ett margarin med hög fetthalt) ersätter detta burkmargarin i samma mängd"
+ },
+ "sub_000700": {
+  "note": "Ersätt med vanlig majonnäs i samma mängd."
+ },
+ "sub_000701": {
+  "note": "Späd tjock crème fraîche med lite mjölk (ungefär hälften-hälften) för att få motsvarigheten till lätt grädde"
+ },
+ "sub_000702": {
+  "note": "Ersätt med solrosolja, liknande neutral smak."
+ },
+ "sub_000703": {
+  "note": "Smör är den närmaste fettmotsvarigheten till detta 80-procentiga margarin"
+ },
+ "sub_000704": {
+  "note": "Avrunnen majs på burk ersätter tillagad färsk majs i de flesta recept"
+ },
+ "sub_000705": {
+  "note": "Smörbönor (gula) ersätter gröna bönor i samma mängd, mildare smak"
+ },
+ "sub_000706": {
+  "note": "Utbytbara; grön paprika är bittrare och mindre söt än röd"
+ },
+ "sub_000707": {
+  "note": "Butternutpumpa kan ersätta acornpumpa i puré, något sötare smak"
+ },
+ "sub_000708": {
+  "note": "Vanlig ersättning för Hubbardpumpa, liknande konsistens och smak."
+ },
+ "sub_000709": {
+  "note": "Ersätt med vanligt vitt ris och öka koktiden (15–20 min i stället för 5 min)."
+ },
+ "sub_000710": {
+  "note": "Ersätt med vanligt kokt vitt ris, med längre koktid."
+ },
+ "sub_000711": {
+  "note": "Great Northern-bönor ersätter vita bönor (navy) i soppor och cassoulet"
+ },
+ "sub_000712": {
+  "note": "Röda bönor ersätter pintobönor i chili och burritos."
+ },
+ "sub_000713": {
+  "note": "Pintobönor ersätter svarta bönor i de flesta mexikanska rätter."
+ },
+ "sub_000714": {
+  "note": "Använd naturell majsmjöl och tillsätt 1,5 tsk bakpulver och 1/4 tsk salt per kopp."
+ },
+ "sub_000715": {
+  "note": "Använd naturell gul majsmjöl och tillsätt 1,5 tsk bakpulver och 1/4 tsk salt per kopp."
+ },
+ "sub_000716": {
+  "note": "Ersätt med vanlig kokt skinka i samma mängd."
+ },
+ "sub_000717": {
+  "note": "Skivad kokt skinka ersätter kanadensisk bacon i de flesta recept (smörgåsar, garneringar)"
+ },
+ "sub_000718": {
+  "note": "Vaktel är ett vanligt substitut för detta lilla fjädervilt, liknande tillagning"
+ },
+ "sub_000719": {
+  "note": "Vit fisk med fast kött, Atlanttorsk är en bra ersättning."
+ },
+ "sub_000720": {
+  "note": "Olika sorters stillahavslax är utbytbara, liknande konsistens och smak."
+ },
+ "sub_000721": {
+  "note": "Sötvattensfisk med vitt kött, gös (walleye) är en bra ersättning."
+ },
+ "sub_000722": {
+  "note": "Sötvattensfisk med fast kött, vanlig ersättning är gös (walleye)."
+ },
+ "sub_000723": {
+  "note": "Mild vit fisk, ersätts i samma mängd (torsk)."
+ },
+ "sub_000724": {
+  "note": "En annan laxsort (rödlax/sockeyelax), använd i samma mängd."
+ },
+ "sub_000725": {
+  "note": "Vit fisk med fast kött, bra ersättning för torsk i samma mängd."
+ },
+ "sub_000726": {
+  "note": "Stillahavstorsk och torsk (Atlanttorsk) är utbytbara."
+ },
+ "sub_000727": {
+  "note": "Stillahavssill och Atlantsill är utbytbara i samma mängd."
+ },
+ "sub_000728": {
+  "note": "Plattfisk med delikat kött, sjötunga kan ersätta piggvar i samma mängd."
+ },
+ "sub_000729": {
+  "note": "Mild vit fisk, ersätter lubb i samma mängd."
+ },
+ "sub_000730": {
+  "note": "Spansk makrill och Atlantmakrill är utbytbara."
+ },
+ "sub_000731": {
+  "note": "Liten fet fisk, sardin kan ersätta ansjovis med en något mildare smak."
+ },
+ "sub_000732": {
+  "note": "Drottningkrabba kan ersätta blå krabba, något finare kött."
+ },
+ "sub_000733": {
+  "note": "Fast vit fisk, torsk ersätter långa i samma mängd."
+ },
+ "sub_000734": {
+  "note": "Lyrtorsk och torsk är utbytbara i de flesta recept."
+ },
+ "sub_000735": {
+  "note": "Lätt naturell kefir kan ersättas med lätt naturell grekisk yoghurt (tjockare konsistens, späd lite om det behövs)."
+ },
+ "sub_000736": {
+  "note": "Grönlandshälleflundra och vanlig hälleflundra är utbytbara i samma mängd."
+ },
+ "sub_000737": {
+  "note": "Fet fisk med fylligt kött, lax kan ersätta ål i många rätter."
+ },
+ "sub_000738": {
+  "note": "1 kopp mjölk + 1 msk citronsaft eller vinäger, låt stå i 5 min för att ersätta kärnmjölk.",
+  "name": "Mjölk + citronsaft eller vinäger (hemgjort)"
+ },
+ "sub_000739": {
+  "note": "Bläckfisk (calamari) kan ersätta octopus, snabbare tillagning."
+ },
+ "sub_000740": {
+  "note": "Olika ostronsorter är utbytbara i samma mängd."
+ },
+ "sub_000741": {
+  "note": "Sötvattensfisk med mild smak, tilapia är en bra ersättning för abborre."
+ },
+ "sub_000742": {
+  "note": "Liknande fast kött, svärdfisk kan ersätta hajsteak."
+ },
+ "sub_000743": {
+  "note": "Kolja och torsk är klassiskt utbytbara."
+ },
+ "sub_000744": {
+  "note": "Mild vit fisk, torsk är en bra ersättning för tilapia."
+ },
+ "sub_000745": {
+  "note": "Fast och tätt kött, svärdfisk kan ersätta mahi-mahi."
+ },
+ "sub_000746": {
+  "note": "Tilapia är ett bra substitut för milkfish, liknande mild smak."
+ },
+ "sub_000747": {
+  "note": "Snapper kan ersätta havsabborre (mérou), liknande fast vitt kött."
+ },
+ "sub_000748": {
+  "note": "Andra krabbor (krabba i allmänhet), utbytbara i samma mängd."
+ },
+ "sub_000749": {
+  "note": "Fast fisk tillagad som en biff, tonfisk kan ersätta svärdfisk."
+ },
+ "sub_000750": {
+  "note": "Mild vit fisk, torsk ersätter vitling i samma mängd."
+ },
+ "sub_000751": {
+  "note": "Fyllig och fet fisk, lax kan ersätta smörfisk (sablefish)."
+ },
+ "sub_000752": {
+  "note": "Neutral olja med liknande rykpunkt, ersätter i samma mängd."
+ },
+ "sub_000753": {
+  "note": "Lätt naturell grekisk yoghurt ersätter lätt gräddfil i samma mängd."
+ },
+ "sub_000754": {
+  "note": "Mussla kan ersätta hjärtmussla i de flesta skaldjursrecept."
+ },
+ "sub_000755": {
+  "note": "Ricotta kan ersätta mager keso i salta eller söta rätter."
+ },
+ "sub_000756": {
+  "note": "Languster kan ersätta hummer, liknande konsistens och smak."
+ },
+ "sub_000757": {
+  "note": "Blå krabba kan ersätta Alaska kungskrabba i samma mängd."
+ },
+ "sub_000758": {
+  "note": "Vilken neutral vegetabilisk olja som helst kan ersätta sojaolja för lätt fritering."
+ },
+ "sub_000759": {
+  "note": "Tonfisk kan ersätta yellowtail (sériola), liknande feta fiskar."
+ },
+ "sub_000760": {
+  "note": "Mycket billigare alternativ till kaviar, saltigare smak och lite fastare konsistens.",
+  "name": "Stenbitsrom (lumpfiskkaviar)"
+ },
+ "sub_000761": {
+  "note": "Färsk torsk (kräver avsaltning och återfuktning om man utgår från torkad saltad torsk)."
+ },
+ "sub_000762": {
+  "note": "Räkor kan ersätta pilgrimsmusslor i många skaldjursrätter."
+ },
+ "sub_000763": {
+  "note": "Rökt lax kan ersätta rökt stör, lättare att få tag på."
+ },
+ "sub_000764": {
+  "note": "Standardmjölk kan ersätta getmjölk, mer neutral smak."
+ },
+ "sub_000765": {
+  "note": "Bläckfisk (calamari) kan ersätta sepia, liknande konsistens och smak."
+ },
+ "sub_000766": {
+  "note": "Smör kan ersätta margarin i samma mängd (rikare smak, något annorlunda konsistens i bakning)."
+ },
+ "sub_000767": {
+  "note": "Hemgjord vinägrett (olja + vinäger) kan ersätta köpt fransk salladsdressing."
+ },
+ "sub_000768": {
+  "note": "Vanlig majonnäs kan ersätta lätt majonnäs (justera fettmängden efter receptet)."
+ },
+ "sub_000769": {
+  "note": "Hummer kan ersätta languster, liknande konsistens och smak."
+ },
+ "sub_000770": {
+  "note": "Sjötunga kan ersätta skrubbskädda (plattfisk) i samma mängd."
+ },
+ "sub_000771": {
+  "note": "Gula smörbönor (wax beans) kan ersättas med gröna bönor, samma mängdförhållande."
+ },
+ "sub_000772": {
+  "note": "Grön paprika kan ersätta röd paprika (grönare och lite bittrare smak, samma mängd)."
+ },
+ "sub_000773": {
+  "note": "Röda bönor (kidney) kan ersätta pintobönor i chili och grytor."
+ },
+ "sub_000774": {
+  "note": "Gul sockermajs kan ersätta vit sockermajs i samma mängd (något sötare smak)."
+ },
+ "sub_000775": {
+  "note": "Edamame kan ersätta omogna limabönor, liknande konsistens."
+ },
+ "sub_000776": {
+  "note": "Kan ersätta limabönor i samma mängd i grytor, mildare smak och liknande konsistens."
+ },
+ "sub_000777": {
+  "note": "Ögonbönor kan ersättas med röda bönor eller kikärtor, förhållande 1:1, i sallader och grytor.",
+  "name": "Röda bönor på burk"
+ },
+ "sub_000778": {
+  "note": "Emufärs är mycket mager; ersätt med nötfärs i samma mängd, minska tillagningstiden något för att undvika att det torkar ut"
+ },
+ "sub_000779": {
+  "note": "Struts (mycket magert rött kött) kan ersätta nötkött i samma mängd, kort tillagning för att undvika att det blir segt"
+ },
+ "sub_000780": {
+  "note": "Ersätter kalvfärs i samma mängd, något kraftigare smak."
+ },
+ "sub_000781": {
+  "note": "Kalkonfärs och kycklingfärs är utbytbara i samma mängd i de flesta recept"
+ },
+ "sub_000782": {
+  "note": "Kycklingfärs och kalkonfärs är utbytbara i samma mängd."
+ },
+ "sub_000783": {
+  "note": "Wapiti (vilt) kan ersättas med nötkött i samma mängd, magrare kött så kortare tillagning"
+ },
+ "sub_000784": {
+  "note": "Hjort (vilt) kan ersätta nötkött i samma mängd, kraftigare och mer vilt smak"
+ },
+ "sub_000785": {
+  "note": "Get (vilt) kan ersätta lamm i samma mängd i grytor och curry"
+ },
+ "sub_000786": {
+  "note": "Älg (vilt) kan ersätta nötkött i samma mängd"
+ },
+ "sub_000787": {
+  "note": "Hästkött kan ersätta nötkött i samma mängd i de flesta tillagningar"
+ },
+ "sub_000788": {
+  "note": "Karibu (vilt) kan ersätta nötkött i samma mängd"
+ },
+ "sub_000789": {
+  "note": "Antilop (vilt) kan ersätta nötkött eller lamm i samma mängd"
+ },
+ "sub_000790": {
+  "note": "Rå gåslever kan ersättas med rå anklever (foie gras) i samma mängd, mycket lik smak och konsistens",
+  "name": "Foie gras av anka, rå"
+ },
+ "sub_000791": {
+  "note": "Vaktel kan ersättas med kyckling (kött och skinn) i samma mängd, justera tillagningstiden (vaktel är mindre och tillagas snabbare)"
+ },
+ "sub_000792": {
+  "note": "Fasan kan ersättas med kyckling i samma mängd, finare smak men liknande konsistens"
+ },
+ "sub_000793": {
+  "note": "Pärlhöna kan ersättas med kyckling i samma mängd"
+ },
+ "sub_000794": {
+  "note": "1 ankägg ≈ 1,5 hönsägg; justera vätskemängden i bakverk",
+  "name": "Hönsägg"
+ },
+ "sub_000795": {
+  "note": "1 gåsägg ≈ 2 hönsägg; rikare konsistens",
+  "name": "Hönsägg"
+ },
+ "sub_000796": {
+  "note": "4–5 vaktelägg ≈ 1 hönsägg",
+  "name": "Hönsägg"
+ },
+ "sub_000797": {
+  "note": "1 kalkonägg ≈ 1,5 hönsägg",
+  "name": "Hönsägg"
+ },
+ "sub_000798": {
+  "note": "Nära ersättning i smak och konsistens, i samma mängd.",
+  "name": "Foie gras av anka, rökt"
+ },
+ "sub_000799": {
+  "note": "1 kopp mjölk + 1 msk vinäger/citron (låt stå 5–10 min) ersätter kärnmjölk i samma mängd",
+  "name": "Mjölk + citronsaft eller vinäger"
+ },
+ "sub_000800": {
+  "note": "Klassisk ersättning för kärnmjölk, i samma mängd.",
+  "name": "Mjölk + citronsaft eller vinäger"
+ },
+ "sub_000801": {
+  "note": "Margarin kan ersättas med saltat smör i samma mängd, rikare smak"
+ },
+ "sub_000802": {
+  "note": "Osaltat margarin kan ersättas med osaltat smör i samma mängd"
+ },
+ "sub_000803": {
+  "note": "Specialiserad vegetabilisk olja/rapsolja kan ersättas med vanlig rapsolja i samma mängd för vardaglig tillagning"
+ },
+ "sub_000804": {
+  "note": "Coholax kan ersätta atlantlax i samma mängd, något magrare kött"
+ },
+ "sub_000805": {
+  "note": "Regnbågslax kan ersätta lax i samma mängd, mildare smak"
+ },
+ "sub_000806": {
+  "note": "Albacoretonfisk och bonit (streaked tonfisk) är utbytbara i samma mängd, särskilt för konserver."
+ },
+ "sub_000807": {
+  "note": "Atlanttorsk kan ersättas med rå kolja i samma mängd, liknande vitt kött"
+ },
+ "sub_000808": {
+  "note": "Orange roughy kan ersättas med torsk eller kolja i samma mängd, liknande mild vit fisk"
+ },
+ "sub_000809": {
+  "note": "Kungsmakrill kan ersättas med atlantmakrill i samma mängd"
+ },
+ "sub_000810": {
+  "note": "Grönlandshälleflundra kan ersättas med Atlant-/Stillahavshälleflundra i samma mängd"
+ },
+ "sub_000811": {
+  "note": "Hummer kan ersättas med languster i samma mängd i grytor eller bisque"
+ },
+ "sub_000812": {
+  "note": "Ansjovis kan ersättas med sardiner på burk i olja i samma mängd, mindre salt smak"
+ },
+ "sub_000813": {
+  "note": "Snökrabba kan ersättas med blå krabba i samma mängd"
+ },
+ "sub_000814": {
+  "note": "Stillahavskrabba kan ersättas med blå krabba i samma mängd"
+ },
+ "sub_000815": {
+  "note": "Alaska kungskrabba kan ersättas med blå krabba i samma mängd (något mindre fast konsistens)"
+ },
+ "sub_000816": {
+  "note": "Ersätt med riktiga tillagade räkor: kraftigare smak, samma mängdförhållande."
+ },
+ "sub_000817": {
+  "note": "Tonfisk på burk i stället för lax på burk, i sallader och smörgåsar."
+ },
+ "sub_000818": {
+  "note": "Tonfisk på burk i stället för sardiner, mildare smak."
+ },
+ "sub_000819": {
+  "note": "Osötad kondenserad mjölk av standardmjölk, något rikare fetthalt"
+ },
+ "sub_000820": {
+  "note": "Kolja/kummel, liknande vit fisk, samma tillagning"
+ },
+ "sub_000821": {
+  "note": "Torsk, liknande vit fisk, samma tillagning"
+ },
+ "sub_000822": {
+  "note": "Vanlig cheddar om lätt smältost saknas, smälter inte lika lätt"
+ },
+ "sub_000823": {
+  "note": "Färsk finskuren grön paprika i stället för fryst, minska koktiden i vatten."
+ },
+ "sub_000824": {
+  "note": "Färska majskorn i stället för frysta, något kortare tillagningstid."
+ },
+ "sub_000825": {
+  "note": "Smör (eller margarin) om industriellt bakfett saknas till smördeg"
+ },
+ "sub_000826": {
+  "note": "Färsk zucchini om fryst saknas, något kortare tillagningstid"
+ },
+ "sub_000827": {
+  "note": "Röda bönor om svartögonbönor saknas, liknande konsistens"
+ },
+ "sub_000828": {
+  "note": "Vanligt fläskkött i stället för vildsvin, mildare smak."
+ },
+ "sub_000829": {
+  "note": "Nötfärs om wapitifärs saknas, fetare kött"
+ },
+ "sub_000830": {
+  "note": "Nötfärs om hjortfärs saknas, fetare kött"
+ },
+ "sub_000831": {
+  "note": "Tamkanin om vildkanin saknas, mörare kött"
+ },
+ "sub_000832": {
+  "note": "Kyckling (lår) i stället för fasan, mildare smak."
+ },
+ "sub_000833": {
+  "note": "Kyckling (bröst) i stället för vaktel, anpassa tillagningstiden (större bit)."
+ },
+ "sub_000834": {
+  "note": "Vanlig nötfärs om bisonfärs saknas, fetare kött"
+ },
+ "sub_000835": {
+  "note": "Tam anka om vildanka saknas, mindre fast kött"
+ },
+ "sub_000836": {
+  "note": "Magert nötkött om emufärs saknas, ovanligt exotiskt kött"
+ },
+ "sub_000837": {
+  "note": "Nötkött om vattenbuffel saknas, ovanligt exotiskt kött"
+ },
+ "sub_000838": {
+  "note": "Kyckling i stället för duvunge, anpassa tillagningstiden (större bit)."
+ },
+ "sub_000839": {
+  "note": "Lamm om killingkött saknas, liknande smak"
+ },
+ "sub_000840": {
+  "note": "Smör om smält baconfett saknas till tillagning"
+ },
+ "sub_000841": {
+  "note": "Nötkött om älg saknas, ovanligt exotiskt kött"
+ },
+ "sub_000842": {
+  "note": "Nötkött om hästkött saknas, mildare smak"
+ },
+ "sub_000843": {
+  "note": "Mager nötfärs om struttsfärs saknas"
+ },
+ "sub_000844": {
+  "note": "Klassisk fläskbacon om nötköttsbacon saknas"
+ },
+ "sub_000845": {
+  "note": "Kyckling på burk i stället för kalkon på burk."
+ },
+ "sub_000846": {
+  "note": "Panerade kycklingfiléremsor om panerade kalkonstavar saknas"
+ },
+ "sub_000847": {
+  "note": "Kyckling i stället för järpe, ovanligt fjädervilt."
+ },
+ "sub_000848": {
+  "note": "Nötfärs om beefalo (korsning bison-nöt) saknas"
+ },
+ "sub_000849": {
+  "note": "Tamgås i stället för kanadagås."
+ },
+ "sub_000850": {
+  "note": "Ister (eller smör) i stället för njurtalg av nötkött (talg)."
+ },
+ "sub_000851": {
+  "note": "Kalvlever om oxlever saknas, mildare smak"
+ },
+ "sub_000852": {
+  "note": "Vild malfisk: ersätt med tillagad tilapia, liknande mild smak."
+ },
+ "sub_000853": {
+  "note": "Odlad malfisk: ersätt med tillagad tilapia."
+ },
+ "sub_000854": {
+  "note": "Sötvattensabborre: ersätt med havsabborre eller liknande vit fisk"
+ },
+ "sub_000855": {
+  "note": "Stillahavskungsfisk: ersätt med atlantisk kungsfisk (uer) eller en fast vit fisk."
+ },
+ "sub_000856": {
+  "note": "Stillahavsmakrill/taggmakrill: ersätt med Atlantmakrill."
+ },
+ "sub_000857": {
+  "note": "Färsk tillagad blåfenad tonfisk: annars, använd avrunnen ljus tonfisk på burk."
+ },
+ "sub_000858": {
+  "note": "Färsk tillagad bonit: annars, använd avrunnen ljus tonfisk på burk."
+ },
+ "sub_000859": {
+  "note": "Färsk tillagad albacoretonfisk: annars, använd avrunnen ljus tonfisk på burk."
+ },
+ "sub_000860": {
+  "note": "Vild tillagad kräfta: ersätt med tillagad räka, liknande konsistens och användning."
+ },
+ "sub_000861": {
+  "note": "Odlad tillagad kräfta: ersätt med tillagad räka."
+ },
+ "sub_000862": {
+  "note": "Fryst saltad/pastöriserad äggula: ersätt med färsk äggula (uteslut tillsatt salt)",
+  "name": "Ägg, gula, rått, färskt"
+ },
+ "sub_000863": {
+  "note": "Fryst saltat/pastöriserat helägg: ersätt med färska hela ägg."
+ },
+ "sub_000864": {
+  "note": "Fryst sockrad/pastöriserad äggula: ersätt med färsk äggula (utan tillsatt socker)",
+  "name": "Ägg, gula, rått, färskt"
+ },
+ "sub_000865": {
+  "note": "Äggvita i torkade flingor: ersätt med färsk äggvita (justera mängden, torkad produkt)",
+  "name": "Ägg, vita, rått, färskt"
+ },
+ "sub_000866": {
+  "note": "Äggvitepulver: ersätt med färsk äggvita",
+  "name": "Ägg, vita, rått, färskt"
+ },
+ "sub_000867": {
+  "note": "Saltat margarin på burk: ersätt med saltat smör, rikare smak."
+ },
+ "sub_000868": {
+  "note": "Saltat margarin i stång: ersätt med saltat smör."
+ },
+ "sub_000869": {
+  "note": "Osaltat margarin i stång: ersätt med osaltat smör."
+ },
+ "sub_000870": {
+  "note": "Torr fettfri keso: ersätt med vanlig keso (krämigare konsistens)"
+ },
+ "sub_000871": {
+  "note": "Lätt chokladmjölk: ersätt med köpt fettsnål chokladmjölk, eller mjölk + kakaopulver"
+ },
+ "sub_000872": {
+  "note": "Chokladmjölk av standardmjölk: i annat fall fettsnål chokladmjölk eller mjölk + kakao och socker"
+ },
+ "sub_000873": {
+  "note": "Lätt vitaminberikad chokladmjölk: ersätt med vanlig fettsnål chokladmjölk"
+ },
+ "sub_000874": {
+  "note": "Rått kalkonbröst: ersätt med rått kycklingbröst, liknande tillagning men något snabbare."
+ },
+ "sub_000875": {
+  "note": "Rå kalkonfärs 85/15: ersätt med nötfärs 85/15, eller kycklingfärs för att hålla sig till fjäderfä"
+ },
+ "sub_000876": {
+  "note": "Rått mörkt kalkonkött: ersätt med rått kycklinglår.",
+  "name": "Kyckling, lår"
+ },
+ "sub_000877": {
+  "note": "Stekt vildsvin: ersätt med fläsk (bog eller stek), mildare smak.",
+  "name": "Fläsk, bog, stekt"
+ },
+ "sub_000878": {
+  "note": "Rå lammlever: ersätt med rå kycklinglever, mildare smak"
+ },
+ "sub_000879": {
+  "note": "Sjuden kanin: ersätt med sjuden kyckling, liknande konsistens och tillagning"
+ },
+ "sub_000880": {
+  "note": "Rostad vattenbuffel: ersätt med rostat nötkött, liknande magert kött",
+  "name": "Nötstek"
+ },
+ "sub_000881": {
+  "note": "Stekt wapitifärs: ersätt med stekt nötfärs 85/15."
+ },
+ "sub_000882": {
+  "note": "Stekt hjortfärs (vilt): ersätt med stekt nötfärs 85/15"
+ },
+ "sub_000883": {
+  "note": "Stekt bisonfärs: ersätt med stekt nötfärs 85/15, något fetare"
+ },
+ "sub_000884": {
+  "note": "Sjuden kalkonlever: ersätt med sjuden kycklinglever, vanligare",
+  "name": "Kyckling, lever, tillagad, småkokt"
+ },
+ "sub_000885": {
+  "note": "Rå lammfärs: ersätt med nötfärs för en mildare smak"
+ },
+ "sub_000886": {
+  "note": "Tillagad och smulad kycklingfärs: ersätt med tillagad kalkonfärs.",
+  "name": "Tillagad kalkonfärs"
+ },
+ "sub_000887": {
+  "note": "Hel rostad anka (endast kött): ersätt med rostad kyckling, mindre fett och lättare att få tag på"
+ },
+ "sub_000888": {
+  "note": "Rå vildandsbröst: ersätt med tamand (enbart köttet), lättare att hitta."
+ },
+ "sub_000889": {
+  "note": "Stekt gås (enbart köttet): ersätt med stekt anka, liknande smak och konsistens."
+ },
+ "sub_000890": {
+  "note": "Stekt gås med skinn: ersätt med stekt anka med skinn."
+ },
+ "sub_000891": {
+  "note": "Kalv (blandning av magra bitar, rå): ersätt annars med kyckling- eller kalkonschnitzel.",
+  "name": "Kalkon- eller kycklingschnitzel"
+ },
+ "sub_000892": {
+  "note": "Ersätt med en mager nötstek (t.ex. bladbog); bison är magrare, håll koll på tillagningen så att den inte torkar ut."
+ },
+ "sub_000893": {
+  "note": "Kyckling är det klassiska substitutet för kanin i grytor och wokrätter."
+ },
+ "sub_000894": {
+  "note": "Oxtunga: liknande konsistens, liknande tillagningstid."
+ },
+ "sub_000895": {
+  "note": "Kalvnjurar: mildare smak än fläsknjurar, samma användning."
+ },
+ "sub_000896": {
+  "note": "Nötfärs ersätter kalkonfärs i de flesta recept, med en rikare smak."
+ },
+ "sub_000897": {
+  "note": "Kalvlever är mörare och har en mildare smak än oxlever."
+ },
+ "sub_000898": {
+  "note": "Kalvlever kan ersätta lammlever, mildare smak."
+ },
+ "sub_000899": {
+  "note": "Kalvbräss är den klassiska och finare versionen; vanligt substitut för oxbräss."
+ },
+ "sub_000900": {
+  "note": "Kalvnjurar: liknande konsistens och användning, mildare smak än lamm."
+ },
+ "sub_000901": {
+  "note": "Bacon från butik: liknande smak och konsistens som förskivad saltad bacon."
+ },
+ "sub_000902": {
+  "note": "Rått skinka (typ Parma/Serrano) för en salt-rökig smak som liknar fet saltad skinka."
+ },
+ "sub_000903": {
+  "note": "En hel gårdskyckling ersätter kapun, minska tillagningstiden något (mindre bit)."
+ },
+ "sub_000904": {
+  "note": "Hel kyckling till buljonger och grytor; köttet blir något mindre fast än på en gammal höna."
+ },
+ "sub_000905": {
+  "note": "En liten hel gårdskyckling ersätter Cornwallhöna; justera portion och tillagningstid."
+ },
+ "sub_000906": {
+  "note": "Fläskläggen är ett billigare alternativ till kalvlägg (osso buco)."
+ },
+ "sub_000907": {
+  "note": "Ersätt med en mager nötbiff (filé eller entrecôte) i stället för vilt."
+ },
+ "sub_000908": {
+  "note": "Fläskkotlett är ett vanligt och billigt substitut för grillad kalvkotlett.",
+  "name": "Fläskkotlett"
+ },
+ "sub_000909": {
+  "note": "Kalv är ofta svårt att hitta: ersätt med bladbog av nötkött (grytstekt/småkokt), samma konsistens efter lång tillagning."
+ },
+ "sub_000910": {
+  "note": "Ersättning: bladbog av nötkött, liknande tillagning (stek/gryta)."
+ },
+ "sub_000911": {
+  "note": "Grytstekt kalvbog: ersätt med grytstekt bog av nötkött."
+ },
+ "sub_000912": {
+  "note": "Stekt kalvbog: ersätt med bog av nötkött eller fläskbog."
+ },
+ "sub_000913": {
+  "note": "Ossobuco av kalv: ersätt med grytstekt oxlägg, liknande tillagningstid.",
+  "name": "Nötkött, lägg (oxlägg), tillagad, grytstekt"
+ },
+ "sub_000914": {
+  "note": "Grillad kalvkotlett: kycklingbröst är ett vanligt och billigt substitut",
+  "name": "Kyckling, schnitzel, tillagad"
+ },
+ "sub_000915": {
+  "note": "Ossobuco av kalv (magert och fett): ersätt med grytstekt oxlägg.",
+  "name": "Nötkött, lägg (oxlägg), tillagad, grytstekt"
+ },
+ "sub_000916": {
+  "note": "Grillad kalvkotlett: vanligt substitut med kycklingbröst",
+  "name": "Kyckling, schnitzel, tillagad"
+ },
+ "sub_000917": {
+  "note": "Panerad kalvschnitzel: klassiskt substitut, panerad kycklingschnitzel (milanese)",
+  "name": "Kyckling, panerad schnitzel, tillagad"
+ },
+ "sub_000918": {
+  "note": "Panerad kalvschnitzel: substitut med panerad kycklingschnitzel",
+  "name": "Kyckling, panerad schnitzel, tillagad"
+ },
+ "sub_000919": {
+  "note": "Stekt kalvschnitzel: substitut med kycklingschnitzel",
+  "name": "Kyckling, schnitzel, tillagad"
+ },
+ "sub_000920": {
+  "note": "Hel grytstekt kalvbog: ersätt med grytstekt bog av nötkött."
+ },
+ "sub_000921": {
+  "note": "Bison (innanlår), ovanligt: ersätt med nötkötts innanlår"
+ },
+ "sub_000922": {
+  "note": "Bison (bogstek): ersätt med nötkötts bogstek till gryta"
+ },
+ "sub_000923": {
+  "note": "Wapitifilé (vilt), sällsynt: ersätt med oxfilé, mildare smak"
+ },
+ "sub_000924": {
+  "note": "Hjortfilé (vilt), sällsynt: ersätt med oxfilé"
+ },
+ "sub_000925": {
+  "note": "Grytstekt hjortbog: ersätt med grytstekt bog av nötkött."
+ },
+ "sub_000926": {
+  "note": "Bisonentrecôte, sällsynt: ersätt med nötkötts entrecôte"
+ },
+ "sub_000927": {
+  "note": "Bisonentrecôte, sällsynt: ersätt med entrecôte av nötkött"
+ },
+ "sub_000928": {
+  "note": "Sjuden kanin, sällsynt/dyrt: ersätt med kyckling (lår/blandning), liknande tillagningstid"
+ },
+ "sub_000929": {
+  "note": "Rostad kanin, sällsynt/dyrt: ersätt med rostad kyckling"
+ },
+ "sub_000930": {
+  "note": "Draget nötkött till smörgås (typ cheesesteak): ersätt med tunt skivad entrecôte eller ryggbiff",
+  "name": "Nötkött, entrecôte, benfri, utvald kvalitet, rå"
+ },
+ "sub_000931": {
+  "note": "Fryst kryddad urbenad kalkonstek: ersätt med naturellt kalkonbröst om den inte finns.",
+  "name": "Kalkon, bröst, endast kött"
+ },
+ "sub_000932": {
+  "note": "Rökt skivad kalkon (chark): vanligt substitut, skivad kokt skinka",
+  "name": "Skinka, kokt, skivad"
+ },
+ "sub_000933": {
+  "note": "Ovanlig bison: ersätt med grytbit av nötkött (bog) till gryta, mildare och mindre vilt smak"
+ },
+ "sub_000934": {
+  "note": "Bisonbiff: ersätt med en nötbiff (entrecôte), samma tillagning på grillen."
+ },
+ "sub_000935": {
+  "note": "Bisonbiff (innanlår): ersätt med samma styckningsdel av nötkött, liknande tillagning."
+ },
+ "sub_000936": {
+  "note": "Bräserad bison, ovanligt: ersätt med bräserad bog av nötkött, samma konsistens och användning (gryta, dragen)"
+ },
+ "sub_000937": {
+  "note": "Hjortkött (vilt), svårt att hitta: ersätt med en nötköttsstek, liknande grilltillagning"
+ },
+ "sub_000938": {
+  "note": "Hjortkött (vilt), sällsynt: ersätt med samma styckdetalj av nötkött, grillat"
+ },
+ "sub_000939": {
+  "note": "Mycket marmorerat och dyrt wagyunötkött: ersätt med vanlig nötfärs 85/15 om det inte finns tillgängligt"
+ },
+ "sub_000940": {
+  "note": "Dyrt och sällsynt wagyunötkött: ersätt med vanlig nötfärs"
+ },
+ "sub_000941": {
+  "note": "Wagyunötkött (yttre fett), sällsynt: ersätt med vanligt nötkött"
+ },
+ "sub_000942": {
+  "note": "Dyrt wagyunötkött: ersätt med vanligt nötkött om det inte finns tillgängligt"
+ },
+ "sub_000943": {
+  "note": "Om kalkonpepperoni inte finns: ersätt med vanlig pepperoni av nöt/fläsk, samma användning i skivor."
+ },
+ "sub_000944": {
+  "note": "Ovanlig natriumreducerad bacon: ersätt med vanlig bacon (justera saltet i receptet)"
+ },
+ "sub_000945": {
+  "note": "Om kycklingpålägg saknas: ersätt med skink- eller kalkonröra, samma användning på smörgås.",
+  "name": "Skinkröra"
+ },
+ "sub_000946": {
+  "note": "Om fågelröra saknas: ersätt med en kyckling- eller kalkonröra, samma användning.",
+  "name": "Kycklingpålägg"
+ },
+ "sub_000947": {
+  "note": "Om skinkröra saknas: ersätt med en annan köttbaserad bredbar röra (kyckling, kalkon), samma användning på smörgås.",
+  "name": "Kycklingpålägg"
+ },
+ "sub_000948": {
+  "note": "Mer sällsynt bison: ersätt med en nötköttsstek (entrecôte) i samma mängd, liknande grilltillagning."
+ },
+ "sub_000949": {
+  "note": "Ersätt med tärnad eller hackad kokt skinka."
+ },
+ "sub_000950": {
+  "note": "Bologna-korv (amerikansk chark) liknar klassisk mortadella"
+ },
+ "sub_000951": {
+  "note": "Kalkonvariant, kan ersättas med vanlig mortadella (bologna av fläsk/nöt)."
+ },
+ "sub_000952": {
+  "note": "Kalkonvariant, kan ersättas med pastrami av nötkött."
+ },
+ "sub_000953": {
+  "note": "Kalkonvariant, kan ersättas med vanlig frankfurterkorv av fläsk."
+ },
+ "sub_000954": {
+  "note": "Kycklingvariant, kan ersättas med vanlig frankfurterkorv av fläsk."
+ },
+ "sub_000955": {
+  "note": "Natriumfattig variant, kan ersättas med vanlig frankfurterkorv."
+ },
+ "sub_000956": {
+  "note": "Kielbasa hittas inte: ersätt med en rökt korv i länk"
+ },
+ "sub_000957": {
+  "note": "Beerwurst är svårt att hitta: ersätt med en rökt korv av fläsk/nötkött"
+ },
+ "sub_000958": {
+  "note": "Ersätt med vanlig tillagad kornbeef."
+ },
+ "sub_000959": {
+  "note": "Amerikanskt märke: ersätt med vanlig skivad torkad salami."
+ },
+ "sub_000960": {
+  "note": "Amerikanskt märke: ersätt med mortadella (bologna) av nötkött."
+ },
+ "sub_000961": {
+  "note": "Amerikanskt märke: ersätt med en vanlig varmkorv av nötkött (hot dog)."
+ },
+ "sub_000962": {
+  "note": "Leverkorv (Braunschweiger) liknar bredbar leverpastej."
+ },
+ "sub_000963": {
+  "note": "Amerikanskt märke: ersätt med bredbar leverpastej."
+ },
+ "sub_000964": {
+  "note": "Amerikanskt märke: ersätt med skivat naturell kycklingbröst (utan honungsglasyr)."
+ },
+ "sub_000965": {
+  "note": "Amerikanskt märke: ersätt med hackad kokt skinka."
+ },
+ "sub_000966": {
+  "note": "Tryffelsmaksatt pastej: kan ersättas med naturell leverpastej."
+ },
+ "sub_000967": {
+  "note": "Om fiskbuljong saknas, använd grönsaksbuljong (mindre havssmak)."
+ },
+ "sub_000968": {
+  "note": "Kalvschnitzel kan ersättas med kyckling- eller kalkonschnitzel",
+  "name": "Kycklingschnitzel"
+ },
+ "sub_000969": {
+  "note": "Frysta potatisklyftor kan ersättas med frysta pommes frites."
+ },
+ "sub_000970": {
+  "note": "Två snarlika bogbitar av nötkött för grytor, utbytbara (bourguignon, pot-au-feu)."
+ },
+ "sub_000971": {
+  "note": "Motsvarande styckdetalj till bogbit för bräsering/gryta"
+ },
+ "sub_000972": {
+  "note": "Om filé saknas, entrecôte (billigare, något mindre mör, håll koll på tillagningen)."
+ },
+ "sub_000973": {
+  "note": "Alternativ till filé för en stek, billigare men mindre mört"
+ },
+ "sub_000974": {
+  "note": "Flankstek och njurtapp kan bytas ut mot varandra för snabb stekning i panna"
+ },
+ "sub_000975": {
+  "note": "Flankstek kan ersättas med njurtapp för snabb grillning"
+ },
+ "sub_000976": {
+  "note": "Surlonge motsvarar rumpstek, utbytbara styckdetaljer för grillning"
+ },
+ "sub_000977": {
+  "note": "Kan ersättas med rumpstek, motsvarande styckningsdel."
+ },
+ "sub_000978": {
+  "note": "Om kotlettrad saknas, fläskkarré (fetare, räkna med lite längre tillagning)."
+ },
+ "sub_000979": {
+  "note": "Fläskkarré i stället, fetare och mörare konsistens."
+ },
+ "sub_000980": {
+  "note": "Motsvarar naturell fläskfilé (utan tillsatt lag)."
+ },
+ "sub_000981": {
+  "note": "Kan ersättas med naturellt kycklingbröst; minska tillsatt salt i receptet."
+ },
+ "sub_000982": {
+  "note": "Om bringa saknas kan bog grytstekas på liknande sätt till pot-au-feu eller gryta.",
+  "name": "Bog av nötkött (till gryta)"
+ },
+ "sub_000983": {
+  "note": "Vanlig fläskbacon kan ersätta kalkonbacon (kraftigare smak, mer fett)"
+ },
+ "sub_000984": {
+  "note": "Vanlig fläskbacon kan ersätta kalkonbacon (kraftigare smak, mer fett)"
+ },
+ "sub_000985": {
+  "note": "Vanlig fläskbacon kan ersätta kalkonbacon (kraftigare smak, mer fett)"
+ },
+ "sub_000986": {
+  "note": "Mandelsmör ersätter jordnötssmör för en mildare smak (jordnötsallergi); observera att det innehåller nötter."
+ },
+ "sub_000987": {
+  "note": "Färsk skivad skinka i stället för hackad skinka på burk för liknande användning i smörgås"
+ },
+ "sub_000988": {
+  "note": "Vanlig blandning för att ersätta Worcestershiresås i marinader och såser.",
+  "name": "Sojasås + en skvätt balsamvinäger"
+ },
+ "sub_000989": {
+  "note": "Vanlig mortadella (bologna) är den direkta motsvarigheten i skivad chark."
+ },
+ "sub_000990": {
+  "note": "Vanlig mortadella (bologna) är den direkta motsvarigheten i skivad chark."
+ },
+ "sub_000991": {
+  "note": "Corned beef på burk kan ersättas med hemlagad saltad och tillagad nötbringa."
+ },
+ "sub_000992": {
+  "note": "Smörgåskött i gelé kan ersättas med tillagad kornbeef, liknande användning som pålägg."
+ },
+ "sub_000993": {
+  "note": "Kokt skinka är ett vanligt substitut för skivad kalkon till smörgåsar."
+ },
+ "sub_000994": {
+  "note": "Ospecificerad leverpastej som ett billigare alternativ till rökt gåsleverpastej."
+ },
+ "sub_000995": {
+  "note": "Vid jordnötsallergi, ersätt med solrosfrösmör i samma mängd."
+ },
+ "sub_000996": {
+  "note": "Kan ersättas med jordnötssmör i samma mängd (om ingen allergi finns)."
+ },
+ "sub_000997": {
+  "note": "För en laktosfri/vegansk version, ersätt vassleprotein med sojaproteinisolat."
+ },
+ "sub_000998": {
+  "note": "För en laktosfri/vegansk version, ersätt vassleproteinisolat med sojaproteinisolat."
+ },
+ "sub_000999": {
+  "note": "Kan ersättas med vassleproteinpulver om sojaintolerans inte är ett problem."
+ },
+ "sub_001000": {
+  "note": "För en vegetarisk version, ersätt fisksås (nuoc-mâm) med sojasås."
+ },
+ "sub_001001": {
+  "note": "Tomatbaserad stekssås kan ersättas med Worcestershiresås utspädd med lite ketchup."
+ },
+ "sub_001002": {
+  "note": "Srirachasås kan ersättas med tabascosås eller en annan het sås på flaska (justera mängden, starkare)."
+ },
+ "sub_001003": {
+  "note": "Färdig het sås kan ersättas med tabascosås."
+ },
+ "sub_001004": {
+  "note": "Brunt ris kan ersättas med långkornigt vitt ris (kortare tillagningstid)."
+ },
+ "sub_001005": {
+  "note": "Brunt ris kan ersättas med långkornigt vitt ris (kortare tillagningstid)."
+ },
+ "sub_001006": {
+  "note": "Kokt brunt ris kan ersättas med kokt långkornigt vitt ris."
+ },
+ "sub_001007": {
+  "note": "Kokt brunt ris kan ersättas med kokt långkornigt vitt ris."
+ },
+ "sub_001008": {
+  "note": "Fullkornspasta kan ersättas med vanlig pasta (spaghetti) om den inte finns."
+ },
+ "sub_001009": {
+  "note": "Kokt fullkornspasta kan ersättas med kokt vanlig pasta."
+ },
+ "sub_001010": {
+  "note": "Pintobönor kan ersättas med röda bönor i de flesta recept (chili, grytor)."
+ },
+ "sub_001011": {
+  "note": "Great Northern-bönor kan ersättas med vita bönor (navy) eller cannellinibönor."
+ },
+ "sub_001012": {
+  "note": "Torkade syrliga körsbär kan ersättas med torkade tranbär i samma mängd."
+ },
+ "sub_001013": {
+  "note": "Frysta syrliga körsbär kan ersättas med frysta osötade tranbär.",
+  "name": "Tranbär, frysta, osötade"
+ },
+ "sub_001014": {
+  "note": "Bönröra kan ersättas med hummus till förrätt eller som bredbar röra."
+ },
+ "sub_001015": {
+  "note": "Köpt grönsaksbuljong kan ersättas med färdig kycklingbuljong om rätten inte behöver vara vegetarisk."
+ },
+ "sub_001016": {
+  "note": "Specifikt märke, ersätt med vanlig barbecuesås."
+ },
+ "sub_001017": {
+  "note": "Specifikt märke, ersätt med vanlig barbecuesås."
+ },
+ "sub_001018": {
+  "note": "Specifikt märke, ersätt med vanlig barbecuesås."
+ },
+ "sub_001019": {
+  "note": "Specifikt märke, ersätt med vanlig barbecuesås."
+ },
+ "sub_001020": {
+  "note": "Specifikt märke, ersätt med vanlig srirachasås."
+ },
+ "sub_001021": {
+  "note": "Specifikt märke, ersätt med vanlig srirachasås."
+ },
+ "sub_001022": {
+  "note": "Tabasco kan ersättas med vilken färdig het sås som helst."
+ },
+ "sub_001023": {
+  "note": "Ostsoppa på burk kan ersättas med en färdig ostsås."
+ },
+ "sub_001024": {
+  "note": "Ostsoppa på burk kan ersättas med en färdig ostsås."
+ },
+ "sub_001025": {
+  "note": "Kryddig ostdip kan ersättas med en naturell ostsås (justera styrkan)."
+ },
+ "sub_001026": {
+  "note": "Natriumfattig version, kan ersättas med vanlig teriyakisås."
+ },
+ "sub_001027": {
+  "note": "Märkes-sockerfri cola kan ersättas med en generisk light-cola"
+ },
+ "sub_001028": {
+  "note": "Märkesenergidryck kan ersättas med en generisk energidryck"
+ },
+ "sub_001029": {
+  "note": "Märkesenergidryck kan ersättas med en generisk energidryck"
+ },
+ "sub_001030": {
+  "note": "Märkesenergidryck kan ersättas med en generisk energidryck"
+ },
+ "sub_001031": {
+  "note": "Märkesenergidryck kan ersättas med en generisk energidryck"
+ },
+ "sub_001032": {
+  "note": "Märkesenergidryck kan ersättas med en generisk energidryck"
+ },
+ "sub_001033": {
+  "note": "Kycklingsoppa (kräm) på burk kan ersättas med hemlagad béchamel med kycklingbuljong tillsatt"
+ },
+ "sub_001034": {
+  "note": "Svampsoppa (kräm) på burk kan ersättas med hemlagad béchamel med svamp tillsatt"
+ },
+ "sub_001035": {
+  "note": "Sellerisoppa (kräm) på burk kan ersättas med hemlagad béchamel med selleri tillsatt"
+ },
+ "sub_001036": {
+  "note": "Potatissoppa (kräm) på burk kan ersättas med hemlagad béchamel"
+ },
+ "sub_001037": {
+  "note": "Räksoppa (kräm) på burk kan ersättas med hemlagad béchamel med räkfond tillsatt"
+ },
+ "sub_001038": {
+  "note": "Löksoppa (kräm) på burk kan ersättas med hemlagad béchamel med lök tillsatt"
+ },
+ "sub_001039": {
+  "note": "Sparrissoppa (kräm) på burk kan ersättas med hemlagad béchamel"
+ },
+ "sub_001040": {
+  "note": "Tomatbisque på burk kan ersättas med tomatsås mixad med grädde"
+ },
+ "sub_001041": {
+  "note": "Svampcremesoppa på burk, en vanlig ersättning när räkor inte finns i grytrecept."
+ },
+ "sub_001042": {
+  "note": "Kycklingcremesoppa, utbytbar mot svampcremesoppa i de flesta grytrecept."
+ },
+ "sub_001043": {
+  "note": "Koncentrerad tomatsoppa på burk ersätter en torkad blandning utblandad med vatten."
+ },
+ "sub_001044": {
+  "note": "Avrunnen majs på burk, vanlig ersättning för fryst majs."
+ },
+ "sub_001045": {
+  "note": "Fryst majs, vanlig ersättning för majs på burk."
+ },
+ "sub_001046": {
+  "note": "En annan jordnötssåsbas (kokosnöt) som kan användas i samma satayrecept"
+ },
+ "sub_001047": {
+  "note": "En annan jordnötssåsbas (jordnötssmör) som kan användas i samma satayrecept"
+ },
+ "sub_001048": {
+  "note": "Grön chilisås, ersättning för röd chilisås beroende på önskad färg/styrka."
+ },
+ "sub_001049": {
+  "note": "Röd chilisås, ersättning för grön chilisås beroende på önskad färg/styrka."
+ },
+ "sub_001050": {
+  "note": "Rökt kalkonkorv, fettsnål, ett lättare alternativ till vanlig rökt korv."
+ },
+ "sub_001051": {
+  "note": "Generisk lättöl som ersättning för märket Bud Light i recept"
+ },
+ "sub_001052": {
+  "note": "Generisk lättöl som ersättning för märket Budweiser Select i recept"
+ },
+ "sub_001053": {
+  "note": "Generisk vanlig öl som ersättning för märket Budweiser i recept"
+ },
+ "sub_001054": {
+  "note": "Kraftigt rödvin (Syrah), kan ersättas med Zinfandel för grytor och såser."
+ },
+ "sub_001055": {
+  "note": "Merlot och Cabernet Sauvignon: strama röda viner som är utbytbara i matlagning."
+ },
+ "sub_001056": {
+  "note": "Claret (bordeauxblandning) liknar Cabernet Sauvignon vid matlagning"
+ },
+ "sub_001057": {
+  "note": "Pinot Noir och Merlot: lättare röda viner, utbytbara."
+ },
+ "sub_001058": {
+  "note": "Cabernet Franc liknar Merlot, kan ersättas i matlagning"
+ },
+ "sub_001059": {
+  "note": "Fumé Blanc är ett annat kommersiellt namn på Sauvignon Blanc"
+ },
+ "sub_001060": {
+  "note": "Chardonnay och Pinot Blanc: torra vita viner som kan ersätta varandra"
+ },
+ "sub_001061": {
+  "note": "Pinot Gris och Chardonnay: torra vita viner som är utbytbara i matlagning."
+ },
+ "sub_001062": {
+  "note": "Chenin Blanc och Sauvignon Blanc: liknande torra vita viner"
+ },
+ "sub_001063": {
+  "note": "Gewürztraminer och Riesling: aromatiska vita viner som kan ersätta varandra"
+ },
+ "sub_001064": {
+  "note": "Musselsoppa Manhattan-stil (tomat) och New England-stil (grädde): kan bytas ut mot varandra efter smak"
+ },
+ "sub_001065": {
+  "note": "Två märken av basilikapesto, likvärdiga"
+ },
+ "sub_001066": {
+  "note": "Varm vetegröt (Wheatena) och Cream of Wheat: kan ersätta varandra"
+ },
+ "sub_001067": {
+  "note": "Cream of Rice och Cream of Wheat: varma frukostgröter som kan ersätta varandra"
+ },
+ "sub_001068": {
+  "note": "Samma produkt utan tillsatt soja; samma mängd, samma tillagning."
+ },
+ "sub_001069": {
+  "note": "Fågelnuggets i stället för enbart kyckling, mycket lik konsistens och tillagning."
+ },
+ "sub_001070": {
+  "note": "Ersätt kalv med panerad kyckling; samma mängd, samma tillagning."
+ },
+ "sub_001071": {
+  "note": "Panerad kalkon och panerad kyckling är utbytbara i samma mängd."
+ },
+ "sub_001072": {
+  "note": "Kycklingbuljong i stället för nötköttsbuljong, något mildare smak men likvärdig bas."
+ },
+ "sub_001073": {
+  "note": "Grönsaksbuljong för en lättare (eller vegetarisk) version, samma mängd."
+ },
+ "sub_001074": {
+  "note": "Ersätt fårkött med en vanlig köttcouscous, samma grönsaker och semolina."
+ },
+ "sub_001075": {
+  "note": "Lätt version med kött eller kyckling, samma princip och samma mängd."
+ },
+ "sub_001076": {
+  "note": "Fågelrulad (paupiette) i stället för kalv, samma tillagning och beredning."
+ },
+ "sub_001077": {
+  "note": "Kycklingtagine i stället för fårkött, samma kryddor och grönsaker, något kortare tillagningstid."
+ },
+ "sub_001078": {
+  "note": "Klassisk konserverad cassoulet i stället för fläskversionen, samma bönbas."
+ },
+ "sub_001079": {
+  "note": "Cassoulet med fläsk i stället för anka/gås; samma bas, mildare smak."
+ },
+ "sub_001080": {
+  "note": "Torkad version att blanda ut, samma smak, blanda enligt påsens anvisning."
+ },
+ "sub_001081": {
+  "note": "Torkad påsblandning att blanda ut, mycket likt resultat som den färska versionen."
+ },
+ "sub_001082": {
+  "note": "Torkad version att blanda ut, mycket lik smak."
+ },
+ "sub_001083": {
+  "note": "Torkad version utblandad med vatten, samma typ av grönsaker, blanda enligt påsens anvisning."
+ },
+ "sub_001084": {
+  "note": "Torkad påsblandning att blanda ut, samma recept med purjolök/potatis."
+ },
+ "sub_001085": {
+  "note": "Torkad version att blanda ut, samma bas av fågel och grönsaker."
+ },
+ "sub_001086": {
+  "note": "Torkad minestronesoppa att blanda ut, samma recept."
+ },
+ "sub_001087": {
+  "note": "Torkad pumpasoppa att blanda ut, mycket lik smak."
+ },
+ "sub_001088": {
+  "note": "Naturell tillagad vit fisk, ringla över hemgjord sås vid behov; samma bas."
+ },
+ "sub_001089": {
+  "note": "Naturell tillagad vit fisk, servera med hemgjord tomatsås vid behov."
+ },
+ "sub_001090": {
+  "note": "Naturell tillagad vit fisk; tillsätt lite senap vid behov."
+ },
+ "sub_001091": {
+  "note": "Naturell tillagad vit fisk, utan ströbröd/olja från bordelaiseversionen."
+ },
+ "sub_001092": {
+  "note": "Rémoulad på selleri och morot i stället för enbart selleri, nästan identisk konsistens och sås."
+ },
+ "sub_001093": {
+  "note": "Köpt potatissallad (piemontese) i stället för hemlagad, samma bas av potatis/majonnäs."
+ },
+ "sub_001094": {
+  "note": "Coleslaw (vitkål/morot) i stället för rödkål, samma princip för kålsallad."
+ },
+ "sub_001095": {
+  "note": "Tabbouleh med kyckling i stället för grönsakstabbouleh; ta bort kycklingen för en vegetarisk version."
+ },
+ "sub_001096": {
+  "note": "Samma produkt, i förpackad version i stället för take away."
+ },
+ "sub_001097": {
+  "note": "Vegetarisk version av samma rätt (ravioli i tomatsås på burk)."
+ },
+ "sub_001098": {
+  "note": "Vegetarisk version utan kött, samma färdigförpackade format."
+ },
+ "sub_001099": {
+  "note": "Ersätt med vanlig potatispuré, utan färsk tomme-ost."
+ },
+ "sub_001100": {
+  "note": "Liknande potatisgratäng, utan reblochonost och baconbitar."
+ },
+ "sub_001101": {
+  "note": "Samma sädesslag, koka själv i stället för mikropåse."
+ },
+ "sub_001102": {
+  "note": "Naturell couscoussemolina, tillsätt själv grönsaker."
+ },
+ "sub_001103": {
+  "note": "Klassisk cordon bleu med kött, samma panerade tillagning."
+ },
+ "sub_001104": {
+  "note": "Vanliga kycklingnuggets, samma mängd."
+ },
+ "sub_001105": {
+  "note": "Sojafritt alternativ, samma panerade format."
+ },
+ "sub_001106": {
+  "note": "Samma mängd, färdigförpackad version av croque-monsieur."
+ },
+ "sub_001107": {
+  "note": "Samma mängd, hemlagad version."
+ },
+ "sub_001108": {
+  "note": "Ta bort ägget för en vanlig croque-monsieur."
+ },
+ "sub_001109": {
+  "note": "Samma smörgås, take away-version."
+ },
+ "sub_001110": {
+  "note": "Samma smörgås, take away-version."
+ },
+ "sub_001111": {
+  "note": "Samma smörgås, take away-version."
+ },
+ "sub_001112": {
+  "note": "Samma smörgås, take away-version."
+ },
+ "sub_001113": {
+  "note": "Samma smörgås, take away-version."
+ },
+ "sub_001114": {
+  "note": "Samma smörgås, take away-version."
+ },
+ "sub_001115": {
+  "note": "Samma typ av tillagning, hemlagad i stället för färdigförpackad."
+ },
+ "sub_001116": {
+  "note": "Vegetarisk version av frityrbakelsen, utan kött eller fisk."
+ },
+ "sub_001117": {
+  "note": "Ersätt räkor med en kött-/grönsaksfyllning, samma bas av wokade nudlar."
+ },
+ "sub_001118": {
+  "note": "Asiatiska nudlar som inte är instant, tillagas själv i stället för instantversionen."
+ },
+ "sub_001119": {
+  "note": "Ta bort skinkan för en ost-/margheritapizza."
+ },
+ "sub_001120": {
+  "note": "Samma produkt, version utan garanti för att vara fri från animaliska ingredienser."
+ },
+ "sub_001121": {
+  "note": "Samma produkt, i en version som passar veganer."
+ },
+ "sub_001122": {
+  "note": "Samma produkt, i en version som passar veganer."
+ },
+ "sub_001123": {
+  "note": "Samma produkt, version utan garanti för att vara fri från animaliska ingredienser."
+ },
+ "sub_001124": {
+  "note": "Samma produkt, i en version som passar veganer."
+ },
+ "sub_001125": {
+  "note": "Ersätt med färska gröna bönor, samma mängd, justera tillagningstiden."
+ },
+ "sub_001126": {
+  "note": "Ersätt med färsk blomkål, samma mängd."
+ },
+ "sub_001127": {
+  "note": "Ersätt med färska skalade gröna ärtor, samma mängd."
+ },
+ "sub_001128": {
+  "note": "Ersätt med färsk morot, samma mängd."
+ },
+ "sub_001129": {
+  "note": "Ersätt med färsk broccoli, samma mängd."
+ },
+ "sub_001130": {
+  "note": "Ersätt med färsk rå spenat, räkna med ungefär dubbla vikten eftersom den kokar ner mycket."
+ },
+ "sub_001131": {
+  "note": "Ersätt med ärt- och morotsblandning på burk, väl avrunnen."
+ },
+ "sub_001132": {
+  "note": "Ersätt med champinjoner på burk, väl avrunna."
+ },
+ "sub_001133": {
+  "note": "Ersätt med smörbönor på burk, väl avrunna."
+ },
+ "sub_001134": {
+  "note": "Ersätt med kronärtskocksbottnar på burk, väl avrunna."
+ },
+ "sub_001135": {
+  "note": "Ersätt med haverrot på burk, väl avrunnen."
+ },
+ "sub_001136": {
+  "note": "Ersätt med grönsaksmacedoine på burk, väl avrunnen."
+ },
+ "sub_001137": {
+  "note": "Använd ungefär hälften så mycket dubbelkoncentrerad tomatpuré och späd med lite vatten."
+ },
+ "sub_001138": {
+  "note": "Använd ungefär dubbelt så mycket enkel tomatpuré och minska tillsatt vatten."
+ },
+ "sub_001139": {
+  "note": "Samma mängd, mycket likt resultat (skalade tomater eller tomatbitar på burk)."
+ },
+ "sub_001140": {
+  "note": "Ersätt med bambuskott på burk, väl avrunna, samma mängd."
+ },
+ "sub_001141": {
+  "note": "Ersätt med sojabönsgroddar på burk, väl avrunna."
+ },
+ "sub_001142": {
+  "note": "Ersätt med butternutpumpa, samma mängd, något mindre söt smak."
+ },
+ "sub_001143": {
+  "note": "Ersätt med kokt strimlad purjolök, samma mängd."
+ },
+ "sub_001144": {
+  "note": "Ersätt med färska champinjoner, mindre smakrikt men ett bra och billigare alternativ."
+ },
+ "sub_001145": {
+  "note": "Ersätt med färska ostronskivlingar, samma mängd, mildare smak."
+ },
+ "sub_001146": {
+  "note": "Ersätt med (vit) haverrot, samma mängd, samma tillagning."
+ },
+ "sub_001147": {
+  "note": "Ersätt med färska sockermajskorn, samma mängd."
+ },
+ "sub_001148": {
+  "note": "Blötlägg och använd i motsvarande mängd; fastare konsistens, mildare smak än svart svamp (mu-err)."
+ },
+ "sub_001149": {
+  "note": "Tillsätt lite olivolja för att kompensera avsaknaden av marinad."
+ },
+ "sub_001150": {
+  "note": "Använd ungefär tre gånger så mycket finhackad färsk lök som torkad lök."
+ },
+ "sub_001151": {
+  "note": "Blötlägg och koka, eller ersätt direkt med kokt färsk morot i motsvarande mängd."
+ },
+ "sub_001152": {
+  "note": "Samma grönsak (pak choi/bok choy), samma mängd."
+ },
+ "sub_001153": {
+  "note": "Samma grönsak (chayote/christophine), samma mängd."
+ },
+ "sub_001154": {
+  "note": "Samma grönsak, samma mängd."
+ },
+ "sub_001155": {
+  "note": "Liknande konsistens, sötare smak; samma mängd."
+ },
+ "sub_001156": {
+  "note": "Mjöligare konsistens; samma mängd, justera tillagningen."
+ },
+ "sub_001157": {
+  "note": "Samma mängd, mer neutral smak."
+ },
+ "sub_001158": {
+  "note": "Samma mängd, något klibbigare konsistens med taro."
+ },
+ "sub_001159": {
+  "note": "Mycket lika vita bönor, samma mängd."
+ },
+ "sub_001160": {
+  "note": "Till soppor/puréer, samma mängd."
+ },
+ "sub_001161": {
+  "note": "Mycket lik tillagning och konsistens, samma mängd."
+ },
+ "sub_001162": {
+  "note": "Mycket lik tillagning och konsistens, samma mängd."
+ },
+ "sub_001163": {
+  "note": "Samma mängd, något mindre syrlig smak."
+ },
+ "sub_001164": {
+  "note": "Samma mängd, något syrligare smak."
+ },
+ "sub_001165": {
+  "note": "Samma mängd, något mindre söt smak."
+ },
+ "sub_001166": {
+  "note": "Samma mängd, något sötare smak."
+ },
+ "sub_001167": {
+  "note": "Samma mängd, reine-claude-plommon är något sötare."
+ },
+ "sub_001168": {
+  "note": "Samma mängd, mirabell är något syrligare."
+ },
+ "sub_001169": {
+  "note": "Samma frukt färsk/fryst, samma mängd."
+ },
+ "sub_001170": {
+  "note": "Samma frukt färsk/fryst, samma mängd."
+ },
+ "sub_001171": {
+  "note": "Samma mängd, Gala är sötare och mindre syrlig."
+ },
+ "sub_001172": {
+  "note": "Samma mängd, Golden håller formen bättre vid tillagning."
+ },
+ "sub_001173": {
+  "note": "Samma mängd, rosa pomelo är något sötare."
+ },
+ "sub_001174": {
+  "note": "Samma mängd, gul pomelo är något syrligare."
+ },
+ "sub_001175": {
+  "note": "Samma mängd, något mindre smakrikt kött."
+ },
+ "sub_001176": {
+  "note": "Samma mängd, något mer smakrikt kött."
+ },
+ "sub_001177": {
+  "note": "Körsbäret är sötare: minska tillsatt socker i receptet något."
+ },
+ "sub_001178": {
+  "note": "Äppelmos utan tillsatt socker, mindre sött men samma konsistens, samma mängd."
+ },
+ "sub_001179": {
+  "note": "Vanligt äppelmos, något sötare, samma mängd."
+ },
+ "sub_001180": {
+  "note": "Äppelmos, mer neutral smak, samma mängd i bakning."
+ },
+ "sub_001181": {
+  "note": "Äppelmos, mer neutral smak, samma mängd."
+ },
+ "sub_001182": {
+  "note": "Version i lätt sirap, mindre sött, samma mängd."
+ },
+ "sub_001183": {
+  "note": "Version i lätt sirap, mindre sött, samma mängd."
+ },
+ "sub_001184": {
+  "note": "Version i lätt sirap, mindre sött, samma mängd."
+ },
+ "sub_001185": {
+  "note": "Version i lätt sirap, mindre sött, samma mängd."
+ },
+ "sub_001186": {
+  "note": "Ananas i egen juice, mindre sött, låt rinna av väl före användning."
+ },
+ "sub_001187": {
+  "note": "Päron i lätt sirap, liknande konsistens och sötma, samma mängd."
+ },
+ "sub_001188": {
+  "note": "Torkad tranbär, syrligare, samma mängd i kakor eller sallader."
+ },
+ "sub_001189": {
+  "note": "Version utan tillsatt salt, för att minska saltet, samma mängd, saltas efter smak."
+ },
+ "sub_001190": {
+  "note": "Version utan tillsatt salt, samma mängd, saltas efter smak."
+ },
+ "sub_001191": {
+  "note": "Version utan tillsatt salt, samma mängd, saltas efter smak."
+ },
+ "sub_001192": {
+  "note": "Bra ersättning i snacksblandningar eller bakning, samma mängd."
+ },
+ "sub_001193": {
+  "note": "Skalade frön, lite lättare att smälta, samma mängd."
+ },
+ "sub_001194": {
+  "note": "Samma användning som bindmedel (gel med vatten) vid bakning/gröt, samma mängd."
+ },
+ "sub_001195": {
+  "note": "Liknande konsistens till såser och bakverk, sötare och kraftigare smak."
+ },
+ "sub_001196": {
+  "note": "Mer rostad smak, samma mängd, något torrare konsistens."
+ },
+ "sub_001197": {
+  "note": "Basmatiris, utbytbara korn, samma mängd."
+ },
+ "sub_001198": {
+  "note": "Basmatiris, liknande långkorn, samma mängd."
+ },
+ "sub_001199": {
+  "note": "Vanligt vitt ris, samma mängd och liknande tillagning."
+ },
+ "sub_001200": {
+  "note": "Fullkornsversion, mer fiberrik, samma mängd."
+ },
+ "sub_001201": {
+  "note": "Fullkornsversion, mer fiberrik, samma mängd."
+ },
+ "sub_001202": {
+  "note": "Tillagad bulgur, något fastare konsistens, samma användning i sallad eller tillbehör."
+ },
+ "sub_001203": {
+  "note": "Rå bulgur, liknande tillagning, samma användning."
+ },
+ "sub_001204": {
+  "note": "Sojavermicelli, liknande konsistens, samma mängd."
+ },
+ "sub_001205": {
+  "note": "Sojavermicelli, liknande konsistens, samma mängd."
+ },
+ "sub_001206": {
+  "note": "Gnocchi på mannagryn, något fastare konsistens, samma mängd."
+ },
+ "sub_001207": {
+  "note": "Vanlig pasta om det inte behöver vara glutenfritt, samma mängd och tillagning."
+ },
+ "sub_001208": {
+  "note": "Glutenfri pasta för en anpassad måltid, samma mängd och liknande tillagning."
+ },
+ "sub_001209": {
+  "note": "Samma mängd, mycket lik bindförmåga."
+ },
+ "sub_001210": {
+  "note": "Samma mängd, liknande förtjockningsförmåga."
+ },
+ "sub_001211": {
+  "note": "Samma mängd, något mer neutral smak."
+ },
+ "sub_001212": {
+  "note": "Samma mängd, mindre rustikt resultat."
+ },
+ "sub_001213": {
+  "note": "Samma mängd, något luftigare brödinkråm."
+ },
+ "sub_001214": {
+  "note": "Samma mängd, kraftigare smak (ren smör)."
+ },
+ "sub_001215": {
+  "note": "Samma mängd, version utan smör (bra vid intolerans)."
+ },
+ "sub_001216": {
+  "note": "Samma mängd, smuligare deg och kraftigare smak."
+ },
+ "sub_001217": {
+  "note": "Samma mängd, alternativ utan smör."
+ },
+ "sub_001218": {
+  "note": "Samma mängd, rikare smak (ren smör)."
+ },
+ "sub_001219": {
+  "note": "Lägg ungefär 2 filodegsblad ovanpå varandra för att ersätta ett brickdegsblad."
+ },
+ "sub_001220": {
+  "note": "Ett brickdegsblad ersätter ungefär 2 filodegsblad."
+ },
+ "sub_001221": {
+  "note": "Samma mängd, mjukare konsistens, mer neutral smak."
+ },
+ "sub_001222": {
+  "note": "Samma mängd, glutenfritt alternativ."
+ },
+ "sub_001223": {
+  "note": "Samma användning för fylld smörgås, avlång form."
+ },
+ "sub_001224": {
+  "note": "Samma tillagningssätt, kraftigare smak."
+ },
+ "sub_001225": {
+  "note": "Samma mängd, magrare kött."
+ },
+ "sub_001226": {
+  "note": "Samma mängd, mycket lik smak och konsistens."
+ },
+ "sub_001227": {
+  "note": "Samma mängd, något torrare kött, håll koll vid tillagning."
+ },
+ "sub_001228": {
+  "note": "Samma produkt, icke-ekologisk version."
+ },
+ "sub_001229": {
+  "note": "Samma tillagningssätt, något mörare bit."
+ },
+ "sub_001230": {
+  "note": "Samma typ av styckningsdetalj, liknande tillagning."
+ },
+ "sub_001231": {
+  "note": "Samma tillagningssätt, liknande resultat."
+ },
+ "sub_001232": {
+  "note": "Kalkonschnitzel, samma tillagning, något mer neutral smak."
+ },
+ "sub_001233": {
+  "note": "Kalvschnitzel, samma mängd, liknande konsistens."
+ },
+ "sub_001234": {
+  "note": "Kalkonkött, samma mängd, mycket lik smak."
+ },
+ "sub_001235": {
+  "note": "Kycklingkött, samma mängd, mycket lik smak."
+ },
+ "sub_001236": {
+  "note": "Gårdskyckling, samma mängd, mildare smak."
+ },
+ "sub_001237": {
+  "note": "Ankkött, samma mängd, liknande smak (fet fågel)."
+ },
+ "sub_001238": {
+  "note": "Gårdskyckling, samma mängd, utan viltsmaken."
+ },
+ "sub_001239": {
+  "note": "Nötbiff, samma mängd, liknande resultat."
+ },
+ "sub_001240": {
+  "note": "Innanlår av nötkött, samma mängd, liknande resultat."
+ },
+ "sub_001241": {
+  "note": "Nötkötts ryggbiff, samma mängd, liknande resultat."
+ },
+ "sub_001242": {
+  "note": "Nötentrecôte, samma mängd, liknande resultat."
+ },
+ "sub_001243": {
+  "note": "Lammstek, samma mängd, liknande smak."
+ },
+ "sub_001244": {
+  "note": "Oxfilé, magert rött kött, samma mängd."
+ },
+ "sub_001245": {
+  "note": "Magert nötkött (filé), samma mängd, utan viltsmaken."
+ },
+ "sub_001246": {
+  "note": "Kaninkött, samma mängd, mildare smak."
+ },
+ "sub_001247": {
+  "note": "Kvigans lever, samma mängd, mycket lik smak."
+ },
+ "sub_001248": {
+  "note": "Kalvlever, samma mängd, mycket lik smak."
+ },
+ "sub_001249": {
+  "note": "Kalvhjärta, samma mängd, något mörare konsistens."
+ },
+ "sub_001250": {
+  "note": "Kalvhjärna, samma mängd, identisk konsistens."
+ },
+ "sub_001251": {
+  "note": "Nötfärsbiff 10 % fetthalt, något fetare."
+ },
+ "sub_001252": {
+  "note": "Nötfärsbiff 15 % fetthalt, något magrare."
+ },
+ "sub_001253": {
+  "note": "Kalvfärsbiff 15 % fetthalt, något magrare."
+ },
+ "sub_001254": {
+  "note": "Fläskbog, samma mängd, något mindre marmorerad."
+ },
+ "sub_001255": {
+  "note": "Lammbog, samma mängd, något fetare."
+ },
+ "sub_001256": {
+  "note": "Bladbog av nötkött, samma användning för lång grytstekning."
+ },
+ "sub_001257": {
+  "note": "Nötkötts halsbit, samma användning till långsam bräsering."
+ },
+ "sub_001258": {
+  "note": "Benfritt kycklinglår, samma mängd, justera tillagningstiden."
+ },
+ "sub_001259": {
+  "note": "Kycklinglår, samma mängd, liknande smak."
+ },
+ "sub_001260": {
+  "note": "Stekt lammbog, samma användning, något fetare och mörare."
+ },
+ "sub_001261": {
+  "note": "Tillagad kalkonlever, samma mängd, mycket lik smak."
+ },
+ "sub_001262": {
+  "note": "Tillagat kalkonhjärta, samma mängd, mycket lik smak."
+ },
+ "sub_001263": {
+  "note": "Kalkonlever, mycket lik konsistens och smak."
+ },
+ "sub_001264": {
+  "note": "Kycklinglever, byts lätt ut, något kraftigare smak."
+ },
+ "sub_001265": {
+  "note": "Lammbräss, samma tillagning, mindre bitar."
+ },
+ "sub_001266": {
+  "note": "Kalvbräss, vanligare, samma tillagning."
+ },
+ "sub_001267": {
+  "note": "Lamnjure, samma tillagningssätt, något kraftigare smak."
+ },
+ "sub_001268": {
+  "note": "Kalvnjure, mildare, samma tillagning."
+ },
+ "sub_001269": {
+  "note": "Oxtunga, större men samma tillagning (pocherad och sedan bräserad)."
+ },
+ "sub_001270": {
+  "note": "Kalvtunga, mindre och mörare, samma tillagning."
+ },
+ "sub_001271": {
+  "note": "Rökt bacon (tärnat), samma användning i matlagning (stekt, quiche, sallad)."
+ },
+ "sub_001272": {
+  "note": "Vanligt tärnat bacon, om pancetta saknas för att smaksätta en gryta."
+ },
+ "sub_001273": {
+  "note": "Bündnerkött, samma typ av tunt skivad torkad chark."
+ },
+ "sub_001274": {
+  "note": "Bresaola, liknande torkat och tunnskivat nötkött."
+ },
+ "sub_001275": {
+  "note": "Bayonneskinka, om Parmaskinka saknas, samma familj av torrskinka."
+ },
+ "sub_001276": {
+  "note": "Bayonneskinka, om Serrano saknas, liknande torrsaltad rå skinka."
+ },
+ "sub_001277": {
+  "note": "Generisk torrskinka, samma konsistens och användning."
+ },
+ "sub_001278": {
+  "note": "Ren fläskrillettes, i stället för anka, liknande konsistens."
+ },
+ "sub_001279": {
+  "note": "Andrillettes, lättare att hitta, smak som liknar gås."
+ },
+ "sub_001280": {
+  "note": "Andrillettes, i stället för ren gåsrillettes."
+ },
+ "sub_001281": {
+  "note": "Fågelleverpastej, i stället för gåslever, vanligare."
+ },
+ "sub_001282": {
+  "note": "Salami, liknande torkad chark, samma användning i skivor."
+ },
+ "sub_001283": {
+  "note": "Torkad fläskkorv (saucisson), samma typ av torkad chark."
+ },
+ "sub_001284": {
+  "note": "Rå merguez i stället för chorizo, för en liknande kryddig smak på grillen."
+ },
+ "sub_001285": {
+  "note": "Rå chipolata, samma användning på grillen eller i stekpannan."
+ },
+ "sub_001286": {
+  "note": "Rå Toulousekorv, samma användning, något kraftigare smak."
+ },
+ "sub_001287": {
+  "note": "Rå Toulousekorv, i stället för merguez (mindre kryddig, justera kryddningen)."
+ },
+ "sub_001288": {
+  "note": "Frankfurterkorv, samma konsistens och användning (hot dog, surkål)."
+ },
+ "sub_001289": {
+  "note": "Strasbourgkorv/knackkorv, samma typ av korv som kokas i vatten."
+ },
+ "sub_001290": {
+  "note": "Strasbourgkorv/knackkorv av rent fläsk, i stället för fågelversionen."
+ },
+ "sub_001291": {
+  "note": "Cervelaskorv, tillagad skivad chark, används på liknande sätt till förrätt eller sallad."
+ },
+ "sub_001292": {
+  "note": "Nötmule, en annan sylta av huvudkött, serveras ofta med vinägrett."
+ },
+ "sub_001293": {
+  "note": "Sylta, liknande gelétillagning."
+ },
+ "sub_001294": {
+  "note": "Tillagad torsk, fast vitt kött, liknande konsistens."
+ },
+ "sub_001295": {
+  "note": "Tillagad torsk, mager vit fisk med liknande smak."
+ },
+ "sub_001296": {
+  "note": "Ångkokt kolja, liknande mager vit fisk."
+ },
+ "sub_001297": {
+  "note": "Vita fiskar med fast kött, vanlig ersättning som ugnsbakad filé."
+ },
+ "sub_001298": {
+  "note": "Sötvattensfiskar med fast kött, liknande ugnstillagning."
+ },
+ "sub_001299": {
+  "note": "Hela små fiskar tillagade i ugn, motsvarande beredning."
+ },
+ "sub_001300": {
+  "note": "Tunna plattfiskar, motsvarande ångkokning."
+ },
+ "sub_001301": {
+  "note": "Magra vita fiskar, utbytbara vid ångkokning."
+ },
+ "sub_001302": {
+  "note": "Feta rosa fiskar, liknande ångkokning."
+ },
+ "sub_001303": {
+  "note": "Saltad torsk och färsk torsk har samma fisk, lägg saltfisken i blöt innan den byts ut."
+ },
+ "sub_001304": {
+  "note": "Magra vita fiskar, motsvarande skonsam tillagning."
+ },
+ "sub_001305": {
+  "note": "Vita fiskar av torskfamiljen, liknande tillagning på grillen."
+ },
+ "sub_001306": {
+  "note": "Små feta fiskar, liknande grillning (sardin/makrill)."
+ },
+ "sub_001307": {
+  "note": "Forell, motsvarande stekning/tillagning i ugn."
+ },
+ "sub_001308": {
+  "note": "Havsabborrar, liknande kött som går att använda utbytbart råa."
+ },
+ "sub_001309": {
+  "note": "Vita fiskar av torskfamiljen, liknande kött rått."
+ },
+ "sub_001310": {
+  "note": "Hälleflundror, liknande kött som är utbytbart."
+ },
+ "sub_001311": {
+  "note": "Snarlika plattfiskar, liknande fint kött."
+ },
+ "sub_001312": {
+  "note": "Vild lax och odlad lax, liknande kött rått."
+ },
+ "sub_001313": {
+  "note": "Lax av olika arter, liknande kött rått."
+ },
+ "sub_001314": {
+  "note": "Räkor av olika arter, tillagade, ofta utbytbara i recept."
+ },
+ "sub_001315": {
+  "note": "Languster och hummer, liknande kött, samma kokning i vatten."
+ },
+ "sub_001316": {
+  "note": "Havskräfta och räka, liknande kött, liknande kokning i vatten."
+ },
+ "sub_001317": {
+  "note": "Liknande skaldjur, samma tillagning i vatten."
+ },
+ "sub_001318": {
+  "note": "Små havssnäckor, motsvarande tillagning och användning."
+ },
+ "sub_001319": {
+  "note": "Bläckfisk (calamari) och åttaarmad bläckfisk (octopus), blötdjurskött som ofta byts ut mot varandra."
+ },
+ "sub_001320": {
+  "note": "Fiskrillettes, ofta utbytbara beroende på vilken fisk som finns."
+ },
+ "sub_001321": {
+  "note": "Taramas, samma recept och användning beroende på vilken fiskrom som används."
+ },
+ "sub_001322": {
+  "note": "Löjrom är en vanlig och betydligt billigare ersättning för kaviar, samma användning som garnering."
+ },
+ "sub_001323": {
+  "note": "Panerad vit fisk, liknande konsistens och användning (fish and chips, panerad och stekt)."
+ },
+ "sub_001324": {
+  "note": "Panerad vit fisk, lätt att ersätta i matlagning."
+ },
+ "sub_001325": {
+  "note": "Tonfisk i eget spad på burk kan ersätta sardiner i olja i sallader och pastejer."
+ },
+ "sub_001326": {
+  "note": "Fiskkonserver i tomatsås är utbytbara (makrill/sardin)"
+ },
+ "sub_001327": {
+  "note": "Rökt fisk, liknande smak och konsistens, kan användas som ett billigare alternativ."
+ },
+ "sub_001328": {
+  "note": "Rökt kolja kan ersätta rökt lax i sallader, quiche, äggröra"
+ },
+ "sub_001329": {
+  "note": "Lax- och tonfiskkonserver används utbytbart (röror, sallader)"
+ },
+ "sub_001330": {
+  "note": "Rökt forell är en klassisk och billigare ersättning för rökt lax."
+ },
+ "sub_001331": {
+  "note": "Ersätt annars med ungefär 4 hönsägg (motsvarande volym)."
+ },
+ "sub_001332": {
+  "note": "Ersätt annars med ungefär 1,5 hönsägg (motsvarande volym)."
+ },
+ "sub_001333": {
+  "note": "Äggpulver utblandat med vatten ersätter färskt ägg vid bakning."
+ },
+ "sub_001334": {
+  "note": "Återfuktat äggulepulver ersätter färsk äggula"
+ },
+ "sub_001335": {
+  "note": "Återfuktat äggvitepulver ersätter färsk äggvita"
+ },
+ "sub_001336": {
+  "note": "Standardmjölk i stället om getmjölk inte finns tillgänglig, eller för att mildra smaken"
+ },
+ "sub_001337": {
+  "note": "Standardmjölk i stället om getmjölk inte finns tillgänglig"
+ },
+ "sub_001338": {
+  "note": "Standardmjölk i stället om fårmjölk inte finns tillgänglig"
+ },
+ "sub_001339": {
+  "note": "Standardmjölk i stället om buffelmjölk inte finns tillgänglig"
+ },
+ "sub_001340": {
+  "note": "Utblandat med vatten, ersätter färsk helmjölk."
+ },
+ "sub_001341": {
+  "note": "Utspätt med vatten (lika delar), ersätter standardmjölk"
+ },
+ "sub_001342": {
+  "note": "Fromage blanc (naturell) kan ersätta grekisk yoghurt, något mindre krämig konsistens"
+ },
+ "sub_001343": {
+  "note": "Vanlig grekisk yoghurt i stället om fårmjölk inte finns."
+ },
+ "sub_001344": {
+  "note": "Naturell komjölksyoghurt i stället om fårmjölk inte finns."
+ },
+ "sub_001345": {
+  "note": "Naturell komjölksyoghurt i stället om getmjölk inte finns."
+ },
+ "sub_001346": {
+  "note": "Mjölkkefir kan ersätta naturell drickyoghurt i recept"
+ },
+ "sub_001347": {
+  "note": "Avrunnen kvarg har en konsistens som liknar fromage blanc 0 % fett"
+ },
+ "sub_001348": {
+  "note": "Avrunnen kvarg har en konsistens som liknar fromage blanc med jämförbar fetthalt"
+ },
+ "sub_001349": {
+  "note": "Liknande efterrätt av ägg och mjölk, liknande konsistens och användning som crème caramel."
+ },
+ "sub_001350": {
+  "note": "Liknande krämig och len konsistens, ersätter panna cotta som mjölkdessert."
+ },
+ "sub_001351": {
+  "note": "Vanlig milkshake motsvarar snabbmatskedjornas format."
+ },
+ "sub_001352": {
+  "note": "Grundversion av risgrynsgröt/mjölkris, utan tillsatt smak."
+ },
+ "sub_001353": {
+  "note": "Mjölkdessert med liknande sädesbas (mannagryn ersatt med ris)."
+ },
+ "sub_001354": {
+  "note": "Hemlagad vaniljkräm motsvarar den återfuktade snabbversionen."
+ },
+ "sub_001355": {
+  "note": "Motsvarande naturell mejeriprodukt, om inget vegetabiliskt krav finns."
+ },
+ "sub_001356": {
+  "note": "Motsvarande smaksatt mejerialternativ om det inte finns krav på vegetabiliskt."
+ },
+ "sub_001357": {
+  "note": "Vanlig mejeribaserad version motsvarande den vegetabiliska chokladmoussen."
+ },
+ "sub_001358": {
+  "note": "En enda riven ost (emmentaler) i stället för den speciella gratäng-/pizzablandningen."
+ },
+ "sub_001359": {
+  "note": "Liknande mjukost med vitmögelskorpa, typ brie."
+ },
+ "sub_001360": {
+  "note": "Krämig mjukost som liknar chaource."
+ },
+ "sub_001361": {
+  "note": "Motsvarande blåmögelost av komjölk."
+ },
+ "sub_001362": {
+  "note": "Liknande mild pressad ost, om mimolette saknas."
+ },
+ "sub_001363": {
+  "note": "Motsvarande generisk racletteost."
+ },
+ "sub_001364": {
+  "note": "Motsvarande generisk smältost, ej i skivform."
+ },
+ "sub_001365": {
+  "note": "Motsvarande generisk fetaost."
+ },
+ "sub_001366": {
+  "note": "Vanlig mozzarella av komjölk motsvarar den."
+ },
+ "sub_001367": {
+  "note": "Vanlig tjock crème fraîche med samma fetthalt."
+ },
+ "sub_001368": {
+  "note": "Motsvarande vanlig vispgrädde."
+ },
+ "sub_001369": {
+  "note": "Vispgrädde att vispa själv till vispad grädde."
+ },
+ "sub_001370": {
+  "note": "Den lätta smaksatta matlagningsprodukten kan ersättas med vanlig vispgrädde i varma rätter."
+ },
+ "sub_001371": {
+  "note": "Lätt grädde 12–20 % fetthalt kan ersättas med vispgrädde (blir krämigare, minska mängden något)."
+ },
+ "sub_001372": {
+  "note": "Kranvatten kan ersättas med stilla mineralvatten i matlagning och bakning."
+ },
+ "sub_001373": {
+  "note": "Hemgjord citronsaft kan ersättas med ren citronsaft på flaska."
+ },
+ "sub_001374": {
+  "note": "Färsk limesaft kan ersättas med citronsaft, i samma mängd, något annorlunda smak."
+ },
+ "sub_001375": {
+  "note": "Ren limesaft kan ersättas med ren citronsaft."
+ },
+ "sub_001376": {
+  "note": "Ananasjuice från koncentrat kan ersättas med ren ananasjuice."
+ },
+ "sub_001377": {
+  "note": "Apelsinjuice från koncentrat kan ersättas med nypressad apelsinjuice."
+ },
+ "sub_001378": {
+  "note": "Äppeljuice från koncentrat kan ersättas med ren äppeljuice."
+ },
+ "sub_001379": {
+  "note": "Grapefruktjuice från koncentrat kan ersättas med ren grapefruktjuice."
+ },
+ "sub_001380": {
+  "note": "Druvjuice från koncentrat kan ersättas med ren druvjuice."
+ },
+ "sub_001381": {
+  "note": "Ren fruktjuice kan ersättas med fruktjuice från koncentrat, tillgänglighet och pris skiljer sig ofta."
+ },
+ "sub_001382": {
+  "note": "Äppelnektar kan ersättas med ren äppeljuice, minska då tillsatt socker i receptet."
+ },
+ "sub_001383": {
+  "note": "Apelsinnektar kan ersättas med ren apelsinjuice, mer fruktkoncentrerad och mindre söt."
+ },
+ "sub_001384": {
+  "note": "Ananasnektar kan ersättas med ren ananasjuice."
+ },
+ "sub_001385": {
+  "note": "Sockrad cola kan ersättas med sockerfri cola med sötningsmedel för en lättare version."
+ },
+ "sub_001386": {
+  "note": "Sockrad lemonad kan ersättas med sockerfri lemonad med sötningsmedel."
+ },
+ "sub_001387": {
+  "note": "Sockrad tonic med sötningsmedel kan ersättas med tonic utan tillsatt socker med sötningsmedel."
+ },
+ "sub_001388": {
+  "note": "Osötade växtbaserade drycker är utbytbara i matlagning (bakning, såser): havremjölk ersatt med osötad sojamjölk."
+ },
+ "sub_001389": {
+  "note": "Osötad sojamjölk kan ersättas med osötad mandelmjölk i de flesta recept."
+ },
+ "sub_001390": {
+  "note": "Rismjölk är mer flytande: kan ersättas med osötad mandelmjölk i vardagsmatlagning."
+ },
+ "sub_001391": {
+  "note": "Kokosmjölk (dryck) kan ersättas med osötad mandelmjölk när man vill dämpa kokossmaken."
+ },
+ "sub_001392": {
+  "note": "Bryggt svart te och grönt te används ofta omväxlande beroende på önskad smak."
+ },
+ "sub_001393": {
+  "note": "Bryggt kaffe klart att dricka kan ersättas med utspätt snabbkaffe."
+ },
+ "sub_001394": {
+  "note": "Bryggkaffe (malet) kan ersättas med snabbkaffe utspätt i varmt vatten."
+ },
+ "sub_001395": {
+  "note": "Fruktos kan ersättas med vanligt socker i bakning (justera mängden något)."
+ },
+ "sub_001396": {
+  "note": "Sötningsmedel med sackarin kan ersättas med socker för en mer naturlig smak."
+ },
+ "sub_001397": {
+  "note": "Sötningsmedel med aspartam i pulverform kan ersättas med socker i matlagning och bakning."
+ },
+ "sub_001398": {
+  "note": "Sötningsmedel med stevia kan ersättas med vanligt socker (närmare smak, justera mängden)."
+ },
+ "sub_001399": {
+  "note": "Sockerrörsmelass kan ersättas med lönnsirap vid bakning för en liknande söt smak."
+ },
+ "sub_001400": {
+  "note": "Flytande kola som topping kan ersättas med honung."
+ },
+ "sub_001401": {
+  "note": "50-procentig mörk choklad i kaka kan ersättas med vanlig mörk choklad i matlagning/bakning."
+ },
+ "sub_001402": {
+  "note": "70-procentig mörk choklad för avnjutning kan ersättas med vanlig mörk choklad vid tillagning."
+ },
+ "sub_001403": {
+  "note": "Mörk bakchoklad (40 %+) kan ersättas med vanlig mörk choklad."
+ },
+ "sub_001404": {
+  "note": "Mjölkchoklad utan tillsatt socker kan ersättas med vanlig mjölkchoklad."
+ },
+ "sub_001405": {
+  "note": "Konjak/armagnac-brännvin kan ersättas med calvados vid flambering eller i en sås."
+ },
+ "sub_001406": {
+  "note": "Rom (medelkvalitet) kan ersättas med vit rom i de flesta matlagningssammanhang."
+ },
+ "sub_001407": {
+  "note": "Jordgubbssylt (extra eller vanlig) motsvarar den vanliga jordgubbssylten i katalogen."
+ },
+ "sub_001408": {
+  "note": "Aprikosmarmelad (extra eller vanlig) motsvarar den vanliga aprikosmarmeladen i katalogen."
+ },
+ "sub_001409": {
+  "note": "Sockerreducerad jordgubbssylt kan ersättas med vanlig jordgubbssylt (sötare)."
+ },
+ "sub_001410": {
+  "note": "Sockerreducerad aprikosmarmelad kan ersättas med vanlig aprikosmarmelad."
+ },
+ "sub_001411": {
+  "note": "Vinbärsgelé kan ersättas med hallonsylt (annat rött bär) i fyllningar, på smörgås eller i pajbottnar."
+ },
+ "sub_001412": {
+  "note": "Vanlig hantverksmässig croissant kan ersättas med en hantverksmässig smörcroissant, rikare smak men samma användning."
+ },
+ "sub_001413": {
+  "note": "Mjukt mjölkbröd kan ersättas med en hantverksmässig naturell brioche till frukost eller mellanmål."
+ },
+ "sub_001414": {
+  "note": "Panettone kan ersättas med en vanlig naturell brioche om kanderad frukt saknas."
+ },
+ "sub_001415": {
+  "note": "Russinsnäcka kan ersättas med en fruktfylld brioche, liknande sött fruktbakverk."
+ },
+ "sub_001416": {
+  "note": "Chokladbulle (pain au chocolat) kan ersättas med en smördegscroissant om chokladbakverk saknas."
+ },
+ "sub_001417": {
+  "note": "Chokladchipsbrioche kan ersättas med en färdigförpackad vanlig brioche, utan choklad."
+ },
+ "sub_001418": {
+  "note": "\"Petit beurre\"-kex kan ersättas med enkla osötade kex, samma bas till cheesecake eller smulat i efterrätter."
+ },
+ "sub_001419": {
+  "note": "Hantverksmässig och färdigförpackad sockerkaka är direkt utbytbara, samma grundrecept."
+ },
+ "sub_001420": {
+  "note": "Färsk rombaba kan ersättas med hantverksmässig rombaba, samma bakverk."
+ },
+ "sub_001421": {
+  "note": "Färdigförpackad kouign amann kan ersättas med en hantverksmässig kouign amann, samma bretonska specialitet."
+ },
+ "sub_001422": {
+  "note": "Petit chou och eclair delar samma smördeg (choux) och liknande vaniljkrämsfyllning."
+ },
+ "sub_001423": {
+  "note": "Petit chou med vaniljkräm kan ersättas med en chou fylld med vispgrädde (typ Saint-Honoré) beroende på önskad fyllning."
+ },
+ "sub_001424": {
+  "note": "Corne de gazelle och baklava är två orientaliska bakverk med mandel och socker, utbytbara på ett orientaliskt fat."
+ },
+ "sub_001425": {
+  "note": "Brownie med nötter kan ersättas med vanlig brownie, särskilt vid nötallergi."
+ },
+ "sub_001426": {
+  "note": "Bretonsk kaka fylld med plommon kan ersättas med far breton med plommon, bretonska specialiteter med samma smaker."
+ },
+ "sub_001427": {
+  "note": "Fruktmoussetårta på sockerkaksbotten (bavarois/glacerad) och jordgubbs-/hallontårta delar en liknande struktur (sockerkaka, kräm, frukt)."
+ },
+ "sub_001428": {
+  "note": "Torr makron kan ersättas med en mjuk fylld makron för att variera ett fat med söta smådelikatesser."
+ },
+ "sub_001429": {
+  "note": "Färdigförpackad ketchup kan ersättas med naturell tomatsås"
+ },
+ "sub_001430": {
+  "note": "Lätt ketchup kan ersättas med vanlig ketchup"
+ },
+ "sub_001431": {
+  "note": "Lätt majonnäs kan ersättas med vanlig majonnäs."
+ },
+ "sub_001432": {
+  "note": "Barbecuesås kan ersättas med ketchup, liknande söt-kryddig tomatbas."
+ },
+ "sub_001433": {
+  "note": "Sojasås kan ersättas med nuoc-mâm i asiatisk matlagning."
+ },
+ "sub_001434": {
+  "note": "Söt sojasås kan ersättas med vanlig sojasås."
+ },
+ "sub_001435": {
+  "note": "Teriyakisås kan ersättas med söt sojasås."
+ },
+ "sub_001436": {
+  "note": "Vinägrett med olivolja motsvarar en vanlig vinägrett med 50–75 % olja."
+ },
+ "sub_001437": {
+  "note": "Harissa kan ersättas med stark chili använd sparsamt"
+ },
+ "sub_001438": {
+  "note": "Senapssås kan ersättas med dijonsenap utspädd med lite grädde."
+ },
+ "sub_001439": {
+  "note": "Caesardressing kan ersättas med majonnäs blandad med parmesan och ansjovis."
+ },
+ "sub_001440": {
+  "note": "Färdigförpackad béchamelsås kan ersättas med en hemgjord béchamel på smör."
+ },
+ "sub_001441": {
+  "note": "Sauce béarnaise och sauce hollandaise är utbytbara, snarlika baser."
+ },
+ "sub_001442": {
+  "note": "Maderasås kan ersättas med en hemgjord rödvinssås."
+ },
+ "sub_001443": {
+  "note": "Olja eller koncentrerat smör kan ersättas med vanligt osaltat smör"
+ },
+ "sub_001444": {
+  "note": "Lätt osaltat smör kan ersättas med vanligt osaltat smör"
+ },
+ "sub_001445": {
+  "note": "Lätt lättsaltat smör kan ersättas med vanligt lättsaltat smör"
+ },
+ "sub_001446": {
+  "note": "Fast kokosolja kan ersättas med osaltat smör i bakning, liknande konsistens kall"
+ },
+ "sub_001447": {
+  "note": "Palmolja kan ersättas med rapsolja, vanligt vegetabiliskt alternativ"
+ },
+ "sub_001448": {
+  "note": "Ospecificerad friteringsolja kan ersättas med solrosolja"
+ },
+ "sub_001449": {
+  "note": "Extra virgin olivolja motsvarande extra jungfruolivolja"
+ },
+ "sub_001450": {
+  "note": "Rått fett fläsk kan ersättas med ister i matlagning"
+ },
+ "sub_001451": {
+  "note": "Pesto rosso kan ersättas med vanlig basilikapesto om det inte finns."
+ },
+ "sub_001452": {
+  "note": "Hackad ättiksgurka som syrligt och krispigt substitut för kapris."
+ },
+ "sub_001453": {
+  "note": "Ättiksgurka ersätter ättikslök för syra som tillbehör."
+ },
+ "sub_001454": {
+  "note": "Vanliga ättiksgurkor som ett mindre sött alternativ till sötsura gurkor."
+ },
+ "sub_001455": {
+  "note": "Grön oliv i saltlake är utbytbar mot svart oliv i de flesta recept."
+ },
+ "sub_001456": {
+  "note": "Svart oliv i saltlake är utbytbar mot grön oliv i de flesta recept."
+ },
+ "sub_001457": {
+  "note": "Svart oliv i saltlake som alternativ till svart oliv i olja om den inte finns."
+ },
+ "sub_001458": {
+  "note": "Vetekli som vanlig fiberersättning för majskli."
+ },
+ "sub_001459": {
+  "note": "Vetekli som vanlig fiberersättning för riskli."
+ },
+ "sub_001460": {
+  "note": "Färdig nötköttsbuljong ersätter torkad buljong (blanda enligt anvisning)."
+ },
+ "sub_001461": {
+  "note": "Bryggjäst i flingor är utbytbar mot vanlig bryggjäst."
+ },
+ "sub_001462": {
+  "note": "Torrjäst ersätter färsk jäst (ungefär hälften av vikten)."
+ },
+ "sub_001463": {
+  "note": "Färsk jäst ersätter torrjäst (ungefär dubbla vikten)."
+ },
+ "sub_001464": {
+  "note": "En urskrapad vaniljstång ersätter alkoholbaserad vaniljextrakt."
+ },
+ "sub_001465": {
+  "note": "Färdig kalvfond ersätter torkad fond (blanda enligt anvisning)."
+ },
+ "sub_001466": {
+  "note": "Färdig fiskfond som alternativ till torkad buljong (court-bouillon)."
+ },
+ "sub_001467": {
+  "note": "Sojasås ger en liknande umaminyans för att ersätta bredbart jästextrakt i matlagning."
+ },
+ "sub_001468": {
+  "note": "Pektin som klassisk ersättning för geleringsmedel i sylt."
+ },
+ "sub_001469": {
+  "note": "Vaniljextrakt (cirka 1 tsk) ersätter en vaniljstång."
+ },
+ "sub_001470": {
+  "note": "Färsk mynta ersätter torkad mynta (tredubbla mängden)."
+ },
+ "sub_001471": {
+  "note": "Färsk rosmarin ersätter torkad rosmarin (tredubbla mängden)."
+ },
+ "sub_001472": {
+  "note": "Färsk salvia ersätter torkad salvia (tredubbla mängden)."
+ },
+ "sub_001473": {
+  "note": "Färsk dragon ersätter torkad dragon (tredubbla mängden)."
+ },
+ "sub_001474": {
+  "note": "Färsk dill ersätter torkad dill (tredubbla mängden)."
+ },
+ "sub_001475": {
+  "note": "Färsk gräslök ersätter torkad gräslök (tredubbla mängden)."
+ },
+ "sub_001476": {
+  "note": "Klassiskt vegetabiliskt alternativ till crème fraîche i matlagning (tillagning, såser)."
+ },
+ "sub_001477": {
+  "note": "Naturell tofu är ett vanligt vegetabiliskt substitut för kycklingbröst i wok och curry."
+ },
+ "sub_001478": {
+  "note": "Seitan är ett vanligt vegetabiliskt substitut för nötfärs i grytor och bolognese."
+ },
+ "sub_001479": {
+  "note": "Liknande grönsaksbaserad bredbar röra, utbytbar mot aubergineçaviar till förrätt."
+ },
+ "sub_001480": {
+  "note": "Olja med mild och neutral smak, med liknande hög rykpunkt; bra ersättning både vid tillagning och som smaksättning."
+ },
+ "sub_001481": {
+  "note": "Vanlig sesamolja, mildare smak men samma asiatiska register; passar i koreanska/japanska rätter."
+ },
+ "sub_001482": {
+  "note": "Raffinerad palmolja, mindre intensiv färg och smak (mindre betakaroten), men samma konsistens och användning vid tillagning."
+ },
+ "sub_001483": {
+  "note": "Vanligt margarin, högre fetthalt; minska mängden något."
+ },
+ "sub_001484": {
+  "note": "Fettreducerad version, praktisk för en lättare tillagning eller smörgåsar."
+ },
+ "sub_001485": {
+  "note": "Krämigt mandelsmör, liknande konsistens och användning (mackor, bakning), mandelsmak i stället för hasselnöt."
+ },
+ "sub_001486": {
+  "note": "Vanlig majsolja, nästan identisk smak och användning."
+ },
+ "sub_001487": {
+  "note": "Majsgroddolja, mycket lik smak, kan ersätta vanlig majsolja."
+ },
+ "sub_001488": {
+  "note": "Valnötsolja, en annan nötolja, annorlunda smak men liknande roll som smaksättning och avslutning."
+ },
+ "sub_001489": {
+  "note": "Valnötsolja, liknande aromprofil (nöt), bra ersättning för vinägretter och avslutande smaksättning."
+ },
+ "sub_001490": {
+  "note": "Vanlig sesamolja, mindre rostad och mindre intensiv smak; öka mängden något för att kompensera."
+ },
+ "sub_001491": {
+  "note": "Rostad sesamolja, kraftigare och rostad smak; använd i mindre mängd."
+ },
+ "sub_001492": {
+  "note": "Vanlig raffinerad solrosolja, mer neutral smak, passar både kall och vid tillagning."
+ },
+ "sub_001493": {
+  "note": "Kallpressad jungfruversion, kraftigare fröig smak, att föredra för rå smaksättning."
+ },
+ "sub_001494": {
+  "note": "Vanlig raffinerad rapsolja, mildare smak, håller bättre vid tillagning."
+ },
+ "sub_001495": {
+  "note": "Kallpressad jungfruversion, mer markerad hasselnötssmak, bäst till kalla rätter."
+ },
+ "sub_001496": {
+  "note": "Nötfett (talg), mycket lik konsistens och användning vid fritering/bakning, något mildare smak."
+ },
+ "sub_001497": {
+  "note": "Vanligt smör, högre fetthalt; använd en något mindre mängd."
+ },
+ "sub_001498": {
+  "note": "Fettreducerad version, för en lättare tillagning eller smörgåsar."
+ },
+ "sub_001499": {
+  "note": "Pastöriserat smör från butik, fungerar mycket bra vid tillagning, med en mindre gårdsartad och fruktig smak."
+ },
+ "sub_001500": {
+  "note": "Filtrerad extra jungfruolivolja, lite mindre rustik smak men jämförbar kvalitet."
+ },
+ "sub_001501": {
+  "note": "Ofiltrerad jungfruversion, mer rustik smak och lätt grumlig konsistens, idealisk rå."
+ },
+ "sub_001502": {
+  "note": "Vanlig sesamolja, ljusare färg och något mildare smak."
+ },
+ "sub_001503": {
+  "note": "Svart sesamolja, kraftigare smak och mörkare färg, för en tydligare touch."
+ },
+ "sub_001504": {
+  "note": "Vanlig majonnäs, gärna berikad med hackat hårdkokt ägg och kapris för att likna smaken av sauce gribiche."
+ },
+ "sub_001505": {
+  "note": "Vanlig vinägrett blandad med hackad kapris, saltgurka och färska örter för att likna sauce ravigote."
+ },
+ "sub_001506": {
+  "note": "Béchamelsås blandad med riven ost, vilket är just basen för en hemgjord sauce Mornay."
+ },
+ "sub_001507": {
+  "note": "Sauce béarnaise blandad med lite tomatpuré, vilket ger en hemgjord sauce Choron."
+ },
+ "sub_001508": {
+  "note": "Färsk salsa, mycket lik konsistens och användning (tacos, grillat, ägg)."
+ },
+ "sub_001509": {
+  "note": "Vinbärsgelé, syrligt tillbehör som traditionellt serveras till fjäderfä och vilt, bra ersättning för tranbärssås."
+ },
+ "sub_001510": {
+  "note": "Tranbärssås, liknande sött-syrligt tillbehör till fågel och vilt."
+ },
+ "sub_001511": {
+  "note": "Chowchow (grönsaksrelish med vinäger och senap), mycket likt engelsk piccalilli."
+ },
+ "sub_001512": {
+  "note": "Piccalilli, engelsk grönsaksrelish med senap och gurkmeja, mycket lik chowchow."
+ },
+ "sub_001513": {
+  "note": "Brynt smör med citronsaft och hackad persilja tillsatt, vilket återskapar en hemmagjord sauce meunière."
+ },
+ "sub_001514": {
+  "note": "Vanlig currysås, mindre komplex smak (utan de specifika kryddorna i antillansk colombo) men samma användning."
+ },
+ "sub_001515": {
+  "note": "Chimichurrisås, en örtbaserad oljesås till grillat, mindre citronsmak men liknande användning."
+ },
+ "sub_001516": {
+  "note": "Tzatziki på yoghurtbas, en yoghurt-gurksås mycket lik raita, generellt något mindre kryddig."
+ },
+ "sub_001517": {
+  "note": "Raita, en indisk yoghurt-gurksås mycket lik tzatziki, ofta kryddigare."
+ },
+ "sub_001518": {
+  "note": "Vanlig tomatsås blandad med chili (färsk, malen eller i flingor) för att likna arrabbiata."
+ },
+ "sub_001519": {
+  "note": "Tomatsås blandad med hackade oliver, kapris och ansjovis för att likna puttanesca."
+ },
+ "sub_001520": {
+  "note": "Grön currypasta utspädd med kokosmjölk, klassisk bas för att göra en thailändsk grön currysås."
+ },
+ "sub_001521": {
+  "note": "Röd currypasta utspädd med kokosmjölk, klassisk bas för att göra en thailändsk röd currysås."
+ },
+ "sub_001522": {
+  "note": "Majonnäs blandad med pressad vitlök, krämig konsistens som liknar toum, men mildare."
+ },
+ "sub_001523": {
+  "note": "Teriyakisås, även den söt-salt sojabaserad, bra ersättning för att marinera eller slå över grillat."
+ },
+ "sub_001524": {
+  "note": "Yakinikusås, även den söt-salt sojabaserad, bra ersättning för teriyaki."
+ },
+ "sub_001525": {
+  "note": "Ren nuoc-mâm, saltare och utan de andra smakerna (lime, socker, chili); späd ut och sockra lätt."
+ },
+ "sub_001526": {
+  "note": "Harissa, tjockare nordafrikansk chilipasta, liknande användning för att krydda grillat och marinader."
+ },
+ "sub_001527": {
+  "note": "Piri piri-sås, också stark men mer flytande, bra ersättning för att krydda upp en rätt eller marinad."
+ },
+ "sub_001528": {
+  "note": "Chimichurri, örtsås med olja (persilja i stället för koriander), liknande roll som tillbehör till grillat."
+ },
+ "sub_001529": {
+  "note": "Röd enchiladasås på tomatbas, mindre syrlig smak än tomatillo-versionen, men samma användning."
+ },
+ "sub_001530": {
+  "note": "Grön enchiladasås på tomatillobas, syrligare, men samma användning för att slå över enchiladas."
+ },
+ "sub_001531": {
+  "note": "Köpt honung-senapsdressing, nästan identisk produkt."
+ }
+}

@@ -1,0 +1,4716 @@
+{
+ "sub_000001": {
+  "note": "Samme mengde, svært likt resultat."
+ },
+ "sub_000002": {
+  "note": "Reduser mengden med omtrent 25 %."
+ },
+ "sub_000003": {
+  "note": "I kaker, for en lettere versjon.",
+  "name": "Eplemos"
+ },
+ "sub_000004": {
+  "note": "Omtrent 60 g eplemos per egg, i kaker.",
+  "name": "Eplemos"
+ },
+ "sub_000005": {
+  "note": "1 ss malt + 3 ss vann per egg, la det svelle i 5 min.",
+  "name": "Linfrø"
+ },
+ "sub_000006": {
+  "note": "Mer nøytral smak, litt mer flytende."
+ },
+ "sub_000007": {
+  "note": "God erstatning både til baking og til drikke."
+ },
+ "sub_000008": {
+  "note": "Naturlig lett søtt."
+ },
+ "sub_000009": {
+  "note": "Lettere, mindre fettrikt."
+ },
+ "sub_000010": {
+  "note": "For en laktosefri versjon, gir en svak kokossmak."
+ },
+ "sub_000011": {
+  "note": "For en glutenfri versjon."
+ },
+ "sub_000012": {
+  "note": "For å jevne en saus; erstatter ikke mel når kaken skal heve."
+ },
+ "sub_000013": {
+  "note": "Endrer konsistens og smak, blir tettere og rikere."
+ },
+ "sub_000014": {
+  "note": "Reduser væskemengden i oppskriften litt (honning er fuktig)."
+ },
+ "sub_000015": {
+  "note": "Sterkere smak, reduser væskemengden i oppskriften litt."
+ },
+ "sub_000016": {
+  "note": "Mer karamellisert smak, samme mengde."
+ },
+ "sub_000017": {
+  "note": "Kombiner med en syrlig ingrediens (eddik, sitronsaft) for at den skal virke."
+ },
+ "sub_000018": {
+  "note": "Tilsett litt sitronsaft for å gjenskape vinens syre."
+ },
+ "sub_000019": {
+  "note": "Tilsett litt balsamicoeddik for syre og farge."
+ },
+ "sub_000020": {
+  "note": "Mer nøytral smak."
+ },
+ "sub_000021": {
+  "note": "Godt tilskudd av omega-3, nøytral smak."
+ },
+ "sub_000022": {
+  "note": "Litt tettere, noe mindre syrlig."
+ },
+ "sub_000023": {
+  "note": "Rikere, bruk i litt mindre mengde.",
+  "name": "Lettere crème fraîche (tykk)"
+ },
+ "sub_000024": {
+  "note": "Saltere og sterkere smak."
+ },
+ "sub_000025": {
+  "note": "For en vegansk versjon, gir en lignende umamismak."
+ },
+ "sub_000026": {
+  "note": "Kjør grovt i hurtigmikser før bruk."
+ },
+ "sub_000027": {
+  "note": "Smuldre fint før bruk."
+ },
+ "sub_000028": {
+  "note": "Sterkere/skarpere, doser forsiktig."
+ },
+ "sub_000029": {
+  "note": "Kombiner med litt eddik for å gjenskape syren."
+ },
+ "sub_000030": {
+  "note": "Omtrent 1/8 ts per fedd fersk hvitløk."
+ },
+ "sub_000031": {
+  "note": "Mildere og søtere smak."
+ },
+ "sub_000032": {
+  "note": "Mildere smak, koker fortere."
+ },
+ "sub_000033": {
+  "note": "Bruk den hvite delen, mildere smak."
+ },
+ "sub_000034": {
+  "note": "Kun for syren, uten sitrussmaken."
+ },
+ "sub_000035": {
+  "note": "Litt friskere smak."
+ },
+ "sub_000036": {
+  "note": "Tilsett en klype sukker for å gjenskape den lett søte tonen."
+ },
+ "sub_000037": {
+  "note": "Samme bruk, ofte mindre salt."
+ },
+ "sub_000038": {
+  "note": "Fortynnet i vann gir salt og umami smak."
+ },
+ "sub_000039": {
+  "note": "Litt magrere, men lignende konsistens."
+ },
+ "sub_000040": {
+  "note": "For en laktosefri versjon."
+ },
+ "sub_000041": {
+  "note": "Bland med litt tykk crème fraîche for mer fylde.",
+  "name": "Fromage frais (fersk ost)"
+ },
+ "sub_000042": {
+  "note": "Bland med smør og sukker for å gjenskape en lignende konsistens."
+ },
+ "sub_000043": {
+  "note": "Sterkere smak."
+ },
+ "sub_000044": {
+  "note": "Mildere og kremete smak."
+ },
+ "sub_000045": {
+  "note": "Mer protein, litt annen konsistens."
+ },
+ "sub_000046": {
+  "note": "Kortere koketid."
+ },
+ "sub_000047": {
+  "note": "For en glutenfri versjon."
+ },
+ "sub_000048": {
+  "note": "For en glutenfri versjon, raskere tilberedning."
+ },
+ "sub_000049": {
+  "note": "Noen dråper er nok, tilsett i vanlig sukker."
+ },
+ "sub_000050": {
+  "note": "Annen smak, men lignende konsistens."
+ },
+ "sub_000051": {
+  "note": "Tilsett litt ekstra væske for å kompensere (honning er fuktig)."
+ },
+ "sub_000052": {
+  "note": "Litt mer flytende."
+ },
+ "sub_000053": {
+  "note": "For en glutenfri versjon, svært lik smak.",
+  "name": "Tamari"
+ },
+ "sub_000054": {
+  "note": "Fortynn med litt vann; umamismaken blir svakere."
+ },
+ "sub_000055": {
+  "note": "Neper og kålrot kan byttes om i gryteretter og puré, i samme mengde."
+ },
+ "sub_000056": {
+  "note": "Blomkål og brokkoli kan byttes om i samme mengde i de fleste oppskrifter (gratenger, wok, blomkål-/brokkoliris)."
+ },
+ "sub_000057": {
+  "note": "Rødkål og hvitkål kan byttes om i samme mengde, fargen på retten endres."
+ },
+ "sub_000058": {
+  "note": "Rødløk kan erstattes med gul løk i samme mengde, litt mindre søt smak."
+ },
+ "sub_000059": {
+  "note": "Hvit løk og gul løk kan byttes om i samme mengde."
+ },
+ "sub_000060": {
+  "note": "Isbergsalat og romanosalat kan byttes om i salater; romanosalat er sprøere og mer næringsrik."
+ },
+ "sub_000061": {
+  "note": "Rød og grønn bladsalat kan byttes om i salater i samme mengde."
+ },
+ "sub_000062": {
+  "note": "Rød paprika kan erstattes med grønn paprika i samme mengde, mer bitter og mindre søt smak."
+ },
+ "sub_000063": {
+  "note": "Gul og oransje paprika kan byttes om i samme mengde (samme sødme)."
+ },
+ "sub_000064": {
+  "note": "Hvit sjampinjong kan erstattes med brun sjampinjong (crimini), sterkere smak, i samme mengde."
+ },
+ "sub_000065": {
+  "note": "Brun sjampinjong (crimini) og portobello er samme sopp i ulik modningsgrad, og kan byttes om (portobello er kjøttfullere)."
+ },
+ "sub_000066": {
+  "note": "Shiitake kan erstattes med portobello for en lignende kjøttfull konsistens i wokretter, i samme mengde."
+ },
+ "sub_000067": {
+  "note": "Enoki kan erstattes med hvit sjampinjong hvis den ikke finnes, mindre sprø konsistens."
+ },
+ "sub_000068": {
+  "note": "Shimeji kan erstattes med hvit sjampinjong, i samme mengde."
+ },
+ "sub_000069": {
+  "note": "Østerssopp kan erstattes med shiitake i wokretter og buljonger, i samme mengde."
+ },
+ "sub_000070": {
+  "note": "Grønnkål og collardgrønnkål kan byttes om i gryteretter, i samme mengde."
+ },
+ "sub_000071": {
+  "note": "Cantaloupemelon og honningmelon kan byttes om i fruktsalat, i samme mengde."
+ },
+ "sub_000072": {
+  "note": "Rød potet kan erstattes med Russet-potet, som er melere (bedre til puré/pommes frites)."
+ },
+ "sub_000073": {
+  "note": "Gulkjøttet potet kan erstattes med rød potet, lignende fast konsistens."
+ },
+ "sub_000074": {
+  "note": "Fuji- og Gala-epler kan byttes om i samme mengde, begge søte og faste."
+ },
+ "sub_000075": {
+  "note": "Granny Smith-eple kan erstattes med Red Delicious, men blir mindre syrlig (juster sukkeret i bakst)."
+ },
+ "sub_000076": {
+  "note": "Honeycrisp-eple kan erstattes med Gala i samme mengde, litt mindre saftig."
+ },
+ "sub_000077": {
+  "note": "Ataulfo-mango kan erstattes med Tommy Atkins-mango i samme mengde, litt mer fibrøs konsistens."
+ },
+ "sub_000078": {
+  "note": "Jalapeño og serrano kan byttes om; serrano er sterkere, reduser mengden litt."
+ },
+ "sub_000079": {
+  "note": "Poblano kan erstattes med jalapeño ved å halvere mengden (poblano er mye mildere)."
+ },
+ "sub_000080": {
+  "note": "Bananpepper (ungarsk voksepepper) kan erstattes med jalapeño; mildere smak, så bruk mer av den."
+ },
+ "sub_000081": {
+  "note": "Cannellini-bønner og hvite bønner (Navy) kan byttes om i samme mengde i supper og salater."
+ },
+ "sub_000082": {
+  "note": "Sorte bønner og pintobønner kan byttes om i meksikanske retter/chili, i samme mengde."
+ },
+ "sub_000083": {
+  "note": "Peanøttsmør kan erstattes med mandelsmør i samme mengde (peanøttfritt alternativ), mildere smak."
+ },
+ "sub_000084": {
+  "note": "Tahini kan erstattes med mandelsmør i samme mengde for en mindre besk smak (unntatt i hummus)."
+ },
+ "sub_000085": {
+  "note": "Tørkede fikener og sviske kan byttes om i bakst/kompott, i samme mengde."
+ },
+ "sub_000086": {
+  "note": "Mørke rosiner og gylne rosiner (sultanrosiner) kan byttes om i samme mengde, de gylne er litt mildere i smak."
+ },
+ "sub_000087": {
+  "note": "Gresskarkjerner (pepitas) kan erstattes med pinjekjerner som topping (pesto, salater), i samme mengde."
+ },
+ "sub_000088": {
+  "note": "Maisolje kan erstattes med rapsolje i samme mengde, lignende nøytral smak."
+ },
+ "sub_000089": {
+  "note": "Saflorolje kan erstattes med solsikkeolje i samme mengde, lignende nøytral smak."
+ },
+ "sub_000090": {
+  "note": "Peanøttolje kan erstattes med rapsolje til frityrsteking ved allergi, lignende røykpunkt."
+ },
+ "sub_000091": {
+  "note": "Gul løk i samme mengde, mildere og søtere smak"
+ },
+ "sub_000092": {
+  "note": "Squash og gul sommergresskar kan byttes om i samme mengde"
+ },
+ "sub_000093": {
+  "note": "Gammelt kornslag kan erstattes med rå quinoa, lignende koketid"
+ },
+ "sub_000094": {
+  "note": "Gammel hvetesort kan erstattes med perlet farro, lignende fast konsistens"
+ },
+ "sub_000095": {
+  "note": "Kamut kan erstattes med farro, samme familie gammel hvete"
+ },
+ "sub_000096": {
+  "note": "Svart ris kan erstattes med brun ris i samme mengde, annen farge"
+ },
+ "sub_000097": {
+  "note": "Rød ris kan erstattes med brun ris i samme mengde"
+ },
+ "sub_000098": {
+  "note": "Brun ris kan erstattes med hvit ris, reduser koketiden"
+ },
+ "sub_000099": {
+  "note": "Sorghumkorn kan erstattes med brun ris i kornboller"
+ },
+ "sub_000100": {
+  "note": "Vanlig spaghetti og fullkornsspaghetti kan byttes om i samme mengde"
+ },
+ "sub_000101": {
+  "note": "Hvetemel i stedet for kakemel; for lettere resultat, bytt ut 2 ss per kopp med maisstivelse"
+ },
+ "sub_000102": {
+  "note": "Versjon med svinekjøtt i stedet for den vegetariske versjonen, for mer røkt smak"
+ },
+ "sub_000103": {
+  "note": "Svartøyebønner kan erstattes med pintobønner, lignende konsistens"
+ },
+ "sub_000104": {
+  "note": "Sorte bønner og pintobønner kan byttes om i meksikanske retter"
+ },
+ "sub_000105": {
+  "note": "Hvite bønner (navy) kan erstattes med cannellini-bønner i samme mengde"
+ },
+ "sub_000106": {
+  "note": "Great northern-bønner og cannellini-bønner er begge hvite bønner som kan byttes om"
+ },
+ "sub_000107": {
+  "note": "Extra virgin har sterkere smak; extra lett egner seg bedre til steking ved høy temperatur"
+ },
+ "sub_000108": {
+  "note": "Hvitvinseddik i samme mengde for syren i dressinger"
+ },
+ "sub_000109": {
+  "note": "Gurkemeiepulver som et rimelig alternativ for fargen; bruk halvparten så mye, annen smak"
+ },
+ "sub_000110": {
+  "note": "Usaltet smør + tilsett omtrent 1/4 ts salt per 115 g"
+ },
+ "sub_000111": {
+  "note": "Saltet smør, utelat saltet som ellers tilsettes i oppskriften"
+ },
+ "sub_000112": {
+  "note": "Naturell gresk yoghurt i stedet for rømme, i samme mengde, mindre fett"
+ },
+ "sub_000113": {
+  "note": "Melk + 1 ss sitronsaft eller eddik per kopp, la det hvile i 5-10 min",
+  "name": "Melk + sitronsaft eller eddik"
+ },
+ "sub_000114": {
+  "note": "Ferskt helt egg i stedet for rekonstituert tørket egg (følg gjenoppfuktingsforholdet)"
+ },
+ "sub_000115": {
+  "note": "Fersk eggeplomme i stedet for rekonstituert tørket eggeplomme"
+ },
+ "sub_000116": {
+  "note": "Fersk eggehvite i stedet for rekonstituert tørket eggehvite"
+ },
+ "sub_000117": {
+  "note": "Magre hvite fisker kan byttes om (Alaska sei og kolje)"
+ },
+ "sub_000118": {
+  "note": "Sei kan erstattes med torsk, lignende hvit fisk"
+ },
+ "sub_000119": {
+  "note": "Faste hvite fiskefileter kan byttes om ved grilling eller steking i panne"
+ },
+ "sub_000120": {
+  "note": "Sverdfisk og mahi-mahi, faste fisker til fiskebiff, kan byttes om"
+ },
+ "sub_000121": {
+  "note": "Chilensk sjøabbor (Patagonia-tannfisk) kan erstattes med kveite, lignende fast og smøraktig konsistens"
+ },
+ "sub_000122": {
+  "note": "Rød laks (sockeye) og atlantisk laks kan byttes om; atlantisk laks er fetere"
+ },
+ "sub_000123": {
+  "note": "Tilapia og malle, milde oppdrettsfisker som kan byttes om"
+ },
+ "sub_000124": {
+  "note": "Snøkrabbe og blå krabbe kan byttes om i de fleste oppskrifter"
+ },
+ "sub_000125": {
+  "note": "Gruyère i stedet for emmentaler, lignende nøttete smak"
+ },
+ "sub_000126": {
+  "note": "Sveitserost (emmentaler) i stedet for cheddar, for en mildere smeltet ost"
+ },
+ "sub_000127": {
+  "note": "Mozzarella med lavt fuktinnhold i stedet for Oaxaca-ost, lignende smelteevne"
+ },
+ "sub_000128": {
+  "note": "Revet parmesan i stedet for cotija som salt topping"
+ },
+ "sub_000129": {
+  "note": "Smuldret feta i stedet for queso fresco, lignende smuldrete og salt konsistens"
+ },
+ "sub_000130": {
+  "note": "Queso seco kan erstattes med cotija, begge tørre og salte oster"
+ },
+ "sub_000131": {
+  "note": "Mozzarella i stedet for Monterey Jack, for lignende mild smelteevne"
+ },
+ "sub_000132": {
+  "note": "Sveitserost (emmentaler) i stedet for provolone, lignende halvfast smelteevne"
+ },
+ "sub_000133": {
+  "note": "Cottage cheese kjørt i foodprosessor i stedet for ricotta, lignende konsistens"
+ },
+ "sub_000134": {
+  "note": "Cheddar i stedet for amerikansk ost til burgere og sandwicher"
+ },
+ "sub_000135": {
+  "note": "Kjøttdeig av storfe i stedet for kjøttdeig av svin, i samme mengde"
+ },
+ "sub_000136": {
+  "note": "Kjøttdeig av storfe i stedet for kjøttdeig av lam, mildere smak"
+ },
+ "sub_000137": {
+  "note": "Kjøttdeig av storfe i stedet for kjøttdeig av bison, fetere, reduser steketiden"
+ },
+ "sub_000138": {
+  "note": "Kalkunkjøttdeig i stedet for kyllingkjøttdeig, hvitt kjøtt som kan byttes om"
+ },
+ "sub_000139": {
+  "note": "Kyllinglår i stedet for kyllingbryst, saftigere, juster steketiden"
+ },
+ "sub_000140": {
+  "note": "Benfritt og skinnfritt kyllinglår i stedet for benfritt kyllingbryst, mørere"
+ },
+ "sub_000141": {
+  "note": "Skivet stekt kalkun i stedet for kyllingpålegg"
+ },
+ "sub_000142": {
+  "note": "Skivet stekt kalkun i stedet for roastbiff-pålegg"
+ },
+ "sub_000143": {
+  "note": "Skivet pepperoni i stedet for tørket salami på pizza eller sandwich"
+ },
+ "sub_000144": {
+  "note": "Chorizo av svin i stedet for mild italiensk pølse, mer krydret og røkt"
+ },
+ "sub_000145": {
+  "note": "Frokostpølse av storfe i stedet for kalkunpølse"
+ },
+ "sub_000146": {
+  "note": "Skummet melk i stedet for helmelk, mindre kremet konsistens"
+ },
+ "sub_000147": {
+  "note": "Mandeldrikk i stedet for havredrikk, plantebaserte melketyper som kan byttes om"
+ },
+ "sub_000148": {
+  "note": "Usøtet mandeldrikk i stedet for soyamelk, uten melkeprodukter og soya"
+ },
+ "sub_000149": {
+  "note": "Hvetetortilla i stedet for maistortilla, mykere, men inneholder gluten"
+ },
+ "sub_000150": {
+  "note": "Erstatt med tørket rosmarin: bruk 1/3 av mengden (tørkede urter er mer konsentrerte)"
+ },
+ "sub_000151": {
+  "note": "Erstatt med fersk rosmarin: bruk 3 ganger mengden"
+ },
+ "sub_000152": {
+  "note": "Bruk omtrent 1/3 av mengden med tørket dill"
+ },
+ "sub_000153": {
+  "note": "Bruk 3 ganger mengden med fersk dill"
+ },
+ "sub_000154": {
+  "note": "Bruk 3 ganger mengden med fersk mynte"
+ },
+ "sub_000155": {
+  "note": "Bruk omtrent 1/3 av mengden med tørket mynte"
+ },
+ "sub_000156": {
+  "note": "God erstatning i samme mengde, litt mildere smak"
+ },
+ "sub_000157": {
+  "note": "Bruk 3 ganger mengden med finhakket fersk persille"
+ },
+ "sub_000158": {
+  "note": "Bruk omtrent 1/3 av mengden med tørket persille"
+ },
+ "sub_000159": {
+  "note": "Bruk omtrent 1/3 av mengden med frysetørket gressløk"
+ },
+ "sub_000160": {
+  "note": "Rehydrer i noen minutter; bruk omtrent 1/3 av mengden"
+ },
+ "sub_000161": {
+  "note": "Erstatning i samme mengde, svært lik smak (samme kryddertre)"
+ },
+ "sub_000162": {
+  "note": "Erstatning i samme mengde, litt mildere smak"
+ },
+ "sub_000163": {
+  "note": "Erstatning i samme mengde, mildere smak, mindre synlig i lyse retter"
+ },
+ "sub_000164": {
+  "note": "Bruk omtrent 6 ganger mengden med revet fersk ingefær"
+ },
+ "sub_000165": {
+  "note": "Bruk omtrent 1/6 av mengden med malt ingefær"
+ },
+ "sub_000166": {
+  "note": "Erstatning i samme mengde, allehånde minner om nellik, kanel og muskatnøtt"
+ },
+ "sub_000167": {
+  "note": "Erstatning i samme mengde, mildere og litt søtere smak"
+ },
+ "sub_000168": {
+  "note": "Erstatning i samme mengde, sterkere smak"
+ },
+ "sub_000169": {
+  "note": "Erstatning i samme mengde, nært beslektet aroma"
+ },
+ "sub_000170": {
+  "note": "Erstatning i samme mengde, mild smak som ligner persille"
+ },
+ "sub_000171": {
+  "note": "Direkte erstatning i samme mengde (alkoholfri versjon)"
+ },
+ "sub_000172": {
+  "note": "Direkte erstatning i samme mengde (versjon med alkohol)"
+ },
+ "sub_000173": {
+  "note": "Erstatning i samme mengde for syren i salte retter, mindre rund smak"
+ },
+ "sub_000174": {
+  "note": "Bruk omtrent 1/4 av mengden, cayennepepper er mye sterkere og mangler de andre krydderne i blandingen"
+ },
+ "sub_000175": {
+  "note": "Bland like deler malt kanel, ingefær og muskatnøtt, tilsett en klype malt allehånde",
+  "name": "Hjemmelaget blanding av malt kanel, ingefær og muskatnøtt med en klype allehånde"
+ },
+ "sub_000176": {
+  "note": "Direkte erstatning i samme mengde, mindre salt versjon"
+ },
+ "sub_000177": {
+  "note": "Reduser mengden og rehydrer lett; mer konsentrert og søt smak"
+ },
+ "sub_000178": {
+  "note": "Reduser mengden og rehydrer lett; mer konsentrert smak"
+ },
+ "sub_000179": {
+  "note": "Rehydrer i vann før bruk; bruk omtrent 1/3 av mengden"
+ },
+ "sub_000180": {
+  "note": "Direkte erstatning i samme mengde, la av og skyll før bruk"
+ },
+ "sub_000181": {
+  "note": "Direkte erstatning, skyll for å fjerne overflødig lake"
+ },
+ "sub_000182": {
+  "note": "Erstatning i samme mengde, fastere og mindre søt konsistens"
+ },
+ "sub_000183": {
+  "note": "Erstatning i samme mengde, mykere og søtere konsistens"
+ },
+ "sub_000184": {
+  "note": "Erstatning i samme mengde for syren, litt annen smak"
+ },
+ "sub_000185": {
+  "note": "Erstatning i samme mengde for syren, litt annen smak"
+ },
+ "sub_000186": {
+  "note": "Direkte erstatning i samme mengde"
+ },
+ "sub_000187": {
+  "note": "Erstatning i samme mengde (hybridfrukt mellom bjørnebær og bringebær), litt mer syrlig"
+ },
+ "sub_000188": {
+  "note": "Erstatning i samme mengde i salat, lignende bitterhet"
+ },
+ "sub_000189": {
+  "note": "Erstatning i samme mengde i salat, lignende pepperaktig smak"
+ },
+ "sub_000190": {
+  "note": "Erstatning i samme mengde i salat eller wok"
+ },
+ "sub_000191": {
+  "note": "Erstatning i samme mengde i salat, mildere smak"
+ },
+ "sub_000192": {
+  "note": "Erstatning i samme mengde, svært lik i smak og konsistens"
+ },
+ "sub_000193": {
+  "note": "Erstatning i samme mengde, lignende tilberedning"
+ },
+ "sub_000194": {
+  "note": "Erstatning i samme mengde, wokes raskt"
+ },
+ "sub_000195": {
+  "note": "Erstatning i samme mengde (svært like rotknoller), må alltid kokes godt før det spises"
+ },
+ "sub_000196": {
+  "note": "Erstatning i samme mengde, må alltid kokes godt før det spises"
+ },
+ "sub_000197": {
+  "note": "Kokt Malabar-spinat kan erstattes med kokt vanlig spinat i samme mengde, litt mindre slimete konsistens"
+ },
+ "sub_000198": {
+  "note": "God erstatning for vanlig rå spinat, i samme mengde"
+ },
+ "sub_000199": {
+  "note": "For umami/salt smak i en nødsituasjon (ikke samme fermenterte smak): bruk omtrent halvparten så mye tamari, salt forsiktig"
+ },
+ "sub_000200": {
+  "note": "Potet i samme mengde, lignende konsistens når den er kokt, mer nøytral smak"
+ },
+ "sub_000201": {
+  "note": "1 ss tørkede flak = omtrent 1/4 finhakket fersk gul løk"
+ },
+ "sub_000202": {
+  "note": "Usøtet tranebærjuice i samme mengde, lignende syre, juster sukkeret"
+ },
+ "sub_000203": {
+  "note": "Sitronskall for sitronaromaen, hvis sitrongress mangler: omtrent 1 ts skall per stilk sitrongress"
+ },
+ "sub_000204": {
+  "note": "Naturell melkebasert yoghurt i samme mengde hvis det plantebaserte alternativet ikke er nødvendig"
+ },
+ "sub_000205": {
+  "note": "Klassisk erstatning i bakst: kakaopulver i samme mengde, tilsett litt mer sukker siden johannesbrød er naturlig søtt"
+ },
+ "sub_000206": {
+  "note": "Bladpersille for dem som ikke liker koriander, i samme mengde, annen smak men lignende aromatisk rolle"
+ },
+ "sub_000207": {
+  "note": "Maisstivelse i samme eller litt mindre mengde til jevning (2 ts maisstivelse = 1 ss arrowrot)"
+ },
+ "sub_000208": {
+  "note": "Shoyu (inneholder hvete) i samme mengde hvis gluten ikke er et problem"
+ },
+ "sub_000209": {
+  "note": "Bruk en tamari som er sertifisert glutenfri (sjekk etiketten, ikke alle er det) for en glutenfri versjon, i samme mengde."
+ },
+ "sub_000210": {
+  "note": "Vanlig pære i samme mengde, mykere konsistens enn nashi-pæren som er sprø"
+ },
+ "sub_000211": {
+  "note": "Pepperrot i redusert mengde (wasabi er sterkere): omtrent halvparten så mye"
+ },
+ "sub_000212": {
+  "note": "Rå spinat i samme mengde, kortere koketid enn mangold"
+ },
+ "sub_000213": {
+  "note": "Ruccola i samme mengde, mer pepperaktig smak enn karse"
+ },
+ "sub_000214": {
+  "note": "Gelatin i tilsvarende mengde for et ikke-vegetarisk alternativ (agar-agar gelerer sterkere, juster mengden ned)"
+ },
+ "sub_000215": {
+  "note": "Vanlig vårløk i samme mengde"
+ },
+ "sub_000216": {
+  "note": "Honeymelon i samme mengde, lignende konsistens og sødme"
+ },
+ "sub_000217": {
+  "note": "Vanlig hvitkål i samme mengde, mindre bulkete blader, men lignende smak"
+ },
+ "sub_000218": {
+  "note": "Squash i samme mengde, litt raskere tilberedning"
+ },
+ "sub_000219": {
+  "note": "Tørket shiitake (rehydrert) i samme mengde for en lignende skoglig smak"
+ },
+ "sub_000220": {
+  "note": "Jalapeño i samme mengde, litt mildere"
+ },
+ "sub_000221": {
+  "note": "Fersk poblanopepper i samme mengde (ancho er tørket poblano); ellers mild paprika for aromaen uten styrken"
+ },
+ "sub_000222": {
+  "note": "Escarole i samme mengde, litt mindre bitter enn endivie"
+ },
+ "sub_000223": {
+  "note": "Grønn bladsalat i samme mengde, samme konsistens, annen farge"
+ },
+ "sub_000224": {
+  "note": "Hvit sjampinjong i samme mengde, fastere konsistens"
+ },
+ "sub_000225": {
+  "note": "Vanlig brokkoli i samme mengde, kai-lan har tynnere og litt bitrere stilker"
+ },
+ "sub_000226": {
+  "note": "California-avokado (Hass) i samme mengde, fetere og kremere enn Florida-avokado"
+ },
+ "sub_000227": {
+  "note": "Vanlige rosiner i samme mengde, litt mindre søte/syrlige enn korinter"
+ },
+ "sub_000228": {
+  "note": "Rå nepe i samme mengde, skarpere og mindre søt smak enn daikon"
+ },
+ "sub_000229": {
+  "note": "Agar-agar-pulver, bruk omtrent 1/8 ts per ss irsk mose, sterkere geleringsevne"
+ },
+ "sub_000230": {
+  "note": "Tørket anchopepper i samme mengde, litt mildere og fruktigere smak enn pasilla"
+ },
+ "sub_000231": {
+  "note": "Vanlig hvit blomkål i samme mengde, samme konsistens, mindre dekorativ"
+ },
+ "sub_000232": {
+  "note": "Shiitake i samme mengde, fastere konsistens enn maitake"
+ },
+ "sub_000233": {
+  "note": "Japansk kaki (Fuyu) i samme mengde, fastere konsistens selv når den ikke er overmoden, i motsetning til den amerikanske kakien"
+ },
+ "sub_000234": {
+  "note": "Hvit sjampinjong i samme mengde, mildere smak enn portobello"
+ },
+ "sub_000235": {
+  "note": "Rå (eller hermetisk) litchi i samme mengde, lignende konsistens og sødme som rambutan"
+ },
+ "sub_000236": {
+  "note": "Søtede tørkede tranebær i samme mengde i bakst, mer syrlige enn tørkede blåbær"
+ },
+ "sub_000237": {
+  "note": "For en plantebasert \"pulled\"-konsistens uten jackfruits søtlige smak: i samme mengde, la det marinere lenger",
+  "name": "Palmehjerter eller østerssopp, trukket i strimler"
+ },
+ "sub_000238": {
+  "note": "I samme mengde, grønt kjøtt i stedet for gult, litt mer markert syre",
+  "name": "Vanlig grønn kiwi"
+ },
+ "sub_000239": {
+  "note": "Fortynnet tomatpuré (1 del puré til 2-3 deler vann) for å erstatte hermetisk tomatsaus"
+ },
+ "sub_000240": {
+  "note": "Quinoa i samme mengde, litt kortere koketid enn hirse"
+ },
+ "sub_000241": {
+  "note": "Rå grønne erter i samme mengde, søtere smak og mørere konsistens enn ferske bønner"
+ },
+ "sub_000242": {
+  "note": "Rå quinoa i samme mengde (raskere tilberedning), glutenfritt alternativ til bulgur"
+ },
+ "sub_000243": {
+  "note": "Jordskokk i samme mengde, lignende jordaktig-søt konsistens og smak som havrerot"
+ },
+ "sub_000244": {
+  "note": "Glutenfritt korn med lignende nøytral smak; erstatt i samme mengde (kokt quinoa)."
+ },
+ "sub_000245": {
+  "note": "Lignende glutenfritt korn; erstatt i samme mengde (rå quinoa)."
+ },
+ "sub_000246": {
+  "note": "Hasselnøtter: lignende konsistens og bruk i bakst, i samme mengde."
+ },
+ "sub_000247": {
+  "note": "Bruk kokt fersk søtpotet i stedet for hermetisk versjon, tilsvarende mengde når den er kokt."
+ },
+ "sub_000248": {
+  "note": "Ferske asparges kokt noen minutter erstatter den hermetiske versjonen, fastere konsistens."
+ },
+ "sub_000249": {
+  "note": "Ferske sjampinjonger, stekes noen minutter, i samme mengde."
+ },
+ "sub_000250": {
+  "note": "Tørr rå bulgur kan erstatte tørr couscous (litt lengre koketid)."
+ },
+ "sub_000251": {
+  "note": "Kokt bulgur og kokt couscous kan byttes om i samme mengde i de fleste oppskrifter."
+ },
+ "sub_000252": {
+  "note": "Kokt brun ris som alternativ til kokt spelt i salater eller tilbehør."
+ },
+ "sub_000253": {
+  "note": "Fullkornshvetemel som erstatning for rå spelt i baking, forhold 1:1."
+ },
+ "sub_000254": {
+  "note": "Frossen hakket spinat i stedet for frosne neperoter (nepetopper), mildere smak."
+ },
+ "sub_000255": {
+  "note": "Frossen spinat i stedet for frosne sennepsblader, mildere smak."
+ },
+ "sub_000256": {
+  "note": "Rå spinat i stedet for tendergreen sennepsspinat, mildere smak."
+ },
+ "sub_000257": {
+  "note": "Rå grønne bønner i stedet for vingebønner (unge belger), lignende konsistens."
+ },
+ "sub_000258": {
+  "note": "Rå grønne bønner i stedet for svartøyebønner i unge belger, lignende tilberedning."
+ },
+ "sub_000259": {
+  "note": "Rå grønne bønner som erstatning for umodne hyasintbønner."
+ },
+ "sub_000260": {
+  "note": "Rå grønne bønner i stedet for gule sukkerertbønner, forhold 1:1."
+ },
+ "sub_000261": {
+  "note": "Frosne blåbær som alternativ til frosne bjørnebær i desserter og smoothies."
+ },
+ "sub_000262": {
+  "note": "Rå squash i stedet for svampgresskar (luffa), lignende konsistens og tilberedning."
+ },
+ "sub_000263": {
+  "note": "Rå squash som erstatning for kalebassgresskar, i samme mengde."
+ },
+ "sub_000264": {
+  "note": "Rå squash i stedet for voksgresskar (kinesisk vintermelon)."
+ },
+ "sub_000265": {
+  "note": "Kokt quinoa som alternativ til kokt hirse, lignende konsistens og bruk."
+ },
+ "sub_000266": {
+  "note": "Rå langkornet brun ris i stedet for rå villris, kortere koketid."
+ },
+ "sub_000267": {
+  "note": "Ferske rå løk, stekes, i stedet for hermetisk løk."
+ },
+ "sub_000268": {
+  "note": "Fast tofu i stedet for kokt tempeh, mer nøytral smak, samme bruk som proteinkilde."
+ },
+ "sub_000269": {
+  "note": "Fersk fast tofu i stedet for tørket/frossen tofu (koyadofu) etter rehydrering."
+ },
+ "sub_000270": {
+  "note": "Appelsiner i stedet for mandariner, litt mindre søt og mer syrlig smak."
+ },
+ "sub_000271": {
+  "note": "Fullkornshvetemel i stedet for (mørkt) rugmel, lettere krumme."
+ },
+ "sub_000272": {
+  "note": "Fullkornshvetemel som alternativ til lyst rugmel."
+ },
+ "sub_000273": {
+  "note": "Fullkornshvetemel som alternativ til medium rugmel."
+ },
+ "sub_000274": {
+  "note": "Fullkornshvetemel i stedet for sorghummel, for dem som ikke trenger et glutenfritt alternativ."
+ },
+ "sub_000275": {
+  "note": "Fullkornshvetemel som alternativ til triticalemel, forhold 1:1."
+ },
+ "sub_000276": {
+  "note": "Fullkornshvetemel i stedet for bokhvetemel (utenom glutenfritt kosthold)."
+ },
+ "sub_000277": {
+  "note": "Hvit rismel i stedet for fullkorns-rismel, finere konsistens."
+ },
+ "sub_000278": {
+  "note": "Chiafrø som alternativ til linfrø, lignende jevnings- og næringsegenskaper.",
+  "name": "Chiafrø"
+ },
+ "sub_000279": {
+  "note": "Ferske eller hermetiske søte kirsebær i stedet for maraschinokirsebær, mindre søte og fargede."
+ },
+ "sub_000280": {
+  "note": "Ferske asparges som en tilnærmet erstatning for bregnetopper (fiddleheads), en grønn vårgrønnsak."
+ },
+ "sub_000281": {
+  "note": "Kylling (kokt bryst) i stedet for plantebasert kylling, for en ikke-vegetarisk rett."
+ },
+ "sub_000282": {
+  "note": "Vanlig svinepølse i stedet for plantebasert pølse, for en ikke-vegetarisk versjon.",
+  "name": "Svinepølse"
+ },
+ "sub_000283": {
+  "note": "Wienerpølse (svin) i stedet for den plantebaserte versjonen."
+ },
+ "sub_000284": {
+  "note": "Stekt og smuldret bacon i stedet for plantebaserte baconbiter."
+ },
+ "sub_000285": {
+  "note": "Skivet kokt skinke i stedet for plantebasert pålegg."
+ },
+ "sub_000286": {
+  "note": "Ferske (moste) bananer i stedet for tørket bananpulver, juster væskemengden i oppskriften."
+ },
+ "sub_000287": {
+  "note": "Medjool-dadler i stedet for sviske trukket i kraft, lignende søt smak."
+ },
+ "sub_000288": {
+  "note": "Dadler i stedet for rå tørkede sviske, i søte retter eller bakst."
+ },
+ "sub_000289": {
+  "note": "Rå løk (redusert mengde, sterkere smak) i stedet for purre hvis den mangler."
+ },
+ "sub_000290": {
+  "note": "Risnudler (vermicelli) som alternativ til soyanudler (harusame) i asiatiske supper og salater.",
+  "name": "Risnudler (vermicelli)"
+ },
+ "sub_000291": {
+  "note": "Kjøttdeig av storfe formet til vanlige kjøttboller i stedet for plantebaserte boller, for en ikke-vegetarisk versjon."
+ },
+ "sub_000292": {
+  "note": "Hvis kjøpt marsipan/mandelmasse mangler, bland mandelmel og melis med litt eggehvite.",
+  "name": "Mandelmel og melis blandet"
+ },
+ "sub_000293": {
+  "note": "Romanosalat i stedet for isbergsalat, mørere blader og litt mer smak."
+ },
+ "sub_000294": {
+  "note": "Helmelk fra ku i stedet for beriket soyamelk, for dem som ikke trenger vegansk alternativ."
+ },
+ "sub_000295": {
+  "note": "Smør i stedet for plantebasert bakefett (shortening), samme mengde, litt annen konsistens i bakst."
+ },
+ "sub_000296": {
+  "note": "Rå gul sukkermais kan byttes om med hvit sukkermais, kun fargeforskjell."
+ },
+ "sub_000297": {
+  "note": "Hvit og gul sukkermais kan byttes om i samme mengde, liten forskjell i søtsmak."
+ },
+ "sub_000299": {
+  "note": "Rå rød paprika i stedet for grønn paprika, mildere og søtere smak."
+ },
+ "sub_000300": {
+  "note": "Søte kirsebær i stedet for surkirsebær, reduser sukkeret som tilsettes i oppskriften."
+ },
+ "sub_000301": {
+  "note": "Vanlig squash i stedet for miniatursquash, juster koketiden etter størrelsen."
+ },
+ "sub_000302": {
+  "note": "Ferske grønne erter i stedet for rå bønner i belg hvis de ikke finnes, mildere smak.",
+  "name": "Ferske grønne erter"
+ },
+ "sub_000303": {
+  "note": "Gul paprika kan erstattes med rød paprika i samme mengde, litt mildere smak"
+ },
+ "sub_000304": {
+  "note": "Kan også erstattes med grønn paprika, sterkere og litt bitrere smak"
+ },
+ "sub_000305": {
+  "note": "Rød og grønn paprika kan byttes om i samme mengde (grønn er mindre søt)"
+ },
+ "sub_000306": {
+  "note": "Moden rød chili kan erstattes med grønn chili i samme mengde, litt mindre søt og noen ganger sterkere"
+ },
+ "sub_000307": {
+  "note": "Grønn chili kan erstattes med moden rød chili, søtere smak"
+ },
+ "sub_000308": {
+  "note": "Ethvert vintersquash (Hubbard) kan erstattes med butternut-squash i samme mengde",
+  "name": "Butternut-squash"
+ },
+ "sub_000309": {
+  "note": "Vintersquash kan byttes om mellom sorter (Hubbard, butternut, gresskar) i samme mengde",
+  "name": "Butternut-squash"
+ },
+ "sub_000310": {
+  "note": "Patisson (sommersquash) kan erstattes med squash i samme mengde"
+ },
+ "sub_000311": {
+  "note": "Alle sorter sommersquash kan erstattes med squash i samme mengde"
+ },
+ "sub_000312": {
+  "note": "Sommersquash med bøyd/rett hals kan erstattes med squash i samme mengde"
+ },
+ "sub_000313": {
+  "note": "Blomkål kan erstattes med brokkoli i samme mengde i de fleste oppskrifter (sterkere smak)"
+ },
+ "sub_000314": {
+  "note": "Blomkål kan erstattes med brokkoli i samme mengde"
+ },
+ "sub_000315": {
+  "note": "Frossen brokkoli kan erstattes med rå/fersk blomkål, lignende koketid"
+ },
+ "sub_000316": {
+  "note": "Frossen løk kan erstattes med hakket fersk løk i samme mengde (mindre kokevann)"
+ },
+ "sub_000317": {
+  "note": "Frossen hakket løk kan erstattes med hakket fersk løk i samme mengde"
+ },
+ "sub_000318": {
+  "note": "Valnøtter kan erstattes med pekannøtter i samme mengde i bakst og salater"
+ },
+ "sub_000319": {
+  "note": "Sesamsmør (tahini) kan erstattes med peanøttsmør i samme mengde i sauser (annen smak)",
+  "name": "Peanøttsmør"
+ },
+ "sub_000320": {
+  "note": "Tapiokaperler kan erstattes med maisstivelse til jevning (bruk omtrent halvparten av mengden)"
+ },
+ "sub_000321": {
+  "note": "Rå perlebygg kan erstattes med langkornet brun ris i samme mengde i supper og gryteretter (litt annen konsistens)"
+ },
+ "sub_000322": {
+  "note": "Kokt perlebygg kan erstattes med kokt brun ris i samme mengde"
+ },
+ "sub_000323": {
+  "note": "Bokhvetegryn (kasha) kan erstattes med rå quinoa i samme mengde som tilbehørskorn"
+ },
+ "sub_000324": {
+  "note": "Rå KAMUT-hvete kan erstattes med spelt i samme mengde (nært beslektede gamle kornsorter)"
+ },
+ "sub_000325": {
+  "note": "Kokt KAMUT-hvete kan erstattes med kokt spelt i samme mengde"
+ },
+ "sub_000326": {
+  "note": "Beriket og ikke-beriket pasta kan byttes om i samme mengde (kun næringsmessig forskjell)"
+ },
+ "sub_000327": {
+  "note": "Rosa/røde linser (rask koketid, konsistens som løser seg opp) kan erstattes med grønne linser med litt lengre koketid for en fastere konsistens",
+  "name": "Grønne eller brune linser"
+ },
+ "sub_000328": {
+  "note": "Rå mungbønner (til spiring) kan erstattes med hermetiske spirede mungbønner, klare til bruk"
+ },
+ "sub_000329": {
+  "note": "Mungbønnespirer kan erstattes med soyabønnespirer i samme mengde i salater og wokretter"
+ },
+ "sub_000330": {
+  "note": "Soyabønnespirer kan erstattes med mungbønnespirer, som er mer vanlige i butikken"
+ },
+ "sub_000331": {
+  "note": "Kokt søtpotet kan erstattes med potet i samme mengde, lignende konsistens men mindre søtt"
+ },
+ "sub_000332": {
+  "note": "Sukret søtpotet kan erstattes med potet i salte oppskrifter (mindre søt smak)"
+ },
+ "sub_000333": {
+  "note": "Tomatpuré (konsentrert) fortynnet med litt vann kan erstatte hermetisk tomatsaus"
+ },
+ "sub_000334": {
+  "note": "Usaltet tomatpuré fortynnet med vann kan erstatte hermetisk tomatsaus"
+ },
+ "sub_000335": {
+  "note": "Tomatsaus med løk kan erstattes med tomatpuré tilsatt stekt løk"
+ },
+ "sub_000336": {
+  "note": "Tomatsaus med sopp kan erstattes med tomatpuré tilsatt stekt sopp"
+ },
+ "sub_000337": {
+  "note": "Shiitake kan erstattes med sjampinjong/hvit sopp i samme mengde, mildere smak",
+  "name": "Sjampinjong"
+ },
+ "sub_000338": {
+  "note": "Shiitake kan erstattes med sjampinjong/hvit sopp i samme mengde, mildere smak",
+  "name": "Sjampinjong"
+ },
+ "sub_000339": {
+  "note": "Hermetiske halmsopp kan erstattes med hermetisk sjampinjong i samme mengde",
+  "name": "Hermetisk sjampinjong"
+ },
+ "sub_000340": {
+  "note": "Hermetiske gulrøtter uten tilsatt salt kan erstattes med vanlige hermetiske gulrøtter (skyll for å redusere saltet)"
+ },
+ "sub_000341": {
+  "note": "Hermetisk grønnsaksblanding kan erstattes med frossen grønnsaksblanding i samme mengde"
+ },
+ "sub_000342": {
+  "note": "Hermetisk grønnsaksblanding kan erstattes med frossen grønnsaksblanding (litt kortere koketid)"
+ },
+ "sub_000343": {
+  "note": "Hermetisk spinat kan erstattes med kokt fersk spinat (bruk omtrent 3 ganger vekten i fersk spinat)"
+ },
+ "sub_000344": {
+  "note": "Hermetisk spinat kan erstattes med kokt fersk spinat (bruk omtrent 3 ganger vekten i fersk spinat)"
+ },
+ "sub_000345": {
+  "note": "Usaltet hermetisk spinat kan erstattes med kokt fersk spinat i justert mengde (omtrent 3x vekten fersk)"
+ },
+ "sub_000346": {
+  "note": "Sure sylteagurker kan erstattes med dillsylteagurker i samme mengde, litt annen smak"
+ },
+ "sub_000347": {
+  "note": "Dillsylteagurker kan erstattes med sure sylteagurker i samme mengde"
+ },
+ "sub_000348": {
+  "note": "Chiafrø kan erstattes med malt linfrø i samme mengde (lignende bindende/jevnende effekt)",
+  "name": "Malt linfrø"
+ },
+ "sub_000349": {
+  "note": "Hvit grapefrukt kan erstattes med rosa/rød grapefrukt i samme mengde, søtere og mindre bitter"
+ },
+ "sub_000350": {
+  "note": "Rosa/rød grapefrukt kan erstattes med hvit grapefrukt i samme mengde, mer bitter"
+ },
+ "sub_000351": {
+  "note": "Søtede frosne bringebær kan erstattes med usøtede frosne bringebær ved å tilsette sukker etter smak"
+ },
+ "sub_000352": {
+  "note": "Tørkede epler kan erstattes med tørkede pærer i samme mengde i kompott og bakst"
+ },
+ "sub_000353": {
+  "note": "Ginkgonøtter kan erstattes med macadamianøtter i samme mengde i matlaging (lignende konsistens/bruk, annen smak)"
+ },
+ "sub_000354": {
+  "note": "Glutenfritt mel; erstatt med hvetemel hvis det ikke er noe krav om glutenfritt, juster bindemiddelet (sorghummel hever ikke)."
+ },
+ "sub_000355": {
+  "note": "Fullkornsmel er tettere; erstatt med hvitt mel i samme mengde for en lettere konsistens (eller bland 50/50)."
+ },
+ "sub_000356": {
+  "note": "Erstatter blått maismel i samme mengde, annen farge men samme bruksområde.",
+  "name": "Gult eller hvitt maismel"
+ },
+ "sub_000357": {
+  "note": "Kasha (kokt ristet bokhvete) kan erstattes med kokt quinoa i samme mengde for en lignende konsistens."
+ },
+ "sub_000358": {
+  "note": "Erstatt med hele rå mandler i samme mengde, litt endret konsistens."
+ },
+ "sub_000359": {
+  "note": "Vanlig erstatning mellom solsikkefrø og gresskarkjerner i salater/granola, samme mengde.",
+  "name": "Skrelte gresskarkjerner"
+ },
+ "sub_000360": {
+  "note": "Kan erstattes med skrelte solsikkefrø i samme mengde i salater og bakst."
+ },
+ "sub_000361": {
+  "note": "Safranfrø er mindre vanlige; erstatt med skrelte solsikkefrø i samme mengde."
+ },
+ "sub_000362": {
+  "note": "Peanøttfritt alternativ i samme mengde; vær oppmerksom på at mandelsmør inneholder nøtter, sjekk i forhold til relevante allergier.",
+  "name": "Gresskarkjernesmør eller mandelsmør"
+ },
+ "sub_000363": {
+  "note": "Ved peanøttallergi, erstatt med solsikkefrøsmør i samme mengde (mer nøytral smak)."
+ },
+ "sub_000364": {
+  "note": "Ved peanøttallergi, erstatt med solsikkefrøsmør i samme mengde."
+ },
+ "sub_000365": {
+  "note": "Ved peanøttallergi, erstatt med solsikkefrøsmør i samme mengde."
+ },
+ "sub_000366": {
+  "note": "Ved peanøttallergi, erstatt med solsikkefrøsmør i samme mengde."
+ },
+ "sub_000367": {
+  "note": "Ved peanøttallergi, erstatt med solsikkefrøsmør i samme mengde."
+ },
+ "sub_000368": {
+  "note": "Erstatt med vanlig naturell soyamelk i samme mengde."
+ },
+ "sub_000369": {
+  "note": "Uten kokos: erstatt med soyamelk eller mandelmelk i samme mengde (mindre kremet konsistens)."
+ },
+ "sub_000370": {
+  "note": "Uten kokos: erstatt med soyamelk eller mandelmelk i samme mengde (mindre kremet konsistens)."
+ },
+ "sub_000371": {
+  "note": "I salte ikke-veganske oppskrifter, erstatt hermetisk kokosmelk med fløte i samme mengde.",
+  "name": "Tykk crème fraîche eller kremfløte"
+ },
+ "sub_000372": {
+  "note": "Ikke-vegansk erstatning for kokoskrem, i samme mengde, i desserter og sauser.",
+  "name": "Tykk crème fraîche"
+ },
+ "sub_000373": {
+  "note": "Dulce de leche kan erstattes med kokt søtet kondensert melk (vannbad) eller brukes som den er i enkelte oppskrifter."
+ },
+ "sub_000374": {
+  "note": "Rå bønner (fava) kan erstattes med tørkede hvite bønner (navy) i samme mengde i gryteretter."
+ },
+ "sub_000375": {
+  "note": "Hermetiske favabønner kan erstattes med hermetiske hvite bønner i samme mengde."
+ },
+ "sub_000376": {
+  "note": "Rå duebønner (pigeon peas) kan erstattes med tørkede linser i samme mengde, juster koketiden."
+ },
+ "sub_000377": {
+  "note": "Rå slangebønne (langbønne) kan erstattes med tørkede kikerter eller sorte bønner i samme mengde."
+ },
+ "sub_000378": {
+  "note": "Hyasintbønne kan erstattes med tørkede hvite bønner i samme mengde."
+ },
+ "sub_000379": {
+  "note": "Hvis frosne svartøyebønner mangler, erstatt med hvite bønner i samme mengde.",
+  "name": "Frosne eller hermetiske hvite bønner"
+ },
+ "sub_000380": {
+  "note": "Kjøpte stekte bønner (refried beans) kan erstattes med hjemmelaget puré av kokte og moste pintobønner.",
+  "name": "Hjemmelaget pintobønnepuré"
+ },
+ "sub_000381": {
+  "note": "Frijoles rojos volteados kan erstattes med vanlige stekte bønner (refritos) i samme mengde.",
+  "name": "Stekte bønner (refritos)"
+ },
+ "sub_000382": {
+  "note": "Rå spirede hvite bønner, hvis de mangler, erstatt med kokte tørkede hvite bønner i tilsvarende mengde."
+ },
+ "sub_000383": {
+  "note": "Rå spirede pintobønner, hvis de mangler, erstatt med kokte tørkede pintobønner."
+ },
+ "sub_000384": {
+  "note": "Rå spirede røde bønner, hvis de mangler, erstatt med kokte tørkede røde/hvite bønner."
+ },
+ "sub_000385": {
+  "note": "Havreolje er en sjelden ingrediens: erstatt med en nøytral vegetabilsk olje i samme mengde."
+ },
+ "sub_000386": {
+  "note": "Erstatt med en nøytral vegetabilsk olje (solsikke, raps) i samme mengde til frityrsteking."
+ },
+ "sub_000387": {
+  "note": "Valnøttolje (sterk smak): erstatt med olivenolje til dressing, samme mengde."
+ },
+ "sub_000388": {
+  "note": "Mandelolje, erstatt med en nøytral vegetabilsk olje i samme mengde."
+ },
+ "sub_000389": {
+  "note": "Hasselnøttolje (sterk smak): erstatt med olivenolje til dressing, samme mengde."
+ },
+ "sub_000390": {
+  "note": "Avokadoolje kan erstattes med olivenolje i samme mengde til dressing eller mild tilberedning."
+ },
+ "sub_000391": {
+  "note": "Riskliolje, erstatt med en nøytral vegetabilsk olje i samme mengde."
+ },
+ "sub_000392": {
+  "note": "Druekjerneolje, erstatt med en nøytral vegetabilsk olje eller lett olivenolje i samme mengde."
+ },
+ "sub_000393": {
+  "note": "Hvetekimolje (sterk smak), erstatt med en nøytral vegetabilsk olje i samme mengde, utenom ernæringsmessig bruk."
+ },
+ "sub_000394": {
+  "note": "Mais- og rapsolje, erstatt med ren rapsolje i samme mengde."
+ },
+ "sub_000395": {
+  "note": "Gåsefett kan erstattes med andefett i samme mengde til å steke poteter."
+ },
+ "sub_000396": {
+  "note": "Kalkunfett kan erstattes med andefett eller smør i samme mengde."
+ },
+ "sub_000397": {
+  "note": "Kyllingfett kan erstattes med andefett eller vegetabilsk olje i samme mengde."
+ },
+ "sub_000398": {
+  "note": "Oksefett (talg) kan erstattes med ister i samme mengde til steking/frityrsteking."
+ },
+ "sub_000399": {
+  "note": "Baconfett kan erstattes med ister i samme mengde."
+ },
+ "sub_000400": {
+  "note": "Hermetisk syltet ingefær, erstatt med revet fersk ingefær (redusert mengde, sterkere smak) eller vanlig syltet ingefær."
+ },
+ "sub_000401": {
+  "note": "Søte sylteagurker med lavt natriuminnhold kan erstattes med vanlige eddiksylteagurker i samme mengde (juster saltet)."
+ },
+ "sub_000402": {
+  "note": "Hermetisk ananas i sirup, erstatt med fersk ananas i biter (reduser sukkeret i oppskriften)."
+ },
+ "sub_000403": {
+  "note": "Hermetisk ananas i tykk sirup, erstatt med fersk ananas (reduser sukkeret)."
+ },
+ "sub_000404": {
+  "note": "Hermetisk ananas i svært tykk sirup, erstatt med fersk ananas (reduser sukkeret betydelig)."
+ },
+ "sub_000405": {
+  "note": "Hermetiske blåbær i sirup, erstatt med ferske eller frosne blåbær (juster sukkeret)."
+ },
+ "sub_000406": {
+  "note": "Hermetiske bjørnebær i sirup, erstatt med ferske eller frosne bjørnebær (juster sukkeret)."
+ },
+ "sub_000407": {
+  "note": "Hermetiske jordbær i sirup, erstatt med ferske eller frosne jordbær (juster sukkeret)."
+ },
+ "sub_000408": {
+  "note": "Hermetiske fikener i sirup, erstatt med ferske eller rehydrerte tørkede fikener (juster sukkeret)."
+ },
+ "sub_000409": {
+  "note": "Hermetiske pærer i svært tykk sirup, erstatt med ferske posjerte pærer (juster sukkeret)."
+ },
+ "sub_000410": {
+  "note": "Hermetiske stikkelsbær, erstatt med ferske stikkelsbær eller ellers blåbær."
+ },
+ "sub_000411": {
+  "note": "Hermetiske mandariner, erstatt med ferske mandarinbåter eller ferske appelsiner."
+ },
+ "sub_000412": {
+  "note": "Hermetiske surkirsebær, erstatt med ferske utsteinede søte kirsebær (juster sukkeret etter syrligheten)."
+ },
+ "sub_000413": {
+  "note": "Hermetiske sviske i sirup kan erstattes med tørkede sviske rehydrert i varmt vann (mindre søtt).",
+  "name": "Rehydrerte tørkede sviske"
+ },
+ "sub_000414": {
+  "note": "Kokte tørkede aprikoser og tørkede fersken kan byttes om i samme mengde i kompott og bakst.",
+  "name": "Tørkede fersken"
+ },
+ "sub_000415": {
+  "note": "Rå tørkede aprikoser og tørkede fersken kan byttes om i samme mengde i matlaging og bakst.",
+  "name": "Tørkede fersken"
+ },
+ "sub_000416": {
+  "note": "Portobellosopp kan erstattes med brun sjampinjong (crimini) i samme mengde, fastere konsistens."
+ },
+ "sub_000417": {
+  "note": "Grillet portobellosopp kan erstattes med brun sjampinjong (crimini) i samme mengde."
+ },
+ "sub_000418": {
+  "note": "Brun sjampinjong (crimini) kan erstattes med hvit sjampinjong i samme mengde, mildere smak.",
+  "name": "Sjampinjong (hvit)"
+ },
+ "sub_000419": {
+  "note": "Ovnsbakt Hubbard-squash kan erstattes med butternut-squash i samme mengde."
+ },
+ "sub_000420": {
+  "note": "Ovnsbakt Hubbard-squash (usaltet) kan erstattes med butternut-squash i samme mengde."
+ },
+ "sub_000421": {
+  "note": "Frossen butternut-squash kan erstattes med kokt fersk moskatgresskar, eller Hubbard-squash, i samme mengde."
+ },
+ "sub_000422": {
+  "note": "Kokt gresskar kan erstattes med kokt butternut-squash i samme mengde (puré, supper, paier)."
+ },
+ "sub_000423": {
+  "note": "Rå squash med skall, samme referansevariant som vanlig squash i katalogen."
+ },
+ "sub_000424": {
+  "note": "Kokt grønnkål kan erstattes med kokt spinat i samme mengde (raskere tilberedning)."
+ },
+ "sub_000425": {
+  "note": "Kokt usaltet grønnkål kan erstattes med kokt spinat i samme mengde."
+ },
+ "sub_000426": {
+  "note": "Kokt collardgrønnkål kan erstattes med kokt grønnkål i samme mengde."
+ },
+ "sub_000427": {
+  "note": "Kokt engsyre (vill surkål) kan erstattes med kokt spinat i samme mengde, mindre syrlig smak."
+ },
+ "sub_000428": {
+  "note": "Kokt usaltet engsyre kan erstattes med kokt spinat i samme mengde."
+ },
+ "sub_000429": {
+  "note": "Kokt agurkurt kan erstattes med kokt spinat i samme mengde, mildere smak."
+ },
+ "sub_000430": {
+  "note": "Kokt portulakk kan erstattes med kokt spinat eller vårsalat i samme mengde."
+ },
+ "sub_000431": {
+  "note": "Kokt kardon kan erstattes med kokt stangselleri i samme mengde, lignende konsistens."
+ },
+ "sub_000432": {
+  "note": "Kokt havrerot kan erstattes med kokt pastinakk i samme mengde, lignende smak."
+ },
+ "sub_000433": {
+  "note": "Kokt pastinakk kan erstattes med kokte gulrøtter i samme mengde, litt mindre søtt.",
+  "name": "Kokte gulrøtter"
+ },
+ "sub_000434": {
+  "note": "Kokt knutekål kan erstattes med kokt nepe i samme mengde, lignende smak."
+ },
+ "sub_000435": {
+  "note": "Kokte neper kan erstattes med kokt knutekål eller kålrot i samme mengde."
+ },
+ "sub_000436": {
+  "note": "Kokt sellerirot kan erstattes med kokt pastinakk i samme mengde i puré og supper."
+ },
+ "sub_000437": {
+  "note": "Kokt brokkoli kan erstattes med kokt blomkål i samme mengde.",
+  "name": "Kokt blomkål"
+ },
+ "sub_000438": {
+  "note": "Kokte skrelte epler kan mostes for å erstatte kjøpt eplemos, i samme mengde.",
+  "name": "Usøtet eplemos"
+ },
+ "sub_000439": {
+  "note": "Epler kokt i mikrobølgeovn og kokte epler kan byttes om i samme mengde."
+ },
+ "sub_000440": {
+  "note": "Ristede brødfruktfrø, en sjelden ingrediens: erstatt med ristede kastanjer i samme mengde (lignende melete konsistens).",
+  "name": "Ristede kastanjer"
+ },
+ "sub_000441": {
+  "note": "Tørkede breadnut-frø, en sjelden ingrediens: erstatt med tørkede kastanjer i samme mengde.",
+  "name": "Tørkede kastanjer"
+ },
+ "sub_000442": {
+  "note": "Rosa/rød grapefrukt kan erstattes med fersk appelsin for en mindre bitter smak, i samme mengde."
+ },
+ "sub_000443": {
+  "note": "Fermentert fuyu-tofu (kraftig smak) kan erstattes med vanlig marinert fast tofu i wokretter.",
+  "name": "Marinert fast tofu"
+ },
+ "sub_000444": {
+  "note": "Nepe kan erstatte kålrot i samme mengde, litt mildere smak"
+ },
+ "sub_000445": {
+  "note": "Nepe kan erstatte kålrot i samme mengde, litt mildere smak"
+ },
+ "sub_000446": {
+  "note": "Knutekål erstattes med nepe i samme mengde, lignende konsistens når den er kokt"
+ },
+ "sub_000447": {
+  "note": "Pastinakk erstatter havrerot i samme mengde, litt søtere smak"
+ },
+ "sub_000448": {
+  "note": "Borrerot erstattes med pastinakk, lignende konsistens og tilberedning"
+ },
+ "sub_000449": {
+  "note": "Borrerot erstattes med pastinakk, lignende konsistens og tilberedning"
+ },
+ "sub_000450": {
+  "note": "Pastinakk kan erstattes med gulrot i samme mengde i gryteretter"
+ },
+ "sub_000451": {
+  "note": "Jicama erstattes med kinesisk vannkastanje for sprøheten, mer nøytral smak",
+  "name": "Kinesisk vannkastanje"
+ },
+ "sub_000452": {
+  "note": "Jicama erstattes med kinesisk vannkastanje for sprøheten, mer nøytral smak",
+  "name": "Kinesisk vannkastanje"
+ },
+ "sub_000453": {
+  "note": "Bambusskudd erstattes med kinesisk vannkastanje for sprøheten i wokretter",
+  "name": "Kinesisk vannkastanje"
+ },
+ "sub_000454": {
+  "note": "Bambusskudd erstattes med kinesisk vannkastanje for sprøheten i wokretter",
+  "name": "Kinesisk vannkastanje"
+ },
+ "sub_000455": {
+  "note": "Lotusrot erstattes med kinesisk vannkastanje for sprøheten",
+  "name": "Kinesisk vannkastanje"
+ },
+ "sub_000456": {
+  "note": "Lotusrot erstattes med kinesisk vannkastanje for sprøheten",
+  "name": "Kinesisk vannkastanje"
+ },
+ "sub_000457": {
+  "note": "Pilblad (rotknoll) erstattes med kinesisk vannkastanje, lignende sprø konsistens",
+  "name": "Kinesisk vannkastanje"
+ },
+ "sub_000458": {
+  "note": "Pilblad (rotknoll) erstattes med kinesisk vannkastanje, lignende sprø konsistens",
+  "name": "Kinesisk vannkastanje"
+ },
+ "sub_000459": {
+  "note": "Meldestokk erstattes med spinat i samme mengde"
+ },
+ "sub_000460": {
+  "note": "Meldestokk erstattes med spinat i samme mengde"
+ },
+ "sub_000461": {
+  "note": "Portulakk erstattes med spinat, mer nøytral og mindre syrlig smak"
+ },
+ "sub_000462": {
+  "note": "Rødbetetopper erstattes med spinat i samme mengde"
+ },
+ "sub_000463": {
+  "note": "Rødbetetopper erstattes med spinat i samme mengde"
+ },
+ "sub_000464": {
+  "note": "Agurkurt erstattes med spinat, mildere smak"
+ },
+ "sub_000465": {
+  "note": "Løvetannblader erstattes med spinat, med mindre bitterhet"
+ },
+ "sub_000466": {
+  "note": "Løvetannblader erstattes med spinat, med mindre bitterhet"
+ },
+ "sub_000467": {
+  "note": "Amarantblader erstattes med spinat i samme mengde"
+ },
+ "sub_000468": {
+  "note": "Amarantblader erstattes med spinat i samme mengde"
+ },
+ "sub_000469": {
+  "note": "Nyzealandsk spinat erstattes med vanlig spinat i samme mengde, svært lik smak"
+ },
+ "sub_000470": {
+  "note": "Nyzealandsk spinat erstattes med vanlig spinat i samme mengde, svært lik smak"
+ },
+ "sub_000471": {
+  "note": "Vannspinat erstattes med spinat, lignende smak og konsistens når den er kokt"
+ },
+ "sub_000472": {
+  "note": "Vannspinat erstattes med spinat, lignende smak og konsistens når den er kokt"
+ },
+ "sub_000473": {
+  "note": "Moringablader erstattes med spinat i samme mengde"
+ },
+ "sub_000474": {
+  "note": "Moringablader erstattes med spinat i samme mengde"
+ },
+ "sub_000475": {
+  "note": "Gresskarblader erstattes med spinat, mer nøytral smak"
+ },
+ "sub_000476": {
+  "note": "Gresskarblader erstattes med spinat, mer nøytral smak"
+ },
+ "sub_000477": {
+  "note": "Neperoter erstattes med collardgrønnkål, litt lengre koketid"
+ },
+ "sub_000478": {
+  "note": "Neperoter erstattes med collardgrønnkål, litt lengre koketid"
+ },
+ "sub_000479": {
+  "note": "Sennepsblader erstattes med collardgrønnkål, med mindre skarphet"
+ },
+ "sub_000480": {
+  "note": "Sennepsblader erstattes med collardgrønnkål, med mindre skarphet"
+ },
+ "sub_000481": {
+  "note": "Escarole erstattes med sikori (belgisk endivie) eller frisésalat, lignende bitterhet"
+ },
+ "sub_000482": {
+  "note": "Kardon erstattes med stangselleri, uten artisjokksmaken"
+ },
+ "sub_000483": {
+  "note": "Sellerirot erstattes med pastinakk i puré og supper"
+ },
+ "sub_000484": {
+  "note": "Langbønne (slangebønne) erstattes med grønne bønner i samme mengde"
+ },
+ "sub_000485": {
+  "note": "Langbønne (slangebønne) erstattes med grønne bønner i samme mengde"
+ },
+ "sub_000486": {
+  "note": "Sorte bønner erstattes med røde bønner i samme mengde"
+ },
+ "sub_000487": {
+  "note": "Sorte bønner (black turtle) erstattes med røde bønner i samme mengde"
+ },
+ "sub_000488": {
+  "note": "Rosa bønner erstattes med røde bønner eller pintobønner i samme mengde"
+ },
+ "sub_000489": {
+  "note": "Pintobønner erstattes med røde bønner i samme mengde"
+ },
+ "sub_000490": {
+  "note": "Pintobønner erstattes med røde bønner i samme mengde"
+ },
+ "sub_000491": {
+  "note": "Adzukibønner erstattes med røde bønner, mer nøytral smak"
+ },
+ "sub_000492": {
+  "note": "Modne franske bønner erstattes med hvite bønner (navy) i samme mengde"
+ },
+ "sub_000493": {
+  "note": "Modne gule bønner erstattes med hvite bønner i samme mengde"
+ },
+ "sub_000494": {
+  "note": "Små hvite bønner erstattes med hvite bønner (navy) i samme mengde"
+ },
+ "sub_000495": {
+  "note": "Limabønner kan erstattes med favabønner i samme mengde"
+ },
+ "sub_000496": {
+  "note": "Limabønner kan erstattes med favabønner i samme mengde"
+ },
+ "sub_000497": {
+  "note": "Umodne limabønner kan erstattes med ferske favabønner"
+ },
+ "sub_000498": {
+  "note": "Umodne limabønner (Fordhook) kan erstattes med ferske favabønner"
+ },
+ "sub_000499": {
+  "note": "Catjang-bønner (niébé) erstattes med kikerter eller hvite bønner i samme mengde"
+ },
+ "sub_000500": {
+  "note": "Eggnudler erstattes med tagliatelle i samme mengde"
+ },
+ "sub_000501": {
+  "note": "Eggnudler erstattes med tagliatelle i samme mengde"
+ },
+ "sub_000502": {
+  "note": "Eggnudler erstattes med tagliatelle i samme mengde"
+ },
+ "sub_000503": {
+  "note": "Sobanudler erstattes med risnudler eller fullkornsspaghetti"
+ },
+ "sub_000504": {
+  "note": "Sobanudler erstattes med risnudler eller fullkornsspaghetti"
+ },
+ "sub_000505": {
+  "note": "Somennudler erstattes med risnudler i samme mengde"
+ },
+ "sub_000506": {
+  "note": "Somennudler erstattes med risnudler i samme mengde"
+ },
+ "sub_000507": {
+  "note": "Glutenfri maispasta erstattes med risnudler eller rispasta"
+ },
+ "sub_000508": {
+  "note": "Glutenfri maispasta erstattes med risnudler eller rispasta"
+ },
+ "sub_000509": {
+  "note": "Kakemel erstattes med hvetemel (T55), litt tettere konsistens"
+ },
+ "sub_000510": {
+  "note": "Brødmel erstattes med hvetemel (T55), noe svakere heving"
+ },
+ "sub_000511": {
+  "note": "Kinesiske kastanjer erstattes med europeiske kastanjer i samme mengde"
+ },
+ "sub_000512": {
+  "note": "Kinesiske kastanjer erstattes med europeiske kastanjer i samme mengde"
+ },
+ "sub_000513": {
+  "note": "Kinesiske kastanjer erstattes med europeiske kastanjer i samme mengde"
+ },
+ "sub_000514": {
+  "note": "Japanske kastanjer erstattes med europeiske kastanjer i samme mengde"
+ },
+ "sub_000515": {
+  "note": "Japanske kastanjer erstattes med europeiske kastanjer i samme mengde"
+ },
+ "sub_000516": {
+  "note": "Japanske kastanjer erstattes med europeiske kastanjer i samme mengde"
+ },
+ "sub_000517": {
+  "note": "Svarte valnøtter erstattes med vanlige valnøtter i samme mengde, sterkere smak"
+ },
+ "sub_000518": {
+  "note": "Pinjekjerner erstattes med cashewnøtter (pesto, topping), mindre kvaeaktig smak"
+ },
+ "sub_000519": {
+  "note": "Paranøtter erstattes med mandler eller cashewnøtter i samme mengde"
+ },
+ "sub_000520": {
+  "note": "Spanske peanøtter erstattes med vanlige ristede saltede peanøtter"
+ },
+ "sub_000521": {
+  "note": "Valencia-peanøtter erstattes med vanlige ristede saltede peanøtter"
+ },
+ "sub_000522": {
+  "note": "Plantebasert kyllingerstatning kan erstattes med panert fast tofu, som et plantebasert alternativ"
+ },
+ "sub_000523": {
+  "note": "Søtet kokoskrem kan erstattes med kokosmelk tilsatt sukker"
+ },
+ "sub_000524": {
+  "note": "Hawaiisk fjellyams erstattes med søtpotet i samme mengde"
+ },
+ "sub_000525": {
+  "note": "Hawaiisk fjellyams erstattes med søtpotet i samme mengde"
+ },
+ "sub_000526": {
+  "note": "Moringabelger (drumstick) erstattes med grønne bønner i karriretter"
+ },
+ "sub_000527": {
+  "note": "Moringabelger (drumstick) erstattes med grønne bønner i karriretter"
+ },
+ "sub_000528": {
+  "note": "Trukne tørkede pærer erstattes med trukne tørkede epler, lignende konsistens"
+ },
+ "sub_000529": {
+  "note": "Trukne tørkede pærer erstattes med trukne tørkede epler, lignende konsistens"
+ },
+ "sub_000530": {
+  "note": "Trukne tørkede fersken erstattes med trukne tørkede aprikoser, lignende smak"
+ },
+ "sub_000531": {
+  "note": "Trukne tørkede fersken erstattes med trukne tørkede aprikoser, lignende smak"
+ },
+ "sub_000532": {
+  "note": "Hermetiske mandariner erstattes med håndskrelte appelsinbåter, mer syrlig smak",
+  "name": "Navelappelsiner, hermetiske eller ferske"
+ },
+ "sub_000533": {
+  "note": "Hermetisk grapefrukt erstattes med håndskrelte appelsinbåter, mindre bitter",
+  "name": "Navelappelsiner, hermetiske eller ferske"
+ },
+ "sub_000534": {
+  "note": "Hermetisk grapefrukt erstattes med håndskrelte appelsinbåter, mindre bitter",
+  "name": "Navelappelsiner, hermetiske eller ferske"
+ },
+ "sub_000535": {
+  "note": "Hermetiske søte kirsebær erstattes med ferske utsteinede kirsebær (eller frosne)"
+ },
+ "sub_000536": {
+  "note": "Hermetiske søte kirsebær erstattes med ferske utsteinede kirsebær (eller frosne)"
+ },
+ "sub_000537": {
+  "note": "Margarinbasert smørepålegg (SMART BALANCE) erstattes med vanlig plantebasert margarin"
+ },
+ "sub_000538": {
+  "note": "Grønnsaksmakaroni erstattes med vanlig pasta (makaroni eller tagliatelle)"
+ },
+ "sub_000539": {
+  "note": "Grønnsaksmakaroni erstattes med vanlig pasta (makaroni eller tagliatelle)"
+ },
+ "sub_000540": {
+  "note": "Hermetiske sorte bønner (black turtle) kan erstatte vanlige sorte bønner i samme mengde."
+ },
+ "sub_000541": {
+  "note": "Great northern-bønner kan erstattes med cannellini-bønner, svært lik konsistens og smak."
+ },
+ "sub_000542": {
+  "note": "Rå cranberrybønner (romerbønner) kan erstattes med pintobønner i samme mengde."
+ },
+ "sub_000543": {
+  "note": "Hermetiske cranberrybønner (romerbønner) kan erstattes med hermetiske pintobønner."
+ },
+ "sub_000544": {
+  "note": "Kan erstattes med vanlige stekte pintobønner, i samme mengde.",
+  "name": "Stekte bønner (refritos), pinto, hermetiske"
+ },
+ "sub_000545": {
+  "note": "Mandelsmør kan erstattes med cashewsmør, mildere og søtere smak."
+ },
+ "sub_000546": {
+  "note": "Usaltet mandelsmør kan erstattes med cashewsmør, i samme mengde."
+ },
+ "sub_000547": {
+  "note": "Cashewsmør kan erstattes med mandelsmør, i samme mengde."
+ },
+ "sub_000548": {
+  "note": "Tahini kan erstattes med peanøttsmør i en nødsituasjon (annen smak, mindre besk)."
+ },
+ "sub_000549": {
+  "note": "Tahini kan erstattes med cashewsmør eller mandelsmør for en mildere smak."
+ },
+ "sub_000550": {
+  "note": "Ristede peanøtter kan erstattes med cashewnøtter i salte retter eller wokretter."
+ },
+ "sub_000551": {
+  "note": "Tørrristede peanøtter kan erstattes med tørrristede cashewnøtter, i samme mengde."
+ },
+ "sub_000552": {
+  "note": "Pekannøtter kan erstattes med hasselnøtter eller valnøtter, litt annen smak, i bakst."
+ },
+ "sub_000553": {
+  "note": "Valnøtter kan erstattes med pekannøtter i samme mengde i bakverk."
+ },
+ "sub_000554": {
+  "note": "Hasselnøtter kan erstattes med valnøtter eller mandler i de fleste bakverk."
+ },
+ "sub_000555": {
+  "note": "Skrelte solsikkefrø kan erstattes med gresskarkjerner (pepitas) i samme mengde."
+ },
+ "sub_000556": {
+  "note": "Ristede gresskar- og valurgresskarfrø kan erstattes med skrelte solsikkefrø, i samme mengde."
+ },
+ "sub_000557": {
+  "note": "Uberiket hvetemel kan erstattes med beriket versjon i samme mengde.",
+  "name": "Hvetemel, beriket"
+ },
+ "sub_000558": {
+  "note": "Ferdigblandet tortillamel kan erstattes med vanlig hvetemel, i samme mengde."
+ },
+ "sub_000559": {
+  "note": "Glutenfri pasta (mais og ris) kan erstattes med risnudler for en lignende rett."
+ },
+ "sub_000560": {
+  "note": "Kinesiske glassnudler (mungbønnestivelse) kan erstattes med risnudler, lignende konsistens etter koking."
+ },
+ "sub_000561": {
+  "note": "Peanøttolje kan erstattes med solsikkeolje, nøytral smak, egnet til steking og frityrsteking."
+ },
+ "sub_000562": {
+  "note": "Sesamolje (til matlaging, ikke ristet) kan erstattes med peanøttolje i wokretter."
+ },
+ "sub_000563": {
+  "note": "Soyaolje kan erstattes med solsikkeolje, i samme mengde, lignende nøytral smak."
+ },
+ "sub_000564": {
+  "note": "Bomullsfrøolje, som er lite tilgjengelig, kan erstattes med solsikkeolje eller soyaolje i samme mengde."
+ },
+ "sub_000565": {
+  "note": "Smøremargarin kan erstatte smør i samme mengde til de fleste formål, unntatt finere bakst."
+ },
+ "sub_000566": {
+  "note": "Saltet smør kan erstattes med usaltet smør ved å tilsette en klype salt."
+ },
+ "sub_000567": {
+  "note": "Usaltet smør kan erstattes med saltet smør ved å redusere saltet som tilsettes i oppskriften."
+ },
+ "sub_000568": {
+  "note": "Smørerstatning i pulverform kan erstattes med smeltet smør eller margarin, i justert mengde."
+ },
+ "sub_000569": {
+  "note": "Vanlig blåmuggost kan erstattes med Roquefort, kraftigere smak."
+ },
+ "sub_000570": {
+  "note": "Roquefort kan erstattes med en annen blåmuggost, litt mildere smak."
+ },
+ "sub_000571": {
+  "note": "Brie kan erstattes med Camembert i samme mengde, svært lik smak."
+ },
+ "sub_000572": {
+  "note": "Camembert (USDA-variant) kan erstattes med standard Camembert fra katalogen, i samme mengde."
+ },
+ "sub_000573": {
+  "note": "Edam kan erstattes med Gouda, svært lik konsistens og smak."
+ },
+ "sub_000574": {
+  "note": "Gouda kan erstattes med Edam, litt magrere."
+ },
+ "sub_000575": {
+  "note": "Gruyère kan erstattes med Emmentaler, litt mildere smak."
+ },
+ "sub_000576": {
+  "note": "Gruyère kan også erstattes med Cheddar til en gratengrett, annen smak men lignende smelteevne.",
+  "name": "Cheddar"
+ },
+ "sub_000577": {
+  "note": "Monterey Jack kan erstattes med mild Cheddar i samme mengde, lignende smelteevne."
+ },
+ "sub_000578": {
+  "note": "Meksikansk ostblanding kan erstattes med Cheddar alene eller sammen med Monterey Jack."
+ },
+ "sub_000579": {
+  "note": "Muenster kan erstattes med Gouda eller Edam for lignende mild smelteevne og smak."
+ },
+ "sub_000580": {
+  "note": "Feta kan erstattes med smuldret fersk geitost, mildere og mindre salt smak."
+ },
+ "sub_000581": {
+  "note": "Neufchâtel kan erstattes med vanlig kremost, lignende konsistens, litt magrere."
+ },
+ "sub_000582": {
+  "note": "Kremost kan erstattes med Neufchâtel i samme mengde, litt magrere."
+ },
+ "sub_000583": {
+  "note": "Romano kan erstattes med Parmesan til å rives over pasta, lignende smak."
+ },
+ "sub_000584": {
+  "note": "Lett rømme kan erstattes med lett naturell gresk yoghurt, i samme mengde."
+ },
+ "sub_000585": {
+  "note": "Fettfri rømme kan erstattes med fettfri naturell gresk yoghurt."
+ },
+ "sub_000586": {
+  "note": "Rømme med redusert fettinnhold kan erstattes med naturell gresk yoghurt."
+ },
+ "sub_000587": {
+  "note": "Hermetiske aprikoser kan erstattes med hermetisk fersken i desserter, lignende smak.",
+  "name": "Fersken, hermetiske i vann, med væske"
+ },
+ "sub_000588": {
+  "note": "Hermetiske aprikoser i sirup kan erstattes med hermetisk fersken i saft, lignende smak."
+ },
+ "sub_000589": {
+  "note": "Hermetisk fruktsalat i vann kan erstattes med fruktcocktail i vann, svært lik sammensetning."
+ },
+ "sub_000590": {
+  "note": "Hermetisk fruktsalat i saft kan erstattes med fruktcocktail i saft, svært lik sammensetning."
+ },
+ "sub_000591": {
+  "note": "Ristede saltede sesamfrø kan erstattes med usaltede sesamfrø, juster saltet i oppskriften."
+ },
+ "sub_000592": {
+  "note": "Tørrristede solsikkefrø kan erstattes med ristede gresskar- og valurgresskarfrø, i samme mengde."
+ },
+ "sub_000593": {
+  "note": "Sjokolade-soyamelk kan erstattes med sjokolade-mandelmelk eller naturell mandelmelk tilsatt kakao."
+ },
+ "sub_000594": {
+  "note": "Naturell soyamelk kan erstattes med mandelmelk, mer nøytral og lettere smak."
+ },
+ "sub_000595": {
+  "note": "Lett soyamelk kan erstattes med mandelmelk, i samme mengde."
+ },
+ "sub_000596": {
+  "note": "Hermetiske limabønner kan erstattes med grønne bønner, fastere konsistens, i samme mengde.",
+  "name": "Grønne bønner, rå"
+ },
+ "sub_000597": {
+  "note": "Fast tofu kan erstattes med vanlig tofu (mindre fast) ved å justere tilberedningen, mykere konsistens."
+ },
+ "sub_000598": {
+  "note": "Vanlig tofu kan erstattes med fast tofu hvis en fastere konsistens er ønsket (steking, grilling)."
+ },
+ "sub_000599": {
+  "note": "Konsentrert grapefruktjuice kan erstattes med konsentrert appelsinjuice, mildere smak."
+ },
+ "sub_000600": {
+  "note": "Lett majones kan erstattes med vanlig majones ved å redusere mengden som brukes."
+ },
+ "sub_000601": {
+  "note": "Vanlig majones kan erstattes med lett majones for å redusere fettinnholdet."
+ },
+ "sub_000602": {
+  "note": "Surimi kan erstattes med ekte krabbekjøtt, finere smak, annen konsistens."
+ },
+ "sub_000603": {
+  "note": "Erstatt i samme mengde med smør (eller en nøytral vegetabilsk olje for et lettere resultat)."
+ },
+ "sub_000604": {
+  "note": "Melkepulver kan erstatte pulverisert fløteerstatning i kaffe eller en oppskrift, med en mer melkeaktig smak."
+ },
+ "sub_000605": {
+  "note": "Erstatt sprayfløte med hjemmelaget pisket krem (pisket kremfløte), i samme mengde."
+ },
+ "sub_000606": {
+  "note": "Ekte mozzarella erstatter ostbasert erstatningsprodukt i samme mengde, med bedre smelteevne og rikere smak."
+ },
+ "sub_000607": {
+  "note": "Vanlig smør erstatter ghee/klaret smør i samme mengde, men brenner raskere ved steking (mindre egnet ved høye temperaturer)."
+ },
+ "sub_000608": {
+  "note": "Erstatt med vanlig kremost i samme mengde."
+ },
+ "sub_000609": {
+  "note": "Erstatt med vanlig revet parmesan i samme mengde (litt mer fett og smak)."
+ },
+ "sub_000610": {
+  "note": "Erstatt med rent smør i samme mengde, eller med margarin ved plantebasert preferanse."
+ },
+ "sub_000611": {
+  "note": "Erstatt med vanlig, ikke-hydrogenert rapsolje, i samme mengde."
+ },
+ "sub_000612": {
+  "note": "Søtpotet kan erstatte yams i samme mengde i de fleste oppskrifter (lignende konsistens og smak, litt søtere)."
+ },
+ "sub_000613": {
+  "note": "Squash (eller agurk til en rå tilberedning) kan erstatte chayote i samme mengde."
+ },
+ "sub_000614": {
+  "note": "Nepe kan erstatte daikon (orientalsk reddik) i kokte retter, i samme mengde (litt sterkere smak)."
+ },
+ "sub_000615": {
+  "note": "Vanlige eggnudler kan erstatte egg- og spinatnudler i samme mengde (mindre farge og grønnsaksinnhold)."
+ },
+ "sub_000616": {
+  "note": "Gule delte erter erstatter grønne delte erter i samme mengde, nesten identisk smak.",
+  "name": "Gule delte erter"
+ },
+ "sub_000617": {
+  "note": "Ferske soyaspirer kan erstatte hermetiske spirede mungbønner, med mer sprøhet (skyll og bruk i samme mengde)."
+ },
+ "sub_000618": {
+  "note": "Erstatt med vanlig brun ris (ikke instant); øk koketiden siden denne risen ikke er forkokt."
+ },
+ "sub_000619": {
+  "note": "Klebris/vanlig rundkornet ris kan byttes om; i mangel av dette kan rundkornet ris av arborio-type gi et lignende klebrig resultat."
+ },
+ "sub_000620": {
+  "note": "Vanlige grønne bønner erstatter vingebønner i samme mengde, lignende konsistens.",
+  "name": "Grønne bønner"
+ },
+ "sub_000621": {
+  "note": "Squash kan erstatte svampgresskar (luffa) i samme mengde i wok- eller kokte retter."
+ },
+ "sub_000622": {
+  "note": "Ristede peanøtter kan erstatte kokte peanøtter, med en sprøere og mindre myk konsistens.",
+  "name": "Ristede saltede peanøtter"
+ },
+ "sub_000623": {
+  "note": "Vanlige grønne bønner kan erstatte unge belger av svartøyebønner, i samme mengde."
+ },
+ "sub_000624": {
+  "note": "Limabønner (eller edamame) kan erstatte hyasintbønner, i samme mengde."
+ },
+ "sub_000625": {
+  "note": "Hvis søtede hermetiske adzukibønner mangler, kok tørkede adzukibønner og søt dem selv.",
+  "name": "Adzukibønner, modne, rå (kokt og søtet hjemme)"
+ },
+ "sub_000626": {
+  "note": "Kikerter kan erstatte lupinbønner i samme mengde i de fleste middelhavsretter."
+ },
+ "sub_000627": {
+  "note": "Hvis selvhevende maismel mangler, bruk vanlig maismel og tilsett 1,5 ts bakepulver og 1/2 ts salt per 150 g.",
+  "name": "Vanlig maismel + bakepulver + salt"
+ },
+ "sub_000628": {
+  "note": "Squash kan erstatte kalebassgresskar i samme mengde i gryteretter."
+ },
+ "sub_000629": {
+  "note": "Hermetisk jalapeño kan erstatte hermetisk sterk rød chili, med noe mindre styrke."
+ },
+ "sub_000630": {
+  "note": "Hvis frosne rösti mangler, riv rå poteter og form dem til karaker som stekes selv.",
+  "name": "Hjemmelagde rivne potetkaker"
+ },
+ "sub_000631": {
+  "note": "Bruk naturell tomatsaus tilsatt finhakket og stekt løk, grønn paprika og selleri, i tilsvarende mengde."
+ },
+ "sub_000632": {
+  "note": "Kan erstatte svartøyebønner med sorte bønner eller andre tørkede bønner i samme mengde i de fleste gryteretter"
+ },
+ "sub_000633": {
+  "note": "Kokt kalebassgresskar kan erstattes med squash i samme mengde, lignende konsistens og smak når det er kokt",
+  "name": "Squash"
+ },
+ "sub_000634": {
+  "note": "Hvis purre mangler, kan løk (helst mild) erstatte den i samme mengde, sterkere smak"
+ },
+ "sub_000635": {
+  "note": "Brun sjampinjong (crimini) erstattes i samme mengde med hvit sjampinjong, mildere smak"
+ },
+ "sub_000636": {
+  "note": "Neperoter kan erstattes med grønnkål eller spinat i samme mengde"
+ },
+ "sub_000637": {
+  "note": "Kokt voksgresskar (kinesisk melon) erstattes med squash eller chayote i samme mengde",
+  "name": "Squash"
+ },
+ "sub_000638": {
+  "note": "Kan erstattes med fullkornshvetemel (tettere konsistens) eller en 50/50-blanding for å lette en oppskrift",
+  "name": "Hvetemel, halvfullkorn eller fullkorn"
+ },
+ "sub_000639": {
+  "note": "Eggnudler erstattes med vanlig flat pasta (tagliatelle) i samme mengde",
+  "name": "Pasta (vanlige nudler)"
+ },
+ "sub_000640": {
+  "note": "Glutenfri pasta (ris/mais/quinoa): praktisk erstatning ved glutenintoleranse, eller omvendt erstatt med vanlig hvetepasta hvis glutenfritt ikke er nødvendig, juster koketiden (ofte kortere)",
+  "name": "Vanlig hvetepasta"
+ },
+ "sub_000641": {
+  "note": "Glutenfri rispasta: erstatning ved glutenintoleranse; ellers erstatt med vanlig hvetepasta i samme mengde",
+  "name": "Vanlig hvetepasta"
+ },
+ "sub_000642": {
+  "note": "Glutenfri mais-/quinoapasta: erstatning ved glutenintoleranse; ellers vanlig hvetepasta i samme mengde",
+  "name": "Vanlig hvetepasta"
+ },
+ "sub_000643": {
+  "note": "Pasta med 51 % fullkornshvete: kan erstattes med vanlig fullkornspasta eller hvit pasta i samme mengde etter ønsket fiberinnhold",
+  "name": "Fullkornspasta (100 % fullkornshvete)"
+ },
+ "sub_000644": {
+  "note": "Kan erstattes med vanlig fullkornspasta eller hvit pasta i samme mengde",
+  "name": "Fullkornspasta (100 % fullkornshvete)"
+ },
+ "sub_000645": {
+  "note": "Erstatt med usøtet kokos og reduser sukkeret i oppskriften (den søtede versjonen tilfører ekstra sukker)",
+  "name": "Tørket usøtet kokos"
+ },
+ "sub_000646": {
+  "note": "Ristede gresskarfrø kan erstattes med ristede solsikkefrø i samme mengde",
+  "name": "Solsikkefrø"
+ },
+ "sub_000647": {
+  "note": "Erstatt i samme mengde med ristede saltede solsikkefrø",
+  "name": "Solsikkefrø"
+ },
+ "sub_000648": {
+  "note": "Frosne pommes frites kan erstattes med ferske poteter skåret i staver og deretter ovnsbakt eller frityrstekt",
+  "name": "Ferske poteter"
+ },
+ "sub_000649": {
+  "note": "Canadisk bacon (skive av kam) kan erstattes med vanlig bacon eller skivet skinke"
+ },
+ "sub_000650": {
+  "note": "Lett smør kan erstattes med vanlig smør ved å redusere mengden litt (lett smør inneholder mer vann)"
+ },
+ "sub_000651": {
+  "note": "Usaltet lett smør kan erstattes med usaltet vanlig smør, i litt redusert mengde"
+ },
+ "sub_000652": {
+  "note": "Smøremargarin kan erstattes med smør i samme mengde (annen konsistens og smak, mindre egnet til finere bakst)"
+ },
+ "sub_000653": {
+  "note": "Raffinert soyaolje erstattes med rapsolje eller solsikkeolje i samme mengde til hverdagsmatlaging",
+  "name": "Rapsolje"
+ },
+ "sub_000654": {
+  "note": "Plantebasert bakefett kan erstattes med kaldt smør i samme mengde i bakst (litt annen konsistens og smak)"
+ },
+ "sub_000655": {
+  "note": "Karpe kan erstattes med tilapia eller en annen ferskvannsfisk med hvitt kjøtt, i samme mengde"
+ },
+ "sub_000656": {
+  "note": "Brosme kan erstattes med torsk eller kolje i samme mengde"
+ },
+ "sub_000657": {
+  "note": "Lange kan erstattes med torsk i samme mengde, lignende hvitt kjøtt"
+ },
+ "sub_000658": {
+  "note": "Lake (ferskvann) kan erstattes med tilapia eller torsk"
+ },
+ "sub_000659": {
+  "note": "Lingcod (stillehavslange) kan erstattes med torsk eller kolje i samme mengde"
+ },
+ "sub_000660": {
+  "note": "Tilapia kan erstattes med torsk eller en annen fast hvit fisk i samme mengde"
+ },
+ "sub_000661": {
+  "note": "Bluefish (fet fisk) kan erstattes med makrell i samme mengde"
+ },
+ "sub_000662": {
+  "note": "Mahi-mahi kan erstattes med tunfisk eller sverdfisk til steking i panne/på grill"
+ },
+ "sub_000663": {
+  "note": "Melkefisk kan erstattes med tilapia i samme mengde"
+ },
+ "sub_000664": {
+  "note": "Breiflabb kan erstattes med kveite for sitt faste kjøtt, lignende konsistens"
+ },
+ "sub_000665": {
+  "note": "Tilefish kan erstattes med rødsnapper eller torsk i samme mengde"
+ },
+ "sub_000666": {
+  "note": "Sverdfisk kan erstattes med tunfisk (biff) til grilling"
+ },
+ "sub_000667": {
+  "note": "Butterfish kan erstattes med makrell, lignende fet fisk"
+ },
+ "sub_000668": {
+  "note": "Sheepshead kan erstattes med rødsnapper eller torsk"
+ },
+ "sub_000669": {
+  "note": "Spot (liten hvit fisk) kan erstattes med rødsnapper"
+ },
+ "sub_000670": {
+  "note": "Scup (flekket havbrasme) kan erstattes med rødsnapper eller havbrasme i samme mengde"
+ },
+ "sub_000671": {
+  "note": "Rekonstituert kjernemelkpulver (pulver + vann) kan erstattes med flytende kjernemelk fra flaske"
+ },
+ "sub_000672": {
+  "note": "Half and half lages ved å blande like deler helmelk og kremfløte",
+  "name": "Blanding av helmelk og kremfløte (1:1)"
+ },
+ "sub_000673": {
+  "note": "Queso Fresco kan erstattes med smuldret feta eller avrent cottage cheese, saltere smak"
+ },
+ "sub_000674": {
+  "note": "Queso Blanco kan erstattes med feta eller mozzarella avhengig av bruk (smelting eller smuldring)"
+ },
+ "sub_000675": {
+  "note": "Queso Añejo (lagret riveost) kan erstattes med parmesan eller godt lagret cheddar"
+ },
+ "sub_000676": {
+  "note": "Queso Cotija (salt riveost) kan erstattes med parmesan"
+ },
+ "sub_000677": {
+  "note": "Queso Asadero (smelteost) kan erstattes med mozzarella eller provolone",
+  "name": "Mozzarella eller provolone"
+ },
+ "sub_000678": {
+  "note": "Queso Chihuahua (smelteost) kan erstattes med Monterey Jack eller mozzarella",
+  "name": "Monterey Jack-ost"
+ },
+ "sub_000679": {
+  "note": "Amerikansk cold-pack ostepålegg kan erstattes med smeltet cheddar i samme mengde"
+ },
+ "sub_000680": {
+  "note": "Frosne eggerøre kan erstattes med hjemmelagde ferske egg",
+  "name": "Ferske egg"
+ },
+ "sub_000681": {
+  "note": "Frossen lett pisket krem kan erstattes med hjemmelaget pisket kremfløte",
+  "name": "Hjemmelaget pisket krem"
+ },
+ "sub_000682": {
+  "note": "Bøffelmelk kan erstattes med helmelk fra ku i samme mengde"
+ },
+ "sub_000683": {
+  "note": "Sauemelk kan erstattes med helmelk fra ku, mildere smak"
+ },
+ "sub_000684": {
+  "note": "Imitasjonsmelk (verken melkebasert eller soya) kan erstattes med kumelk eller en plantedrikk etter behov"
+ },
+ "sub_000685": {
+  "note": "Lett fløteerstatning kan erstattes med lett kremfløte eller kondensert melk",
+  "name": "Lett kremfløte"
+ },
+ "sub_000686": {
+  "note": "Lett fløtepulver kan erstattes med melkepulver til kaffe",
+  "name": "Melkepulver"
+ },
+ "sub_000687": {
+  "note": "Flytende smakstilsatt fløteerstatning kan erstattes med lett kremfløte tilsatt smak (vanilje, karamell)",
+  "name": "Lett kremfløte"
+ },
+ "sub_000688": {
+  "note": "Erstatt med ekte cheddar i samme mengde for mer smak og bedre smelteevne"
+ },
+ "sub_000689": {
+  "note": "Vanlig (eller lett) cheddar erstatter fettfri cheddar med bedre smak og smelteevne"
+ },
+ "sub_000690": {
+  "note": "Kan erstattes med smeltet cheddar i samme mengde for mer smak"
+ },
+ "sub_000691": {
+  "note": "Erstatt fløtepulveret med lett kremfløte, fortynnet ved behov"
+ },
+ "sub_000692": {
+  "note": "Erstatt med en nøytral vegetabilsk olje (solsikke, raps) i samme mengde"
+ },
+ "sub_000693": {
+  "note": "Smør erstatter lett margarin i samme mengde, men gir mer fett og smak"
+ },
+ "sub_000694": {
+  "note": "Tilsvarende vanlig rapsolje til hverdagsbruk, i samme mengde"
+ },
+ "sub_000695": {
+  "note": "Usaltet smør erstatter usaltet lett margarin i samme mengde"
+ },
+ "sub_000696": {
+  "note": "Erstatt med rent smør i samme mengde, sterkere smak"
+ },
+ "sub_000697": {
+  "note": "Omtrent 1/4 kopp flytende eggerstatning tilsvarer ett helt egg"
+ },
+ "sub_000698": {
+  "note": "Kan erstattes med solsikkeolje eller en annen nøytral olje i samme mengde"
+ },
+ "sub_000699": {
+  "note": "Smør (eller en margarin med høyt fettinnhold) erstatter denne margarinen på boks i samme mengde"
+ },
+ "sub_000700": {
+  "note": "Erstatt med vanlig majones i samme mengde"
+ },
+ "sub_000701": {
+  "note": "Fortynn tykk fløte med litt melk (omtrent halvt om halvt) for å tilsvare lett kremfløte"
+ },
+ "sub_000702": {
+  "note": "Erstatt med solsikkeolje, lignende nøytral smak"
+ },
+ "sub_000703": {
+  "note": "Smør er det nærmeste alternativet i fettinnhold for denne 80 %-margarinen"
+ },
+ "sub_000704": {
+  "note": "Avrent hermetisk mais erstatter kokt fersk mais i de fleste oppskrifter"
+ },
+ "sub_000705": {
+  "note": "Smørbønner (gule) erstatter grønne bønner i samme mengde, mildere smak"
+ },
+ "sub_000706": {
+  "note": "Kan byttes om; grønn paprika er mer bitter og mindre søt enn rød"
+ },
+ "sub_000707": {
+  "note": "Butternut-squash erstatter squash med spisskål i puré, litt søtere smak"
+ },
+ "sub_000708": {
+  "note": "Vanlig erstatning for Hubbard-squash, lignende konsistens og smak"
+ },
+ "sub_000709": {
+  "note": "Erstatt med vanlig hvit ris og øk koketiden (15-20 min i stedet for 5 min)"
+ },
+ "sub_000710": {
+  "note": "Erstatt med kokt vanlig hvit ris, med lengre koketid"
+ },
+ "sub_000711": {
+  "note": "Great Northern-bønner erstatter hvite bønner (navy) i supper og gryteretter"
+ },
+ "sub_000712": {
+  "note": "Røde bønner erstatter pintobønner i chili og burritos"
+ },
+ "sub_000713": {
+  "note": "Pintobønner erstatter sorte bønner i de fleste meksikanske retter"
+ },
+ "sub_000714": {
+  "note": "Bruk naturell maismel og tilsett 1,5 ts bakepulver og 1/4 ts salt per kopp"
+ },
+ "sub_000715": {
+  "note": "Bruk naturell gult maismel og tilsett 1,5 ts bakepulver og 1/4 ts salt per kopp"
+ },
+ "sub_000716": {
+  "note": "Erstatt med vanlig kokt skinke i samme mengde"
+ },
+ "sub_000717": {
+  "note": "Skivet kokt skinke erstatter canadisk bacon i de fleste oppskrifter (sandwicher, topping)"
+ },
+ "sub_000718": {
+  "note": "Vaktel er en vanlig erstatning for denne lille fuglevilten, lignende tilberedning"
+ },
+ "sub_000719": {
+  "note": "Fast hvit fisk, atlantisk torsk er en god erstatning"
+ },
+ "sub_000720": {
+  "note": "Stillehavslaksesorter kan byttes om, lignende konsistens og smak"
+ },
+ "sub_000721": {
+  "note": "Ferskvannsfisk med hvitt kjøtt, gjørs er en god erstatning"
+ },
+ "sub_000722": {
+  "note": "Ferskvannsfisk med fast kjøtt, vanlig erstatning med gjørs"
+ },
+ "sub_000723": {
+  "note": "Mild hvit fisk, erstatt i samme mengde (torsk)."
+ },
+ "sub_000724": {
+  "note": "En annen laksesort (rød laks/sockeye), bruk i samme mengde."
+ },
+ "sub_000725": {
+  "note": "Fast hvit fisk, god erstatning for torsk i samme mengde."
+ },
+ "sub_000726": {
+  "note": "Stillehavstorsk og atlantisk torsk kan byttes om."
+ },
+ "sub_000727": {
+  "note": "Stillehavssild og atlanterhavssild kan byttes om i samme mengde."
+ },
+ "sub_000728": {
+  "note": "Flat fisk med delikat kjøtt, tunge kan erstatte piggvar i samme mengde."
+ },
+ "sub_000729": {
+  "note": "Mild hvit fisk, erstatter brosme i samme mengde."
+ },
+ "sub_000730": {
+  "note": "Spansk makrell og atlantisk makrell kan byttes om."
+ },
+ "sub_000731": {
+  "note": "Liten fet fisk, sardin kan erstatte ansjos med en litt mildere smak."
+ },
+ "sub_000732": {
+  "note": "Snøkrabbe kan erstatte blå krabbe, noe finere kjøtt."
+ },
+ "sub_000733": {
+  "note": "Fast hvit fisk, torsk erstatter lange i samme mengde."
+ },
+ "sub_000734": {
+  "note": "Atlantisk sei og torsk kan byttes om i de fleste oppskrifter."
+ },
+ "sub_000735": {
+  "note": "Mager naturell kefir kan erstattes med mager naturell gresk yoghurt (tykkere konsistens, fortynn litt om nødvendig)."
+ },
+ "sub_000736": {
+  "note": "Grønlandskveite og vanlig kveite kan byttes om i samme mengde."
+ },
+ "sub_000737": {
+  "note": "Fet fisk med rikt kjøtt, laks kan erstatte ål i mange retter."
+ },
+ "sub_000738": {
+  "note": "1 kopp melk + 1 ss sitronsaft eller eddik, la det hvile i 5 min for å erstatte kjernemelk.",
+  "name": "Melk + sitronsaft eller eddik (hjemmelaget)"
+ },
+ "sub_000739": {
+  "note": "Blekksprut kan erstatte åttearmet blekksprut, raskere tilberedning."
+ },
+ "sub_000740": {
+  "note": "Østerssorter kan byttes om i samme mengde."
+ },
+ "sub_000741": {
+  "note": "Ferskvannsfisk med mild smak, tilapia er en god erstatning for abbor."
+ },
+ "sub_000742": {
+  "note": "Lignende fast kjøtt, sverdfisk kan erstatte hai i biffskiver."
+ },
+ "sub_000743": {
+  "note": "Kolje og torsk kan klassisk byttes om."
+ },
+ "sub_000744": {
+  "note": "Mild hvit fisk, torsk er en god erstatning for tilapia."
+ },
+ "sub_000745": {
+  "note": "Fast og tett kjøtt, sverdfisk kan erstatte mahi-mahi."
+ },
+ "sub_000746": {
+  "note": "Tilapia er en god erstatning for melkefisk, lignende mild smak."
+ },
+ "sub_000747": {
+  "note": "Rødsnapper kan erstatte havabbor, lignende fast hvitt kjøtt."
+ },
+ "sub_000748": {
+  "note": "Andre krabbesorter (vanlig krabbe) kan byttes om i samme mengde."
+ },
+ "sub_000749": {
+  "note": "Fast fisk til biffskiver, tunfisk kan erstatte sverdfisk."
+ },
+ "sub_000750": {
+  "note": "Mild hvit fisk, torsk erstatter hvitting i samme mengde."
+ },
+ "sub_000751": {
+  "note": "Rik og fet fisk, laks kan erstatte smørfisk (sablefish)."
+ },
+ "sub_000752": {
+  "note": "Nøytral olje med lignende røykpunkt, erstatter i samme mengde."
+ },
+ "sub_000753": {
+  "note": "Mager naturell gresk yoghurt erstatter lett rømme i samme mengde."
+ },
+ "sub_000754": {
+  "note": "Blåskjell kan erstatte muslinger i de fleste sjømatoppskrifter."
+ },
+ "sub_000755": {
+  "note": "Ricotta kan erstatte mager cottage cheese i salte eller søte retter."
+ },
+ "sub_000756": {
+  "note": "Languster kan erstatte hummer, lignende konsistens og smak."
+ },
+ "sub_000757": {
+  "note": "Blå krabbe kan erstatte kongekrabbe fra Alaska i samme mengde."
+ },
+ "sub_000758": {
+  "note": "Enhver nøytral vegetabilsk olje kan erstatte soyaolje til lett steking."
+ },
+ "sub_000759": {
+  "note": "Tunfisk kan erstatte gulhale, lignende fet fisk."
+ },
+ "sub_000760": {
+  "note": "Et langt rimeligere alternativ til kaviar, saltere smak og litt fastere konsistens.",
+  "name": "Sikrogn (lumperogn)"
+ },
+ "sub_000761": {
+  "note": "Fersk torsk (krever utvanning og gjenoppfukting hvis man tar utgangspunkt i tørrsaltet klippfisk)."
+ },
+ "sub_000762": {
+  "note": "Reke kan erstatte kamskjell i mange sjømatretter."
+ },
+ "sub_000763": {
+  "note": "Røkt laks kan erstatte røkt stør, lettere å få tak i."
+ },
+ "sub_000764": {
+  "note": "Helmelk fra ku kan erstatte geitemelk, mer nøytral smak."
+ },
+ "sub_000765": {
+  "note": "Blekksprut kan erstatte sepia, lignende konsistens og smak."
+ },
+ "sub_000766": {
+  "note": "Smør kan erstatte margarin i samme mengde (rikere smak, litt annen konsistens i bakst)."
+ },
+ "sub_000767": {
+  "note": "Hjemmelaget dressing (olje + eddik) kan erstatte kjøpt fransk salatdressing."
+ },
+ "sub_000768": {
+  "note": "Vanlig majones kan erstatte lett majones (juster fettmengden etter oppskriften)."
+ },
+ "sub_000769": {
+  "note": "Hummer kan erstatte languster, lignende konsistens og smak."
+ },
+ "sub_000770": {
+  "note": "Tunge kan erstatte flyndre (flatfisk) i samme mengde."
+ },
+ "sub_000771": {
+  "note": "Gule smørbønner (wax beans) kan erstattes med grønne bønner, samme forhold."
+ },
+ "sub_000772": {
+  "note": "Grønn paprika kan erstatte rød paprika (mer grønn og litt bitter smak, samme mengde)."
+ },
+ "sub_000773": {
+  "note": "Røde bønner (kidney) kan erstatte pintobønner i chili og gryteretter."
+ },
+ "sub_000774": {
+  "note": "Gul sukkermais kan erstatte hvit sukkermais i samme mengde (litt søtere smak)."
+ },
+ "sub_000775": {
+  "note": "Edamame kan erstatte umodne limabønner, lignende konsistens."
+ },
+ "sub_000776": {
+  "note": "Kan erstatte limabønner i samme mengde i gryteretter, mildere smak og lignende konsistens"
+ },
+ "sub_000777": {
+  "note": "Svartøyebønner kan erstattes med røde bønner eller kikerter, forhold 1:1, i salater og gryteretter",
+  "name": "Røde bønner, hermetiske"
+ },
+ "sub_000778": {
+  "note": "Emukjøttdeig er svært mager; erstatt med kjøttdeig av storfe i samme mengde, reduser steketiden litt for å unngå uttørking"
+ },
+ "sub_000779": {
+  "note": "Struts (svært magert rødt kjøtt) erstattes med storfekjøtt i samme mengde, kort steketid for å unngå at det blir seigt"
+ },
+ "sub_000780": {
+  "note": "Erstatter kjøttdeig av kalv i samme mengde, litt sterkere smak"
+ },
+ "sub_000781": {
+  "note": "Kalkunkjøttdeig og kyllingkjøttdeig kan byttes om i samme mengde i de fleste oppskrifter"
+ },
+ "sub_000782": {
+  "note": "Kyllingkjøttdeig og kalkunkjøttdeig kan byttes om i samme mengde"
+ },
+ "sub_000783": {
+  "note": "Elg/wapiti (vilt) kan erstattes med storfekjøtt i samme mengde, magrere kjøtt så kortere steketid"
+ },
+ "sub_000784": {
+  "note": "Hjort (viltkjøtt) erstatter storfekjøtt i samme mengde, sterkere og viltere smak"
+ },
+ "sub_000785": {
+  "note": "Geit (vilt) erstatter lam i samme mengde i gryteretter og karriretter"
+ },
+ "sub_000786": {
+  "note": "Elg (vilt) erstatter storfekjøtt i samme mengde"
+ },
+ "sub_000787": {
+  "note": "Hest erstatter storfekjøtt i samme mengde i de fleste retter"
+ },
+ "sub_000788": {
+  "note": "Reinsdyr (vilt) erstatter storfekjøtt i samme mengde"
+ },
+ "sub_000789": {
+  "note": "Antilope (vilt) erstatter storfekjøtt eller lam i samme mengde"
+ },
+ "sub_000790": {
+  "note": "Rå gåselever kan erstattes med rå andelever i samme mengde, svært lik smak og konsistens",
+  "name": "Rå andelever (foie gras)"
+ },
+ "sub_000791": {
+  "note": "Vaktel erstattes med kylling (kjøtt og skinn) i samme mengde, juster steketiden (vaktel er mindre og raskere å steke)"
+ },
+ "sub_000792": {
+  "note": "Fasan erstattes med kylling i samme mengde, finere smak men lignende konsistens"
+ },
+ "sub_000793": {
+  "note": "Perlehøne erstattes med kylling i samme mengde"
+ },
+ "sub_000794": {
+  "note": "1 andeegg ≈ 1,5 hønseegg; juster væskemengden i bakst",
+  "name": "Hønseegg"
+ },
+ "sub_000795": {
+  "note": "1 gåseegg ≈ 2 hønseegg; rikere konsistens",
+  "name": "Hønseegg"
+ },
+ "sub_000796": {
+  "note": "4-5 vaktelegg ≈ 1 hønseegg",
+  "name": "Hønseegg"
+ },
+ "sub_000797": {
+  "note": "1 kalkunegg ≈ 1,5 hønseegg",
+  "name": "Hønseegg"
+ },
+ "sub_000798": {
+  "note": "God erstatning i smak og konsistens, i samme mengde",
+  "name": "Røkt andelever (foie gras)"
+ },
+ "sub_000799": {
+  "note": "1 kopp melk + 1 ss eddik/sitron (la det hvile 5-10 min) erstatter kjernemelk i samme mengde",
+  "name": "Melk + sitronsaft eller eddik"
+ },
+ "sub_000800": {
+  "note": "Klassisk erstatning for kjernemelk, i samme mengde",
+  "name": "Melk + sitronsaft eller eddik"
+ },
+ "sub_000801": {
+  "note": "Margarin erstattes med saltet smør i samme mengde, rikere smak"
+ },
+ "sub_000802": {
+  "note": "Usaltet margarin erstattes med usaltet smør i samme mengde"
+ },
+ "sub_000803": {
+  "note": "Spesialolje/rapsolje kan erstattes med vanlig rapsolje i samme mengde til hverdagsmatlaging"
+ },
+ "sub_000804": {
+  "note": "Cohosalaks kan erstatte atlantisk laks i samme mengde, litt magrere kjøtt"
+ },
+ "sub_000805": {
+  "note": "Regnbueørret erstatter laks i samme mengde, mildere smak"
+ },
+ "sub_000806": {
+  "note": "Albacoretunfisk og bonitotunfisk (skipjack) kan byttes om i samme mengde, spesielt hermetisk"
+ },
+ "sub_000807": {
+  "note": "Atlantisk torsk erstattes med rå kolje i samme mengde, lignende hvitt kjøtt"
+ },
+ "sub_000808": {
+  "note": "Oransje kjeglemunn (orange roughy) erstattes med torsk eller kolje i samme mengde, lignende mild hvit fisk"
+ },
+ "sub_000809": {
+  "note": "Kongemakrell erstattes med atlantisk makrell i samme mengde"
+ },
+ "sub_000810": {
+  "note": "Grønlandskveite erstattes med atlantisk/stillehavskveite i samme mengde"
+ },
+ "sub_000811": {
+  "note": "Hummer kan erstattes med languster i samme mengde i gryteretter eller supper"
+ },
+ "sub_000812": {
+  "note": "Ansjos erstattes med hermetiske sardiner i olje i samme mengde, mindre salt smak"
+ },
+ "sub_000813": {
+  "note": "Snøkrabbe erstattes med blå krabbe i samme mengde"
+ },
+ "sub_000814": {
+  "note": "Stillehavskrabbe (dungeness) erstattes med blå krabbe i samme mengde"
+ },
+ "sub_000815": {
+  "note": "Kongekrabbe fra Alaska erstattes med blå krabbe i samme mengde (litt mindre fast konsistens)"
+ },
+ "sub_000816": {
+  "note": "Erstatt med ekte kokte reker: sterkere smak, samme forhold"
+ },
+ "sub_000817": {
+  "note": "Hermetisk tunfisk hvis hermetisk laks mangler, i salater og sandwicher"
+ },
+ "sub_000818": {
+  "note": "Hermetisk tunfisk hvis sardiner mangler, mildere smak"
+ },
+ "sub_000819": {
+  "note": "Usøtet kondensert melk, helmelkversjon, litt rikere på fett"
+ },
+ "sub_000820": {
+  "note": "Lysing, lignende hvit fisk, samme tilberedning"
+ },
+ "sub_000821": {
+  "note": "Torsk, lignende hvit fisk, samme tilberedning"
+ },
+ "sub_000822": {
+  "note": "Vanlig cheddar hvis lett smelteost mangler, smelter litt dårligere"
+ },
+ "sub_000823": {
+  "note": "Fersk hakket grønn paprika hvis frossen mangler, reduser koketiden i vann"
+ },
+ "sub_000824": {
+  "note": "Ferske maiskorn hvis frosne mangler, litt kortere koketid"
+ },
+ "sub_000825": {
+  "note": "Smør (eller margarin) hvis industrielt bakefett mangler til butterdeig"
+ },
+ "sub_000826": {
+  "note": "Fersk squash hvis frossen mangler, litt kortere koketid"
+ },
+ "sub_000827": {
+  "note": "Røde bønner hvis svartøyebønner mangler, lignende konsistens"
+ },
+ "sub_000828": {
+  "note": "Vanlig svin hvis villsvin mangler, mildere smak"
+ },
+ "sub_000829": {
+  "note": "Kjøttdeig av storfe hvis elgkjøttdeig mangler, fetere kjøtt"
+ },
+ "sub_000830": {
+  "note": "Kjøttdeig av storfe hvis hjortekjøttdeig mangler, fetere kjøtt"
+ },
+ "sub_000831": {
+  "note": "Oppdrettskanin hvis viltkanin mangler, mørere kjøtt"
+ },
+ "sub_000832": {
+  "note": "Kylling (lår) hvis fasan mangler, mildere smak"
+ },
+ "sub_000833": {
+  "note": "Kylling (bryst) hvis vaktel mangler, tilpass steketiden (større stykke)"
+ },
+ "sub_000834": {
+  "note": "Vanlig kjøttdeig av storfe hvis bisonkjøttdeig mangler, fetere kjøtt"
+ },
+ "sub_000835": {
+  "note": "Oppdrettsand hvis villand mangler, mindre fast kjøtt"
+ },
+ "sub_000836": {
+  "note": "Magert storfekjøtt hvis emu mangler, et lite vanlig eksotisk kjøtt"
+ },
+ "sub_000837": {
+  "note": "Storfekjøtt hvis vannbøffel mangler, et lite vanlig eksotisk kjøtt"
+ },
+ "sub_000838": {
+  "note": "Kylling hvis due mangler, tilpass steketiden (større stykke)"
+ },
+ "sub_000839": {
+  "note": "Lam hvis geit(kje) mangler, lignende smak"
+ },
+ "sub_000840": {
+  "note": "Smør hvis smeltet baconfett mangler til steking"
+ },
+ "sub_000841": {
+  "note": "Storfekjøtt hvis elg mangler, et lite vanlig eksotisk kjøtt"
+ },
+ "sub_000842": {
+  "note": "Storfekjøtt hvis hest mangler, mildere smak"
+ },
+ "sub_000843": {
+  "note": "Magert kjøttdeig av storfe hvis strutskjøttdeig mangler"
+ },
+ "sub_000844": {
+  "note": "Vanlig svinebacon hvis oksebacon mangler"
+ },
+ "sub_000845": {
+  "note": "Hermetisk kylling hvis hermetisk kalkun mangler"
+ },
+ "sub_000846": {
+  "note": "Panerte kyllingstrimler hvis panerte kalkunpinner mangler"
+ },
+ "sub_000847": {
+  "note": "Kylling hvis jerpe mangler, en lite vanlig fuglevilt"
+ },
+ "sub_000848": {
+  "note": "Kjøttdeig av storfe hvis beefalo (bison-storfe-kryssning) mangler"
+ },
+ "sub_000849": {
+  "note": "Tamgås hvis kanadagås mangler"
+ },
+ "sub_000850": {
+  "note": "Ister (eller smør) hvis fett fra storfenyre (talg) mangler"
+ },
+ "sub_000851": {
+  "note": "Kalvelever hvis oksekjøttlever mangler, mildere smak"
+ },
+ "sub_000852": {
+  "note": "Villfanget malle: erstatt med kokt tilapia, lignende mild smak"
+ },
+ "sub_000853": {
+  "note": "Oppdrettsmalle: erstatt med kokt tilapia"
+ },
+ "sub_000854": {
+  "note": "Ferskvannsabbor: erstatt med havabbor eller lignende hvit fisk"
+ },
+ "sub_000855": {
+  "note": "Stillehavsuer: erstatt med atlanterhavsuer eller en annen fast hvit fisk"
+ },
+ "sub_000856": {
+  "note": "Stillehavsmakrell/hestmakrell: erstatt med atlantisk makrell"
+ },
+ "sub_000857": {
+  "note": "Fersk kokt blåfinnet tunfisk: bruk avrent lys hermetisk tunfisk hvis den mangler"
+ },
+ "sub_000858": {
+  "note": "Fersk kokt bonitotunfisk (skipjack): bruk avrent lys hermetisk tunfisk hvis den mangler"
+ },
+ "sub_000859": {
+  "note": "Fersk kokt albacoretunfisk: bruk avrent lys hermetisk tunfisk hvis den mangler"
+ },
+ "sub_000860": {
+  "note": "Villfanget kokt kreps: erstatt med kokte reker, lignende konsistens og bruk"
+ },
+ "sub_000861": {
+  "note": "Oppdrettskokt kreps: erstatt med kokte reker"
+ },
+ "sub_000862": {
+  "note": "Fryst saltet/pasteurisert eggeplomme: erstatt med fersk eggeplomme (utelat tilsatt salt)",
+  "name": "Egg, eggeplomme, rå, fersk"
+ },
+ "sub_000863": {
+  "note": "Fryst saltet/pasteurisert helegg: erstatt med ferske hele egg"
+ },
+ "sub_000864": {
+  "note": "Fryst søtet/pasteurisert eggeplomme: erstatt med fersk eggeplomme (uten tilsatt sukker)",
+  "name": "Egg, eggeplomme, rå, fersk"
+ },
+ "sub_000865": {
+  "note": "Tørket eggehvite i flak: erstatt med fersk eggehvite (juster mengden, dehydrert produkt)",
+  "name": "Egg, eggehvite, rå, fersk"
+ },
+ "sub_000866": {
+  "note": "Tørket eggehvitepulver: erstatt med fersk eggehvite",
+  "name": "Egg, eggehvite, rå, fersk"
+ },
+ "sub_000867": {
+  "note": "Saltet margarin på boks: erstatt med saltet smør, rikere smak"
+ },
+ "sub_000868": {
+  "note": "Saltet margarinstang: erstatt med saltet smør"
+ },
+ "sub_000869": {
+  "note": "Usaltet margarinstang: erstatt med usaltet smør"
+ },
+ "sub_000870": {
+  "note": "Tørr fettfri cottage cheese: erstatt med vanlig cottage cheese (kremere konsistens)"
+ },
+ "sub_000871": {
+  "note": "Lett sjokolademelk: erstatt med kjøpt lettmelk med sjokolade, eller melk + kakaopulver"
+ },
+ "sub_000872": {
+  "note": "Sjokolademelk av helmelk: bruk lett sjokolademelk eller melk + kakao og sukker hvis den mangler"
+ },
+ "sub_000873": {
+  "note": "Lett vitaminberiket sjokolademelk: erstatt med vanlig lett sjokolademelk"
+ },
+ "sub_000874": {
+  "note": "Rå kalkunbryst: erstatt med rå kyllingbryst, lignende men litt raskere tilberedning"
+ },
+ "sub_000875": {
+  "note": "Rå 85/15 kalkunkjøttdeig: erstatt med 85/15 kjøttdeig av storfe, eller kyllingkjøttdeig for å holde seg til fjærfe"
+ },
+ "sub_000876": {
+  "note": "Rå mørkt kalkunkjøtt: erstatt med rå kyllinglår",
+  "name": "Kylling, lår"
+ },
+ "sub_000877": {
+  "note": "Stekt villsvin: erstatt med svin (bog eller stek), mildere smak",
+  "name": "Svin, bog, stekt"
+ },
+ "sub_000878": {
+  "note": "Rå lammelever: erstatt med rå kyllinglever, mildere smak"
+ },
+ "sub_000879": {
+  "note": "Grytestuet kanin: erstatt med grytestuet kylling, lignende konsistens og tilberedning"
+ },
+ "sub_000880": {
+  "note": "Stekt vannbøffel: erstatt med stekt storfekjøtt, lignende magert kjøtt",
+  "name": "Storfe, stek"
+ },
+ "sub_000881": {
+  "note": "Stekt elgkjøttdeig: erstatt med stekt 85/15 kjøttdeig av storfe"
+ },
+ "sub_000882": {
+  "note": "Stekt hjortekjøttdeig: erstatt med stekt 85/15 kjøttdeig av storfe"
+ },
+ "sub_000883": {
+  "note": "Stekt bisonkjøttdeig: erstatt med stekt 85/15 kjøttdeig av storfe, litt fetere"
+ },
+ "sub_000884": {
+  "note": "Grytestuet kalkunlever: erstatt med grytestuet kyllinglever, mer vanlig",
+  "name": "Kylling, lever, kokt, grytestuet"
+ },
+ "sub_000885": {
+  "note": "Rå lammekjøttdeig: erstatt med kjøttdeig av storfe for en mer nøytral smak"
+ },
+ "sub_000886": {
+  "note": "Kokt smuldret kyllingkjøttdeig: erstatt med kokt kalkunkjøttdeig",
+  "name": "Kalkunkjøttdeig, kokt"
+ },
+ "sub_000887": {
+  "note": "Hel stekt and (kun kjøtt): erstatt med stekt kylling, magrere og lettere å få tak i"
+ },
+ "sub_000888": {
+  "note": "Rått villandbryst: erstatt med oppdrettsand (kun kjøtt), lettere å finne"
+ },
+ "sub_000889": {
+  "note": "Stekt gås (kun kjøtt): erstatt med stekt and, lignende smak og konsistens"
+ },
+ "sub_000890": {
+  "note": "Stekt gås med skinn: erstatt med stekt and med skinn"
+ },
+ "sub_000891": {
+  "note": "Kalv (blanding av magre stykker, rå): erstatt med kylling- eller kalkunschnitzel hvis den mangler",
+  "name": "Kalkun- eller kyllingschnitzel"
+ },
+ "sub_000892": {
+  "note": "Erstatt med en mager storfestek (f.eks. bogstek); bison er magrere, følg med under steking for å unngå uttørking."
+ },
+ "sub_000893": {
+  "note": "Kylling er den klassiske erstatningen for kanin i gryteretter og wokretter."
+ },
+ "sub_000894": {
+  "note": "Oksetunge: lignende konsistens, lignende koketid."
+ },
+ "sub_000895": {
+  "note": "Kalvenyrer: mildere smak enn svinenyrer, samme bruk."
+ },
+ "sub_000896": {
+  "note": "Kjøttdeig av storfe erstatter kalkunkjøttdeig i de fleste oppskrifter, med rikere smak."
+ },
+ "sub_000897": {
+  "note": "Kalvelever er mørere og mildere i smak enn oksekjøttlever."
+ },
+ "sub_000898": {
+  "note": "Kalvelever kan erstatte lammelever, mildere smak."
+ },
+ "sub_000899": {
+  "note": "Kalvebrissel er den klassiske og finere versjonen; vanlig erstatning for oksebrissel."
+ },
+ "sub_000900": {
+  "note": "Kalvenyrer: lignende konsistens og bruk, mildere smak enn lam."
+ },
+ "sub_000901": {
+  "note": "Kjøpt bacon: lignende smak og konsistens som ferdigskivet saltet bacon."
+ },
+ "sub_000902": {
+  "note": "Spekeskinke (type Parma/Serrano) for en lignende salt-røkt smak som fett saltet skinke."
+ },
+ "sub_000903": {
+  "note": "En hel gårdskylling erstatter kapun, med litt kortere steketid (mindre stykke)."
+ },
+ "sub_000904": {
+  "note": "Hel kylling til buljong og gryteretter; kjøttet blir litt mindre fast enn suppehøne."
+ },
+ "sub_000905": {
+  "note": "En liten hel gårdskylling erstatter cornish hen; juster porsjon og steketid."
+ },
+ "sub_000906": {
+  "note": "Svineskank er et rimelig alternativ til kalveskank (osso buco)."
+ },
+ "sub_000907": {
+  "note": "Erstatt med en mager biff av storfe (indrefilet eller entrecôte) hvis viltkjøtt mangler."
+ },
+ "sub_000908": {
+  "note": "Svinekotelett er en vanlig og rimelig erstatning for grillet kalvekotelett.",
+  "name": "Svinekotelett"
+ },
+ "sub_000909": {
+  "note": "Kalvekjøtt er ofte vanskelig å finne: erstatt med bogstek av storfe (braisert/gryte), lignende konsistens etter lang koketid"
+ },
+ "sub_000910": {
+  "note": "Erstatning: bogstek av storfe, lignende tilberedning (stek/braisert)"
+ },
+ "sub_000911": {
+  "note": "Braisert kalveskulder: erstatt med braisert bogstek av storfe"
+ },
+ "sub_000912": {
+  "note": "Stekt kalveskulder: erstatt med bogstek av storfe eller svineskulder"
+ },
+ "sub_000913": {
+  "note": "Kalve-osso buco: erstatt med braisert oksehase, lignende koketid",
+  "name": "Storfe, hase, kokt, braisert"
+ },
+ "sub_000914": {
+  "note": "Grillet kalvekotelett: kyllingbryst er en vanlig og rimelig erstatning",
+  "name": "Kylling, filet, kokt"
+ },
+ "sub_000915": {
+  "note": "Kalve-osso buco (mager og fet): erstatt med braisert oksehase",
+  "name": "Storfe, hase, kokt, braisert"
+ },
+ "sub_000916": {
+  "note": "Grillet kalvekotelett: vanlig erstatning med kyllingfilet",
+  "name": "Kylling, filet, kokt"
+ },
+ "sub_000917": {
+  "note": "Panert kalveschnitzel: klassisk erstatning, panert kyllingschnitzel (milanese)",
+  "name": "Kylling, panert schnitzel, kokt"
+ },
+ "sub_000918": {
+  "note": "Panert kalveschnitzel: erstatning med panert kyllingschnitzel",
+  "name": "Kylling, panert schnitzel, kokt"
+ },
+ "sub_000919": {
+  "note": "Stekt kalveschnitzel: erstatning med kyllingschnitzel",
+  "name": "Kylling, filet, kokt"
+ },
+ "sub_000920": {
+  "note": "Hel braisert kalveskulder: erstatt med braisert bogstek av storfe"
+ },
+ "sub_000921": {
+  "note": "Sjelden bisonindrefilet: erstatt med rundstek av storfe"
+ },
+ "sub_000922": {
+  "note": "Bison (bog): erstatt med bogstek av storfe til gryte"
+ },
+ "sub_000923": {
+  "note": "Sjelden elgfilet (vilt): erstatt med oksefilet, mildere smak"
+ },
+ "sub_000924": {
+  "note": "Sjelden hjortefilet (vilt): erstatt med oksefilet"
+ },
+ "sub_000925": {
+  "note": "Braisert hjorteskulder: erstatt med braisert bogstek av storfe"
+ },
+ "sub_000926": {
+  "note": "Sjelden bisonentrecôte: erstatt med okseentrecôte"
+ },
+ "sub_000927": {
+  "note": "Sjelden bison-ytrefilet: erstatt med okse-ytrefilet"
+ },
+ "sub_000928": {
+  "note": "Sjelden/dyr grytestuet kanin: erstatt med kylling (lår/blanding), lignende koketid"
+ },
+ "sub_000929": {
+  "note": "Sjelden/dyr stekt kanin: erstatt med stekt kylling"
+ },
+ "sub_000930": {
+  "note": "Strimlet storfekjøtt til sandwich (cheesesteak-type): erstatt med tynt skivet entrecôte eller ytrefilet",
+  "name": "Storfe, entrecôte, uten ben, utvalgt, rå"
+ },
+ "sub_000931": {
+  "note": "Frossen benfri krydret kalkunstek: erstatt med naturell kalkunbryst hvis den ikke finnes",
+  "name": "Kalkun, bryst, kun kjøtt"
+ },
+ "sub_000932": {
+  "note": "Skivet røkt kalkunpålegg: vanlig erstatning, skivet kokt skinke",
+  "name": "Skinke, kokt, skivet"
+ },
+ "sub_000933": {
+  "note": "Bison er lite vanlig: erstatt med bogstek av storfe til gryte, mildere og mindre vill smak"
+ },
+ "sub_000934": {
+  "note": "Sjelden bisonbiff: erstatt med en oksebiff (entrecôte), samme grillsteking"
+ },
+ "sub_000935": {
+  "note": "Sjelden bisonbiff (indrefilet): erstatt med samme stykke av storfe, lignende tilberedning"
+ },
+ "sub_000936": {
+  "note": "Lite vanlig braisert bison: erstatt med braisert bogstek av storfe, identisk konsistens og bruk (gryte, trukket kjøtt)"
+ },
+ "sub_000937": {
+  "note": "Hjort (vilt) er vanskelig å finne: erstatt med en oksebiff, lignende grillsteking"
+ },
+ "sub_000938": {
+  "note": "Sjeldent hjortekjøtt (vilt): erstatt med samme stykke storfekjøtt grillet"
+ },
+ "sub_000939": {
+  "note": "Svært marmorert og dyr Wagyu-storfekjøtt: erstatt med vanlig 85/15 kjøttdeig av storfe hvis den mangler"
+ },
+ "sub_000940": {
+  "note": "Dyr og sjelden Wagyu-storfekjøtt: erstatt med vanlig kjøttdeig av storfe"
+ },
+ "sub_000941": {
+  "note": "Sjelden Wagyu-storfekjøtt (utvendig fett): erstatt med vanlig storfekjøtt"
+ },
+ "sub_000942": {
+  "note": "Dyrt Wagyu-storfekjøtt: erstatt med vanlig storfekjøtt hvis det ikke finnes"
+ },
+ "sub_000943": {
+  "note": "Kalkunpepperoni ikke å oppdrive: erstatt med vanlig pepperoni av storfe/svin, samme bruk skivet"
+ },
+ "sub_000944": {
+  "note": "Lite vanlig natriumredusert bacon: erstatt med vanlig bacon (juster saltet i oppskriften)"
+ },
+ "sub_000945": {
+  "note": "Kyllingpålegg (spread) ikke tilgjengelig: erstatt med skinke- eller kalkunsalat-pålegg, samme bruk i sandwich",
+  "name": "Skinkesalat til pålegg"
+ },
+ "sub_000946": {
+  "note": "Fjærfesalat-pålegg ikke tilgjengelig: erstatt med kylling- eller kalkunpålegg, samme bruk",
+  "name": "Kyllingpålegg"
+ },
+ "sub_000947": {
+  "note": "Skinkesalat-pålegg ikke tilgjengelig: erstatt med et annet kjøttbasert pålegg (kylling, kalkun), samme bruk i sandwich",
+  "name": "Kyllingpålegg"
+ },
+ "sub_000948": {
+  "note": "Sjeldnere bison: erstatt med en oksebiff (høyrygg) i samme mengde, lignende grillsteking."
+ },
+ "sub_000949": {
+  "note": "Erstatt med terninger eller hakket kokt skinke"
+ },
+ "sub_000950": {
+  "note": "Amerikansk bologna ligner vanlig mortadella"
+ },
+ "sub_000951": {
+  "note": "Kalkunvariant, kan erstattes med vanlig mortadella (svin/storfe)"
+ },
+ "sub_000952": {
+  "note": "Kalkunvariant, kan erstattes med oksepastrami"
+ },
+ "sub_000953": {
+  "note": "Kalkunvariant, kan erstattes med vanlig svine-wienerpølse"
+ },
+ "sub_000954": {
+  "note": "Kyllingvariant, kan erstattes med vanlig svine-wienerpølse"
+ },
+ "sub_000955": {
+  "note": "Natriumredusert variant, kan erstattes med vanlig wienerpølse"
+ },
+ "sub_000956": {
+  "note": "Kielbasa ikke å oppdrive: erstatt med en kjede av røkt pølse"
+ },
+ "sub_000957": {
+  "note": "Beerwurst vanskelig å finne: erstatt med en røkt svine-/oksepølse"
+ },
+ "sub_000958": {
+  "note": "Erstatt med vanlig kokt corned beef"
+ },
+ "sub_000959": {
+  "note": "Amerikansk merkevare: erstatt med generisk skivet tørket salami"
+ },
+ "sub_000960": {
+  "note": "Amerikansk merkevare: erstatt med oksemortadella (bologna)"
+ },
+ "sub_000961": {
+  "note": "Amerikansk merkevare: erstatt med en generisk oksewienerpølse (hot dog)"
+ },
+ "sub_000962": {
+  "note": "Leverpølse (Braunschweiger) ligner leverpostei"
+ },
+ "sub_000963": {
+  "note": "Amerikansk merkevare: erstatt med leverpostei"
+ },
+ "sub_000964": {
+  "note": "Amerikansk merkevare: erstatt med naturell skivet kyllingbryst (uten honningglasur)"
+ },
+ "sub_000965": {
+  "note": "Amerikansk merkevare: erstatt med hakket kokt skinke"
+ },
+ "sub_000966": {
+  "note": "Trøffelsmakssatt postei: kan erstattes med naturell leverpostei"
+ },
+ "sub_000967": {
+  "note": "Hvis fiskekraft mangler, bruk grønnsaksbuljong (mindre sjøsmak)"
+ },
+ "sub_000968": {
+  "note": "Kalveschnitzel, kan erstattes med kylling- eller kalkunschnitzel",
+  "name": "Kyllingschnitzel"
+ },
+ "sub_000969": {
+  "note": "Frosne potetbåter kan erstattes med frosne pommes frites"
+ },
+ "sub_000970": {
+  "note": "Bogstek og skulder er nesten identiske stykker til gryte, kan byttes om (bourguignon, pot-au-feu)"
+ },
+ "sub_000971": {
+  "note": "Tilsvarende stykke som skulder til braisert/gryte-tilberedning"
+ },
+ "sub_000972": {
+  "note": "Hvis indrefilet mangler, bruk ytrefilet (billigere, litt mindre mørt, følg med under steking)"
+ },
+ "sub_000973": {
+  "note": "Alternativ til indrefilet til en stek, rimeligere men mindre mørt"
+ },
+ "sub_000974": {
+  "note": "Flanksteak og indrefiletlapp kan byttes om til rask panestekt grilling"
+ },
+ "sub_000975": {
+  "note": "Flanksteak kan erstattes med indrefiletlapp til rask grilling"
+ },
+ "sub_000976": {
+  "note": "Høyrygg tilsvarer rundstek, stykkene kan byttes om til grilling"
+ },
+ "sub_000977": {
+  "note": "Kan erstattes med rundstek, tilsvarende stykke"
+ },
+ "sub_000978": {
+  "note": "Hvis kotelett av kam mangler, bruk svinenakke (fetere, beregn litt lengre steketid)"
+ },
+ "sub_000979": {
+  "note": "Svinenakke som erstatning, fetere og mørere konsistens"
+ },
+ "sub_000980": {
+  "note": "Tilsvarer naturell svineindrefilet (uten tilsatt saltlake)"
+ },
+ "sub_000981": {
+  "note": "Kan erstattes med naturell kyllingbryst; reduser saltet som tilsettes i oppskriften"
+ },
+ "sub_000982": {
+  "note": "Hvis oksebryst mangler, kan bogstek braiseres på lignende måte til gryte eller pot-au-feu",
+  "name": "Bogstek av storfe (til gryte)"
+ },
+ "sub_000983": {
+  "note": "Vanlig svinebacon kan erstatte kalkunbacon (sterkere smak, mer fett)"
+ },
+ "sub_000984": {
+  "note": "Vanlig svinebacon kan erstatte kalkunbacon (sterkere smak, mer fett)"
+ },
+ "sub_000985": {
+  "note": "Vanlig svinebacon kan erstatte kalkunbacon (sterkere smak, mer fett)"
+ },
+ "sub_000986": {
+  "note": "Mandelsmør erstatter peanøttsmør for en mildere smak (peanøttallergi); vær oppmerksom på at det inneholder nøtter."
+ },
+ "sub_000987": {
+  "note": "Fersk skivet skinke i stedet for hermetisk hakket skinke, til lignende bruk i sandwich"
+ },
+ "sub_000988": {
+  "note": "Vanlig erstatning for Worcestershiresaus i marinader og sauser",
+  "name": "Soyasaus + en skvett balsamicoeddik"
+ },
+ "sub_000989": {
+  "note": "Vanlig mortadella (bologna) er den direkte erstatningen som skivet pålegg."
+ },
+ "sub_000990": {
+  "note": "Vanlig mortadella (bologna) er den direkte erstatningen som skivet pålegg."
+ },
+ "sub_000991": {
+  "note": "Hermetisk corned beef kan erstattes med hjemmelaget kokt saltet oksebryst."
+ },
+ "sub_000992": {
+  "note": "Sylte-pålegg kan erstattes med kokt corned beef, lignende bruk som pålegg."
+ },
+ "sub_000993": {
+  "note": "Kokt skinke er en vanlig erstatning for skivet kalkun i sandwicher."
+ },
+ "sub_000994": {
+  "note": "Uspesifisert leverpostei som et rimeligere alternativ til røkt gåseleverpostei."
+ },
+ "sub_000995": {
+  "note": "Ved peanøttallergi, erstatt med solsikkefrøsmør i samme mengde."
+ },
+ "sub_000996": {
+  "note": "Kan erstattes med peanøttsmør i samme mengde (unntatt ved allergi)."
+ },
+ "sub_000997": {
+  "note": "For en laktosefri/vegansk versjon, erstatt myseprotein med soyaproteinisolat."
+ },
+ "sub_000998": {
+  "note": "For en laktosefri/vegansk versjon, erstatt myseproteinisolat med soyaproteinisolat."
+ },
+ "sub_000999": {
+  "note": "Kan erstattes med myseproteinpulver hvis soyaintoleranse ikke er et problem."
+ },
+ "sub_001000": {
+  "note": "For en vegetarisk versjon, erstatt fiskesaus (nuoc-mâm) med soyasaus."
+ },
+ "sub_001001": {
+  "note": "Tomatbasert biffsaus kan erstattes med Worcestershiresaus fortynnet med litt ketchup."
+ },
+ "sub_001002": {
+  "note": "Sriracha kan erstattes med tabascosaus eller en annen sterk saus på flaske (juster mengden, siden den er sterkere)."
+ },
+ "sub_001003": {
+  "note": "Ferdig sterk saus kan erstattes med tabascosaus."
+ },
+ "sub_001004": {
+  "note": "Brun ris kan erstattes med langkornet hvit ris (kortere koketid)."
+ },
+ "sub_001005": {
+  "note": "Brun ris kan erstattes med langkornet hvit ris (kortere koketid)."
+ },
+ "sub_001006": {
+  "note": "Kokt brun ris kan erstattes med kokt langkornet hvit ris."
+ },
+ "sub_001007": {
+  "note": "Kokt brun ris kan erstattes med kokt langkornet hvit ris."
+ },
+ "sub_001008": {
+  "note": "Fullkornpasta kan erstattes med vanlig pasta (spaghetti) hvis fullkorn ikke er tilgjengelig."
+ },
+ "sub_001009": {
+  "note": "Kokt fullkornpasta kan erstattes med kokt vanlig pasta."
+ },
+ "sub_001010": {
+  "note": "Pintobønner kan erstattes med røde bønner i de fleste oppskrifter (chili, gryteretter)."
+ },
+ "sub_001011": {
+  "note": "Great Northern-bønner kan erstattes med hvite bønner (navy) eller cannellinibønner."
+ },
+ "sub_001012": {
+  "note": "Tørkede syrlige kirsebær kan erstattes med tørkede tranebær i samme mengde."
+ },
+ "sub_001013": {
+  "note": "Frosne syrlige kirsebær kan erstattes med frosne usøtede tranebær.",
+  "name": "Canneberges, surgelées, non sucrées"
+ },
+ "sub_001014": {
+  "note": "Bønnedipp kan erstattes med hummus til aperitiff eller brødpålegg."
+ },
+ "sub_001015": {
+  "note": "Ferdig grønnsaksbuljong kan erstattes med ferdig kyllingbuljong hvis retten ikke trenger å være vegetarisk."
+ },
+ "sub_001016": {
+  "note": "Spesifikt merke, erstatt med en generisk grillsaus"
+ },
+ "sub_001017": {
+  "note": "Spesifikt merke, erstatt med en generisk grillsaus"
+ },
+ "sub_001018": {
+  "note": "Spesifikt merke, erstatt med en generisk grillsaus"
+ },
+ "sub_001019": {
+  "note": "Spesifikt merke, erstatt med en generisk grillsaus"
+ },
+ "sub_001020": {
+  "note": "Spesifikt merke, erstatt med en generisk sriracha"
+ },
+ "sub_001021": {
+  "note": "Spesifikt merke, erstatt med en generisk sriracha"
+ },
+ "sub_001022": {
+  "note": "Tabasco kan erstattes med hvilken som helst ferdig sterk saus"
+ },
+ "sub_001023": {
+  "note": "Hermetisk ostesuppe kan erstattes med ferdig ostesaus"
+ },
+ "sub_001024": {
+  "note": "Hermetisk ostesuppe kan erstattes med ferdig ostesaus"
+ },
+ "sub_001025": {
+  "note": "Sterk ostedipp kan erstattes med naturell ostesaus (juster styrken)"
+ },
+ "sub_001026": {
+  "note": "Versjon med lite natrium kan erstattes med vanlig teriyakisaus"
+ },
+ "sub_001027": {
+  "note": "Merkevare cola uten sukker kan erstattes med en generisk cola light"
+ },
+ "sub_001028": {
+  "note": "Merkevare energidrikk kan erstattes med en generisk energidrikk"
+ },
+ "sub_001029": {
+  "note": "Merkevare energidrikk kan erstattes med en generisk energidrikk"
+ },
+ "sub_001030": {
+  "note": "Merkevare energidrikk kan erstattes med en generisk energidrikk"
+ },
+ "sub_001031": {
+  "note": "Merkevare energidrikk kan erstattes med en generisk energidrikk"
+ },
+ "sub_001032": {
+  "note": "Merkevare energidrikk kan erstattes med en generisk energidrikk"
+ },
+ "sub_001033": {
+  "note": "Hermetisk kyllingkrem kan erstattes med hjemmelaget bechamelsaus tilsatt kyllingbuljong"
+ },
+ "sub_001034": {
+  "note": "Hermetisk soppkrem kan erstattes med hjemmelaget bechamelsaus tilsatt sopp"
+ },
+ "sub_001035": {
+  "note": "Hermetisk sellerikrem kan erstattes med hjemmelaget bechamelsaus tilsatt selleri"
+ },
+ "sub_001036": {
+  "note": "Hermetisk potetkrem kan erstattes med hjemmelaget bechamelsaus"
+ },
+ "sub_001037": {
+  "note": "Hermetisk rekekrem kan erstattes med hjemmelaget bechamelsaus tilsatt rekekraft"
+ },
+ "sub_001038": {
+  "note": "Hermetisk løkkrem kan erstattes med hjemmelaget bechamelsaus tilsatt løk"
+ },
+ "sub_001039": {
+  "note": "Hermetisk aspargeskrem kan erstattes med hjemmelaget bechamelsaus"
+ },
+ "sub_001040": {
+  "note": "Hermetisk tomatbisk kan erstattes med tomatsaus mikset med fløte"
+ },
+ "sub_001041": {
+  "note": "Hermetisk kremet soppsuppe, en vanlig erstatning når reker ikke er tilgjengelig i gryteretter"
+ },
+ "sub_001042": {
+  "note": "Kremet kyllingsuppe kan byttes om med kremet soppsuppe i de fleste gryteretter"
+ },
+ "sub_001043": {
+  "note": "Hermetisk kondensert tomatsuppe erstatter tørket blanding tilberedt med vann"
+ },
+ "sub_001044": {
+  "note": "Avrent hermetisk mais, en vanlig erstatning for frossen mais"
+ },
+ "sub_001045": {
+  "note": "Frossen mais, en vanlig erstatning for hermetisk mais"
+ },
+ "sub_001046": {
+  "note": "Annen peanøttsausbase (kokos) som kan brukes i de samme satay-oppskriftene"
+ },
+ "sub_001047": {
+  "note": "Annen peanøttsausbase (peanøttsmør) som kan brukes i de samme satay-oppskriftene"
+ },
+ "sub_001048": {
+  "note": "Grønn chilisaus, erstatning for rød chilisaus avhengig av ønsket farge/styrke"
+ },
+ "sub_001049": {
+  "note": "Rød chilisaus, erstatning for grønn chilisaus avhengig av ønsket farge/styrke"
+ },
+ "sub_001050": {
+  "note": "Røkt kalkunpølse med lite fett, et lettere alternativ til vanlig røkt pølse"
+ },
+ "sub_001051": {
+  "note": "Generisk lettøl, erstatning for merket Bud Light i oppskrifter"
+ },
+ "sub_001052": {
+  "note": "Generisk lettøl, erstatning for merket Budweiser Select i oppskrifter"
+ },
+ "sub_001053": {
+  "note": "Generisk vanlig øl, erstatning for merket Budweiser i oppskrifter"
+ },
+ "sub_001054": {
+  "note": "Kraftig rødvin (Syrah) kan erstattes med Zinfandel til braisering og sauser"
+ },
+ "sub_001055": {
+  "note": "Merlot og Cabernet Sauvignon: tanninrike rødviner som kan byttes om i matlaging"
+ },
+ "sub_001056": {
+  "note": "Claret (bordeauxblanding) ligner på Cabernet Sauvignon i matlaging"
+ },
+ "sub_001057": {
+  "note": "Pinot Noir og Merlot: lettere rødviner som kan erstatte hverandre"
+ },
+ "sub_001058": {
+  "note": "Cabernet Franc ligner på Merlot og kan brukes i stedet i matlaging"
+ },
+ "sub_001059": {
+  "note": "Fumé Blanc er et annet handelsnavn på Sauvignon Blanc"
+ },
+ "sub_001060": {
+  "note": "Chardonnay og Pinot Blanc: tørre hvitviner som kan erstatte hverandre"
+ },
+ "sub_001061": {
+  "note": "Pinot Gris og Chardonnay: tørre hvitviner som kan byttes om i matlaging"
+ },
+ "sub_001062": {
+  "note": "Chenin Blanc og Sauvignon Blanc: like tørre hvitviner"
+ },
+ "sub_001063": {
+  "note": "Gewürztraminer og Riesling: aromatiske hvitviner som kan erstatte hverandre"
+ },
+ "sub_001064": {
+  "note": "Musling-chowder i Manhattan-stil (tomat) og New England-stil (fløte): kan byttes om etter smak"
+ },
+ "sub_001065": {
+  "note": "To merker basilikumpesto, likeverdige"
+ },
+ "sub_001066": {
+  "note": "Varm hvetegrøt (Wheatena) og Cream of Wheat: kan erstatte hverandre"
+ },
+ "sub_001067": {
+  "note": "Cream of Rice og Cream of Wheat: varme grøttyper som kan erstatte hverandre"
+ },
+ "sub_001068": {
+  "note": "Samme produkt uten tilsatt soya; samme mengde, samme tilberedning."
+ },
+ "sub_001069": {
+  "note": "Kyllingnuggets i stedet for ren kylling, svært lik konsistens og tilberedning."
+ },
+ "sub_001070": {
+  "note": "Erstatt kalv med panert kylling; samme mengde, samme tilberedning."
+ },
+ "sub_001071": {
+  "note": "Panert kalkun og panert kylling kan byttes om i samme mengde."
+ },
+ "sub_001072": {
+  "note": "Kyllingbuljong i stedet for oksebuljong, litt mildere smak men tilsvarende base."
+ },
+ "sub_001073": {
+  "note": "Grønnsaksbuljong for en lettere (eller vegetarisk) versjon, samme mengde."
+ },
+ "sub_001074": {
+  "note": "Erstatt lammekjøtt med vanlig couscous med kjøtt, samme grønnsaker og semulegryn."
+ },
+ "sub_001075": {
+  "note": "Lettere versjon med kjøtt eller kylling, samme prinsipp og samme mengde."
+ },
+ "sub_001076": {
+  "note": "Kyllingrull i stedet for kalv, identisk tilberedning og koking."
+ },
+ "sub_001077": {
+  "note": "Kyllingtajine i stedet for lammekjøtt, samme krydder og grønnsaker, litt kortere koketid."
+ },
+ "sub_001078": {
+  "note": "Vanlig hermetisert cassoulet i stedet for svinekjøttversjonen, samme bønnebase."
+ },
+ "sub_001079": {
+  "note": "Cassoulet med svinekjøtt i stedet for and/gås; samme base, mildere smak."
+ },
+ "sub_001080": {
+  "note": "Tørket versjon som tilberedes med vann, samme smak, følg anvisningen på posen."
+ },
+ "sub_001081": {
+  "note": "Tørket pose som tilberedes med vann, resultat svært likt den ferske versjonen."
+ },
+ "sub_001082": {
+  "note": "Tørket versjon som tilberedes med vann, svært lik smak."
+ },
+ "sub_001083": {
+  "note": "Tørket versjon tilberedt med vann, samme type grønnsaker, følg anvisningen på posen."
+ },
+ "sub_001084": {
+  "note": "Tørket pose som tilberedes med vann, samme oppskrift med purre og potet."
+ },
+ "sub_001085": {
+  "note": "Tørket versjon som tilberedes med vann, samme base av fjærkre og grønnsaker."
+ },
+ "sub_001086": {
+  "note": "Tørket minestrone som tilberedes med vann, samme oppskrift."
+ },
+ "sub_001087": {
+  "note": "Tørket gresskarsuppe som tilberedes med vann, svært lik smak."
+ },
+ "sub_001088": {
+  "note": "Naturell kokt hvit fisk, kan toppes med hjemmelaget saus ved behov; samme base."
+ },
+ "sub_001089": {
+  "note": "Naturell kokt hvit fisk, kan serveres med hjemmelaget tomatsaus ved behov."
+ },
+ "sub_001090": {
+  "note": "Naturell kokt hvit fisk; tilsett litt sennep i tilberedningen ved behov."
+ },
+ "sub_001091": {
+  "note": "Naturell kokt hvit fisk, uten panering/olje fra bordeaux-versjonen."
+ },
+ "sub_001092": {
+  "note": "Selleri-gulrot remoulade i stedet for ren sellerisalat, nesten identisk konsistens og saus."
+ },
+ "sub_001093": {
+  "note": "Potetsalat piemonte-stil i stedet for hjemmelaget, samme base av potet og majones."
+ },
+ "sub_001094": {
+  "note": "Coleslaw (hvitkål/gulrot) i stedet for rødkål, samme prinsipp som kålsalat."
+ },
+ "sub_001095": {
+  "note": "Taboulé med kylling i stedet for taboulé med grønnsaker; fjern kyllingen for en vegetarisk versjon."
+ },
+ "sub_001096": {
+  "note": "Samme produkt, i ferdigpakket versjon i stedet for take-away."
+ },
+ "sub_001097": {
+  "note": "Vegetarisk versjon av samme rett (hermetisk ravioli i tomatsaus)."
+ },
+ "sub_001098": {
+  "note": "Vegetarisk versjon uten kjøtt, samme ferdigpakkede format."
+ },
+ "sub_001099": {
+  "note": "Erstatt med vanlig potetmos, uten fersk tomme-ost."
+ },
+ "sub_001100": {
+  "note": "Lignende potetgrateng, uten reblochon-ost og bacon."
+ },
+ "sub_001101": {
+  "note": "Samme kornsort, tilberedes selv i stedet for i mikrobølgepose."
+ },
+ "sub_001102": {
+  "note": "Naturell couscous-semule, tilsett selv grønnsaker etter smak."
+ },
+ "sub_001103": {
+  "note": "Vanlig cordon bleu med kjøtt, samme panerte tilberedning."
+ },
+ "sub_001104": {
+  "note": "Vanlige kyllingnuggets, samme mengde."
+ },
+ "sub_001105": {
+  "note": "Alternativ uten soya, samme panerte format."
+ },
+ "sub_001106": {
+  "note": "Samme mengde, ferdigpakket versjon av croque-monsieur."
+ },
+ "sub_001107": {
+  "note": "Samme mengde, hjemmelaget versjon."
+ },
+ "sub_001108": {
+  "note": "Fjern egget for å få en vanlig croque-monsieur."
+ },
+ "sub_001109": {
+  "note": "Samme sandwich, take-away-versjon."
+ },
+ "sub_001110": {
+  "note": "Samme sandwich, take-away-versjon."
+ },
+ "sub_001111": {
+  "note": "Samme sandwich, take-away-versjon."
+ },
+ "sub_001112": {
+  "note": "Samme sandwich, take-away-versjon."
+ },
+ "sub_001113": {
+  "note": "Samme sandwich, take-away-versjon."
+ },
+ "sub_001114": {
+  "note": "Samme sandwich, take-away-versjon."
+ },
+ "sub_001115": {
+  "note": "Samme type tilberedning, hjemmelaget i stedet for ferdigpakket."
+ },
+ "sub_001116": {
+  "note": "Vegetarisk versjon av beignet, uten kjøtt og fisk."
+ },
+ "sub_001117": {
+  "note": "Erstatt rekene med en fyll av kjøtt/grønnsaker, samme base av wokte nudler."
+ },
+ "sub_001118": {
+  "note": "Asiatiske nudler som ikke er hurtignudler, tilberedes selv i stedet for hurtigversjonen."
+ },
+ "sub_001119": {
+  "note": "Fjern skinken for å få en ost-/margherita-pizza."
+ },
+ "sub_001120": {
+  "note": "Samme produkt, versjon uten garanti om at den er fri for animalske ingredienser."
+ },
+ "sub_001121": {
+  "note": "Samme produkt, i en versjon som egner seg for veganere."
+ },
+ "sub_001122": {
+  "note": "Samme produkt, i en versjon som egner seg for veganere."
+ },
+ "sub_001123": {
+  "note": "Samme produkt, versjon uten garanti om at den er fri for animalske ingredienser."
+ },
+ "sub_001124": {
+  "note": "Samme produkt, i en versjon som egner seg for veganere."
+ },
+ "sub_001125": {
+  "note": "Erstatt med ferske grønne bønner, samme mengde, juster koketiden."
+ },
+ "sub_001126": {
+  "note": "Erstatt med fersk blomkål, samme mengde."
+ },
+ "sub_001127": {
+  "note": "Erstatt med ferske skrelte erter, samme mengde."
+ },
+ "sub_001128": {
+  "note": "Erstatt med fersk gulrot, samme mengde."
+ },
+ "sub_001129": {
+  "note": "Erstatt med fersk brokkoli, samme mengde."
+ },
+ "sub_001130": {
+  "note": "Erstatt med rå fersk spinat, regn med omtrent dobbelt så mye vekt siden den svinner mye ved koking."
+ },
+ "sub_001131": {
+  "note": "Erstatt med en hermetisk blanding av erter og gulrøtter, godt avrent."
+ },
+ "sub_001132": {
+  "note": "Erstatt med hermetiske champignoner, godt avrent."
+ },
+ "sub_001133": {
+  "note": "Erstatt med hermetiske smørbønner, godt avrent."
+ },
+ "sub_001134": {
+  "note": "Erstatt med hermetiske artisjokkbunner, godt avrent."
+ },
+ "sub_001135": {
+  "note": "Erstatt med hermetisk havrerot, godt avrent."
+ },
+ "sub_001136": {
+  "note": "Erstatt med hermetisk grønnsaksblanding, godt avrent."
+ },
+ "sub_001137": {
+  "note": "Bruk omtrent halvparten så mye dobbeltkonsentrert tomatpuré og spe med litt vann."
+ },
+ "sub_001138": {
+  "note": "Bruk omtrent dobbelt så mye vanlig tomatpuré og reduser tilsatt vann."
+ },
+ "sub_001139": {
+  "note": "Samme mengde, svært likt resultat (hermetiske flådde eller oppdelte tomater)."
+ },
+ "sub_001140": {
+  "note": "Erstatt med hermetiske bambusskudd, godt avrent, samme mengde."
+ },
+ "sub_001141": {
+  "note": "Erstatt med hermetiske soyaspirer, godt avrent."
+ },
+ "sub_001142": {
+  "note": "Erstatt med butternsquash, samme mengde, litt mindre søt smak."
+ },
+ "sub_001143": {
+  "note": "Erstatt med kokt finhakket purre, samme mengde."
+ },
+ "sub_001144": {
+  "note": "Erstatt med ferske champignoner, mindre smaksrikt men et godt og rimelig alternativ."
+ },
+ "sub_001145": {
+  "note": "Erstatt med ferske østerssopp, samme mengde, mildere smak."
+ },
+ "sub_001146": {
+  "note": "Erstatt med havrerot (hvit), samme mengde, identisk tilberedning."
+ },
+ "sub_001147": {
+  "note": "Erstatt med ferske maiskorn, samme mengde."
+ },
+ "sub_001148": {
+  "note": "Bløtlegg og bruk deretter i tilsvarende mengde; fastere konsistens, mildere smak enn den svarte soppen."
+ },
+ "sub_001149": {
+  "note": "Tilsett litt olivenolje for å kompensere for manglende marinade."
+ },
+ "sub_001150": {
+  "note": "Bruk omtrent tre ganger så mye finhakket fersk løk som tørket løk."
+ },
+ "sub_001151": {
+  "note": "Bløtlegg og kok, eller erstatt direkte med kokt fersk gulrot i tilsvarende mengde."
+ },
+ "sub_001152": {
+  "note": "Samme grønnsak (pak choi), identisk mengde."
+ },
+ "sub_001153": {
+  "note": "Samme grønnsak (chayote), identisk mengde."
+ },
+ "sub_001154": {
+  "note": "Samme grønnsak, identisk mengde."
+ },
+ "sub_001155": {
+  "note": "Lik konsistens, søtere smak; identisk mengde."
+ },
+ "sub_001156": {
+  "note": "Melere konsistens; identisk mengde, juster koketiden."
+ },
+ "sub_001157": {
+  "note": "Identisk mengde, mer nøytral smak."
+ },
+ "sub_001158": {
+  "note": "Identisk mengde, litt mer klebrig konsistens med taro."
+ },
+ "sub_001159": {
+  "note": "Svært lignende hvite bønner, identisk mengde."
+ },
+ "sub_001160": {
+  "note": "Til supper/purévarianter, identisk mengde."
+ },
+ "sub_001161": {
+  "note": "Svært lik tilberedning og konsistens, identisk mengde."
+ },
+ "sub_001162": {
+  "note": "Svært lik tilberedning og konsistens, identisk mengde."
+ },
+ "sub_001163": {
+  "note": "Samme mengde, litt mindre syrlig smak."
+ },
+ "sub_001164": {
+  "note": "Samme mengde, litt mer syrlig smak."
+ },
+ "sub_001165": {
+  "note": "Samme mengde, litt mindre søt smak."
+ },
+ "sub_001166": {
+  "note": "Samme mengde, litt søtere smak."
+ },
+ "sub_001167": {
+  "note": "Samme mengde, reineclaude-plommen er litt søtere."
+ },
+ "sub_001168": {
+  "note": "Samme mengde, mirabelle-plommen er litt mer syrlig."
+ },
+ "sub_001169": {
+  "note": "Samme frukt, fersk/frossen, identisk mengde."
+ },
+ "sub_001170": {
+  "note": "Samme frukt, fersk/frossen, identisk mengde."
+ },
+ "sub_001171": {
+  "note": "Samme mengde, Gala-eplet er søtere og mindre syrlig."
+ },
+ "sub_001172": {
+  "note": "Samme mengde, Golden-eplet holder formen bedre ved koking."
+ },
+ "sub_001173": {
+  "note": "Samme mengde, rosa pomelo er litt søtere."
+ },
+ "sub_001174": {
+  "note": "Samme mengde, gul pomelo er litt mer syrlig."
+ },
+ "sub_001175": {
+  "note": "Samme mengde, litt mindre smaksrikt fruktkjøtt."
+ },
+ "sub_001176": {
+  "note": "Samme mengde, litt mer smaksrikt fruktkjøtt."
+ },
+ "sub_001177": {
+  "note": "Kirsebæret er søtere: reduser litt på tilsatt sukker i oppskriften."
+ },
+ "sub_001178": {
+  "note": "Eplemos uten tilsatt sukker, mindre søtt men identisk konsistens, samme mengde."
+ },
+ "sub_001179": {
+  "note": "Vanlig eplemos, litt søtere, samme mengde."
+ },
+ "sub_001180": {
+  "note": "Eplemos, mer nøytral smak, samme mengde i bakst."
+ },
+ "sub_001181": {
+  "note": "Eplemos, mer nøytral smak, samme mengde."
+ },
+ "sub_001182": {
+  "note": "Versjon i lett sirup, mindre søtt, samme mengde."
+ },
+ "sub_001183": {
+  "note": "Versjon i lett sirup, mindre søtt, samme mengde."
+ },
+ "sub_001184": {
+  "note": "Versjon i lett sirup, mindre søtt, samme mengde."
+ },
+ "sub_001185": {
+  "note": "Versjon i lett sirup, mindre søtt, samme mengde."
+ },
+ "sub_001186": {
+  "note": "Ananas i egen juice, mindre søtt, avrenn godt før bruk."
+ },
+ "sub_001187": {
+  "note": "Pære i lett sirup, lik konsistens og sødme, samme mengde."
+ },
+ "sub_001188": {
+  "note": "Tørket tranebær, mer syrlig, samme mengde i kaker eller salater."
+ },
+ "sub_001189": {
+  "note": "Versjon uten tilsatt salt, for å redusere saltinnholdet, samme mengde, salt etter smak."
+ },
+ "sub_001190": {
+  "note": "Versjon uten tilsatt salt, samme mengde, salt etter smak."
+ },
+ "sub_001191": {
+  "note": "Versjon uten tilsatt salt, samme mengde, salt etter smak."
+ },
+ "sub_001192": {
+  "note": "God erstatning i snacksblandinger eller bakst, samme mengde."
+ },
+ "sub_001193": {
+  "note": "Skallede frø, litt lettere fordøyelig, samme mengde."
+ },
+ "sub_001194": {
+  "note": "Samme bruk som bindemiddel (gelé med vann) i bakst/grøt, samme mengde."
+ },
+ "sub_001195": {
+  "note": "Lik konsistens til sauser og bakst, søtere og kraftigere smak."
+ },
+ "sub_001196": {
+  "note": "Mer ristet smak, samme mengde, litt tørrere konsistens."
+ },
+ "sub_001197": {
+  "note": "Basmatiris, korn som kan byttes om, samme mengde."
+ },
+ "sub_001198": {
+  "note": "Basmatiris, lignende langkorn, samme mengde."
+ },
+ "sub_001199": {
+  "note": "Vanlig hvit ris, samme mengde og lignende koketid."
+ },
+ "sub_001200": {
+  "note": "Fullkornversjon, rikere på fiber, samme mengde."
+ },
+ "sub_001201": {
+  "note": "Fullkornversjon, rikere på fiber, samme mengde."
+ },
+ "sub_001202": {
+  "note": "Kokt bulgur, litt fastere konsistens, samme bruk i salat eller som tilbehør."
+ },
+ "sub_001203": {
+  "note": "Rå bulgur, lignende koketid, samme bruk."
+ },
+ "sub_001204": {
+  "note": "Glassnudler av soya, lik konsistens, samme mengde."
+ },
+ "sub_001205": {
+  "note": "Glassnudler av soya, lik konsistens, samme mengde."
+ },
+ "sub_001206": {
+  "note": "Gnocchi av semulegryn, litt fastere konsistens, samme mengde."
+ },
+ "sub_001207": {
+  "note": "Vanlig pasta hvis det ikke er behov for glutenfritt, samme mengde og koketid."
+ },
+ "sub_001208": {
+  "note": "Glutenfri pasta for et tilpasset måltid, samme mengde og lignende koketid."
+ },
+ "sub_001209": {
+  "note": "Samme mengde, svært lik bindeevne."
+ },
+ "sub_001210": {
+  "note": "Samme mengde, lignende fortykningsevne."
+ },
+ "sub_001211": {
+  "note": "Samme mengde, litt mer nøytral smak."
+ },
+ "sub_001212": {
+  "note": "Samme mengde, mindre rustikt resultat."
+ },
+ "sub_001213": {
+  "note": "Samme mengde, litt lettere smulestruktur."
+ },
+ "sub_001214": {
+  "note": "Samme mengde, kraftigere smak (ren smør)."
+ },
+ "sub_001215": {
+  "note": "Samme mengde, versjon uten smør (nyttig ved intoleranse)."
+ },
+ "sub_001216": {
+  "note": "Samme mengde, mer smuldrende deig og kraftigere smak."
+ },
+ "sub_001217": {
+  "note": "Samme mengde, alternativ uten smør."
+ },
+ "sub_001218": {
+  "note": "Samme mengde, rikere smak (ren smør)."
+ },
+ "sub_001219": {
+  "note": "Legg omtrent 2 filodeigark oppå hverandre for å erstatte ett brickdeigark."
+ },
+ "sub_001220": {
+  "note": "Ett brickdeigark erstatter omtrent 2 filodeigark."
+ },
+ "sub_001221": {
+  "note": "Samme mengde, mykere konsistens, mer nøytral smak."
+ },
+ "sub_001222": {
+  "note": "Samme mengde, glutenfritt alternativ."
+ },
+ "sub_001223": {
+  "note": "Samme bruk til fylte sandwicher, avlang form."
+ },
+ "sub_001224": {
+  "note": "Samme tilberedningsmetode, kraftigere smak."
+ },
+ "sub_001225": {
+  "note": "Samme mengde, magrere kjøtt."
+ },
+ "sub_001226": {
+  "note": "Samme mengde, svært lik smak og konsistens."
+ },
+ "sub_001227": {
+  "note": "Samme mengde, litt tørrere kjøtt, følg med under tilberedningen."
+ },
+ "sub_001228": {
+  "note": "Samme produkt, ikke-økologisk versjon."
+ },
+ "sub_001229": {
+  "note": "Samme tilberedningsmetode, litt mørere kjøttstykke."
+ },
+ "sub_001230": {
+  "note": "Samme type kjøttstykke, lignende tilberedning."
+ },
+ "sub_001231": {
+  "note": "Samme tilberedningsmetode, likt resultat."
+ },
+ "sub_001232": {
+  "note": "Kalkunsknitsel, samme tilberedning, litt mer nøytral smak."
+ },
+ "sub_001233": {
+  "note": "Kalvesknitsel, identisk mengde, lik konsistens."
+ },
+ "sub_001234": {
+  "note": "Kalkunkjøtt, samme mengde, svært lik smak."
+ },
+ "sub_001235": {
+  "note": "Kyllingkjøtt, samme mengde, svært lik smak."
+ },
+ "sub_001236": {
+  "note": "Frittgående kylling, samme mengde, mildere smak."
+ },
+ "sub_001237": {
+  "note": "Andekjøtt, samme mengde, lik smak (fett fjørfe)."
+ },
+ "sub_001238": {
+  "note": "Frittgående kylling, samme mengde, uten viltsmaken."
+ },
+ "sub_001239": {
+  "note": "Biff av okse, samme mengde, likt resultat."
+ },
+ "sub_001240": {
+  "note": "Indrefilet-lignende oksestykke, samme mengde, likt resultat."
+ },
+ "sub_001241": {
+  "note": "Entrecôte av okse, samme mengde, likt resultat."
+ },
+ "sub_001242": {
+  "note": "Entrecôte av okse, samme mengde, likt resultat."
+ },
+ "sub_001243": {
+  "note": "Lammelår, samme mengde, lik smak."
+ },
+ "sub_001244": {
+  "note": "Oksefilet, magert rødt kjøtt, samme mengde."
+ },
+ "sub_001245": {
+  "note": "Magert oksekjøtt (filet), samme mengde, uten viltsmaken."
+ },
+ "sub_001246": {
+  "note": "Kaninkjøtt, samme mengde, mildere smak."
+ },
+ "sub_001247": {
+  "note": "Kvigelever, samme mengde, svært lik smak."
+ },
+ "sub_001248": {
+  "note": "Kalvelever, samme mengde, svært lik smak."
+ },
+ "sub_001249": {
+  "note": "Kalvehjerte, samme mengde, litt mørere konsistens."
+ },
+ "sub_001250": {
+  "note": "Kalvehjerne, samme mengde, identisk konsistens."
+ },
+ "sub_001251": {
+  "note": "Kjøttdeig 10 % fett, litt fetere."
+ },
+ "sub_001252": {
+  "note": "Kjøttdeig 15 % fett, litt magrere."
+ },
+ "sub_001253": {
+  "note": "Kalvekjøttdeig 15 % fett, litt magrere."
+ },
+ "sub_001254": {
+  "note": "Svineskulder, samme mengde, litt mindre marmorert."
+ },
+ "sub_001255": {
+  "note": "Lammeskulder, samme mengde, litt fetere."
+ },
+ "sub_001256": {
+  "note": "Bogstek av okse, samme bruk til langtidsbraisering."
+ },
+ "sub_001257": {
+  "note": "Oksenakke, samme bruk til langtidsbraisering."
+ },
+ "sub_001258": {
+  "note": "Utbeinet kyllinglår, samme mengde, juster koketiden."
+ },
+ "sub_001259": {
+  "note": "Kyllinglår, samme mengde, lik smak."
+ },
+ "sub_001260": {
+  "note": "Stekt lammeskulder, samme bruk, litt fetere og mørere."
+ },
+ "sub_001261": {
+  "note": "Kokt kalkunlever, samme mengde, svært lik smak."
+ },
+ "sub_001262": {
+  "note": "Kokt kalkunhjerte, samme mengde, svært lik smak."
+ },
+ "sub_001263": {
+  "note": "Kalkunlever, svært lik konsistens og smak."
+ },
+ "sub_001264": {
+  "note": "Kyllinglever, lett å erstatte med, litt kraftigere smak."
+ },
+ "sub_001265": {
+  "note": "Lammebriss, identisk tilberedning, mindre stykker."
+ },
+ "sub_001266": {
+  "note": "Kalvebriss, mer vanlig, samme tilberedning."
+ },
+ "sub_001267": {
+  "note": "Lammenyre, samme tilberedningsmetode, litt kraftigere smak."
+ },
+ "sub_001268": {
+  "note": "Kalvenyre, mildere, samme tilberedning."
+ },
+ "sub_001269": {
+  "note": "Oksetunge, større men samme tilberedning (pochert og deretter braisert)."
+ },
+ "sub_001270": {
+  "note": "Kalvetunge, mindre og mørere, samme tilberedning."
+ },
+ "sub_001271": {
+  "note": "Røkt baconterninger, samme bruk i matlaging (i panne, quiche, salat)."
+ },
+ "sub_001272": {
+  "note": "Naturelle baconterninger, i mangel av pancetta for å smaksette en gryterett."
+ },
+ "sub_001273": {
+  "note": "Bündnerkjøtt, samme type tørket pålegg i tynne skiver."
+ },
+ "sub_001274": {
+  "note": "Bresaola, lignende tørket oksekjøtt i tynne skiver."
+ },
+ "sub_001275": {
+  "note": "Bayonne-skinke, i mangel av parmaskinke, samme type tørket skinke."
+ },
+ "sub_001276": {
+  "note": "Bayonne-skinke, i mangel av serranoskinke, lignende tørket rå skinke."
+ },
+ "sub_001277": {
+  "note": "Generisk tørket skinke, samme konsistens og bruk."
+ },
+ "sub_001278": {
+  "note": "Rillettes av rent svinekjøtt, i mangel av and, lik konsistens."
+ },
+ "sub_001279": {
+  "note": "Andrillettes, lettere å få tak i, smak som ligner på gås."
+ },
+ "sub_001280": {
+  "note": "Andrillettes, i mangel av rillettes av ren gås."
+ },
+ "sub_001281": {
+  "note": "Fjørfeleverpostei, i mangel av gåselever, mer vanlig."
+ },
+ "sub_001282": {
+  "note": "Salami, lignende tørket pølse, samme bruk i skiver."
+ },
+ "sub_001283": {
+  "note": "Tørket spekepølse av rent svinekjøtt, samme type tørket pålegg."
+ },
+ "sub_001284": {
+  "note": "Rå merguez, i mangel av chorizo, for en lignende sterk smak på grillen."
+ },
+ "sub_001285": {
+  "note": "Rå chipolatapølse, samme bruk på grillen eller i panne."
+ },
+ "sub_001286": {
+  "note": "Rå Toulouse-pølse, samme bruk, litt kraftigere smak."
+ },
+ "sub_001287": {
+  "note": "Rå Toulouse-pølse, i mangel av merguez (mindre sterk, juster krydderet)."
+ },
+ "sub_001288": {
+  "note": "Frankfurterpølse, identisk konsistens og bruk (hot dog, surkål)."
+ },
+ "sub_001289": {
+  "note": "Strasbourgpølse/knakkpølse, samme type pølse som kokes i vann."
+ },
+ "sub_001290": {
+  "note": "Strasbourgpølse/knakkpølse av rent svinekjøtt, i mangel av fjørfeversjonen."
+ },
+ "sub_001291": {
+  "note": "Cervelaspølse, kokt pålegg i skiver, lignende bruk som snacks eller i salat."
+ },
+ "sub_001292": {
+  "note": "Oksemule, annen hodepølse i gelé, ofte servert med vinaigrette."
+ },
+ "sub_001293": {
+  "note": "Sylte, lignende tilberedning i gelé."
+ },
+ "sub_001294": {
+  "note": "Kokt torsk, fast hvit fisk, lik konsistens."
+ },
+ "sub_001295": {
+  "note": "Kokt torsk, mager hvit fisk med lik smak."
+ },
+ "sub_001296": {
+  "note": "Dampet hyse, lignende mager hvit fisk."
+ },
+ "sub_001297": {
+  "note": "Hvit fisk med fast kjøtt, vanlig erstatning som ovnsbakt filet."
+ },
+ "sub_001298": {
+  "note": "Ferskvannsfisk med fast kjøtt, lignende ovnstilberedning."
+ },
+ "sub_001299": {
+  "note": "Små hele fisker bakt i ovn, tilsvarende tilberedning."
+ },
+ "sub_001300": {
+  "note": "Tynne flatfisker, tilsvarende damping."
+ },
+ "sub_001301": {
+  "note": "Mager hvit fisk, kan byttes om ved damping."
+ },
+ "sub_001302": {
+  "note": "Rosa fet fisk, lignende damping."
+ },
+ "sub_001303": {
+  "note": "Saltet klippfisk og fersk torsk har samme kjøtt, bløtlegg klippfisken før bruk."
+ },
+ "sub_001304": {
+  "note": "Mager hvit fisk, tilsvarende skånsom tilberedning."
+ },
+ "sub_001305": {
+  "note": "Hvit fisk av torskefamilien, lignende grilling."
+ },
+ "sub_001306": {
+  "note": "Små fete fisker, lignende grilling (sardin/makrell)."
+ },
+ "sub_001307": {
+  "note": "Ørret, tilsvarende steking i panne/ovn."
+ },
+ "sub_001308": {
+  "note": "Havabbor, lignende kjøtt som kan byttes om når det spises rått."
+ },
+ "sub_001309": {
+  "note": "Hvit fisk av torskefamilien, likt kjøtt når det er rått."
+ },
+ "sub_001310": {
+  "note": "Kveite, lignende kjøtt som kan byttes om."
+ },
+ "sub_001311": {
+  "note": "Lignende flatfisker, samme fine kjøtt."
+ },
+ "sub_001312": {
+  "note": "Villaks og oppdrettslaks, likt kjøtt når det er rått."
+ },
+ "sub_001313": {
+  "note": "Laks av ulike arter, likt kjøtt når det er rått."
+ },
+ "sub_001314": {
+  "note": "Reker av ulike arter, kokte, kan ofte byttes om i oppskrifter."
+ },
+ "sub_001315": {
+  "note": "Languster og hummer, likt kjøtt, tilsvarende koking i vann."
+ },
+ "sub_001316": {
+  "note": "Sjøkreps og reker, likt kjøtt, lignende koking i vann."
+ },
+ "sub_001317": {
+  "note": "Lignende skjell, tilsvarende koking i vann."
+ },
+ "sub_001318": {
+  "note": "Små marine snegler, tilsvarende tilberedning og bruk."
+ },
+ "sub_001319": {
+  "note": "Blekksprut og åttearmet blekksprut, blekksprutkjøtt som ofte erstatter hverandre."
+ },
+ "sub_001320": {
+  "note": "Fiskerillettes, kan ofte byttes om avhengig av tilgjengelig fisk."
+ },
+ "sub_001321": {
+  "note": "Taramas, identisk oppskrift og bruk avhengig av hvilken fiskerogn som brukes."
+ },
+ "sub_001322": {
+  "note": "Lakserogn (stenbitrogn) er en vanlig og langt rimeligere erstatning for kaviar, samme bruk som pynt"
+ },
+ "sub_001323": {
+  "note": "Panert hvit fisk, lignende konsistens og bruk (fish and chips, panert i panne)"
+ },
+ "sub_001324": {
+  "note": "Panert hvit fisk, lett å erstatte i matlaging"
+ },
+ "sub_001325": {
+  "note": "Hermetisert tunfisk i vann kan erstatte sardiner i olje i salater og postei"
+ },
+ "sub_001326": {
+  "note": "Hermetisk fisk i tomatsaus kan byttes om (makrell/sardin)"
+ },
+ "sub_001327": {
+  "note": "Røkt fisk, lik smak og konsistens, kan brukes som et rimeligere alternativ"
+ },
+ "sub_001328": {
+  "note": "Røkt hyse kan erstatte røkelaks i salater, quicher og eggerøre"
+ },
+ "sub_001329": {
+  "note": "Hermetisk laks og tunfisk kan byttes om (rillettes, salater)"
+ },
+ "sub_001330": {
+  "note": "Røkt ørret er en klassisk og rimeligere erstatning for røkelaks"
+ },
+ "sub_001331": {
+  "note": "Kan erstattes med omtrent 4 hønseegg (tilsvarende volum)"
+ },
+ "sub_001332": {
+  "note": "Kan erstattes med omtrent 1,5 hønseegg (tilsvarende volum)"
+ },
+ "sub_001333": {
+  "note": "Eggepulver rørt ut i vann erstatter ferskt egg i bakst"
+ },
+ "sub_001334": {
+  "note": "Eggeplommepulver rørt ut i vann erstatter fersk eggeplomme"
+ },
+ "sub_001335": {
+  "note": "Eggehvitepulver rørt ut i vann erstatter fersk eggehvite"
+ },
+ "sub_001336": {
+  "note": "Helmelk fra ku kan erstatte geitemelk hvis den ikke er tilgjengelig, eller for å dempe smaken"
+ },
+ "sub_001337": {
+  "note": "Helmelk fra ku kan erstatte geitemelk hvis den ikke er tilgjengelig"
+ },
+ "sub_001338": {
+  "note": "Helmelk fra ku kan erstatte fåremelk hvis den ikke er tilgjengelig"
+ },
+ "sub_001339": {
+  "note": "Helmelk fra ku kan erstatte bøffelmelk hvis den ikke er tilgjengelig"
+ },
+ "sub_001340": {
+  "note": "Rørt ut i vann, erstatter fersk helmelk"
+ },
+ "sub_001341": {
+  "note": "Spedd med vann (like deler), erstatter helmelk"
+ },
+ "sub_001342": {
+  "note": "Naturell fromage blanc kan erstatte gresk yoghurt, litt mindre kremet konsistens"
+ },
+ "sub_001343": {
+  "note": "Vanlig gresk yoghurt kan erstattes hvis fåremelksyoghurt ikke er tilgjengelig"
+ },
+ "sub_001344": {
+  "note": "Naturell yoghurt av kumelk kan erstatte fåremelksyoghurt hvis den ikke er tilgjengelig"
+ },
+ "sub_001345": {
+  "note": "Naturell yoghurt av kumelk kan erstatte geitemelksyoghurt hvis den ikke er tilgjengelig"
+ },
+ "sub_001346": {
+  "note": "Kefir kan erstatte naturell drikkeyoghurt i oppskrifter"
+ },
+ "sub_001347": {
+  "note": "Avrent fersk hytteost har en konsistens som ligner fromage blanc med 0 % fett"
+ },
+ "sub_001348": {
+  "note": "Avrent fersk hytteost har en konsistens som ligner naturell fromage blanc med tilsvarende fettinnhold"
+ },
+ "sub_001349": {
+  "note": "Lignende dessert av egg og melk, tilsvarende konsistens og bruk som karamellpudding."
+ },
+ "sub_001350": {
+  "note": "Lignende kremet og myk konsistens, erstatter panna cotta som melkedessert."
+ },
+ "sub_001351": {
+  "note": "Vanlig milkshake, tilsvarende hurtigmat-formatet."
+ },
+ "sub_001352": {
+  "note": "Grunnversjon av risgrøt, uten tilsatt smak."
+ },
+ "sub_001353": {
+  "note": "Lignende melkedessert av korn (semulegryn erstattet med ris)."
+ },
+ "sub_001354": {
+  "note": "Hjemmelaget vaniljekrem tilsvarer den ferdigblandede versjonen rørt ut i væske."
+ },
+ "sub_001355": {
+  "note": "Naturell melkebasert versjon, hvis det ikke er behov for plantebasert."
+ },
+ "sub_001356": {
+  "note": "Tilsvarende smaksatt melkebasert alternativ, hvis det ikke er behov for plantebasert."
+ },
+ "sub_001357": {
+  "note": "Vanlig melkebasert versjon tilsvarende den plantebaserte sjokolademoussen."
+ },
+ "sub_001358": {
+  "note": "Én type revet ost (emmentaler) i stedet for spesialblandingen til gratenger/pizza."
+ },
+ "sub_001359": {
+  "note": "Myk ost med hvit skimmelskorpe, av brie-typen."
+ },
+ "sub_001360": {
+  "note": "Myk kremet ost som ligner på chaource."
+ },
+ "sub_001361": {
+  "note": "Tilsvarende blåmuggost av kumelk."
+ },
+ "sub_001362": {
+  "note": "Mild fast ost som ligner, i mangel av mimolette."
+ },
+ "sub_001363": {
+  "note": "Tilsvarende generisk raclette-ost."
+ },
+ "sub_001364": {
+  "note": "Tilsvarende generisk smelteost, ikke i skiveformat."
+ },
+ "sub_001365": {
+  "note": "Tilsvarende generisk fetaost."
+ },
+ "sub_001366": {
+  "note": "Tilsvarende generisk mozzarella av kumelk."
+ },
+ "sub_001367": {
+  "note": "Vanlig tykk crème fraîche med samme fettinnhold."
+ },
+ "sub_001368": {
+  "note": "Tilsvarende vanlig flytende crème fraîche."
+ },
+ "sub_001369": {
+  "note": "Flytende helfløte som piskes selv til krem."
+ },
+ "sub_001370": {
+  "note": "Det lettere smaksatte melkeproduktet til matlaging kan erstattes med vanlig flytende crème fraîche i varme retter."
+ },
+ "sub_001371": {
+  "note": "Lettfløte 12-20 % fett kan erstattes med flytende helfløte (mer kremet resultat, reduser mengden litt)."
+ },
+ "sub_001372": {
+  "note": "Springvann kan erstattes med stille mineralvann i matlaging og bakst."
+ },
+ "sub_001373": {
+  "note": "Hjemmepresset sitronsaft kan erstattes med ren sitronsaft fra flaske."
+ },
+ "sub_001374": {
+  "note": "Fersk limejuice kan erstattes med sitronjuice, i samme mengde, litt annen smak."
+ },
+ "sub_001375": {
+  "note": "Ren limejuice kan erstattes med ren sitronjuice."
+ },
+ "sub_001376": {
+  "note": "Ananasjuice laget av konsentrat kan erstattes med ren ananasjuice."
+ },
+ "sub_001377": {
+  "note": "Appelsinjuice laget av konsentrat kan erstattes med nypresset appelsinjuice."
+ },
+ "sub_001378": {
+  "note": "Eplejuice laget av konsentrat kan erstattes med ren eplejuice."
+ },
+ "sub_001379": {
+  "note": "Grapefruktjuice laget av konsentrat kan erstattes med ren grapefruktjuice."
+ },
+ "sub_001380": {
+  "note": "Druejuice laget av konsentrat kan erstattes med ren druejuice."
+ },
+ "sub_001381": {
+  "note": "Ren fruktjuice kan erstattes med fruktjuice laget av konsentrat, ofte forskjellig tilgjengelighet og pris."
+ },
+ "sub_001382": {
+  "note": "Eplenektar kan erstattes med ren eplejuice, ved å redusere tilsatt sukker i oppskriften."
+ },
+ "sub_001383": {
+  "note": "Appelsinnektar kan erstattes med ren appelsinjuice, som er mer fruktkonsentrert og mindre søt."
+ },
+ "sub_001384": {
+  "note": "Ananasnektar kan erstattes med ren ananasjuice."
+ },
+ "sub_001385": {
+  "note": "Sukret cola kan erstattes med cola uten tilsatt sukker og med søtstoff, for en lettere versjon."
+ },
+ "sub_001386": {
+  "note": "Sukret limonade kan erstattes med limonade uten tilsatt sukker og med søtstoff."
+ },
+ "sub_001387": {
+  "note": "Sukret tonic med søtstoff kan erstattes med tonic uten tilsatt sukker og med søtstoff."
+ },
+ "sub_001388": {
+  "note": "Naturelle plantebaserte drikker kan byttes om i matlaging (bakst, sauser): havredrikk erstattet med naturell soyadrikk."
+ },
+ "sub_001389": {
+  "note": "Naturell soyadrikk kan erstattes med naturell mandeldrikk i de fleste oppskrifter."
+ },
+ "sub_001390": {
+  "note": "Risdrikk er tynnere: kan erstattes med naturell mandeldrikk i vanlig matlaging."
+ },
+ "sub_001391": {
+  "note": "Kokosdrikk kan erstattes med naturell mandeldrikk når man vil dempe kokossmaken."
+ },
+ "sub_001392": {
+  "note": "Trukket svart te og grønn te kan ofte brukes om hverandre etter ønsket smak."
+ },
+ "sub_001393": {
+  "note": "Ferdig traktet kaffe kan erstattes med pulverkaffe rørt ut i vann."
+ },
+ "sub_001394": {
+  "note": "Malt kaffe til trakting kan erstattes med pulverkaffe oppløst i varmt vann."
+ },
+ "sub_001395": {
+  "note": "Fruktose kan erstattes med vanlig sukker i bakst (juster mengden litt)."
+ },
+ "sub_001396": {
+  "note": "Sakkarin-søtstoff kan erstattes med sukker for en mer naturlig smak."
+ },
+ "sub_001397": {
+  "note": "Aspartam-søtstoff i pulverform kan erstattes med sukker i matlaging og bakst."
+ },
+ "sub_001398": {
+  "note": "Stevia-søtstoff kan erstattes med vanlig sukker (nærmere smak, juster mengden)."
+ },
+ "sub_001399": {
+  "note": "Sukkerrørmelasse kan erstattes med lønnesirup i bakst for en lignende søt smak."
+ },
+ "sub_001400": {
+  "note": "Flytende karamell brukt som topping kan erstattes med honning."
+ },
+ "sub_001401": {
+  "note": "Mørk sjokolade 50 % i plate kan erstattes med vanlig mørk sjokolade i matlaging/bakst."
+ },
+ "sub_001402": {
+  "note": "Mørk sjokolade 70 % til nyting kan erstattes med vanlig mørk sjokolade til baking."
+ },
+ "sub_001403": {
+  "note": "Bakesjokolade, mørk (40 %+), kan erstattes med vanlig mørk sjokolade."
+ },
+ "sub_001404": {
+  "note": "Melkesjokolade uten tilsatt sukker kan erstattes med vanlig melkesjokolade."
+ },
+ "sub_001405": {
+  "note": "Brennevin av typen cognac/armagnac kan erstattes med calvados ved flambering eller i saus."
+ },
+ "sub_001406": {
+  "note": "Rom (gjennomsnittstype) kan erstattes med hvit rom i de fleste kulinariske sammenhenger."
+ },
+ "sub_001407": {
+  "note": "Jordbærsyltetøy (ekstra eller vanlig) tilsvarer standard jordbærsyltetøy i katalogen."
+ },
+ "sub_001408": {
+  "note": "Aprikossyltetøy (ekstra eller vanlig) tilsvarer standard aprikossyltetøy i katalogen."
+ },
+ "sub_001409": {
+  "note": "Jordbærsyltetøy med redusert sukker kan erstattes med vanlig jordbærsyltetøy (søtere)."
+ },
+ "sub_001410": {
+  "note": "Aprikossyltetøy med redusert sukker kan erstattes med vanlig aprikossyltetøy."
+ },
+ "sub_001411": {
+  "note": "Ripsgelé kan erstattes med bringebærsyltetøy (annen rød bær) i fyll, på brødskiver eller i paibunner."
+ },
+ "sub_001412": {
+  "note": "Vanlig håndverksbakt croissant kan erstattes med en ren smør-croissant, rikere smak men samme bruk."
+ },
+ "sub_001413": {
+  "note": "Melkebrød kan erstattes med naturell håndverksbakt brioche til frokost eller mellommåltid."
+ },
+ "sub_001414": {
+  "note": "Panettone kan erstattes med vanlig naturell brioche hvis kandiserte frukter ikke er tilgjengelig."
+ },
+ "sub_001415": {
+  "note": "Rosinsnurr kan erstattes med en fruktfylt brioche, lignende søt fruktfylt bakverk."
+ },
+ "sub_001416": {
+  "note": "Sjokoladecroissant kan erstattes med en ren smør-croissant hvis sjokoladebakverk ikke er tilgjengelig."
+ },
+ "sub_001417": {
+  "note": "Brioche med sjokoladebiter kan erstattes med ferdigpakket naturell brioche, uten sjokolade."
+ },
+ "sub_001418": {
+  "note": "Smørkjeks kan erstattes med naturell tørr kjeks, samme base til cheesecake eller smuldret i dessert."
+ },
+ "sub_001419": {
+  "note": "Håndverksbakt og ferdigpakket sukkerbrødkake kan byttes direkte om, samme grunnoppskrift."
+ },
+ "sub_001420": {
+  "note": "Rombaba fra kjøledisken kan erstattes med håndverksbakt rombaba, samme bakverk."
+ },
+ "sub_001421": {
+  "note": "Ferdigpakket kouign-amann kan erstattes med håndverksbakt kouign-amann, samme bretonske spesialitet."
+ },
+ "sub_001422": {
+  "note": "Vannbakkels og eclair har samme vannbakkelsdeig og lignende vaniljekremfyll."
+ },
+ "sub_001423": {
+  "note": "Vannbakkels med vaniljekrem kan erstattes med vannbakkels med krem (Saint-Honoré-type), avhengig av ønsket fyll."
+ },
+ "sub_001424": {
+  "note": "Gasellehorn og baklava er to orientalske bakverk med mandler og sukker, som kan byttes om på et orientalsk fat."
+ },
+ "sub_001425": {
+  "note": "Brownie med nøtter kan erstattes med naturell brownie, spesielt ved nøtteallergi."
+ },
+ "sub_001426": {
+  "note": "Bretonsk kake fylt med sviske kan erstattes med far breton med sviske, bretonske spesialiteter med samme smak."
+ },
+ "sub_001427": {
+  "note": "Fruktmoussekake på sukkerbrødbunn (bavarois/speilkake) og jordbær-/bringebærkake har lignende oppbygning (sukkerbrød, krem, frukt)."
+ },
+ "sub_001428": {
+  "note": "Tørr makron kan erstattes med en myk fylt makron for å variere et fat med søte småkaker."
+ },
+ "sub_001429": {
+  "note": "Ferdigpakket ketchup kan erstattes med naturell tomatsaus"
+ },
+ "sub_001430": {
+  "note": "Lettketchup kan erstattes med vanlig ketchup"
+ },
+ "sub_001431": {
+  "note": "Lettmajones kan erstattes med vanlig majones"
+ },
+ "sub_001432": {
+  "note": "Grillsaus kan erstattes med ketchup, lignende søt-krydret tomatbase"
+ },
+ "sub_001433": {
+  "note": "Soyasaus kan erstattes med fiskesaus (nuoc-mâm) i asiatisk matlaging"
+ },
+ "sub_001434": {
+  "note": "Søt soyasaus kan erstattes med vanlig soyasaus"
+ },
+ "sub_001435": {
+  "note": "Teriyakisaus kan erstattes med søt soyasaus"
+ },
+ "sub_001436": {
+  "note": "Vinaigrette med olivenolje tilsvarer en vanlig vinaigrette med 50-75 % olje"
+ },
+ "sub_001437": {
+  "note": "Harissa kan erstattes med sterk chili brukt sparsomt"
+ },
+ "sub_001438": {
+  "note": "Sennepssaus kan erstattes med Dijon-sennep tynnet ut med litt fløte"
+ },
+ "sub_001439": {
+  "note": "Caesardressing kan erstattes med majones tilsatt parmesan og ansjos"
+ },
+ "sub_001440": {
+  "note": "Ferdigpakket bechamelsaus kan erstattes med hjemmelaget bechamelsaus med smør"
+ },
+ "sub_001441": {
+  "note": "Bearnaisesaus og hollandaisesaus kan byttes om, beslektede baser"
+ },
+ "sub_001442": {
+  "note": "Madeirasaus kan erstattes med hjemmelaget rødvinssaus"
+ },
+ "sub_001443": {
+  "note": "Konsentrert olje eller smør kan erstattes med vanlig usaltet smør"
+ },
+ "sub_001444": {
+  "note": "Lettsmør, usaltet, kan erstattes med vanlig usaltet smør"
+ },
+ "sub_001445": {
+  "note": "Lettsmør, lettsaltet, kan erstattes med vanlig lettsaltet smør"
+ },
+ "sub_001446": {
+  "note": "Fast kokosolje kan erstattes med usaltet smør i bakst, lik konsistens når kaldt"
+ },
+ "sub_001447": {
+  "note": "Palmeolje kan erstattes med rapsolje, et vanlig plantebasert alternativ"
+ },
+ "sub_001448": {
+  "note": "Uspesifisert fritéringsolje kan erstattes med solsikkeolje"
+ },
+ "sub_001449": {
+  "note": "Ekstra jomfru olivenolje tilsvarer ekstra virgin olivenolje"
+ },
+ "sub_001450": {
+  "note": "Rått fett flesk kan erstattes med smult i matlaging"
+ },
+ "sub_001451": {
+  "note": "Pesto rosso kan erstattes med vanlig basilikumpesto hvis den ikke er tilgjengelig."
+ },
+ "sub_001452": {
+  "note": "Hakket sylteagurk som en syrlig og sprø erstatning for kapers."
+ },
+ "sub_001453": {
+  "note": "Sylteagurk i eddik erstatter syltet løk for syrligheten som tilbehør."
+ },
+ "sub_001454": {
+  "note": "Vanlige sylteagurker i eddik som et mindre søtt alternativ til søtsyrlig sylteagurk."
+ },
+ "sub_001455": {
+  "note": "Grønn oliven i lake kan byttes om med svart oliven i de fleste oppskrifter."
+ },
+ "sub_001456": {
+  "note": "Svart oliven i lake kan byttes om med grønn oliven i de fleste oppskrifter."
+ },
+ "sub_001457": {
+  "note": "Svart oliven i lake som alternativ til svart oliven i olje hvis den ikke er tilgjengelig."
+ },
+ "sub_001458": {
+  "note": "Hvetekli som en vanlig fibererstatning for maiskli."
+ },
+ "sub_001459": {
+  "note": "Hvetekli som en vanlig fibererstatning for riskli."
+ },
+ "sub_001460": {
+  "note": "Ferdig oksebuljong erstatter tørket buljong (bland ut etter anvisning)."
+ },
+ "sub_001461": {
+  "note": "Ølgjær i flak kan byttes om med vanlig ølgjær."
+ },
+ "sub_001462": {
+  "note": "Tørrgjær erstatter fersk gjær (omtrent halvparten av vekten)."
+ },
+ "sub_001463": {
+  "note": "Fersk gjær erstatter tørrgjær (omtrent dobbelt så mye i vekt)."
+ },
+ "sub_001464": {
+  "note": "Et utskrapt vaniljestang erstatter alkoholbasert vaniljeekstrakt."
+ },
+ "sub_001465": {
+  "note": "Ferdig kalvefond erstatter tørket fond (bland ut etter anvisning)."
+ },
+ "sub_001466": {
+  "note": "Ferdig fiskekraft som alternativ til tørket kraft."
+ },
+ "sub_001467": {
+  "note": "Soyasaus gir en lignende umami-smak som kan erstatte gjærekstrakt til bredning i matlaging."
+ },
+ "sub_001468": {
+  "note": "Pektin som en klassisk erstatning for geleringsmiddel til syltetøy."
+ },
+ "sub_001469": {
+  "note": "Vaniljeekstrakt (omtrent 1 ts) erstatter en vaniljestang."
+ },
+ "sub_001470": {
+  "note": "Fersk mynte erstatter tørket mynte (tredobl mengden)."
+ },
+ "sub_001471": {
+  "note": "Fersk rosmarin erstatter tørket rosmarin (tredobl mengden)."
+ },
+ "sub_001472": {
+  "note": "Fersk salvie erstatter tørket salvie (tredobl mengden)."
+ },
+ "sub_001473": {
+  "note": "Fersk estragon erstatter tørket estragon (tredobl mengden)."
+ },
+ "sub_001474": {
+  "note": "Fersk dill erstatter tørket dill (tredobl mengden)."
+ },
+ "sub_001475": {
+  "note": "Fersk gressløk erstatter tørket gressløk (tredobl mengden)."
+ },
+ "sub_001476": {
+  "note": "Vanlig plantebasert alternativ til crème fraîche i matlaging (retter, sauser)."
+ },
+ "sub_001477": {
+  "note": "Naturell tofu er en vanlig plantebasert erstatning for kyllingbryst i wok- og currygryter."
+ },
+ "sub_001478": {
+  "note": "Seitan er en vanlig plantebasert erstatning for kjøttdeig i gryteretter og bolognese."
+ },
+ "sub_001479": {
+  "note": "Lignende grønnsakspålegg, kan byttes om med aubergine-kaviar som snacks."
+ },
+ "sub_001480": {
+  "note": "Olje med mild og nøytral smak og tilsvarende høyt røykpunkt; god erstatning både til steking og smaksetting."
+ },
+ "sub_001481": {
+  "note": "Vanlig sesamolje, mildere smak men samme asiatiske register; passer i koreanske/japanske retter."
+ },
+ "sub_001482": {
+  "note": "Raffinert palmeolje, mindre intens farge og smak (mindre betakaroten), men samme konsistens og bruk i steking."
+ },
+ "sub_001483": {
+  "note": "Vanlig margarin, høyere fettinnhold; reduser mengden litt."
+ },
+ "sub_001484": {
+  "note": "Versjon med redusert fett, nyttig for lettere steking eller brødpålegg."
+ },
+ "sub_001485": {
+  "note": "Kremet mandelsmør, lignende konsistens og bruk (brødpålegg, bakst), mandelsmak i stedet for hasselnøttsmak."
+ },
+ "sub_001486": {
+  "note": "Vanlig maisolje, nesten identisk smak og bruk."
+ },
+ "sub_001487": {
+  "note": "Maiskimolje, svært lik i smak, kan erstatte vanlig maisolje."
+ },
+ "sub_001488": {
+  "note": "Valnøttolje, annen nøtteolje, annen smak men lignende rolle til smaksetting og finpuss."
+ },
+ "sub_001489": {
+  "note": "Valnøttolje, lignende aromaprofil (nøtt), god erstatning til vinaigretter og finpuss."
+ },
+ "sub_001490": {
+  "note": "Vanlig sesamolje, mindre ristet og mindre intens smak; øk mengden litt for å kompensere."
+ },
+ "sub_001491": {
+  "note": "Ristet sesamolje, mer intens og ristet smak; brukes i redusert mengde."
+ },
+ "sub_001492": {
+  "note": "Vanlig raffinert solsikkeolje, mer nøytral smak, egner seg både kald og til steking."
+ },
+ "sub_001493": {
+  "note": "Kaldpresset jomfruversjon, kraftigere frøsmak, foretrekkes til rå smaksetting."
+ },
+ "sub_001494": {
+  "note": "Vanlig raffinert rapsolje, mildere smak, tåler steking bedre."
+ },
+ "sub_001495": {
+  "note": "Kaldpresset jomfruversjon, tydeligere nøttesmak, bør forbeholdes kalde retter."
+ },
+ "sub_001496": {
+  "note": "Oksetalg, svært lik konsistens og bruk i fritering/bakst, litt mildere smak."
+ },
+ "sub_001497": {
+  "note": "Vanlig smør, høyere fettinnhold; bruk en litt redusert mengde."
+ },
+ "sub_001498": {
+  "note": "Versjon med redusert fett, for lettere steking eller brødpålegg."
+ },
+ "sub_001499": {
+  "note": "Vanlig pasteurisert smør fra butikk, egner seg godt til steking, med mindre gårdspreget og fruktig smak."
+ },
+ "sub_001500": {
+  "note": "Filtrert ekstra virgin olivenolje, litt mindre rustikk smak men sammenlignbar kvalitet."
+ },
+ "sub_001501": {
+  "note": "Ufiltrert jomfruversjon, mer rustikk smak og litt grumsete konsistens, ideell til rå bruk."
+ },
+ "sub_001502": {
+  "note": "Vanlig sesamolje, lys farge og litt mildere smak."
+ },
+ "sub_001503": {
+  "note": "Mørk sesamolje, kraftigere smak og mørkere farge, for et tydeligere preg."
+ },
+ "sub_001504": {
+  "note": "Vanlig majones, gjerne tilsatt hakket hardkokt egg og kapers for å nærme seg smaken av gribiche-saus."
+ },
+ "sub_001505": {
+  "note": "Vanlig vinaigrette tilsatt kapers, sylteagurk og hakkede urter for å nærme seg ravigote-saus."
+ },
+ "sub_001506": {
+  "note": "Bechamelsaus tilsatt revet ost, som nettopp er basen i en hjemmelaget Mornay-saus."
+ },
+ "sub_001507": {
+  "note": "Bearnaisesaus tilsatt litt tomatpuré, som gir en hjemmelaget Choron-saus."
+ },
+ "sub_001508": {
+  "note": "Fersk salsasaus, svært lik konsistens og bruk (tacos, grillmat, egg)."
+ },
+ "sub_001509": {
+  "note": "Ripsgelé, en syrlig tilbehørssaus som tradisjonelt serveres med fjørfe og vilt, en god erstatning for tranebærsaus."
+ },
+ "sub_001510": {
+  "note": "Tranebærsaus, lignende søt-syrlig tilbehørssaus til fjørfe og vilt."
+ },
+ "sub_001511": {
+  "note": "Chowchow (grønnsaksrelish med eddik og sennep), svært lik den engelske piccalilli."
+ },
+ "sub_001512": {
+  "note": "Piccalilli, engelsk grønnsaksrelish med sennep og gurkemeie, svært lik chowchow."
+ },
+ "sub_001513": {
+  "note": "Brunet smør tilsatt sitronsaft og hakket persille, som gir en hjemmelaget meunière-saus."
+ },
+ "sub_001514": {
+  "note": "Vanlig karrisaus, mindre kompleks smak (uten de spesifikke krydderne fra antillansk colombo), men samme bruk."
+ },
+ "sub_001515": {
+  "note": "Chimichurrisaus, urte- og oljebasert saus til grillmat, mindre sitronsmak men lignende bruk."
+ },
+ "sub_001516": {
+  "note": "Tzatziki basert på yoghurt, en yoghurt-agurksaus svært lik raita, vanligvis litt mindre sterk."
+ },
+ "sub_001517": {
+  "note": "Raita, en indisk yoghurt-agurksaus svært lik tzatziki, ofte sterkere."
+ },
+ "sub_001518": {
+  "note": "Vanlig tomatsaus tilsatt chili (fersk, pulver eller flak) for å nærme seg arrabbiata."
+ },
+ "sub_001519": {
+  "note": "Tomatsaus tilsatt oliven, kapers og hakket ansjos for å nærme seg puttanesca."
+ },
+ "sub_001520": {
+  "note": "Grønn karripasta spedd med kokosmelk, vanlig base for å lage thailandsk grønn karrisaus."
+ },
+ "sub_001521": {
+  "note": "Rød karripasta spedd med kokosmelk, vanlig base for å lage thailandsk rød karrisaus."
+ },
+ "sub_001522": {
+  "note": "Majones tilsatt most hvitløk, kremet konsistens som ligner på toum, men mildere."
+ },
+ "sub_001523": {
+  "note": "Teriyakisaus, også søt-salt og soyabasert, en god erstatning til marinering eller til å toppe grillmat."
+ },
+ "sub_001524": {
+  "note": "Yakinikusaus, også søt-salt og soyabasert, en god erstatning for teriyaki."
+ },
+ "sub_001525": {
+  "note": "Ren fiskesaus (nuoc-mâm), saltere og uten de andre smakene (lime, sukker, chili); spe ut og søt litt."
+ },
+ "sub_001526": {
+  "note": "Harissa, tykkere nordafrikansk chilipasta, lignende bruk til å krydre grillmat og marinader."
+ },
+ "sub_001527": {
+  "note": "Piri-pirisaus, også sterk men mer flytende, en god erstatning for å krydre en rett eller marinade."
+ },
+ "sub_001528": {
+  "note": "Chimichurri, urte- og oljebasert saus (persille i stedet for koriander), lignende bruk til grillmat."
+ },
+ "sub_001529": {
+  "note": "Rød enchiladasaus basert på tomat, mindre syrlig enn tomatillo-versjonen, men samme bruk."
+ },
+ "sub_001530": {
+  "note": "Grønn enchiladasaus basert på tomatillo, mer syrlig, men samme bruk til å toppe enchiladas."
+ },
+ "sub_001531": {
+  "note": "Ferdig honning-sennepsdressing, nesten identisk produkt."
+ }
+}

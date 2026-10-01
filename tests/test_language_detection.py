@@ -6,7 +6,7 @@ l'utilisateur (voir TESTS_NON_REGRESSION.md point 122) :
 1. Une langue du navigateur (`navigator.language`) parmi les 4 supportées
    (fr/en/es/de) doit être adoptée automatiquement dès le premier
    chargement.
-2. Une langue du navigateur NON supportée (ex. italien) doit désormais
+2. Une langue du navigateur NON supportée (ex. japonais) doit désormais
    retomber sur l'ANGLAIS par défaut — et non plus le français comme
    avant ce correctif.
 3. Un choix de langue déjà enregistré (`localStorage.lang`, un lancement
@@ -73,8 +73,8 @@ def main():
         )
         ctx1.close()
 
-        print("\n=== 2. Langue navigateur NON supportée (italien) -> repli sur l'anglais (pas le français) ===")
-        ctx2 = browser.new_context(viewport={"width": 390, "height": 900}, locale="it-IT")
+        print("\n=== 2. Langue navigateur NON supportée (japonais) -> repli sur l'anglais (pas le français) ===")
+        ctx2 = browser.new_context(viewport={"width": 390, "height": 900}, locale="ja-JP")
         page2 = ctx2.new_page()
         errors2 = []
         page2.on("pageerror", lambda exc: errors2.append(str(exc)))
@@ -82,14 +82,14 @@ def main():
         page2.wait_for_timeout(600)
         r2 = page2.evaluate("() => ({ lang: CURRENT_LANG, navLang: navigator.language, htmlLang: document.documentElement.lang })")
         check(
-            "italien (non supporté) retombe sur l'anglais",
+            "japonais (non supporté) retombe sur l'anglais",
             r2["lang"] == "en" and r2["htmlLang"] == "en",
             str(r2),
         )
         ctx2.close()
 
         print("\n=== 3. Un choix déjà enregistré garde la priorité sur le navigateur (même non supporté) ===")
-        ctx3 = browser.new_context(viewport={"width": 390, "height": 900}, locale="it-IT")
+        ctx3 = browser.new_context(viewport={"width": 390, "height": 900}, locale="ja-JP")
         ctx3.add_init_script("localStorage.setItem('lang', 'de');")
         page3 = ctx3.new_page()
         errors3 = []
@@ -98,7 +98,7 @@ def main():
         page3.wait_for_timeout(600)
         r3 = page3.evaluate("() => ({ lang: CURRENT_LANG, navLang: navigator.language })")
         check(
-            "choix enregistré (allemand) prioritaire sur le navigateur non supporté (italien)",
+            "choix enregistré (allemand) prioritaire sur le navigateur non supporté (japonais)",
             r3["lang"] == "de",
             str(r3),
         )
