@@ -1020,8 +1020,8 @@ function setLang(lang) {
   // Retrie immédiatement selon la traduction de la nouvelle langue —
   // sans ça, la liste restait triée selon l'ordre de la langue
   // précédente jusqu'au prochain redémarrage de l'application.
-  if (typeof state !== "undefined" && state.ingredientNames && typeof compareIngredientNamesForDisplay === "function") {
-    state.ingredientNames.sort(compareIngredientNamesForDisplay);
+  if (typeof state !== "undefined" && state.ingredientNames && typeof sortIngredientNamesForDisplay === "function") {
+    sortIngredientNamesForDisplay(state.ingredientNames);
   }
   // Textes d'interface ET traductions d'ingrédients/substitutions (voir
   // ensureIngredientTranslationsLoaded dans app.js, chargé après ce

@@ -82,7 +82,7 @@ def main():
             str(on_click),
         )
         # Comparé à l'ordre que l'app elle-même utilise partout ailleurs
-        # (compareIngredientNamesForDisplay, basé sur localeCompare) —
+        # (sortIngredientNamesForDisplay, basé sur localeCompare) —
         # PAS au tri Python naïf (sorted()), qui trie par valeur brute
         # des caractères et diverge de la collation FR dès qu'un nom
         # contient de la ponctuation (virgules, parenthèses), devenu

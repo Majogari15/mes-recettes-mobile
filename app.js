@@ -3800,10 +3800,9 @@ function renderManageSubstitutions() {
   function fillList(query) {
     listHolder.innerHTML = "";
     const key = normalize(query || "");
-    const allMatches = (key
+    const allMatches = sortIngredientNamesForDisplay(key
       ? state.ingredientNames.filter((n) => normalize(n).includes(key))
-      : state.ingredientNames.filter((n) => getIngredientSubstitutes(n).length > 0)
-    ).sort(compareIngredientNamesForDisplay);
+      : state.ingredientNames.filter((n) => getIngredientSubstitutes(n).length > 0));
     if (!allMatches.length) {
       listHolder.appendChild(el(`<div class="empty-state"><div class="emoji">🔄</div><p>${escapeHtml(key ? t("no_recipes_found") : t("manage_substitutions_none"))}</p></div>`));
       return;
@@ -6809,13 +6808,17 @@ function translateIngredientName(name) {
   if (!id) return name;
   return translateIngredientNameById(id) || name;
 }
-// Compare deux noms d'ingrédients selon leur traduction AFFICHÉE dans la
-// langue actuelle, pas selon leur nom français interne — sans ça, la
-// liste apparaissait triée dans le désordre pour toute langue autre que
-// le français (l'ordre alphabétique français ne correspond pas
-// forcément à l'ordre alphabétique de la traduction affichée).
-function compareIngredientNamesForDisplay(a, b) {
-  return translateIngredientName(a).localeCompare(translateIngredientName(b), CURRENT_LANG);
+// Trie sur place (comme .sort) des noms d'ingrédients selon leur
+// traduction AFFICHÉE dans la langue actuelle, pas selon leur nom français
+// interne — sans ça, la liste apparaissait triée dans le désordre pour
+// toute langue autre que le français. Chaque nom n'est traduit qu'une
+// fois : retraduire les deux noms à chaque comparaison coûtait ~220 000
+// traductions pour ~10 000 noms (la moitié du premier lancement sur
+// processeur lent hors français).
+function sortIngredientNamesForDisplay(names) {
+  const display = new Map();
+  for (const n of names) if (!display.has(n)) display.set(n, translateIngredientName(n));
+  return names.sort((a, b) => display.get(a).localeCompare(display.get(b), CURRENT_LANG));
 }
 // Résout un nom d'ingrédient tapé ou sélectionné, qu'il soit en français
 // ou dans la langue actuellement affichée, vers son nom canonique
@@ -6870,10 +6873,10 @@ function resolveIngredientInput(typedName) {
    ingrédients courants au premier lancement, puis modifiable (ajout,
    renommage, suppression) depuis "🥕 Gérer les ingrédients".
    ====================================================================== */
-async function ensureIngredientListLoaded() {
+async function ensureIngredientListLoaded(options = {}) {
   const existing = await storeAll("ingredients");
   if (existing.length) {
-    state.ingredientNames = existing.map((i) => i.name).sort(compareIngredientNamesForDisplay);
+    state.ingredientNames = sortIngredientNamesForDisplay(existing.map((i) => i.name));
     // Relie chaque ingrédient déjà enregistré à son id de catalogue —
     // déjà présent (installation faite après cette migration) ou
     // retrouvé ici par son nom actuel et écrit une bonne fois pour
@@ -6908,19 +6911,87 @@ async function ensureIngredientListLoaded() {
   state.ingredientCatalogIds = {};
   state.ingredientNameByCatalogId = {};
   const seedItems = INGREDIENT_CATALOGUE.map((entry) => ({ name: entry.fr, catalogId: entry.id }));
-  // Une seule transaction pour les ~6800 entrées (voir
-  // storePutAndDeleteMany) plutôt qu'autant de transactions séparées
-  // qu'd'ingrédients : au-delà du millier d'entrées, l'attente
-  // séquentielle de chaque storePut() rendait le tout premier
-  // lancement perceptiblement lent (voire incomplet si l'utilisateur
-  // navigue avant la fin).
-  await storePutAndDeleteMany("ingredients", seedItems, []);
   for (const entry of INGREDIENT_CATALOGUE) {
     state.ingredientCatalogIds[normalize(entry.fr)] = entry.id;
     state.ingredientNameByCatalogId[entry.id] = entry.fr;
   }
-  state.ingredientNames = INGREDIENT_CATALOGUE.map((e) => e.fr).sort(compareIngredientNamesForDisplay);
-  await kvSet(KNOWN_CATALOGUE_IDS_KEY, INGREDIENT_CATALOGUE.map((e) => e.id));
+  state.ingredientNames = sortIngredientNamesForDisplay(INGREDIENT_CATALOGUE.map((e) => e.fr));
+  if (options.deferSeedWrite) {
+    pendingIngredientSeed = seedItems;
+  } else {
+    await storePutAndDeleteMany("ingredients", seedItems, []);
+    await kvSet(KNOWN_CATALOGUE_IDS_KEY, seedItems.map((item) => item.catalogId));
+  }
+}
+
+// Écriture des ~10 000 ingrédients du premier lancement (1 à 3 s), faite
+// en arrière-plan : l'accueil s'affiche sans l'attendre, la liste étant
+// déjà complète en mémoire. Lancée par initInner APRÈS sa dernière lecture
+// d'IndexedDB (Chrome fait attendre toute lecture derrière une écriture
+// en cours, même sur un autre magasin) et AVANT le premier render() :
+// IndexedDB exécutant les transactions d'écriture sur un même magasin dans
+// leur ordre de création, un ajout/renommage/suppression de l'utilisateur
+// passe forcément après et ne peut pas être écrasé.
+// Le marqueur SEED_INCOMPLETE_KEY reste posé tant que tout n'est pas
+// écrit : si l'application est fermée entre-temps, le lancement suivant
+// restaure le catalogue complet (voir addNewCatalogueEntries) au lieu de
+// prendre les entrées manquantes pour des suppressions volontaires. Dans
+// localStorage et non dans IndexedDB : Chrome valide les transactions
+// une à une, une écriture dans "kv" attendrait la fin des ~10 000
+// ingrédients et bloquerait toute lecture de "kv" jusqu'à l'accueil.
+const SEED_INCOMPLETE_KEY = "catalogueSeedIncomplete";
+function setSeedIncompleteFlag(on) {
+  try {
+    if (on) localStorage.setItem(SEED_INCOMPLETE_KEY, "1");
+    else localStorage.removeItem(SEED_INCOMPLETE_KEY);
+  } catch (e) { /* stockage indisponible : simple perte de la reprise */ }
+}
+function isSeedIncomplete() {
+  try { return localStorage.getItem(SEED_INCOMPLETE_KEY) === "1"; } catch (e) { return false; }
+}
+let ingredientSeedWrite = Promise.resolve();
+let pendingIngredientSeed = null;
+function startPendingIngredientSeed() {
+  if (!pendingIngredientSeed) return;
+  ingredientSeedWrite = writeIngredientSeed(pendingIngredientSeed);
+  pendingIngredientSeed = null;
+}
+// Une seule transaction (tout-ou-rien, et sa place dans l'ordre des
+// écritures est prise dès sa création), mais remplie par lots depuis les
+// rappels de ses propres requêtes — permis par IndexedDB tant que la
+// transaction a des requêtes en cours. Mettre les ~10 000 écritures en
+// file d'un coup bloquait le thread ~0,5 s avant même le premier
+// affichage de l'accueil sur processeur lent.
+function putIngredientsInChunks(items, chunkSize) {
+  return openDB().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const tx = db.transaction("ingredients", "readwrite");
+        const store = tx.objectStore("ingredients");
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error || new Error("transaction_aborted"));
+        let index = 0;
+        function putNextChunk() {
+          try {
+            const end = Math.min(index + chunkSize, items.length);
+            let last = null;
+            for (; index < end; index++) last = store.put(items[index]);
+            if (index < items.length && last) last.onsuccess = putNextChunk;
+          } catch (e) {
+            tx.abort();
+          }
+        }
+        store.count().onsuccess = putNextChunk;
+      })
+  );
+}
+function writeIngredientSeed(seedItems) {
+  setSeedIncompleteFlag(true);
+  return putIngredientsInChunks(seedItems, 500)
+    .then(() => kvSet(KNOWN_CATALOGUE_IDS_KEY, seedItems.map((item) => item.catalogId)))
+    .then(() => setSeedIncompleteFlag(false))
+    .catch((error) => console.error("Écriture initiale des ingrédients incomplète, reprise au prochain lancement", error));
 }
 
 // Ids du catalogue déjà proposés à cet utilisateur. Un id absent de sa
@@ -6934,7 +7005,13 @@ const KNOWN_CATALOGUE_IDS_KEY = "knownCatalogueIds";
 const ORIGINAL_CATALOGUE_MAX_ID = 1030;
 async function addNewCatalogueEntries(existingRecords) {
   let known = await kvGet(KNOWN_CATALOGUE_IDS_KEY);
-  if (!Array.isArray(known)) {
+  const seedInterrupted = isSeedIncomplete();
+  if (seedInterrupted) {
+    // Premier lancement interrompu avant la fin de l'écriture : seuls
+    // les ingrédients réellement présents comptent comme déjà proposés,
+    // tout le reste du catalogue est rajouté.
+    known = Object.keys(state.ingredientNameByCatalogId);
+  } else if (!Array.isArray(known)) {
     // Installation antérieure à ce suivi : on ne sait pas lesquels de
     // ses ids d'origine ont été supprimés, donc on considère comme déjà
     // proposés le catalogue d'origine et tout ce que la liste contient.
@@ -6968,12 +7045,13 @@ async function addNewCatalogueEntries(existingRecords) {
   }
   if (toPut.length) await storePutAndDeleteMany("ingredients", toPut, []);
   if (addedNames.length) {
-    state.ingredientNames = state.ingredientNames.concat(addedNames).sort(compareIngredientNamesForDisplay);
+    state.ingredientNames = sortIngredientNamesForDisplay(state.ingredientNames.concat(addedNames));
   }
   const allIds = INGREDIENT_CATALOGUE.map((e) => e.id);
   if (known.length !== allIds.length || allIds.some((id) => !knownSet.has(id))) {
     await kvSet(KNOWN_CATALOGUE_IDS_KEY, Array.from(new Set(known.concat(allIds))));
   }
+  if (seedInterrupted) setSeedIncompleteFlag(false);
 }
 async function addIngredientName(name) {
   const trimmed = (name || "").trim();
@@ -6991,7 +7069,7 @@ async function addIngredientName(name) {
     state.ingredientNameByCatalogId[catalogId] = trimmed;
   }
   state.ingredientNames.push(trimmed);
-  state.ingredientNames.sort(compareIngredientNamesForDisplay);
+  sortIngredientNamesForDisplay(state.ingredientNames);
   return true;
 }
 async function renameIngredientName(oldName, newName) {
@@ -7052,7 +7130,7 @@ async function renameIngredientName(oldName, newName) {
   // changements à l'état en mémoire.
   state.ingredientNames = state.ingredientNames.filter((n) => n !== oldName);
   state.ingredientNames.push(trimmed);
-  state.ingredientNames.sort(compareIngredientNamesForDisplay);
+  sortIngredientNamesForDisplay(state.ingredientNames);
   delete state.ingredientCatalogIds[oldKey];
   if (catalogId) {
     state.ingredientCatalogIds[normalize(trimmed)] = catalogId;
@@ -13310,7 +13388,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 294;
+const APP_VERSION = 295;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
@@ -13412,9 +13490,10 @@ async function initInner() {
   state.weeklyPlan = savedPlan || {};
   await migrateMergedContainerUnits();
   await migratePhotosToBlob();
-  await ensureIngredientListLoaded();
+  await ensureIngredientListLoaded({ deferSeedWrite: true });
   await loadIngredientOverrides();
   await loadDismissedPairs();
+  startPendingIngredientSeed();
 
   // Raccourcis PWA (appui long sur l'icône de l'application) : ouvre
   // directement l'écran demandé au lancement, plutôt que de toujours
@@ -13488,6 +13567,8 @@ async function initInner() {
   render();
 }
 
-// Promesse résolue une fois le démarrage terminé — permet aux tests
-// d'attendre la fin réelle de l'initialisation plutôt qu'un délai fixe.
-const appReady = init();
+// Promesse résolue une fois le démarrage terminé, écriture initiale des
+// ingrédients comprise (faite en arrière-plan, voir writeIngredientSeed) —
+// permet aux tests d'attendre la fin réelle de l'initialisation plutôt
+// qu'un délai fixe.
+const appReady = init().then(() => ingredientSeedWrite);

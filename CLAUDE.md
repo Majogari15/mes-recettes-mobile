@@ -57,6 +57,8 @@ Le lien nom↔id d'un utilisateur (qui peut renommer ses ingrédients localement
 
 Point important pour toute évolution du catalogue : ne jamais réutiliser un id déjà attribué, même après suppression d'une entrée — le lien nom↔id d'un utilisateur existant en dépend.
 
+Premier lancement : la liste est remplie en mémoire et l'accueil s'affiche aussitôt ; l'écriture des ~10 000 ingrédients dans IndexedDB se fait ensuite en arrière-plan (`writeIngredientSeed`, lancée par `initInner` après sa dernière lecture et avant le premier `render()`). Sa sûreté repose sur l'ordre des transactions IndexedDB : ne pas ajouter de lecture/écriture IndexedDB dans `initInner` entre `startPendingIngredientSeed()` et `render()`, et ne pas déplacer ce lancement après le `render()`. Le marqueur `localStorage.catalogueSeedIncomplete` permet de reprendre une écriture interrompue.
+
 Les nouvelles entrées du catalogue arrivent automatiquement chez les utilisateurs existants au démarrage (`addNewCatalogueEntries`) : la clé kv `knownCatalogueIds` mémorise les ids déjà proposés, pour ne jamais réajouter un ingrédient supprimé volontairement. Ne pas vider cette clé.
 
 ### Rendu : `render()` + `state.screen`
