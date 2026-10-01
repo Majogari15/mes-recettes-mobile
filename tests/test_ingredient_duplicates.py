@@ -108,6 +108,7 @@ def main():
         page = browser.new_page()
         page.on("pageerror", lambda exc: errors.append(str(exc)))
         page.goto(base_url, timeout=8000)
+        page.evaluate("() => appReady")
         page.wait_for_timeout(1500)
 
         def find(a, b):

@@ -69,8 +69,20 @@ def main():
         errors = []
         page.on("pageerror", lambda exc: errors.append(str(exc)))
         page.goto(base_url, timeout=8000)
-        page.wait_for_timeout(600)
+        # Attend la fin réelle du démarrage (voir appReady dans app.js) : un
+        # délai fixe ne suffisait pas sous charge, init() écrasait encore
+        # l'état pendant que le test remplissait le formulaire.
+        page.evaluate("() => appReady")
         page.evaluate("() => setLang('fr')")
+
+        def wait_dialog():
+            page.wait_for_selector("#custom-two-choice-message", timeout=10000)
+
+        def wait_recipe_saved():
+            page.wait_for_function(
+                "async () => (await storeAll('recipes')).some((x) => x.name === 'Test doublon')",
+                timeout=10000,
+            )
 
         def open_form_with_ingredients(ings):
             page.evaluate(
@@ -99,7 +111,10 @@ def main():
             {"name": "oignon", "quantity": "200", "unit": "g"},
         ])
         submit_and_wait_for_dialog()
-        page.wait_for_timeout(300)
+        try:
+            wait_dialog()
+        except Exception:
+            pass
         r1 = page.evaluate(
             """
             () => {
@@ -112,7 +127,7 @@ def main():
 
         print("\n=== 2. Choisir 'Fusionner' -> quantités additionnées en une seule ligne ===")
         page.evaluate("() => document.getElementById('custom-two-choice-merge').click()")
-        page.wait_for_timeout(300)
+        wait_recipe_saved()
         r2 = page.evaluate(
             """
             async () => {
@@ -131,9 +146,9 @@ def main():
             {"name": "Carotte", "quantity": "2", "unit": "pièce"},
         ])
         submit_and_wait_for_dialog()
-        page.wait_for_timeout(300)
+        wait_dialog()
         page.evaluate("() => document.getElementById('custom-two-choice-keep').click()")
-        page.wait_for_timeout(300)
+        wait_recipe_saved()
         r3 = page.evaluate(
             """
             async () => {
@@ -152,9 +167,9 @@ def main():
             {"name": "Poivron", "quantity": "1", "unit": "pièce"},
         ])
         submit_and_wait_for_dialog()
-        page.wait_for_timeout(300)
+        wait_dialog()
         page.keyboard.press("Escape")
-        page.wait_for_timeout(300)
+        page.wait_for_selector("#custom-two-choice-message", state="detached", timeout=10000)
         r4 = page.evaluate(
             """
             async () => {
@@ -171,9 +186,9 @@ def main():
             {"name": "Sel", "quantity": "1", "unit": "c. à café"},
         ])
         submit_and_wait_for_dialog()
-        page.wait_for_timeout(300)
+        wait_dialog()
         page.evaluate("() => document.getElementById('custom-two-choice-merge').click()")
-        page.wait_for_timeout(300)
+        wait_recipe_saved()
         r5 = page.evaluate(
             """
             async () => {
@@ -196,9 +211,9 @@ def main():
             {"name": "Ail", "quantity": "3", "unit": "gousse"},
         ])
         submit_and_wait_for_dialog()
-        page.wait_for_timeout(300)
+        wait_dialog()
         page.evaluate("() => document.getElementById('custom-two-choice-merge').click()")
-        page.wait_for_timeout(300)
+        wait_recipe_saved()
         r6 = page.evaluate(
             """
             async () => {
@@ -217,7 +232,7 @@ def main():
             {"name": "Basilic", "quantity": "1", "unit": "bouquet"},
         ])
         submit_and_wait_for_dialog()
-        page.wait_for_timeout(300)
+        wait_recipe_saved()
         r7 = page.evaluate(
             """
             async () => {

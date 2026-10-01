@@ -95,6 +95,7 @@ def main():
         page1 = context1.new_page()
         page1.on("pageerror", lambda exc: errors.append(str(exc)))
         page1.goto(base_url, timeout=8000)
+        page1.evaluate("() => appReady")
         page1.wait_for_timeout(500)
         result1 = page1.evaluate(
             """
@@ -138,6 +139,7 @@ def main():
         page2 = context2.new_page()
         page2.on("pageerror", lambda exc: errors.append(str(exc)))
         page2.goto(base_url, timeout=8000)
+        page2.evaluate("() => appReady")
         page2.wait_for_timeout(500)
         result2 = page2.evaluate(
             """
@@ -179,6 +181,7 @@ def main():
         page3 = context3.new_page()
         page3.on("pageerror", lambda exc: errors.append(str(exc)))
         page3.goto(base_url, timeout=8000)
+        page3.evaluate("() => appReady")
         page3.wait_for_timeout(1000)
         page3.evaluate("() => setLang('fr')")
         result3 = page3.evaluate(
@@ -226,6 +229,7 @@ def main():
         page4 = context4.new_page()
         page4.on("pageerror", lambda exc: errors.append(str(exc)))
         page4.goto(base_url, timeout=8000)
+        page4.evaluate("() => appReady")
         page4.wait_for_timeout(500)
         result4 = page4.evaluate("() => parseCalendarDateLocal('2026-02-31')")
         check(

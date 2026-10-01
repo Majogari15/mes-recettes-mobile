@@ -86,6 +86,7 @@ def main():
         errors1 = []
         page1.on("pageerror", lambda exc: errors1.append(str(exc)))
         page1.goto(base_url, timeout=8000)
+        page1.evaluate("() => appReady")
         page1.wait_for_timeout(800)
         page1.evaluate("() => setLang('fr')")
         page1.evaluate(
@@ -117,6 +118,7 @@ def main():
         errors2 = []
         page2.on("pageerror", lambda exc: errors2.append(str(exc)))
         page2.goto(base_url, timeout=8000)
+        page2.evaluate("() => appReady")
         page2.wait_for_timeout(800)
         page2.evaluate("() => setLang('fr')")
         page2.evaluate(
@@ -154,6 +156,7 @@ def main():
         errors3 = []
         page3.on("pageerror", lambda exc: errors3.append(str(exc)))
         page3.goto(base_url, timeout=8000)
+        page3.evaluate("() => appReady")
         page3.wait_for_timeout(800)
         page3.evaluate("() => setLang('fr')")
         page3.evaluate(
@@ -168,13 +171,19 @@ def main():
                 // appelant directement la fonction avec un délai court —
                 // vérifie le mécanisme de disparition automatique
                 // lui-même, pas la durée exacte choisie en production.
-                showSnackbar('Test disparition automatique', { duration: 300 });
+                showSnackbar('Test disparition automatique', { duration: 2000 });
             }
             """
         )
-        page3.wait_for_timeout(100)
-        visible_before = page3.is_visible("#snackbar.show")
-        page3.wait_for_timeout(400)
+        try:
+            page3.wait_for_selector("#snackbar.show", state="visible", timeout=1500)
+            visible_before = True
+        except Exception:
+            visible_before = False
+        try:
+            page3.wait_for_selector("#snackbar.show", state="hidden", timeout=10000)
+        except Exception:
+            pass
         visible_after = page3.is_visible("#snackbar.show")
         check("Le snackbar est bien visible juste après son affichage", visible_before)
         check("Le snackbar disparaît seul une fois son délai écoulé", not visible_after, f"avant={visible_before} après={visible_after}")
@@ -186,6 +195,7 @@ def main():
         errors4 = []
         page4.on("pageerror", lambda exc: errors4.append(str(exc)))
         page4.goto(base_url, timeout=8000)
+        page4.evaluate("() => appReady")
         page4.wait_for_timeout(800)
         page4.evaluate("() => setLang('fr')")
         page4.evaluate(
@@ -221,6 +231,7 @@ def main():
         page5.on("pageerror", lambda exc: errors5.append(str(exc)))
         page5.set_viewport_size({"width": 390, "height": 844})
         page5.goto(base_url, timeout=8000)
+        page5.evaluate("() => appReady")
         page5.wait_for_timeout(800)
         page5.evaluate("() => setLang('fr')")
         page5.evaluate(

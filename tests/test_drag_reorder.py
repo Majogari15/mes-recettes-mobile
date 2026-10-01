@@ -90,6 +90,7 @@ def main():
         errors = []
         page.on("pageerror", lambda exc: errors.append(str(exc)))
         page.goto(base_url, timeout=8000)
+        page.evaluate("() => appReady")
         page.wait_for_timeout(1000)
         page.evaluate("() => setLang('fr')")
 
@@ -276,6 +277,7 @@ def main():
         page2 = browser.new_page(viewport={"width": 320, "height": 844})
         page2.on("pageerror", lambda exc: errors.append(str(exc)))
         page2.goto(base_url, timeout=8000)
+        page2.evaluate("() => appReady")
         page2.wait_for_timeout(1000)
         page2.evaluate("() => setLang('fr')")
         page2.evaluate(

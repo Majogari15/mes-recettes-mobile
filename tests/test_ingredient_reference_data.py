@@ -79,7 +79,7 @@ def main():
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 390, "height": 844})
         page.goto(base_url, timeout=8000)
-        page.wait_for_timeout(1500)  # laisse le temps à loadReferenceData
+        page.evaluate("() => appReady")  # fin réelle du démarrage, loadReferenceData compris
 
         print("=== Nombre total d'ingrédients de référence ===\n")
         count = page.evaluate("() => Object.keys(NUTRITION_DB).length")

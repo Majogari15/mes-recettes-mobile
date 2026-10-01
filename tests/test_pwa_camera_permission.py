@@ -83,6 +83,7 @@ def main():
         errors = []
         page.on("pageerror", lambda exc: errors.append(str(exc)))
         page.goto(base_url, timeout=8000)
+        page.evaluate("() => appReady")
         page.wait_for_timeout(1000)
         page.evaluate("() => setLang('fr')")
 
@@ -117,6 +118,7 @@ def main():
             """
         )
         page2.goto(base_url, timeout=8000)
+        page2.evaluate("() => appReady")
         page2.wait_for_timeout(1000)
         page2.evaluate("() => setLang('fr')")
         page2.evaluate("() => { openQrScanModal(); }")
@@ -143,6 +145,7 @@ def main():
             """
         )
         page3.goto(base_url, timeout=8000)
+        page3.evaluate("() => appReady")
         page3.wait_for_timeout(1000)
         page3.evaluate("() => setLang('fr')")
         page3.evaluate("() => { openQrScanModal(); }")
@@ -167,6 +170,7 @@ def main():
             """
         )
         page4.goto(base_url, timeout=8000)
+        page4.evaluate("() => appReady")
         page4.wait_for_timeout(1000)
         page4.evaluate("() => setLang('fr')")
         page4.evaluate("() => { openQrScanModal(); }")
@@ -195,6 +199,7 @@ def main():
             """
         )
         page5.goto(base_url, timeout=8000)
+        page5.evaluate("() => appReady")
         page5.wait_for_timeout(1000)
         page5.evaluate("() => setLang('fr')")
         page5.evaluate("() => { state.screen = 'pantry'; render(); openBarcodeScanModal(); }")

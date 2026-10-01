@@ -110,6 +110,7 @@ def main():
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 390, "height": 844})
         page.goto(base_url, timeout=8000)
+        page.evaluate("() => appReady")
         page.wait_for_timeout(500)
 
         print("=== Pourcentages non pris pour une quantité ===\n")

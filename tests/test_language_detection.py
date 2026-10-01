@@ -64,6 +64,7 @@ def main():
         errors1 = []
         page1.on("pageerror", lambda exc: errors1.append(str(exc)))
         page1.goto(base_url, timeout=8000)
+        page1.evaluate("() => appReady")
         page1.wait_for_timeout(600)
         r1 = page1.evaluate("() => ({ lang: CURRENT_LANG, navLang: navigator.language, htmlLang: document.documentElement.lang })")
         check(
@@ -79,6 +80,7 @@ def main():
         errors2 = []
         page2.on("pageerror", lambda exc: errors2.append(str(exc)))
         page2.goto(base_url, timeout=8000)
+        page2.evaluate("() => appReady")
         page2.wait_for_timeout(600)
         r2 = page2.evaluate("() => ({ lang: CURRENT_LANG, navLang: navigator.language, htmlLang: document.documentElement.lang })")
         check(
@@ -95,6 +97,7 @@ def main():
         errors3 = []
         page3.on("pageerror", lambda exc: errors3.append(str(exc)))
         page3.goto(base_url, timeout=8000)
+        page3.evaluate("() => appReady")
         page3.wait_for_timeout(600)
         r3 = page3.evaluate("() => ({ lang: CURRENT_LANG, navLang: navigator.language })")
         check(
@@ -110,6 +113,7 @@ def main():
         errors4 = []
         page4.on("pageerror", lambda exc: errors4.append(str(exc)))
         page4.goto(base_url, timeout=8000)
+        page4.evaluate("() => appReady")
         page4.wait_for_timeout(600)
         r4 = page4.evaluate("() => CURRENT_LANG")
         check("français (supporté) toujours détecté correctement", r4 == "fr", str(r4))

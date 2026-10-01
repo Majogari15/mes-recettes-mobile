@@ -96,6 +96,7 @@ def main():
         page1 = context1.new_page()
         page1.on("pageerror", lambda exc: errors.append(str(exc)))
         page1.goto(base_url, timeout=8000)
+        page1.evaluate("() => appReady")
         page1.wait_for_timeout(1000)
         page1.evaluate("() => setLang('fr')")
         page1.evaluate(
@@ -125,6 +126,7 @@ def main():
         page2 = context2.new_page()
         page2.on("pageerror", lambda exc: errors.append(str(exc)))
         page2.goto(base_url, timeout=8000)
+        page2.evaluate("() => appReady")
         page2.wait_for_timeout(500)
         result2 = page2.evaluate(
             """
@@ -163,6 +165,7 @@ def main():
         page3 = context3.new_page()
         page3.on("pageerror", lambda exc: errors.append(str(exc)))
         page3.goto(base_url, timeout=8000)
+        page3.evaluate("() => appReady")
         page3.wait_for_timeout(500)
         result3 = page3.evaluate(
             """
@@ -190,6 +193,7 @@ def main():
         page4 = context4.new_page()
         page4.on("pageerror", lambda exc: errors.append(str(exc)))
         page4.goto(base_url, timeout=8000)
+        page4.evaluate("() => appReady")
         page4.wait_for_timeout(500)
         result4 = page4.evaluate(
             """
@@ -299,6 +303,7 @@ def main():
         page7 = context7.new_page()
         page7.on("pageerror", lambda exc: errors.append(str(exc)))
         page7.goto(base_url, timeout=8000)
+        page7.evaluate("() => appReady")
         page7.wait_for_timeout(1000)
         page7.evaluate("() => setLang('fr')")
         import datetime
@@ -323,6 +328,7 @@ def main():
         page8 = context8.new_page()
         page8.on("pageerror", lambda exc: errors.append(str(exc)))
         page8.goto(base_url, timeout=8000)
+        page8.evaluate("() => appReady")
         page8.wait_for_timeout(1000)
         result8 = page8.evaluate(
             """
@@ -363,6 +369,7 @@ def main():
         page9 = context9.new_page()
         page9.on("pageerror", lambda exc: errors.append(str(exc)))
         page9.goto(base_url, timeout=8000)
+        page9.evaluate("() => appReady")
         page9.wait_for_timeout(1000)
         page9.evaluate("() => setLang('fr')")
         page9.evaluate(
@@ -402,6 +409,7 @@ def main():
         page10 = context10.new_page()
         page10.on("pageerror", lambda exc: errors.append(str(exc)))
         page10.goto(base_url, timeout=8000)
+        page10.evaluate("() => appReady")
         page10.wait_for_timeout(1000)
         page10.evaluate("() => setLang('fr')")
         nutrition_label = page10.evaluate("() => t('recipe_nutrition')")

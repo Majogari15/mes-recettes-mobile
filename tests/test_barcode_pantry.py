@@ -91,6 +91,7 @@ def main():
             lambda route: mock_off_route(route, {"status": 1, "product": {"product_name_fr": "Haricots Verts", "quantity": "400 g"}}),
         )
         cam_page.goto(base_url, timeout=8000)
+        cam_page.evaluate("() => appReady")
         cam_page.wait_for_timeout(1000)
         cam_page.evaluate("() => setLang('fr')")
         # Simule une vraie détection : le détecteur natif existe et
@@ -129,6 +130,7 @@ def main():
         errors = []
         page.on("pageerror", lambda exc: errors.append(str(exc)))
         page.goto(base_url, timeout=8000)
+        page.evaluate("() => appReady")
         page.wait_for_timeout(1000)
         page.evaluate("() => setLang('fr')")
         page.evaluate("() => { state.screen = 'pantry'; render(); }")

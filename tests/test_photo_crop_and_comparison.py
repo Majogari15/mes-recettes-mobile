@@ -86,6 +86,7 @@ def main():
         errors = []
         page.on("pageerror", lambda exc: errors.append(str(exc)))
         page.goto(base_url, timeout=8000)
+        page.evaluate("() => appReady")
         page.wait_for_timeout(1000)
         page.evaluate("() => setLang('fr')")
 
@@ -102,12 +103,18 @@ def main():
             }}
             """
         )
-        page.wait_for_timeout(300)
+        try:
+            page.wait_for_function("() => document.querySelectorAll('.section img, img').length > 0", timeout=10000)
+        except Exception:
+            pass
         before = page.evaluate("() => document.querySelectorAll('.section img, img').length")
         check("miniature présente juste après import", before > 0, f"{before} <img>")
 
-        page.evaluate("() => { setLang('en'); render(); }")
-        page.wait_for_timeout(200)
+        page.evaluate("async () => { await ensureUiTranslationsLoaded('en'); await ensureIngredientTranslationsLoaded('en'); setLang('en'); render(); }")
+        try:
+            page.wait_for_function("() => document.querySelectorAll('.section img, img').length > 0", timeout=10000)
+        except Exception:
+            pass
         after_lang_change = page.evaluate("() => document.querySelectorAll('.section img, img').length")
         check("miniature toujours présente après changement de langue", after_lang_change > 0, f"{after_lang_change} <img>")
         page.evaluate("() => { setLang('fr'); render(); }")

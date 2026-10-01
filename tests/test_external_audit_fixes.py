@@ -87,6 +87,7 @@ def main():
         page1 = context1.new_page()
         page1.on("pageerror", lambda exc: errors.append(str(exc)))
         page1.goto(base_url, timeout=8000)
+        page1.evaluate("() => appReady")
         page1.wait_for_timeout(1000)
         check(
             "Le thème clair est appliqué malgré un OS en sombre (toujours clair par défaut)",
@@ -99,6 +100,7 @@ def main():
         page2 = context2.new_page()
         page2.on("pageerror", lambda exc: errors.append(str(exc)))
         page2.goto(base_url, timeout=8000)
+        page2.evaluate("() => appReady")
         page2.wait_for_timeout(1000)
         check("Le thème clair est appliqué", page2.evaluate("() => document.documentElement.dataset.theme") == "light")
 
@@ -128,6 +130,7 @@ def main():
         page3.on("pageerror", lambda exc: errors.append(str(exc)))
         page3.add_init_script("localStorage.setItem('theme', 'dark')")
         page3.goto(base_url, timeout=8000)
+        page3.evaluate("() => appReady")
         page3.wait_for_timeout(1000)
         check(
             "Reste en sombre (préférence enregistrée respectée, indépendamment de l'OS)",
@@ -141,6 +144,7 @@ def main():
         page4.on("pageerror", lambda exc: errors.append(str(exc)))
         page4.add_init_script("localStorage.setItem('theme', 'light')")
         page4.goto(base_url, timeout=8000)
+        page4.evaluate("() => appReady")
         page4.wait_for_timeout(1000)
         check(
             "Reste en clair (préférence enregistrée respectée, indépendamment de l'OS)",
@@ -153,6 +157,7 @@ def main():
         page5 = context5.new_page()
         page5.on("pageerror", lambda exc: errors.append(str(exc)))
         page5.goto(base_url, timeout=8000)
+        page5.evaluate("() => appReady")
         page5.wait_for_timeout(1000)
         page5.evaluate("() => setLang('fr')")
         page5.evaluate(
@@ -245,6 +250,7 @@ def main():
         page7 = context7.new_page()
         page7.on("pageerror", lambda exc: errors.append(str(exc)))
         page7.goto(base_url, timeout=8000)
+        page7.evaluate("() => appReady")
         page7.wait_for_timeout(1000)
         page7.evaluate("() => setLang('fr')")
         page7.evaluate("() => { state.screen = 'importPhoto'; render(); }")
@@ -252,7 +258,10 @@ def main():
         check("Pas d'avertissement sans économie de données activée", not page7.is_visible("text=Économie de données"))
         page7.evaluate("() => { Object.defineProperty(navigator, 'connection', { value: { saveData: true }, configurable: true }); }")
         page7.evaluate("() => { state.screen = 'recipes'; render(); state.screen = 'importPhoto'; render(); }")
-        page7.wait_for_timeout(400)
+        try:
+            page7.wait_for_selector("text=Économie de données", state="visible", timeout=10000)
+        except Exception:
+            pass
         check("Avertissement affiché : économie de données activée ET modèle non caché", page7.is_visible("text=Économie de données"))
         page7.evaluate(
             """
@@ -272,6 +281,7 @@ def main():
         page8 = context8.new_page()
         page8.on("pageerror", lambda exc: errors.append(str(exc)))
         page8.goto(base_url, timeout=8000)
+        page8.evaluate("() => appReady")
         page8.wait_for_timeout(1000)
         listener_count = page8.evaluate(
             """

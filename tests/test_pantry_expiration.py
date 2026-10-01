@@ -87,6 +87,7 @@ def main():
         errors = []
         page.on("pageerror", lambda exc: errors.append(str(exc)))
         page.goto(base_url, timeout=8000)
+        page.evaluate("() => appReady")
         page.wait_for_timeout(1000)
         page.evaluate("() => setLang('fr')")
 
@@ -98,7 +99,13 @@ def main():
         page.fill("#modal-ing-name", "Thon en boîte")
         page.fill("#modal-ing-expiration", short_date(-2))
         page.click("#modal-confirm")
-        page.wait_for_timeout(300)
+        # Attend l'enregistrement effectif et la fermeture de la fenêtre :
+        # sous charge, 300 ms ne suffisaient pas et la fenêtre suivante
+        # s'ouvrait par-dessus celle-ci (identifiants en double).
+        try:
+            page.wait_for_function("() => state.pantry.some(i => i.name === 'Thon en boîte') && !document.getElementById('modal-ing-name')", timeout=10000)
+        except Exception:
+            pass
         saved = page.evaluate("() => state.pantry.find(i => i.name === 'Thon en boîte')")
         check("L'article est enregistré avec la date de péremption saisie", saved is not None and saved.get("expirationDate") == iso_date(-2), str(saved))
 
@@ -116,7 +123,10 @@ def main():
         print("\n=== Date incomplète refusée avec un message clair ===\n")
         page.fill("#modal-ing-expiration", "0102")
         page.click("#modal-confirm")
-        page.wait_for_timeout(200)
+        try:
+            page.wait_for_function("() => { const el = document.getElementById('modal-ing-expiration-error'); return el && el.style.display !== 'none'; }", timeout=10000)
+        except Exception:
+            pass
         incomplete_error = page.evaluate(
             """
             () => {
@@ -135,7 +145,10 @@ def main():
         print("\n=== Date calendaire invalide refusée (31 février n'existe pas) ===\n")
         page.fill("#modal-ing-expiration", "310226")
         page.click("#modal-confirm")
-        page.wait_for_timeout(200)
+        try:
+            page.wait_for_function("() => { const el = document.getElementById('modal-ing-expiration-error'); return el && el.style.display !== 'none'; }", timeout=10000)
+        except Exception:
+            pass
         invalid_error = page.evaluate(
             """
             () => {

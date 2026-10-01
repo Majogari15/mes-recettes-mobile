@@ -68,7 +68,7 @@ def main():
         errors = []
         page.on("pageerror", lambda exc: errors.append(str(exc)))
         page.goto(base_url, timeout=8000)
-        page.wait_for_timeout(1000)
+        page.evaluate("() => appReady")
         page.evaluate("() => setLang('fr')")
         page.evaluate("() => { state.screen = 'importUrl'; render(); }")
         page.wait_for_timeout(200)

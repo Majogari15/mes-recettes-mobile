@@ -10496,7 +10496,7 @@ function parseOcrRecipeText(rawText) {
   // par l'OCR (ex. "Cassoulet à l'ancienne 4.7/5 3 commentaires") —
   // retirés du nom, qu'ils proviennent de la fusion ci-dessus ou
   // qu'ils soient déjà présents sur la toute première ligne.
-  name = name.replace(/\s*\d+([.,]\d+)?\s*\/\s*5\s*(\d+\s*)?(commentaires?|comments?|avis|reviews?)?\s*$/i, "").trim();
+  name = name.replace(/(^|\D)\d+([.,]\d+)?\s*\/\s*5\s*(\d+\s*)?(commentaires?|comments?|avis|reviews?)?\s*$/i, "$1").trim();
   // Une vraie ligne d'en-tête ("Préparation :", "Description :",
   // "Allergènes :"...) reste courte ET se termine par ":" ou rien du
   // tout après le mot-clé — jamais par un point. Sans cette
@@ -11173,7 +11173,10 @@ function parseTableRowsIngredients(tableText) {
   // ignoré, évitant qu'il ne soit pris à tort pour des ingrédients.
   // Repli sur un traitement dès le début si ce motif précis est
   // absent, pour ne jamais bloquer les fiches qui ne l'utilisent pas.
-  const personsStepperIdx = lines.findIndex((l) => /\d+\s*personnes?/i.test(l));
+  // (?:^|\D) : ne tente une correspondance qu'au DÉBUT d'une suite de
+  // chiffres — sans lui, une longue suite de chiffres (OCR bruité)
+  // coûtait un temps quadratique. Même garde sur les motifs similaires.
+  const personsStepperIdx = lines.findIndex((l) => /(?:^|\D)\d+\s*personnes?/i.test(l));
   const startLineIdx = personsStepperIdx >= 0 ? personsStepperIdx + 1 : 0;
   const results = [];
   for (const rawLine of lines.slice(startLineIdx)) {
@@ -11651,7 +11654,7 @@ function looksLikeIngredientLine(line) {
 // de cette analyse).
 function parseStackedIngredientColumn(text) {
   const lines = (text || "").split("\n").map((l) => l.trim()).filter(Boolean);
-  const filtered = lines.filter((l) => !matchesIngredientTitle(l) && !/\d+\s*(personnes?|people|persons?|personas?|personen)/i.test(l));
+  const filtered = lines.filter((l) => !matchesIngredientTitle(l) && !/(?:^|\D)\d+\s*(personnes?|people|persons?|personas?|personen)/i.test(l));
 
   // Retire un préfixe court de case à cocher mal reconnue (symbole ou
   // 1-2 caractères isolés suivis d'un espace) devant le vrai contenu —
@@ -11727,13 +11730,13 @@ function extractIngredientsFromLines(text) {
   let ingredients = lines
     .slice(startIdx, endIdx)
     .filter((l) => {
-      const m = l.match(/\d+\s*(personnes?|people|persons?|personas?|personen)/i);
+      const m = l.match(/(^|\D)\d+\s*(personnes?|people|persons?|personas?|personen)/i);
       // Rejette si le motif "N personnes" apparaît près du début de la
       // ligne — quels que soient les caractères parasites qui suivent
       // (ex. "| 2 personnes | + es"). Une exigence de correspondance
       // exacte sur toute la ligne échouait dès qu'un fragment résiduel
       // de l'OCR apparaissait après le nombre de personnes.
-      return !(m && m.index <= 10);
+      return !(m && m.index + m[1].length <= 10);
     })
     .filter(looksLikeIngredientLine)
     .map(parseIngredientString)
@@ -13346,4 +13349,6 @@ async function initInner() {
   render();
 }
 
-init();
+// Promesse résolue une fois le démarrage terminé — permet aux tests
+// d'attendre la fin réelle de l'initialisation plutôt qu'un délai fixe.
+const appReady = init();

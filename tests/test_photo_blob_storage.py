@@ -77,6 +77,7 @@ def main():
         page.on("pageerror", lambda exc: errors.append(str(exc)))
         page.on("console", lambda msg: csp_violations.append(msg.text) if "Refused" in msg.text else None)
         page.goto(base_url, timeout=8000)
+        page.evaluate("() => appReady")
         page.wait_for_timeout(600)
         page.evaluate("() => setLang('fr')")
 

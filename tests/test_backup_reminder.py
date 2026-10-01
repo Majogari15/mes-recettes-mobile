@@ -90,7 +90,7 @@ def main():
         errors = []
         page.on("pageerror", lambda exc: errors.append(str(exc)))
         page.goto(base_url, timeout=8000)
-        page.wait_for_timeout(1000)
+        page.evaluate("() => appReady")
         page.evaluate("() => { setLang('fr'); }")
         setup_sample_recipe(page)
         page.wait_for_timeout(300)
@@ -133,7 +133,10 @@ def main():
 
         print("=== Fichier préparé en arrière-plan avant tout clic ===\n")
         set_days_since_backup(page, 20)
-        page.wait_for_timeout(500)
+        try:
+            page.wait_for_function("() => reminderFileCache.file !== null", timeout=10000)
+        except Exception:
+            pass
         result = page.evaluate("() => ({ fileReady: reminderFileCache.file !== null })")
         ok = result["fileReady"]
         print(f"{'✅ OK' if ok else '❌ ÉCHEC'}  {result}")

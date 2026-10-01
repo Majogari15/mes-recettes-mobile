@@ -95,6 +95,7 @@ def main():
         errors1 = []
         page1.on("pageerror", lambda exc: errors1.append(str(exc)))
         page1.goto(base_url, timeout=8000)
+        page1.evaluate("() => appReady")
         page1.wait_for_timeout(300)
 
         cases = page1.evaluate(
@@ -140,6 +141,7 @@ def main():
         errors2 = []
         page2.on("pageerror", lambda exc: errors2.append(str(exc)))
         page2.goto(base_url, timeout=8000)
+        page2.evaluate("() => appReady")
         page2.wait_for_timeout(500)
         page2.evaluate("() => setLang('fr')")
         page2.evaluate("async () => { for (const p of await storeAll('pantry')) await storeDelete('pantry', p.id); state.pantry = []; state.screen = 'pantry'; render(); }")
@@ -215,6 +217,7 @@ def main():
         errors3 = []
         page3.on("pageerror", lambda exc: errors3.append(str(exc)))
         page3.goto(base_url, timeout=8000)
+        page3.evaluate("() => appReady")
         page3.wait_for_timeout(300)
 
         # runExpirationDateOcr() réutilise detectAndCorrectOrientation() —

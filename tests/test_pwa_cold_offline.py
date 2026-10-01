@@ -70,6 +70,7 @@ def main():
 
         print("=== Premier chargement en ligne : installation du service worker + remplissage du cache ===\n")
         page.goto(base_url, timeout=8000)
+        page.evaluate("() => appReady")
         page.wait_for_timeout(500)
         page.evaluate("() => setLang('fr')")
 
@@ -144,6 +145,7 @@ def main():
         # erreur réseau.
         try:
             page.goto(f"{base_url}?openRecipe=inexistant", timeout=8000)
+            page.evaluate("() => appReady")
             page.wait_for_timeout(500)
             deep_link_ok = page.evaluate("() => !!document.getElementById('app') && document.getElementById('app').innerHTML.length > 0")
         except Exception as e:
