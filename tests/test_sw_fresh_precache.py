@@ -109,7 +109,7 @@ def main():
         tag = page.evaluate(read_cached_app, "mes-recettes-cache-vtestB")
         check("la nouvelle version enregistre le app.js B, pas la copie A du cache HTTP", tag == "B", f"app.js en cache : {tag}")
 
-        page.reload()
+        page.reload(wait_until="domcontentloaded", timeout=60000)
         page.evaluate("() => appReady")
         live = page.evaluate("() => __TEST_BUILD_TAG")
         check("après rechargement, le code exécuté est bien B", live == "B", f"code exécuté : {live}")

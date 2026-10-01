@@ -38,6 +38,7 @@
   "ingredient_duplicates_button": "🔍 Kontrollera dubbletter",
   "ingredient_duplicates_title": "Möjliga dubbletter",
   "ingredient_duplicates_none_found": "Inga dubbletter hittades.",
+  "ingredient_duplicates_show_more": "Visa fler ({count} kvar)",
   "ingredient_duplicates_loading": "Söker efter dubbletter…",
   "ingredient_duplicates_hint": "Dessa ingredienspar liknar varandra starkt. Slå ihop dem om det är samma ingrediens, eller ange att det inte är en dubblett för att sluta se dem.",
   "ingredient_duplicates_merge_button": "Slå ihop",

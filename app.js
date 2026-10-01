@@ -3839,11 +3839,16 @@ function renderIngredientDuplicates() {
   // Résultat brut (avant filtrage des paires ignorées) mis en cache pour
   // la durée de cette visite d'écran : "Ignorer" une paire ne change en
   // rien la liste d'ingrédients elle-même, donc ça ne justifie pas de
-  // relancer tout le calcul (5-7 s à l'échelle de ~10 000 ingrédients) —
-  // seule une fusion, qui modifie réellement la liste, invalide ce
-  // cache. Variable de fermeture (pas globale) : automatiquement
+  // relancer tout le calcul — une fusion se contente d'en retirer les
+  // paires du nom supprimé (voir plus bas). Variable de fermeture (pas
+  // globale) : automatiquement
   // réinitialisée à chaque nouvelle visite de cet écran.
   let cachedAllPairs = null;
+  // Affichage par lots : créer d'un coup les ~4 000 cartes du catalogue
+  // complet prenait plus de temps que le calcul lui-même (~6 s sur un
+  // processeur lent), pour une liste que personne ne parcourt en entier.
+  const PAGE_SIZE = 50;
+  let shownCount = PAGE_SIZE;
 
   function fillList() {
     if (cachedAllPairs) { renderPairs(); return; }
@@ -3880,7 +3885,7 @@ function renderIngredientDuplicates() {
       listHolder.appendChild(el(`<div class="empty-state"><div class="emoji">✅</div><p>${escapeHtml(t("ingredient_duplicates_none_found"))}</p></div>`));
       return;
     }
-    pairs.forEach(([nameA, nameB, ratio]) => {
+    pairs.slice(0, shownCount).forEach(([nameA, nameB, ratio]) => {
       const card = el(`<div class="card" style="padding:14px 16px;margin-bottom:12px;">
         <div style="font-weight:600;margin-bottom:2px;">${escapeHtml(translateIngredientName(nameA))} ↔ ${escapeHtml(translateIngredientName(nameB))}</div>
         <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">${Math.round(ratio * 100)}%</div>
@@ -3897,15 +3902,25 @@ function renderIngredientDuplicates() {
         renderPairs();
       });
       card.querySelector(".merge-btn").addEventListener("click", () => {
-        openMergeChoiceModal(nameA, nameB, () => {
-          // La fusion, elle, retire réellement un nom de la liste —
-          // le cache doit être invalidé pour refléter la liste à jour.
-          cachedAllPairs = null;
-          fillList();
+        openMergeChoiceModal(nameA, nameB, (removed) => {
+          // La fusion retire un nom de la liste : seules les paires qui le
+          // contenaient disparaissent, les autres sont inchangées (chaque
+          // paire est calculée indépendamment) — même résultat qu'un
+          // recalcul complet, sans ses secondes d'attente.
+          cachedAllPairs = cachedAllPairs.filter(([a, b]) => a !== removed && b !== removed);
+          renderPairs();
         });
       });
       listHolder.appendChild(card);
     });
+    if (pairs.length > shownCount) {
+      const moreBtn = el(`<button type="button" class="btn btn-outline" style="width:100%;">${escapeHtml(t("ingredient_duplicates_show_more", { count: String(pairs.length - shownCount) }))}</button>`);
+      moreBtn.addEventListener("click", () => {
+        shownCount += PAGE_SIZE;
+        renderPairs();
+      });
+      listHolder.appendChild(moreBtn);
+    }
   }
   fillList();
   return wrap;
@@ -3928,7 +3943,7 @@ function openMergeChoiceModal(nameA, nameB, onDone) {
         return;
       }
       overlay.remove();
-      onDone();
+      onDone(remove);
     });
     sheet.appendChild(btn);
   });
@@ -7096,39 +7111,60 @@ function searchIngredientNames(query, limit) {
    la version bureau (Ratcliff/Obershelp, comme Python difflib), pour un
    comportement identique entre les deux applications.
    ====================================================================== */
-function findLongestMatch(a, b, alo, ahi, blo, bhi) {
+// ctx : index des positions de chaque caractère de b (construit une seule
+// fois par paire, filtré ici par [blo, bhi) comme dans difflib) et deux
+// tableaux de longueurs réutilisés — remplacent des objets recréés à
+// chaque appel récursif, le poste le plus coûteux sur ~10 000 ingrédients.
+// j2len[j] est stocké à l'indice j + 1 ; les cases écrites sont remises à
+// zéro avant de rendre la main, pour le prochain appel.
+const NO_INDICES = [];
+function findLongestMatch(a, b, alo, ahi, blo, bhi, ctx) {
   let besti = alo, bestj = blo, bestsize = 0;
-  const b2j = {};
-  for (let i = blo; i < bhi; i++) {
-    const c = b[i];
-    (b2j[c] = b2j[c] || []).push(i);
-  }
-  let j2len = {};
+  let prev = ctx.lenA, cur = ctx.lenB;
+  let prevTouched = ctx.touchedA, curTouched = ctx.touchedB;
   for (let i = alo; i < ahi; i++) {
-    const newj2len = {};
-    const indices = b2j[a[i]] || [];
-    for (const j of indices) {
+    const indices = ctx.b2j.get(a[i]) || NO_INDICES;
+    for (let n = 0; n < indices.length; n++) {
+      const j = indices[n];
       if (j < blo) continue;
       if (j >= bhi) break;
-      const k = (j2len[j - 1] || 0) + 1;
-      newj2len[j] = k;
+      const k = prev[j] + 1;
+      cur[j + 1] = k;
+      curTouched.push(j + 1);
       if (k > bestsize) { besti = i - k + 1; bestj = j - k + 1; bestsize = k; }
     }
-    j2len = newj2len;
+    for (let t = 0; t < prevTouched.length; t++) prev[prevTouched[t]] = 0;
+    prevTouched.length = 0;
+    const swap = prev; prev = cur; cur = swap;
+    const swapT = prevTouched; prevTouched = curTouched; curTouched = swapT;
   }
+  for (let t = 0; t < prevTouched.length; t++) prev[prevTouched[t]] = 0;
+  prevTouched.length = 0;
   return [besti, bestj, bestsize];
 }
-function matchingBlocksRec(a, b, alo, ahi, blo, bhi, result) {
-  const [i, j, k] = findLongestMatch(a, b, alo, ahi, blo, bhi);
+function matchingBlocksRec(a, b, alo, ahi, blo, bhi, result, ctx) {
+  const [i, j, k] = findLongestMatch(a, b, alo, ahi, blo, bhi, ctx);
   if (k > 0) {
-    if (alo < i && blo < j) matchingBlocksRec(a, b, alo, i, blo, j, result);
+    if (alo < i && blo < j) matchingBlocksRec(a, b, alo, i, blo, j, result, ctx);
     result.push(k);
-    if (i + k < ahi && j + k < bhi) matchingBlocksRec(a, b, i + k, ahi, j + k, bhi, result);
+    if (i + k < ahi && j + k < bhi) matchingBlocksRec(a, b, i + k, ahi, j + k, bhi, result, ctx);
   }
 }
 function sequenceMatcherRatio(a, b) {
+  const b2j = new Map();
+  for (let i = 0; i < b.length; i++) {
+    const list = b2j.get(b[i]);
+    if (list) list.push(i); else b2j.set(b[i], [i]);
+  }
+  const ctx = {
+    b2j,
+    lenA: new Int32Array(b.length + 1),
+    lenB: new Int32Array(b.length + 1),
+    touchedA: [],
+    touchedB: [],
+  };
   const result = [];
-  matchingBlocksRec(a, b, 0, a.length, 0, b.length, result);
+  matchingBlocksRec(a, b, 0, a.length, 0, b.length, result, ctx);
   const matches = result.reduce((sum, k) => sum + k, 0);
   const total = a.length + b.length;
   return total === 0 ? 1 : (2 * matches) / total;
@@ -7160,6 +7196,53 @@ function diceCoefficient(countsA, lenA, countsB, lenB) {
     if (otherCount) intersection += Math.min(count, otherCount);
   });
   return (2 * intersection) / (bigramsA + bigramsB);
+}
+// Borne supérieure EXACTE de sequenceMatcherRatio (équivalent du
+// quick_ratio de Python difflib) : des blocs correspondants ne peuvent
+// contenir plus de caractères que ceux que les deux noms ont en commun.
+// Une borne sous le seuil garantit donc un ratio sous le seuil — écarte
+// ~80 % des calculs exacts sur le catalogue complet, sans jamais changer
+// le résultat.
+// Comptés par unité UTF-16 (charCodeAt), comme sequenceMatcherRatio — un
+// for...of compterait un emoji pour 1 au lieu de 2 et fausserait la
+// borne. Tableau numérique pour les codes < 256 (quasi tous, après
+// normalize) : appelée ~1 million de fois, une Map y était le poste le
+// plus coûteux.
+function charCounts(s) {
+  const low = new Uint16Array(256);
+  const lowCodes = [];
+  let high = null;
+  for (let i = 0; i < s.length; i++) {
+    const c = s.charCodeAt(i);
+    if (c < 256) {
+      if (low[c] === 0) lowCodes.push(c);
+      low[c]++;
+    } else {
+      high = high || new Map();
+      high.set(c, (high.get(c) || 0) + 1);
+    }
+  }
+  return { low, lowCodes, high };
+}
+function ratioUpperBound(countsA, lenA, countsB, lenB) {
+  const total = lenA + lenB;
+  if (total === 0) return 1;
+  const [smaller, larger] = countsA.lowCodes.length <= countsB.lowCodes.length ? [countsA, countsB] : [countsB, countsA];
+  let common = 0;
+  const codes = smaller.lowCodes;
+  for (let i = 0; i < codes.length; i++) {
+    const c = codes[i];
+    const a = smaller.low[c];
+    const b = larger.low[c];
+    common += a < b ? a : b;
+  }
+  if (countsA.high && countsB.high) {
+    countsA.high.forEach((count, c) => {
+      const other = countsB.high.get(c);
+      if (other) common += Math.min(count, other);
+    });
+  }
+  return (2 * common) / total;
 }
 // Partagé par findSimilarIngredientPairs et findClosestIngredientMatch :
 // borne supérieure du ratio exact (2*min(len)/(len_a+len_b), voir
@@ -7202,7 +7285,7 @@ function findSimilarIngredientPairs(names, threshold) {
   // comparée) — voir diceCoefficient, le filtre rapide utilisé plus bas.
   const normalized = names.map((n) => {
     const key = normalize(n);
-    return [n, key, bigramCounts(key)];
+    return [n, key, bigramCounts(key), charCounts(key)];
   });
   // Regroupe par PREMIÈRE lettre seulement (pas les deux premières
   // comme avant) : un ingrédient mal orthographié dès la deuxième
@@ -7226,10 +7309,10 @@ function findSimilarIngredientPairs(names, threshold) {
     // mesuré avant ce correctif, voir TESTS_NON_REGRESSION.md.
     bucket.sort((a, b) => a[1].length - b[1].length);
     for (let i = 0; i < bucket.length; i++) {
-      const [nameA, keyA, bigramsA] = bucket[i];
+      const [nameA, keyA, bigramsA, charsA] = bucket[i];
       const { maxLen } = ingredientMatchLengthWindow(keyA.length, threshold);
       for (let j = i + 1; j < bucket.length; j++) {
-        const [nameB, keyB, bigramsB] = bucket[j];
+        const [nameB, keyB, bigramsB, charsB] = bucket[j];
         if (keyB.length > maxLen) break; // trié par longueur : tout le reste dépasse aussi
         // Deux noms strictement identiques une fois normalisés (accents/
         // casse ignorés) : en usage normal, addIngredientName() empêche
@@ -7246,6 +7329,7 @@ function findSimilarIngredientPairs(names, threshold) {
         // généreux possible (Dice) reste trop bas pour espérer
         // atteindre le seuil, sauf pour un pluriel déjà confirmé par
         // ailleurs.
+        if (!isPluralVariant && ratioUpperBound(charsA, keyA.length, charsB, keyB.length) < threshold) continue;
         if (!isPluralVariant && failsCheapDiceFilter(keyA, bigramsA, keyB, bigramsB, threshold)) continue;
         const ratio = sequenceMatcherRatio(keyA, keyB);
         if (isPluralVariant || ratio >= threshold) {
@@ -13226,7 +13310,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 293;
+const APP_VERSION = 294;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

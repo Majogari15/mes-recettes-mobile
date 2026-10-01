@@ -44,6 +44,7 @@ const TRANSLATIONS = {
     ingredient_duplicates_button: "🔍 Vérifier les doublons",
     ingredient_duplicates_title: "Doublons possibles",
     ingredient_duplicates_none_found: "Aucun doublon détecté.",
+    ingredient_duplicates_show_more: "Afficher plus ({count} restantes)",
     ingredient_duplicates_loading: "Recherche de doublons en cours…",
     ingredient_duplicates_hint: "Ces paires d'ingrédients se ressemblent fortement. Fusionnez-les si c'est bien le même ingrédient, ou indiquez que ce n'en est pas un pour ne plus le voir apparaître.",
     ingredient_duplicates_merge_button: "Fusionner",

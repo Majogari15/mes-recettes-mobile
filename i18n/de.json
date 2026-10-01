@@ -36,6 +36,7 @@
   "ingredient_duplicates_button": "🔍 Duplikate prüfen",
   "ingredient_duplicates_title": "Mögliche Duplikate",
   "ingredient_duplicates_none_found": "Kein Duplikat gefunden.",
+  "ingredient_duplicates_show_more": "Mehr anzeigen ({count} verbleibend)",
   "ingredient_duplicates_loading": "Duplikate werden gesucht…",
   "ingredient_duplicates_hint": "Diese Zutatenpaare sehen sich sehr ähnlich. Führen Sie sie zusammen, wenn es sich wirklich um dieselbe Zutat handelt, oder markieren Sie sie als kein Duplikat, damit sie nicht mehr angezeigt werden.",
   "ingredient_duplicates_merge_button": "Zusammenführen",

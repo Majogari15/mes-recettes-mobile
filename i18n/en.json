@@ -38,6 +38,7 @@
   "ingredient_duplicates_button": "🔍 Check for duplicates",
   "ingredient_duplicates_title": "Possible duplicates",
   "ingredient_duplicates_none_found": "No duplicate detected.",
+  "ingredient_duplicates_show_more": "Show more ({count} remaining)",
   "ingredient_duplicates_loading": "Looking for duplicates…",
   "ingredient_duplicates_hint": "These ingredient pairs look very similar. Merge them if it's really the same ingredient, or mark it as not a duplicate so it stops showing up.",
   "ingredient_duplicates_merge_button": "Merge",

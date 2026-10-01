@@ -38,6 +38,7 @@
   "ingredient_duplicates_button": "🔍 Verifica i duplicati",
   "ingredient_duplicates_title": "Possibili duplicati",
   "ingredient_duplicates_none_found": "Nessun duplicato rilevato.",
+  "ingredient_duplicates_show_more": "Mostra altro ({count} rimanenti)",
   "ingredient_duplicates_loading": "Ricerca di duplicati in corso…",
   "ingredient_duplicates_hint": "Queste coppie di ingredienti si assomigliano molto. Uniscile se si tratta davvero dello stesso ingrediente, oppure indica che non lo sono per non vederle più comparire.",
   "ingredient_duplicates_merge_button": "Unisci",

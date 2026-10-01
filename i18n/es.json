@@ -36,6 +36,7 @@
   "ingredient_duplicates_button": "🔍 Buscar duplicados",
   "ingredient_duplicates_title": "Posibles duplicados",
   "ingredient_duplicates_none_found": "No se detectó ningún duplicado.",
+  "ingredient_duplicates_show_more": "Mostrar más ({count} restantes)",
   "ingredient_duplicates_loading": "Buscando duplicados…",
   "ingredient_duplicates_hint": "Estos pares de ingredientes se parecen mucho. Fusiónalos si es realmente el mismo ingrediente, o indica que no lo es para que deje de aparecer.",
   "ingredient_duplicates_merge_button": "Fusionar",

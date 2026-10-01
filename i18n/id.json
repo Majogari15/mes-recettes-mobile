@@ -38,6 +38,7 @@
   "ingredient_duplicates_button": "🔍 Periksa duplikat",
   "ingredient_duplicates_title": "Kemungkinan duplikat",
   "ingredient_duplicates_none_found": "Tidak ada duplikat yang terdeteksi.",
+  "ingredient_duplicates_show_more": "Tampilkan lebih banyak ({count} tersisa)",
   "ingredient_duplicates_loading": "Mencari duplikat…",
   "ingredient_duplicates_hint": "Pasangan bahan ini sangat mirip. Gabungkan jika memang bahan yang sama, atau tandai bahwa keduanya berbeda agar tidak muncul lagi.",
   "ingredient_duplicates_merge_button": "Gabungkan",

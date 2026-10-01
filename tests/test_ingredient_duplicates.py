@@ -161,6 +161,18 @@ def main():
         page.wait_for_function(
             "() => !document.getElementById('dup-list-holder').innerText.includes('…')", timeout=90000
         )
+        # Affichage par lots de 50 : "Afficher plus" jusqu'à la paire de test.
+        first_batch = page.evaluate("() => document.querySelectorAll('#dup-list-holder .card').length")
+        check("Premier lot limité à 50 paires", first_batch == 50, str(first_batch))
+        clicks = 0
+        while not page.evaluate("() => document.body.innerText.includes('Testinga')") and clicks < 200:
+            more = page.query_selector("#dup-list-holder > button.btn-outline")
+            if not more:
+                break
+            more.click()
+            clicks += 1
+        after_more = page.evaluate("() => document.querySelectorAll('#dup-list-holder .card').length")
+        check("'Afficher plus' ajoute bien des paires", clicks == 0 or after_more == 50 * (clicks + 1) or not page.query_selector("#dup-list-holder > button.btn-outline"), f"{clicks} clics, {after_more} cartes")
         before = page.evaluate("() => document.body.innerText.includes('Testinga')")
         check("La paire de test apparaît bien dans l'écran de vérification", before)
         page.evaluate(
@@ -174,6 +186,48 @@ def main():
         )
         after_dismiss = page.evaluate("() => document.body.innerText.includes('Testinga')")
         check("Ignorer la paire la fait disparaître de l'écran", not after_dismiss)
+
+        # Fusion depuis l'écran : la liste est mise à jour en retirant les
+        # paires du nom supprimé, sans relancer le calcul complet.
+        page.evaluate(
+            """async () => {
+                if (!state.ingredientNames.includes('Fusiontesta')) await addIngredientName('Fusiontesta');
+                if (!state.ingredientNames.includes('Fusiontestaz')) await addIngredientName('Fusiontestaz');
+                state.screen = 'home'; render();
+                state.screen = 'ingredientDuplicates'; render();
+            }"""
+        )
+        page.wait_for_function(
+            "() => !document.getElementById('dup-list-holder').innerText.includes('…')", timeout=90000
+        )
+        clicks = 0
+        while not page.evaluate("() => document.body.innerText.includes('Fusiontesta ↔')") and clicks < 400:
+            more = page.query_selector("#dup-list-holder > button.btn-outline")
+            if not more:
+                break
+            more.click()
+            clicks += 1
+        cards_before = page.evaluate("() => document.querySelectorAll('#dup-list-holder .card').length")
+        page.evaluate(
+            """() => {
+                const card = Array.from(document.querySelectorAll('#dup-list-holder .card')).find((c) => c.textContent.includes('Fusiontesta ↔'));
+                card.querySelector('.merge-btn').click();
+            }"""
+        )
+        page.click(".modal-sheet button:has-text('Fusiontesta'):not(:has-text('Fusiontestaz'))")
+        page.wait_for_function("() => !state.ingredientNames.includes('Fusiontestaz')", timeout=10000)
+        merged = page.evaluate(
+            """() => ({
+                pairGone: !document.body.innerText.includes('Fusiontestaz'),
+                loading: document.getElementById('dup-list-holder').innerText.includes('…'),
+                cards: document.querySelectorAll('#dup-list-holder .card').length,
+            })"""
+        )
+        check(
+            "Fusion : la paire disparaît, sans repasser par le calcul complet",
+            merged["pairGone"] and not merged["loading"] and merged["cards"] >= cards_before - 1,
+            str(merged),
+        )
 
         print("\n=== Performance : gros volume de noms longs et très proches (forme USDA-like) ===\n")
         # Génère un jeu synthétique reproduisant la forme qui faisait

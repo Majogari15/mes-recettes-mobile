@@ -38,6 +38,7 @@
   "ingredient_duplicates_button": "🔍 Sjekk duplikater",
   "ingredient_duplicates_title": "Mulige duplikater",
   "ingredient_duplicates_none_found": "Ingen duplikater oppdaget.",
+  "ingredient_duplicates_show_more": "Vis flere ({count} gjenstår)",
   "ingredient_duplicates_loading": "Søker etter duplikater…",
   "ingredient_duplicates_hint": "Disse ingredienspar ligner sterkt på hverandre. Slå dem sammen hvis det er samme ingrediens, eller merk at det ikke er det for å slutte å se dem.",
   "ingredient_duplicates_merge_button": "Slå sammen",
