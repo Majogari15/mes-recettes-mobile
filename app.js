@@ -6723,8 +6723,22 @@ async function ensureIngredientTranslationsLoaded(lang) {
 // renommage. Un ingrédient personnel (jamais rattaché au catalogue)
 // renvoie undefined, traité comme "aucune donnée de référence" partout
 // où cette fonction est utilisée.
+// normalize() ne dépend que du texte reçu : son résultat peut être gardé
+// sans jamais devenir faux. Réservé aux noms d'ingrédients (ensemble
+// borné), dont la recherche et "vouliez-vous dire" renormalisaient les
+// ~10 000 à chaque frappe (jusqu'à ~150 ms par frappe sur téléphone lent).
+const _normalizedNameCache = new Map();
+function normalizeCached(str) {
+  let value = _normalizedNameCache.get(str);
+  if (value === undefined) {
+    if (_normalizedNameCache.size > 50000) _normalizedNameCache.clear();
+    value = normalize(str);
+    _normalizedNameCache.set(str, value);
+  }
+  return value;
+}
 function getIngredientCatalogId(name) {
-  return state.ingredientCatalogIds[normalize((name || "").trim())];
+  return state.ingredientCatalogIds[normalizeCached((name || "").trim())];
 }
 
 function getReferenceSubstitutes(name) {
@@ -6807,6 +6821,25 @@ function translateIngredientName(name) {
   const id = getIngredientCatalogId(name);
   if (!id) return name;
   return translateIngredientNameById(id) || name;
+}
+// Équivaut à normalize(translateIngredientName(name)). La traduction
+// normalisée est gardée par (langue, id) — fixe une fois la langue
+// chargée — tandis que le lien nom -> id reste lu en direct : un
+// renommage, une fusion ou une suppression est donc pris en compte sans
+// rien invalider.
+const _normalizedTranslationById = new Map();
+function normalizedTranslatedIngredientName(name) {
+  if (!name || CURRENT_LANG === "fr") return normalizeCached(name);
+  const id = getIngredientCatalogId(name);
+  if (!id) return normalizeCached(name);
+  const cacheable = !!INGREDIENT_TRANSLATIONS[CURRENT_LANG];
+  const key = CURRENT_LANG + "\u0000" + id;
+  if (cacheable && _normalizedTranslationById.has(key)) return _normalizedTranslationById.get(key);
+  const translated = translateIngredientNameById(id);
+  if (!translated) return normalizeCached(name);
+  const value = normalize(translated);
+  if (cacheable) _normalizedTranslationById.set(key, value);
+  return value;
 }
 // Trie sur place (comme .sort) des noms d'ingrédients selon leur
 // traduction AFFICHÉE dans la langue actuelle, pas selon leur nom français
@@ -7173,8 +7206,8 @@ function searchIngredientNames(query, limit) {
   const starts = [];
   const contains = [];
   state.ingredientNames.forEach((n) => {
-    const nk = normalize(n);
-    const tk = CURRENT_LANG !== "fr" ? normalize(translateIngredientName(n)) : null;
+    const nk = normalizeCached(n);
+    const tk = CURRENT_LANG !== "fr" ? normalizedTranslatedIngredientName(n) : null;
     if (nk.startsWith(key) || (tk && tk.startsWith(key))) starts.push(n);
     else if (nk.includes(key) || (tk && tk.includes(key))) contains.push(n);
   });
@@ -7792,7 +7825,7 @@ function findClosestIngredientMatch(typedName) {
   const keyBigrams = key.length >= 15 ? bigramCounts(key) : null;
   let best = null;
   state.ingredientNames.forEach((name) => {
-    const nk = normalize(name);
+    const nk = normalizeCached(name);
     if (nk === key) return;
     const isPluralVariant = key === nk + "s" || key === nk + "x" || nk === key + "s" || nk === key + "x";
     if (!isPluralVariant) {
@@ -13388,7 +13421,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 295;
+const APP_VERSION = 296;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
