@@ -6069,7 +6069,10 @@ function speakText(text) {
   if (!("speechSynthesis" in window)) return false;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
-  const langMap = { fr: "fr-FR", en: "en-US", es: "es-ES", de: "de-DE" };
+  const langMap = {
+    fr: "fr-FR", en: "en-US", es: "es-ES", de: "de-DE",
+    id: "id-ID", pt: "pt-PT", it: "it-IT", sv: "sv-SE", no: "nb-NO",
+  };
   utterance.lang = langMap[CURRENT_LANG] || "fr-FR";
   window.speechSynthesis.speak(utterance);
   return true;

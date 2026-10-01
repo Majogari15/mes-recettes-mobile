@@ -648,6 +648,36 @@ const ALLERGEN_TRANSLATIONS = {
     "sésame": "Sesam", "céleri": "Sellerie", moutarde: "Senf", sulfites: "Sulfite",
     lupin: "Lupinen", mollusques: "Weichtiere",
   },
+  id: {
+    gluten: "Gluten", lactose: "Laktosa", "œufs": "Telur", arachides: "Kacang tanah",
+    "fruits à coque": "Kacang pohon", soja: "Kedelai", poisson: "Ikan", "crustacés": "Krustasea",
+    "sésame": "Wijen", "céleri": "Seledri", moutarde: "Mustar", sulfites: "Sulfit",
+    lupin: "Lupin", mollusques: "Moluska",
+  },
+  pt: {
+    gluten: "Glúten", lactose: "Lactose", "œufs": "Ovos", arachides: "Amendoim",
+    "fruits à coque": "Frutos de casca rija", soja: "Soja", poisson: "Peixe", "crustacés": "Crustáceos",
+    "sésame": "Sésamo", "céleri": "Aipo", moutarde: "Mostarda", sulfites: "Sulfitos",
+    lupin: "Tremoço", mollusques: "Moluscos",
+  },
+  it: {
+    gluten: "Glutine", lactose: "Lattosio", "œufs": "Uova", arachides: "Arachidi",
+    "fruits à coque": "Frutta a guscio", soja: "Soia", poisson: "Pesce", "crustacés": "Crostacei",
+    "sésame": "Sesamo", "céleri": "Sedano", moutarde: "Senape", sulfites: "Solfiti",
+    lupin: "Lupini", mollusques: "Molluschi",
+  },
+  sv: {
+    gluten: "Gluten", lactose: "Laktos", "œufs": "Ägg", arachides: "Jordnötter",
+    "fruits à coque": "Nötter", soja: "Soja", poisson: "Fisk", "crustacés": "Kräftdjur",
+    "sésame": "Sesam", "céleri": "Selleri", moutarde: "Senap", sulfites: "Sulfiter",
+    lupin: "Lupin", mollusques: "Blötdjur",
+  },
+  no: {
+    gluten: "Gluten", lactose: "Laktose", "œufs": "Egg", arachides: "Peanøtter",
+    "fruits à coque": "Nøtter", soja: "Soya", poisson: "Fisk", "crustacés": "Krepsdyr",
+    "sésame": "Sesam", "céleri": "Selleri", moutarde: "Sennep", sulfites: "Sulfitter",
+    lupin: "Lupin", mollusques: "Bløtdyr",
+  },
 };
 const RAYON_KEYWORDS = [
   ["Fruits & Légumes", [
@@ -784,6 +814,36 @@ const RAYON_TRANSLATIONS = {
     "crèmerie": "Milchprodukte", "boulangerie & pâtisserie": "Bäckerei & Konditorei",
     "épicerie": "Lebensmittel", "herbes & épices": "Kräuter & Gewürze",
     "boissons": "Getränke", "autre": "Sonstiges",
+  },
+  id: {
+    "fruits & légumes": "Buah & Sayur", "viandes & poissons": "Daging & Ikan",
+    "crèmerie": "Produk Susu", "boulangerie & pâtisserie": "Roti & Kue",
+    "épicerie": "Sembako", "herbes & épices": "Bumbu & Rempah",
+    "boissons": "Minuman", "autre": "Lainnya",
+  },
+  pt: {
+    "fruits & légumes": "Frutas e Legumes", "viandes & poissons": "Carnes e Peixes",
+    "crèmerie": "Lacticínios", "boulangerie & pâtisserie": "Padaria e Pastelaria",
+    "épicerie": "Mercearia", "herbes & épices": "Ervas e Especiarias",
+    "boissons": "Bebidas", "autre": "Outro",
+  },
+  it: {
+    "fruits & légumes": "Frutta e Verdura", "viandes & poissons": "Carne e Pesce",
+    "crèmerie": "Latticini", "boulangerie & pâtisserie": "Panetteria e Pasticceria",
+    "épicerie": "Drogheria", "herbes & épices": "Erbe e Spezie",
+    "boissons": "Bevande", "autre": "Altro",
+  },
+  sv: {
+    "fruits & légumes": "Frukt & Grönt", "viandes & poissons": "Kött & Fisk",
+    "crèmerie": "Mejeri", "boulangerie & pâtisserie": "Bageri & Konditori",
+    "épicerie": "Skafferi", "herbes & épices": "Örter & Kryddor",
+    "boissons": "Drycker", "autre": "Övrigt",
+  },
+  no: {
+    "fruits & légumes": "Frukt & Grønt", "viandes & poissons": "Kjøtt & Fisk",
+    "crèmerie": "Meieriprodukter", "boulangerie & pâtisserie": "Bakervarer & Konditori",
+    "épicerie": "Tørrvarer", "herbes & épices": "Urter & Krydder",
+    "boissons": "Drikke", "autre": "Annet",
   },
 };
 
