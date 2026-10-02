@@ -184,6 +184,12 @@ désormais complète
    pas dans la liste de partage, ou s'ouvre encore sur l'accueil,
    désinstallez-la puis réinstallez-la depuis le Play Store.
 
+Note : depuis 2026, PWABuilder génère des paquets qui exigent Android 7
+(API 24) minimum. La Play Console affiche alors un avertissement
+« appareils qui ne sont plus compatibles » (téléphones sous Android 6) :
+il peut être accepté, ces appareils ne reçoivent plus de mises à jour
+de sécurité.
+
 ## Fichiers fournis avec ce guide
 
 - `FICHE_PLAY_STORE.md` — textes prêts à copier-coller

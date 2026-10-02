@@ -9274,3 +9274,11 @@ environnement (pas d'appareil Android ni de Play Console).
 `test_pwa_cold_offline.py`, `test_version_sync.py`.
 
 **Version testée** : v306
+
+**Suivi (02/10/2026)** : nouveau paquet généré avec PWABuilder (Package
+ID `io.github.majogari15.mesrecettes`, même clé de signature, version
+1.0.1.0 / version code 2, SDK cible 36) et envoyé pour examen en test
+fermé. Avertissement Play Console accepté : 1 163 appareils sous
+Android 6 ne sont plus compatibles (le nouveau paquet exige Android 7,
+API 24) — impact indiqué par la console : 0 installation. Test du
+partage sur téléphone en attente de la validation Google.
