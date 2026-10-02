@@ -9199,3 +9199,17 @@ tables d'allergènes/rayons complètes dans les 9 langues, CSP stricte
 échouent sur la v302 et passent sur la v303.
 
 **Version testée** : v303
+
+### 138 — Phrase « N ingrédients affichés sur M » remontée au-dessus de la liste
+
+**Demande de l'utilisateur** : sur « Gérer les ingrédients » et « Gérer
+les substituts », la phrase indiquant que seuls 200 ingrédients sont
+affichés (et invitant à utiliser la recherche) était tout en bas, après
+les 200 lignes — personne ne la voyait. Elle s'affiche désormais juste
+au-dessus de la liste, sous la barre de recherche.
+
+**Vérifié** : `tests/test_list_truncated_hint_position.py` (les 2
+écrans) ; tests des doublons, de la recherche, de l'accessibilité et
+des écrans étroits relancés.
+
+**Version testée** : v304

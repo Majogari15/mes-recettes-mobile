@@ -3778,10 +3778,12 @@ function renderIngredientManage() {
       });
       card.appendChild(row);
     });
-    listHolder.appendChild(card);
+    // Indication placée AU-DESSUS de la liste : en bas, après 200
+    // lignes, personne ne la voyait.
     if (truncated) {
-      listHolder.appendChild(el(`<p style="font-size:12px;color:var(--text-muted);text-align:center;margin:12px 0 0;">${escapeHtml(t("ingredient_list_truncated_hint", { shown: String(names.length), total: String(allMatches.length) }))}</p>`));
+      listHolder.appendChild(el(`<p class="list-truncated-hint" style="font-size:12px;color:var(--text-muted);text-align:center;margin:0 0 12px;">${escapeHtml(t("ingredient_list_truncated_hint", { shown: String(names.length), total: String(allMatches.length) }))}</p>`));
     }
+    listHolder.appendChild(card);
   }
   searchBar.querySelector("input").addEventListener("input", (e) => fillList(e.target.value));
   fillList("");
@@ -3830,10 +3832,12 @@ function renderManageSubstitutions() {
       row.querySelector(".edit").addEventListener("click", () => openIngredientNameModal(name));
       card.appendChild(row);
     });
-    listHolder.appendChild(card);
+    // Indication placée AU-DESSUS de la liste : en bas, après 200
+    // lignes, personne ne la voyait.
     if (truncated) {
-      listHolder.appendChild(el(`<p style="font-size:12px;color:var(--text-muted);text-align:center;margin:12px 0 0;">${escapeHtml(t("ingredient_list_truncated_hint", { shown: String(names.length), total: String(allMatches.length) }))}</p>`));
+      listHolder.appendChild(el(`<p class="list-truncated-hint" style="font-size:12px;color:var(--text-muted);text-align:center;margin:0 0 12px;">${escapeHtml(t("ingredient_list_truncated_hint", { shown: String(names.length), total: String(allMatches.length) }))}</p>`));
     }
+    listHolder.appendChild(card);
   }
   searchBar.querySelector("input").addEventListener("input", (e) => fillList(e.target.value));
   fillList("");
@@ -13604,7 +13608,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 303;
+const APP_VERSION = 304;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
