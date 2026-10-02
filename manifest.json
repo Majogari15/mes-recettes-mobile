@@ -24,7 +24,7 @@
     { "src": "screenshots/wide_02_recettes.png", "sizes": "1920x1080", "type": "image/png", "form_factor": "wide", "label": "Liste des recettes" }
   ],
   "share_target": {
-    "action": "./index.html",
+    "action": "https://majogari15.github.io/mes-recettes-mobile/index.html",
     "method": "GET",
     "params": { "title": "title", "text": "text", "url": "url" }
   },

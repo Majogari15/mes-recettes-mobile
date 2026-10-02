@@ -147,6 +147,43 @@ version dans `app.js`) :
    nouvelle)
 3. Téléversez le nouveau `.aab` dans Play Console
 
+## Activer « Partager → Mes Recettes » dans l'app du Play Store
+
+Constaté en octobre 2026 : le partage d'un lien de recette vers l'app
+fonctionne quand elle est installée depuis le site (« Ajouter à l'écran
+d'accueil »), mais pas depuis l'app du Play Store, qui s'ouvre sur
+l'accueil sans rien importer.
+
+**Pourquoi** : dans une app Play Store (TWA), le partage n'est pas lu
+dans le manifeste du site au moment de l'utilisation — il est
+**inscrit dans le paquet Android** (`AndroidManifest.xml` et
+`strings.xml`) au moment où PWABuilder le génère. Un paquet généré
+avant l'ajout du partage, ou avec une adresse de partage relative
+(`./index.html`), ne transmet pas le lien. Source : Chrome for
+Developers, « Enable Web Share Target in Trusted Web Activity »
+(l'adresse `action` doit être complète, avec le domaine) ; même
+symptôme rapporté sur le dépôt Bubblewrap (outil utilisé par
+PWABuilder), problème #698.
+
+**Fait côté site (v306)** : l'adresse de partage des 9 manifestes est
+désormais complète
+(`https://majogari15.github.io/mes-recettes-mobile/index.html`).
+
+**À faire de votre côté**, une fois la v306 en ligne :
+1. Repassez par PWABuilder (étape 1) avec le **même Package ID** et la
+   **même clé de signature** (à importer, ne pas en créer une
+   nouvelle).
+2. Dans les options Android, augmentez le numéro de version (version
+   code) par rapport au paquet déjà publié, et vérifiez dans les
+   réglages avancés que le partage (« Share target ») est bien repris
+   du manifeste, avec l'adresse complète ci-dessus.
+3. Téléversez le nouveau `.aab` dans Play Console.
+4. Mettez l'app à jour depuis le Play Store, puis testez : partager
+   un lien de recette depuis Chrome → choisir Mes Recettes → l'écran
+   d'import doit s'ouvrir avec le lien prérempli. Si l'app n'apparaît
+   pas dans la liste de partage, ou s'ouvre encore sur l'accueil,
+   désinstallez-la puis réinstallez-la depuis le Play Store.
+
 ## Fichiers fournis avec ce guide
 
 - `FICHE_PLAY_STORE.md` — textes prêts à copier-coller

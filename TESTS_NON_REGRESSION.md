@@ -9243,3 +9243,34 @@ d'interruption réseau, d'accessibilité, d'écran étroit et de langue
 relancés.
 
 **Version testée** : v305
+
+### 140 — Partage vers l'app Play Store : adresse de partage complète
+
+**Signalé par l'utilisateur** : l'import par lien classique fonctionne,
+mais « Partager → Mes Recettes » ne fonctionne pas avec l'app installée
+depuis le Play Store (déjà constaté au point 127 ; fonctionne avec
+l'app installée depuis le site).
+
+**Cause (documentée, non reproductible ici)** : dans une app Play
+Store (TWA), la configuration de partage est inscrite dans le paquet
+Android au moment de sa génération par PWABuilder, et l'adresse
+`action` doit être complète (avec le domaine) — Chrome for Developers,
+« Enable Web Share Target in Trusted Web Activity » ; dépôt Bubblewrap,
+problème #698 (même symptôme : l'app s'ouvre sur l'accueil sans le
+lien, corrigé par une adresse absolue). Nos manifestes utilisaient
+`./index.html`.
+
+**Corrigé côté site** : `share_target.action` passe à
+`https://majogari15.github.io/mes-recettes-mobile/index.html` dans les
+9 manifestes (même page qu'avant, même méthode GET, mêmes paramètres :
+aucun changement pour l'installation depuis le site).
+
+**Reste à faire par l'utilisateur** : régénérer le paquet Android avec
+PWABuilder et publier la mise à jour sur le Play Store — procédure
+ajoutée à `GUIDE_PUBLICATION_PLAY_STORE.md`. Non vérifiable dans cet
+environnement (pas d'appareil Android ni de Play Console).
+
+**Vérifié** : `test_pwa_manifest.py`, `test_pwa_install_flow.py`,
+`test_pwa_cold_offline.py`, `test_version_sync.py`.
+
+**Version testée** : v306
