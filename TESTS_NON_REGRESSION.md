@@ -9021,3 +9021,61 @@ restent des estimations.
 - Suite complète (60 scripts) relancée sans régression.
 
 **Version testée** : v300
+
+### 135 — 186 des 199 dernières fiches nutritionnelles estimées remplacées (Ciqual, USDA SR Legacy, Open Food Facts)
+
+**Contexte** : suite de l'entrée 134. Les 199 fiches restées estimées
+étaient des noms génériques (Agneau, Porc, Fromage…) ou des aliments
+absents des sources déjà utilisées. Plusieurs reprenaient elles aussi le
+profil d'une autre catégorie : Choucroute 120 kcal (profil d'une sauce),
+Clotted cream 90 kcal / 19 g de protéines (profil d'un poisson),
+Caramel au beurre salé 717 kcal (profil de la margarine), Eau de rose
+300 kcal (profil d'une épice), Lait en poudre 50 kcal.
+
+**Corrigé** (`data/valeurs_nutritionnelles.json`, uniquement ces fiches) :
+- 98 fiches Ciqual 2025 (`_ciqual`), dont des « aliment moyen » pour les
+  noms génériques (Fromage, Saucisse, Herbes aromatiques fraîches).
+- 40 fiches USDA SR Legacy (`_usda`, nouvelle source téléchargée :
+  FoodData Central SR Legacy 2018-04), ex. Choucroute, Pectine, Crème de
+  tartre, Sauce Worcestershire, Agneau/Porc/Veau sans morceau précisé
+  (moyenne des morceaux de détail crus).
+- 40 fiches Open Food Facts (`_openfoodfacts`) pour des produits du
+  commerce absents des tables officielles (Halloumi, Skyr, pâtes de
+  curry, Wasabi en pâte, Za'atar, Freekeh, farines de coco/lupin…) :
+  38 = médiane de plusieurs produits (3 à 75), avec le nombre de
+  produits, l'écart et un produit de référence dans la note ; 2 = un
+  produit unique recoupé (Vergeoise Saint Louis, sirop de canne).
+- 7 fiches reprises d'une fiche déjà sourcée du catalogue (nori, kombu,
+  wakamé séchés, gambas…) et 1 moyenne de deux fiches Ciqual (viande
+  hachée bœuf/porc, 50/50).
+- **77 de ces fiches utilisent un aliment voisin**, signalé par une
+  `note` commençant par « Aliment voisin utilisé faute de fiche exacte »
+  (ex. herbes fraîches rares → herbes aromatiques fraîches aliment
+  moyen ; poivres de Sichuan/rose/long → poivre noir ; huiles de cameline
+  ou de pépin de courge → huile végétale pure ; mangoustan et ramboutan
+  → fruit au sirop, faute de fiche pour le fruit frais).
+
+**Non remplacées (13)** : Colorant alimentaire, Extrait de café,
+Feuilles de bananier (non consommées, déjà à 0), Gousse de vanille,
+Vanille, Vanille en poudre, Pâte à choux, Pâte à crêpes, Pâte à gaufres
+(préparations maison sans fiche), Propolis, Réglisse (racine ou
+confiserie ?), Truffe blanche, Truffe noire. Aucune source fiable
+trouvée ; elles restent des estimations.
+
+**Limites** :
+- Les fiches Open Food Facts reflètent des produits du commerce, avec
+  des écarts parfois larges (caramel au beurre salé, chimichurri,
+  praliné) ; la médiane limite l'effet des valeurs aberrantes sans les
+  supprimer.
+- Choix de sens pour les noms ambigus, indiqués en note : Morue = morue
+  salée séchée, Cranberry = séchée sucrée, Chicorée = salade, Levure =
+  levure de boulanger déshydratée, Lait en poudre = demi-écrémé.
+
+**Vérifié** :
+- Seules les 186 fiches ciblées diffèrent de la v300 ; 9 916 fiches,
+  ordre et format identiques ; 13 fiches sans provenance restantes.
+- `tests/test_ingredient_reference_data.py` : 2 cas ajoutés (Choucroute,
+  Clotted cream) avec bornes basse et haute.
+- Suite complète (60 scripts) relancée sans régression.
+
+**Version testée** : v301

@@ -73,6 +73,9 @@ NUTRITION_CASES = [
     ("Mayonnaise", True, 600, None),  # était 300 kcal
     ("Sel", True, 0, 0),  # était 300 kcal (profil d'une épice)
     ("Babeurre", False, 30, 60),  # était 717 kcal (profil de la margarine)
+    # Entrée 135 : estimations restantes remplacées (Ciqual, USDA, Open Food Facts).
+    ("Choucroute", False, 10, 40),  # était 120 kcal (profil d'une sauce)
+    ("Clotted cream", False, 450, 650),  # était 90 kcal (profil d'un poisson)
 ]
 
 

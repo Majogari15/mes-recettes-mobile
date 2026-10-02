@@ -44,10 +44,18 @@
   }
  },
  "ing_000004": {
-  "kcal": 220,
-  "protein_g": 20.0,
-  "carbs_g": 0,
-  "fat_g": 15.0
+  "kcal": 243.0,
+  "protein_g": 17.5,
+  "carbs_g": 0.0,
+  "fat_g": 18.7,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "172545",
+   "food": "Lamb, composite of trimmed retail cuts, separable lean and fat, trimmed to 1/8\" fat, choice, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/172545/nutrients",
+   "note": "Agneau sans morceau précisé : moyenne des morceaux de détail crus (viande et gras) de l'USDA."
+  }
  },
  "ing_000005": {
   "kcal": 109.0,
@@ -66,16 +74,36 @@
   }
  },
  "ing_000006": {
-  "kcal": 40,
-  "protein_g": 1.5,
-  "carbs_g": 8,
-  "fat_g": 0.1
+  "kcal": 109.0,
+  "protein_g": 5.31,
+  "carbs_g": 18.6,
+  "fat_g": 0.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11000",
+   "food": "Ail, cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "fat_g": "< 0.5"
+   },
+   "note": "Aliment voisin utilisé faute de fiche exacte : ail cru (l'huile de confisage n'est pas comptée)."
+  }
  },
  "ing_000007": {
-  "kcal": 35,
-  "protein_g": 3.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 51.2,
+  "protein_g": 3.26,
+  "carbs_g": 4.69,
+  "fat_g": 0.93,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11080",
+   "food": "Herbes aromatiques fraîches (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : herbes aromatiques fraîches (aliment moyen Ciqual)."
+  }
  },
  "ing_000008": {
   "kcal": 346.0,
@@ -120,34 +148,78 @@
   }
  },
  "ing_000011": {
-  "kcal": 45,
-  "protein_g": 0.8,
-  "carbs_g": 9,
-  "fat_g": 0.4
+  "kcal": 46.0,
+  "protein_g": 0.46,
+  "carbs_g": 12.0,
+  "fat_g": 0.13,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "171722",
+   "food": "Cranberries, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/171722/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : canneberge crue (même genre Vaccinium)."
+  }
  },
  "ing_000012": {
-  "kcal": 45,
-  "protein_g": 5.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 222.0,
+  "protein_g": 7.89,
+  "carbs_g": 24.9,
+  "fat_g": 2.56,
+  "_ciqual": {
+   "version": "2025",
+   "code": "20990",
+   "food": "Kombu ou kombu japonais (Saccharina japonica), séché ou déshydraté",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Kombu séché, forme vendue en France."
+  }
  },
  "ing_000013": {
-  "kcal": 45,
-  "protein_g": 5.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 257.0,
+  "protein_g": 30.2,
+  "carbs_g": 11.7,
+  "fat_g": 1.77,
+  "_ciqual": {
+   "version": "2025",
+   "code": "20987",
+   "food": "Nori (Porphyra sp., Pyropia), séchée ou déshydratée",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Nori séchée (feuilles)."
+  }
  },
  "ing_000014": {
-  "kcal": 45,
-  "protein_g": 5.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 257.0,
+  "protein_g": 30.2,
+  "carbs_g": 11.7,
+  "fat_g": 1.77,
+  "_ciqual": {
+   "version": "2025",
+   "code": "20987",
+   "food": "Nori (Porphyra sp., Pyropia), séchée ou déshydratée",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Nori séchée (feuilles)."
+  }
  },
  "ing_000015": {
-  "kcal": 45,
-  "protein_g": 5.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 201.0,
+  "protein_g": 12.2,
+  "carbs_g": 13.3,
+  "fat_g": 1.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "20999",
+   "food": "Wakamé atlantique (Alaria esculenta), séché ou déshydraté",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Wakamé séché, forme la plus vendue en France."
+  }
  },
  "ing_000016": {
   "kcal": 631.0,
@@ -220,10 +292,19 @@
   }
  },
  "ing_000021": {
-  "kcal": 250,
-  "protein_g": 0,
-  "carbs_g": 0,
-  "fat_g": 0
+  "kcal": 225.0,
+  "protein_g": 0.1,
+  "carbs_g": 25.4,
+  "fat_g": 0.23,
+  "_ciqual": {
+   "version": "2025",
+   "code": "1003",
+   "food": "Liqueur",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : liqueur (aliment moyen Ciqual)."
+  }
  },
  "ing_000022": {
   "kcal": 51.6,
@@ -242,10 +323,19 @@
   }
  },
  "ing_000023": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 229.0,
+  "protein_g": 1.93,
+  "carbs_g": 3.29,
+  "fat_g": 21.9,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11043",
+   "food": "Tapenade, préemballée",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : tapenade (pâte d'olives et d'anchois) ; l'anchoïade est en général plus riche en huile."
+  }
  },
  "ing_000024": {
   "kcal": 129.0,
@@ -348,16 +438,32 @@
   }
  },
  "ing_000031": {
-  "kcal": 200,
-  "protein_g": 20.0,
-  "carbs_g": 0,
-  "fat_g": 13.0
+  "kcal": 184.0,
+  "protein_g": 18.4,
+  "carbs_g": 0.0,
+  "fat_g": 11.7,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "174193",
+   "food": "Fish, eel, mixed species, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/174193/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : anguille crue ; le fumage concentre un peu les valeurs."
+  }
  },
  "ing_000032": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 337.0,
+  "protein_g": 17.6,
+  "carbs_g": 50.0,
+  "fat_g": 15.9,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "171316",
+   "food": "Spices, anise seed",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/171316/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : graine d'anis (anis vert)."
+  }
  },
  "ing_000033": {
   "kcal": 337.0,
@@ -416,10 +522,18 @@
   }
  },
  "ing_000037": {
-  "kcal": 600,
-  "protein_g": 18.0,
-  "carbs_g": 15,
-  "fat_g": 52.0
+  "kcal": 237.0,
+  "protein_g": 0.05,
+  "carbs_g": 2.41,
+  "fat_g": 0.0,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "172235",
+   "food": "Vanilla extract, imitation, alcohol",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/172235/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : extrait aromatique à base d'alcool (extrait de vanille d'imitation)."
+  }
  },
  "ing_000038": {
   "kcal": 45.4,
@@ -436,10 +550,19 @@
   }
  },
  "ing_000039": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 327.0,
+  "protein_g": 12.6,
+  "carbs_g": 37.8,
+  "fat_g": 7.85,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11081",
+   "food": "Epice (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : épice (aliment moyen Ciqual)."
+  }
  },
  "ing_000040": {
   "kcal": 18.6,
@@ -484,10 +607,19 @@
   }
  },
  "ing_000043": {
-  "kcal": 20,
-  "protein_g": 2.0,
-  "carbs_g": 3,
-  "fat_g": 0.3
+  "kcal": 475.0,
+  "protein_g": 0.55,
+  "carbs_g": 2.91,
+  "fat_g": 51.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11110",
+   "food": "Sauce vinaigrette (50 à 75% d'huile), préemballée",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : vinaigrette du commerce."
+  }
  },
  "ing_000044": {
   "kcal": 22.9,
@@ -562,10 +694,19 @@
   }
  },
  "ing_000049": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 327.0,
+  "protein_g": 12.6,
+  "carbs_g": 37.8,
+  "fat_g": 7.85,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11081",
+   "food": "Epice (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : épice (aliment moyen Ciqual)."
+  }
  },
  "ing_000050": {
   "kcal": 87.6,
@@ -756,10 +897,21 @@
   }
  },
  "ing_000063": {
-  "kcal": 42,
-  "protein_g": 0.8,
-  "carbs_g": 10,
-  "fat_g": 0.2
+  "kcal": 24.3,
+  "protein_g": 0.25,
+  "carbs_g": 1.56,
+  "fat_g": 0.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "13009",
+   "food": "Citron, chair sans peau, sans pépins, cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "fat_g": "< 0.5"
+   },
+   "note": "Aliment voisin utilisé faute de fiche exacte : citron (agrume voisin)."
+  }
  },
  "ing_000064": {
   "kcal": 19.0,
@@ -832,10 +984,18 @@
   }
  },
  "ing_000069": {
-  "kcal": 717,
-  "protein_g": 0.9,
-  "carbs_g": 0.1,
-  "fat_g": 81.0
+  "kcal": 900.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "16110",
+   "food": "Huile ou beurre de karité",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {}
+  }
  },
  "ing_000070": {
   "kcal": 725.0,
@@ -880,10 +1040,19 @@
   }
  },
  "ing_000073": {
-  "kcal": 717,
-  "protein_g": 0.9,
-  "carbs_g": 0.1,
-  "fat_g": 81.0
+  "kcal": 900.0,
+  "protein_g": 0.28,
+  "carbs_g": 0.0,
+  "fat_g": 99.9,
+  "_ciqual": {
+   "version": "2025",
+   "code": "16401",
+   "food": "Huile de beurre ou beurre concentré",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : beurre concentré : le beurre noisette a perdu son eau à la cuisson."
+  }
  },
  "ing_000074": {
   "kcal": 732.0,
@@ -1086,10 +1255,19 @@
   }
  },
  "ing_000088": {
-  "kcal": 350,
-  "protein_g": 20.0,
-  "carbs_g": 2,
-  "fat_g": 30.0
+  "kcal": 361.0,
+  "protein_g": 16.8,
+  "carbs_g": 0.68,
+  "fat_g": 32.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "12520",
+   "food": "Fromage bleu au lait de vache, non allégé en matière grasse",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : fromage bleu au lait de vache."
+  }
  },
  "ing_000089": {
   "kcal": 215.0,
@@ -1148,10 +1326,19 @@
   }
  },
  "ing_000093": {
-  "kcal": 10,
-  "protein_g": 1.0,
-  "carbs_g": 1,
-  "fat_g": 0.2
+  "kcal": 5.76,
+  "protein_g": 0.53,
+  "carbs_g": 0.24,
+  "fat_g": 0.3,
+  "_ciqual": {
+   "version": "2025",
+   "code": "25909",
+   "food": "Bouillon de viande et légumes type pot-au-feu, prêt à consommer",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Bouillon prêt à consommer."
+  }
  },
  "ing_000094": {
   "kcal": 6.14,
@@ -1252,10 +1439,19 @@
   }
  },
  "ing_000101": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 51.2,
+  "protein_g": 3.26,
+  "carbs_g": 4.69,
+  "fat_g": 0.93,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11080",
+   "food": "Herbes aromatiques fraîches (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : herbes aromatiques fraîches ; retiré après cuisson, apport réel négligeable."
+  }
  },
  "ing_000102": {
   "kcal": 252.0,
@@ -1486,10 +1682,19 @@
   }
  },
  "ing_000118": {
-  "kcal": 250,
-  "protein_g": 0,
-  "carbs_g": 0,
-  "fat_g": 0
+  "kcal": 233.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.63,
+  "fat_g": 0.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "1001",
+   "food": "Eau de vie de fruits",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : eau-de-vie (la fiche Ciqual du calvados n'a pas de valeur énergétique)."
+  }
  },
  "ing_000119": {
   "kcal": 280.0,
@@ -1508,10 +1713,19 @@
   }
  },
  "ing_000120": {
-  "kcal": 165,
-  "protein_g": 22.0,
-  "carbs_g": 0,
-  "fat_g": 8.0
+  "kcal": 273.0,
+  "protein_g": 17.4,
+  "carbs_g": 0.0,
+  "fat_g": 22.6,
+  "_ciqual": {
+   "version": "2025",
+   "code": "36204",
+   "food": "Canard, viande et peau crues",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Canard sans morceau précisé : viande et peau crues."
+  }
  },
  "ing_000121": {
   "kcal": 243.0,
@@ -1628,16 +1842,33 @@
   }
  },
  "ing_000129": {
-  "kcal": 717,
-  "protein_g": 0.9,
-  "carbs_g": 0.1,
-  "fat_g": 81.0
+  "kcal": 385.0,
+  "protein_g": 3.1,
+  "carbs_g": 51.3,
+  "fat_g": 13.45,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "9006360224309",
+   "food": "Caramel beurre salé",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/9006360224309",
+   "note": "Médiane de 38 produits Open Food Facts (de 53 à 620 kcal/100 g) ; produit de référence le plus proche de la médiane : Caramel beurre salé (Refilait, 385 kcal). Écart large entre produits (sauces, crèmes et caramels à tartiner)."
+  }
  },
  "ing_000130": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 321.0,
+  "protein_g": 10.8,
+  "carbs_g": 40.5,
+  "fat_g": 6.7,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11075",
+   "food": "Cardamome, poudre",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : cardamome (verte) en poudre."
+  }
  },
  "ing_000131": {
   "kcal": 321.0,
@@ -1700,10 +1931,19 @@
   }
  },
  "ing_000135": {
-  "kcal": 220,
-  "protein_g": 20.0,
-  "carbs_g": 0,
-  "fat_g": 15.0
+  "kcal": 132.0,
+  "protein_g": 21.6,
+  "carbs_g": 0.22,
+  "fat_g": 4.95,
+  "_ciqual": {
+   "version": "2025",
+   "code": "6116",
+   "food": "Boeuf, filet cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Bœuf cru seul (filet), sans la marinade."
+  }
  },
  "ing_000136": {
   "kcal": 114.0,
@@ -1856,10 +2096,18 @@
   }
  },
  "ing_000146": {
-  "kcal": 48,
-  "protein_g": 0.8,
-  "carbs_g": 11,
-  "fat_g": 0.2
+  "kcal": 297.0,
+  "protein_g": 0.25,
+  "carbs_g": 72.4,
+  "fat_g": 0.063,
+  "_ciqual": {
+   "version": "2025",
+   "code": "31027",
+   "food": "Fruit confit",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {}
+  }
  },
  "ing_000147": {
   "kcal": 53.7,
@@ -2060,10 +2308,19 @@
   }
  },
  "ing_000161": {
-  "kcal": 20,
-  "protein_g": 2.0,
-  "carbs_g": 3,
-  "fat_g": 0.3
+  "kcal": 26.0,
+  "protein_g": 1.7,
+  "carbs_g": 2.13,
+  "fat_g": 0.3,
+  "_ciqual": {
+   "version": "2025",
+   "code": "20012",
+   "food": "Salade ou chicorée frisée, crue",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Chicorée prise au sens salade (frisée) ; la chicorée soluble est très différente."
+  }
  },
  "ing_000162": {
   "kcal": 376.0,
@@ -2334,16 +2591,32 @@
   }
  },
  "ing_000181": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 19.0,
+  "protein_g": 0.91,
+  "carbs_g": 4.28,
+  "fat_g": 0.14,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "169279",
+   "food": "Sauerkraut, canned, solids and liquids",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/169279/nutrients",
+   "note": "Choucroute crue (en conserve), sans garniture."
+  }
  },
  "ing_000182": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 240.0,
+  "protein_g": 0.5,
+  "carbs_g": 58.15,
+  "fat_g": 0.5,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "4056489712459",
+   "food": "Mango Chutney",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/4056489712459",
+   "note": "Médiane de 76 produits Open Food Facts (de 90 à 400 kcal/100 g) ; produit de référence le plus proche de la médiane : Mango Chutney (Taste Of India, 240 kcal)."
+  }
  },
  "ing_000183": {
   "kcal": 30.8,
@@ -2404,10 +2677,21 @@
   }
  },
  "ing_000187": {
-  "kcal": 42,
-  "protein_g": 0.8,
-  "carbs_g": 10,
-  "fat_g": 0.2
+  "kcal": 24.3,
+  "protein_g": 0.25,
+  "carbs_g": 1.56,
+  "fat_g": 0.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "13009",
+   "food": "Citron, chair sans peau, sans pépins, cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "fat_g": "< 0.5"
+   },
+   "note": "Aliment voisin utilisé faute de fiche exacte : citron cru ; le citron confit au sel a des valeurs proches hors sodium."
+  }
  },
  "ing_000188": {
   "kcal": 24.3,
@@ -2486,10 +2770,18 @@
   }
  },
  "ing_000193": {
-  "kcal": 90,
-  "protein_g": 19.0,
-  "carbs_g": 0,
-  "fat_g": 1.0
+  "kcal": 586.0,
+  "protein_g": 1.6,
+  "carbs_g": 2.33,
+  "fat_g": 63.3,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "50849871",
+   "food": "Cornish Clotted Cream",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/50849871",
+   "note": "Médiane de 17 produits Open Food Facts (de 333 à 589 kcal/100 g) ; produit de référence le plus proche de la médiane : Cornish Clotted Cream (Arla Foods,  Rodda’s, 586 kcal)."
+  }
  },
  "ing_000194": {
   "kcal": 335.0,
@@ -2564,10 +2856,19 @@
   }
  },
  "ing_000199": {
-  "kcal": 250,
-  "protein_g": 0,
-  "carbs_g": 0,
-  "fat_g": 0
+  "kcal": 225.0,
+  "protein_g": 0.1,
+  "carbs_g": 25.4,
+  "fat_g": 0.23,
+  "_ciqual": {
+   "version": "2025",
+   "code": "1003",
+   "food": "Liqueur",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : liqueur (aliment moyen Ciqual)."
+  }
  },
  "ing_000200": {
   "kcal": 75.5,
@@ -2604,10 +2905,21 @@
   "fat_g": 8.0
  },
  "ing_000203": {
-  "kcal": 42,
-  "protein_g": 0.8,
-  "carbs_g": 10,
-  "fat_g": 0.2
+  "kcal": 39.3,
+  "protein_g": 1.13,
+  "carbs_g": 3.14,
+  "fat_g": 0.3,
+  "_ciqual": {
+   "version": "2025",
+   "code": "13067",
+   "food": "Citron vert ou lime, chair sans peau, sans pépins, cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "fat_g": "< 0.3"
+   },
+   "note": "Aliment voisin utilisé faute de fiche exacte : citron vert (agrume voisin)."
+  }
  },
  "ing_000204": {
   "kcal": 93.5,
@@ -2668,16 +2980,32 @@
   }
  },
  "ing_000208": {
-  "kcal": 40,
-  "protein_g": 1.5,
-  "carbs_g": 8,
-  "fat_g": 0.1
+  "kcal": 190.0,
+  "protein_g": 0.5,
+  "carbs_g": 39.0,
+  "fat_g": 0.9,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3270160854974",
+   "food": "Confit D'oignon Au Miel Et Aux Epices",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3270160854974",
+   "note": "Médiane de 3 produits Open Food Facts (de 151 à 195 kcal/100 g) ; produit de référence le plus proche de la médiane : Confit D'oignon Au Miel Et Aux Epices (Picard, 190 kcal). Aliment voisin utilisé faute de fiche exacte : confit d'oignons."
+  }
  },
  "ing_000209": {
-  "kcal": 40,
-  "protein_g": 1.5,
-  "carbs_g": 8,
-  "fat_g": 0.1
+  "kcal": 190.0,
+  "protein_g": 0.5,
+  "carbs_g": 39.0,
+  "fat_g": 0.9,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3270160854974",
+   "food": "Confit D'oignon Au Miel Et Aux Epices",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3270160854974",
+   "note": "Médiane de 3 produits Open Food Facts (de 151 à 195 kcal/100 g) ; produit de référence le plus proche de la médiane : Confit D'oignon Au Miel Et Aux Epices (Picard, 190 kcal)."
+  }
  },
  "ing_000210": {
   "kcal": 273.0,
@@ -2736,10 +3064,18 @@
   }
  },
  "ing_000214": {
-  "kcal": 165,
-  "protein_g": 22.0,
-  "carbs_g": 0,
-  "fat_g": 8.0
+  "kcal": 258.0,
+  "protein_g": 17.6,
+  "carbs_g": 0.0,
+  "fat_g": 20.3,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "172400",
+   "food": "Chicken, stewing, meat and skin, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/172400/nutrients",
+   "note": "Coq : poule à bouillir (stewing chicken), viande et peau crues."
+  }
  },
  "ing_000215": {
   "kcal": 86.9,
@@ -3044,10 +3380,18 @@
   }
  },
  "ing_000236": {
-  "kcal": 95,
-  "protein_g": 18.0,
-  "carbs_g": 2,
-  "fat_g": 1.5
+  "kcal": 86.0,
+  "protein_g": 14.7,
+  "carbs_g": 3.57,
+  "fat_g": 0.96,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "174214",
+   "food": "Mollusks, clam, mixed species, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/174214/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : palourde (clam) crue."
+  }
  },
  "ing_000237": {
   "kcal": 104.0,
@@ -3078,10 +3422,19 @@
   }
  },
  "ing_000239": {
-  "kcal": 45,
-  "protein_g": 0.8,
-  "carbs_g": 9,
-  "fat_g": 0.4
+  "kcal": 332.0,
+  "protein_g": 0.25,
+  "carbs_g": 76.4,
+  "fat_g": 1.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "13178",
+   "food": "Canneberge ou cranberry, séchée, sucrée",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Cranberry au sens courant en France : séchée, sucrée."
+  }
  },
  "ing_000240": {
   "kcal": 332.0,
@@ -3098,10 +3451,19 @@
   }
  },
  "ing_000241": {
-  "kcal": 300,
-  "protein_g": 2.5,
-  "carbs_g": 3,
-  "fat_g": 30.0
+  "kcal": 285.0,
+  "protein_g": 2.32,
+  "carbs_g": 1.38,
+  "fat_g": 29.9,
+  "_ciqual": {
+   "version": "2025",
+   "code": "19410",
+   "food": "Crème 30% MG, épaisse, rayon frais",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Crème fraîche 30 % MG, épaisse."
+  }
  },
  "ing_000242": {
   "kcal": 97.3,
@@ -3118,10 +3480,18 @@
   }
  },
  "ing_000243": {
-  "kcal": 300,
-  "protein_g": 1.5,
-  "carbs_g": 8,
-  "fat_g": 30.0
+  "kcal": 188.0,
+  "protein_g": 0.9,
+  "carbs_g": 46.0,
+  "fat_g": 0.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3256222404677",
+   "food": "Crème balsamiques",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3256222404677",
+   "note": "Médiane de 5 produits Open Food Facts (de 30 à 304 kcal/100 g) ; produit de référence le plus proche de la médiane : Crème balsamiques (U bio, 188 kcal)."
+  }
  },
  "ing_000244": {
   "kcal": 330.0,
@@ -3152,16 +3522,32 @@
   }
  },
  "ing_000246": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 258.0,
+  "protein_g": 0.0,
+  "carbs_g": 61.5,
+  "fat_g": 0.0,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "175041",
+   "food": "Leavening agents, cream of tartar",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/175041/nutrients"
+  }
  },
  "ing_000247": {
-  "kcal": 300,
-  "protein_g": 2.5,
-  "carbs_g": 3,
-  "fat_g": 30.0
+  "kcal": 382.0,
+  "protein_g": 2.55,
+  "carbs_g": 3.0,
+  "fat_g": 40.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "19411",
+   "food": "Crème d'Isigny, >= 35% MG",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : crème d'Isigny ≥ 35 % MG (la crème double anglaise est plus grasse, ~48 %)."
+  }
  },
  "ing_000248": {
   "kcal": 293.0,
@@ -3248,10 +3634,19 @@
   }
  },
  "ing_000254": {
-  "kcal": 300,
-  "protein_g": 2.5,
-  "carbs_g": 3,
-  "fat_g": 30.0
+  "kcal": 120.0,
+  "protein_g": 3.79,
+  "carbs_g": 18.0,
+  "fat_g": 3.6,
+  "_ciqual": {
+   "version": "2025",
+   "code": "39710",
+   "food": "Crème pâtissière instantanée, reconstituée",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Crème pâtissière instantanée reconstituée ; une recette maison au beurre est plus calorique."
+  }
  },
  "ing_000255": {
   "kcal": 15.5,
@@ -3296,10 +3691,18 @@
   }
  },
  "ing_000258": {
-  "kcal": 20,
-  "protein_g": 1.0,
-  "carbs_g": 4,
-  "fat_g": 0.2
+  "kcal": 51.8,
+  "protein_g": 7.38,
+  "carbs_g": 5.51,
+  "fat_g": 0.03,
+  "_ciqual": {
+   "version": "2025",
+   "code": "20231",
+   "food": "Crosne, surgelé, cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {}
+  }
  },
  "ing_000259": {
   "kcal": 344.0,
@@ -3344,10 +3747,19 @@
   }
  },
  "ing_000262": {
-  "kcal": 10,
-  "protein_g": 1.0,
-  "carbs_g": 1,
-  "fat_g": 0.2
+  "kcal": 232.0,
+  "protein_g": 10.2,
+  "carbs_g": 18.0,
+  "fat_g": 13.3,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11001",
+   "food": "Bouillon de boeuf, déshydraté",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Bouillon déshydraté (cube), base bœuf."
+  }
  },
  "ing_000263": {
   "kcal": 273.0,
@@ -3462,10 +3874,19 @@
   }
  },
  "ing_000271": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 33.3,
+  "protein_g": 1.1,
+  "carbs_g": 3.4,
+  "fat_g": 1.1,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11074",
+   "food": "Gingembre, racine fraîche",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : gingembre frais (même famille)."
+  }
  },
  "ing_000272": {
   "kcal": 301.0,
@@ -3598,10 +4019,21 @@
   }
  },
  "ing_000281": {
-  "kcal": 90,
-  "protein_g": 19.0,
-  "carbs_g": 0,
-  "fat_g": 1.0
+  "kcal": 129.0,
+  "protein_g": 20.9,
+  "carbs_g": 0.0,
+  "fat_g": 5.1,
+  "_ciqual": {
+   "version": "2025",
+   "code": "26088",
+   "food": "Dorade royale ou daurade ou vraie daurade, élevage, crue",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "carbs_g": "traces"
+   },
+   "note": "Daurade royale d'élevage crue, la plus vendue en France."
+  }
  },
  "ing_000282": {
   "kcal": 0.0,
@@ -3634,16 +4066,34 @@
   }
  },
  "ing_000284": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 0.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 0.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "18066",
+   "food": "Eau du robinet",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Eau florale : distillat sans apport nutritionnel notable, valeurs de l'eau."
+  }
  },
  "ing_000285": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 0.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 0.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "18066",
+   "food": "Eau du robinet",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Eau florale : distillat sans apport nutritionnel notable, valeurs de l'eau."
+  }
  },
  "ing_000286": {
   "kcal": 233.0,
@@ -3704,10 +4154,17 @@
   }
  },
  "ing_000290": {
-  "kcal": 280,
-  "protein_g": 3.0,
-  "carbs_g": 65,
-  "fat_g": 0.5
+  "kcal": 97.0,
+  "protein_g": 1.5,
+  "carbs_g": 25.0,
+  "fat_g": 0.2,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "169103",
+   "food": "Orange peel, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/169103/nutrients"
+  }
  },
  "ing_000291": {
   "kcal": 320.0,
@@ -3740,10 +4197,21 @@
   }
  },
  "ing_000293": {
-  "kcal": 2,
-  "protein_g": 0,
-  "carbs_g": 1,
-  "fat_g": 0
+  "kcal": 1.2,
+  "protein_g": 0.16,
+  "carbs_g": 0.3,
+  "fat_g": 0.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "31087",
+   "food": "Édulcorant à base d'extrait de stévia",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "fat_g": "< 0.5"
+   },
+   "note": "Édulcorant de table type stévia ; les poudres à base de maltodextrine sont plus caloriques."
+  }
  },
  "ing_000294": {
   "kcal": 373.0,
@@ -4062,16 +4530,34 @@
   }
  },
  "ing_000316": {
-  "kcal": 35,
-  "protein_g": 3.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 51.2,
+  "protein_g": 3.26,
+  "carbs_g": 4.69,
+  "fat_g": 0.93,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11080",
+   "food": "Herbes aromatiques fraîches (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : herbes aromatiques fraîches (la fiche Ciqual de l'estragon frais n'a pas de valeur énergétique)."
+  }
  },
  "ing_000317": {
-  "kcal": 95,
-  "protein_g": 18.0,
-  "carbs_g": 2,
-  "fat_g": 1.5
+  "kcal": 104.0,
+  "protein_g": 19.5,
+  "carbs_g": 0.027,
+  "fat_g": 2.86,
+  "_ciqual": {
+   "version": "2025",
+   "code": "10039",
+   "food": "Crabe, cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : crabe cru."
+  }
  },
  "ing_000318": {
   "kcal": 1,
@@ -4122,10 +4608,18 @@
   }
  },
  "ing_000322": {
-  "kcal": 600,
-  "protein_g": 18.0,
-  "carbs_g": 15,
-  "fat_g": 52.0
+  "kcal": 607.0,
+  "protein_g": 21.4,
+  "carbs_g": 16.0,
+  "fat_g": 50.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "52507168",
+   "food": "Farine d'amande",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/52507168",
+   "note": "Médiane de 7 produits Open Food Facts (de 595 à 644 kcal/100 g) ; produit de référence le plus proche de la médiane : Farine d'amande (Smaakt Bio, 633 kcal)."
+  }
  },
  "ing_000323": {
   "kcal": 342.0,
@@ -4198,16 +4692,32 @@
   }
  },
  "ing_000328": {
-  "kcal": 355,
-  "protein_g": 8.0,
-  "carbs_g": 78,
-  "fat_g": 1.0
+  "kcal": 360.0,
+  "protein_g": 20.0,
+  "carbs_g": 22.0,
+  "fat_g": 14.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3160920774980",
+   "food": "Farine de coco",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3160920774980",
+   "note": "Médiane de 13 produits Open Food Facts (de 256 à 464 kcal/100 g) ; produit de référence le plus proche de la médiane : Farine de coco (Esprit bio, 357 kcal)."
+  }
  },
  "ing_000329": {
-  "kcal": 355,
-  "protein_g": 8.0,
-  "carbs_g": 78,
-  "fat_g": 1.0
+  "kcal": 335.0,
+  "protein_g": 39.5,
+  "carbs_g": 10.8,
+  "fat_g": 8.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3329486741205",
+   "food": "Farine De Lupin Bio",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3329486741205",
+   "note": "Médiane de 12 produits Open Food Facts (de 162.79 à 376 kcal/100 g) ; produit de référence le plus proche de la médiane : Farine De Lupin Bio (Markal, 314 kcal)."
+  }
  },
  "ing_000330": {
   "kcal": 362.0,
@@ -4252,10 +4762,18 @@
   }
  },
  "ing_000333": {
-  "kcal": 350,
-  "protein_g": 12.0,
-  "carbs_g": 65,
-  "fat_g": 5.0
+  "kcal": 368.0,
+  "protein_g": 14.1,
+  "carbs_g": 64.2,
+  "fat_g": 6.07,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "168874",
+   "food": "Quinoa, uncooked",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/168874/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : quinoa cru (la farine est le grain moulu)."
+  }
  },
  "ing_000334": {
   "kcal": 357.0,
@@ -4286,16 +4804,33 @@
   }
  },
  "ing_000336": {
-  "kcal": 355,
-  "protein_g": 8.0,
-  "carbs_g": 78,
-  "fat_g": 1.0
+  "kcal": 344.0,
+  "protein_g": 7.24,
+  "carbs_g": 70.9,
+  "fat_g": 1.12,
+  "_ciqual": {
+   "version": "2025",
+   "code": "9533",
+   "food": "Farine de seigle T130",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Farine de seigle T130, la plus courante."
+  }
  },
  "ing_000337": {
-  "kcal": 355,
-  "protein_g": 8.0,
-  "carbs_g": 78,
-  "fat_g": 1.0
+  "kcal": 367.0,
+  "protein_g": 3.57,
+  "carbs_g": 80.0,
+  "fat_g": 1.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0055742500486",
+   "food": "Farine sans gluten",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0055742500486",
+   "note": "Médiane de 5 produits Open Food Facts (de 310 à 405 kcal/100 g) ; produit de référence le plus proche de la médiane : Farine sans gluten (Compliments, 310 kcal)."
+  }
  },
  "ing_000338": {
   "kcal": 350.0,
@@ -4384,16 +4919,34 @@
   }
  },
  "ing_000344": {
-  "kcal": 35,
-  "protein_g": 3.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 51.2,
+  "protein_g": 3.26,
+  "carbs_g": 4.69,
+  "fat_g": 0.93,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11080",
+   "food": "Herbes aromatiques fraîches (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : herbes aromatiques fraîches."
+  }
  },
  "ing_000345": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 51.2,
+  "protein_g": 3.26,
+  "carbs_g": 4.69,
+  "fat_g": 0.93,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11080",
+   "food": "Herbes aromatiques fraîches (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : herbes aromatiques fraîches."
+  }
  },
  "ing_000346": {
   "kcal": 0,
@@ -4402,10 +4955,18 @@
   "fat_g": 0
  },
  "ing_000347": {
-  "kcal": 355,
-  "protein_g": 8.0,
-  "carbs_g": 78,
-  "fat_g": 1.0
+  "kcal": 341.0,
+  "protein_g": 0.51,
+  "carbs_g": 82.65,
+  "fat_g": 0.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "9310432004042",
+   "food": "Rice Paper 22cm Round (c)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/9310432004042",
+   "note": "Médiane de 20 produits Open Food Facts (de 70 à 353 kcal/100 g) ; produit de référence le plus proche de la médiane : Rice Paper 22cm Round (c) (Valcom, 347 kcal)."
+  }
  },
  "ing_000348": {
   "kcal": 69.0,
@@ -4436,10 +4997,19 @@
   }
  },
  "ing_000350": {
-  "kcal": 70,
-  "protein_g": 5.0,
-  "carbs_g": 12,
-  "fat_g": 0.5
+  "kcal": 327.0,
+  "protein_g": 12.6,
+  "carbs_g": 37.8,
+  "fat_g": 7.85,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11081",
+   "food": "Epice (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : épice (aliment moyen Ciqual)."
+  }
  },
  "ing_000351": {
   "kcal": 67.6,
@@ -4602,10 +5172,19 @@
   }
  },
  "ing_000362": {
-  "kcal": 460,
-  "protein_g": 8.0,
-  "carbs_g": 4,
-  "fat_g": 45.0
+  "kcal": 526.0,
+  "protein_g": 8.41,
+  "carbs_g": 0.026,
+  "fat_g": 54.6,
+  "_ciqual": {
+   "version": "2025",
+   "code": "8321",
+   "food": "Foie gras, canard, entier, cuit",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Foie gras de canard entier cuit (mi-cuit)."
+  }
  },
  "ing_000363": {
   "kcal": 40.9,
@@ -4650,10 +5229,18 @@
   }
  },
  "ing_000366": {
-  "kcal": 400,
-  "protein_g": 7.0,
-  "carbs_g": 45,
-  "fat_g": 20.0
+  "kcal": 395.0,
+  "protein_g": 0.3,
+  "carbs_g": 87.1,
+  "fat_g": 5.15,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "8718452580279",
+   "food": "Fondant",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/8718452580279",
+   "note": "Médiane de 4 produits Open Food Facts (de 382 à 408 kcal/100 g) ; produit de référence le plus proche de la médiane : Fondant (Jumbo, 390 kcal)."
+  }
  },
  "ing_000367": {
   "kcal": 376.891,
@@ -4732,10 +5319,18 @@
   }
  },
  "ing_000372": {
-  "kcal": 350,
-  "protein_g": 12.0,
-  "carbs_g": 65,
-  "fat_g": 5.0
+  "kcal": 345.0,
+  "protein_g": 12.4,
+  "carbs_g": 70.0,
+  "fat_g": 2.5,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0028571006450",
+   "food": "Freekeh, roasted green wheat",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0028571006450",
+   "note": "Médiane de 37 produits Open Food Facts (de 96.5 à 458 kcal/100 g) ; produit de référence le plus proche de la médiane : Freekeh, roasted green wheat (marque non indiquée, 350 kcal)."
+  }
  },
  "ing_000373": {
   "kcal": 26.0,
@@ -4752,16 +5347,32 @@
   }
  },
  "ing_000374": {
-  "kcal": 380,
-  "protein_g": 27.0,
-  "carbs_g": 1,
-  "fat_g": 30.0
+  "kcal": 324.0,
+  "protein_g": 21.1,
+  "carbs_g": 0.71,
+  "fat_g": 26.3,
+  "_ciqual": {
+   "version": "2025",
+   "code": "12999",
+   "food": "Fromage (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {}
+  }
  },
  "ing_000375": {
-  "kcal": 300,
-  "protein_g": 20.0,
-  "carbs_g": 1,
-  "fat_g": 24.0
+  "kcal": 237.0,
+  "protein_g": 14.9,
+  "carbs_g": 3.4,
+  "fat_g": 17.1,
+  "_ciqual": {
+   "version": "2025",
+   "code": "25509",
+   "food": "Préparation à base de fromage(s) pour fondue savoyarde, préemballée",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {}
+  }
  },
  "ing_000376": {
   "kcal": 342.0,
@@ -4794,16 +5405,33 @@
   }
  },
  "ing_000378": {
-  "kcal": 380,
-  "protein_g": 27.0,
-  "carbs_g": 1,
-  "fat_g": 30.0
+  "kcal": 393.0,
+  "protein_g": 22.3,
+  "carbs_g": 0.72,
+  "fat_g": 33.6,
+  "_ciqual": {
+   "version": "2025",
+   "code": "12747",
+   "food": "Fromage de brebis à pâte pressée non cuite des Pyrénées, type tomme ou tome",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Fromage de brebis le plus courant : tomme des Pyrénées."
+  }
  },
  "ing_000379": {
-  "kcal": 300,
-  "protein_g": 20.0,
-  "carbs_g": 1,
-  "fat_g": 24.0
+  "kcal": 238.0,
+  "protein_g": 11.2,
+  "carbs_g": 8.52,
+  "fat_g": 17.6,
+  "_ciqual": {
+   "version": "2025",
+   "code": "12303",
+   "food": "Fromage fondu en portion (triangle), non enrichi",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {}
+  }
  },
  "ing_000380": {
   "kcal": 320.0,
@@ -4848,10 +5476,18 @@
   }
  },
  "ing_000383": {
-  "kcal": 65,
-  "protein_g": 0.9,
-  "carbs_g": 16,
-  "fat_g": 0.3
+  "kcal": 54.2,
+  "protein_g": 0.71,
+  "carbs_g": 12.14,
+  "fat_g": 0.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0085239048740",
+   "food": "Dragon Fruit Chunks",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0085239048740",
+   "note": "Médiane de 31 produits Open Food Facts (de 0.29 à 114 kcal/100 g) ; produit de référence le plus proche de la médiane : Dragon Fruit Chunks (marque non indiquée, 57.14 kcal). Écart large entre produits."
+  }
  },
  "ing_000384": {
   "kcal": 297.0,
@@ -4868,10 +5504,18 @@
   }
  },
  "ing_000385": {
-  "kcal": 90,
-  "protein_g": 19.0,
-  "carbs_g": 0,
-  "fat_g": 1.0
+  "kcal": 53.6,
+  "protein_g": 5.1,
+  "carbs_g": 3.8,
+  "fat_g": 2.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11303",
+   "food": "Fumet de poisson, prêt à consommer, préemballé",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {}
+  }
  },
  "ing_000386": {
   "kcal": 364.0,
@@ -4888,10 +5532,19 @@
   }
  },
  "ing_000387": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 33.3,
+  "protein_g": 1.1,
+  "carbs_g": 3.4,
+  "fat_g": 1.1,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11074",
+   "food": "Gingembre, racine fraîche",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : gingembre frais (même famille)."
+  }
  },
  "ing_000388": {
   "kcal": 381.0,
@@ -4908,10 +5561,19 @@
   }
  },
  "ing_000389": {
-  "kcal": 95,
-  "protein_g": 18.0,
-  "carbs_g": 2,
-  "fat_g": 1.5
+  "kcal": 105.0,
+  "protein_g": 23.4,
+  "carbs_g": 0.74,
+  "fat_g": 0.9,
+  "_ciqual": {
+   "version": "2025",
+   "code": "10038",
+   "food": "Crevette, surgelée, crue",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Gambas : crevette crue."
+  }
  },
  "ing_000390": {
   "kcal": 327.0,
@@ -4956,16 +5618,31 @@
   }
  },
  "ing_000393": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 149.0,
+  "protein_g": 14.4,
+  "carbs_g": 15.2,
+  "fat_g": 4.1,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3266191051758",
+   "food": "GELÉE ROYALE",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3266191051758",
+   "note": "Médiane de 3 produits Open Food Facts (de 143 à 150 kcal/100 g) ; produit de référence le plus proche de la médiane : GELÉE ROYALE (La Vie Claire, 150 kcal)."
+  }
  },
  "ing_000394": {
-  "kcal": 400,
-  "protein_g": 7.0,
-  "carbs_g": 45,
-  "fat_g": 20.0
+  "kcal": 297.0,
+  "protein_g": 7.3,
+  "carbs_g": 57.7,
+  "fat_g": 4.3,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "172707",
+   "food": "Cake, sponge, prepared from recipe",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/172707/nutrients"
+  }
  },
  "ing_000395": {
   "kcal": 375.0,
@@ -5028,10 +5705,19 @@
   }
  },
  "ing_000399": {
-  "kcal": 150,
-  "protein_g": 22.0,
-  "carbs_g": 0,
-  "fat_g": 6.0
+  "kcal": 110.0,
+  "protein_g": 23.0,
+  "carbs_g": 0.0,
+  "fat_g": 2.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "14005",
+   "food": "Chevreuil, viande crue",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Gibier sans précision : chevreuil cru."
+  }
  },
  "ing_000400": {
   "kcal": 128.0,
@@ -5104,10 +5790,18 @@
   }
  },
  "ing_000405": {
-  "kcal": 250,
-  "protein_g": 0,
-  "carbs_g": 0,
-  "fat_g": 0
+  "kcal": 20.0,
+  "protein_g": 0.33,
+  "carbs_g": 4.83,
+  "fat_g": 0.1,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "169765",
+   "food": "Ginger root, pickled, canned, with artificial sweetener",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/169765/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : gingembre mariné en conserve (version édulcorée)."
+  }
  },
  "ing_000406": {
   "kcal": 24.7,
@@ -5124,16 +5818,32 @@
   }
  },
  "ing_000407": {
-  "kcal": 400,
-  "protein_g": 7.0,
-  "carbs_g": 45,
-  "fat_g": 20.0
+  "kcal": 389.0,
+  "protein_g": 0.0,
+  "carbs_g": 99.8,
+  "fat_g": 0.0,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "169656",
+   "food": "Sugars, powdered",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/169656/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : sucre glace (la glace royale est du sucre glace lié au blanc d'œuf)."
+  }
  },
  "ing_000408": {
-  "kcal": 400,
-  "protein_g": 0,
-  "carbs_g": 100,
-  "fat_g": 0
+  "kcal": 283.0,
+  "protein_g": 0.0,
+  "carbs_g": 76.8,
+  "fat_g": 0.2,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "168837",
+   "food": "Syrups, corn, light",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/168837/nutrients",
+   "note": "Glucose au sens pâtissier : sirop de glucose (sirop de maïs léger)."
+  }
  },
  "ing_000409": {
   "kcal": 31.0,
@@ -5300,10 +6010,19 @@
   }
  },
  "ing_000421": {
-  "kcal": 20,
-  "protein_g": 2.0,
-  "carbs_g": 3,
-  "fat_g": 0.3
+  "kcal": 29.2,
+  "protein_g": 3.38,
+  "carbs_g": 0.81,
+  "fat_g": 0.69,
+  "_ciqual": {
+   "version": "2025",
+   "code": "15029",
+   "food": "Graine germée de luzerne, crue",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : graine germée de luzerne."
+  }
  },
  "ing_000422": {
   "kcal": 898.0,
@@ -5348,10 +6067,19 @@
   }
  },
  "ing_000425": {
-  "kcal": 250,
-  "protein_g": 0,
-  "carbs_g": 0,
-  "fat_g": 0
+  "kcal": 225.0,
+  "protein_g": 0.1,
+  "carbs_g": 25.4,
+  "fat_g": 0.23,
+  "_ciqual": {
+   "version": "2025",
+   "code": "1003",
+   "food": "Liqueur",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : liqueur (aliment moyen Ciqual)."
+  }
  },
  "ing_000426": {
   "kcal": 81.0,
@@ -5382,10 +6110,17 @@
   }
  },
  "ing_000428": {
-  "kcal": 48,
-  "protein_g": 0.8,
-  "carbs_g": 11,
-  "fat_g": 0.2
+  "kcal": 50.0,
+  "protein_g": 1.0,
+  "carbs_g": 12.2,
+  "fat_g": 0.3,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "173954",
+   "food": "Cherries, sour, red, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/173954/nutrients"
+  }
  },
  "ing_000429": {
   "kcal": 0.0,
@@ -5458,10 +6193,18 @@
   }
  },
  "ing_000434": {
-  "kcal": 300,
-  "protein_g": 20.0,
-  "carbs_g": 1,
-  "fat_g": 24.0
+  "kcal": 317.0,
+  "protein_g": 22.0,
+  "carbs_g": 2.0,
+  "fat_g": 25.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "7340083402241",
+   "food": "Halloumi",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/7340083402241",
+   "note": "Médiane de 75 produits Open Food Facts (de 139 à 393 kcal/100 g) ; produit de référence le plus proche de la médiane : Halloumi (Garant, 330 kcal)."
+  }
  },
  "ing_000435": {
   "kcal": 176.0,
@@ -5562,10 +6305,19 @@
   }
  },
  "ing_000442": {
-  "kcal": 340,
-  "protein_g": 22.0,
-  "carbs_g": 60,
-  "fat_g": 2.0
+  "kcal": 85.5,
+  "protein_g": 5.88,
+  "carbs_g": 10.9,
+  "fat_g": 0.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "20511",
+   "food": "Haricot blanc, appertisé, égoutté",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Haricots blancs appertisés, égouttés."
+  }
  },
  "ing_000443": {
   "kcal": 283.0,
@@ -5684,10 +6436,19 @@
   }
  },
  "ing_000451": {
-  "kcal": 884,
-  "protein_g": 0,
-  "carbs_g": 0,
-  "fat_g": 100.0
+  "kcal": 900.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "17220",
+   "food": "Huile de noix",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : huile végétale pure (100 % lipides)."
+  }
  },
  "ing_000452": {
   "kcal": 897.0,
@@ -5802,10 +6563,19 @@
   }
  },
  "ing_000460": {
-  "kcal": 884,
-  "protein_g": 0,
-  "carbs_g": 0,
-  "fat_g": 100.0
+  "kcal": 900.0,
+  "protein_g": 0.0,
+  "carbs_g": 0.0,
+  "fat_g": 100.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "17220",
+   "food": "Huile de noix",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : huile végétale pure (100 % lipides)."
+  }
  },
  "ing_000461": {
   "kcal": 900.0,
@@ -5866,10 +6636,21 @@
   }
  },
  "ing_000465": {
-  "kcal": 884,
-  "protein_g": 0,
-  "carbs_g": 0,
-  "fat_g": 100.0
+  "kcal": 899.0,
+  "protein_g": 0.25,
+  "carbs_g": 0.0,
+  "fat_g": 99.9,
+  "_ciqual": {
+   "version": "2025",
+   "code": "17270",
+   "food": "Huile d'olive vierge extra",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "carbs_g": "traces"
+   },
+   "note": "Aliment voisin utilisé faute de fiche exacte : huile d'olive (base des huiles à la truffe)."
+  }
  },
  "ing_000466": {
   "kcal": 899.0,
@@ -5886,10 +6667,21 @@
   }
  },
  "ing_000467": {
-  "kcal": 884,
-  "protein_g": 0,
-  "carbs_g": 0,
-  "fat_g": 100.0
+  "kcal": 899.0,
+  "protein_g": 0.25,
+  "carbs_g": 0.0,
+  "fat_g": 99.9,
+  "_ciqual": {
+   "version": "2025",
+   "code": "17270",
+   "food": "Huile d'olive vierge extra",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "carbs_g": "traces"
+   },
+   "note": "Aliment voisin utilisé faute de fiche exacte : huile d'olive (base courante des huiles pimentées)."
+  }
  },
  "ing_000468": {
   "kcal": 899.0,
@@ -5948,10 +6740,19 @@
   }
  },
  "ing_000472": {
-  "kcal": 35,
-  "protein_g": 3.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 51.2,
+  "protein_g": 3.26,
+  "carbs_g": 4.69,
+  "fat_g": 0.93,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11080",
+   "food": "Herbes aromatiques fraîches (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : herbes aromatiques fraîches."
+  }
  },
  "ing_000473": {
   "kcal": 111.0,
@@ -6024,16 +6825,31 @@
   }
  },
  "ing_000478": {
-  "kcal": 65,
-  "protein_g": 0.9,
-  "carbs_g": 16,
-  "fat_g": 0.3
+  "kcal": 95.0,
+  "protein_g": 1.72,
+  "carbs_g": 23.2,
+  "fat_g": 0.64,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "174687",
+   "food": "Jackfruit, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/174687/nutrients"
+  }
  },
  "ing_000479": {
-  "kcal": 240,
-  "protein_g": 19.0,
-  "carbs_g": 0,
-  "fat_g": 18.0
+  "kcal": 193.0,
+  "protein_g": 19.9,
+  "carbs_g": 0.0,
+  "fat_g": 12.0,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "168226",
+   "food": "Pork, fresh, leg (ham), shank half, separable lean and fat, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/168226/nutrients",
+   "note": "Jarret de porc cru (shank), viande et gras."
+  }
  },
  "ing_000480": {
   "kcal": 307.0,
@@ -6078,10 +6894,18 @@
   }
  },
  "ing_000483": {
-  "kcal": 45,
-  "protein_g": 0.3,
-  "carbs_g": 10,
-  "fat_g": 0
+  "kcal": 54.0,
+  "protein_g": 0.0,
+  "carbs_g": 13.5,
+  "fat_g": 0.1,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "171903",
+   "food": "Cranberry juice cocktail, bottled",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/171903/nutrients",
+   "note": "Jus de cranberry du commerce (cocktail sucré)."
+  }
  },
  "ing_000484": {
   "kcal": 29.4,
@@ -6140,10 +6964,17 @@
   }
  },
  "ing_000488": {
-  "kcal": 45,
-  "protein_g": 0.3,
-  "carbs_g": 10,
-  "fat_g": 0
+  "kcal": 16.0,
+  "protein_g": 1.2,
+  "carbs_g": 2.5,
+  "fat_g": 0.2,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "171168",
+   "food": "Gravy, au jus, canned",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/171168/nutrients"
+  }
  },
  "ing_000489": {
   "kcal": 66.0,
@@ -6428,10 +7259,19 @@
   }
  },
  "ing_000509": {
-  "kcal": 50,
-  "protein_g": 3.3,
-  "carbs_g": 5,
-  "fat_g": 1.5
+  "kcal": 459.0,
+  "protein_g": 31.5,
+  "carbs_g": 43.4,
+  "fat_g": 17.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "19044",
+   "food": "Lait en poudre, demi-écrémé",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Lait en poudre demi-écrémé (le type n'est pas précisé)."
+  }
  },
  "ing_000510": {
   "kcal": 64.6,
@@ -6546,10 +7386,19 @@
   }
  },
  "ing_000518": {
-  "kcal": 300,
-  "protein_g": 18.0,
-  "carbs_g": 1,
-  "fat_g": 25.0
+  "kcal": 269.0,
+  "protein_g": 16.6,
+  "carbs_g": 1.01,
+  "fat_g": 22.1,
+  "_ciqual": {
+   "version": "2025",
+   "code": "28501",
+   "food": "Lardon nature, cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Lard au sens courant : lardons nature crus."
+  }
  },
  "ing_000519": {
   "kcal": 272.0,
@@ -6664,16 +7513,34 @@
   }
  },
  "ing_000527": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 341.0,
+  "protein_g": 42.7,
+  "carbs_g": 14.3,
+  "fat_g": 6.56,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11045",
+   "food": "Levure de boulanger déshydratée",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Levure prise au sens levure de boulanger déshydratée (pour la levure chimique, voir Levure chimique)."
+  }
  },
  "ing_000528": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 115.0,
+  "protein_g": 8.4,
+  "carbs_g": 11.9,
+  "fat_g": 1.9,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11010",
+   "food": "Levure de boulanger fraîche",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Levure de boulanger fraîche."
+  }
  },
  "ing_000529": {
   "kcal": 108.0,
@@ -6718,10 +7585,18 @@
   }
  },
  "ing_000532": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 321.0,
+  "protein_g": 47.0,
+  "carbs_g": 9.0,
+  "fat_g": 4.8,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0073156724717",
+   "food": "Levure maltée",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0073156724717",
+   "note": "Médiane de 5 produits Open Food Facts (de 321 à 345 kcal/100 g) ; produit de référence le plus proche de la médiane : Levure maltée (Quitoque, 321 kcal)."
+  }
  },
  "ing_000533": {
   "kcal": 75.5,
@@ -6784,10 +7659,19 @@
   }
  },
  "ing_000537": {
-  "kcal": 35,
-  "protein_g": 3.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 51.2,
+  "protein_g": 3.26,
+  "carbs_g": 4.69,
+  "fat_g": 0.93,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11080",
+   "food": "Herbes aromatiques fraîches (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : herbes aromatiques fraîches."
+  }
  },
  "ing_000538": {
   "kcal": 60.0,
@@ -6864,10 +7748,19 @@
   }
  },
  "ing_000543": {
-  "kcal": 85,
-  "protein_g": 0.1,
-  "carbs_g": 2.5,
-  "fat_g": 0
+  "kcal": 148.0,
+  "protein_g": 0.2,
+  "carbs_g": 9.96,
+  "fat_g": 0.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "1006",
+   "food": "Vin doux",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : vin doux (vin muté)."
+  }
  },
  "ing_000544": {
   "kcal": 337.0,
@@ -6956,10 +7849,18 @@
   }
  },
  "ing_000550": {
-  "kcal": 65,
-  "protein_g": 0.9,
-  "carbs_g": 16,
-  "fat_g": 0.3
+  "kcal": 73.0,
+  "protein_g": 0.41,
+  "carbs_g": 17.9,
+  "fat_g": 0.58,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "169090",
+   "food": "Mangosteen, canned, syrup pack",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/169090/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : mangoustan au sirop (pas de fiche pour le fruit frais)."
+  }
  },
  "ing_000551": {
   "kcal": 71.1,
@@ -7162,10 +8063,19 @@
   }
  },
  "ing_000565": {
-  "kcal": 600,
-  "protein_g": 18.0,
-  "carbs_g": 15,
-  "fat_g": 52.0
+  "kcal": 493.0,
+  "protein_g": 8.29,
+  "carbs_g": 51.0,
+  "fat_g": 26.3,
+  "_ciqual": {
+   "version": "2025",
+   "code": "15048",
+   "food": "Mélange apéritif de graines et fruits séchés, sans sel ajouté",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Mélange de graines et fruits séchés, sans sel."
+  }
  },
  "ing_000566": {
   "kcal": 348.0,
@@ -7196,10 +8106,19 @@
   }
  },
  "ing_000568": {
-  "kcal": 35,
-  "protein_g": 3.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 51.2,
+  "protein_g": 3.26,
+  "carbs_g": 4.69,
+  "fat_g": 0.93,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11080",
+   "food": "Herbes aromatiques fraîches (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : herbes aromatiques fraîches."
+  }
  },
  "ing_000569": {
   "kcal": 59.8,
@@ -7260,10 +8179,19 @@
   }
  },
  "ing_000573": {
-  "kcal": 300,
-  "protein_g": 18.0,
-  "carbs_g": 1,
-  "fat_g": 25.0
+  "kcal": 301.0,
+  "protein_g": 13.8,
+  "carbs_g": 1.15,
+  "fat_g": 26.8,
+  "_ciqual": {
+   "version": "2025",
+   "code": "30150",
+   "food": "Merguez crue",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : merguez crue (bœuf et mouton)."
+  }
  },
  "ing_000574": {
   "kcal": 396.0,
@@ -7294,10 +8222,19 @@
   }
  },
  "ing_000576": {
-  "kcal": 20,
+  "kcal": 22.0,
   "protein_g": 2.0,
-  "carbs_g": 3,
-  "fat_g": 0.3
+  "carbs_g": 2.5,
+  "fat_g": 0.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "20272",
+   "food": "Mesclun ou salade, mélange de jeunes pousses",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : mélange de jeunes pousses."
+  }
  },
  "ing_000577": {
   "kcal": 331.0,
@@ -7388,10 +8325,19 @@
   }
  },
  "ing_000583": {
-  "kcal": 90,
-  "protein_g": 19.0,
-  "carbs_g": 0,
-  "fat_g": 1.0
+  "kcal": 210.0,
+  "protein_g": 47.6,
+  "carbs_g": 1.1,
+  "fat_g": 1.67,
+  "_ciqual": {
+   "version": "2025",
+   "code": "26098",
+   "food": "Morue, salée, sèche",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Morue au sens courant en cuisine : morue salée séchée (avant dessalage)."
+  }
  },
  "ing_000584": {
   "kcal": 71.8,
@@ -7492,10 +8438,18 @@
   }
  },
  "ing_000591": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 508.0,
+  "protein_g": 26.1,
+  "carbs_g": 28.1,
+  "fat_g": 36.2,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "170929",
+   "food": "Spices, mustard seed, ground",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/170929/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : graine de moutarde moulue."
+  }
  },
  "ing_000592": {
   "kcal": 137.0,
@@ -7610,10 +8564,19 @@
   }
  },
  "ing_000600": {
-  "kcal": 400,
-  "protein_g": 7.0,
-  "carbs_g": 45,
-  "fat_g": 20.0
+  "kcal": 235.0,
+  "protein_g": 0.36,
+  "carbs_g": 57.1,
+  "fat_g": 0.27,
+  "_ciqual": {
+   "version": "2025",
+   "code": "30999",
+   "food": "Confiture ou marmelade, tout type de fruits, sans précision sur la teneur en sucres (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : confiture (aliment moyen Ciqual) ; le nappage neutre est un gel sucré."
+  }
  },
  "ing_000601": {
   "kcal": 42.0,
@@ -7884,16 +8847,33 @@
   }
  },
  "ing_000620": {
-  "kcal": 600,
-  "protein_g": 18.0,
-  "carbs_g": 15,
-  "fat_g": 52.0
+  "kcal": 483.0,
+  "protein_g": 8.7,
+  "carbs_g": 67.7,
+  "fat_g": 19.7,
+  "_ciqual": {
+   "version": "2025",
+   "code": "31052",
+   "food": "Praline",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : praline (amandes caramélisées)."
+  }
  },
  "ing_000621": {
-  "kcal": 350,
-  "protein_g": 12.0,
-  "carbs_g": 72,
-  "fat_g": 1.5
+  "kcal": 371.0,
+  "protein_g": 11.9,
+  "carbs_g": 71.0,
+  "fat_g": 3.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "9863",
+   "food": "Pâtes ou nouilles asiatiques sèches, au blé et aux oeufs, nature, crues",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {}
+  }
  },
  "ing_000622": {
   "kcal": 364.0,
@@ -7924,10 +8904,18 @@
   }
  },
  "ing_000624": {
-  "kcal": 350,
-  "protein_g": 12.0,
-  "carbs_g": 72,
-  "fat_g": 1.5
+  "kcal": 150.0,
+  "protein_g": 4.9,
+  "carbs_g": 31.0,
+  "fat_g": 0.75,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0079763251547",
+   "food": "Udon Noodles",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0079763251547",
+   "note": "Médiane de 43 produits Open Food Facts (de 102 à 505 kcal/100 g) ; produit de référence le plus proche de la médiane : Udon Noodles (marque non indiquée, 145 kcal)."
+  }
  },
  "ing_000625": {
   "kcal": 250.0,
@@ -8000,10 +8988,17 @@
   }
  },
  "ing_000630": {
-  "kcal": 90,
-  "protein_g": 19.0,
-  "carbs_g": 0,
-  "fat_g": 1.0
+  "kcal": 143.0,
+  "protein_g": 22.3,
+  "carbs_g": 1.5,
+  "fat_g": 6.42,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "175132",
+   "food": "Fish, roe, mixed species, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/175132/nutrients"
+  }
  },
  "ing_000631": {
   "kcal": 240.0,
@@ -8062,10 +9057,18 @@
   }
  },
  "ing_000635": {
-  "kcal": 40,
-  "protein_g": 1.5,
-  "carbs_g": 8,
-  "fat_g": 0.1
+  "kcal": 190.0,
+  "protein_g": 0.5,
+  "carbs_g": 39.0,
+  "fat_g": 0.9,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3270160854974",
+   "food": "Confit D'oignon Au Miel Et Aux Epices",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3270160854974",
+   "note": "Médiane de 3 produits Open Food Facts (de 151 à 195 kcal/100 g) ; produit de référence le plus proche de la médiane : Confit D'oignon Au Miel Et Aux Epices (Picard, 190 kcal)."
+  }
  },
  "ing_000636": {
   "kcal": 355.0,
@@ -8214,10 +9217,18 @@
   }
  },
  "ing_000646": {
-  "kcal": 42,
-  "protein_g": 0.8,
-  "carbs_g": 10,
-  "fat_g": 0.2
+  "kcal": 297.0,
+  "protein_g": 0.25,
+  "carbs_g": 72.4,
+  "fat_g": 0.063,
+  "_ciqual": {
+   "version": "2025",
+   "code": "31027",
+   "food": "Fruit confit",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {}
+  }
  },
  "ing_000647": {
   "kcal": 346.0,
@@ -8290,10 +9301,18 @@
   }
  },
  "ing_000652": {
-  "kcal": 95,
-  "protein_g": 18.0,
-  "carbs_g": 2,
-  "fat_g": 1.5
+  "kcal": 143.0,
+  "protein_g": 22.3,
+  "carbs_g": 1.5,
+  "fat_g": 6.42,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "175132",
+   "food": "Fish, roe, mixed species, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/175132/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : œufs de poisson (on mange les gonades de l'oursin)."
+  }
  },
  "ing_000653": {
   "kcal": 287.0,
@@ -8456,10 +9475,18 @@
   }
  },
  "ing_000664": {
-  "kcal": 355,
-  "protein_g": 8.0,
-  "carbs_g": 78,
-  "fat_g": 1.0
+  "kcal": 341.0,
+  "protein_g": 0.51,
+  "carbs_g": 82.65,
+  "fat_g": 0.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "9310432004042",
+   "food": "Rice Paper 22cm Round (c)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/9310432004042",
+   "note": "Médiane de 20 produits Open Food Facts (de 70 à 353 kcal/100 g) ; produit de référence le plus proche de la médiane : Rice Paper 22cm Round (c) (Valcom, 347 kcal)."
+  }
  },
  "ing_000665": {
   "kcal": 318.0,
@@ -8608,28 +9635,61 @@
   }
  },
  "ing_000677": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 136.5,
+  "protein_g": 3.6,
+  "carbs_g": 20.0,
+  "fat_g": 4.35,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0016229906436",
+   "food": "'Prodhead'&gt;yellow Curry Paste",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0016229906436",
+   "note": "Médiane de 28 produits Open Food Facts (de 50 à 355 kcal/100 g) ; produit de référence le plus proche de la médiane : 'Prodhead'&gt;yellow Curry Paste (aroy-d, 134 kcal)."
+  }
  },
  "ing_000678": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 111.0,
+  "protein_g": 2.6,
+  "carbs_g": 12.25,
+  "fat_g": 3.02,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "5059697740046",
+   "food": "red curry paste",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/5059697740046",
+   "note": "Médiane de 46 produits Open Food Facts (de 8.19 à 311.11 kcal/100 g) ; produit de référence le plus proche de la médiane : red curry paste (Tesco, 78 kcal)."
+  }
  },
  "ing_000679": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 96.52,
+  "protein_g": 2.1,
+  "carbs_g": 13.2,
+  "fat_g": 4.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "5010525209111",
+   "food": "Thai style green curry paste",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/5010525209111",
+   "note": "Médiane de 34 produits Open Food Facts (de 42 à 280 kcal/100 g) ; produit de référence le plus proche de la médiane : Thai style green curry paste (Morrisons, 101 kcal)."
+  }
  },
  "ing_000680": {
-  "kcal": 65,
-  "protein_g": 0.9,
-  "carbs_g": 16,
-  "fat_g": 0.3
+  "kcal": 239.0,
+  "protein_g": 2.8,
+  "carbs_g": 62.5,
+  "fat_g": 0.6,
+  "_usda": {
+   "dataset": "SR Legacy",
+   "release": "2018-04",
+   "fdc_id": "167763",
+   "food": "Tamarinds, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/",
+   "note": "Aliment voisin utilisé faute de fiche exacte : pulpe de tamarin crue ; les pâtes du commerce sont parfois sucrées."
+  }
  },
  "ing_000681": {
   "kcal": 370.0,
@@ -8760,10 +9820,17 @@
   }
  },
  "ing_000690": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 325.0,
+  "protein_g": 0.3,
+  "carbs_g": 90.4,
+  "fat_g": 0.3,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "168821",
+   "food": "Pectin, unsweetened, dry mix",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/168821/nutrients"
+  }
  },
  "ing_000691": {
   "kcal": 364.0,
@@ -8864,10 +9931,19 @@
   }
  },
  "ing_000698": {
-  "kcal": 35,
-  "protein_g": 3.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 67.9,
+  "protein_g": 1.2,
+  "carbs_g": 12.6,
+  "fat_g": 0.3,
+  "_ciqual": {
+   "version": "2025",
+   "code": "20181",
+   "food": "Panais, cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : panais (même famille, racine voisine)."
+  }
  },
  "ing_000699": {
   "kcal": 370.0,
@@ -8898,10 +9974,18 @@
   }
  },
  "ing_000701": {
-  "kcal": 350,
-  "protein_g": 12.0,
-  "carbs_g": 65,
-  "fat_g": 5.0
+  "kcal": 345.68,
+  "protein_g": 15.117,
+  "carbs_g": 68.654,
+  "fat_g": 3.811,
+  "_usda": {
+   "dataset": "Foundation Foods",
+   "release": "2026-04-30",
+   "fdc_id": "2710827",
+   "food": "Einkorn, grain, dry, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/"
+  }
  },
  "ing_000702": {
   "kcal": 347.0,
@@ -8932,10 +10016,19 @@
   }
  },
  "ing_000704": {
-  "kcal": 100,
-  "protein_g": 9.0,
-  "carbs_g": 4,
-  "fat_g": 5.0
+  "kcal": 88.0,
+  "protein_g": 9.71,
+  "carbs_g": 3.11,
+  "fat_g": 3.9,
+  "_ciqual": {
+   "version": "2025",
+   "code": "19664",
+   "food": "Fromage frais type petit suisse, nature, 4% MG environ",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Petit-suisse nature, 4 % MG environ."
+  }
  },
  "ing_000705": {
   "kcal": 81.2,
@@ -8980,10 +10073,21 @@
   }
  },
  "ing_000708": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 16.0,
+  "protein_g": 1.06,
+  "carbs_g": 0.78,
+  "fat_g": 0.6,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11004",
+   "food": "Cornichon, au vinaigre",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "fat_g": "< 0.6"
+   },
+   "note": "Aliment voisin utilisé faute de fiche exacte : cornichon au vinaigre."
+  }
  },
  "ing_000709": {
   "kcal": 60.1,
@@ -9056,10 +10160,19 @@
   }
  },
  "ing_000714": {
-  "kcal": 20,
-  "protein_g": 1.0,
-  "carbs_g": 4,
-  "fat_g": 0.2
+  "kcal": 376.0,
+  "protein_g": 12.0,
+  "carbs_g": 29.4,
+  "fat_g": 17.3,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11088",
+   "food": "Poivre de Cayenne ou piment de Cayenne, poudre",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : piment de Cayenne en poudre (le chipotle est un piment séché et fumé)."
+  }
  },
  "ing_000715": {
   "kcal": 282.0,
@@ -9104,10 +10217,19 @@
   }
  },
  "ing_000718": {
-  "kcal": 20,
-  "protein_g": 1.0,
-  "carbs_g": 4,
-  "fat_g": 0.2
+  "kcal": 37.4,
+  "protein_g": 1.87,
+  "carbs_g": 5.75,
+  "fat_g": 0.44,
+  "_ciqual": {
+   "version": "2025",
+   "code": "20151",
+   "food": "Piment, cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : piment cru."
+  }
  },
  "ing_000719": {
   "kcal": 40.0,
@@ -9350,10 +10472,19 @@
   }
  },
  "ing_000736": {
-  "kcal": 90,
-  "protein_g": 19.0,
-  "carbs_g": 0,
-  "fat_g": 1.0
+  "kcal": 64.8,
+  "protein_g": 15.3,
+  "carbs_g": 0.0,
+  "fat_g": 0.41,
+  "_ciqual": {
+   "version": "2025",
+   "code": "26125",
+   "food": "Cabillaud ou morue du Pacifique, cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Poisson blanc sans précision : cabillaud cru, le plus courant."
+  }
  },
  "ing_000737": {
   "kcal": 163.0,
@@ -9442,10 +10573,19 @@
   }
  },
  "ing_000743": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 331.0,
+  "protein_g": 13.3,
+  "carbs_g": 39.9,
+  "fat_g": 7.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11015",
+   "food": "Poivre noir, poudre",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : poivre noir."
+  }
  },
  "ing_000744": {
   "kcal": 331.0,
@@ -9462,10 +10602,19 @@
   }
  },
  "ing_000745": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 331.0,
+  "protein_g": 13.3,
+  "carbs_g": 39.9,
+  "fat_g": 7.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11015",
+   "food": "Poivre noir, poudre",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : poivre noir."
+  }
  },
  "ing_000746": {
   "kcal": 331.0,
@@ -9496,16 +10645,34 @@
   }
  },
  "ing_000748": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 331.0,
+  "protein_g": 13.3,
+  "carbs_g": 39.9,
+  "fat_g": 7.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11015",
+   "food": "Poivre noir, poudre",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : poivre noir."
+  }
  },
  "ing_000749": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 331.0,
+  "protein_g": 13.3,
+  "carbs_g": 39.9,
+  "fat_g": 7.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11015",
+   "food": "Poivre noir, poudre",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : poivre noir (le poivre vert est la même baie, cueillie verte)."
+  }
  },
  "ing_000750": {
   "kcal": 22.6,
@@ -9568,10 +10735,18 @@
   }
  },
  "ing_000754": {
-  "kcal": 20,
-  "protein_g": 1.0,
-  "carbs_g": 4,
-  "fat_g": 0.2
+  "kcal": 90.66,
+  "protein_g": 1.22,
+  "carbs_g": 6.85,
+  "fat_g": 6.5,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0627652000402",
+   "food": "Poivrons grillés",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0627652000402",
+   "note": "Médiane de 16 produits Open Food Facts (de 29 à 316 kcal/100 g) ; produit de référence le plus proche de la médiane : Poivrons grillés (Golosini, 83.33 kcal)."
+  }
  },
  "ing_000755": {
   "kcal": 350.0,
@@ -9708,22 +10883,48 @@
   }
  },
  "ing_000764": {
-  "kcal": 450,
-  "protein_g": 7.0,
-  "carbs_g": 65,
-  "fat_g": 18.0
+  "kcal": 419.0,
+  "protein_g": 11.0,
+  "carbs_g": 59.7,
+  "fat_g": 12.3,
+  "_ciqual": {
+   "version": "2025",
+   "code": "9231",
+   "food": "Pop-corn ou maïs éclaté, sans huile, non salé",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Pop-corn éclaté, sans huile, non salé."
+  }
  },
  "ing_000765": {
-  "kcal": 240,
+  "kcal": 216.0,
   "protein_g": 19.0,
-  "carbs_g": 0,
-  "fat_g": 18.0
+  "carbs_g": 0.0,
+  "fat_g": 15.0,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "167888",
+   "food": "Pork, fresh, composite of trimmed retail cuts (leg, loin, shoulder, and spareribs), separable lean and fat, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/167888/nutrients",
+   "note": "Porc sans morceau précisé : moyenne des morceaux de détail crus (viande et gras) de l'USDA."
+  }
  },
  "ing_000766": {
-  "kcal": 85,
-  "protein_g": 0.1,
-  "carbs_g": 2.5,
-  "fat_g": 0
+  "kcal": 148.0,
+  "protein_g": 0.2,
+  "carbs_g": 9.96,
+  "fat_g": 0.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "1006",
+   "food": "Vin doux",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : vin doux (vin muté)."
+  }
  },
  "ing_000767": {
   "kcal": 20.1,
@@ -9740,10 +10941,19 @@
   }
  },
  "ing_000768": {
-  "kcal": 400,
-  "protein_g": 0,
-  "carbs_g": 100,
-  "fat_g": 0
+  "kcal": 365.0,
+  "protein_g": 0.26,
+  "carbs_g": 90.4,
+  "fat_g": 0.05,
+  "_ciqual": {
+   "version": "2025",
+   "code": "9510",
+   "food": "Amidon de maïs ou fécule de maïs",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : fécule de maïs (base des poudres à flan)."
+  }
  },
  "ing_000769": {
   "kcal": 108.0,
@@ -9958,10 +11168,19 @@
   }
  },
  "ing_000784": {
-  "kcal": 20,
-  "protein_g": 2.0,
-  "carbs_g": 3,
-  "fat_g": 0.3
+  "kcal": 29.2,
+  "protein_g": 3.38,
+  "carbs_g": 0.81,
+  "fat_g": 0.69,
+  "_ciqual": {
+   "version": "2025",
+   "code": "15029",
+   "food": "Graine germée de luzerne, crue",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : graine germée de luzerne."
+  }
  },
  "ing_000785": {
   "kcal": 80.5,
@@ -9978,10 +11197,18 @@
   }
  },
  "ing_000786": {
-  "kcal": 600,
-  "protein_g": 18.0,
-  "carbs_g": 15,
-  "fat_g": 52.0
+  "kcal": 538.0,
+  "protein_g": 5.7,
+  "carbs_g": 52.0,
+  "fat_g": 32.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "4056489215677",
+   "food": "Praliné selection",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/4056489215677",
+   "note": "Médiane de 43 produits Open Food Facts (de 84 à 615.38 kcal/100 g) ; produit de référence le plus proche de la médiane : Praliné selection (Lidl, 538 kcal). Écart large entre produits."
+  }
  },
  "ing_000787": {
   "kcal": 310,
@@ -10046,10 +11273,19 @@
   }
  },
  "ing_000792": {
-  "kcal": 48,
-  "protein_g": 0.8,
-  "carbs_g": 11,
-  "fat_g": 0.2
+  "kcal": 51.6,
+  "protein_g": 0.7,
+  "carbs_g": 9.92,
+  "fat_g": 0.28,
+  "_ciqual": {
+   "version": "2025",
+   "code": "13100",
+   "food": "Prune, sans noyau, crue",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : prune crue."
+  }
  },
  "ing_000793": {
   "kcal": 22.6,
@@ -10297,10 +11533,18 @@
   }
  },
  "ing_000810": {
-  "kcal": 65,
-  "protein_g": 0.9,
-  "carbs_g": 16,
-  "fat_g": 0.3
+  "kcal": 82.0,
+  "protein_g": 0.65,
+  "carbs_g": 20.9,
+  "fat_g": 0.21,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "168167",
+   "food": "Rambutan, canned, syrup pack",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/168167/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : ramboutan au sirop (pas de fiche pour le fruit frais)."
+  }
  },
  "ing_000811": {
   "kcal": 327.0,
@@ -10333,10 +11577,18 @@
   }
  },
  "ing_000813": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 188.0,
+  "protein_g": 0.9,
+  "carbs_g": 46.0,
+  "fat_g": 0.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3256222404677",
+   "food": "Crème balsamiques",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3256222404677",
+   "note": "Médiane de 5 produits Open Food Facts (de 30 à 304 kcal/100 g) ; produit de référence le plus proche de la médiane : Crème balsamiques (U bio, 188 kcal)."
+  }
  },
  "ing_000814": {
   "kcal": 300,
@@ -10459,10 +11711,18 @@
   }
  },
  "ing_000823": {
-  "kcal": 355,
-  "protein_g": 8.0,
-  "carbs_g": 78,
-  "fat_g": 1.0
+  "kcal": 121.0,
+  "protein_g": 3.0,
+  "carbs_g": 18.9,
+  "fat_g": 3.4,
+  "_ciqual": {
+   "version": "2025",
+   "code": "39212",
+   "food": "Riz au lait vanille, cannelle ou nature, rayon frais",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {}
+  }
  },
  "ing_000824": {
   "kcal": 351.0,
@@ -10935,10 +12195,18 @@
   }
  },
  "ing_000857": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 258.5,
+  "protein_g": 0.6,
+  "carbs_g": 6.67,
+  "fat_g": 18.93,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0810062520442",
+   "food": "Classic chimichurri",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0810062520442",
+   "note": "Médiane de 52 produits Open Food Facts (de 33.33 à 1940 kcal/100 g) ; produit de référence le plus proche de la médiane : Classic chimichurri (marque non indiquée, 200 kcal). Écart large entre produits."
+  }
  },
  "ing_000858": {
   "kcal": 572.0,
@@ -11039,22 +12307,44 @@
   }
  },
  "ing_000865": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 11.0,
+  "protein_g": 0.51,
+  "carbs_g": 1.75,
+  "fat_g": 0.37,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "174527",
+   "food": "Sauce, ready-to-serve, pepper or hot",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/174527/nutrients"
+  }
  },
  "ing_000866": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 11.0,
+  "protein_g": 0.51,
+  "carbs_g": 1.75,
+  "fat_g": 0.37,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "174527",
+   "food": "Sauce, ready-to-serve, pepper or hot",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/174527/nutrients"
+  }
  },
  "ing_000867": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 67.0,
+  "protein_g": 3.5,
+  "carbs_g": 13.33,
+  "fat_g": 0.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "4903001044133",
+   "food": "Yamasa, Kombu Ponzu",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/4903001044133",
+   "note": "Médiane de 43 produits Open Food Facts (de 10 à 439 kcal/100 g) ; produit de référence le plus proche de la médiane : Yamasa, Kombu Ponzu (Yamasa Corporation, 67 kcal)."
+  }
  },
  "ing_000868": {
   "kcal": 430.0,
@@ -11085,10 +12375,18 @@
   }
  },
  "ing_000870": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 267.69,
+  "protein_g": 6.7,
+  "carbs_g": 27.0,
+  "fat_g": 14.1,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0078895147452",
+   "food": "Ready sauce satay chicken",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0078895147452",
+   "note": "Médiane de 7 produits Open Food Facts (de 178 à 353 kcal/100 g) ; produit de référence le plus proche de la médiane : Ready sauce satay chicken (Lee Kum Kee, 267.69 kcal)."
+  }
  },
  "ing_000871": {
   "kcal": 39.9,
@@ -11253,22 +12551,45 @@
   }
  },
  "ing_000882": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 77.0,
+  "protein_g": 0.0,
+  "carbs_g": 19.2,
+  "fat_g": 0.0,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "171610",
+   "food": "Sauce, worcestershire",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/171610/nutrients"
+  }
  },
  "ing_000883": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 77.0,
+  "protein_g": 0.0,
+  "carbs_g": 19.2,
+  "fat_g": 0.0,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "171610",
+   "food": "Sauce, worcestershire",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/171610/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : sauce Worcestershire classique."
+  }
  },
  "ing_000884": {
-  "kcal": 300,
-  "protein_g": 18.0,
-  "carbs_g": 1,
-  "fat_g": 25.0
+  "kcal": 286.0,
+  "protein_g": 17.4,
+  "carbs_g": 1.22,
+  "fat_g": 23.4,
+  "_ciqual": {
+   "version": "2025",
+   "code": "30780",
+   "food": "Saucisse (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {}
+  }
  },
  "ing_000885": {
   "kcal": 321.0,
@@ -11415,16 +12736,32 @@
   }
  },
  "ing_000895": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 86.0,
+  "protein_g": 4.2,
+  "carbs_g": 15.7,
+  "fat_g": 0.2,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "50191390",
+   "food": "Garlic salt",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/50191390",
+   "note": "Médiane de 3 produits Open Food Facts (de 84 à 97 kcal/100 g) ; produit de référence le plus proche de la médiane : Garlic salt (Schwartz, 86 kcal)."
+  }
  },
  "ing_000896": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 18.0,
+  "protein_g": 0.9,
+  "carbs_g": 2.5,
+  "fat_g": 0.5,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "7670393424795",
+   "food": "Herbamare",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/7670393424795",
+   "note": "Médiane de 10 produits Open Food Facts (de 18 à 305 kcal/100 g) ; produit de référence le plus proche de la médiane : Herbamare (A Vogel, 18 kcal)."
+  }
  },
  "ing_000897": {
   "kcal": 49.0,
@@ -11581,10 +12918,17 @@
   }
  },
  "ing_000908": {
-  "kcal": 310,
-  "protein_g": 0.3,
-  "carbs_g": 76,
-  "fat_g": 0
+  "kcal": 310.0,
+  "protein_g": 0.09,
+  "carbs_g": 76.4,
+  "fat_g": 0.45,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "170277",
+   "food": "Sweetener, syrup, agave",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/170277/nutrients"
+  }
  },
  "ing_000909": {
   "kcal": 269.0,
@@ -11601,46 +12945,104 @@
   }
  },
  "ing_000910": {
-  "kcal": 45,
-  "protein_g": 0.3,
-  "carbs_g": 10,
-  "fat_g": 0
+  "kcal": 252.0,
+  "protein_g": 0.25,
+  "carbs_g": 62.5,
+  "fat_g": 0.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "18017",
+   "food": "Sirop à diluer, sucré",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "fat_g": "< 0.5"
+   }
+  }
  },
  "ing_000911": {
-  "kcal": 310,
-  "protein_g": 0.3,
-  "carbs_g": 76,
-  "fat_g": 0
+  "kcal": 283.0,
+  "protein_g": 0.0,
+  "carbs_g": 76.8,
+  "fat_g": 0.2,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "168837",
+   "food": "Syrups, corn, light",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/168837/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : sirop de maïs léger (sirop de glucose)."
+  }
  },
  "ing_000912": {
-  "kcal": 45,
-  "protein_g": 0.3,
-  "carbs_g": 10,
-  "fat_g": 0
+  "kcal": 268.0,
+  "protein_g": 0.0,
+  "carbs_g": 66.9,
+  "fat_g": 0.0,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "168088",
+   "food": "Syrups, grenadine",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/168088/nutrients"
+  }
  },
  "ing_000913": {
-  "kcal": 86,
-  "protein_g": 3.2,
-  "carbs_g": 19,
-  "fat_g": 1.2
+  "kcal": 283.0,
+  "protein_g": 0.0,
+  "carbs_g": 76.8,
+  "fat_g": 0.2,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "168837",
+   "food": "Syrups, corn, light",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/168837/nutrients"
+  }
  },
  "ing_000914": {
-  "kcal": 35,
-  "protein_g": 3.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 252.0,
+  "protein_g": 0.25,
+  "carbs_g": 62.5,
+  "fat_g": 0.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "18017",
+   "food": "Sirop à diluer, sucré",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "fat_g": "< 0.5"
+   }
+  }
  },
  "ing_000915": {
-  "kcal": 400,
-  "protein_g": 0,
-  "carbs_g": 100,
-  "fat_g": 0
+  "kcal": 328.0,
+  "protein_g": 0.0,
+  "carbs_g": 82.0,
+  "fat_g": 0.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3290370000404",
+   "food": "Sirop de sucre de canne (Damoiseau)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3290370000404",
+   "note": "Recoupé avec Monin « Sirop sucre de canne » (3052911248467 : 343 kcal, 85,7 g de glucides)."
+  }
  },
  "ing_000916": {
-  "kcal": 100,
-  "protein_g": 9.0,
-  "carbs_g": 4,
-  "fat_g": 5.0
+  "kcal": 61.0,
+  "protein_g": 10.0,
+  "carbs_g": 3.9,
+  "fat_g": 0.2,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "4016241030603",
+   "food": "Skyr Natur",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/4016241030603",
+   "note": "Médiane de 78 produits Open Food Facts (de 37.1 à 760 kcal/100 g) ; produit de référence le plus proche de la médiane : Skyr Natur (Arla, 61 kcal)."
+  }
  },
  "ing_000917": {
   "kcal": 441.0,
@@ -11715,10 +13117,18 @@
   }
  },
  "ing_000922": {
-  "kcal": 220,
-  "protein_g": 20.0,
-  "carbs_g": 0,
-  "fat_g": 15.0
+  "kcal": 201.0,
+  "protein_g": 18.9,
+  "carbs_g": 0.0,
+  "fat_g": 13.4,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "172481",
+   "food": "Lamb, foreshank, separable lean and fat, trimmed to 1/4\" fat, choice, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/172481/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : jarret avant d'agneau cru (foreshank), viande et gras."
+  }
  },
  "ing_000923": {
   "kcal": 364.0,
@@ -11849,10 +13259,18 @@
   }
  },
  "ing_000932": {
-  "kcal": 400,
-  "protein_g": 0,
-  "carbs_g": 100,
-  "fat_g": 0
+  "kcal": 383.0,
+  "protein_g": 0.4,
+  "carbs_g": 96.85,
+  "fat_g": 0.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3700214610480",
+   "food": "Sucre Cmplet Muscovado",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3700214610480",
+   "note": "Médiane de 14 produits Open Food Facts (de 133 à 394 kcal/100 g) ; produit de référence le plus proche de la médiane : Sucre Cmplet Muscovado (Alter Eco, 394 kcal). Sucre complet de canne (muscovado)."
+  }
  },
  "ing_000933": {
   "kcal": 393.0,
@@ -11897,16 +13315,32 @@
   }
  },
  "ing_000936": {
-  "kcal": 310,
-  "protein_g": 0.3,
-  "carbs_g": 76,
-  "fat_g": 0
+  "kcal": 283.0,
+  "protein_g": 0.0,
+  "carbs_g": 76.8,
+  "fat_g": 0.2,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "168837",
+   "food": "Syrups, corn, light",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/168837/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : sirop de glucose (sucre liquide de composition voisine)."
+  }
  },
  "ing_000937": {
-  "kcal": 400,
-  "protein_g": 0,
-  "carbs_g": 100,
-  "fat_g": 0
+  "kcal": 383.0,
+  "protein_g": 0.4,
+  "carbs_g": 96.85,
+  "fat_g": 0.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3700214610480",
+   "food": "Sucre Cmplet Muscovado",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3700214610480",
+   "note": "Médiane de 14 produits Open Food Facts (de 133 à 394 kcal/100 g) ; produit de référence le plus proche de la médiane : Sucre Cmplet Muscovado (Alter Eco, 394 kcal)."
+  }
  },
  "ing_000938": {
   "kcal": 399.0,
@@ -11979,10 +13413,19 @@
   }
  },
  "ing_000943": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 327.0,
+  "protein_g": 12.6,
+  "carbs_g": 37.8,
+  "fat_g": 7.85,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11081",
+   "food": "Epice (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : épice (aliment moyen Ciqual)."
+  }
  },
  "ing_000944": {
   "kcal": 73.0,
@@ -12471,10 +13914,19 @@
   }
  },
  "ing_000978": {
-  "kcal": 40,
-  "protein_g": 1.5,
-  "carbs_g": 8,
-  "fat_g": 0.1
+  "kcal": 493.0,
+  "protein_g": 8.29,
+  "carbs_g": 51.0,
+  "fat_g": 26.3,
+  "_ciqual": {
+   "version": "2025",
+   "code": "15048",
+   "food": "Mélange apéritif de graines et fruits séchés, sans sel ajouté",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Mélange de graines et fruits séchés, sans sel."
+  }
  },
  "ing_000979": {
   "kcal": 237.0,
@@ -12491,16 +13943,33 @@
   }
  },
  "ing_000980": {
-  "kcal": 20,
-  "protein_g": 2.0,
-  "carbs_g": 3,
-  "fat_g": 0.3
+  "kcal": 23.0,
+  "protein_g": 1.43,
+  "carbs_g": 4.48,
+  "fat_g": 0.25,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "168564",
+   "food": "Radicchio, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/168564/nutrients",
+   "note": "Trévise = radicchio."
+  }
  },
  "ing_000981": {
-  "kcal": 250,
-  "protein_g": 0,
-  "carbs_g": 0,
-  "fat_g": 0
+  "kcal": 225.0,
+  "protein_g": 0.1,
+  "carbs_g": 25.4,
+  "fat_g": 0.23,
+  "_ciqual": {
+   "version": "2025",
+   "code": "1003",
+   "food": "Liqueur",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : liqueur (aliment moyen Ciqual)."
+  }
  },
  "ing_000982": {
   "kcal": 25,
@@ -12569,16 +14038,32 @@
   "fat_g": 8.0
  },
  "ing_000989": {
-  "kcal": 220,
-  "protein_g": 20.0,
-  "carbs_g": 0,
-  "fat_g": 15.0
+  "kcal": 144.0,
+  "protein_g": 19.4,
+  "carbs_g": 0.0,
+  "fat_g": 6.77,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "173815",
+   "food": "Veal, composite of trimmed retail cuts, separable lean and fat, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/173815/nutrients",
+   "note": "Veau sans morceau précisé : moyenne des morceaux de détail crus (viande et gras) de l'USDA."
+  }
  },
  "ing_000990": {
-  "kcal": 400,
-  "protein_g": 0,
-  "carbs_g": 100,
-  "fat_g": 0
+  "kcal": 396.0,
+  "protein_g": 0.0,
+  "carbs_g": 99.0,
+  "fat_g": 0.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "3104463090008",
+   "food": "Vergeoise brune (Saint Louis)",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/3104463090008",
+   "note": "Produit de référence de la vergeoise en France ; cohérent avec le sucre roux Ciqual (393 kcal)."
+  }
  },
  "ing_000991": {
   "kcal": 365.0,
@@ -12637,22 +14122,48 @@
   }
  },
  "ing_000995": {
-  "kcal": 95,
-  "protein_g": 18.0,
-  "carbs_g": 2,
-  "fat_g": 1.5
+  "kcal": 86.0,
+  "protein_g": 14.7,
+  "carbs_g": 3.57,
+  "fat_g": 0.96,
+  "_usda": {
+   "dataset": "USDA FDC (SR Legacy)",
+   "fdc_id": "174214",
+   "food": "Mollusks, clam, mixed species, raw",
+   "basis": "100g",
+   "url": "https://fdc.nal.usda.gov/food-details/174214/nutrients",
+   "note": "Aliment voisin utilisé faute de fiche exacte : palourde (clam) crue."
+  }
  },
  "ing_000996": {
-  "kcal": 35,
-  "protein_g": 3.0,
-  "carbs_g": 5,
-  "fat_g": 0.6
+  "kcal": 51.2,
+  "protein_g": 3.26,
+  "carbs_g": 4.69,
+  "fat_g": 0.93,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11080",
+   "food": "Herbes aromatiques fraîches (aliment moyen)",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : herbes aromatiques fraîches."
+  }
  },
  "ing_000997": {
-  "kcal": 300,
-  "protein_g": 18.0,
-  "carbs_g": 1,
-  "fat_g": 25.0
+  "kcal": 254.0,
+  "protein_g": 18.75,
+  "carbs_g": 0.36,
+  "fat_g": 19.75,
+  "_ciqual": {
+   "version": "2025",
+   "code": "6254+28476",
+   "food": "Moyenne 50/50 : Boeuf, steak haché 15% MG cru / Porc, maigre 80/20 cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Viande hachée mélangée (bœuf et porc) : moyenne à parts égales des deux fiches Ciqual."
+  }
  },
  "ing_000998": {
   "kcal": 76.7,
@@ -12701,16 +14212,34 @@
   }
  },
  "ing_001001": {
-  "kcal": 85,
-  "protein_g": 0.1,
-  "carbs_g": 2.5,
-  "fat_g": 0
+  "kcal": 148.0,
+  "protein_g": 0.2,
+  "carbs_g": 9.96,
+  "fat_g": 0.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "1006",
+   "food": "Vin doux",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : vin doux (le xérès sec est moins sucré)."
+  }
  },
  "ing_001002": {
-  "kcal": 85,
-  "protein_g": 0.1,
-  "carbs_g": 2.5,
-  "fat_g": 0
+  "kcal": 55.3,
+  "protein_g": 0.25,
+  "carbs_g": 0.17,
+  "fat_g": 0.0,
+  "_ciqual": {
+   "version": "2025",
+   "code": "5215",
+   "food": "Vin blanc sec",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : vin blanc sec."
+  }
  },
  "ing_001003": {
   "kcal": 69.2,
@@ -12773,10 +14302,21 @@
   }
  },
  "ing_001007": {
-  "kcal": 20,
-  "protein_g": 0,
-  "carbs_g": 1,
-  "fat_g": 0
+  "kcal": 91.7,
+  "protein_g": 0.69,
+  "carbs_g": 18.0,
+  "fat_g": 0.6,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11091",
+   "food": "Vinaigre balsamique",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "fat_g": "< 0.6"
+   },
+   "note": "Aliment voisin utilisé faute de fiche exacte : vinaigre balsamique."
+  }
  },
  "ing_001008": {
   "kcal": 18.0,
@@ -12835,10 +14375,18 @@
   }
  },
  "ing_001012": {
-  "kcal": 20,
-  "protein_g": 0,
-  "carbs_g": 1,
-  "fat_g": 0
+  "kcal": 133.0,
+  "protein_g": 0.0,
+  "carbs_g": 26.67,
+  "fat_g": 0.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0073575220029",
+   "food": "Citrus seasoned rice vinegar, citrus",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0073575220029",
+   "note": "Médiane de 30 produits Open Food Facts (de 53 à 200 kcal/100 g) ; produit de référence le plus proche de la médiane : Citrus seasoned rice vinegar, citrus (Mizkan,   Mizkan America  Inc., 133 kcal)."
+  }
  },
  "ing_001013": {
   "kcal": 22.5,
@@ -12885,16 +14433,33 @@
   }
  },
  "ing_001016": {
-  "kcal": 20,
-  "protein_g": 0,
-  "carbs_g": 1,
-  "fat_g": 0
+  "kcal": 133.0,
+  "protein_g": 0.0,
+  "carbs_g": 26.67,
+  "fat_g": 0.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "0073575220029",
+   "food": "Citrus seasoned rice vinegar, citrus",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/0073575220029",
+   "note": "Médiane de 30 produits Open Food Facts (de 53 à 200 kcal/100 g) ; produit de référence le plus proche de la médiane : Citrus seasoned rice vinegar, citrus (Mizkan,   Mizkan America  Inc., 133 kcal). Vinaigre pour sushi = vinaigre de riz assaisonné."
+  }
  },
  "ing_001017": {
-  "kcal": 20,
-  "protein_g": 0,
-  "carbs_g": 1,
-  "fat_g": 0
+  "kcal": 471.0,
+  "protein_g": 0.7,
+  "carbs_g": 3.03,
+  "fat_g": 50.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "11108",
+   "food": "Sauce vinaigrette à l'huile d'olive (50 à 75% d'huile), préemballée",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {},
+   "note": "Aliment voisin utilisé faute de fiche exacte : vinaigrette à l'huile d'olive."
+  }
  },
  "ing_001018": {
   "kcal": 250.0,
@@ -12925,10 +14490,18 @@
   }
  },
  "ing_001020": {
-  "kcal": 120,
-  "protein_g": 2.0,
-  "carbs_g": 12,
-  "fat_g": 7.0
+  "kcal": 300.0,
+  "protein_g": 1.8,
+  "carbs_g": 43.5,
+  "fat_g": 12.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "4311596616985",
+   "food": "Wasabi Paste",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/4311596616985",
+   "note": "Médiane de 25 produits Open Food Facts (de 107.2 à 376 kcal/100 g) ; produit de référence le plus proche de la médiane : Wasabi Paste (Ming Chu, 276 kcal)."
+  }
  },
  "ing_001021": {
   "kcal": 252.0,
@@ -13001,16 +14574,35 @@
   }
  },
  "ing_001026": {
-  "kcal": 42,
-  "protein_g": 0.8,
-  "carbs_g": 10,
-  "fat_g": 0.2
+  "kcal": 24.3,
+  "protein_g": 0.25,
+  "carbs_g": 1.56,
+  "fat_g": 0.5,
+  "_ciqual": {
+   "version": "2025",
+   "code": "13009",
+   "food": "Citron, chair sans peau, sans pépins, cru",
+   "basis": "100g",
+   "url": "https://doi.org/10.57745/RDMHWY",
+   "qualifiers": {
+    "fat_g": "< 0.5"
+   },
+   "note": "Aliment voisin utilisé faute de fiche exacte : citron (agrume voisin)."
+  }
  },
  "ing_001027": {
-  "kcal": 300,
-  "protein_g": 12.0,
-  "carbs_g": 50,
-  "fat_g": 8.0
+  "kcal": 381.0,
+  "protein_g": 10.0,
+  "carbs_g": 41.7,
+  "fat_g": 20.0,
+  "_openfoodfacts": {
+   "provider": "Open Food Facts",
+   "code": "9310571010287",
+   "food": "Zaatar",
+   "basis": "100g",
+   "url": "https://world.openfoodfacts.org/product/9310571010287",
+   "note": "Médiane de 7 produits Open Food Facts (de 300 à 462 kcal/100 g) ; produit de référence le plus proche de la médiane : Zaatar (marque non indiquée, 381 kcal)."
+  }
  },
  "ing_001028": {
   "kcal": 297.0,
