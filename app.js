@@ -508,13 +508,23 @@ function icon(name) {
 // Piège le focus (Tab/Maj+Tab) à l'intérieur d'une fenêtre modale, et
 // permet de fermer avec la touche Échap — comportement standard attendu
 // pour tout dialogue, indispensable à la navigation au clavier.
+// Éléments focalisables réellement visibles, recalculés à chaque appel :
+// une fenêtre peut contenir des boutons masqués (navigation entre les
+// parties d'un QR code) ou se remplir après son ouverture — figer la
+// liste à l'ouverture faisait viser un bouton caché (focus perdu, Tab
+// sortant de la fenêtre).
+function visibleFocusables(sheet) {
+  return Array.from(sheet.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+    .filter((elem) => !elem.disabled && elem.getClientRects().length > 0);
+}
 function trapFocusInModal(sheet, onEscape) {
-  const focusable = sheet.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-  const first = focusable[0];
-  const last = focusable[focusable.length - 1];
   const handler = (e) => {
     if (e.key === "Escape") { e.preventDefault(); onEscape(); return; }
-    if (e.key !== "Tab" || !first || !last) return;
+    if (e.key !== "Tab") return;
+    const focusable = visibleFocusables(sheet);
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (!first || !last) return;
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   };
@@ -568,7 +578,7 @@ function initModalA11y(overlay, sheet, options = {}) {
     }
   });
   observer.observe(document.body, { childList: true });
-  const focusable = sheet.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  const focusable = visibleFocusables(sheet)[0];
   if (focusable) focusable.focus();
 }
 
@@ -4421,8 +4431,8 @@ function renderCookbookExport() {
   const checkboxes = [];
   sortedRecipes.forEach((recipe) => {
     const row = el(`<div class="checkbox-row">
-      <input type="checkbox" id="cb-${recipe.id}">
-      <label for="cb-${recipe.id}">${escapeHtml(recipe.name)}</label>
+      <input type="checkbox" id="cb-${escapeHtml(recipe.id)}">
+      <label for="cb-${escapeHtml(recipe.id)}">${escapeHtml(recipe.name)}</label>
     </div>`);
     const checkbox = row.querySelector("input");
     checkbox.addEventListener("change", () => {
@@ -4686,6 +4696,8 @@ async function openQrCodeModal(recipe, persons) {
     try {
       await loadQrCodeLib();
       holder.innerHTML = generateQrCodeImgTag(parts[currentPart]);
+      const qrImg = holder.querySelector("img");
+      if (qrImg) qrImg.alt = sheet.querySelector("h2") ? sheet.querySelector("h2").textContent : "QR code";
     } catch (e) {
       holder.innerHTML = `<div><span style="font-size:13px;color:var(--danger);">${escapeHtml(t("qrcode_load_error"))}</span><div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml(formatCaughtError(e))}</div></div>`;
     }
@@ -4932,6 +4944,8 @@ async function openShoppingQrCodeModal() {
     try {
       await loadQrCodeLib();
       holder.innerHTML = generateQrCodeImgTag(parts[currentPart]);
+      const qrImg = holder.querySelector("img");
+      if (qrImg) qrImg.alt = sheet.querySelector("h2") ? sheet.querySelector("h2").textContent : "QR code";
     } catch (e) {
       holder.innerHTML = `<div><span style="font-size:13px;color:var(--danger);">${escapeHtml(t("qrcode_load_error"))}</span><div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml(formatCaughtError(e))}</div></div>`;
     }
@@ -8043,14 +8057,6 @@ async function setIngredientOverride(name, allergens, nutrition, price, substitu
   await storePut("ingredientOverrides", record);
   INGREDIENT_OVERRIDES[name] = record;
 }
-async function moveIngredientOverride(oldName, newName) {
-  if (!INGREDIENT_OVERRIDES[oldName]) return;
-  const record = { ...INGREDIENT_OVERRIDES[oldName], name: newName };
-  await storeDelete("ingredientOverrides", oldName);
-  await storePut("ingredientOverrides", record);
-  delete INGREDIENT_OVERRIDES[oldName];
-  INGREDIENT_OVERRIDES[newName] = record;
-}
 async function deleteIngredientOverrideFor(name) {
   if (!INGREDIENT_OVERRIDES[name]) return;
   await storeDelete("ingredientOverrides", name);
@@ -9229,7 +9235,45 @@ function sanitizeBackupItem(item, storeName, report) {
       return { ...it, unit: migratedUnit };
     });
   }
+  ensureBackupItemShape(cleaned, storeName, report);
   return cleaned;
+}
+
+// Champs dont l'affichage et les tris dépendent sans vérification
+// (localeCompare sur un nom ou une date, .map/.length sur une liste) :
+// un seul enregistrement où ils manquent suffisait à bloquer un écran,
+// voire le démarrage de l'application (tri de l'historique de
+// planning au chargement) — et donc l'accès à toutes les données après
+// la restauration d'une sauvegarde abîmée. Réparés plutôt que rejetés,
+// comme le reste de sanitizeBackupItem.
+function ensureBackupItemShape(cleaned, storeName, report) {
+  const isPlainObject = (v) => v && typeof v === "object" && !Array.isArray(v);
+  const fixString = (field) => {
+    if (typeof cleaned[field] !== "string") { cleaned[field] = ""; report.structuralFixes += 1; }
+  };
+  const fixArray = (field) => {
+    if (!Array.isArray(cleaned[field])) { cleaned[field] = []; report.structuralFixes += 1; }
+    const before = cleaned[field].length;
+    cleaned[field] = cleaned[field].filter(isPlainObject);
+    if (cleaned[field].length !== before) report.structuralFixes += 1;
+  };
+  const fixObject = (field) => {
+    if (!isPlainObject(cleaned[field])) { cleaned[field] = {}; report.structuralFixes += 1; }
+  };
+  if (storeName === "shopping" || storeName === "pantry") fixString("name");
+  if (storeName === "menus") {
+    fixString("name");
+    fixArray("items");
+    cleaned.items = cleaned.items.map((it) => ({ ...it, persons: sanitizeNonNegativeNumber(it.persons) || 4 }));
+  }
+  if (storeName === "savedShoppingLists") {
+    fixString("name");
+    fixArray("items");
+    cleaned.items = cleaned.items.map((it) => (typeof it.name === "string" ? it : { ...it, name: "" }));
+  }
+  if (storeName === "planTemplates") { fixString("name"); fixObject("plan"); }
+  if (storeName === "planHistory") { fixString("date"); fixObject("plan"); }
+  if (storeName === "trash") fixString("deletedAt");
 }
 
 async function parseBackupFile(file) {
@@ -9336,10 +9380,23 @@ async function importAllData(data, mode) {
   // à jour en base.
   state.menus = await storeAll("menus");
   state.planTemplates = await storeAll("planTemplates");
-  state.planHistory = (await storeAll("planHistory")).sort((a, b) => b.date.localeCompare(a.date));
+  state.planHistory = (await storeAll("planHistory")).sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
   state.trash = (await storeAll("trash")).sort((a, b) => (b.deletedAt || "").localeCompare(a.deletedAt || ""));
   state.savedShoppingLists = await storeAll("savedShoppingLists");
+  repairLoadedShapes();
   state.weeklyPlan = (await kvGet("weeklyPlan")) || {};
+}
+
+// Même réparation qu'à l'import (ensureBackupItemShape), appliquée en
+// mémoire seulement aux données déjà en base : couvre une sauvegarde
+// abîmée restaurée par une version antérieure à cette vérification.
+function repairLoadedShapes() {
+  const report = { structuralFixes: 0 };
+  state.recipes.forEach((r) => { if (typeof r.name !== "string") r.name = ""; });
+  [["shopping", state.shopping], ["pantry", state.pantry], ["menus", state.menus],
+    ["savedShoppingLists", state.savedShoppingLists], ["planTemplates", state.planTemplates],
+    ["planHistory", state.planHistory], ["trash", state.trash]]
+    .forEach(([storeName, items]) => items.forEach((item) => ensureBackupItemShape(item, storeName, report)));
 }
 
 async function renderDiagnostic() {
@@ -9451,7 +9508,7 @@ async function renderDiagnostic() {
     <div class="section-label">${escapeHtml(t("diagnostic_report_title"))}</div>
     <div class="card" style="padding:16px;">
       <p style="font-size:13px;color:var(--text-muted);margin:0 0 12px;line-height:1.5;">${escapeHtml(t("diagnostic_report_hint"))}</p>
-      <textarea id="diag-report-text" rows="4" placeholder="${escapeHtml(t("diagnostic_report_placeholder"))}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);font-size:14px;font-family:inherit;resize:vertical;"></textarea>
+      <textarea id="diag-report-text" rows="4" aria-label="${escapeHtml(t("diagnostic_report_title"))}" placeholder="${escapeHtml(t("diagnostic_report_placeholder"))}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);font-size:14px;font-family:inherit;resize:vertical;"></textarea>
       <button type="button" class="btn btn-primary" id="diag-report-btn" style="margin-top:10px;">${escapeHtml(t("diagnostic_report_button"))}</button>
     </div>
   </div>`);
@@ -9780,7 +9837,7 @@ function renderBackup() {
   });
   wrap.appendChild(sharedSection);
 
-  const diagLink = el(`<p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">v${APP_VERSION} · <a href="#" id="open-diagnostic" style="color:var(--accent);">${escapeHtml(t("nav_diagnostic"))}</a> · <a href="https://majogari15.github.io/mes-recettes-mobile/confidentialite.html" target="_blank" rel="noopener" style="color:var(--accent);">${escapeHtml(t("privacy_policy_link"))}</a></p>`);
+  const diagLink = el(`<p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">v${APP_VERSION} · <a href="#" id="open-diagnostic" style="color:var(--accent);display:inline-block;padding:6px 4px;">${escapeHtml(t("nav_diagnostic"))}</a> · <a href="https://majogari15.github.io/mes-recettes-mobile/confidentialite.html" target="_blank" rel="noopener" style="color:var(--accent);display:inline-block;padding:6px 4px;">${escapeHtml(t("privacy_policy_link"))}</a></p>`);
   diagLink.querySelector("#open-diagnostic").addEventListener("click", (e) => {
     e.preventDefault();
     state.screen = "diagnostic";
@@ -9804,7 +9861,7 @@ function renderCompare() {
   [fieldA, fieldB].forEach((field) => {
     const select = field.querySelector("select");
     select.appendChild(el(`<option value="">—</option>`));
-    sortedRecipes.forEach((r) => select.appendChild(el(`<option value="${r.id}">${escapeHtml(r.name)}</option>`)));
+    sortedRecipes.forEach((r) => select.appendChild(el(`<option value="${escapeHtml(r.id)}">${escapeHtml(r.name)}</option>`)));
   });
   pickerRow.appendChild(fieldA);
   pickerRow.appendChild(fieldB);
@@ -10047,7 +10104,7 @@ function renderMenuList() {
 function renderMenuDetail() {
   const wrap = el(`<div></div>`);
   const existing = state.currentMenuId ? state.menus.find((m) => m.id === state.currentMenuId) : null;
-  const items = existing ? existing.items.map((i) => ({ ...i })) : [];
+  const items = existing ? (existing.items || []).map((i) => ({ ...i })) : [];
 
   wrap.appendChild(el(`<div class="field">
     <label for="menu-name">${t("menu_name_label")}</label>
@@ -10070,7 +10127,7 @@ function renderMenuDetail() {
       const row = el(`<div class="ingredient-item">
         <span>${escapeHtml(recipe ? recipe.name : "?")}</span>
         <span style="display:flex;align-items:center;gap:8px;">
-          <input type="number" min="1" value="${item.persons}" style="width:50px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:6px;">
+          <input type="number" min="1" value="${escapeHtml(item.persons)}" aria-label="${escapeHtml(t("form_persons"))} — ${escapeHtml(recipe ? recipe.name : "?")}" style="width:50px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:6px;">
           <button aria-label="${t("common_delete")}" style="width:32px;height:32px;border:none;border-radius:8px;background:var(--danger-light);color:var(--danger);">${icon("trash")}</button>
         </span>
       </div>`);
@@ -10214,7 +10271,7 @@ function renderPlanning() {
         const assignments = planSlotAssignments((state.weeklyPlan[day] || {})[slot]);
         const labelRow = el(`<div class="ingredient-item" ${assignments.length ? 'style="border-bottom:none;padding-bottom:4px;"' : ""}></div>`);
         labelRow.innerHTML = `<span style="color:var(--text-muted);">${escapeHtml(translateSlot(slot))}</span>`;
-        const addBtn = el(`<button style="border:none;background:none;color:var(--primary);font-weight:600;font-size:13px;">${t("planning_empty_slot")}</button>`);
+        const addBtn = el(`<button style="border:none;background:none;color:var(--primary);font-weight:600;font-size:13px;min-height:32px;padding:6px 8px;">${t("planning_empty_slot")}</button>`);
         addBtn.addEventListener("click", () => {
           openRecipePickerModal(async (recipe) => {
             if (!state.weeklyPlan[day]) state.weeklyPlan[day] = {};
@@ -13046,7 +13103,7 @@ function renderImportUrl() {
   wrap.appendChild(el(`<div class="field">
     <label for="import-url-input">${t("import_url_label")}</label>
     <div style="display:flex;gap:8px;">
-      <input type="url" id="import-url-input" placeholder="${t("import_url_placeholder")}" value="${escapeHtml(sharedUrlValue)}" style="flex:1;">
+      <input type="url" id="import-url-input" placeholder="${t("import_url_placeholder")}" value="${escapeHtml(sharedUrlValue)}" style="flex:1;min-width:0;">
       <button type="button" id="import-url-clear" class="btn btn-outline btn-sm" style="width:auto;flex-shrink:0;">${t("import_url_clear_button")}</button>
     </div>
   </div>`));
@@ -13547,7 +13604,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 302;
+const APP_VERSION = 303;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
@@ -13642,9 +13699,10 @@ async function initInner() {
   state.pantry = await storeAll("pantry");
   state.menus = await storeAll("menus");
   state.planTemplates = await storeAll("planTemplates");
-  state.planHistory = (await storeAll("planHistory")).sort((a, b) => b.date.localeCompare(a.date));
+  state.planHistory = (await storeAll("planHistory")).sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
   state.trash = (await storeAll("trash")).sort((a, b) => (b.deletedAt || "").localeCompare(a.deletedAt || ""));
   state.savedShoppingLists = await storeAll("savedShoppingLists");
+  repairLoadedShapes();
   const savedPlan = await kvGet("weeklyPlan");
   state.weeklyPlan = savedPlan || {};
   await migrateMergedContainerUnits();

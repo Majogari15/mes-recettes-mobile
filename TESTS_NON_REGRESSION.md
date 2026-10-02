@@ -9116,3 +9116,86 @@ ajout supprimé, renommage annulé → plus de rappel). Les 3 cas
 **Non-régression** : suite complète (61 scripts) et corpus OCR relancés, aucune régression.
 
 **Version testée** : v302
+
+### 137 — Audit complet v303 (code, interface, données, sécurité, performance)
+
+**Méthode** : contrôles statiques (syntaxe JS, JSON, clés et
+`{placeholders}` i18n des 9 langues, fichiers du cache du service
+worker, références du HTML et des manifestes, intégrité croisée des
+fichiers `data/`, code mort, interpolations HTML non échappées) ;
+balayage automatique des 24 écrans × 9 langues × 2 thèmes à 360 et
+320 px (erreurs JS, débordement horizontal, clés i18n brutes,
+« undefined/NaN », texte français resté dans une autre langue, boutons
+sans nom, champs sans étiquette, cibles tactiles) ; axe-core sur tous
+les écrans et 16 fenêtres modales ; restauration de sauvegardes
+volontairement abîmées ; import QR piégé ; mesures de démarrage et de
+rendu (processeur ralenti ×4, 600 recettes).
+
+**Corrigé** :
+1. **Grave — sauvegarde abîmée qui bloque l'application** : deux
+   entrées d'historique de planning sans date suffisaient à faire
+   échouer le démarrage (tri au chargement) après restauration, donc à
+   rendre toutes les données inaccessibles ; menus sans nom/recettes et
+   listes enregistrées sans articles faisaient planter leurs écrans.
+   `ensureBackupItemShape` répare ces champs à l'import, et
+   `repairLoadedShapes` fait de même au chargement pour des données
+   déjà en base ; tris rendus tolérants.
+2. **Injection HTML** : un identifiant de recette piégé (venant d'une
+   sauvegarde) était inséré sans échappement dans les écrans
+   Comparaison et Export du livre (le CSP bloquait déjà tout script,
+   mais pas l'injection de balises). Échappé.
+3. **Débordement horizontal sur écran étroit** : fiche recette (boutons
+   d'action, fr/de/no), import par lien (toutes langues), gestion des
+   ingrédients (noms longs sv/de), courses (de).
+4. **Fenêtres modales** : focus placé sur un bouton masqué (QR codes) et
+   piège de focus figé à l'ouverture → focus et Tab ne visent plus que
+   des éléments visibles, recalculés à chaque appui ; QR codes sans
+   texte alternatif ; lignes des fenêtres « choisir une recette » et
+   « langue » sur le fond gris par défaut du navigateur (contraste
+   4,45:1 en sombre).
+5. **Étiquettes** : champs « personnes » de l'écran menu (violation axe
+   critique) et zone de texte du signalement (diagnostic).
+6. **Cibles tactiles** : bouton « + Ajouter » du planning (19 px de
+   haut), liens Diagnostic/Confidentialité (14 px), cases à cocher
+   (22 → 24 px).
+7. **Données** : 10 fiches USDA à glucides légèrement négatifs (artefact
+   du calcul « par différence ») ramenées à 0 ; huile de noix de pécan à
+   929 kcal (> 900, maximum physique) ramenée à 900 ; notes ajoutées.
+8. **Test qui ne testait pas** : `test_accessibility_audit.py` réglait
+   un champ inexistant (`viewingRecipeId`), la fiche recette était donc
+   redirigée vers la liste et jamais auditée ; corrigé, écrans ajoutés
+   (menus, menu, comparaison, export, etc.) et contrôle que chaque
+   écran est réellement affiché.
+9. Code mort retiré (`moveIngredientOverride`).
+
+**Vérifié sans problème** : syntaxe, JSON, 618 clés i18n présentes dans
+les 9 langues avec les mêmes `{placeholders}`, aucun texte français
+dans les autres langues, aucune clé brute ni « undefined » affiché,
+aucune erreur JS sur les 432 combinaisons écran/langue/thème, fichiers
+du cache tous présents, catalogue (ids uniques, références croisées
+valides pour traductions, allergènes, nutrition, 1 530 substitutions),
+tables d'allergènes/rayons complètes dans les 9 langues, CSP stricte
+(pas de script en ligne), pas d'`eval`.
+
+**Constats non corrigés (faible gravité)** :
+- Import QR : quantités négatives, unités ou difficulté inconnues
+  acceptées jusqu'au formulaire (affichage échappé, aucune injection).
+- Worker Cloudflare : filtre anti-SSRF sur le nom d'hôte seulement (un
+  nom DNS pointant vers une adresse privée n'est pas vérifié — sans
+  effet pratique, le réseau Cloudflare n'atteint pas un réseau local) ;
+  l'en-tête Origin peut être imité hors navigateur, la limitation de
+  débit reste une configuration manuelle.
+- Politique de confidentialité en français uniquement.
+- Performances sur téléphone lent simulé (×4) : démarrage ~2,3 s,
+  recherche d'ingrédient ~70 ms par frappe, cocher un article dans une
+  liste de 300 ~180 ms (rendu complet de l'écran). Acceptable, à
+  surveiller.
+
+**Non-régression** : suite complète (64 scripts) et corpus OCR relancés, aucune régression.
+
+**Tests permanents ajoutés** : `test_backup_corrupted_records.py`
+(9 cas), `test_narrow_screen_overflow.py` (6 langues à 320 px),
+`test_modal_accessibility.py` (16 fenêtres × 2 thèmes) — tous trois
+échouent sur la v302 et passent sur la v303.
+
+**Version testée** : v303

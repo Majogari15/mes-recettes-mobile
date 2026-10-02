@@ -18196,7 +18196,7 @@
  "ing_004488": {
   "kcal": 81.335,
   "protein_g": 19.062,
-  "carbs_g": -0.06,
+  "carbs_g": 0.0,
   "fat_g": 0.592,
   "_usda": {
    "dataset": "Foundation Foods",
@@ -18204,7 +18204,8 @@
    "fdc_id": "2747656",
    "food": "Halibut, frozen, wild caught",
    "basis": "100g",
-   "url": "https://fdc.nal.usda.gov/"
+   "url": "https://fdc.nal.usda.gov/",
+   "note": "carbs_g négatif dans la source (-0.06, glucides calculés « par différence » : artefact de calcul) ramené à 0."
   }
  },
  "ing_004489": {
@@ -18601,7 +18602,7 @@
  "ing_004517": {
   "kcal": 101.87,
   "protein_g": 24.7,
-  "carbs_g": -0.104,
+  "carbs_g": 0.0,
   "fat_g": 0.388,
   "_usda": {
    "dataset": "Foundation Foods",
@@ -18609,7 +18610,8 @@
    "fdc_id": "2747673",
    "food": "Tuna, ahi or yellowfin, frozen, wild caught",
    "basis": "100g",
-   "url": "https://fdc.nal.usda.gov/"
+   "url": "https://fdc.nal.usda.gov/",
+   "note": "carbs_g négatif dans la source (-0.104, glucides calculés « par différence » : artefact de calcul) ramené à 0."
   }
  },
  "ing_004518": {
@@ -18741,7 +18743,7 @@
  "ing_004527": {
   "kcal": 241.727,
   "protein_g": 17.462,
-  "carbs_g": -0.251,
+  "carbs_g": 0.0,
   "fat_g": 18.64,
   "_usda": {
    "dataset": "Foundation Foods",
@@ -18749,13 +18751,14 @@
    "fdc_id": "2727570",
    "food": "Lamb, ground, raw",
    "basis": "100g",
-   "url": "https://fdc.nal.usda.gov/"
+   "url": "https://fdc.nal.usda.gov/",
+   "note": "carbs_g négatif dans la source (-0.251, glucides calculés « par différence » : artefact de calcul) ramené à 0."
   }
  },
  "ing_004528": {
   "kcal": 164.412,
   "protein_g": 19.881,
-  "carbs_g": -0.15,
+  "carbs_g": 0.0,
   "fat_g": 8.88,
   "_usda": {
    "dataset": "Foundation Foods",
@@ -18763,7 +18766,8 @@
    "fdc_id": "2727571",
    "food": "Bison, ground, raw",
    "basis": "100g",
-   "url": "https://fdc.nal.usda.gov/"
+   "url": "https://fdc.nal.usda.gov/",
+   "note": "carbs_g négatif dans la source (-0.15, glucides calculés « par différence » : artefact de calcul) ramené à 0."
   }
  },
  "ing_004529": {
@@ -18979,7 +18983,7 @@
  "ing_004544": {
   "kcal": 144.617,
   "protein_g": 22.812,
-  "carbs_g": -0.562,
+  "carbs_g": 0.0,
   "fat_g": 5.475,
   "_usda": {
    "dataset": "Foundation Foods",
@@ -18987,13 +18991,14 @@
    "fdc_id": "2727575",
    "food": "Pork, chop, center cut, raw",
    "basis": "100g",
-   "url": "https://fdc.nal.usda.gov/"
+   "url": "https://fdc.nal.usda.gov/",
+   "note": "carbs_g négatif dans la source (-0.562, glucides calculés « par différence » : artefact de calcul) ramené à 0."
   }
  },
  "ing_004545": {
   "kcal": 385.362,
   "protein_g": 15.2,
-  "carbs_g": -0.705,
+  "carbs_g": 0.0,
   "fat_g": 35.83,
   "_usda": {
    "dataset": "Foundation Foods",
@@ -19001,13 +19006,14 @@
    "fdc_id": "2727576",
    "food": "Pork, belly, with skin, raw",
    "basis": "100g",
-   "url": "https://fdc.nal.usda.gov/"
+   "url": "https://fdc.nal.usda.gov/",
+   "note": "carbs_g négatif dans la source (-0.705, glucides calculés « par différence » : artefact de calcul) ramené à 0."
   }
  },
  "ing_004546": {
   "kcal": 172.792,
   "protein_g": 18.406,
-  "carbs_g": -0.459,
+  "carbs_g": 0.0,
   "fat_g": 10.64,
   "_usda": {
    "dataset": "Foundation Foods",
@@ -19015,13 +19021,14 @@
    "fdc_id": "2727568",
    "food": "Chicken, wing, meat and skin, raw",
    "basis": "100g",
-   "url": "https://fdc.nal.usda.gov/"
+   "url": "https://fdc.nal.usda.gov/",
+   "note": "carbs_g négatif dans la source (-0.459, glucides calculés « par différence » : artefact de calcul) ramené à 0."
   }
  },
  "ing_004547": {
   "kcal": 192.793,
   "protein_g": 17.106,
-  "carbs_g": -0.173,
+  "carbs_g": 0.0,
   "fat_g": 13.35,
   "_usda": {
    "dataset": "Foundation Foods",
@@ -19029,13 +19036,14 @@
    "fdc_id": "2727567",
    "food": "Chicken, thigh, meat and skin, raw",
    "basis": "100g",
-   "url": "https://fdc.nal.usda.gov/"
+   "url": "https://fdc.nal.usda.gov/",
+   "note": "carbs_g négatif dans la source (-0.173, glucides calculés « par différence » : artefact de calcul) ramené à 0."
   }
  },
  "ing_004548": {
   "kcal": 132.836,
   "protein_g": 21.406,
-  "carbs_g": -0.428,
+  "carbs_g": 0.0,
   "fat_g": 4.777,
   "_usda": {
    "dataset": "Foundation Foods",
@@ -19043,7 +19051,8 @@
    "fdc_id": "2727569",
    "food": "Chicken, breast, meat and skin, raw",
    "basis": "100g",
-   "url": "https://fdc.nal.usda.gov/"
+   "url": "https://fdc.nal.usda.gov/",
+   "note": "carbs_g négatif dans la source (-0.428, glucides calculés « par différence » : artefact de calcul) ramené à 0."
   }
  },
  "ing_004549": {
@@ -19077,7 +19086,7 @@
  "ing_004551": {
   "kcal": 130.122,
   "protein_g": 18.356,
-  "carbs_g": -0.475,
+  "carbs_g": 0.0,
   "fat_g": 5.94,
   "_usda": {
    "dataset": "Foundation Foods",
@@ -19085,7 +19094,8 @@
    "fdc_id": "2727566",
    "food": "Chicken, drumstick, meat and skin, raw",
    "basis": "100g",
-   "url": "https://fdc.nal.usda.gov/"
+   "url": "https://fdc.nal.usda.gov/",
+   "note": "carbs_g négatif dans la source (-0.475, glucides calculés « par différence » : artefact de calcul) ramené à 0."
   }
  },
  "ing_004552": {
@@ -139436,7 +139446,7 @@
   }
  },
  "ing_010012": {
-  "kcal": 929.0,
+  "kcal": 900.0,
   "protein_g": 0.0,
   "carbs_g": 0.0,
   "fat_g": 100.0,
@@ -139446,7 +139456,7 @@
    "food": "100% Virgin Pecan Oil (Panola)",
    "basis": "100g",
    "url": "https://world.openfoodfacts.org/product/0032982591504/100-virgin-pecan-oil-panola",
-   "note": "Recoupé avec Kinloch Plantation Products 'Kinloch Pecan Oil' (0182202000191 : 130 kcal / 14 g de lipides par portion de 15 ml, soit 866.7 kcal pour 93.33 g de lipides) : la densité énergétique calculée est identique dans les deux cas (~9.29 kcal par gramme de lipides), ce qui confirme la cohérence malgré la différence de teneur en lipides déclarée par 100 g (100 g vs 93.33 g, écart de présentation/arrondi)."
+   "note": "Recoupé avec Kinloch Plantation Products 'Kinloch Pecan Oil' (0182202000191 : 130 kcal / 14 g de lipides par portion de 15 ml, soit 866.7 kcal pour 93.33 g de lipides) : la densité énergétique calculée est identique dans les deux cas (~9.29 kcal par gramme de lipides), ce qui confirme la cohérence malgré la différence de teneur en lipides déclarée par 100 g (100 g vs 93.33 g, écart de présentation/arrondi). Valeur d'énergie de l'étiquette (929 kcal) supérieure au maximum physique pour 100 g de lipides (100 × 9 = 900 kcal) : ramenée à 900."
   }
  },
  "ing_010028": {

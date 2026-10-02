@@ -306,7 +306,7 @@ a { color: inherit; }
   gap: 10px;
   padding: 12px 4px;
 }
-.checkbox-row input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); }
+.checkbox-row input[type="checkbox"] { width: 24px; height: 24px; flex-shrink: 0; accent-color: var(--primary); }
 .checkbox-row label { font-weight: 500; font-size: 15px; margin: 0; color: var(--text); }
 
 /* ---------- Recherche ---------- */
@@ -392,6 +392,15 @@ a { color: inherit; }
   padding: 12px;
   text-align: left;
   width: 100%;
+}
+/* Ligne compacte des fenêtres de choix (recette, langue) : sans .card,
+   le <button> gardait le fond gris par défaut du navigateur, d'où un
+   contraste insuffisant en thème sombre (4,45:1). */
+button.recipe-row:not(.card) {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 /* Carte à grande photo (16/9) plutôt qu'une ligne avec petite miniature
    — .recipe-thumb/.recipe-info/.recipe-name sont réutilisées AUSSI par
@@ -610,8 +619,11 @@ a { color: inherit; }
   font-size: 12px;
   font-weight: 600;
 }
-.action-row { display: flex; gap: 10px; margin-top: 24px; }
-.action-row .btn { flex: 1; }
+.action-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+/* flex-wrap + flex-basis auto : sur un écran étroit (320 px) ou avec des
+   libellés longs (allemand, norvégien), les boutons passent à la ligne
+   au lieu de déborder de l'écran. */
+.action-row .btn { flex: 1 1 auto; }
 .prose { white-space: pre-line; line-height: 1.6; color: var(--text); }
 
 /* ---------- Ingrédients du formulaire ---------- */
@@ -1030,8 +1042,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   border-bottom: 1px solid var(--border);
 }
 .ingredient-manage-row:last-child { border-bottom: none; }
-.ingredient-manage-row .name { font-size: 15px; }
-.ingredient-manage-row .row-actions { display: flex; gap: 12px; }
+.ingredient-manage-row .name { font-size: 15px; flex: 1; min-width: 0; overflow-wrap: anywhere; margin-right: 8px; }
+.ingredient-manage-row .row-actions { display: flex; gap: 12px; flex-shrink: 0; }
 .ingredient-manage-row .row-actions button {
   width: 44px; height: 44px;
   border-radius: 10px;

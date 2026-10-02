@@ -38,7 +38,9 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCREENS = [
     "home", "recipes", "form", "recipe", "shopping", "pantry",
     "ingredients", "planning", "diagnostic", "backup", "statistics",
-    "trash", "importUrl",
+    "trash", "importUrl", "menus", "menu", "compare", "cookbookExport",
+    "whatCanICook", "unitConverter", "savedShoppingLists", "planningHistory",
+    "manageSubstitutions",
 ]
 
 
@@ -103,7 +105,14 @@ def main():
                 };
                 await storePut('recipes', recipe);
                 state.recipes = await storeAll('recipes');
-                state.viewingRecipeId = 'a11y-1';
+                // currentRecipeId (et non "viewingRecipeId", champ qui
+                // n'existe pas) : sans lui, renderRecipeView redirigeait
+                // en silence vers la liste et la fiche recette n'était
+                // jamais réellement auditée (constaté à l'audit v303).
+                state.currentRecipeId = 'a11y-1';
+                await storePut('menus', { id: 'a11y-menu', name: 'Menu test', items: [{ recipeId: 'a11y-1', persons: 2 }] });
+                state.menus = await storeAll('menus');
+                state.currentMenuId = 'a11y-menu';
                 state.editingRecipeId = 'a11y-1';
 
                 // Articles de garde-manger avec une date de péremption
@@ -139,6 +148,7 @@ def main():
                     (screen) => {
                         state.screen = screen;
                         try { render(); } catch (e) { /* révélé par pageerror */ }
+                        window.__renderedScreen = state.screen;
                     }
                     """,
                     screen,
@@ -162,6 +172,8 @@ def main():
                     check(f"axe.run() sur écran '{screen}' ({theme})", False, str(e))
                     continue
 
+                rendered = page.evaluate("() => window.__renderedScreen")
+                check(f"Écran '{screen}' ({theme}) réellement affiché (pas de redirection)", rendered == screen, f"affiché : {rendered}")
                 blocking = [v for v in result if v["impact"] in ("critical", "serious")]
                 for v in result:
                     if v["impact"] in totals:
