@@ -8964,3 +8964,60 @@ langues, pièges et non-régression fr/en/es/de) ; suite complète (59
 scripts) rejouée sans régression.
 
 **Version testée** : v299
+
+### 134 — 541 des 740 fiches nutritionnelles estimées remplacées par des valeurs sourcées (Ciqual 2025 / USDA)
+
+**Contexte** : la limite notée à l'import v198 (« 740 fiches
+nutritionnelles restent des estimations non vérifiées ») cachait de
+vraies erreurs : beaucoup de ces fiches reprenaient le profil d'une autre
+catégorie d'aliment. Exemples : Anchois à l'huile 884 kcal (profil d'une
+huile), Babeurre 717 kcal (profil de la margarine), Sel et Gros sel
+300 kcal / 50 g de glucides (profil d'une épice), Navet nouveau
+220 kcal / 20 g de protéines (profil d'une viande), Sucre semoule et
+semoules de blé 95 kcal / 18 g de protéines (profil d'un fruit de mer),
+Graines de courge 30 kcal, Sureau 0 kcal.
+
+**Corrigé** (`data/valeurs_nutritionnelles.json`, uniquement ces 740
+fiches sans provenance, les 9 176 autres inchangées) : chaque fiche a été
+comparée une à une aux aliments Ciqual 2025 (ANSES, doi:10.57745/RDMHWY)
+et aux fiches du catalogue déjà sourcées USDA FoodData Central. Une
+fiche n'est remplacée que si la source décrit le même aliment sous sa
+forme par défaut (cru pour les produits frais, viandes et poissons ;
+sec pour pâtes, riz, légumineuses ; forme du commerce français
+courante pour le reste) :
+- 463 fiches reprennent les valeurs Ciqual 2025 avec la provenance
+  `_ciqual` (même format et mêmes conventions que les 3 300 existantes :
+  « < x » enregistré à x, « traces » à 0, précisés dans `qualifiers`) ;
+- 78 fiches reprennent les valeurs et la provenance `_usda` d'une fiche
+  du catalogue déjà sourcée (ex. Babeurre, Physalis, Wasabi) quand
+  Ciqual n'a pas l'aliment.
+- Convention reprise des lots précédents : les mélanges d'épices sans
+  entrée propre (cinq-épices, ras el hanout, colombo…) prennent
+  « Épice (aliment moyen) » de Ciqual.
+
+**Non remplacées (199)** : fiches génériques ou ambiguës (Agneau,
+Fromage, Crème, Porc, Pain à la forme non précisée, Morue fraîche ou
+salée…), aliments sans équivalent fiable dans les deux sources (Mélisse,
+Nougatine, Oursin, Skyr, sirops de glucose/grenadine, pâtes de curry,
+Sumac…), ou équivalent Ciqual dont une valeur manque (« - »). Elles
+restent des estimations.
+
+**Limites** :
+- Le choix de la « forme par défaut » est un jugement (ex. Pistache =
+  grillée non salée, Steak haché = 15 % MG cru, Yaourt grec = « à la
+  grecque » du commerce français) ; une recette qui utilise une autre
+  forme aura un écart.
+- Pour certaines fiches (alcools, vinaigres, épices riches en fibres),
+  les kcal ne correspondent pas à 4×protéines + 4×glucides + 9×lipides :
+  c'est la valeur de la source (alcool, acide acétique et fibres comptés
+  dans l'énergie réglementaire), pas une erreur de copie.
+
+**Vérifié** :
+- Seules les 541 fiches ciblées diffèrent de la version précédente ;
+  9 916 fiches, ordre et format du fichier identiques.
+- `tests/test_ingredient_reference_data.py` : échantillon étendu avec
+  4 anciennes erreurs (Anchois à l'huile, Mayonnaise, Sel, Babeurre),
+  avec une borne haute de kcal en plus de la borne basse.
+- Suite complète (60 scripts) relancée sans régression.
+
+**Version testée** : v300

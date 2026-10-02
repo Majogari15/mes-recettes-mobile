@@ -60,12 +60,19 @@ ALLERGEN_CASES = [
     ("Crème anglaise", "Œufs", True, "corrigé : allergène manquant ajouté"),
 ]
 
-# (nom, doit avoir une provenance Ciqual, kcal minimum attendu — juste
-# pour confirmer qu'une vraie valeur est chargée, pas une vérification
-# nutritionnelle précise)
+# (nom, doit avoir une provenance Ciqual, kcal minimum, kcal maximum ou
+# None — juste pour confirmer qu'une vraie valeur est chargée, pas une
+# vérification nutritionnelle précise)
 NUTRITION_CASES = [
-    ("Ail en poudre", True, 300),  # corrigé : partageait le profil de l'ail frais
-    ("Abricot", True, 30),
+    ("Ail en poudre", True, 300, None),  # corrigé : partageait le profil de l'ail frais
+    ("Abricot", True, 30, None),
+    # Valeurs estimées remplacées par Ciqual 2025 / USDA (entrée 134 de
+    # TESTS_NON_REGRESSION.md) : elles reprenaient le profil d'une autre
+    # catégorie d'aliment.
+    ("Anchois à l'huile", True, 150, 300),  # était 884 kcal (profil d'une huile)
+    ("Mayonnaise", True, 600, None),  # était 300 kcal
+    ("Sel", True, 0, 0),  # était 300 kcal (profil d'une épice)
+    ("Babeurre", False, 30, 60),  # était 717 kcal (profil de la margarine)
 ]
 
 
@@ -103,14 +110,14 @@ def main():
             print()
 
         print("=== Valeurs nutritionnelles (échantillon) ===\n")
-        for name, should_have_ciqual, min_kcal in NUTRITION_CASES:
+        for name, should_have_ciqual, min_kcal, max_kcal in NUTRITION_CASES:
             info = page.evaluate("(n) => getIngredientNutrition(n)", name)
             has_ciqual = bool(info and info.get("_ciqual"))
-            kcal_ok = bool(info and info.get("kcal", 0) >= min_kcal)
+            kcal_ok = bool(info and info.get("kcal", -1) >= min_kcal and (max_kcal is None or info.get("kcal") <= max_kcal))
             ok = has_ciqual == should_have_ciqual and kcal_ok
             status = "✅ OK" if ok else "❌ ÉCHEC"
             print(f"{status}  {name}")
-            print(f"        kcal={info.get('kcal') if info else None} (≥{min_kcal} attendu), provenance Ciqual={has_ciqual}")
+            print(f"        kcal={info.get('kcal') if info else None} (≥{min_kcal}{'' if max_kcal is None else f' et ≤{max_kcal}'} attendu), provenance Ciqual={has_ciqual}")
             if not ok:
                 all_ok = False
             print()
