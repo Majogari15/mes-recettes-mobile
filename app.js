@@ -13098,7 +13098,19 @@ async function fetchRecipeFromUrl(url, onAttempt) {
 
 function renderImportUrl() {
   const wrap = el(`<div></div>`);
-  wrap.appendChild(el(`<p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;line-height:1.5;">${escapeHtml(t("import_url_disclaimer"))}</p>`));
+  // Mode d'emploi en 3 étapes, puis compatibilité et confidentialité —
+  // remplace un seul long paragraphe technique qui ne disait pas
+  // comment faire.
+  wrap.appendChild(el(`<div class="import-url-intro" style="font-size:13px;color:var(--text-muted);line-height:1.5;margin:0 0 16px;">
+    <p style="margin:0 0 8px;color:var(--text);font-weight:600;font-size:14px;">${escapeHtml(t("import_url_intro_title"))}</p>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li>${escapeHtml(t("import_url_step1"))}</li>
+      <li>${escapeHtml(t("import_url_step2"))}</li>
+      <li>${escapeHtml(t("import_url_step3"))}</li>
+    </ol>
+    <p style="margin:0 0 8px;">${escapeHtml(t("import_url_compat"))}</p>
+    <p style="margin:0;">${escapeHtml(t("import_url_privacy"))}</p>
+  </div>`));
   // Préremplie si on arrive ici via le menu de partage natif d'une
   // autre application (voir pendingSharedUrl, consommée une seule fois
   // pour ne pas la réappliquer sur un simple retour à cet écran).
@@ -13121,10 +13133,9 @@ function renderImportUrl() {
   // sans jamais bloquer la saisie manuelle qui reste toujours possible.
   const pasteBtn = el(`<button type="button" class="btn btn-outline" style="margin-bottom:16px;">${t("import_url_paste_button")}</button>`);
   wrap.appendChild(pasteBtn);
-  wrap.appendChild(el(`<p style="font-size:13px;color:var(--danger);margin:0 0 20px;line-height:1.5;">${escapeHtml(t("import_url_duplicate_warning"))}</p>`));
+  wrap.appendChild(el(`<p style="font-size:13px;color:var(--text-muted);margin:0 0 20px;line-height:1.5;">${escapeHtml(t("import_url_duplicate_warning"))}</p>`));
   const btn = el(`<button class="btn btn-primary">${t("import_url_button")}</button>`);
   wrap.appendChild(btn);
-  wrap.appendChild(el(`<p style="font-size:13px;color:var(--danger);margin:12px 0 0;line-height:1.5;">${escapeHtml(t("import_url_failure_warning"))}</p>`));
   const statusHolder = el(`<div style="margin-top:16px;font-size:14px;"></div>`);
   wrap.querySelector("#import-url-clear").addEventListener("click", () => {
     wrap.querySelector("#import-url-input").value = "";
@@ -13181,7 +13192,11 @@ function renderImportUrl() {
       render();
     } catch (e) {
       statusHolder.innerHTML = "";
-      statusHolder.appendChild(el(`<div>${escapeHtml(navigator.onLine === false ? t("import_url_error_offline") : t("import_url_error"))}</div>`));
+      const offline = navigator.onLine === false;
+      statusHolder.appendChild(el(`<div style="color:var(--danger);">${escapeHtml(offline ? t("import_url_error_offline") : t("import_url_error"))}</div>`));
+      // Conseil affiché seulement après un vrai échec (il était
+      // auparavant affiché en rouge en permanence, avant même d'essayer).
+      if (!offline) statusHolder.appendChild(el(`<div class="import-url-failure-hint" style="font-size:13px;color:var(--text-muted);margin-top:6px;line-height:1.5;">${escapeHtml(t("import_url_failure_warning"))}</div>`));
       if (e && e.details) {
         statusHolder.appendChild(el(`<div style="font-size:11px;color:var(--text-muted);margin-top:6px;word-break:break-word;">${escapeHtml(e.details)}</div>`));
       }
@@ -13608,7 +13623,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 304;
+const APP_VERSION = 305;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

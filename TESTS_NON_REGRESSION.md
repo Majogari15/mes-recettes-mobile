@@ -9213,3 +9213,33 @@ au-dessus de la liste, sous la barre de recherche.
 des écrans étroits relancés.
 
 **Version testée** : v304
+
+### 139 — Nouvelle description de l'import par lien
+
+**Demande de l'utilisateur** : une description plus claire de l'écran
+« Importer depuis un lien » (sans citer d'exemples de sites).
+
+**Modifié** :
+- Le long paragraphe technique (`import_url_disclaimer`, supprimé) est
+  remplacé par un titre, un mode d'emploi en 3 étapes (copier ou
+  partager le lien, coller puis « Récupérer la recette », relire avant
+  d'enregistrer), une phrase de compatibilité (pages réservées aux
+  abonnés ou avec connexion non lisibles) et une mention de
+  confidentialité (seule l'adresse passe par un service intermédiaire).
+- Titre du champ : « Lien de la recette ».
+- Avertissement sur les doublons : ton neutre (💡, gris au lieu de rouge),
+  avec un exemple (« oignon jaune » / « oignon »).
+- Conseil en cas d'échec : n'est plus affiché en rouge en permanence,
+  seulement après un vrai échec (sauf hors connexion, qui a déjà son
+  propre message), et propose la capture d'écran + import par photo
+  (aucun import de recette par texte collé n'existe, contrairement à ce
+  qui avait d'abord été envisagé).
+- 9 langues traduites (5 nouvelles clés, 4 modifiées).
+
+**Vérifié** : `tests/test_import_url_help_texts.py` (9 langues : 3
+étapes, mention de confidentialité, pas de conseil avant d'essayer, pas
+de débordement à 360 px ; échec simulé → message + conseil) ; tests
+d'interruption réseau, d'accessibilité, d'écran étroit et de langue
+relancés.
+
+**Version testée** : v305
