@@ -1314,7 +1314,8 @@ function renderHome() {
   const hasImportantData = [
     state.recipes, state.shopping, state.pantry, state.menus,
     state.planTemplates, state.planHistory, state.savedShoppingLists,
-  ].some((arr) => arr.length > 0) || Object.keys(state.weeklyPlan || {}).length > 0;
+  ].some((arr) => arr.length > 0) || Object.keys(state.weeklyPlan || {}).length > 0
+    || hasPersonalIngredientData();
   const lastBackupAt = localStorage.getItem("lastBackupAt");
   const daysSinceBackup = lastBackupAt ? (Date.now() - new Date(lastBackupAt).getTime()) / 86400000 : Infinity;
   if (hasImportantData && daysSinceBackup >= 14) {
@@ -6757,6 +6758,20 @@ function getIngredientCatalogId(name) {
   return state.ingredientCatalogIds[normalizeCached((name || "").trim())];
 }
 
+// Vrai si la liste d'ingrédients contient un travail personnel qu'une
+// réinstallation ferait perdre : un ingrédient ajouté (sans id du
+// catalogue), un ingrédient du catalogue renommé, ou une surcharge
+// (allergènes, nutrition, prix, substituts). Sert au rappel de
+// sauvegarde. Les suppressions ne sont pas comptées : une réinstallation
+// remettrait simplement l'ingrédient.
+function hasPersonalIngredientData() {
+  if (Object.keys(INGREDIENT_OVERRIDES).length > 0) return true;
+  for (const id in state.ingredientNameByCatalogId) {
+    if (CATALOGUE_BY_ID[id] && state.ingredientNameByCatalogId[id] !== CATALOGUE_BY_ID[id]) return true;
+  }
+  return state.ingredientNames.some((name) => !getIngredientCatalogId(name));
+}
+
 function getReferenceSubstitutes(name) {
   const catalogId = getIngredientCatalogId(name);
   return catalogId ? (SUBSTITUTIONS_BY_INGREDIENT_ID[catalogId] || []) : [];
@@ -12112,6 +12127,17 @@ function extractIngredientsFromLines(text) {
   return { ingredients, persons, foundMarker: ingIdx >= 0 };
 }
 
+// detectPhotoSection s'appuie sur l'extraction de parseOcrRecipeText,
+// plus permissive que extractIngredientsFromLines (qui écarte les lignes
+// de bruit et les fragments trop courts) : une photo classée
+// "Ingrédients" peut donc n'en donner aucun au final. Dans ce cas, on ne
+// garde pas une étiquette démentie par le résultat — la photo passe en
+// "Autre", à choisir par l'utilisateur — sauf si elle a au moins donné
+// le nombre de personnes, qu'on ne veut pas perdre.
+function isEmptyIngredientsDetection(detected, sectionData) {
+  return detected === "ingredients" && sectionData.ingredients.length === 0 && sectionData.persons == null;
+}
+
 function deriveSectionDataForPhoto(rawText, section, layoutText, gridText, twoColumnIngredients, tableText) {
   const empty = { name: "", ingredients: [], description: "", persons: null, prepTime: null, cookTime: null };
   // Toujours le texte BRUT pour ces deux sections — jamais le texte
@@ -12465,6 +12491,11 @@ function renderImportPhoto() {
         const twoColumnIngredients = detected === "ingredients" ? await computeTwoColumnIngredients(correctedImage || file) : null;
         entry.twoColumnIngredients = twoColumnIngredients;
         entry.sectionData = deriveSectionDataForPhoto(rawText, entry.section, layoutText, gridText, twoColumnIngredients, tableText);
+        if (isEmptyIngredientsDetection(detected, entry.sectionData)) {
+          entry.section = "other";
+          entry.autoDetected = false;
+          entry.sectionData = deriveSectionDataForPhoto(rawText, "other", layoutText, gridText, twoColumnIngredients, tableText);
+        }
         entry.status = "done";
       }
     } catch (err) {
@@ -13516,7 +13547,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 301;
+const APP_VERSION = 302;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

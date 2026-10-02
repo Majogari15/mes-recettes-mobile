@@ -161,6 +161,36 @@ def main():
             all_ok = False
         print()
 
+        print("=== Ingrédients personnels seuls (entrée 136) ===\n")
+        # Nouveau contexte = IndexedDB vide : aucune recette, aucune
+        # course, seulement le catalogue d'ingrédients fourni.
+        ctx2 = browser.new_context(viewport={"width": 390, "height": 900})
+        page2 = ctx2.new_page()
+        page2.on("pageerror", lambda exc: errors.append(str(exc)))
+        page2.goto(base_url, timeout=8000)
+        page2.evaluate("() => appReady")
+        page2.evaluate("() => { setLang('fr'); }")
+
+        def check_ingredient_case(label, js, expected):
+            nonlocal all_ok
+            if js:
+                page2.evaluate(js)
+            set_days_since_backup(page2, 20)
+            r = get_reminder(page2)
+            ok = r["found"] == expected
+            print(f"{'✅ OK' if ok else '❌ ÉCHEC'}  {label} — rappel {'affiché' if r['found'] else 'absent'} (attendu {'affiché' if expected else 'absent'})")
+            if not ok:
+                all_ok = False
+
+        check_ingredient_case("catalogue d'origine seul", None, False)
+        check_ingredient_case("ingrédient ajouté", "async () => { await addIngredientName('Zzyzx perso'); }", True)
+        check_ingredient_case("ingrédient ajouté puis supprimé", "async () => { await deleteIngredientName('Zzyzx perso'); }", False)
+        check_ingredient_case("ingrédient du catalogue renommé", "async () => { await renameIngredientName('Tomate', 'Tomate du jardin'); }", True)
+        check_ingredient_case("renommage annulé", "async () => { await renameIngredientName('Tomate du jardin', 'Tomate'); }", False)
+        check_ingredient_case("prix personnalisé (surcharge)", "async () => { await setIngredientOverride('Beurre', [], null, 2.5, []); }", True)
+        ctx2.close()
+        print()
+
         browser.close()
 
     httpd.shutdown()

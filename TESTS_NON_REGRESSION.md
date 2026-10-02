@@ -9079,3 +9079,40 @@ trouvée ; elles restent des estimations.
 - Suite complète (60 scripts) relancée sans régression.
 
 **Version testée** : v301
+
+### 136 — Deux limites connues levées : étiquette « Ingrédients » sur une liste vide, rappel de sauvegarde pour les ingrédients personnels
+
+**1. Photo étiquetée « Ingrédients » sans aucun ingrédient (point 30,
+« point cosmétique connu »)** — revérifié sur le code actuel : toujours
+présent. La classification (`detectPhotoSection`, via
+`parseOcrRecipeText`) et l'extraction finale
+(`extractIngredientsFromLines`, qui écarte bruit et fragments trop
+courts) restent deux chemins distincts ; ex. « Ingrédients / ab / cd /
+ef » ou « Ingrédients / 2 g / 3 cl / 1 kg » sont classés
+« Ingrédients » mais ne gardent aucun ingrédient.
+**Corrigé sans toucher à la classification** (la raison de prudence
+du point 30 : ne pas risquer les photos « mixed ») : après
+l'extraction, `isEmptyIngredientsDetection` repasse une telle photo en
+« Autre » avec le message « à choisir manuellement », sauf si elle a
+donné le nombre de personnes (qu'on ne veut pas perdre). Un choix
+manuel de « Ingrédients » relance l'extraction comme avant.
+Test : `tests/test_photo_empty_ingredients_section.py` (4 cas, sur le
+vrai pipeline texte) ; corpus OCR rejoué, résultats identiques.
+
+**2. Rappel de sauvegarde absent quand l'app ne contient que des
+ingrédients personnels (point 5.0bis, « limite connue »)** — la raison
+donnée à l'époque (« ingrédients pas chargés en mémoire ») n'est plus
+vraie : la liste, le lien nom → id du catalogue et les surcharges sont
+chargés au démarrage. Le rappel compte désormais aussi
+(`hasPersonalIngredientData`) : un ingrédient ajouté (sans id du
+catalogue), un ingrédient du catalogue renommé, une surcharge
+(allergènes, nutrition, prix, substituts). Les suppressions ne comptent
+pas : une réinstallation remettrait l'ingrédient, rien n'est perdu.
+Test : `tests/test_backup_reminder.py`, 6 cas ajoutés sur une base vide
+(catalogue seul → pas de rappel ; ajout, renommage, prix → rappel ;
+ajout supprimé, renommage annulé → plus de rappel). Les 3 cas
+« rappel attendu » échouent sur la v301, passent sur la v302.
+
+**Non-régression** : suite complète (61 scripts) et corpus OCR relancés, aucune régression.
+
+**Version testée** : v302
