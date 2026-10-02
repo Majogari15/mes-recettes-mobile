@@ -8924,3 +8924,43 @@ correctes après ce changement, et confirmé par comparaison automatisée
 qu'aucune paire n'est perdue ni ajoutée à tort par le nouveau filtre.
 
 **Version testée** : v275
+
+### 133 — Unités reconnues dans les 9 langues de l'application (limite du point 13.11 levée)
+
+**Contexte** : la limite notée au point 13.11 (« unités catalanes,
+portugaises ou italiennes non couvertes ») est devenue concrète avec
+l'ajout du portugais, de l'italien, du suédois, du norvégien et de
+l'indonésien : seules les unités françaises, anglaises, espagnoles et
+allemandes étaient reconnues à l'import par photo ou par lien
+(« 2 msk olivolja » restait « msk olivolja » en pièce).
+
+**Corrigé** (`parseIngredientStringInner`) :
+- Unités ajoutées : cuillères (msk/ss/sdm, tsk/ts/sdt, cucchiaio,
+  cucchiaino, cucharadita, cullerada, culleradeta, matsked, spiseskje...),
+  « colher(es) de sopa/chá » et « c. de sopa » en plusieurs mots, dl
+  (10 cl) et krm (1 ml), xícara (tasse normalisée 240 ml, comme « cup »),
+  gousses (dente, spicchio, klyfta, fedd, siung, diente, Zehe), tranches
+  (fatia, fetta, skiva, skive, rebanada, Scheibe), pièces (st, stk,
+  unidade, pezzo), contenants (burk, påse, boks, pose, pacote, vasetto,
+  bustina, confezione, kaleng, bungkus...). « di » italien retiré devant
+  le nom comme « de »/« d' ». Les tasses sans contenance fixe (tazza,
+  chávena, gelas) ne sont volontairement pas converties.
+- **Bug trouvé au passage** : le motif ne reconnaissait pas les lettres
+  ø å ä ö æ á ã, coupant le mot (« 2 smør » -> « sm ør »,
+  « 1 påse » -> « p åse »). Étendu à tout l'alphabet latin accentué.
+- **Bug trouvé au passage (toutes langues)** : quand le mot suivant le
+  nombre n'était pas une unité, le nom était recollé avec un espace en
+  trop avant une virgule (« oignons , émincés ») et perdait le point
+  d'une abréviation. Le texte d'origine est désormais repris tel quel.
+- **Pièges vérifiés sur les ~10 000 noms du catalogue dans les 9 langues**
+  : une unité suivie d'un tiret n'en est pas une (« 2 pot-au-feu »,
+  déjà faux en français, « St-Amand », « dente-de-leão ») ; « fette
+  biscottate » (biscottes) garde son nom ; « buah », « lembar »,
+  « batang » (indonésien) volontairement non traités comme unités car ils
+  font souvent partie du nom (« buah naga » = fruit du dragon).
+
+**Vérifié** : `tests/test_multilingual_units.py` (54 cas, nouvelles
+langues, pièges et non-régression fr/en/es/de) ; suite complète (59
+scripts) rejouée sans régression.
+
+**Version testée** : v299

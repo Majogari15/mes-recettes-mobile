@@ -10445,6 +10445,22 @@ function parseIngredientStringInner(str, fromReversedOrder) {
     const spoonUnit = /caf[eé]/i.test(spoonType) ? "c. à café" : "c. à soupe";
     return { name: rest.trim() || text, quantity: spoonQty, unit: spoonUnit };
   }
+  // Même principe pour le portugais : "colher(es) de sopa/chá",
+  // "c. de sopa", "c. chá" — "colher" seul reste ambigu et n'est pas
+  // interprété.
+  const ptSpoonMatch = text.match(/^([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*(?:colher(?:es)?|c\.)\s*(?:de\s+)?(sopa|ch[áa])(?![a-zA-Z\u00C0-\u017F])\s*(?:de\s+|d['’])?(.*)$/i);
+  if (ptSpoonMatch) {
+    const [, qtyStr, spoonType, rest] = ptSpoonMatch;
+    let spoonQty;
+    if (qtyStr.includes("/")) {
+      const [num, den] = qtyStr.split("/").map((s) => parseFloat(s.trim().replace(",", ".")));
+      spoonQty = den ? num / den : null;
+    } else {
+      spoonQty = parseFloat(qtyStr.replace(",", "."));
+    }
+    if (Number.isNaN(spoonQty)) spoonQty = null;
+    return { name: rest.trim() || text, quantity: spoonQty, unit: /sopa/i.test(spoonType) ? "c. à soupe" : "c. à café" };
+  }
 
   // Un nombre suivi directement de "%" n'est jamais une quantité
   // d'ingrédient — c'est un descripteur de pourcentage (matière grasse,
@@ -10452,14 +10468,14 @@ function parseIngredientStringInner(str, fromReversedOrder) {
   // comme s'il n'y avait aucun chiffre en tête, pour retomber sur le
   // texte complet comme nom plutôt que d'extraire "20" à tort.
   const startsWithPercent = /^\d+(?:[.,]\d+)?\s*%/.test(text);
-  const match = startsWithPercent ? null : text.match(/^([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([a-zA-Zéèàêûîôçñü]*)\.?\s*(.*)$/);
+  const match = startsWithPercent ? null : text.match(/^([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([a-zA-Z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u017F]*)\.?\s*(.*)$/);
   if (!match || !match[1]) {
     // Aucun chiffre en tête : essaie l'ordre inversé "Nom Quantité
     // Unité" (ex. "Grenailles 500 g", "Thon au naturel 1 boîte") — un
     // format courant sur certains sites/kits repas (HelloFresh
     // notamment), où la quantité et l'unité arrivent à la fin plutôt
     // qu'au début.
-    const reversedMatch = text.match(/^(.+?)\s+([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([a-zA-Zéèàêûîôçñü]+)\.?\s*$/i);
+    const reversedMatch = text.match(/^(.+?)\s+([\d]+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*([a-zA-Z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u017F]+)\.?\s*$/i);
     if (reversedMatch) {
       const [, namePartRaw, qtyStr, unitWordRaw] = reversedMatch;
       // Un ":" séparateur ("Beurre : 40.0 Gr") reste sinon capturé dans
@@ -10517,15 +10533,27 @@ function parseIngredientStringInner(str, fromReversedOrder) {
   else if (uwRaw === "cc") unit = "c. à café";
   else if (uwRaw === "el") unit = "c. à soupe";
   else if (uwRaw === "tl") unit = "c. à café";
-  else if (["pièce", "piece", "pieza", "piezas", "stück"].includes(uw)) unit = "pièce";
+  // Abréviations courtes testées sur le mot brut (le retrait du "s"
+  // final ci-dessus ferait de "ss" un "s", de "ts" un "t") : suédois
+  // msk/tsk, norvégien ss/ts, indonésien sdm/sdt (sendok makan/teh),
+  // décilitre et kryddmått (1 ml) scandinaves, pièces "st"/"stk".
+  else if (["msk", "ss", "sdm"].includes(uwRaw)) unit = "c. à soupe";
+  else if (["tsk", "ts", "sdt"].includes(uwRaw)) unit = "c. à café";
+  else if (uwRaw === "dl") { unit = "cl"; factor = 10; }
+  else if (uwRaw === "krm") { unit = "cl"; factor = 0.1; }
+  else if (["st", "stk"].includes(uwRaw)) unit = "pièce";
+  else if (["pièce", "piece", "pieza", "piezas", "stück", "unidade", "pezzo", "pezzi"].includes(uw)) unit = "pièce";
   else if (["g", "gr", "gram", "gramme"].includes(uw)) unit = "g";
   else if (["kg", "kilo"].includes(uw)) unit = "kg";
   else if (uw === "ml") { unit = "cl"; factor = 0.1; }
   else if (uw === "cl") unit = "cl";
   else if (["l", "litre", "liter"].includes(uw)) unit = "L";
-  else if (["tbsp", "tablespoon", "cucharada", "cucharadas"].includes(uw)) unit = "c. à soupe";
-  else if (["tsp", "teaspoon"].includes(uw)) unit = "c. à café";
-  else if (uw === "cup") { unit = "cl"; factor = 24; }
+  else if (["tbsp", "tablespoon", "cucharada", "cucharadas", "cucchiaio", "cucchiai", "cullerada", "cullerade", "matsked", "matskedar", "spiseskje", "spiseskjeer"].includes(uw)) unit = "c. à soupe";
+  else if (["tsp", "teaspoon", "cucharadita", "cucchiaino", "cucchiaini", "culleradeta", "culleradete", "tesked", "teskedar", "teskje", "teskjeer"].includes(uw)) unit = "c. à café";
+  // "xícara" : tasse brésilienne normalisée (240 ml), comme "cup". Les
+  // tasses sans contenance fixe (tazza, chávena, gelas) ne sont pas
+  // converties.
+  else if (["cup", "xícara", "xicara"].includes(uw)) { unit = "cl"; factor = 24; }
   else if (["oz", "ounce"].includes(uw)) { unit = "g"; factor = 28.35; }
   else if (["lb", "pound"].includes(uw)) { unit = "g"; factor = 453.6; }
   // Unités-contenants françaises courantes : gardées comme unité à part
@@ -10536,7 +10564,12 @@ function parseIngredientStringInner(str, fromReversedOrder) {
   // (juste un mot différent selon la recette/langue source) : toutes
   // leurs variantes pointent donc vers la même unité fusionnée "boîte",
   // affichée comme "boîte/pot/sachet" (voir UNIT_KEYS/translateUnit).
-  else if (["boîte", "boite", "conserve", "lata", "latas", "dose", "dosen", "sachet", "pot", "paquet", "paquete", "paquetes", "packung", "packungen"].includes(uw)) {
+  else if (["boîte", "boite", "conserve", "lata", "latas", "dose", "dosen", "sachet", "pot", "paquet", "paquete", "paquetes", "packung", "packungen",
+    "pacote", "embalagem", "frasco", "saqueta", "scatola", "scatole", "barattolo", "barattoli", "vasetto", "vasetti", "bustina", "bustine", "busta", "buste", "confezione", "confezioni",
+    "burk", "burkar", "paket", "påse", "påsar", "förpackning", "förpackningar", "bokser", "pakke", "pakker", "pose", "poser", "kaleng"].includes(uw)
+    // Mots finissant par "s" au singulier, testés bruts (le retrait du
+    // "s" final en ferait "bok"/"bungku").
+    || ["boks", "bungkus"].includes(uwRaw)) {
     unit = "boîte";
     // "boîte" est ici un fait observé DIRECTEMENT dans le texte source
     // en cours d'analyse, jamais reconstitué à partir d'une valeur
@@ -10549,13 +10582,21 @@ function parseIngredientStringInner(str, fromReversedOrder) {
   }
   else if (uw === "barquette") unit = "barquette";
   else if (uw === "filet") unit = "filet";
-  else if (["tranche", "tranches"].includes(uw)) unit = "tranche";
-  else if (["gousse", "gousses"].includes(uw)) unit = "gousse";
+  else if (["tranche", "tranches", "rebanada", "scheibe", "scheiben", "fatia", "fetta", "fette", "skiva", "skivor", "skive", "skiver"].includes(uw)) unit = "tranche";
+  else if (["gousse", "gousses", "diente", "zehe", "zehen", "dente", "spicchio", "spicchi", "klyfta", "klyftor", "fedd", "siung"].includes(uw)) unit = "gousse";
 
+  // Mot suivi d'un tiret ("2 pot-au-feu", "St-Amand", "dente-de-leão") :
+  // début d'un nom composé, jamais une unité. "fette biscottate"
+  // (biscottes italiennes) est un nom de produit, pas des tranches.
+  if (unit && (/^-/.test(rest) || (["fetta", "fette"].includes(uw) && /^biscottat/i.test(rest)))) {
+    unit = null;
+    factor = 1;
+    containerLabel = null;
+  }
   let name;
   if (unit) {
     quantity = quantity != null ? Math.round(quantity * factor * 100) / 100 : null;
-    name = rest.trim().replace(/^(?:de\s+|d['’])/i, "");
+    name = rest.trim().replace(/^(?:de\s+|di\s+|d['’])/i, "");
   } else {
     unit = "pièce";
     // Ici, unitWordRaw est le premier mot suivant un nombre en tête de
@@ -10567,7 +10608,10 @@ function parseIngredientStringInner(str, fromReversedOrder) {
     // d'unité non reconnue, jamais le début du nom. Le coller devant
     // produisait "bouquet Persil" / "cm Gingembre frais*" au lieu du
     // nom réel seul.
-    name = fromReversedOrder ? rest.trim() : (unitWordRaw + " " + rest).trim();
+    // Texte d'origine après le nombre, tel quel : recoller le mot et la
+    // suite ajoutait un espace avant une virgule ("oignons , émincés")
+    // et perdait le point d'une abréviation ("c. de sopa" -> "c de").
+    name = fromReversedOrder ? rest.trim() : text.slice(qtyStr.length).trim();
   }
   // Ingrédients alternatifs ("oie ou canard") : le nombre indiqué avant
   // la seconde option répète souvent exactement la quantité déjà
@@ -10597,7 +10641,7 @@ function parseIngredientStringInner(str, fromReversedOrder) {
 // relecture.
 function parseIngredientString(str) {
   const text = normalizeUnicodeFractions(String(str || "").trim()).replace(/\s*\(s?\)?\s*$/i, "");
-  const likelyMisreadFraction = /(?:^|\s)%\s*[a-zA-Zéèàêûîôçñü]/.test(text);
+  const likelyMisreadFraction = /(?:^|\s)%\s*[a-zA-Z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u017F]/.test(text);
   const result = parseIngredientStringInner(str);
   return likelyMisreadFraction ? { ...result, likelyMisreadFraction: true } : result;
 }
@@ -11977,7 +12021,7 @@ function parseStackedIngredientColumn(text) {
     // (jusqu'à 4 caractères, résidu de case à cocher) avant le
     // chiffre, éventuellement suivi d'un mot d'unité complet (pas
     // seulement une abréviation courte).
-    const qtyMatch = line.match(/^.{0,4}?(\d+(?:[.,]\d+)?)\s*([a-zA-Zéèàêûîôçñü]*)\s*$/);
+    const qtyMatch = line.match(/^.{0,4}?(\d+(?:[.,]\d+)?)\s*([a-zA-Z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u017F]*)\s*$/);
     if (qtyMatch && i + 1 < filtered.length) {
       const name = stripCheckboxPrefix(filtered[i + 1]);
       results.push(parseIngredientString(`${qtyMatch[1]} ${qtyMatch[2]} ${name}`));
@@ -13472,7 +13516,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 298;
+const APP_VERSION = 299;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
