@@ -362,6 +362,10 @@ const state = {
   editingRecipeId: null,
   search: "",
   activeFilter: null, // 'favorite' | 'quick' | 'vegetarian' | 'wishlist'
+  recipeTagFilter: null, // étiquette choisie (texte affiché), ou null
+  recipeIngredientWith: "", // « avec » : ingrédients séparés par des virgules
+  recipeIngredientWithout: "", // « sans »
+  recipeFiltersOpen: false, // panneau « Filtrer par ingrédient ou étiquette » déplié
   recipeCategoryFilter: null, // null (toutes) ou une valeur de CATEGORY_OPTIONS
   recipeSortBy: "name", // 'name' | 'recent' | 'prepTime' | 'favoriteFirst'
   pantrySortBy: "name", // 'name' | 'expiration'
@@ -1233,6 +1237,9 @@ function renderBottomNav() {
       state.screen = item.key;
       state.activeFilter = null;
       state.recipeCategoryFilter = null;
+      state.recipeTagFilter = null;
+      state.recipeIngredientWith = "";
+      state.recipeIngredientWithout = "";
       state.recipeSortBy = "name";
       state.pantrySortBy = "name";
       render();
@@ -1495,6 +1502,8 @@ function renderRecipeRow(recipe) {
     <div class="recipe-name">${escapeHtml(recipe.name)}</div>
     <div class="recipe-meta">${escapeHtml(translateCategory(recipe.category))}${recipe.prepTime || recipe.cookTime ? " · " + ((Number(recipe.prepTime) || 0) + (Number(recipe.cookTime) || 0)) + " " + t("recipe_min") : ""}${recipe.personalRating ? ` · ${"★".repeat(recipe.personalRating)}` : ""}</div>
   </div>`);
+  const rowTags = recipeTags(recipe).slice(0, 3);
+  if (rowTags.length) info.appendChild(el(`<div class="recipe-row-tags">${rowTags.map((tg) => `<span>${escapeHtml(tg)}</span>`).join("")}</div>`));
   row.appendChild(info);
   if (recipe.favorite) row.appendChild(el(`<span class="recipe-star">⭐</span>`));
   row.addEventListener("click", () => {
@@ -1506,10 +1515,89 @@ function renderRecipeRow(recipe) {
   return row;
 }
 
+// Clé de comparaison pour la recherche : minuscules, sans accents, œ/æ
+// dépliés (« oeuf » trouve « Œuf »), ponctuation remplacée par des
+// espaces. \p{L} plutôt que [a-z] : « ø » (norvégien) n'est pas
+// décomposé par NFD et doit rester une lettre.
+function searchKey(str) {
+  return normalize(str).replace(/œ/g, "oe").replace(/æ/g, "ae").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+}
+
+// Étiquettes libres d'une recette (même champ « tags » que l'app
+// Windows) : tableau ou texte séparé par des virgules en entrée, sortie
+// sans doublon à la casse et aux accents près (première graphie
+// gardée, comme Windows), espaces superflus retirés.
+const MAX_RECIPE_TAGS = 20;
+const MAX_RECIPE_TAG_LENGTH = 40;
+function normalizeRecipeTags(value) {
+  const raw = Array.isArray(value) ? value : (typeof value === "string" ? value.split(",") : []);
+  const seen = new Set();
+  const tags = [];
+  raw.forEach((v) => {
+    if (typeof v !== "string") return;
+    const tag = v.replace(/\s+/g, " ").trim().slice(0, MAX_RECIPE_TAG_LENGTH).trim();
+    const key = searchKey(tag);
+    if (!key || seen.has(key) || tags.length >= MAX_RECIPE_TAGS) return;
+    seen.add(key);
+    tags.push(tag);
+  });
+  return tags;
+}
+function recipeTags(recipe) {
+  return Array.isArray(recipe && recipe.tags) ? recipe.tags.filter((x) => typeof x === "string" && x.trim()) : [];
+}
+// Toutes les étiquettes utilisées, une seule graphie par étiquette.
+function allRecipeTags() {
+  return normalizeRecipeTags(state.recipes.flatMap(recipeTags)).sort((a, b) => a.localeCompare(b, CURRENT_LANG));
+}
+
+// Recherche par ingrédient (« avec poulet, sans crème ») : un terme
+// trouve un ingrédient dont un mot commence par lui (« poulet » ->
+// « Blanc de poulet », « poul » -> « Poulet »), jamais au milieu d'un
+// mot (« riz » ne trouve pas « Chorizo »). Pluriel simple toléré
+// (« oeufs » -> « Œuf »). Comparé au nom enregistré ET à sa traduction
+// dans la langue de l'interface.
+function singularWord(w) {
+  return w.length > 3 && /[sx]$/.test(w) ? w.slice(0, -1) : w;
+}
+function parseIngredientTerms(text) {
+  return String(text || "").split(/[,;]/).map(searchKey).filter(Boolean).map((k) => k.split(" "));
+}
+function ingredientNameMatchesTerm(name, termWords) {
+  const words = searchKey(name).split(" ");
+  const last = termWords.length - 1;
+  for (let i = 0; i + termWords.length <= words.length; i++) {
+    const ok = termWords.every((tw, j) => {
+      const w = words[i + j];
+      return w === tw || singularWord(w) === singularWord(tw) || (j === last && w.startsWith(tw));
+    });
+    if (ok) return true;
+  }
+  return false;
+}
+function recipeHasIngredientTerm(recipe, termWords) {
+  return (recipe.ingredients || []).some((ing) => ing && typeof ing.name === "string"
+    && (ingredientNameMatchesTerm(ing.name, termWords) || ingredientNameMatchesTerm(translateIngredientName(ing.name), termWords)));
+}
+function activeRecipeAdvancedFilterCount() {
+  return parseIngredientTerms(state.recipeIngredientWith).length
+    + parseIngredientTerms(state.recipeIngredientWithout).length
+    + (state.recipeTagFilter ? 1 : 0);
+}
+
 function filteredRecipes() {
   let list = state.recipes.slice();
   const key = normalize(state.search);
-  if (key) list = list.filter((r) => normalize(r.name).includes(key));
+  // Le nom ET les étiquettes, comme la recherche de l'app Windows.
+  if (key) list = list.filter((r) => normalize(r.name).includes(key) || recipeTags(r).some((tg) => normalize(tg).includes(key)));
+  if (state.recipeTagFilter) {
+    const tagKey = searchKey(state.recipeTagFilter);
+    list = list.filter((r) => recipeTags(r).some((tg) => searchKey(tg) === tagKey));
+  }
+  const withTerms = parseIngredientTerms(state.recipeIngredientWith);
+  if (withTerms.length) list = list.filter((r) => withTerms.every((term) => recipeHasIngredientTerm(r, term)));
+  const withoutTerms = parseIngredientTerms(state.recipeIngredientWithout);
+  if (withoutTerms.length) list = list.filter((r) => !withoutTerms.some((term) => recipeHasIngredientTerm(r, term)));
   if (state.activeFilter === "favorite") list = list.filter((r) => r.favorite);
   if (state.activeFilter === "quick") list = list.filter((r) => (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0) > 0 && (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0) <= 30);
   if (state.activeFilter === "vegetarian") list = list.filter((r) => r.vegetarian);
@@ -1605,6 +1693,62 @@ function renderRecipeList() {
   });
   wrap.appendChild(sortRow);
 
+  // Filtres avancés (comme l'app Windows) : ingrédients voulus / exclus
+  // et étiquette. Repliés par défaut pour ne pas encombrer la liste ;
+  // dépliés d'office dès qu'un filtre est actif, pour qu'une liste
+  // réduite ait toujours sa raison visible.
+  const tags = allRecipeTags();
+  if (state.recipeTagFilter && !tags.some((tg) => searchKey(tg) === searchKey(state.recipeTagFilter))) tags.unshift(state.recipeTagFilter);
+  const panel = el(`<details class="recipe-filters-panel card" ${state.recipeFiltersOpen || activeRecipeAdvancedFilterCount() ? "open" : ""}>
+    <summary><span>${escapeHtml(t("recipe_filters_title"))}</span> <span class="recipe-filters-count"></span></summary>
+    <div class="field">
+      <label for="recipe-filter-with">${escapeHtml(t("recipe_filter_with_label"))}</label>
+      <input type="text" id="recipe-filter-with" autocomplete="off" placeholder="${escapeHtml(t("recipe_filter_with_placeholder"))}">
+    </div>
+    <div class="field">
+      <label for="recipe-filter-without">${escapeHtml(t("recipe_filter_without_label"))}</label>
+      <input type="text" id="recipe-filter-without" autocomplete="off" placeholder="${escapeHtml(t("recipe_filter_without_placeholder"))}">
+    </div>
+    <p class="recipe-filters-hint">${escapeHtml(t("recipe_filter_ingredients_hint"))}</p>
+    ${tags.length ? `<div class="field">
+      <label for="recipe-filter-tag">${escapeHtml(t("recipe_filter_tag_label"))}</label>
+      <select id="recipe-filter-tag">
+        <option value="">${escapeHtml(t("recipe_filter_tag_all"))}</option>
+        ${tags.map((tg) => `<option value="${escapeHtml(tg)}" ${state.recipeTagFilter && searchKey(tg) === searchKey(state.recipeTagFilter) ? "selected" : ""}>${escapeHtml(tg)}</option>`).join("")}
+      </select>
+    </div>` : ""}
+    <button type="button" class="btn btn-outline recipe-filters-reset">${escapeHtml(t("recipe_filters_reset"))}</button>
+  </details>`);
+  const withInput = panel.querySelector("#recipe-filter-with");
+  const withoutInput = panel.querySelector("#recipe-filter-without");
+  const tagSelect = panel.querySelector("#recipe-filter-tag");
+  withInput.value = state.recipeIngredientWith;
+  withoutInput.value = state.recipeIngredientWithout;
+  const countEl = panel.querySelector(".recipe-filters-count");
+  const refreshCount = () => {
+    const n = activeRecipeAdvancedFilterCount();
+    countEl.textContent = n ? t("recipe_filters_active", { count: String(n) }) : "";
+    panel.querySelector(".recipe-filters-reset").hidden = !n;
+  };
+  refreshCount();
+  panel.addEventListener("toggle", () => { state.recipeFiltersOpen = panel.open; });
+  withInput.addEventListener("input", () => { state.recipeIngredientWith = withInput.value; refreshCount(); renderRecipeListInto(wrap); });
+  withoutInput.addEventListener("input", () => { state.recipeIngredientWithout = withoutInput.value; refreshCount(); renderRecipeListInto(wrap); });
+  if (tagSelect) {
+    tagSelect.addEventListener("change", () => { state.recipeTagFilter = tagSelect.value || null; refreshCount(); renderRecipeListInto(wrap); });
+  }
+  panel.querySelector(".recipe-filters-reset").addEventListener("click", () => {
+    state.recipeIngredientWith = "";
+    state.recipeIngredientWithout = "";
+    state.recipeTagFilter = null;
+    withInput.value = "";
+    withoutInput.value = "";
+    if (tagSelect) tagSelect.value = "";
+    refreshCount();
+    renderRecipeListInto(wrap);
+  });
+  wrap.appendChild(panel);
+
   const listHolder = el(`<div id="recipe-list-holder"></div>`);
   wrap.appendChild(listHolder);
   fillRecipeListHolder(listHolder);
@@ -1649,6 +1793,30 @@ function renderRecipeView() {
   if (r.cookTime) stats.appendChild(el(`<div class="stat-pill"><div class="value">${escapeHtml(r.cookTime)}</div><div class="label">${t("recipe_cook")}</div></div>`));
   if (r.difficulty) stats.appendChild(el(`<div class="stat-pill"><div class="value">${escapeHtml(translateDifficulty(r.difficulty))}</div><div class="label">${t("recipe_difficulty")}</div></div>`));
   wrap.appendChild(stats);
+
+  // Étiquettes : un appui affiche toutes les recettes qui la portent
+  // (autres filtres effacés, pour ne pas montrer une liste vide sans
+  // raison apparente).
+  const viewTags = recipeTags(r);
+  if (viewTags.length) {
+    const tagRow = el(`<div class="recipe-tags" aria-label="${escapeHtml(t("form_tags"))}"></div>`);
+    viewTags.forEach((tg) => {
+      const chip = el(`<button type="button" class="chip">${escapeHtml(tg)}</button>`);
+      chip.setAttribute("aria-label", t("recipe_tag_show_recipes", { tag: tg }));
+      chip.addEventListener("click", () => {
+        state.search = "";
+        state.activeFilter = null;
+        state.recipeCategoryFilter = null;
+        state.recipeIngredientWith = "";
+        state.recipeIngredientWithout = "";
+        state.recipeTagFilter = tg;
+        state.screen = "recipes";
+        render();
+      });
+      tagRow.appendChild(chip);
+    });
+    wrap.appendChild(tagRow);
+  }
 
   const stepperWrap = el(`<div class="section" style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;"></div>`);
   const stepper = el(`<div class="persons-stepper">
@@ -1874,6 +2042,7 @@ async function captureRecipeFormDraft() {
     favorite: document.getElementById("f-favorite").checked,
     vegetarian: document.getElementById("f-vegetarian").checked,
     wishlist: document.getElementById("f-wishlist").checked,
+    tags: document.getElementById("f-tags") ? document.getElementById("f-tags").value : "",
     description: document.getElementById("f-description").value,
     notes: document.getElementById("f-notes").value,
     personalRating: Number(document.getElementById("f-rating-stars").dataset.value) || 0,
@@ -2111,6 +2280,38 @@ function renderRecipeForm() {
     <div class="checkbox-row"><input type="checkbox" id="f-wishlist" ${prefill ? (prefill.wishlist ? "checked" : "") : (r && r.wishlist ? "checked" : "")}><label for="f-wishlist">${t("form_wishlist")}</label></div>
   </div>`);
   wrap.appendChild(checks);
+
+  // Étiquettes libres (champ « tags » partagé avec l'app Windows), avec
+  // les étiquettes déjà utilisées proposées en un appui pour garder une
+  // graphie cohérente d'une recette à l'autre.
+  const initialTags = normalizeRecipeTags(prefill ? prefill.tags : (r ? r.tags : []));
+  const tagsField = el(`<div class="field">
+    <label for="f-tags">${escapeHtml(t("form_tags"))}</label>
+    <input type="text" id="f-tags" autocomplete="off" placeholder="${escapeHtml(t("form_tags_placeholder"))}">
+    <p class="field-hint">${escapeHtml(t("form_tags_hint"))}</p>
+    <div class="tag-suggestions"></div>
+  </div>`);
+  const tagsInput = tagsField.querySelector("#f-tags");
+  tagsInput.value = initialTags.join(", ");
+  const suggestionsHolder = tagsField.querySelector(".tag-suggestions");
+  const refreshTagSuggestions = () => {
+    const present = new Set(normalizeRecipeTags(tagsInput.value).map(searchKey));
+    const available = allRecipeTags().filter((tg) => !present.has(searchKey(tg)));
+    suggestionsHolder.innerHTML = "";
+    if (!available.length) return;
+    suggestionsHolder.appendChild(el(`<span class="tag-suggestions-label">${escapeHtml(t("form_tags_existing"))}</span>`));
+    available.forEach((tg) => {
+      const chip = el(`<button type="button" class="chip">+ ${escapeHtml(tg)}</button>`);
+      chip.addEventListener("click", () => {
+        tagsInput.value = normalizeRecipeTags([...normalizeRecipeTags(tagsInput.value), tg]).join(", ");
+        refreshTagSuggestions();
+      });
+      suggestionsHolder.appendChild(chip);
+    });
+  };
+  tagsInput.addEventListener("input", refreshTagSuggestions);
+  refreshTagSuggestions();
+  wrap.appendChild(tagsField);
 
   const ingSection = el(`<div class="section"><div class="section-label">${t("form_ingredients")}</div>
     <p style="font-size:13px;color:var(--text-muted);margin:0 0 12px;line-height:1.4;">${escapeHtml(t("form_ingredients_hint"))}</p>
@@ -2431,6 +2632,7 @@ async function saveRecipeForm(wrap, existing) {
     wishlistSince: wrap.querySelector("#f-wishlist").checked
       ? ((existing && existing.wishlist && existing.wishlistSince) || new Date().toISOString())
       : null,
+    tags: normalizeRecipeTags(wrap.querySelector("#f-tags").value),
     ingredients: finalIngredients,
     allergens: state.formAllergens.slice(),
     description: wrap.querySelector("#f-description").value.trim(),
@@ -4046,6 +4248,7 @@ function openIngredientNameModal(existingName) {
       <label for="modal-ing-rename">${t("ingredient_name_label")}</label>
       <input type="text" id="modal-ing-rename" value="${escapeHtml(existingName || "")}">
     </div>
+    <div id="modal-used-in"></div>
 
     <div class="section-label">${t("form_allergens")}</div>
     <div id="modal-allergen-holder" class="card allergen-grid" style="padding:2px 14px;margin-bottom:18px;"></div>
@@ -4095,6 +4298,37 @@ function openIngredientNameModal(existingName) {
     });
     allergenHolder.appendChild(row);
   });
+
+  // « Quelles recettes utilisent cet ingrédient ? » (comme l'app
+  // Windows) : nom exact à la casse et aux accents près, pas la
+  // recherche par mot de la liste des recettes — « Farine » ne doit pas
+  // lister les recettes à la « Farine de riz ».
+  if (existingName) {
+    const usedHolder = sheet.querySelector("#modal-used-in");
+    const key = normalize(existingName);
+    const using = state.recipes
+      .filter((rec) => (rec.ingredients || []).some((ing) => ing && normalize(ing.name) === key))
+      .sort((a, b) => a.name.localeCompare(b.name, CURRENT_LANG));
+    usedHolder.className = "ingredient-used-in";
+    if (!using.length) {
+      usedHolder.appendChild(el(`<p>${escapeHtml(t("ingredient_used_in_none"))}</p>`));
+    } else {
+      usedHolder.appendChild(el(`<p>${escapeHtml(t("ingredient_used_in", { count: String(using.length) }))}</p>`));
+      const links = el(`<div class="chip-row-wrapping"></div>`);
+      using.forEach((rec) => {
+        const chip = el(`<button type="button" class="chip">${escapeHtml(rec.name)}</button>`);
+        chip.addEventListener("click", () => {
+          overlay.remove();
+          state.currentRecipeId = rec.id;
+          state.viewPersons = rec.defaultPersons || 4;
+          state.screen = "recipe";
+          render();
+        });
+        links.appendChild(chip);
+      });
+      usedHolder.appendChild(links);
+    }
+  }
 
   const priceUnitSelect = sheet.querySelector("#modal-price-unit");
   UNIT_OPTIONS.filter((u) => u !== "autre").forEach((u) => priceUnitSelect.appendChild(el(`<option value="${u}">${escapeHtml(translateUnit(u))}</option>`)));
@@ -8642,7 +8876,7 @@ async function recipeToSharedFormat(recipe) {
     cook_time: recipe.cookTime ?? null,
     difficulty: recipe.difficulty || "",
     default_persons: recipe.defaultPersons || 4,
-    tags: [],
+    tags: normalizeRecipeTags(recipe.tags),
     allergens: recipe.allergens || [],
     description: recipe.description || "",
     personal_notes: recipe.notes || "",
@@ -8691,6 +8925,7 @@ function recipeFromSharedFormat(json, imageBytesByFilename) {
     vegetarian: !!json.vegetarian,
     wishlist: !!json.wishlist,
     wishlistSince: json.wishlist && typeof json.wishlist_since === "string" ? json.wishlist_since : null,
+    tags: normalizeRecipeTags(json.tags),
     // migrateLegacyUnit : une recette partagée depuis un appareil (ou
     // une version de l'app de bureau) qui n'a pas encore la fusion des
     // unités peut encore contenir "sachet"/"pot" — sans cette
@@ -9192,6 +9427,13 @@ function sanitizeBackupItem(item, storeName, report) {
       const clamped = Number.isFinite(n) ? Math.max(0, Math.min(5, Math.round(n))) : 0;
       if (clamped !== cleaned.personalRating) report.structuralFixes += 1;
       cleaned.personalRating = clamped;
+    }
+    // Étiquettes : tableau de textes sans doublon, sinon le filtre et
+    // l'affichage pourraient tomber sur une valeur non textuelle.
+    if ("tags" in cleaned) {
+      const tags = normalizeRecipeTags(cleaned.tags);
+      if (JSON.stringify(tags) !== JSON.stringify(cleaned.tags)) report.structuralFixes += 1;
+      cleaned.tags = tags;
     }
     if (cleaned.category && !CATEGORY_OPTIONS.includes(cleaned.category)) {
       cleaned.category = "Autre";
@@ -13524,8 +13766,7 @@ function renderWhatCanICook() {
 
 /* ======================================================================
    STATISTIQUES
-   Adapté du bureau : la note en étoiles et les tags n'existent pas sur
-   mobile, donc remplacés par ce qui est réellement disponible ici
+   Adapté du bureau : centré sur ce qui est réellement disponible ici
    (coût, calories, historique de cuisine).
    ====================================================================== */
 const WISHLIST_REMINDER_DAYS = 90;
@@ -13725,7 +13966,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 307;
+const APP_VERSION = 308;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

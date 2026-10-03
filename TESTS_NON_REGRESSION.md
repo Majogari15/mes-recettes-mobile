@@ -9320,3 +9320,49 @@ vs 10 j, clic, aller-retour `wishlist_since`, ÷2/×2, coût complet/partiel/
 absent, comparaison 3 recettes à 320 px sans débordement).
 
 **Version testée** : v307
+
+### 142 — Étiquettes libres et recherche par ingrédient (reprises de l'app Windows)
+
+Points 2 et 3 de la comparaison avec l'app Windows (build 79 / 1.6.32).
+
+**Bug corrigé au passage** : l'export vers l'app Windows envoyait toujours
+`tags: []` et l'import ignorait ce champ — les étiquettes d'une recette
+Windows étaient donc perdues après un passage par le mobile.
+
+**Étiquettes** (champ `tags`, même format que Windows) :
+- Formulaire : champ « Étiquettes » (séparées par des virgules) + étiquettes
+  déjà utilisées proposées en un appui. Dédoublonnage à la casse et aux
+  accents près, première graphie gardée (comme Windows) ; 20 étiquettes de
+  40 caractères au plus (`normalizeRecipeTags`).
+- Fiche recette : étiquettes en puces ; un appui ouvre la liste filtrée sur
+  cette étiquette (recherche et autres filtres effacés).
+- Liste : 3 étiquettes au plus sur chaque carte ; la barre de recherche
+  trouve aussi par étiquette (comme Windows) ; filtre « Étiquette ».
+- Format partagé : exportées et importées. Sauvegarde : valeur invalide
+  réparée à la restauration (`sanitizeBackupItem`).
+
+**Recherche par ingrédient** (panneau repliable « 🔎 Filtrer par
+ingrédient ou étiquette » de la liste des recettes, déplié d'office si un
+filtre est actif, remis à zéro par la barre de navigation) :
+- « Avec » : tous les ingrédients listés ; « Sans » : aucun d'eux
+  (séparés par des virgules).
+- Correspondance en début de mot : « poulet » trouve « Blanc de poulet »,
+  « poul » trouve « Poulet », mais « riz » ne trouve pas « Chorizo ». Les
+  mots composés commençant par le terme sont trouvés (« Hähnchen » →
+  « Hähnchenbrust »). Pluriel simple (« oeufs » → « Œuf »), sans faux
+  positifs du type « pois » → « Poivre ». Comparé au nom enregistré et à
+  sa traduction dans la langue de l'interface.
+- Limite connue : les accents étant ignorés, « pâtes » trouve aussi
+  « Pâté » (même clé « pate »).
+- Fenêtre d'un ingrédient (Gérer les ingrédients) : « Utilisé dans N
+  recette(s) » avec les recettes cliquables — nom exact, pour que
+  « Farine » ne liste pas les recettes à la « Farine de riz ».
+
+Textes dans les 9 langues ; exemples de l'aide vérifiés contre les vrais
+noms traduits du catalogue.
+
+**Test** : `tests/test_tags_and_ingredient_search.py` (normalisation,
+12 cas de recherche, nom traduit, panneau, fiche, formulaire et
+enregistrement, format partagé, sauvegarde, fenêtre ingrédient, 320 px).
+
+**Version testée** : v308

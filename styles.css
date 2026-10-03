@@ -1120,3 +1120,56 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   max-width: 100%;
   height: auto;
 }
+
+/* ---------- Étiquettes et filtres avancés des recettes ---------- */
+.recipe-tags, .chip-row-wrapping, .tag-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.recipe-tags { margin: 0 0 16px; }
+.recipe-tags .chip, .chip-row-wrapping .chip, .tag-suggestions .chip {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+  max-width: 100%;
+  min-height: 32px;
+  padding: 6px 12px;
+}
+.tag-suggestions { margin-top: 8px; align-items: center; }
+.tag-suggestions-label { font-size: 12px; color: var(--text-muted); width: 100%; }
+.field-hint { font-size: 12px; color: var(--text-muted); margin: 6px 0 0; line-height: 1.4; }
+.recipe-row-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.recipe-row-tags span {
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 999px;
+  padding: 2px 8px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.recipe-filters-panel { padding: 0 14px; margin-bottom: 14px; }
+.recipe-filters-panel > summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 0;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+.recipe-filters-panel[open] > summary { margin-bottom: 4px; }
+.recipe-filters-panel[open] { padding-bottom: 14px; }
+.recipe-filters-count { color: var(--primary); font-weight: 700; }
+.recipe-filters-hint { font-size: 12px; color: var(--text-muted); margin: -6px 0 12px; line-height: 1.4; }
+.recipe-filters-panel input, .recipe-filters-panel select { min-width: 0; width: 100%; box-sizing: border-box; }
+.ingredient-used-in { margin: -4px 0 16px; }
+.ingredient-used-in p { font-size: 13px; color: var(--text-muted); margin: 0 0 8px; }
