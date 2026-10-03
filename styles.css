@@ -1173,3 +1173,16 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .recipe-filters-panel input, .recipe-filters-panel select { min-width: 0; width: 100%; box-sizing: border-box; }
 .ingredient-used-in { margin: -4px 0 16px; }
 .ingredient-used-in p { font-size: 13px; color: var(--text-muted); margin: 0 0 8px; }
+
+/* ---------- Journal de cuisine : détails par cuisson ---------- */
+.cooklog-rating-summary { font-size: 13px; font-weight: 600; color: var(--text-muted); margin: 0 0 12px; }
+.cooklog-entry-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.cooklog-entry-stars { color: var(--accent); letter-spacing: 1px; }

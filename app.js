@@ -5802,17 +5802,57 @@ function openSubstitutesModal(recipe) {
 /* ======================================================================
    JOURNAL DE CUISINE
    Chaque entrée est stockée directement dans la recette (recipe.cookLog),
-   avec une note et une photo optionnelles, ainsi qu'un compteur du
-   nombre de fois cuisinée (recipe.timesCooked).
+   ainsi qu'un compteur du nombre de fois cuisinée (recipe.timesCooked).
+   Même contenu par entrée que l'app Windows (cook_log) : date, note
+   personnelle, commentaire, note en étoiles (0-5), nombre de personnes,
+   photo — tous facultatifs sauf la date.
    ====================================================================== */
+// Entrée du journal ramenée à une forme sûre (import Windows, sauvegarde
+// restaurée) : textes, note entière 0-5, personnes nombre > 0 ou null.
+// Les champs inconnus sont conservés tels quels (aller-retour sans perte).
+function normalizeCookLogEntry(entry) {
+  const out = { ...entry };
+  out.date = typeof entry.date === "string" ? entry.date : "";
+  out.note = typeof entry.note === "string" ? entry.note : "";
+  out.comment = typeof entry.comment === "string" ? entry.comment : "";
+  const rating = Math.round(Number(entry.rating));
+  out.rating = Number.isFinite(rating) ? Math.max(0, Math.min(5, rating)) : 0;
+  const persons = Number(entry.persons);
+  out.persons = entry.persons != null && entry.persons !== "" && Number.isFinite(persons) && persons > 0 ? persons : null;
+  if (!("photo" in entry)) out.photo = null;
+  return out;
+}
+// Note moyenne des cuissons notées (les entrées sans note ne comptent pas).
+function cookLogRatingSummary(entries) {
+  const rated = (entries || []).map((e) => Number(e && e.rating) || 0).filter((n) => n > 0);
+  if (!rated.length) return null;
+  return { avg: rated.reduce((a, b) => a + b, 0) / rated.length, count: rated.length };
+}
+
 function openCookLogAddModal(recipe, existingEntry, onDone) {
   const isEdit = !!existingEntry;
+  const initialPersons = isEdit
+    ? (existingEntry.persons || "")
+    : (state.currentRecipeId === recipe.id && state.viewPersons ? state.viewPersons : (recipe.defaultPersons || 4));
+  const initialRating = isEdit ? Math.max(0, Math.min(5, Math.round(Number(existingEntry.rating) || 0))) : 0;
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
     <h2>${escapeHtml(recipe.name)}</h2>
     <div class="field">
+      <label for="cooklog-persons">${t("cooklog_persons_label")}</label>
+      <input type="number" min="1" step="1" inputmode="numeric" id="cooklog-persons" value="${escapeHtml(String(initialPersons))}">
+    </div>
+    <div class="field">
+      <label id="cooklog-rating-label">${t("cooklog_rating_label")}</label>
+      <div id="cooklog-rating-stars" data-value="${initialRating}" role="radiogroup" aria-labelledby="cooklog-rating-label" style="font-size:30px;letter-spacing:6px;line-height:1;"></div>
+    </div>
+    <div class="field">
       <label for="cooklog-note">${t("cooklog_add_note_label")}</label>
       <textarea id="cooklog-note">${escapeHtml(isEdit ? existingEntry.note || "" : "")}</textarea>
+    </div>
+    <div class="field">
+      <label for="cooklog-comment">${t("cooklog_comment_label")}</label>
+      <textarea id="cooklog-comment" placeholder="${escapeHtml(t("cooklog_comment_placeholder"))}">${escapeHtml(isEdit ? existingEntry.comment || "" : "")}</textarea>
     </div>
     <div class="photo-upload" style="margin-bottom:10px;">
       <div id="cooklog-photo-preview">${escapeHtml(t("cooklog_add_photo_label"))}</div>
@@ -5828,6 +5868,38 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
       <button type="button" class="btn btn-primary" id="cooklog-save">${t("cooklog_save_button")}</button>
     </div>
   </div>`);
+
+  // Étoiles : même comportement que la note du formulaire de recette
+  // (appui sur l'étoile déjà choisie = effacer, flèches au clavier).
+  const starsEl = sheet.querySelector("#cooklog-rating-stars");
+  function renderCookStars(value) {
+    starsEl.dataset.value = String(value);
+    const tabbableStar = value || 1;
+    starsEl.innerHTML = [1, 2, 3, 4, 5].map((n) =>
+      `<button type="button" data-star="${n}" role="radio" aria-checked="${n === value}" aria-label="${n}" tabindex="${n === tabbableStar ? "0" : "-1"}" style="background:none;border:none;padding:0 2px;cursor:pointer;font:inherit;color:${n <= value ? "var(--accent)" : "var(--border)"};">★</button>`
+    ).join("");
+  }
+  renderCookStars(initialRating);
+  starsEl.addEventListener("click", (e) => {
+    const starEl = e.target.closest("[data-star]");
+    if (!starEl) return;
+    const clicked = Number(starEl.dataset.star);
+    renderCookStars(clicked === Number(starsEl.dataset.value) ? 0 : clicked);
+  });
+  starsEl.addEventListener("keydown", (e) => {
+    const current = Number(starsEl.dataset.value) || 1;
+    let next = null;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = Math.min(5, current + 1);
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = Math.max(1, current - 1);
+    if (next == null || next === current) return;
+    e.preventDefault();
+    renderCookStars(next);
+    starsEl.querySelector(`[data-star="${next}"]`).focus();
+  });
+  const readPersons = () => {
+    const n = Number(sheet.querySelector("#cooklog-persons").value);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  };
 
   const photoPreview = sheet.querySelector("#cooklog-photo-preview");
   let photoData = isEdit ? (existingEntry.photo || null) : null;
@@ -5900,13 +5972,22 @@ function openCookLogAddModal(recipe, existingEntry, onDone) {
   }
 
   async function saveEntry(withDetails) {
+    const rating = Number(starsEl.dataset.value) || 0;
     if (isEdit) {
       existingEntry.note = sheet.querySelector("#cooklog-note").value.trim();
+      existingEntry.comment = sheet.querySelector("#cooklog-comment").value.trim();
+      existingEntry.rating = rating;
+      existingEntry.persons = readPersons();
       existingEntry.photo = photoData;
     } else {
+      // « Passer » garde quand même le nombre de personnes : ce n'est pas
+      // un détail saisi mais le contexte de la cuisson (comme Windows).
       const entry = {
         date: new Date().toISOString(),
         note: withDetails ? sheet.querySelector("#cooklog-note").value.trim() : "",
+        comment: withDetails ? sheet.querySelector("#cooklog-comment").value.trim() : "",
+        rating: withDetails ? rating : 0,
+        persons: readPersons(),
         photo: withDetails ? photoData : null,
       };
       recipe.cookLog = recipe.cookLog || [];
@@ -6149,6 +6230,13 @@ function openCookLogViewModal(recipe) {
       entriesHolder.appendChild(el(`<div class="empty-state" style="padding:20px 0;"><p>${escapeHtml(t("cooklog_no_entries"))}</p></div>`));
       return;
     }
+    const summary = cookLogRatingSummary(entries);
+    if (summary) {
+      entriesHolder.appendChild(el(`<p class="cooklog-rating-summary">${escapeHtml(t("cooklog_rating_summary", {
+        avg: summary.avg.toLocaleString(CURRENT_LANG, { maximumFractionDigits: 1 }),
+        count: String(summary.count),
+      }))}</p>`));
+    }
     entries.forEach((entry) => {
       const dateStr = localeDateStr(entry.date);
       const card = el(`<div class="card" style="padding:12px 16px;margin-bottom:12px;"></div>`);
@@ -6177,7 +6265,18 @@ function openCookLogViewModal(recipe) {
         entryPhotoUrls.push(url);
         card.appendChild(el(`<img src="${url}" style="width:100%;border-radius:10px;margin-bottom:8px;" alt="">`));
       }
-      if (entry.note) card.appendChild(el(`<p class="prose" style="margin:0;">${escapeHtml(entry.note)}</p>`));
+      const details = [];
+      if (entry.persons) details.push(t("cooklog_entry_persons", { persons: String(entry.persons) }));
+      const entryRating = Math.max(0, Math.min(5, Math.round(Number(entry.rating) || 0)));
+      if (details.length || entryRating) {
+        card.appendChild(el(`<div class="cooklog-entry-meta">${details.map((d) => `<span>${escapeHtml(d)}</span>`).join("")}${entryRating ? `<span class="cooklog-entry-stars" aria-label="${escapeHtml(t("cooklog_entry_rating", { rating: String(entryRating) }))}">${"★".repeat(entryRating)}${"☆".repeat(5 - entryRating)}</span>` : ""}</div>`));
+      }
+      // Intitulés seulement si les deux textes sont présents : une note
+      // seule reste affichée comme avant.
+      const note = typeof entry.note === "string" ? entry.note.trim() : "";
+      const comment = typeof entry.comment === "string" ? entry.comment.trim() : "";
+      if (note) card.appendChild(el(`<p class="prose" style="margin:0 0 6px;">${comment ? `<strong>${escapeHtml(t("cooklog_note_heading"))}</strong> ` : ""}${escapeHtml(note)}</p>`));
+      if (comment) card.appendChild(el(`<p class="prose" style="margin:0;"><strong>${escapeHtml(t("cooklog_comment_heading"))}</strong> ${escapeHtml(comment)}</p>`));
       entriesHolder.appendChild(card);
     });
   }
@@ -8911,8 +9010,8 @@ function recipeFromSharedFormat(json, imageBytesByFilename) {
     photo = new Blob([bytes], { type: mime });
   }
   const cookLog = Array.isArray(json.cook_log_full) && json.cook_log_full.length
-    ? json.cook_log_full
-    : (Array.isArray(json.cooked_dates) ? json.cooked_dates : []).map((date) => ({ date, note: "", photo: null }));
+    ? json.cook_log_full.filter((e) => e && typeof e === "object" && !Array.isArray(e)).map(normalizeCookLogEntry)
+    : (Array.isArray(json.cooked_dates) ? json.cooked_dates : []).map((date) => normalizeCookLogEntry({ date, note: "", photo: null }));
   return {
     id: json.id || uid(),
     name: json.name || "",
@@ -9473,10 +9572,23 @@ function sanitizeBackupItem(item, storeName, report) {
       cleaned.cookLog = cleaned.cookLog
         .filter((entry) => entry && typeof entry === "object" && !Array.isArray(entry))
         .map((entry) => {
-          if ("photo" in entry && entry.photo != null) {
-            return { ...entry, photo: sanitizePhotoField(entry.photo, report) };
+          let out = entry;
+          // Note et personnes ramenées à des valeurs sûres (affichage
+          // des étoiles, moyenne) ; commentaire forcé en texte.
+          if ("rating" in out || "persons" in out || "comment" in out) {
+            const fixed = normalizeCookLogEntry(out);
+            if (("rating" in out && fixed.rating !== out.rating) || ("persons" in out && fixed.persons !== out.persons) || ("comment" in out && fixed.comment !== out.comment)) {
+              report.structuralFixes += 1;
+            }
+            out = { ...out };
+            if ("rating" in entry) out.rating = fixed.rating;
+            if ("persons" in entry) out.persons = fixed.persons;
+            if ("comment" in entry) out.comment = fixed.comment;
           }
-          return entry;
+          if ("photo" in out && out.photo != null) {
+            return { ...out, photo: sanitizePhotoField(out.photo, report) };
+          }
+          return out;
         });
       if (cleaned.cookLog.length !== beforeCount) report.structuralFixes += 1;
     } else if ("cookLog" in cleaned) {
@@ -13966,7 +14078,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 308;
+const APP_VERSION = 309;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

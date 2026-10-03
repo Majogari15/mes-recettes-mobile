@@ -9366,3 +9366,39 @@ noms traduits du catalogue.
 enregistrement, format partagé, sauvegarde, fenêtre ingrédient, 320 px).
 
 **Version testée** : v308
+
+### 143 — Journal de cuisine complet (repris de l'app Windows)
+
+Point 7 de la comparaison avec l'app Windows (build 79 / 1.6.32).
+
+**Constat vérifié avant de coder** : contrairement à ce que laissait
+penser la comparaison, il n'y avait **pas de perte de données**. Le mobile
+conservait déjà tels quels les champs `comment`, `rating` et `persons`
+venus de Windows (modification de l'entrée sur place, export par copie de
+l'entrée dans `cook_log_full`). Il ne les affichait simplement pas et ne
+permettait pas de les saisir.
+
+**Ajouté** :
+- Fenêtre « J'ai cuisiné ça » : nombre de personnes (prérempli avec le
+  nombre affiché sur la fiche), appréciation en étoiles (appui sur l'étoile
+  choisie = effacer, flèches au clavier, comme le formulaire), note
+  personnelle (libellé renommé, avant « Une note sur cette fois-ci ») et
+  commentaire sur la cuisson. « Passer » garde le nombre de personnes,
+  comme Windows. Modification d'une entrée : tous les champs.
+- Journal : personnes, étoiles, note et commentaire (intitulés seulement si
+  les deux sont présents : une ancienne entrée s'affiche comme avant) ;
+  appréciation moyenne des cuissons notées (comme Windows).
+- « Appréciation » pour les étoiles (fr ; « Puntuación » en espagnol), pour
+  ne pas confondre avec la « note » écrite.
+- `normalizeCookLogEntry` : import Windows (textes, appréciation entière
+  0-5, personnes > 0 ou null ; champs inconnus conservés) ; restauration
+  d'une sauvegarde : seules les valeurs présentes sont réparées, aucune
+  clé ajoutée aux anciennes entrées.
+
+Textes dans les 9 langues.
+
+**Test** : `tests/test_cook_log_details.py` (ajout, effacement d'étoiles,
+« Passer », affichage et moyenne, modification, export/aller-retour,
+import Windows invalide, ancien format `cooked_dates`, sauvegarde, 320 px).
+
+**Version testée** : v309
