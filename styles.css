@@ -1095,7 +1095,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   font-size: 13px;
   line-height: 1.7;
 }
-.compare-only-columns > div:first-child { border-right: 1px solid var(--border); }
+.compare-only-columns > div + div { border-left: 1px solid var(--border); }
+.compare-values > div, .compare-headers .header-values > div, .compare-only-columns > div { min-width: 0; overflow-wrap: anywhere; }
 .compare-only-columns .col-title {
   font-weight: 700;
   font-size: 11px;

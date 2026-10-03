@@ -1313,6 +1313,21 @@ function renderHome() {
     wrap.appendChild(expiringReminder);
   }
 
+  // Rappel liste d'envies (même règle que l'app Windows) : recettes
+  // marquées « à essayer » depuis 90 jours ou plus.
+  const staleWishlist = getStaleWishlistRecipes();
+  if (staleWishlist.length) {
+    const wishlistReminder = el(`<button type="button" class="home-wishlist-reminder" style="display:block;width:100%;border:none;background:var(--primary-light);color:var(--primary);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;">
+      ${escapeHtml(t("home_wishlist_reminder", { count: String(staleWishlist.length), days: String(WISHLIST_REMINDER_DAYS) }))}
+    </button>`);
+    wishlistReminder.addEventListener("click", () => {
+      state.activeFilter = "wishlist";
+      state.screen = "recipes";
+      render();
+    });
+    wrap.appendChild(wishlistReminder);
+  }
+
   // Rappel de sauvegarde : dès qu'il y a une donnée importante à
   // protéger (pas seulement des recettes — une personne n'ayant que des
   // courses, un garde-manger, des menus ou des plannings mérite aussi
@@ -1637,11 +1652,21 @@ function renderRecipeView() {
 
   const stepperWrap = el(`<div class="section" style="display:flex;align-items:center;justify-content:space-between;"></div>`);
   const stepper = el(`<div class="persons-stepper">
+    <button data-action="half" aria-label="${escapeHtml(t("recipe_persons_half"))}" style="font-size:14px;">÷2</button>
     <button data-action="minus" aria-label="${t("common_minus")}">−</button>
     <span class="count">${state.viewPersons}</span>
     <span style="font-size:13px;color:var(--text-muted);">${t("recipe_persons")}</span>
     <button data-action="plus" aria-label="${t("common_plus")}">+</button>
+    <button data-action="double" aria-label="${escapeHtml(t("recipe_persons_double"))}" style="font-size:14px;">×2</button>
   </div>`);
+  // ÷2 arrondi au supérieur (5 -> 3) et jamais sous 1, comme l'app Windows.
+  stepper.querySelector('[data-action="half"]').addEventListener("click", () => {
+    const next = Math.max(1, Math.ceil(state.viewPersons / 2));
+    if (next !== state.viewPersons) { state.viewPersons = next; render(); }
+  });
+  stepper.querySelector('[data-action="double"]').addEventListener("click", () => {
+    state.viewPersons *= 2; render();
+  });
   stepper.querySelector('[data-action="minus"]').addEventListener("click", () => {
     if (state.viewPersons > 1) { state.viewPersons--; render(); }
   });
@@ -1671,6 +1696,17 @@ function renderRecipeView() {
     r.allergens.forEach((a) => allergenTags.appendChild(el(`<span class="allergen-tag">${escapeHtml(translateAllergen(a))}</span>`)));
     wrap.appendChild(el(`<div class="section"><div class="section-label">${t("recipe_allergens")}</div></div>`));
     wrap.lastElementChild.appendChild(allergenTags);
+  }
+
+  const costInfo = computeRecipeCostInfo(r.ingredients);
+  if (costInfo) {
+    const total = costInfo.perPerson * state.viewPersons;
+    const costCard = el(`<div class="card recipe-cost-card" style="padding:14px 16px;">
+      <p style="margin:0;font-weight:700;font-size:16px;">${escapeHtml(t("recipe_cost_line", { total: formatPrice(total), persons: String(state.viewPersons), perPerson: formatPrice(costInfo.perPerson) }))}</p>
+      ${costInfo.priced < costInfo.counted ? `<p style="margin:6px 0 0;font-size:12px;color:var(--text-muted);">${escapeHtml(t("recipe_cost_partial", { priced: String(costInfo.priced), total: String(costInfo.counted) }))}</p>` : ""}
+    </div>`);
+    wrap.appendChild(el(`<div class="section"><div class="section-label">${escapeHtml(t("recipe_cost_title"))}</div></div>`));
+    wrap.lastElementChild.appendChild(costCard);
   }
 
   const nutrition = computeRecipeNutrition(r.ingredients);
@@ -2384,6 +2420,12 @@ async function saveRecipeForm(wrap, existing) {
     favorite: wrap.querySelector("#f-favorite").checked,
     vegetarian: wrap.querySelector("#f-vegetarian").checked,
     wishlist: wrap.querySelector("#f-wishlist").checked,
+    // Date d'entrée dans la liste d'envies (rappel après 90 jours, même
+    // règle que l'app Windows) : conservée tant que la case reste cochée,
+    // posée à maintenant quand elle vient d'être cochée, effacée sinon.
+    wishlistSince: wrap.querySelector("#f-wishlist").checked
+      ? ((existing && existing.wishlist && existing.wishlistSince) || new Date().toISOString())
+      : null,
     ingredients: finalIngredients,
     allergens: state.formAllergens.slice(),
     description: wrap.querySelector("#f-description").value.trim(),
@@ -8589,6 +8631,7 @@ async function recipeToSharedFormat(recipe) {
     favorite: !!recipe.favorite,
     vegetarian: !!recipe.vegetarian,
     wishlist: !!recipe.wishlist,
+    wishlist_since: recipe.wishlist ? (recipe.wishlistSince || null) : null,
     rating: recipe.personalRating || 0,
     prep_time: recipe.prepTime ?? null,
     cook_time: recipe.cookTime ?? null,
@@ -8642,6 +8685,7 @@ function recipeFromSharedFormat(json, imageBytesByFilename) {
     favorite: !!json.favorite,
     vegetarian: !!json.vegetarian,
     wishlist: !!json.wishlist,
+    wishlistSince: json.wishlist && typeof json.wishlist_since === "string" ? json.wishlist_since : null,
     // migrateLegacyUnit : une recette partagée depuis un appareil (ou
     // une version de l'app de bureau) qui n'a pas encore la fusion des
     // unités peut encore contenir "sachet"/"pot" — sans cette
@@ -9859,117 +9903,126 @@ function renderCompare() {
   const wrap = el(`<div></div>`);
   const sortedRecipes = state.recipes.slice().sort((a, b) => a.name.localeCompare(b.name, CURRENT_LANG));
 
-  const pickerRow = el(`<div class="field-row"></div>`);
-  const fieldA = el(`<div class="field"><label for="compare-a">${t("compare_recipe_a")}</label><select id="compare-a"></select></div>`);
-  const fieldB = el(`<div class="field"><label for="compare-b">${t("compare_recipe_b")}</label><select id="compare-b"></select></div>`);
-  [fieldA, fieldB].forEach((field) => {
+  // Recettes A et B obligatoires, C facultative (comme l'app Windows,
+  // qui compare jusqu'à trois recettes).
+  function picker(id, labelKey) {
+    const field = el(`<div class="field"><label for="${id}">${escapeHtml(t(labelKey))}</label><select id="${id}"></select></div>`);
     const select = field.querySelector("select");
     select.appendChild(el(`<option value="">—</option>`));
     sortedRecipes.forEach((r) => select.appendChild(el(`<option value="${escapeHtml(r.id)}">${escapeHtml(r.name)}</option>`)));
-  });
+    return field;
+  }
+  const pickerRow = el(`<div class="field-row"></div>`);
+  const fieldA = picker("compare-a", "compare_recipe_a");
+  const fieldB = picker("compare-b", "compare_recipe_b");
+  const fieldC = picker("compare-c", "compare_recipe_c");
   pickerRow.appendChild(fieldA);
   pickerRow.appendChild(fieldB);
   wrap.appendChild(pickerRow);
+  wrap.appendChild(fieldC);
 
   const resultHolder = el(`<div id="compare-result"></div>`);
   wrap.appendChild(resultHolder);
 
+  function costText(recipe) {
+    const info = computeRecipeCostInfo(recipe.ingredients);
+    if (!info) return "—";
+    const persons = recipe.defaultPersons || 4;
+    return t("compare_cost_value", { total: formatPrice(info.perPerson * persons), persons: String(persons) })
+      + (info.priced < info.counted ? " *" : "");
+  }
+  function kcalText(recipe) {
+    const n = computeRecipeNutrition(recipe.ingredients);
+    return n ? `${n.kcal} kcal${n.partial ? " *" : ""}` : "—";
+  }
+
   function refresh() {
-    const idA = fieldA.querySelector("select").value;
-    const idB = fieldB.querySelector("select").value;
     resultHolder.innerHTML = "";
-    const recipeA = state.recipes.find((r) => r.id === idA);
-    const recipeB = state.recipes.find((r) => r.id === idB);
-    if (!recipeA || !recipeB) {
+    const picked = [fieldA, fieldB, fieldC]
+      .map((f) => state.recipes.find((r) => r.id === f.querySelector("select").value))
+      .filter(Boolean);
+    const ids = new Set();
+    const recipes = picked.filter((r) => (ids.has(r.id) ? false : (ids.add(r.id), true)));
+    if (!state.recipes.find((r) => r.id === fieldA.querySelector("select").value)
+      || !state.recipes.find((r) => r.id === fieldB.querySelector("select").value) || recipes.length < 2) {
       resultHolder.appendChild(el(`<div class="empty-state"><div class="emoji">⚖️</div><p>${escapeHtml(t("compare_select_both"))}</p></div>`));
       return;
     }
 
     const headers = el(`<div class="compare-headers">
       <div class="spacer"></div>
-      <div class="header-values">
-        <div><div class="name">${escapeHtml(recipeA.name)}</div></div>
-        <div><div class="name">${escapeHtml(recipeB.name)}</div></div>
-      </div>
+      <div class="header-values"></div>
     </div>`);
-    const headerCols = headers.querySelectorAll(".header-values > div");
-    const viewBtnA = el(`<button class="view-btn">${t("compare_view_recipe")}</button>`);
-    viewBtnA.addEventListener("click", () => {
-      state.currentRecipeId = recipeA.id;
-      state.viewPersons = recipeA.defaultPersons || 4;
-      state.screen = "recipe";
-      render();
+    const headerValues = headers.querySelector(".header-values");
+    recipes.forEach((recipe) => {
+      const col = el(`<div><div class="name">${escapeHtml(recipe.name)}</div></div>`);
+      const viewBtn = el(`<button class="view-btn">${t("compare_view_recipe")}</button>`);
+      viewBtn.addEventListener("click", () => {
+        state.currentRecipeId = recipe.id;
+        state.viewPersons = recipe.defaultPersons || 4;
+        state.screen = "recipe";
+        render();
+      });
+      col.appendChild(viewBtn);
+      headerValues.appendChild(col);
     });
-    const viewBtnB = el(`<button class="view-btn">${t("compare_view_recipe")}</button>`);
-    viewBtnB.addEventListener("click", () => {
-      state.currentRecipeId = recipeB.id;
-      state.viewPersons = recipeB.defaultPersons || 4;
-      state.screen = "recipe";
-      render();
-    });
-    headerCols[0].appendChild(viewBtnA);
-    headerCols[1].appendChild(viewBtnB);
     resultHolder.appendChild(headers);
 
-    const statsCard = el(`<div class="card" style="padding:2px 14px;margin-bottom:16px;"></div>`);
+    const statsCard = el(`<div class="card" style="padding:2px 14px;margin-bottom:8px;"></div>`);
     const rows = [
-      [t("compare_category"), translateCategory(recipeA.category), translateCategory(recipeB.category)],
-      [t("compare_difficulty"), translateDifficulty(recipeA.difficulty) || "—", translateDifficulty(recipeB.difficulty) || "—"],
-      [t("compare_prep"), recipeA.prepTime ? recipeA.prepTime + " " + t("recipe_min") : "—", recipeB.prepTime ? recipeB.prepTime + " " + t("recipe_min") : "—"],
-      [t("compare_cook"), recipeA.cookTime ? recipeA.cookTime + " " + t("recipe_min") : "—", recipeB.cookTime ? recipeB.cookTime + " " + t("recipe_min") : "—"],
-      [t("compare_persons"), recipeA.defaultPersons, recipeB.defaultPersons],
-      [t("recipe_allergens"), (recipeA.allergens && recipeA.allergens.length) ? recipeA.allergens.map(translateAllergen).join(", ") : "—", (recipeB.allergens && recipeB.allergens.length) ? recipeB.allergens.map(translateAllergen).join(", ") : "—"],
+      [t("compare_category"), (r) => translateCategory(r.category)],
+      [t("compare_difficulty"), (r) => translateDifficulty(r.difficulty) || "—"],
+      [t("compare_prep"), (r) => (r.prepTime ? r.prepTime + " " + t("recipe_min") : "—")],
+      [t("compare_cook"), (r) => (r.cookTime ? r.cookTime + " " + t("recipe_min") : "—")],
+      [t("compare_persons"), (r) => r.defaultPersons],
+      [t("compare_rating"), (r) => (r.personalRating ? "★".repeat(r.personalRating) : "—")],
+      [t("compare_favorite"), (r) => (r.favorite ? "⭐" : "—")],
+      [t("compare_times_cooked"), (r) => String(r.timesCooked || 0)],
+      [t("compare_cost"), costText],
+      [t("compare_kcal"), kcalText],
+      [t("recipe_allergens"), (r) => ((r.allergens && r.allergens.length) ? r.allergens.map(translateAllergen).join(", ") : "—")],
     ];
-    rows.forEach(([label, a, b]) => {
+    rows.forEach(([label, valueOf]) => {
       statsCard.appendChild(el(`<div class="compare-row">
         <div class="compare-label">${escapeHtml(label)}</div>
-        <div class="compare-values"><div>${escapeHtml(String(a))}</div><div>${escapeHtml(String(b))}</div></div>
+        <div class="compare-values">${recipes.map((r) => `<div>${escapeHtml(String(valueOf(r)))}</div>`).join("")}</div>
       </div>`));
     });
     resultHolder.appendChild(statsCard);
+    resultHolder.appendChild(el(`<p class="compare-footnote" style="font-size:12px;color:var(--text-muted);margin:0 0 16px;">${escapeHtml(t("compare_estimate_note"))}</p>`));
 
-    const namesA = new Set((recipeA.ingredients || []).map((i) => normalize(i.name)));
-    const namesB = new Set((recipeB.ingredients || []).map((i) => normalize(i.name)));
-    const byNormA = {};
-    (recipeA.ingredients || []).forEach((i) => (byNormA[normalize(i.name)] = i.name));
-    const byNormB = {};
-    (recipeB.ingredients || []).forEach((i) => (byNormB[normalize(i.name)] = i.name));
+    const nameSets = recipes.map((r) => {
+      const byNorm = {};
+      (r.ingredients || []).forEach((i) => { byNorm[normalize(i.name)] = i.name; });
+      return byNorm;
+    });
+    const common = Object.keys(nameSets[0]).filter((n) => nameSets.every((set) => n in set)).map((n) => nameSets[0][n]);
 
-    const common = [...namesA].filter((n) => namesB.has(n)).map((n) => byNormA[n]);
-    const onlyA = [...namesA].filter((n) => !namesB.has(n)).map((n) => byNormA[n]);
-    const onlyB = [...namesB].filter((n) => !namesA.has(n)).map((n) => byNormB[n]);
-
-    function ingredientListBlock(title, names) {
-      const block = el(`<div class="section"><div class="section-label">${escapeHtml(title)}</div></div>`);
-      const card = el(`<div class="card compare-ing-list" style="padding:12px 16px;"></div>`);
-      card.textContent = names.length ? names.map(translateIngredientName).join(", ") : t("compare_none");
-      block.appendChild(card);
-      resultHolder.appendChild(block);
-    }
-    ingredientListBlock(t("compare_common_ingredients"), common);
+    const commonBlock = el(`<div class="section"><div class="section-label">${escapeHtml(t("compare_common_ingredients"))}</div></div>`);
+    const commonCard = el(`<div class="card compare-ing-list" style="padding:12px 16px;"></div>`);
+    commonCard.textContent = common.length ? common.map(translateIngredientName).join(", ") : t("compare_none");
+    commonBlock.appendChild(commonCard);
+    resultHolder.appendChild(commonBlock);
 
     const onlyBlock = el(`<div class="section"><div class="section-label">${escapeHtml(t("compare_only_in"))}</div></div>`);
     const onlyCard = el(`<div class="card compare-only-columns"></div>`);
-    const colA = el(`<div><div class="col-title">${escapeHtml(recipeA.name)}</div></div>`);
-    const colB = el(`<div><div class="col-title">${escapeHtml(recipeB.name)}</div></div>`);
-    if (onlyA.length) {
-      onlyA.forEach((n) => colA.appendChild(el(`<div>${escapeHtml(translateIngredientName(n))}</div>`)));
-    } else {
-      colA.appendChild(el(`<div style="color:var(--text-muted);">${escapeHtml(t("compare_none"))}</div>`));
-    }
-    if (onlyB.length) {
-      onlyB.forEach((n) => colB.appendChild(el(`<div>${escapeHtml(translateIngredientName(n))}</div>`)));
-    } else {
-      colB.appendChild(el(`<div style="color:var(--text-muted);">${escapeHtml(t("compare_none"))}</div>`));
-    }
-    onlyCard.appendChild(colA);
-    onlyCard.appendChild(colB);
+    recipes.forEach((recipe, index) => {
+      const only = Object.keys(nameSets[index])
+        .filter((n) => nameSets.every((set, j) => j === index || !(n in set)))
+        .map((n) => nameSets[index][n]);
+      const col = el(`<div><div class="col-title">${escapeHtml(recipe.name)}</div></div>`);
+      if (only.length) {
+        only.forEach((n) => col.appendChild(el(`<div>${escapeHtml(translateIngredientName(n))}</div>`)));
+      } else {
+        col.appendChild(el(`<div style="color:var(--text-muted);">${escapeHtml(t("compare_none"))}</div>`));
+      }
+      onlyCard.appendChild(col);
+    });
     onlyBlock.appendChild(onlyCard);
     resultHolder.appendChild(onlyBlock);
   }
 
-  fieldA.querySelector("select").addEventListener("change", refresh);
-  fieldB.querySelector("select").addEventListener("change", refresh);
+  [fieldA, fieldB, fieldC].forEach((f) => f.querySelector("select").addEventListener("change", refresh));
   refresh();
 
   return wrap;
@@ -13470,6 +13523,50 @@ function renderWhatCanICook() {
    mobile, donc remplacés par ce qui est réellement disponible ici
    (coût, calories, historique de cuisine).
    ====================================================================== */
+const WISHLIST_REMINDER_DAYS = 90;
+function getStaleWishlistRecipes() {
+  const now = Date.now();
+  return state.recipes.filter((r) => {
+    if (!r.wishlist || !r.wishlistSince) return false;
+    const since = new Date(r.wishlistSince).getTime();
+    return Number.isFinite(since) && (now - since) / 86400000 >= WISHLIST_REMINDER_DAYS;
+  });
+}
+// Recettes déjà en liste d'envies avant l'arrivée de wishlistSince :
+// date posée à aujourd'hui (jamais à createdAt, qui ferait sonner le
+// rappel tout de suite pour une recette ancienne ajoutée hier aux
+// envies). Le rappel les concernera donc dans 90 jours au plus tôt.
+async function migrateWishlistSince() {
+  const now = new Date().toISOString();
+  for (const r of state.recipes) {
+    if (r.wishlist && !r.wishlistSince) {
+      const updated = { ...r, wishlistSince: now };
+      await storePut("recipes", updated);
+      r.wishlistSince = now;
+    }
+  }
+}
+
+// Coût d'une recette pour 1 personne + nombre d'ingrédients réellement
+// pris en compte (avec un prix connu) sur ceux qui ont une quantité,
+// pour signaler une estimation partielle plutôt qu'un chiffre trompeur.
+// null si aucun ingrédient n'a de prix.
+function computeRecipeCostInfo(ingredients) {
+  let perPerson = 0, priced = 0, counted = 0;
+  (ingredients || []).forEach((ing) => {
+    if (ing.quantity == null) return;
+    counted++;
+    const cost = computeIngredientCost(ing.name, ing.quantity, ing.unit);
+    if (cost == null) return;
+    perPerson += cost;
+    priced++;
+  });
+  return priced ? { perPerson, priced, counted } : null;
+}
+function formatPrice(value) {
+  return Number(value).toLocaleString(CURRENT_LANG, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 function computeRecipeCostPerPerson(ingredients) {
   let total = 0, known = 0;
   (ingredients || []).forEach((ing) => {
@@ -13623,7 +13720,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 306;
+const APP_VERSION = 307;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
@@ -13726,6 +13823,7 @@ async function initInner() {
   state.weeklyPlan = savedPlan || {};
   await migrateMergedContainerUnits();
   await migratePhotosToBlob();
+  await migrateWishlistSince();
   await ensureIngredientListLoaded({ deferSeedWrite: true });
   await loadIngredientOverrides();
   await loadDismissedPairs();

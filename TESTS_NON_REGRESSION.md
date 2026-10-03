@@ -9282,3 +9282,38 @@ fermé. Avertissement Play Console accepté : 1 163 appareils sous
 Android 6 ne sont plus compatibles (le nouveau paquet exige Android 7,
 API 24) — impact indiqué par la console : 0 installation. Test du
 partage sur téléphone en attente de la validation Google.
+
+### 141 — Fonctions reprises de l'app Windows : ÷2/×2, coût estimé, comparaison enrichie, rappel liste d'envies
+
+Comparaison avec l'app Windows (build 79 / 1.6.32), points 1, 4, 9 et 11
+retenus par l'utilisateur.
+
+1. **Personnes ÷2 / ×2** dans la fiche recette, de part et d'autre du
+   sélecteur −/+ : ÷2 arrondi au supérieur (5 → 3), jamais sous 1.
+2. **Coût estimé** dans la fiche recette (carte `recipe-cost-card`, avant
+   les valeurs nutritionnelles) : total pour le nombre de personnes
+   affiché + coût par personne, à partir des prix saisis dans « Gérer les
+   ingrédients ». Absent si aucun ingrédient n'a de prix ; ligne
+   « Estimation partielle : X ingrédient(s) sur Y » si certains n'en ont
+   pas (`computeRecipeCostInfo`).
+3. **Comparaison enrichie** : jusqu'à 3 recettes (A et B obligatoires,
+   C facultative, doublons ignorés), lignes ajoutées : note, favori,
+   nombre de fois cuisinée, coût estimé (pour le nombre de personnes par
+   défaut), calories par personne ; « * » = estimation partielle, expliqué
+   sous le tableau. Colonnes `min-width:0` + `overflow-wrap:anywhere`.
+4. **Rappel liste d'envies** sur l'accueil : recettes « à essayer » depuis
+   90 jours ou plus (`wishlistSince`, posé à la mise en liste d'envies,
+   conservé tant qu'elle y reste, effacé à la sortie). Clic → liste des
+   recettes filtrée sur les envies. Champ `wishlist_since` dans le format
+   partagé (export/import). Recettes déjà en liste d'envies avant cette
+   version : datées du jour de la mise à jour (`migrateWishlistSince`),
+   jamais de `createdAt`, pour éviter un rappel immédiat injustifié — leur
+   premier rappel viendra donc au plus tôt 90 jours après la mise à jour.
+
+Textes traduits dans les 9 langues (vérification clés/placeholders OK).
+
+**Test** : `tests/test_windows_parity_features.py` (migration, rappel 100 j
+vs 10 j, clic, aller-retour `wishlist_since`, ÷2/×2, coût complet/partiel/
+absent, comparaison 3 recettes à 320 px sans débordement).
+
+**Version testée** : v307
