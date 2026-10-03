@@ -59,9 +59,12 @@ def drag(page, handle_selector, dy, nth=0):
     """Simule un glisser du nth-ième élément correspondant à
     handle_selector, de dy pixels vers le bas (négatif pour vers le
     haut)."""
+    # Défilement préalable : sans lui, une poignée sous le bas de l'écran
+    # (formulaire allongé, ex. champ « Étiquettes » de la v308) recevait
+    # un clic hors fenêtre, sans effet.
     box = page.eval_on_selector_all(
         handle_selector,
-        "(els, nth) => { const r = els[nth].getBoundingClientRect(); return {x: r.x + r.width / 2, y: r.y + r.height / 2}; }",
+        "(els, nth) => { els[nth].scrollIntoView({ block: 'center' }); const r = els[nth].getBoundingClientRect(); return {x: r.x + r.width / 2, y: r.y + r.height / 2}; }",
         nth,
     )
     page.mouse.move(box["x"], box["y"])
