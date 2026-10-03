@@ -1650,21 +1650,25 @@ function renderRecipeView() {
   if (r.difficulty) stats.appendChild(el(`<div class="stat-pill"><div class="value">${escapeHtml(translateDifficulty(r.difficulty))}</div><div class="label">${t("recipe_difficulty")}</div></div>`));
   wrap.appendChild(stats);
 
-  const stepperWrap = el(`<div class="section" style="display:flex;align-items:center;justify-content:space-between;"></div>`);
+  const stepperWrap = el(`<div class="section" style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;"></div>`);
   const stepper = el(`<div class="persons-stepper">
-    <button data-action="half" aria-label="${escapeHtml(t("recipe_persons_half"))}" style="font-size:14px;">÷2</button>
     <button data-action="minus" aria-label="${t("common_minus")}">−</button>
     <span class="count">${state.viewPersons}</span>
     <span style="font-size:13px;color:var(--text-muted);">${t("recipe_persons")}</span>
     <button data-action="plus" aria-label="${t("common_plus")}">+</button>
-    <button data-action="double" aria-label="${escapeHtml(t("recipe_persons_double"))}" style="font-size:14px;">×2</button>
+  </div>`);
+  // ÷2 / ×2 dans un groupe à part : passe à la ligne sur écran étroit
+  // (320 px) au lieu d'élargir la pastille −/+ au-delà de l'écran.
+  const quick = el(`<div class="persons-stepper persons-quick">
+    <button data-action="half" aria-label="${escapeHtml(t("recipe_persons_half"))}">÷2</button>
+    <button data-action="double" aria-label="${escapeHtml(t("recipe_persons_double"))}">×2</button>
   </div>`);
   // ÷2 arrondi au supérieur (5 -> 3) et jamais sous 1, comme l'app Windows.
-  stepper.querySelector('[data-action="half"]').addEventListener("click", () => {
+  quick.querySelector('[data-action="half"]').addEventListener("click", () => {
     const next = Math.max(1, Math.ceil(state.viewPersons / 2));
     if (next !== state.viewPersons) { state.viewPersons = next; render(); }
   });
-  stepper.querySelector('[data-action="double"]').addEventListener("click", () => {
+  quick.querySelector('[data-action="double"]').addEventListener("click", () => {
     state.viewPersons *= 2; render();
   });
   stepper.querySelector('[data-action="minus"]').addEventListener("click", () => {
@@ -1674,6 +1678,7 @@ function renderRecipeView() {
     state.viewPersons++; render();
   });
   stepperWrap.appendChild(stepper);
+  stepperWrap.appendChild(quick);
   wrap.appendChild(stepperWrap);
 
   const ingSection = el(`<div class="section"><div class="section-label">${t("recipe_ingredients")}</div></div>`);

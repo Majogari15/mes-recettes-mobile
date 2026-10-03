@@ -610,6 +610,8 @@ button.recipe-row:not(.card) {
   font-weight: 700;
 }
 .persons-stepper .count { font-weight: 700; min-width: 22px; text-align: center; }
+.persons-quick { gap: 8px; }
+.persons-quick button { font-size: 14px; }
 .allergen-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .allergen-tag {
   background: var(--danger-light);

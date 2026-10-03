@@ -9288,8 +9288,11 @@ partage sur téléphone en attente de la validation Google.
 Comparaison avec l'app Windows (build 79 / 1.6.32), points 1, 4, 9 et 11
 retenus par l'utilisateur.
 
-1. **Personnes ÷2 / ×2** dans la fiche recette, de part et d'autre du
-   sélecteur −/+ : ÷2 arrondi au supérieur (5 → 3), jamais sous 1.
+1. **Personnes ÷2 / ×2** dans la fiche recette, en pastille séparée à
+   côté du sélecteur −/+ (passe à la ligne sur écran étroit : placés
+   dans la même pastille, ils la faisaient déborder de 34 à 49 px à
+   320 px, détecté par `test_narrow_screen_overflow.py`) : ÷2 arrondi au
+   supérieur (5 → 3), jamais sous 1.
 2. **Coût estimé** dans la fiche recette (carte `recipe-cost-card`, avant
    les valeurs nutritionnelles) : total pour le nombre de personnes
    affiché + coût par personne, à partir des prix saisis dans « Gérer les
