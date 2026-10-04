@@ -97,6 +97,27 @@ externe. Chacune conserve sa licence d'origine.
   premier lancement, désormais entièrement locales, ce qui supprime la
   dernière dépendance réseau externe de l'application
 
+## Police Noto Sans SC pour les PDF (`fonts/noto-sans-sc-pdf.ttf`)
+
+- Noto Sans SC (chinois simplifié), par Google et Adobe
+  (https://github.com/notofonts/noto-cjk) ; fichier source récupéré
+  depuis le dépôt Google Fonts (`ofl/notosanssc/NotoSansSC[wght].ttf`)
+- Licence : SIL Open Font License 1.1 — texte complet dans
+  `fonts/OFL-NotoSansSC.txt`
+- Fichier modifié (autorisé par l'OFL) : graisse figée à 400 (normale)
+  avec `fontTools.varLib.instancer`, puis sous-ensemble avec
+  `pyftsubset` (8 372 caractères : tout le jeu GB2312, latin de base et
+  étendu A, ponctuations latine, chinoise et pleine chasse, €, chiffres
+  cerclés, flèches, et tous les caractères des fichiers chinois de
+  l'application), sans tables de mise en page ni hinting — 2,3 Mo
+- Utilisation dans l'application : uniquement l'export PDF (la police
+  Helvetica intégrée à jsPDF n'a aucun caractère chinois). Pas incluse
+  dans le préchargement (voir `sw.js`) : téléchargée au premier export
+  PDF en chinois (ou d'un contenu contenant du chinois), puis mise en
+  cache. jsPDF n'intègre dans chaque PDF que les caractères utilisés.
+- Un caractère absent du sous-ensemble (chinois rare hors GB2312)
+  apparaît vide dans le PDF
+
 ---
 
 Aucune de ces bibliothèques ne collecte ni ne transmet de données —

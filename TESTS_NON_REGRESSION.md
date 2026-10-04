@@ -9738,3 +9738,29 @@ reconnaissance chinois), symbole € codé en dur.
 **Tests** : `tests/test_chinese_ingredients.py`.
 
 **Version testée** : v320 (branche)
+
+### 155 — Chinois simplifié, étape 3 : export PDF avec une police chinoise (branche, pas sur main)
+
+- La police Helvetica intégrée à jsPDF n'a aucun caractère chinois : le
+  texte chinois sortait en signes illisibles dans les PDF (recette, liste
+  de courses, livre de recettes).
+- Nouvelle police `lib/fonts/noto-sans-sc-pdf.ttf` (Noto Sans SC, OFL 1.1,
+  sous-ensemble de 8 372 caractères, 2,3 Mo), voir `lib/LICENSES.md`.
+  Téléchargée seulement au premier export en chinois, ou d'un contenu
+  contenant du chinois (recette au nom chinois exportée en français),
+  puis mise en cache ; jamais pour un PDF tout en latin (Helvetica comme
+  avant). Hors connexion avant le premier téléchargement : PDF produit
+  quand même avec Helvetica.
+- Une seule graisse (une version grasse doublerait le poids) : en
+  chinois, les titres se distinguent par la taille. PDF d'une recette
+  ≈ 128 Ko (jsPDF n'intègre que les caractères utilisés).
+- Libellés « 准备：10 分钟 » via `labelValue()`, allergènes séparés par
+  `listSeparator()`.
+- Nom de fichier : les caractères chinois sont gardés (« 番茄炒蛋.pdf ») ;
+  avant, `[^\w]` effaçait tout nom non latin, remplacé par « recette ».
+- Limite : un caractère chinois rare absent du sous-ensemble apparaît
+  vide.
+
+**Tests** : `tests/test_chinese_pdf.py`.
+
+**Version testée** : v321 (branche)

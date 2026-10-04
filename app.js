@@ -4629,6 +4629,55 @@ function openIngredientNameModal(existingName) {
 // voir blobToDataUrl — alors que cette fonction reste volontairement
 // synchrone, appelée en séquence pendant la construction du PDF), ou
 // null pour ne pas inclure de photo.
+// Police du PDF : Helvetica (intégrée à jsPDF, alphabet latin seulement)
+// sauf si le contenu contient du chinois — interface en chinois ou
+// simple nom de recette chinois dans une autre langue. Helvetica
+// n'a aucun caractère chinois : le PDF aurait affiché des signes
+// illisibles. La police chinoise (Noto Sans SC réduite à ~8 400
+// caractères courants, 2,2 Mo, lib/fonts/noto-sans-sc-pdf.ttf) n'est
+// téléchargée qu'à ce moment-là, puis gardée en mémoire et en cache
+// hors connexion par le service worker. Pas de version grasse (elle
+// doublerait le poids) : les titres restent distingués par leur taille.
+const PDF_CJK_RE = /[\u2e80-\u9fff\uf900-\ufaff\uff00-\uffef]/;
+let pdfCjkFontPromise = null;
+function loadPdfCjkFont() {
+  if (pdfCjkFontPromise) return pdfCjkFontPromise;
+  pdfCjkFontPromise = fetch("./lib/fonts/noto-sans-sc-pdf.ttf")
+    .then((res) => { if (!res.ok) throw new Error("pdf_font_load_failed"); return res.arrayBuffer(); })
+    .then((buf) => {
+      const bytes = new Uint8Array(buf);
+      let binary = "";
+      for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+      return btoa(binary);
+    })
+    .catch((e) => { pdfCjkFontPromise = null; throw e; });
+  return pdfCjkFontPromise;
+}
+async function preparePdfFont(doc, contentSample) {
+  doc.__pdfFamily = "helvetica";
+  if (CURRENT_LANG !== "zh" && !PDF_CJK_RE.test(contentSample || "")) return;
+  try {
+    const base64 = await loadPdfCjkFont();
+    doc.addFileToVFS("noto-sans-sc-pdf.ttf", base64);
+    doc.addFont("noto-sans-sc-pdf.ttf", "NotoSansSC", "normal");
+    doc.__pdfFamily = "NotoSansSC";
+    doc.setFont("NotoSansSC", "normal");
+  } catch (e) {
+    // Hors connexion avant le premier téléchargement : PDF quand même
+    // produit (texte latin lisible), plutôt que pas de PDF du tout.
+  }
+}
+// Police chinoise : une seule graisse intégrée (une version grasse doublerait
+// le poids du fichier) ; les titres se distinguent par leur taille.
+function pdfSetFont(doc, style) {
+  if (doc.__pdfFamily === "NotoSansSC") doc.setFont("NotoSansSC", "normal");
+  else doc.setFont("helvetica", style);
+}
+// Nom de fichier : garde lettres et chiffres de toutes les écritures
+// (avant, [^\w] effaçait tout nom chinois, remplacé par « recette »).
+function pdfSafeFileName(name, fallback) {
+  return (name || "").replace(/[^\p{L}\p{N}\s-]/gu, "").trim() || fallback;
+}
 function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl) {
   let y = 22;
 
@@ -4640,11 +4689,11 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl)
   }
   function heading(text) {
     ensureSpace(12);
-    doc.setFont("helvetica", "bold");
+    pdfSetFont(doc, "bold");
     doc.setFontSize(14);
     doc.text(text, margin, y);
     y += 8;
-    doc.setFont("helvetica", "normal");
+    pdfSetFont(doc, "normal");
     doc.setFontSize(11);
   }
   function paragraph(text) {
@@ -4655,7 +4704,7 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl)
     });
   }
 
-  doc.setFont("helvetica", "bold");
+  pdfSetFont(doc, "bold");
   doc.setFontSize(20);
   doc.splitTextToSize(recipe.name, maxWidth).forEach((line) => {
     doc.text(line, margin, y);
@@ -4687,16 +4736,16 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl)
   // sont alignées sur une seule ligne, en colonnes de largeur fixe —
   // plus lisible qu'empilées, et cohérent d'une recette à l'autre dans
   // le livre de cuisine.
-  doc.setFont("helvetica", "normal");
+  pdfSetFont(doc, "normal");
   doc.setFontSize(9);
   const colWidth = maxWidth / 4;
   doc.text(translateCategory(recipe.category), margin, y);
   doc.text(`${persons} ${t("recipe_persons")}`, margin + colWidth, y);
-  if (recipe.prepTime) doc.text(`${t("pdf_prep_label")}: ${recipe.prepTime} ${t("recipe_min")}`, margin + colWidth * 2, y);
-  if (recipe.cookTime) doc.text(`${t("pdf_cook_label")}: ${recipe.cookTime} ${t("recipe_min")}`, margin + colWidth * 3, y);
+  if (recipe.prepTime) doc.text(labelValue(t("pdf_prep_label"), `${recipe.prepTime} ${t("recipe_min")}`), margin + colWidth * 2, y);
+  if (recipe.cookTime) doc.text(labelValue(t("pdf_cook_label"), `${recipe.cookTime} ${t("recipe_min")}`), margin + colWidth * 3, y);
   y += 8;
   doc.setFontSize(11);
-  if (recipe.difficulty) { doc.text(`${t("pdf_difficulty_label")}: ${translateDifficulty(recipe.difficulty)}`, margin, y); y += 6; }
+  if (recipe.difficulty) { doc.text(labelValue(t("pdf_difficulty_label"), translateDifficulty(recipe.difficulty)), margin, y); y += 6; }
   y += 5;
 
   heading(t("pdf_ingredients_label"));
@@ -4711,7 +4760,7 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl)
 
   if (recipe.allergens && recipe.allergens.length) {
     heading(t("recipe_allergens"));
-    paragraph(recipe.allergens.map((a) => translateAllergen(a)).join(", "));
+    paragraph(recipe.allergens.map((a) => translateAllergen(a)).join(listSeparator()));
     y += 5;
   }
 
@@ -4765,11 +4814,11 @@ async function exportRecipePdf(recipe, persons) {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const margin = 20;
   const maxWidth = doc.internal.pageSize.getWidth() - margin * 2;
+  await preparePdfFont(doc, JSON.stringify(recipe));
 
   drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl);
 
-  const safeName = recipe.name.replace(/[^\w\s-]/g, "").trim() || "recette";
-  doc.save(`${safeName}.pdf`);
+  doc.save(`${pdfSafeFileName(recipe.name, "recette")}.pdf`);
 }
 
 async function exportShoppingListPdf() {
@@ -4781,6 +4830,7 @@ async function exportShoppingListPdf() {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const margin = 20;
   let y = 22;
+  await preparePdfFont(doc, JSON.stringify(state.shopping));
 
   function ensureSpace(needed) {
     if (y + needed > 280) {
@@ -4796,11 +4846,11 @@ async function exportShoppingListPdf() {
     y += 6;
   }
 
-  doc.setFont("helvetica", "bold");
+  pdfSetFont(doc, "bold");
   doc.setFontSize(20);
   doc.text(t("shopping_title"), margin, y);
   y += 10;
-  doc.setFont("helvetica", "normal");
+  pdfSetFont(doc, "normal");
   doc.setFontSize(11);
 
   if (state.shoppingSortMode === "rayon") {
@@ -4813,10 +4863,10 @@ async function exportShoppingListPdf() {
       const items = byRayon[rayon];
       if (!items || !items.length) return;
       ensureSpace(10);
-      doc.setFont("helvetica", "bold");
+      pdfSetFont(doc, "bold");
       doc.text(translateRayonName(rayon), margin, y);
       y += 7;
-      doc.setFont("helvetica", "normal");
+      pdfSetFont(doc, "normal");
       items.forEach(itemLine);
       y += 3;
     });
@@ -4845,14 +4895,15 @@ async function exportCookbookPdf(recipes, includePhotos) {
   const margin = 20;
   const pageWidth = doc.internal.pageSize.getWidth();
   const maxWidth = pageWidth - margin * 2;
+  await preparePdfFont(doc, JSON.stringify(recipes.map((r) => [r.name, r.ingredients, r.description, r.notes, r.familyOpinion, r.improvementNotes])));
 
   // Page de garde
-  doc.setFont("helvetica", "bold");
+  pdfSetFont(doc, "bold");
   doc.setFontSize(28);
   doc.splitTextToSize(t("cookbook_title"), maxWidth).forEach((line, idx) => {
     doc.text(line, margin, 100 + idx * 11);
   });
-  doc.setFont("helvetica", "normal");
+  pdfSetFont(doc, "normal");
   doc.setFontSize(12);
   doc.text(localeDateStr(new Date()), margin, 125);
   doc.text(t("cookbook_recipe_count", { count: String(recipes.length) }), margin, 133);
@@ -4862,11 +4913,11 @@ async function exportCookbookPdf(recipes, includePhotos) {
   // sera ajouté après coup.
   doc.addPage();
   let tocY = 22;
-  doc.setFont("helvetica", "bold");
+  pdfSetFont(doc, "bold");
   doc.setFontSize(18);
   doc.text(t("cookbook_toc_title"), margin, tocY);
   tocY += 12;
-  doc.setFont("helvetica", "normal");
+  pdfSetFont(doc, "normal");
   doc.setFontSize(11);
   const tocEntries = [];
   recipes.forEach((recipe) => {
@@ -14709,7 +14760,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 320;
+const APP_VERSION = 321;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
