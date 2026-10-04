@@ -13674,6 +13674,28 @@ async function fetchRecipeFromUrl(url, onAttempt) {
   return await buildRecipeFromStructuredData(recipeData);
 }
 
+// Recherche web d'une recette (reprise de l'app Windows,
+// build_recipe_search_url) : le navigateur s'ouvre sur une recherche
+// Google limitée aux sites dont l'import a été vérifié dans l'app Windows
+// (listes de Windows pour fr/en/es/de ; mot « recette » seul pour les
+// autres langues). Aucune lecture des résultats dans l'app : rien ne casse
+// quand le moteur change sa page.
+const RECIPE_SEARCH_SITES = {
+  fr: ["marmiton.org", "cuisineaz.com", "750g.com", "cuisineactuelle.fr", "chefsimon.com", "papillesetpupilles.fr"],
+  en: ["allrecipes.com", "bbcgoodfood.com", "seriouseats.com", "simplyrecipes.com", "foodnetwork.com", "epicurious.com"],
+  es: ["recetasderechupete.com", "directoalpaladar.com", "javirecetas.com", "hogarmania.com", "cocina-casera.com", "divinacocina.es"],
+  de: ["chefkoch.de", "lecker.de", "einfachbacken.de", "gutekueche.at", "essen-und-trinken.de", "kochbar.de"],
+};
+const RECIPE_SEARCH_WORD = { fr: "recette", en: "recipe", es: "receta", de: "Rezept", it: "ricetta", pt: "receita", id: "resep", no: "oppskrift", sv: "recept" };
+function buildRecipeSearchUrl(query, lang = CURRENT_LANG) {
+  const q = String(query || "").trim();
+  if (!q) return "https://www.google.com/";
+  const terms = [q, RECIPE_SEARCH_WORD[lang] || "recipe"];
+  const sites = RECIPE_SEARCH_SITES[lang];
+  if (sites) terms.push("(" + sites.map((site) => `site:${site}`).join(" OR ") + ")");
+  return "https://www.google.com/search?q=" + encodeURIComponent(terms.join(" "));
+}
+
 function renderImportUrl() {
   const wrap = el(`<div></div>`);
   // Mode d'emploi en 3 étapes, puis compatibilité et confidentialité —
@@ -13689,6 +13711,22 @@ function renderImportUrl() {
     <p style="margin:0 0 8px;">${escapeHtml(t("import_url_compat"))}</p>
     <p style="margin:0;">${escapeHtml(t("import_url_privacy"))}</p>
   </div>`));
+
+  // Pas encore de recette en tête : recherche web, puis retour ici pour
+  // coller (ou partager) le lien trouvé.
+  const webSearch = el(`<form class="card import-web-search" role="search" style="padding:14px 16px;margin-bottom:20px;">
+    <label for="import-web-search-input" style="display:block;font-weight:600;font-size:14px;margin-bottom:8px;">${escapeHtml(t("import_web_search_label"))}</label>
+    <div style="display:flex;gap:8px;">
+      <input type="search" id="import-web-search-input" enterkeyhint="search" placeholder="${escapeHtml(t("import_web_search_placeholder"))}" style="flex:1;min-width:0;">
+      <button type="submit" class="btn btn-outline btn-sm" style="width:auto;flex-shrink:0;">${escapeHtml(t("import_web_search_button"))}</button>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin:8px 0 0;line-height:1.4;">${escapeHtml(t("import_web_search_hint"))}</p>
+  </form>`);
+  webSearch.addEventListener("submit", (e) => {
+    e.preventDefault();
+    window.open(buildRecipeSearchUrl(webSearch.querySelector("#import-web-search-input").value), "_blank", "noopener");
+  });
+  wrap.appendChild(webSearch);
   // Préremplie si on arrive ici via le menu de partage natif d'une
   // autre application (voir pendingSharedUrl, consommée une seule fois
   // pour ne pas la réappliquer sur un simple retour à cet écran).
@@ -14244,7 +14282,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 311;
+const APP_VERSION = 312;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

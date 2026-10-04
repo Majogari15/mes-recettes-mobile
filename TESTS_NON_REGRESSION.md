@@ -9457,3 +9457,24 @@ catégorie ») et ouvre la recette d'un appui.
 **Test** : `tests/test_similar_recipes.py`.
 
 **Version testée** : v311
+
+### 146 — Recherche web d'une recette (reprise de l'app Windows)
+
+Point 13 de la comparaison avec l'app Windows. Carte « Pas encore de
+recette ? Cherchez-en une sur Internet » sur l'écran « Importer depuis un
+lien », avant le champ du lien.
+
+- Même adresse que Windows (`build_recipe_search_url`) : recherche Google
+  « mots-clés + mot recette dans la langue de l'interface », limitée aux
+  sites dont l'import a été vérifié **dans l'app Windows** pour fr, en, es,
+  de (6 sites chacun) ; sans filtre de site pour id, pt, it, sv, no (comme
+  Windows). Champ vide : page d'accueil Google. Ces sites n'ont pas été
+  retestés un par un avec l'import du mobile.
+- Ouverture dans un nouvel onglet (`noopener`) ; aucune lecture des
+  résultats dans l'app. L'utilisateur revient ensuite partager ou coller
+  le lien. Non vérifiable ici : le comportement exact dans l'app installée
+  depuis le Play Store (ouverture probable dans un onglet Chrome).
+
+**Test** : `tests/test_recipe_web_search.py`.
+
+**Version testée** : v312
