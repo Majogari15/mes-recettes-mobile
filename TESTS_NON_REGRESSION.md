@@ -9702,3 +9702,39 @@ reconnaissance chinois), symbole € codé en dur.
 `test_narrow_screen_overflow.py` et `test_import_url_help_texts.py`.
 
 **Version testée** : v319 (branche)
+
+### 154 — Chinois simplifié, étape 2 : catalogue d'ingrédients et substitutions (branche, pas sur main)
+
+- `data/ingredient_translations_zh.json` : les 9 992 noms du catalogue en
+  chinois simplifié (mêmes ids, même ordre que l'anglais). Règles : noms
+  courts et usuels ; marques, appellations et lieux gardés en alphabet
+  latin (« Evian矿泉水 », « 巴约讷火腿（Bayonne） ») ; « aliment moyen » →
+  « （平均值） » ; ponctuation chinoise « ， » « （） » « “” ».
+- Aucune traduction en double : le catalogue contient de vrais doublons
+  (même aliment venant de deux tables, ex. « Cheddar » / « Fromage,
+  cheddar », « Foie, veau, cru » / « Veau, abats…, foie, cru ») ; 84
+  paires distinguées à la main (« 切达奶酪 » / « 奶酪，切达 »,
+  « 小牛肝，生 » / « 生小牛肝 »). Sans ça, l'application ajouterait le nom
+  français entre parenthèses.
+- `data/ingredient_substitutions_zh.json` : les 1 530 notes (1 458
+  textes différents) et les 124 noms de substituts libres traduits, mêmes
+  `substitutionId` ; quantités, durées et pourcentages conservés
+  (« 1 c. à soupe » → « 1汤匙 », « tasse » → « 杯 »).
+- Dans l'application : chargement à la demande comme les autres langues,
+  recherche par un mot chinois sans espace (« 番茄 » trouve tous les
+  produits à la tomate), recherche inverse chinois → ingrédient,
+  substituts affichés en chinois, liste triée par l'ordre chinois du
+  navigateur, écran Ingrédients sans débordement à 320 px.
+- Correction valable pour toutes les langues : la recherche des écrans
+  « Gérer les ingrédients » et « Substituts » ne comparait que le nom
+  français (en anglais « beef », en chinois « 牛肉 » ne trouvaient rien) ;
+  elle cherche maintenant aussi dans le nom affiché
+  (`ingredientNameMatches`). Compteur de substituts de cet écran avec
+  `paren()` (« （1 种替代食材） » en chinois).
+- Traduction faite par Claude, non relue par une personne de langue
+  maternelle chinoise : relecture conseillée avant publication, surtout
+  pour les découpes de viande américaines et les produits antillais.
+
+**Tests** : `tests/test_chinese_ingredients.py`.
+
+**Version testée** : v320 (branche)

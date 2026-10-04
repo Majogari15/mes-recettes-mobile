@@ -4173,6 +4173,14 @@ function openPantryAddPrompt() {
 /* ======================================================================
    GESTION DES INGRÉDIENTS (ajouter / modifier / supprimer)
    ====================================================================== */
+// Recherche des écrans Ingrédients et Substituts : dans le nom français
+// ET dans le nom affiché (traduit) — avant, seul le nom français était
+// comparé, si bien qu'en anglais « beef » ou en chinois « 牛肉 » ne
+// trouvaient rien. key : texte déjà passé par normalize().
+function ingredientNameMatches(name, key) {
+  if (normalizeCached(name).includes(key)) return true;
+  return CURRENT_LANG !== "fr" && normalizedTranslatedIngredientName(name).includes(key);
+}
 function renderIngredientManage() {
   const wrap = el(`<div></div>`);
   const dupBtn = el(`<button class="btn btn-secondary btn-sm" style="margin-bottom:14px;">${t("ingredient_duplicates_button")}</button>`);
@@ -4197,7 +4205,7 @@ function renderIngredientManage() {
   function fillList(query) {
     listHolder.innerHTML = "";
     const key = normalize(query || "");
-    const allMatches = state.ingredientNames.filter((n) => !key || normalize(n).includes(key));
+    const allMatches = state.ingredientNames.filter((n) => !key || ingredientNameMatches(n, key));
     if (!allMatches.length) {
       listHolder.appendChild(el(`<div class="empty-state"><div class="emoji">🥕</div><p>${escapeHtml(t("ingredient_no_results"))}</p></div>`));
       return;
@@ -4258,7 +4266,7 @@ function renderManageSubstitutions() {
     listHolder.innerHTML = "";
     const key = normalize(query || "");
     const allMatches = sortIngredientNamesForDisplay(key
-      ? state.ingredientNames.filter((n) => normalize(n).includes(key))
+      ? state.ingredientNames.filter((n) => ingredientNameMatches(n, key))
       : state.ingredientNames.filter((n) => getIngredientSubstitutes(n).length > 0));
     if (!allMatches.length) {
       listHolder.appendChild(el(`<div class="empty-state"><div class="emoji">🔄</div><p>${escapeHtml(key ? t("no_recipes_found") : t("manage_substitutions_none"))}</p></div>`));
@@ -4270,7 +4278,7 @@ function renderManageSubstitutions() {
     names.forEach((name) => {
       const subs = getIngredientSubstitutes(name);
       const row = el(`<div class="ingredient-manage-row">
-        <span class="name">${escapeHtml(translateIngredientName(name))}${subs.length ? ` <span style="color:var(--text-muted);font-size:12px;">(${escapeHtml(t("manage_substitutions_count", { count: String(subs.length) }))})</span>` : ""}</span>
+        <span class="name">${escapeHtml(translateIngredientName(name))}${subs.length ? `<span style="color:var(--text-muted);font-size:12px;">${escapeHtml(paren(t("manage_substitutions_count", { count: String(subs.length) })))}</span>` : ""}</span>
         <div class="row-actions"><button class="edit" aria-label="${t("recipe_edit")}">✏️</button></div>
       </div>`);
       row.querySelector(".edit").addEventListener("click", () => openIngredientNameModal(name));
@@ -14701,7 +14709,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 319;
+const APP_VERSION = 320;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
