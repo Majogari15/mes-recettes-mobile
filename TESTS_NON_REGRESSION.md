@@ -9871,3 +9871,47 @@ reconnaissance chinois), symbole € codé en dur.
 **Tests** : `tests/test_chinese_misc_import.py`.
 
 **Version testée** : v324 (branche)
+
+### 160 — Chinois : import par lien depuis les sites chinois (branche, pas sur main)
+
+Essai réel le 4 octobre 2026 sur les 10 sites proposés (une requête par
+service et par site, depuis l'environnement de développement : Worker
+Cloudflare de l'app, Jina, les 3 proxys publics — mêmes services que sur
+le téléphone, qui vont eux-mêmes chercher la page) :
+
+| Site | Résultat |
+|---|---|
+| 下厨房 xiachufang.com | ✅ Worker (JSON-LD) ; ✅ Jina en secours. Page anti-robot (« 滑动验证 ») après plusieurs requêtes rapprochées |
+| 美食天下 meishichina.com | Worker refusé (403) ; ✅ Jina (version bureau `home.meishichina.com/recipe-N.html`) ; une recette sans liste d'ingrédients sur le site n'est pas importable |
+| 豆果美食 douguo.com | ❌ 403 pour tous les services |
+| 香哈网 xiangha.com | ❌ 403 pour tous les services |
+| 美食杰 meishij.net | ❌ pages de recettes en 404 (le site renvoie vers son application) |
+| 好豆网 haodou.com | ❌ n'est plus un site de recettes (téléchargement de jeux) |
+| 心食谱 xinshipu.com | ❌ redirige vers une page sans rapport |
+| 中华美食网 zhms.cn | ❌ injoignable (connexion refusée, y compris pour Jina) |
+| 吃四方 eat4.cn | ❌ injoignable |
+| 天天饮食 tv.cctv.com | ❌ pages vidéo : le résumé de la recette est noyé dans le texte du menu par Jina, rien d'exploitable |
+
+Corrections (toutes vérifiées sur les pages réelles, puis figées dans un
+test avec des pages au contenu inventé) :
+- Étapes données en un seul texte (« 1.… 2.… 3.… », 下厨房) découpées
+  (`splitNumberedStepsText` : au moins deux numéros qui se suivent, le
+  premier en tête ; « 1.5 kg » jamais découpé) ; coupure de ligne au
+  milieu d'un mot chinois recollée.
+- Jina sans titre « # » : titre de la page (« Title: ») pris comme nom,
+  sans le nom du site ni « 的做法 », pour le chinois seulement.
+- « …的做法 » / « …的做法步骤 » reconnus comme titre des étapes ;
+  « 食材明细 » ; sous-titres « 主料(水油皮) » ; fiche « 甜味口味 /
+  中级难度 » écartée des ingrédients ; numéro d'étape seul sur sa ligne
+  réuni au texte suivant ; fin de recette « 本菜谱为作者发布… »,
+  « 分类： », « 相关菜谱 ».
+- Titre chinois : plus de fusion avec la ligne suivante (souvent du menu
+  ou une citation).
+- Catégorie : « 快手菜 », « 下饭菜 », « 素菜 », « 荤菜 » -> Plat ; avec
+  Jina, catégorie lue dans « 分类： » (avant : toujours « Autre »).
+- Liste d'ingrédients sur une ligne (« 主料：A；辅料：B；调料：C，D »)
+  dépliée.
+
+**Tests** : `tests/test_chinese_url_import.py` (réseau simulé).
+
+**Version testée** : v325 (branche)

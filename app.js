@@ -11915,7 +11915,9 @@ function matchesIngredientTitle(line) {
 // connaît que les lettres latines : « 材料 » en fin de ligne n'avait
 // pas de « limite de mot »).
 const OCR_ZH_INGREDIENT_TITLES = "材料|食材|用料|原料|主料|配料";
-const OCR_ZH_INSTRUCTION_TITLES = "做法|步骤|制作方法|制作步骤|烹饪步骤|操作步骤|烹饪方法";
+// « 番茄炒蛋的做法 », « 蒸腊鱼的做法步骤 » : titre de section des sites
+// chinois, nom du plat devant.
+const OCR_ZH_INSTRUCTION_TITLES = "做法|步骤|制作方法|制作步骤|烹饪步骤|操作步骤|烹饪方法|[^。！？]{1,40}的(?:家常)?做法(?:步骤)?[：:]?\\s*$";
 const OCR_INGREDIENT_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(ingr[ée]dients?|ingredients|ingredientes|zutaten)\\b|" + OCR_ZH_INGREDIENT_TITLES + ")", "i");
 const OCR_INSTRUCTION_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(pr[ée]paration|description|recette|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\\b|" + OCR_ZH_INSTRUCTION_TITLES + ")", "i");
 // Toute section qui doit arrêter la liste des ingrédients, pas
@@ -11930,7 +11932,10 @@ const OCR_SECTION_BOUNDARY_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(pr
 // Sous-titres d'une liste d'ingrédients chinoise (« 主料 » ingrédients
 // principaux, « 辅料 » secondaires, « 调料 » assaisonnements…) : ni des
 // ingrédients, ni une fin de liste.
-const OCR_ZH_INGREDIENT_SUBHEADING = /^[\s【\[]*(?:主料|辅料|调料|配料|调味料|腌料|酱汁)[】\]]?\s*[：:]?\s*$/;
+const OCR_ZH_INGREDIENT_SUBHEADING = /^[\s【\[]*(?:主料|辅料|调料|配料|调味料|腌料|酱汁)[】\]]?\s*(?:[（(][^（）()]{0,20}[）)])?\s*[：:]?\s*$/;
+// Fiche technique de 美食天下 (« 甜味口味 », « 烤工艺 », « 数小时耗时 »,
+// « 中级难度 ») au milieu des ingrédients.
+const OCR_ZH_RECIPE_META_LINE = /^.{1,8}(?:口味|工艺|耗时|难度)$/;
 // Durée écrite en chinois (« 10分钟 », « 1小时30分钟 », « 半小时 »),
 // capturée seule pour ne pas avaler le libellé suivant sur la même ligne.
 const ZH_DURATION = "(半\\s*个?\\s*小时|\\d+\\s*个?\\s*小时\\s*(?:\\d+\\s*分钟?)?|\\d+\\s*分钟?|\\d+\\s*min)";
@@ -11951,7 +11956,7 @@ const OCR_PERSONS_IN_TITLE = /\b(\d+)\s*(?:(?:personnes?|people|persons?|persona
 // de la page. Liste élargie après avoir constaté des sections encore
 // non couvertes (ex. "Qu'est-ce qu'on mange ce soir ?", propre à
 // Marmiton mais représentative du genre de contenu à exclure).
-const OCR_DESCRIPTION_END_MARKER = /^(\([A-Za-z]\)\s*)?(anonyme|anonymous|commentaires?|comments?|avis|reviews?|vous aimerez aussi|you (may|might) also like|related recipes?|plus de recettes|ces contenus devraient vous int[ée]resser|note de l['’]auteur|donnez votre avis|qu['’]est-ce qu['’]on mange|découvrir aussi|à découvrir|on vous propose|d[ée]couvrez aussi|dans la m[êe]me cat[ée]gorie|recettes similaires|similar recipes?|nos coups de coeur|publicit[ée]|advertisement|partager cette recette|share this recipe|imprimer|print recipe|newsletter)\b|^.{0,20}capture\s*d.{0,2}[ée]cran|^(?:评论|网友评论|相关食谱|相关推荐|猜你喜欢|推荐食谱|你可能还喜欢)/i;
+const OCR_DESCRIPTION_END_MARKER = /^(\([A-Za-z]\)\s*)?(anonyme|anonymous|commentaires?|comments?|avis|reviews?|vous aimerez aussi|you (may|might) also like|related recipes?|plus de recettes|ces contenus devraient vous int[ée]resser|note de l['’]auteur|donnez votre avis|qu['’]est-ce qu['’]on mange|découvrir aussi|à découvrir|on vous propose|d[ée]couvrez aussi|dans la m[êe]me cat[ée]gorie|recettes similaires|similar recipes?|nos coups de coeur|publicit[ée]|advertisement|partager cette recette|share this recipe|imprimer|print recipe|newsletter)\b|^.{0,20}capture\s*d.{0,2}[ée]cran|^(?:评论|网友评论|相关食谱|相关菜谱|相关推荐|猜你喜欢|推荐食谱|你可能还喜欢|本菜谱为作者|分类[：:])/i;
 // Mots chinois courants des mentions d'allergènes (« 过敏原：鸡蛋、牛奶 »),
 // en plus du libellé traduit de l'application (« 蛋类 », « 乳糖 »…).
 const ZH_ALLERGEN_WORDS = {
@@ -11960,8 +11965,40 @@ const ZH_ALLERGEN_WORDS = {
   "Crustacés": ["虾", "蟹", "甲壳"], "Sésame": ["芝麻"], "Céleri": ["芹菜"], Moutarde: ["芥末"],
   Sulfites: ["亚硫酸"], Lupin: ["羽扇豆"], Mollusques: ["贝", "软体动物"],
 };
+// Numéro d'étape seul sur sa ligne, texte chinois sur la suivante
+// (美食天下 : « 1 » puis « 腊鱼用淡盐水浸泡20分钟。 ») : réunis en
+// « 1. 腊鱼… ». Limité au chinois, mise en page des autres langues
+// inchangée.
+function joinLoneStepNumbers(lines) {
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (/^\d{1,2}$/.test(lines[i].trim()) && i + 1 < lines.length && CJK_CHAR_RE.test(lines[i + 1])) {
+      out.push(`${lines[i].trim()}. ${lines[i + 1].trim()}`);
+      i++;
+    } else {
+      out.push(lines[i]);
+    }
+  }
+  return out;
+}
+// Liste d'ingrédients chinoise sur une seule ligne (天天饮食 :
+// « 主料：杏鲍菇；辅料：虾；调料：鸡精，盐，料酒 ») : dépliée en un titre
+// « 材料 » suivi d'un ingrédient par ligne, comme une liste ordinaire.
+const ZH_INLINE_INGREDIENTS_RE = /^(?:主料|辅料|调料|原料|配料|材料|食材|用料)\s*[：:]/;
+function expandInlineChineseIngredientLists(lines) {
+  const out = [];
+  lines.forEach((line) => {
+    if (!ZH_INLINE_INGREDIENTS_RE.test(line)) { out.push(line); return; }
+    const items = line.replace(/[。.]\s*$/, "").split(/[；;]/)
+      .flatMap((seg) => seg.replace(ZH_INLINE_INGREDIENTS_RE, "").split(/[，,、]/))
+      .map((x) => x.trim()).filter(Boolean);
+    if (items.length < 2 && !line.replace(ZH_INLINE_INGREDIENTS_RE, "").trim()) { out.push(line); return; }
+    out.push("材料", ...items);
+  });
+  return out;
+}
 function parseOcrRecipeText(rawText) {
-  const lines = (rawText || "").split("\n").map((l) => l.trim()).filter(Boolean);
+  const lines = expandInlineChineseIngredientLists((rawText || "").split("\n").map((l) => l.trim()).filter(Boolean));
   if (!lines.length) return { name: "", ingredients: [], description: "", prepTime: null, cookTime: null };
 
   const ingredientMarker = OCR_INGREDIENT_MARKER;
@@ -11997,13 +12034,18 @@ function parseOcrRecipeText(rawText) {
   // nouvelle section (courte, ne correspond à aucun marqueur de temps,
   // personnes, ingrédients ou préparation).
   const nextLine = lines[nameIdx + 1];
-  if (nextLine && nextLine.length <= 60
+  // Pas de fusion d'un sous-titre pour un titre chinois : rarement coupé,
+  // et la ligne suivante d'une page web est souvent du menu (« 登录 »).
+  if (nextLine && nextLine.length <= 60 && !CJK_CHAR_RE.test(name)
     && !/[àa]\s+table\s+dans|pr[eé]paration\s*:|prep(?:aration)?\s*time|cuisson\s*:|cook\s*time|(?:ready|total\s+time)/i.test(nextLine)
     && !/\d+\s*(personnes?|people|persons?|personas?|personen|人份)/i.test(nextLine)
     // Ligne d'informations chinoise (« 准备时间：10分钟 », « 难度：简单 »).
     && !/时间|分钟|小时|难度|份量|分量|人数/.test(nextLine)
     && !matchesIngredientTitle(nextLine)
     && !instructionMarker.test(nextLine)
+    // Même titre répété (titre de page puis titre de la fiche), ou
+    // citation d'introduction (« > “… »).
+    && !name.includes(nextLine) && !/^[>“"「]/.test(nextLine)
     // Ligne de durée/difficulté/prix isolée (format Marmiton : "6h10 •
     // Facile • Assez cher") — jamais un sous-titre de recette.
     && !/\b\d+\s*h\s*\d{1,2}\b/i.test(nextLine)
@@ -12042,7 +12084,7 @@ function parseOcrRecipeText(rawText) {
     if (/[.。]\s*$/.test(trimmed)) return false;
     // Chinois, sans espace entre les mots : un titre reste court en
     // nombre de caractères (« 做法 », « 制作步骤： »), une phrase non.
-    if (CJK_CHAR_RE.test(trimmed)) return trimmed.replace(/\s+/g, "").length <= 10;
+    if (CJK_CHAR_RE.test(trimmed)) return trimmed.replace(/\s+/g, "").length <= 10 || /的(?:家常)?做法(?:步骤)?[：:]?$/.test(trimmed);
     const words = trimmed.split(/\s+/).filter(Boolean);
     return words.length <= 6;
   }
@@ -12058,11 +12100,11 @@ function parseOcrRecipeText(rawText) {
       // Repère de compteur "- personnes +" (choix du nombre de
       // personnes sur la page), pas un ingrédient.
       .filter((l) => !/^(pour\s+|for\s+)?\d*\s*(personnes?|people|persons?|personas?|personen)\s*[+\-]?$/i.test(l))
-      .filter((l) => !OCR_ZH_INGREDIENT_SUBHEADING.test(l));
+      .filter((l) => !OCR_ZH_INGREDIENT_SUBHEADING.test(l) && !OCR_ZH_RECIPE_META_LINE.test(l));
   }
   if (instrIdx >= 0) {
     const descEndIdx = lines.findIndex((l, i) => i > instrIdx && descriptionEndMarker.test(l));
-    descriptionLines = lines.slice(instrIdx + 1, descEndIdx >= 0 ? descEndIdx : lines.length);
+    descriptionLines = joinLoneStepNumbers(lines.slice(instrIdx + 1, descEndIdx >= 0 ? descEndIdx : lines.length));
   } else if (ingIdx < 0) {
     // Aucun des deux mots-clés trouvé : impossible de distinguer les
     // sections, tout ce qui suit le nom devient la description — mieux
@@ -13176,7 +13218,7 @@ function looksLikeIngredientLine(line) {
   // Purement numérique/symboles (ex. "2423 /579", "10,2", "0,5") : une
   // ligne de tableau de valeurs nutritionnelles, jamais un ingrédient.
   if (!/[a-zA-ZÀ-ÿ]/.test(trimmed) && !CJK_CHAR_RE.test(trimmed)) return false;
-  if (OCR_ZH_INGREDIENT_SUBHEADING.test(trimmed)) return false;
+  if (OCR_ZH_INGREDIENT_SUBHEADING.test(trimmed) || OCR_ZH_RECIPE_META_LINE.test(trimmed)) return false;
   // Chinois sans espace : une phrase d'étape égarée se reconnaît à sa
   // longueur et à sa ponctuation de phrase.
   if (CJK_CHAR_RE.test(trimmed) && (trimmed.length > 30 || /[。！？]/.test(trimmed))) return false;
@@ -13788,13 +13830,36 @@ function renderImportPhoto() {
   return wrap;
 }
 
+// Découpe un texte d'étapes numérotées d'un seul bloc (« 1.… 2.… »,
+// « 1、… 2、… », séparés par des espaces, virgules ou retours à la ligne)
+// en étapes. Il faut au moins deux numéros qui se suivent, le premier en
+// tête du texte, sinon le texte est rendu tel quel (une seule étape) —
+// « 1.5 kg » ou « 2 c. à soupe » ne sont jamais des numéros d'étape. Un
+// retour à la ligne entre deux caractères chinois (coupure de mise en
+// page, « 耗\n油 ») est retiré.
+function splitNumberedStepsText(text) {
+  const trimmed = String(text).trim().replace(/([\u3400-\u9fff，、])\s*\n\s*(?=[\u3400-\u9fff])/g, "$1");
+  const markers = [...trimmed.matchAll(/(?:^|[\s,，;；])(\d{1,2})\s*[.、．)）](?!\d)\s*/g)];
+  if (markers.length < 2 || markers[0].index !== 0) return [trimmed];
+  const first = parseInt(markers[0][1], 10);
+  if (first > 1 || markers.some((m, i) => parseInt(m[1], 10) !== first + i)) return [trimmed];
+  return markers.map((m, i) => trimmed.slice(m.index + m[0].length, i + 1 < markers.length ? markers[i + 1].index : undefined)
+    .replace(/[\s,，;；]+$/, "").trim()).filter(Boolean);
+}
 function extractRecipeInstructions(recipeData) {
   const raw = recipeData.recipeInstructions;
   if (!raw) return "";
   const lines = [];
   let stepNum = 1;
   function collect(item) {
-    if (typeof item === "string" && item.trim()) { lines.push(`${stepNum}. ${item.trim()}`); stepNum++; return; }
+    if (typeof item === "string" && item.trim()) {
+      // Toutes les étapes dans un seul texte (« 1.… 2.… 3.… », constaté
+      // sur 下厨房) : découpé en étapes, numéro d'origine retiré pour ne
+      // pas le doubler (« 1. 1.… »).
+      const parts = splitNumberedStepsText(item);
+      parts.forEach((part) => { lines.push(`${stepNum}. ${part}`); stepNum++; });
+      return;
+    }
     if (!item || typeof item !== "object") return;
     const type = item["@type"];
     if (type === "HowToSection" && Array.isArray(item.itemListElement)) {
@@ -13830,7 +13895,7 @@ function guessCategoryFromText(text) {
     [/甜点|甜品|糕点|蛋糕|烘焙/, "Dessert"], [/早餐|早点/, "Petit-déjeuner"],
     [/饮料|饮品|鸡尾酒|果汁|奶茶/, "Boisson"], [/前菜|开胃菜|凉菜|冷盘/, "Entrée"],
     [/酱料|酱汁|蘸料|调味酱/, "Sauce"], [/小吃|零食|点心/, "Apéro"],
-    [/主菜|主食|家常菜|热菜|午餐|晚餐|正餐/, "Plat"],
+    [/主菜|主食|家常菜|热菜|午餐|晚餐|正餐|快手菜|下饭菜|素菜|荤菜/, "Plat"],
   ].find(([re]) => re.test(key));
   if (zhCategory) return zhCategory[1];
   if (/dessert|sweet|postre|nachtisch|suss/.test(key)) return "Dessert";
@@ -13993,6 +14058,20 @@ function stripJinaMarkdownNoise(markdown) {
   // précède d'un coup.
   const h1Idx = relevant.findIndex((l) => /^#\s+\S/.test(l.trim()));
   if (h1Idx > 0) relevant = relevant.slice(h1Idx);
+  // Pas de titre « # » (下厨房, 美食天下…) : le titre de la page donné
+  // par Jina (« Title: 蒸腊鱼的做法_蒸腊鱼怎么做_…_美食天下 ») devient la
+  // première ligne, sans le nom du site ni « 的做法 ». Limité au chinois
+  // pour ne rien changer aux autres langues.
+  if (h1Idx < 0) {
+    const titleLine = rawLines.find((l) => /^title:\s*\S/i.test(l.trim()));
+    const title = titleLine ? titleLine.trim().replace(/^title:\s*/i, "") : "";
+    if (CJK_CHAR_RE.test(title)) {
+      const cleanTitle = title.split(/_| - | \| |－/)[0].replace(/(?:的(?:家常)?做法(?:大全)?|怎么做)$/, "")
+        // « 《天天饮食》椒麻杏鲍菇 20150827 » : nom de l'émission et date retirés.
+        .replace(/^《[^》]*》\s*/, "").replace(/\s*\d{6,8}$/, "").trim();
+      if (cleanTitle) relevant = [`# ${cleanTitle}`, ...relevant];
+    }
+  }
 
   // Nettoie chaque ligne (images, liens, ponctuation Markdown) avant
   // de les regrouper.
@@ -14212,7 +14291,9 @@ async function fetchRecipeFromUrl(url, onAttempt) {
           persons: detectedPersons || 4,
           prepTime: parsedFromText.prepTime,
           cookTime: parsedFromText.cookTime,
-          category: "Autre",
+          // « 分类：热菜家常菜… » (美食天下) : catégorie devinée comme pour
+          // les données structurées.
+          category: guessCategoryFromText((cleanedText.match(/^(?:分类|类别)[：:]\s*(.+)$/m) || [])[1] || ""),
           photo: null,
         };
       }
@@ -14996,7 +15077,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 324;
+const APP_VERSION = 325;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
