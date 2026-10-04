@@ -10529,14 +10529,25 @@ function openRecipePickerModal(onPick) {
    9 langues, avec choix de la langue avant d'accepter. Pas de bouton
    « Quitter » : une application web ne peut pas se fermer elle-même de
    façon fiable. Relisible ensuite depuis l'écran Sauvegarde.
+   Version numérotée (DISCLAIMER_VERSION) : à incrémenter à chaque
+   changement du texte, pour qu'il soit de nouveau présenté et accepté
+   (article 6 du texte). Version 1 = texte d'origine repris de Windows
+   (v313, acceptation enregistrée sans numéro) ; version 2 = v314.
    ====================================================================== */
+const DISCLAIMER_VERSION = 2;
 const DISCLAIMER_ACCEPTED_KEY = "disclaimerAcceptedAt";
-function isDisclaimerAccepted() {
+const DISCLAIMER_VERSION_KEY = "disclaimerAcceptedVersion";
+function acceptedDisclaimerVersion() {
   try {
-    return !!localStorage.getItem(DISCLAIMER_ACCEPTED_KEY);
+    const v = Number(localStorage.getItem(DISCLAIMER_VERSION_KEY));
+    if (Number.isFinite(v) && v > 0) return v;
+    return localStorage.getItem(DISCLAIMER_ACCEPTED_KEY) ? 1 : 0;
   } catch (e) {
-    return false;
+    return 0;
   }
+}
+function isDisclaimerAccepted() {
+  return acceptedDisclaimerVersion() >= DISCLAIMER_VERSION;
 }
 // Navigateur piloté par les tests automatiques (navigator.webdriver,
 // jamais vrai chez un utilisateur) : la clause n'est pas imposée, sans
@@ -10552,6 +10563,9 @@ function openDisclaimer({ readOnly = false } = {}) {
   overlay.appendChild(sheet);
   let checked = false;
   let removeTrap = null;
+  // Déjà acceptée dans une version précédente : on dit pourquoi elle
+  // revient, plutôt que de la présenter comme un premier lancement.
+  const isUpdate = !readOnly && acceptedDisclaimerVersion() > 0;
   function build() {
     sheet.innerHTML = `
       ${readOnly ? "" : `<div class="disclaimer-lang">
@@ -10560,7 +10574,7 @@ function openDisclaimer({ readOnly = false } = {}) {
         </select>
       </div>`}
       <h2 id="disclaimer-heading">${escapeHtml(t("disclaimer_heading"))}</h2>
-      ${readOnly ? "" : `<p class="disclaimer-intro">${escapeHtml(t("disclaimer_intro"))}</p>`}
+      ${readOnly ? "" : `<p class="disclaimer-intro">${escapeHtml(t(isUpdate ? "disclaimer_updated_intro" : "disclaimer_intro"))}</p>`}
       <div class="disclaimer-text" tabindex="0">${escapeHtml(t("disclaimer_text"))}</div>
       ${readOnly
         ? `<button type="button" class="btn btn-primary" id="disclaimer-close">${escapeHtml(t("cooking_close"))}</button>`
@@ -10575,7 +10589,10 @@ function openDisclaimer({ readOnly = false } = {}) {
     box.addEventListener("change", () => { checked = box.checked; continueBtn.disabled = !checked; });
     continueBtn.addEventListener("click", () => {
       if (!checked) return;
-      try { localStorage.setItem(DISCLAIMER_ACCEPTED_KEY, new Date().toISOString()); } catch (e) { /* stockage indisponible : redemandée au prochain lancement */ }
+      try {
+        localStorage.setItem(DISCLAIMER_ACCEPTED_KEY, new Date().toISOString());
+        localStorage.setItem(DISCLAIMER_VERSION_KEY, String(DISCLAIMER_VERSION));
+      } catch (e) { /* stockage indisponible : redemandée au prochain lancement */ }
       close();
     });
     sheet.querySelector("#disclaimer-lang-select").addEventListener("change", async (e) => {
@@ -14368,7 +14385,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 313;
+const APP_VERSION = 314;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

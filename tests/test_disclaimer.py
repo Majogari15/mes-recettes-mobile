@@ -74,7 +74,12 @@ def main():
             disabled: document.querySelector('#disclaimer-continue').disabled,
             hasQuit: !!document.querySelector('.disclaimer-sheet').textContent.includes('Quitter'),
         })""")
-        check("premier lancement : clause affichée", "Clause de responsabilité" in r["heading"] and "ARTICLE 1" in r["text"], r["heading"])
+        check("premier lancement : clause affichée", "Clause de responsabilité" in r["heading"] and "Article 1 – Allergènes" in r["text"], r["heading"])
+        check("texte v2 : éditeur et contact, articles 1 à 6, plus de « critères d'allergies »",
+              "majogari81@gmail.com" in r["text"] and "Article 6 – Modifications et droit applicable" in r["text"]
+              and "calculés automatiquement" in r["text"] and "critères d'allergies" not in r["text"] and "ARTICLE 1" not in r["text"], r["text"][:80])
+        intro = page.evaluate("() => document.querySelector('.disclaimer-intro').textContent")
+        check("premier lancement : introduction normale", "Merci de lire" in intro, intro)
         check("« Continuer » inactif tant que la case n'est pas cochée", r["disabled"])
         check("pas de bouton « Quitter » (impossible pour une appli web)", not r["hasQuit"])
 
@@ -102,19 +107,34 @@ def main():
         page.wait_for_function("() => document.querySelector('#disclaimer-heading').textContent.includes('Clause')")
 
         page.click("#disclaimer-continue")
-        r = page.evaluate("() => ({ open: !!document.querySelector('.disclaimer-overlay'), saved: localStorage.getItem('disclaimerAcceptedAt') })")
-        check("« Continuer » : clause fermée, acceptation enregistrée", not r["open"] and r["saved"], r)
+        r = page.evaluate("() => ({ open: !!document.querySelector('.disclaimer-overlay'), saved: localStorage.getItem('disclaimerAcceptedAt'), version: localStorage.getItem('disclaimerAcceptedVersion') })")
+        check("« Continuer » : clause fermée, acceptation et version enregistrées", not r["open"] and r["saved"] and r["version"] == "2", r)
 
         page.reload()
         page.evaluate("() => appReady")
         page.wait_for_timeout(300)
         check("après rechargement : plus redemandée", page.locator(".disclaimer-overlay").count() == 0)
 
+        # Acceptation d'une ancienne version (v313 : date seule, sans
+        # numéro) -> redemandée, avec une introduction qui dit pourquoi.
+        page.evaluate("() => { localStorage.removeItem('disclaimerAcceptedVersion'); }")
+        page.reload()
+        page.evaluate("() => appReady")
+        page.wait_for_selector(".disclaimer-overlay")
+        intro = page.evaluate("() => document.querySelector('.disclaimer-intro').textContent")
+        check("ancienne version acceptée : clause redemandée (texte mis à jour)", "mis à jour" in intro, intro)
+        page.check("#disclaimer-accept")
+        page.click("#disclaimer-continue")
+        page.reload()
+        page.evaluate("() => appReady")
+        page.wait_for_timeout(300)
+        check("nouvelle version acceptée : plus redemandée", page.locator(".disclaimer-overlay").count() == 0)
+
         # Relecture depuis l'écran Sauvegarde.
         page.evaluate("() => { state.screen = 'backup'; render(); }")
         page.click("#open-disclaimer")
         page.wait_for_selector(".disclaimer-overlay")
-        r = page.evaluate("() => ({ checkbox: !!document.querySelector('#disclaimer-accept'), close: !!document.querySelector('#disclaimer-close'), text: document.querySelector('.disclaimer-text').textContent.includes('ARTICLE 1') })")
+        r = page.evaluate("() => ({ checkbox: !!document.querySelector('#disclaimer-accept'), close: !!document.querySelector('#disclaimer-close'), text: document.querySelector('.disclaimer-text').textContent.includes('Article 6') })")
         check("relecture : texte complet, sans case à cocher", r == {"checkbox": False, "close": True, "text": True}, r)
         page.keyboard.press("Escape")
         check("relecture : Échap ferme", page.locator(".disclaimer-overlay").count() == 0)

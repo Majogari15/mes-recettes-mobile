@@ -9503,3 +9503,36 @@ Point 16 de la comparaison avec l'app Windows.
 **Test** : `tests/test_disclaimer.py` (force `webdriver` à false).
 
 **Version testée** : v313
+
+### 148 — Clause de responsabilité réécrite (version 2) et redemandée quand elle change
+
+Relecture complète du texte repris de Windows (entrée 147) ; corrections
+retenues par l'utilisateur (points 1, 3, 4, 5 de la relecture ; le point 2
+— plafond à 0 € et exclusion de responsabilité — est volontairement
+laissé tel quel).
+
+- **Article 1 réécrit** : le texte parlait de « critères d'allergies » que
+  l'utilisateur configure, fonction qui n'existe ni sur mobile ni sur
+  Windows ; il dit maintenant que les allergènes, valeurs nutritionnelles,
+  coûts et substitutions sont calculés automatiquement à partir de données
+  indicatives, modifiables, et que les recettes importées peuvent contenir
+  des erreurs de lecture. Titre « Alertes médicales » (trompeur) remplacé.
+  Les deux puces juridiques d'origine sont gardées mot pour mot.
+- **Ajouts** : article 4 (données uniquement sur l'appareil, sauvegardes),
+  article 5 (services tiers, recettes importées à usage personnel),
+  article 6 (modifications, droit français).
+- **Forme** : « ARTICLE 1 » isolé remplacé par des articles 1 à 6 ;
+  éditeur désigné (« le développeur de l'application ») avec l'adresse de
+  contact déjà publiée dans confidentialite.html.
+- Articles 2 et 3 (ex-1.2 et 1.3) : texte d'origine inchangé, dans les 9
+  langues (seules les parties nouvelles ont été traduites).
+- **Version de la clause** (`DISCLAIMER_VERSION = 2`,
+  `localStorage.disclaimerAcceptedVersion`) : une acceptation d'une
+  version antérieure (v313, date seule) fait réafficher la clause, avec
+  l'introduction « Ce texte a été mis à jour ».
+- Non fait ici : le même texte dans l'app Windows (autre dépôt), qui
+  affiche toujours l'ancienne version.
+
+**Test** : `tests/test_disclaimer.py` (complété).
+
+**Version testée** : v314
