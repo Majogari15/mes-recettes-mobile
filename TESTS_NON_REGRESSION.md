@@ -9629,3 +9629,28 @@ après les rappels et avant les boutons :
 le test pour un résultat reproductible).
 
 **Version testée** : v317
+
+### 152 — Calendrier des cuissons dans les Statistiques (repris de l'app Windows)
+
+Point 12 de la comparaison avec l'app Windows, dernier point retenu de la
+liste. Section « Calendrier des cuissons (12 mois) » après le graphique par
+mois.
+
+- Une case par jour sur les 12 derniers mois, semaines en colonnes (lundi
+  en haut), plus foncée selon le nombre de cuissons notées au journal ce
+  jour-là, toutes recettes confondues : niveaux 0, 1, 2, 3 et plus.
+- Couleurs : échelle séquentielle à une seule teinte (vert de l'app),
+  jetons `--heat-0` à `--heat-3` ; clarté OKLab strictement monotone et
+  écart ≥ 10 entre niveaux voisins, vérifiés par calcul ; thème sombre avec
+  sa propre échelle (sens inversé : plus clair = plus de cuissons).
+- Trop large pour un téléphone : défilement horizontal, positionné sur les
+  semaines les plus récentes ; cases de 15 px pour le toucher.
+- Résumé texte (« N cuisson(s) sur N jour(s) »), légende Moins/Plus, détail
+  au toucher (date, nombre, recettes regroupées « Tarte ×3, Soupe »). Jours
+  cuisinés = boutons libellés (clavier, lecteur d'écran) ; jours vides
+  masqués aux lecteurs d'écran (audit axe : aucun attribut ARIA interdit).
+
+**Test** : `tests/test_cooking_heatmap.py` ; `test_accessibility_audit.py`
+repassé.
+
+**Version testée** : v318

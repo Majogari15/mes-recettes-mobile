@@ -45,6 +45,9 @@
   --border: #E8DCC8;
   --primary: #2F5233;
   --primary-light: #E4EEE3;
+  /* Calendrier des cuissons : échelle séquentielle à une teinte (0, 1, 2, 3+),
+     clarté OKLab vérifiée décroissante, écart ≥ 10 entre niveaux voisins. */
+  --heat-0: #EDE6DA; --heat-1: #B3D1B7; --heat-2: #6FA27A; --heat-3: #2F5233;
   /* Fond des boutons/puces pleins à texte blanc : identique à
      --primary en thème clair (déjà assez sombre pour du texte blanc),
      mais distinct en thème sombre — voir plus bas. */
@@ -73,6 +76,8 @@
      4,5:1) — --primary-strong lui est réservé, plus sombre. */
   --primary-strong: #3F7A4C;
   --primary-light: #26332A;
+  /* Thème sombre : même teinte, sens inversé (plus clair = plus de cuissons). */
+  --heat-0: #35312A; --heat-1: #33503B; --heat-2: #5E9A6B; --heat-3: #A8D9B2;
   --accent: #D6A84E;
   --accent-light: #33291A;
   --text: #F0EAE0;
@@ -1261,3 +1266,27 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .home-daily .name { font-weight: 700; font-size: 16px; overflow-wrap: anywhere; }
 .home-daily .meta { font-size: 12px; color: var(--text-muted); }
 .home-recent { margin-bottom: 4px; }
+
+/* ---------- Statistiques : calendrier des cuissons ---------- */
+.heatmap-card { padding: 12px 12px 10px; }
+.heatmap-summary { font-size: 13px; color: var(--text); margin: 0 0 8px; }
+.heatmap-body { display: flex; gap: 4px; min-width: 0; }
+.heatmap-days { display: grid; grid-template-rows: repeat(7, 15px); row-gap: 3px; margin-top: 16px; font-size: 9px; color: var(--text-muted); line-height: 15px; flex-shrink: 0; }
+.heatmap-scroll { overflow-x: auto; min-width: 0; flex: 1; padding-bottom: 4px; }
+.heatmap-months { display: flex; gap: 3px; height: 14px; margin-bottom: 2px; }
+.heatmap-months span { width: 15px; flex-shrink: 0; font-size: 9px; color: var(--text-muted); white-space: nowrap; overflow: visible; }
+.heatmap-grid { display: flex; gap: 3px; }
+.heatmap-week { display: grid; grid-template-rows: repeat(7, 15px); row-gap: 3px; }
+.heatmap-cell { display: block; width: 15px; height: 15px; border-radius: 3px; border: none; padding: 0; margin: 0; }
+button.heatmap-cell { cursor: pointer; }
+.heatmap-out { background: transparent; }
+.heatmap-l0 { background: var(--heat-0); }
+.heatmap-l1 { background: var(--heat-1); }
+.heatmap-l2 { background: var(--heat-2); }
+.heatmap-l3 { background: var(--heat-3); }
+.heatmap-selected, button.heatmap-cell:focus-visible { outline: 2px solid var(--text); outline-offset: 1px; }
+.heatmap-legend .heatmap-cell { width: 12px; height: 12px; }
+.heatmap-legend { display: flex; align-items: center; gap: 3px; justify-content: flex-end; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+.heatmap-legend span:first-child { margin-right: 3px; }
+.heatmap-legend span:last-child { margin-left: 3px; }
+.heatmap-detail { font-size: 13px; color: var(--text-muted); margin: 8px 0 0; min-height: 1.4em; overflow-wrap: anywhere; }

@@ -14559,14 +14559,129 @@ function renderStatistics() {
   });
   wrap.appendChild(chartCard);
 
+  section(t("stats_heatmap_title"));
+  wrap.appendChild(renderCookingHeatmap(recipes));
+
   return wrap;
+}
+
+// Calendrier des jours de cuisine (repris de l'app Windows) : une case
+// par jour sur les 12 derniers mois (semaines en colonnes, lundi en
+// haut), plus foncée selon le nombre de cuissons du journal ce jour-là.
+// Échelle séquentielle à une seule teinte (--heat-0 à --heat-3, 0, 1, 2,
+// 3 cuissons ou plus), clarté vérifiée strictement décroissante en thème
+// clair et croissante en thème sombre. Trop large pour un téléphone :
+// défilement horizontal, positionné sur les semaines les plus récentes.
+// Un appui sur un jour affiche sa date et les recettes cuisinées ; un
+// résumé texte et la légende accompagnent la grille (jamais la couleur
+// seule).
+const HEATMAP_WEEKS = 53;
+// « Tarte ×3, Soupe » plutôt que « Tarte, Tarte, Tarte, Soupe ».
+function groupedNames(names) {
+  const counts = new Map();
+  names.forEach((n) => counts.set(n, (counts.get(n) || 0) + 1));
+  return [...counts].map(([n, c]) => (c > 1 ? `${n} ×${c}` : n)).join(", ");
+}
+function cookingDayKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function renderCookingHeatmap(recipes, now = new Date()) {
+  const byDay = new Map();
+  recipes.forEach((r) => {
+    (r.cookLog || []).forEach((entry) => {
+      const d = entry && new Date(entry.date);
+      if (!d || Number.isNaN(d.getTime())) return;
+      const key = cookingDayKey(d);
+      if (!byDay.has(key)) byDay.set(key, []);
+      byDay.get(key).push(r.name);
+    });
+  });
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const mondayIndex = (today.getDay() + 6) % 7;
+  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - mondayIndex - (HEATMAP_WEEKS - 1) * 7);
+  const firstShown = new Date(today.getFullYear(), today.getMonth() - 12, today.getDate() + 1);
+
+  const card = el(`<div class="card heatmap-card"></div>`);
+  let totalCount = 0, totalDays = 0;
+  const grid = el(`<div class="heatmap-grid" role="group"></div>`);
+  const months = el(`<div class="heatmap-months" aria-hidden="true"></div>`);
+  let lastMonth = null;
+  for (let w = 0; w < HEATMAP_WEEKS; w++) {
+    const col = el(`<div class="heatmap-week"></div>`);
+    const weekStart = new Date(start.getFullYear(), start.getMonth(), start.getDate() + w * 7);
+    const monthLabel = el(`<span></span>`);
+    if (weekStart.getMonth() !== lastMonth) {
+      // Libellé du mois au-dessus de la première semaine qui le contient.
+      monthLabel.textContent = weekStart.toLocaleDateString(CURRENT_LANG, { month: "short" });
+      lastMonth = weekStart.getMonth();
+    }
+    months.appendChild(monthLabel);
+    for (let dIdx = 0; dIdx < 7; dIdx++) {
+      const day = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + dIdx);
+      if (day > today || day < firstShown) {
+        col.appendChild(el(`<span class="heatmap-cell heatmap-out" aria-hidden="true"></span>`));
+        continue;
+      }
+      const names = byDay.get(cookingDayKey(day)) || [];
+      const level = Math.min(3, names.length);
+      if (names.length) { totalCount += names.length; totalDays++; }
+      const dateText = day.toLocaleDateString(CURRENT_LANG, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      const label = names.length
+        ? t("stats_heatmap_day", { date: dateText, count: String(names.length), names: groupedNames(names) })
+        : t("stats_heatmap_day_none", { date: dateText });
+      // Jours avec cuisson : vrais boutons (atteignables au clavier) ;
+      // jours vides : simple case, l'appui affiche quand même la date.
+      // Jours vides masqués aux lecteurs d'écran (un aria-label n'est pas
+      // permis sur une simple case, et 300 cases « aucune cuisson » ne
+      // diraient rien) : le résumé et les boutons des jours cuisinés
+      // portent l'information.
+      const cell = names.length
+        ? el(`<button type="button" class="heatmap-cell heatmap-l${level}"></button>`)
+        : el(`<span class="heatmap-cell heatmap-l0" aria-hidden="true"></span>`);
+      if (names.length) cell.setAttribute("aria-label", label);
+      cell.dataset.day = cookingDayKey(day);
+      cell.addEventListener("click", () => {
+        grid.querySelectorAll(".heatmap-selected").forEach((c) => c.classList.remove("heatmap-selected"));
+        cell.classList.add("heatmap-selected");
+        detail.textContent = label;
+      });
+      col.appendChild(cell);
+    }
+    grid.appendChild(col);
+  }
+  const dayLabels = el(`<div class="heatmap-days" aria-hidden="true"></div>`);
+  for (let dIdx = 0; dIdx < 7; dIdx++) {
+    // Lundi, mercredi, vendredi seulement, comme les calendriers de ce type.
+    const ref = new Date(2024, 0, 1 + dIdx); // 1er janvier 2024 = lundi
+    dayLabels.appendChild(el(`<span>${dIdx % 2 === 0 && dIdx < 6 ? escapeHtml(ref.toLocaleDateString(CURRENT_LANG, { weekday: "short" })) : ""}</span>`));
+  }
+  const scroller = el(`<div class="heatmap-scroll" role="region" tabindex="0"></div>`);
+  scroller.setAttribute("aria-label", t("stats_heatmap_title"));
+  scroller.appendChild(months);
+  scroller.appendChild(grid);
+  const body = el(`<div class="heatmap-body"></div>`);
+  body.appendChild(dayLabels);
+  body.appendChild(scroller);
+
+  card.appendChild(el(`<p class="heatmap-summary">${escapeHtml(t("stats_heatmap_summary", { count: String(totalCount), days: String(totalDays) }))}</p>`));
+  card.appendChild(body);
+  card.appendChild(el(`<div class="heatmap-legend" aria-hidden="true">
+    <span>${escapeHtml(t("stats_heatmap_less"))}</span>
+    <span class="heatmap-cell heatmap-l0"></span><span class="heatmap-cell heatmap-l1"></span><span class="heatmap-cell heatmap-l2"></span><span class="heatmap-cell heatmap-l3"></span>
+    <span>${escapeHtml(t("stats_heatmap_more"))}</span>
+  </div>`));
+  const detail = el(`<p class="heatmap-detail" aria-live="polite">${escapeHtml(t("stats_heatmap_hint"))}</p>`);
+  card.appendChild(detail);
+  // Semaines les plus récentes visibles d'emblée (à droite).
+  requestAnimationFrame(() => { scroller.scrollLeft = scroller.scrollWidth; });
+  return card;
 }
 
 // À incrémenter à chaque livraison, en même temps que CACHE_NAME dans
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 317;
+const APP_VERSION = 318;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
