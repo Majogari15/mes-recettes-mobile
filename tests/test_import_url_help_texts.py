@@ -13,7 +13,7 @@ import threading
 from playwright.sync_api import sync_playwright
 
 PROJECT_ROOT = "/home/user/mes-recettes-mobile"
-LANGS = ["fr", "en", "es", "de", "id", "pt", "it", "sv", "no"]
+LANGS = ["fr", "en", "es", "de", "id", "pt", "it", "sv", "no", "zh"]
 
 
 def find_free_port():

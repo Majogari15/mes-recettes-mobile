@@ -1065,6 +1065,7 @@ function render() {
   }
 
   app.appendChild(topbar);
+  fitTopbarTitle(topbar);
 
   if (state.updateAvailable) {
     const updateBanner = el(`<div style="background:var(--primary-strong);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;font-weight:600;">
@@ -1106,6 +1107,23 @@ function render() {
     window.scrollTo(0, 0);
   }
   _restoreScrollOnNextRender = false;
+}
+
+// Chinois : le grand titre reste sur une ligne (un titre chinois coupé
+// au milieu, « 食品 / 柜 », se lit mal) et sa taille est réduite juste
+// assez pour tenir à côté des boutons, 20 px au minimum (au-delà, la
+// coupure « … » de la CSS prend le relais). Sans effet dans les autres
+// langues, dont le titre peut passer sur deux lignes entre deux mots.
+function fitTopbarTitle(topbar) {
+  if (CURRENT_LANG !== "zh") return;
+  const h = topbar.querySelector(".topbar-title h1:not(.subtitle)");
+  if (!h) return;
+  let size = 30;
+  h.style.fontSize = `${size}px`;
+  while (size > 20 && h.scrollWidth > h.clientWidth) {
+    size -= 1;
+    h.style.fontSize = `${size}px`;
+  }
 }
 
 function renderTopbar() {
@@ -1518,7 +1536,7 @@ function renderHome() {
   addBtn.addEventListener("click", () => openRecipeForm(null));
   const viewBtn = el(`<button class="btn btn-secondary" style="margin-bottom:10px;">${t("home_view_recipes")}</button>`);
   viewBtn.addEventListener("click", () => { state.screen = "recipes"; render(); });
-  const shopBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_shopping_list")}${shoppingCount ? ` (${shoppingCount})` : ""}</button>`);
+  const shopBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_shopping_list")}${shoppingCount ? paren(shoppingCount) : ""}</button>`);
   shopBtn.addEventListener("click", () => { state.screen = "shopping"; render(); });
   mainActions.appendChild(viewBtn);
   mainActions.appendChild(shopBtn);
@@ -1578,7 +1596,7 @@ function renderHome() {
 
   // Groupe "Autre"
   const otherActions = el(`<div class="section"><div class="section-label">${t("home_group_other")}</div></div>`);
-  const trashBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_trash")}${state.trash.length ? ` (${state.trash.length})` : ""}</button>`);
+  const trashBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_trash")}${state.trash.length ? paren(state.trash.length) : ""}</button>`);
   trashBtn.addEventListener("click", () => { state.screen = "trash"; render(); });
   const backupBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("home_backup")}</button>`);
   backupBtn.addEventListener("click", () => { state.screen = "backup"; render(); });
@@ -1643,7 +1661,8 @@ function searchKey(str) {
 const MAX_RECIPE_TAGS = 20;
 const MAX_RECIPE_TAG_LENGTH = 40;
 function normalizeRecipeTags(value) {
-  const raw = Array.isArray(value) ? value : (typeof value === "string" ? value.split(",") : []);
+  // Virgules latines et chinoises (« ， » pleine largeur, « 、 »).
+  const raw = Array.isArray(value) ? value : (typeof value === "string" ? value.split(/[,，、]/) : []);
   const seen = new Set();
   const tags = [];
   raw.forEach((v) => {
@@ -1674,7 +1693,7 @@ function singularWord(w) {
   return w.length > 3 && /[sx]$/.test(w) ? w.slice(0, -1) : w;
 }
 function parseIngredientTerms(text) {
-  return String(text || "").split(/[,;]/).map(searchKey).filter(Boolean).map((k) => k.split(" "));
+  return String(text || "").split(/[,;，、；]/).map(searchKey).filter(Boolean).map((k) => k.split(" "));
 }
 function ingredientNameMatchesTerm(name, termWords) {
   const words = searchKey(name).split(" ");
@@ -1999,7 +2018,7 @@ function renderRecipeView() {
   const nutrition = computeRecipeNutrition(r.ingredients);
   if (nutrition) {
     const nutriLabel = nutrition.partial
-      ? `${t("recipe_nutrition_base")} (${t("recipe_nutrition_partial")})`
+      ? `${t("recipe_nutrition_base")}${paren(t("recipe_nutrition_partial"))}`
       : t("recipe_nutrition");
     const nutriCard = el(`<div class="card" style="padding:14px 16px;"></div>`);
     nutriCard.appendChild(el(`<div class="stat-row" style="margin-bottom:0;">
@@ -2062,7 +2081,7 @@ function renderRecipeView() {
   const logRow = el(`<div class="action-row"></div>`);
   const cookedBtn = el(`<button class="btn btn-secondary">${t("recipe_cooked_button")}</button>`);
   cookedBtn.addEventListener("click", () => openCookLogAddModal(r));
-  const viewLogBtn = el(`<button class="btn btn-outline">${t("cooklog_view_button")}${r.cookLog && r.cookLog.length ? ` (${r.cookLog.length})` : ""}</button>`);
+  const viewLogBtn = el(`<button class="btn btn-outline">${t("cooklog_view_button")}${r.cookLog && r.cookLog.length ? paren(r.cookLog.length) : ""}</button>`);
   viewLogBtn.addEventListener("click", () => openCookLogViewModal(r));
   logRow.appendChild(cookedBtn);
   logRow.appendChild(viewLogBtn);
@@ -2468,7 +2487,7 @@ function renderRecipeForm() {
     <div class="tag-suggestions"></div>
   </div>`);
   const tagsInput = tagsField.querySelector("#f-tags");
-  tagsInput.value = initialTags.join(", ");
+  tagsInput.value = initialTags.join(listSeparator());
   const suggestionsHolder = tagsField.querySelector(".tag-suggestions");
   const refreshTagSuggestions = () => {
     const present = new Set(normalizeRecipeTags(tagsInput.value).map(searchKey));
@@ -2479,7 +2498,7 @@ function renderRecipeForm() {
     available.forEach((tg) => {
       const chip = el(`<button type="button" class="chip">+ ${escapeHtml(tg)}</button>`);
       chip.addEventListener("click", () => {
-        tagsInput.value = normalizeRecipeTags([...normalizeRecipeTags(tagsInput.value), tg]).join(", ");
+        tagsInput.value = normalizeRecipeTags([...normalizeRecipeTags(tagsInput.value), tg]).join(listSeparator());
         refreshTagSuggestions();
       });
       suggestionsHolder.appendChild(chip);
@@ -3055,7 +3074,7 @@ async function addRecipeToShopping(recipe, persons) {
 function renderShopping() {
   const wrap = el(`<div></div>`);
   const topRow = el(`<div class="action-row" style="margin-bottom:14px;"></div>`);
-  const savedListsBtn = el(`<button class="btn btn-outline btn-sm">${t("shopping_saved_lists_button")}${state.savedShoppingLists.length ? ` (${state.savedShoppingLists.length})` : ""}</button>`);
+  const savedListsBtn = el(`<button class="btn btn-outline btn-sm">${t("shopping_saved_lists_button")}${state.savedShoppingLists.length ? paren(state.savedShoppingLists.length) : ""}</button>`);
   savedListsBtn.addEventListener("click", () => { state.screen = "savedShoppingLists"; render(); });
   const scanBtn = el(`<button class="btn btn-outline btn-sm">${t("shopping_qr_scan_button")}</button>`);
   scanBtn.addEventListener("click", () => openQrScanModal());
@@ -3077,7 +3096,7 @@ function renderShopping() {
 
   const costInfo = computeShoppingTotal(state.shopping);
   const totalRow = el(`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;">
-    <span style="font-weight:700;font-size:16px;">${t("shopping_total_label")} : ${fmtQty(costInfo.total)} €</span>
+    <span style="font-weight:700;font-size:16px;">${escapeHtml(labelValue(t("shopping_total_label"), `${fmtQty(costInfo.total)} €`))}</span>
     ${costInfo.unknown ? `<span style="font-size:12px;color:var(--text-muted);">${escapeHtml(t("shopping_unknown_price", { count: costInfo.unknown }))}</span>` : ""}
   </div>`);
   wrap.appendChild(totalRow);
@@ -6677,6 +6696,7 @@ function speakText(text) {
   const langMap = {
     fr: "fr-FR", en: "en-US", es: "es-ES", de: "de-DE",
     id: "id-ID", pt: "pt-PT", it: "it-IT", sv: "sv-SE", no: "nb-NO",
+    zh: "zh-CN",
   };
   utterance.lang = langMap[CURRENT_LANG] || "fr-FR";
   window.speechSynthesis.speak(utterance);
@@ -6779,7 +6799,7 @@ async function showTimerNotification(timer) {
     // la notification précédente, Android n'en affichant alors qu'une
     // seule alors que plusieurs sont réellement terminés.
     const originalDuration = timer ? formatCountdown(timer.minutes * 60 + timer.seconds) : "";
-    const body = originalDuration ? `${t("cooking_notification_body")} (${originalDuration})` : t("cooking_notification_body");
+    const body = originalDuration ? `${t("cooking_notification_body")}${paren(originalDuration)}` : t("cooking_notification_body");
     const tag = timer ? `cooking-timer-${timer.id}` : "cooking-timer";
     if ("serviceWorker" in navigator) {
       const registration = await navigator.serviceWorker.ready;
@@ -7419,7 +7439,7 @@ function translateIngredientNameById(id) {
   const translated = dict && dict[id];
   if (!translated) return fr || null;
   const collisions = getIngredientTranslationCollisions(CURRENT_LANG);
-  return collisions.has(translated) ? `${translated} (${fr})` : translated;
+  return collisions.has(translated) ? `${translated}${paren(fr)}` : translated;
 }
 function translateIngredientName(name) {
   if (!name || CURRENT_LANG === "fr") return name;
@@ -10128,7 +10148,7 @@ async function renderDiagnostic() {
   copyBtn.addEventListener("click", async () => {
     const lines = Array.from(rowsHolder.children).map((row) => {
       const spans = row.querySelectorAll("span");
-      return `${spans[0].textContent} : ${spans[1].textContent}`;
+      return labelValue(spans[0].textContent, spans[1].textContent);
     });
     const text = lines.join("\n");
     try {
@@ -10164,7 +10184,7 @@ async function renderDiagnostic() {
     if (!description) { await customAlert(t("diagnostic_report_empty")); return; }
     const diagLines = Array.from(rowsHolder.children).map((row) => {
       const spans = row.querySelectorAll("span");
-      return `${spans[0].textContent} : ${spans[1].textContent}`;
+      return labelValue(spans[0].textContent, spans[1].textContent);
     });
     const fullText = `${description}\n\n---\n${diagLines.join("\n")}`;
     if (navigator.share) {
@@ -11160,7 +11180,7 @@ function renderPlanning() {
   }
   fillDays();
 
-  const historyBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("planning_view_history")}${state.planHistory.length ? ` (${state.planHistory.length})` : ""}</button>`);
+  const historyBtn = el(`<button class="btn btn-outline" style="margin-bottom:10px;">${t("planning_view_history")}${state.planHistory.length ? paren(state.planHistory.length) : ""}</button>`);
   historyBtn.addEventListener("click", () => { state.screen = "planningHistory"; render(); });
   wrap.appendChild(historyBtn);
 
@@ -13970,7 +13990,7 @@ const RECIPE_SEARCH_SITES = {
   es: ["recetasderechupete.com", "directoalpaladar.com", "javirecetas.com", "hogarmania.com", "cocina-casera.com", "divinacocina.es"],
   de: ["chefkoch.de", "lecker.de", "einfachbacken.de", "gutekueche.at", "essen-und-trinken.de", "kochbar.de"],
 };
-const RECIPE_SEARCH_WORD = { fr: "recette", en: "recipe", es: "receta", de: "Rezept", it: "ricetta", pt: "receita", id: "resep", no: "oppskrift", sv: "recept" };
+const RECIPE_SEARCH_WORD = { fr: "recette", en: "recipe", es: "receta", de: "Rezept", it: "ricetta", pt: "receita", id: "resep", no: "oppskrift", sv: "recept", zh: "菜谱" };
 function buildRecipeSearchUrl(query, lang = CURRENT_LANG) {
   const q = String(query || "").trim();
   if (!q) return "https://www.google.com/";
@@ -14072,7 +14092,7 @@ function renderImportUrl() {
     try {
       const result = await fetchRecipeFromUrl(url, (attempt, total) => {
         statusHolder.textContent = total > 1
-          ? t("import_url_fetching") + ` (${attempt}/${total})`
+          ? t("import_url_fetching") + paren(`${attempt}/${total}`)
           : t("import_url_fetching");
       });
       state.editingRecipeId = null;
@@ -14452,7 +14472,7 @@ function renderStatistics() {
   const catCounts = {};
   recipes.forEach((r) => { const c = r.category || "Autre"; catCounts[c] = (catCounts[c] || 0) + 1; });
   CATEGORY_OPTIONS.forEach((cat) => {
-    if (catCounts[cat]) catCard.appendChild(line(`${translateCategory(cat)} : ${catCounts[cat]}`));
+    if (catCounts[cat]) catCard.appendChild(line(labelValue(translateCategory(cat), catCounts[cat])));
   });
 
   section(t("stats_by_difficulty"));
@@ -14460,7 +14480,7 @@ function renderStatistics() {
   const diffCounts = {};
   recipes.forEach((r) => { const d = r.difficulty || "Facile"; diffCounts[d] = (diffCounts[d] || 0) + 1; });
   DIFFICULTY_OPTIONS.forEach((diff) => {
-    if (diffCounts[diff]) diffCard.appendChild(line(`${translateDifficulty(diff)} : ${diffCounts[diff]}`));
+    if (diffCounts[diff]) diffCard.appendChild(line(labelValue(translateDifficulty(diff), diffCounts[diff])));
   });
 
   const favCount = recipes.filter((r) => r.favorite).length;
@@ -14681,7 +14701,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 318;
+const APP_VERSION = 319;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

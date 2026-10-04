@@ -1290,3 +1290,39 @@ button.heatmap-cell { cursor: pointer; }
 .heatmap-legend span:first-child { margin-right: 3px; }
 .heatmap-legend span:last-child { margin-left: 3px; }
 .heatmap-detail { font-size: 13px; color: var(--text-muted); margin: 8px 0 0; min-height: 1.4em; overflow-wrap: anywhere; }
+
+/* ---------- Chinois simplifié (html lang="zh-CN") ----------
+   Aucune police chinoise n'est embarquée (CSP : polices du site uniquement,
+   et une police chinoise pèse plusieurs Mo) : celles du système sont
+   utilisées, dans cet ordre : iPhone/Mac (PingFang), Android (Noto CJK),
+   Windows (Microsoft YaHei). Inter/Fraunces restent en tête pour les
+   chiffres et lettres latines. */
+html:lang(zh) body {
+  font-family: 'Inter', "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  line-break: strict;
+}
+html:lang(zh) h1, html:lang(zh) h2, html:lang(zh) h3, html:lang(zh) .display,
+html:lang(zh) .card.recipe-row .recipe-name, html:lang(zh) .disclaimer-sheet h2 {
+  font-family: 'Fraunces', "Noto Serif CJK SC", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "PingFang SC", "Noto Sans CJK SC", serif;
+  letter-spacing: 0;
+}
+/* Pas d'espacement entre caractères chinois (pensé pour des capitales
+   latines) ; les étoiles de notation gardent le leur. */
+html:lang(zh) .section-label, html:lang(zh) .stat-pill .label,
+html:lang(zh) .shopping-group-title, html:lang(zh) .compare-label,
+html:lang(zh) .compare-only-columns .col-title, html:lang(zh) .home-daily .label {
+  letter-spacing: 0;
+}
+/* 9 px est illisible en caractères chinois : 10 px minimum. */
+html:lang(zh) .heatmap-months span, html:lang(zh) .heatmap-days,
+html:lang(zh) [style*="font-size:9px"] {
+  font-size: 10px !important;
+}
+/* Grand titre de page : caractères chinois larges, chaque caractère
+   compte — une seule ligne, taille réduite, coupure propre si trop long. */
+html:lang(zh) .topbar-title h1:not(.subtitle) {
+  font-size: 30px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -16,7 +16,7 @@ import threading
 from playwright.sync_api import sync_playwright
 
 PROJECT_ROOT = "/home/user/mes-recettes-mobile"
-LANGS = ["fr", "de", "sv", "no", "pt", "it"]
+LANGS = ["fr", "de", "sv", "no", "pt", "it", "zh"]
 SCREENS = ["home", "recipes", "recipe", "form", "shopping", "pantry", "ingredients", "backup",
            "diagnostic", "compare", "menus", "menu", "planning", "planningHistory", "importUrl",
            "unitConverter", "trash", "savedShoppingLists", "whatCanICook", "cookbookExport",

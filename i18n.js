@@ -759,6 +759,12 @@ const ALLERGEN_TRANSLATIONS = {
     "sésame": "Sesam", "céleri": "Selleri", moutarde: "Sennep", sulfites: "Sulfitter",
     lupin: "Lupin", mollusques: "Bløtdyr",
   },
+  zh: {
+    gluten: "麸质", lactose: "乳糖", "œufs": "蛋类", arachides: "花生",
+    "fruits à coque": "坚果", soja: "大豆", poisson: "鱼类", "crustacés": "甲壳类",
+    "sésame": "芝麻", "céleri": "芹菜", moutarde: "芥末", sulfites: "亚硫酸盐",
+    lupin: "羽扇豆", mollusques: "软体动物",
+  },
 };
 const RAYON_KEYWORDS = [
   ["Fruits & Légumes", [
@@ -926,6 +932,12 @@ const RAYON_TRANSLATIONS = {
     "épicerie": "Tørrvarer", "herbes & épices": "Urter & Krydder",
     "boissons": "Drikke", "autre": "Annet",
   },
+  zh: {
+    "fruits & légumes": "蔬菜水果", "viandes & poissons": "肉类水产",
+    "crèmerie": "乳制品", "boulangerie & pâtisserie": "面包糕点",
+    "épicerie": "粮油干货", "herbes & épices": "香草香料",
+    "boissons": "饮料", "autre": "其他",
+  },
 };
 
 function getIngredientRayon(name) {
@@ -1011,6 +1023,7 @@ const SUPPORTED_LANGUAGES = [
   { code: "it", flag: "🇮🇹", nativeName: "Italiano" },
   { code: "sv", flag: "🇸🇪", nativeName: "Svenska" },
   { code: "no", flag: "🇳🇴", nativeName: "Norsk" },
+  { code: "zh", flag: "🇨🇳", nativeName: "简体中文" },
 ];
 
 // Textes de l'interface des langues autres que le français : chargés à
@@ -1049,6 +1062,32 @@ async function ensureUiTranslationsLoaded(lang) {
 // précédente et reconstituée... non, jamais persistée : donc toujours
 // le français à ce stade pour une langue non-fr), puis une seconde fois
 // une fois le fichier de langue téléchargé (voir plus bas et setLang).
+// Valeur de l'attribut lang du document : « zh » seul est ambigu
+// (simplifié ou traditionnel) et peut faire choisir au téléphone des
+// formes de caractères non simplifiées ; « zh-CN » impose le chinois
+// simplifié (et reste reconnu par :lang(zh) en CSS).
+// « Libellé : valeur » avec la ponctuation de la langue : espace avant
+// les deux-points en français, deux-points pleine largeur en chinois,
+// deux-points collés ailleurs.
+function labelValue(label, value) {
+  if (CURRENT_LANG === "zh") return `${label}：${value}`;
+  if (CURRENT_LANG === "fr") return `${label} : ${value}`;
+  return `${label}: ${value}`;
+}
+// Précision entre parenthèses ajoutée à un libellé : parenthèses pleine
+// largeur, sans espace, en chinois (« 烹饪日志（1） ») ; « Libellé (1) »
+// ailleurs.
+// Séparateur d'une liste saisie par l'utilisateur (étiquettes) : virgule
+// chinoise en chinois.
+function listSeparator() {
+  return CURRENT_LANG === "zh" ? "，" : ", ";
+}
+function paren(text) {
+  return CURRENT_LANG === "zh" ? `（${text}）` : ` (${text})`;
+}
+function htmlLangFor(lang) {
+  return lang === "zh" ? "zh-CN" : lang;
+}
 function applyDocumentChrome() {
   if (typeof document === "undefined") return;
   document.title = t("app_name");
@@ -1071,7 +1110,7 @@ if (!SUPPORTED_LANGUAGES.some((l) => l.code === CURRENT_LANG)) CURRENT_LANG = "e
 // l'attribut "fr" figé dans index.html, faisant prononcer le contenu
 // dans la mauvaise langue par un lecteur d'écran.
 if (typeof document !== "undefined") {
-  document.documentElement.lang = CURRENT_LANG;
+  document.documentElement.lang = htmlLangFor(CURRENT_LANG);
   // Utilise ce qui est déjà disponible tout de suite (le français, voir
   // le repli dans t()) ; si CURRENT_LANG n'est pas "fr", ces deux
   // éléments restent temporairement en français le temps du
@@ -1095,7 +1134,7 @@ function setLang(lang) {
   if (!SUPPORTED_LANGUAGES.some((l) => l.code === lang)) return;
   CURRENT_LANG = lang;
   localStorage.setItem("lang", lang);
-  document.documentElement.lang = lang;
+  document.documentElement.lang = htmlLangFor(lang);
   applyDocumentChrome();
   // Retrie immédiatement selon la traduction de la nouvelle langue —
   // sans ça, la liste restait triée selon l'ordre de la langue

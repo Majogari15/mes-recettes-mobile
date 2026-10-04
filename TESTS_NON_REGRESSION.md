@@ -9654,3 +9654,51 @@ mois.
 repassé.
 
 **Version testée** : v318
+
+### 153 — Chinois simplifié, étape 1 : interface et mise en page (branche, pas sur main)
+
+Intégration du chinois simplifié menée sur la branche de travail ; **rien
+n'est poussé sur main tant que l'intégration complète n'est pas terminée
+et vérifiée** (demande de l'utilisateur).
+
+**Fait à cette étape :**
+- Langue `zh` déclarée (« 简体中文 »), attribut `lang="zh-CN"` (impose les
+  formes simplifiées des caractères ; `htmlLangFor`), détection automatique
+  d'un téléphone réglé en chinois, `manifest-zh.json` (+ chargeur, cache
+  hors ligne), synthèse vocale `zh-CN`, mot « 菜谱 » pour la recherche web.
+- Interface : 698 textes traduits depuis le français (`i18n/zh.json`),
+  mêmes clés et mêmes `{variables}` ; phrases tournées sans pluriel
+  « (s) » ; ponctuation pleine largeur ; allergènes (14) et rayons (8).
+  Clause de responsabilité traduite avec la mention « 以法文原文为准 »
+  (le texte français fait foi).
+- Ponctuation selon la langue (`labelValue`, `paren`, `listSeparator`,
+  i18n.js) : « 主菜：2 », « 烹饪日志（1） », « 快手，家常 » en chinois ;
+  français inchangé (« Total estimé : 3 € », « (1) »), « Label: value »
+  dans les autres langues (avant : « Label : value » à la française
+  partout).
+- Virgules chinoises « ， » « 、 » « ； » acceptées dans les étiquettes et
+  la recherche par ingrédient.
+- Mise en page (`html:lang(zh)`, styles.css) : polices chinoises du
+  système (PingFang, Noto CJK, Microsoft YaHei — aucune police embarquée,
+  CSP + poids), titres en police chinoise à empattements, pas
+  d'espacement de lettres sur les petits titres, 10 px minimum ; grand
+  titre de page sur une ligne, taille ajustée pour tenir à côté des
+  boutons (`fitTopbarTitle`, 30 → 20 px, chinois uniquement).
+- Vérifié visuellement à 320 px (police WenQuanYi de l'environnement de
+  test, proche mais pas identique au rendu Android) : accueil, liste,
+  fiche, formulaire, courses, garde-manger, planning, statistiques,
+  sauvegarde, import par lien, clause, journal, mode cuisine, comparaison,
+  ingrédients, substituts, menus, « que cuisiner », convertisseur, livre
+  de recettes, diagnostic, import photo, corbeille, choix de la langue.
+
+**Reste à faire (étapes suivantes) :** noms des ~10 000 ingrédients et
+substitutions en chinois (affichés en français pour l'instant), export PDF
+(police sans caractères chinois), recherche par ingrédient et recettes
+similaires (comparaison par mots séparés d'espaces), import par photo et
+par lien (règles de lecture pensées pour l'alphabet latin, modèle de
+reconnaissance chinois), symbole € codé en dur.
+
+**Tests** : `tests/test_chinese_ui.py` ; `zh` ajouté à
+`test_narrow_screen_overflow.py` et `test_import_url_help_texts.py`.
+
+**Version testée** : v319 (branche)
