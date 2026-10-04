@@ -9777,13 +9777,16 @@ reconnaissance chinois), symbole € codé en dur.
   (sans effet sur un texte sans chinois).
 - Lignes d'ingrédients (`parseChineseIngredientString`, aussi pour
   l'import par lien) : « 番茄 2个 », « 面粉：200克 », « 200克面粉 »,
-  « 两个鸡蛋 », « 十二个虾 », « 半个柠檬 », plage « 2-3克 » (première
+  « 两个鸡蛋 », « 十二个虾 », « 半个柠檬 », « 柠檬一半 », plage « 2-3克 » (première
   valeur), « 1斤 » = 500 g, « 二两 » = 100 g, « 杯 » = 24 cl comme
   « cup », « 适量/少许 » = sans quantité, note « （约300克） » gardée
   dans le nom. Un chiffre chinois n'est une quantité que suivi d'une
   unité : « 三文鱼 », « 五花肉 », « 四季豆 » restent des noms.
-- Sections : 材料/食材/用料 et 做法/步骤 (hors du `\b`, qui ne marche
-  pas après un caractère chinois), sous-titres 主料/辅料/调料 ignorés,
+- Sections : 材料/食材/用料/配料 et 做法/步骤 (hors du `\b`, qui ne
+  marche pas après un caractère chinois), en tête d'une ligne courte
+  seulement (« 把材料准备好 » n'est pas un titre), « 【食材】 » toléré
+  (« 【 » et « [ » ajoutés aux symboles parasites tolérés devant un
+  titre, toutes langues), sous-titres 主料/辅料/调料 ignorés,
   fin de page « 猜你喜欢 », « 相关食谱 »… ; personnes « 2人份 »,
   « 份量：4 » ; durées « 10分钟 », « 1小时30分钟 », « 半小时 » ;
   allergènes « 过敏原：鸡蛋、牛奶 » (mots chinois courants + libellé
@@ -9805,3 +9808,45 @@ reconnaissance chinois), symbole € codé en dur.
 (10 langues de reconnaissance de texte).
 
 **Version testée** : v322 (branche)
+
+### 157 — Devise configurable (étape 5 de l'intégration du chinois, branche, pas sur main)
+
+- Le symbole « € » était écrit en dur dans les textes de coût (coût d'une
+  recette, comparaison, statistiques, total de la liste de courses) —
+  dans les 10 langues, avec en plus un « kr » isolé dans la ligne
+  suédoise des statistiques (les autres textes suédois disaient « € »).
+- Nouveau réglage « Devise » dans la fenêtre d'un ingrédient, sous le
+  prix (là où les prix se saisissent) : 17 devises (EUR, USD, GBP, CHF,
+  CAD, AUD, CNY, HKD, TWD, SGD, JPY, SEK, NOK, DKK, IDR, BRL, MXN), nom
+  affiché dans la langue de l'interface (`Intl.DisplayNames`). Réglage
+  global, appliqué tout de suite ; enregistré dans IndexedDB (clé kv
+  `currency`, donc inclus dans les sauvegardes) ; euro par défaut :
+  rien ne change pour les utilisateurs actuels.
+- `formatPrice` utilise `Intl.NumberFormat` (style monnaie) : symbole et
+  place selon la langue (« 1,20 € », « $1.20 », « ¥1.20 »). Le total des
+  courses et la moyenne des statistiques passent aussi par
+  `formatPrice` (avant : `fmtQty`, sans les deux décimales).
+- Changer de devise ne convertit pas les prix déjà saisis (indiqué sous
+  la liste).
+- Non modifié : la clause juridique (« zéro euro (0 €) »), qui parle bien
+  d'euros.
+
+**Tests** : `tests/test_currency.py`.
+
+**Version testée** : v323 (branche)
+
+### 158 — Chinois : recherche de recettes par ingrédient (fin de l'étape 2, branche, pas sur main)
+
+- « Avec / sans un ingrédient » cherchait le terme en début de mot ; en
+  chinois, sans espace et avec le mot principal en fin de nom, « 牛肉 »
+  (bœuf) ne trouvait pas « 焖牛肉 » (bœuf braisé). Un terme contenant du
+  chinois est maintenant cherché n'importe où dans le nom (traduit ou
+  enregistré). Revers accepté : « 鸡 » (poulet) trouve aussi « 鸡蛋 »
+  (œuf). Langues latines inchangées.
+- Recettes proches : les assaisonnements de base saisis en chinois hors
+  catalogue (« 盐 », « 水 », « 食用油 »…) ne comptent plus comme
+  ingrédients communs, comme « sel », « eau », « huile ».
+
+**Tests** : `tests/test_chinese_ingredients.py` (4 vérifications ajoutées).
+
+**Version testée** : v323 (branche)

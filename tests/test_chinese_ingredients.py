@@ -140,6 +140,26 @@ def main():
         check("écran Ingrédients : recherche par le nom français toujours possible", "杏" in rows, rows[:5])
         rows = screen_search("manageSubstitutions", "黄油")
         check("écran Substituts : recherche « 黄油 » dans les noms chinois", rows and any("黄油" in x for x in rows), rows[:5])
+        # Recherche de recettes par ingrédient (« avec / sans ») : en
+        # chinois, le mot principal est en fin de nom (« 焖牛肉 »).
+        r = page.evaluate("""() => {
+            const saved = state.recipes;
+            const mk = (id, names) => ({ id, name: id, category: 'Plat', ingredients: names.map((n) => ({ name: n, quantity: 1, unit: 'pièce' })) });
+            state.recipes = [mk('R1', ['Tomate', 'Oeufs']), mk('R2', ['Boeuf braisé']), mk('R3', ['Tomate'])];
+            const run = (withT, withoutT) => {
+                state.search = ''; state.recipeTagFilter = ''; state.activeFilter = 'all'; state.recipeCategoryFilter = '';
+                state.recipeIngredientWith = withT; state.recipeIngredientWithout = withoutT;
+                return filteredRecipes().map((x) => x.id).sort();
+            };
+            const out = { beef: run('牛肉', ''), tomatoEgg: run('番茄，鸡蛋', ''), noEgg: run('', '鸡蛋'), fr: run('boeuf', '') };
+            state.recipes = saved; state.recipeIngredientWith = ''; state.recipeIngredientWithout = '';
+            return out;
+        }""")
+        check("recettes « avec 牛肉 » : trouve « 焖牛肉 » (mot en fin de nom)", r["beef"] == ["R2"], r["beef"])
+        check("recettes « avec 番茄，鸡蛋 » (virgule chinoise)", r["tomatoEgg"] == ["R1"], r["tomatoEgg"])
+        check("recettes « sans 鸡蛋 »", r["noEgg"] == ["R2", "R3"], r["noEgg"])
+        check("recettes : nom français toujours reconnu (« boeuf »)", r["fr"] == ["R2"], r["fr"])
+
         page.evaluate("async () => { await ensureIngredientTranslationsLoaded('en'); setLang('en'); }")
         rows = screen_search("ingredients", "beef")
         check("écran Ingrédients en anglais : « beef » trouvé (même correction)", rows and all("beef" in x.lower() for x in rows), rows[:3])

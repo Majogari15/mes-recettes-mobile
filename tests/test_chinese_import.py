@@ -51,6 +51,8 @@ INGREDIENT_CASES = [
     ("三文鱼", "三文鱼", None, "pièce"),
     ("五香粉", "五香粉", None, "pièce"),
     ("四季豆 300克", "四季豆", 300, "g"),
+    ("柠檬 一半", "柠檬", 0.5, "pièce"),
+    ("一半柠檬", "柠檬", 0.5, "pièce"),
     # Non-régression : lignes françaises inchangées.
     ("200 g de farine", "farine", 200, "g"),
     ("2 oignons", "oignons", 2, "pièce"),
@@ -125,6 +127,16 @@ def main():
             setLang('zh');
         }""")
 
+        r = page.evaluate("""() => ({
+            step: matchesIngredientTitle('把材料都准备好，切成小块'),
+            heads: ['材料', '用料（2人份）', '配料：', '【食材】'].map(matchesIngredientTitle),
+            fr: matchesIngredientTitle('Ingrédients pour 2 personnes'),
+            onlyPeiliao: parseOcrRecipeText('凉拌黄瓜\\n配料\\n黄瓜 2根\\n蒜 3瓣\\n做法\\n黄瓜拍碎，加蒜末拌匀即可。').ingredients.map((i) => i.name),
+        })""")
+        check("titre d'ingrédients : pas au milieu d'une phrase d'étape", r["step"] is False, r)
+        check("titres d'ingrédients chinois reconnus (材料, 用料（2人份）, 配料：, 【食材】)", r["heads"] == [True] * 4, r["heads"])
+        check("titre français toujours reconnu", r["fr"] is True)
+        check("« 配料 » seul comme titre de liste", r["onlyPeiliao"] == ["黄瓜", "蒜"], r["onlyPeiliao"])
         check("TESSERACT_LANG_MAP.zh = chi_sim", page.evaluate("() => TESSERACT_LANG_MAP.zh") == "chi_sim")
         r = page.evaluate("""() => [collapseCjkSpaces('番 茄 炒 蛋 ， 加 少许 盐 。'), collapseCjkSpaces('番茄 2 个'),
                                     collapseCjkSpaces('200 g de farine  et sel')]""")

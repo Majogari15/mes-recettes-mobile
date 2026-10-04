@@ -399,6 +399,8 @@ const state = {
   cookingTimers: [],
   shoppingSortMode: "name",
   currentMenuId: null,
+  // Devise des prix d'ingrédients (code ISO 4217), voir formatPrice.
+  currency: "EUR",
   weeklyPlan: {},
   menus: [],
   planTemplates: [],
@@ -1696,6 +1698,13 @@ function parseIngredientTerms(text) {
   return String(text || "").split(/[,;，、；]/).map(searchKey).filter(Boolean).map((k) => k.split(" "));
 }
 function ingredientNameMatchesTerm(name, termWords) {
+  // Chinois : pas d'espace entre les mots et le mot principal en fin de
+  // nom (« 碎牛肉 », viande de bœuf hachée) — recherche n'importe où dans
+  // le nom plutôt qu'en début de mot. Revers accepté : « 鸡 » (poulet)
+  // trouve aussi « 鸡蛋 » (œuf).
+  if (termWords.some((w) => CJK_CHAR_RE.test(w))) {
+    return searchKey(name).replace(/ /g, "").includes(termWords.join(""));
+  }
   const words = searchKey(name).split(" ");
   const last = termWords.length - 1;
   for (let i = 0; i + termWords.length <= words.length; i++) {
@@ -2183,6 +2192,9 @@ const SIMILARITY_IGNORED_INGREDIENTS = new Set([
   "sel", "sel fin", "gros sel", "fleur de sel", "poivre", "poivre noir", "poivre blanc",
   "poivre du moulin", "eau", "huile", "huile d olive", "huile de tournesol",
   "huile vegetale", "huile neutre", "huile de colza",
+  // Noms chinois saisis librement (hors catalogue, où « 盐 » est déjà
+  // relié à « Sel »).
+  "盐", "胡椒", "胡椒粉", "水", "清水", "油", "食用油", "植物油", "橄榄油",
 ].map(searchKey));
 function findSimilarRecipes(recipe, limit = 5) {
   const ingredientKeys = (r) => new Set((r.ingredients || [])
@@ -3096,7 +3108,7 @@ function renderShopping() {
 
   const costInfo = computeShoppingTotal(state.shopping);
   const totalRow = el(`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;">
-    <span style="font-weight:700;font-size:16px;">${escapeHtml(labelValue(t("shopping_total_label"), `${fmtQty(costInfo.total)} €`))}</span>
+    <span style="font-weight:700;font-size:16px;">${escapeHtml(labelValue(t("shopping_total_label"), formatPrice(costInfo.total)))}</span>
     ${costInfo.unknown ? `<span style="font-size:12px;color:var(--text-muted);">${escapeHtml(t("shopping_unknown_price", { count: costInfo.unknown }))}</span>` : ""}
   </div>`);
   wrap.appendChild(totalRow);
@@ -4473,6 +4485,11 @@ function openIngredientNameModal(existingName) {
       <div class="field"><label for="modal-price-amount">${t("ingredient_price_label")}</label><input type="number" min="0" step="any" id="modal-price-amount" value="${currentPrice ? currentPrice.amount : ""}"></div>
       <div class="field"><label for="modal-price-unit">${t("ingredient_price_for")}</label><select id="modal-price-unit"></select></div>
     </div>
+    <div class="field">
+      <label for="modal-price-currency">${t("currency_label")}</label>
+      <select id="modal-price-currency">${CURRENCY_OPTIONS.map((code) => `<option value="${code}" ${code === normalizeCurrency(state.currency) ? "selected" : ""}>${escapeHtml(currencyOptionLabel(code))}</option>`).join("")}</select>
+      <p style="font-size:12px;color:var(--text-muted);margin:6px 0 0;line-height:1.4;">${escapeHtml(t("currency_hint"))}</p>
+    </div>
 
     <div class="section-label">${t("ingredient_substitutes_label")}</div>
     <p style="font-size:13px;color:var(--text-muted);margin:0 0 12px;line-height:1.4;">${escapeHtml(t("ingredient_substitutes_hint"))}</p>
@@ -4564,6 +4581,12 @@ function openIngredientNameModal(existingName) {
     fillSubstitutes();
   });
   substitutesHolder.insertAdjacentElement("afterend", addSubstituteBtn);
+
+  // Réglage global (pas propre à cet ingrédient) : appliqué tout de
+  // suite, même si la fenêtre est ensuite annulée.
+  sheet.querySelector("#modal-price-currency").addEventListener("change", async (e) => {
+    try { await setCurrency(e.target.value); } catch (err) { await customAlert(t("storage_write_error")); }
+  });
 
   overlay.appendChild(sheet);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
@@ -10111,6 +10134,7 @@ async function importAllData(data, mode) {
   state.savedShoppingLists = await storeAll("savedShoppingLists");
   repairLoadedShapes();
   state.weeklyPlan = (await kvGet("weeklyPlan")) || {};
+  state.currency = normalizeCurrency(await kvGet(CURRENCY_KEY));
 }
 
 // Même réparation qu'à l'import (ensureBackupItemShape), appliquée en
@@ -11459,7 +11483,7 @@ function parseZhNumber(str) {
     const n = parseFloat(str.replace(",", "."));
     return Number.isNaN(n) ? null : n;
   }
-  if (str === "半") return 0.5;
+  if (str === "半" || str === "一半") return 0.5;
   const m = str.match(/^([一二两三四五六七八九])?(十)?([一二三四五六七八九])?(半)?$/);
   if (!m || (!m[1] && !m[2])) return null;
   let n = m[2] ? (m[1] ? ZH_NUMERALS[m[1]] : 1) * 10 + (m[3] ? ZH_NUMERALS[m[3]] : 0) : ZH_NUMERALS[m[1]];
@@ -11503,7 +11527,10 @@ function parseChineseIngredientString(text) {
     const u = unitWord ? ZH_UNIT_LOOKUP.get(unitWord) : { unit: "pièce", factor: 1 };
     return { name: withNote(cleanName), quantity: Math.round(quantity * u.factor * 100) / 100, unit: u.unit, containerLabel: null };
   };
-  let m = text.match(ZH_VAGUE_LAST_RE) || text.match(ZH_VAGUE_FIRST_RE);
+  // « 柠檬一半 », « 一半柠檬 » : la moitié, sans mot d'unité.
+  let m = text.match(/^(.+?)\s*[：:]?\s*一半$/) || text.match(/^一半\s*(?:的\s*)?(.+)$/);
+  if (m && CJK_CHAR_RE.test(m[1])) return { name: withNote(m[1].trim()), quantity: 0.5, unit: "pièce", containerLabel: null };
+  m = text.match(ZH_VAGUE_LAST_RE) || text.match(ZH_VAGUE_FIRST_RE);
   if (m && CJK_CHAR_RE.test(m[1])) return { name: withNote(m[1].replace(/[\s：:，,]+$/, "")), quantity: null, unit: "pièce", containerLabel: null, vagueQuantity: true };
   for (const re of ZH_QTY_LAST_RES) {
     m = text.match(re);
@@ -11854,16 +11881,19 @@ function parseIsoDurationToMinutes(duration) {
 // section ("= Ingrédients", "« Préparation", "• Étapes"...) — tolérés
 // en petit nombre avant le mot-clé, sans quoi la ponctuation à elle
 // seule suffisait à empêcher toute reconnaissance de la section.
-const OCR_LEADING_NOISE = "[\\s=#«»“”\"'’•/|+@©®\\-*;]{0,6}";
+const OCR_LEADING_NOISE = "[\\s=#«»“”\"'’•/|+@©®\\-*;【\\[]{0,6}";
 // Recherche le mot n'importe où dans la ligne (pas seulement en tout
 // début), tant que la ligne reste raisonnablement courte — une photo
 // avec des ustensiles ou un fragment précédent le titre fait parfois
 // réordonner les lignes par Tesseract, ou coller un fragment collé
 // juste devant "Ingrédients" (ex. "d Ingrédients"), faisant échouer
 // une détection strictement ancrée en début de ligne.
-const OCR_INGREDIENT_WORD = /(ingr[ée]dients?|ingredients|ingredientes|zutaten|材料|食材|用料|原料|主料)/i;
+const OCR_INGREDIENT_WORD = /(ingr[ée]dients?|ingredients|ingredientes|zutaten)/i;
 function matchesIngredientTitle(line) {
   const trimmed = line.trim();
+  // Chinois : le titre en tête de ligne courte (« 材料 », « 用料（2人份） ») —
+  // pas n'importe où, sinon une étape « 把材料准备好 » deviendrait le titre.
+  if (CJK_CHAR_RE.test(trimmed)) return OCR_INGREDIENT_MARKER.test(trimmed) && trimmed.replace(/\s+/g, "").length <= 15;
   if (trimmed.length > 50) return false;
   const words = trimmed.split(/\s+/).filter(Boolean);
   // Une vraie phrase d'étape mentionnant le mot au milieu ("Mélanger
@@ -11882,7 +11912,7 @@ function matchesIngredientTitle(line) {
 // fonctionne pas après un caractère chinois (sans le drapeau u, \b ne
 // connaît que les lettres latines : « 材料 » en fin de ligne n'avait
 // pas de « limite de mot »).
-const OCR_ZH_INGREDIENT_TITLES = "材料|食材|用料|原料|主料";
+const OCR_ZH_INGREDIENT_TITLES = "材料|食材|用料|原料|主料|配料";
 const OCR_ZH_INSTRUCTION_TITLES = "做法|步骤|制作方法|制作步骤|烹饪步骤|操作步骤|烹饪方法";
 const OCR_INGREDIENT_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(ingr[ée]dients?|ingredients|ingredientes|zutaten)\\b|" + OCR_ZH_INGREDIENT_TITLES + ")", "i");
 const OCR_INSTRUCTION_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(pr[ée]paration|description|recette|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\\b|" + OCR_ZH_INSTRUCTION_TITLES + ")", "i");
@@ -14645,8 +14675,39 @@ function computeRecipeCostInfo(ingredients) {
   });
   return priced ? { perPerson, priced, counted } : null;
 }
+// Devises proposées (codes ISO 4217). Changer de devise ne convertit pas
+// les prix déjà saisis : seul le symbole affiché change.
+const CURRENCY_OPTIONS = ["EUR", "USD", "GBP", "CHF", "CAD", "AUD", "CNY", "HKD", "TWD", "SGD", "JPY", "SEK", "NOK", "DKK", "IDR", "BRL", "MXN"];
+const CURRENCY_KEY = "currency";
+function normalizeCurrency(code) {
+  return CURRENCY_OPTIONS.includes(code) ? code : "EUR";
+}
+// Montant avec le symbole et sa place selon la langue (« 2,50 € » en
+// français, « €2.50 » en anglais, « ¥2.50 » en chinois avec le yuan) —
+// remplace le « € » auparavant écrit en dur dans les textes de coût.
 function formatPrice(value) {
-  return Number(value).toLocaleString(CURRENT_LANG, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const currency = normalizeCurrency(state.currency);
+  try {
+    return new Intl.NumberFormat(htmlLangFor(CURRENT_LANG), { style: "currency", currency }).format(Number(value));
+  } catch (e) {
+    return `${Number(value).toFixed(2)} ${currency}`;
+  }
+}
+// Libellé d'une devise dans la liste : « € — euro ».
+function currencyOptionLabel(code) {
+  let symbol = code, name = code;
+  try {
+    const part = new Intl.NumberFormat(htmlLangFor(CURRENT_LANG), { style: "currency", currency: code }).formatToParts(0).find((x) => x.type === "currency");
+    if (part) symbol = part.value;
+  } catch (e) { /* symbole inconnu : code ISO */ }
+  try {
+    if (Intl.DisplayNames) name = new Intl.DisplayNames([htmlLangFor(CURRENT_LANG)], { type: "currency" }).of(code) || code;
+  } catch (e) { /* nom inconnu : code ISO */ }
+  return symbol === name ? code : `${symbol} — ${name}`;
+}
+async function setCurrency(code) {
+  state.currency = normalizeCurrency(code);
+  await kvSet(CURRENCY_KEY, state.currency);
 }
 
 function computeRecipeCostPerPerson(ingredients) {
@@ -14748,7 +14809,7 @@ function renderStatistics() {
   });
   if (costs.length) {
     const avg = costs.reduce((s, c) => s + c, 0) / costs.length;
-    costCard.appendChild(line(t("stats_avg_cost_line", { avg: fmtQty(Math.round(avg * 100) / 100), count: String(costs.length) })));
+    costCard.appendChild(line(t("stats_avg_cost_line", { avg: formatPrice(avg), count: String(costs.length) })));
   } else {
     costCard.appendChild(line(t("stats_no_priced_recipe")));
   }
@@ -14917,7 +14978,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 322;
+const APP_VERSION = 323;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
@@ -15018,6 +15079,7 @@ async function initInner() {
   repairLoadedShapes();
   const savedPlan = await kvGet("weeklyPlan");
   state.weeklyPlan = savedPlan || {};
+  state.currency = normalizeCurrency(await kvGet(CURRENCY_KEY));
   await migrateMergedContainerUnits();
   await migratePhotosToBlob();
   await migrateWishlistSince();
