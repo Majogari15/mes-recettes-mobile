@@ -17,8 +17,9 @@ planning et vos préférences sont enregistrés **uniquement sur votre
 appareil** (stockage local du navigateur, technologie IndexedDB),
 ainsi que quelques réglages et messages techniques (langue, thème,
 date de la dernière sauvegarde, acceptation de la clause de
-responsabilité, derniers messages d'erreur affichés dans l'écran
-Diagnostic). Aucun compte n'est requis. Personne d'autre que vous — ni le
+responsabilité, recettes consultées récemment et recette du jour
+affichées sur l'accueil, derniers messages d'erreur affichés dans
+l'écran Diagnostic). Aucun compte n'est requis. Personne d'autre que vous — ni le
 développeur, ni un tiers — n'a accès à ces données.
 
 Si vous désinstallez l'application ou effacez les données de votre

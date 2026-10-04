@@ -1255,6 +1255,117 @@ function renderBottomNav() {
 // Cache du fichier de sauvegarde préparé pour le rappel de l'accueil —
 // voir son usage dans renderHome ci-dessous (partage en un clic).
 const reminderFileCache = { file: null, builtAt: 0 };
+// Accueil enrichi (repris de l'app Windows) : repas prévus aujourd'hui,
+// recette du jour, recettes consultées récemment. Mémorisés dans le
+// stockage local du navigateur (préférences d'affichage, pas des données
+// à sauvegarder) ; toute lecture/écriture protégée, l'accueil
+// s'affichant normalement même si le stockage est indisponible.
+const RECENT_RECIPES_KEY = "recentRecipeIds";
+const RECENT_RECIPES_MAX = 8; // comme Windows ; l'accueil en montre 5
+const DAILY_RECIPE_KEY = "dailyRecipe";
+function localDateKey(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function recordRecentRecipe(id) {
+  try {
+    const list = JSON.parse(localStorage.getItem(RECENT_RECIPES_KEY) || "[]");
+    const next = [id, ...(Array.isArray(list) ? list : []).filter((x) => x !== id)].slice(0, RECENT_RECIPES_MAX);
+    localStorage.setItem(RECENT_RECIPES_KEY, JSON.stringify(next));
+  } catch (e) { /* stockage indisponible : simple confort perdu */ }
+}
+function getRecentRecipes(limit = 5) {
+  let ids = [];
+  try {
+    const list = JSON.parse(localStorage.getItem(RECENT_RECIPES_KEY) || "[]");
+    if (Array.isArray(list)) ids = list;
+  } catch (e) { ids = []; }
+  return ids.map((id) => state.recipes.find((r) => r.id === id)).filter(Boolean).slice(0, limit);
+}
+// La même toute la journée, tirée au hasard parmi toutes les recettes
+// chaque nouveau jour (comme Windows) ; retirée si elle a été supprimée.
+function getDailyRecipe(now = new Date()) {
+  if (!state.recipes.length) return null;
+  const today = localDateKey(now);
+  try {
+    const saved = JSON.parse(localStorage.getItem(DAILY_RECIPE_KEY) || "null");
+    if (saved && saved.date === today) {
+      const match = state.recipes.find((r) => r.id === saved.id);
+      if (match) return match;
+    }
+  } catch (e) { /* valeur illisible : nouveau tirage */ }
+  const chosen = state.recipes[Math.floor(Math.random() * state.recipes.length)];
+  try { localStorage.setItem(DAILY_RECIPE_KEY, JSON.stringify({ date: today, id: chosen.id })); } catch (e) { /* tirage non mémorisé */ }
+  return chosen;
+}
+function openRecipeFromHome(recipe, persons) {
+  state.currentRecipeId = recipe.id;
+  state.viewPersons = persons || recipe.defaultPersons || 4;
+  state.screen = "recipe";
+  render();
+}
+function renderHomeHighlights() {
+  const wrap = el(`<div class="home-highlights"></div>`);
+  if (!state.recipes.length) return wrap;
+
+  // Repas prévus aujourd'hui : seulement si le planning sert (au moins
+  // une recette dans la semaine), pour ne pas encombrer l'accueil des
+  // personnes qui n'utilisent pas le planning.
+  if (planHasAnyAssignment(state.weeklyPlan || {})) {
+    const todayName = WEEKDAYS[(new Date().getDay() + 6) % 7];
+    const card = el(`<div class="card home-today" style="padding:12px 16px;margin-bottom:12px;">
+      <div class="section-label" style="margin:0 0 6px;">${escapeHtml(t("home_today_title", { day: translateWeekday(todayName) }))}</div>
+    </div>`);
+    let count = 0;
+    MEAL_SLOTS.forEach((slot) => {
+      planSlotAssignments(((state.weeklyPlan || {})[todayName] || {})[slot]).forEach((assigned) => {
+        const recipe = state.recipes.find((r) => r.id === assigned.recipeId);
+        if (!recipe) return;
+        count++;
+        const row = el(`<button type="button" class="home-today-row">
+          <span class="slot">${escapeHtml(translateSlot(slot))}</span>
+          <span class="name">${escapeHtml(recipe.name)}</span>
+          <span class="persons">${escapeHtml(t("home_today_persons", { persons: String(assigned.persons || recipe.defaultPersons || 4) }))}</span>
+        </button>`);
+        row.addEventListener("click", () => openRecipeFromHome(recipe, assigned.persons));
+        card.appendChild(row);
+      });
+    });
+    if (!count) {
+      const empty = el(`<button type="button" class="home-today-empty">${escapeHtml(t("home_today_nothing"))}</button>`);
+      empty.addEventListener("click", () => { state.screen = "planning"; render(); });
+      card.appendChild(empty);
+    }
+    wrap.appendChild(card);
+  }
+
+  const daily = getDailyRecipe();
+  if (daily) {
+    const dailyBtn = el(`<button type="button" class="card home-daily">
+      <span class="label">${escapeHtml(t("home_daily_recipe"))}</span>
+      <span class="name">${escapeHtml(daily.name)}</span>
+      <span class="meta">${escapeHtml(translateCategory(daily.category))}</span>
+    </button>`);
+    dailyBtn.addEventListener("click", () => openRecipeFromHome(daily));
+    wrap.appendChild(dailyBtn);
+  }
+
+  const recent = getRecentRecipes(5);
+  if (recent.length) {
+    const block = el(`<div class="home-recent"><div class="section-label" style="margin:0 0 6px;">${escapeHtml(t("home_recent_recipes"))}</div></div>`);
+    const row = el(`<div class="chip-row"></div>`);
+    recent.forEach((recipe) => {
+      const chip = el(`<button type="button" class="chip">${escapeHtml(recipe.name)}</button>`);
+      chip.addEventListener("click", () => openRecipeFromHome(recipe));
+      row.appendChild(chip);
+    });
+    const rowWrap = el(`<div class="chip-row-wrap"></div>`);
+    rowWrap.appendChild(row);
+    block.appendChild(rowWrap);
+    wrap.appendChild(block);
+  }
+  return wrap;
+}
+
 function renderHome() {
   const wrap = el(`<div></div>`);
   const installBannerDismissed = !!localStorage.getItem("install_dismissed");
@@ -1398,6 +1509,8 @@ function renderHome() {
   }
 
   const shoppingCount = state.shopping.filter((i) => !i.checked).length;
+
+  wrap.appendChild(renderHomeHighlights());
 
   // Groupe principal (sans en-tête, actions les plus utilisées)
   const mainActions = el(`<div class="section"></div>`);
@@ -1783,6 +1896,7 @@ function renderRecipeView() {
     state.screen = "recipes";
     return el(`<div></div>`);
   }
+  recordRecentRecipe(r.id);
   const wrap = el(`<div></div>`);
   const hero = el(`<div class="recipe-hero"></div>`);
   hero.innerHTML = r.photo ? `<img src="${photoObjectUrl(r.photo)}" alt="">` : "🍽️";
@@ -14452,7 +14566,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 316;
+const APP_VERSION = 317;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

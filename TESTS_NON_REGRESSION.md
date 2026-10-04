@@ -9602,3 +9602,30 @@ déjà identiques, et explication des copies.
 **Test** : `tests/test_shared_merge_protection.py`.
 
 **Version testée** : v316
+
+### 151 — Accueil enrichi (repris de l'app Windows)
+
+Point 5 de la comparaison avec l'app Windows. Bloc ajouté sur l'accueil,
+après les rappels et avant les boutons :
+
+- **Aujourd'hui — {jour}** : repas prévus aujourd'hui dans le planning,
+  dans l'ordre des repas, avec le nombre de personnes ; un appui ouvre la
+  fiche à ce nombre de personnes. Affiché seulement si le planning de la
+  semaine contient au moins une recette (différence voulue avec Windows,
+  pour ne pas encombrer l'accueil des personnes qui n'utilisent pas le
+  planning) ; s'il ne prévoit rien aujourd'hui : « Rien de prévu
+  aujourd'hui », qui ouvre le planning.
+- **Recette du jour** : la même toute la journée, tirée au hasard parmi
+  toutes les recettes chaque nouveau jour (comme Windows) ; nouveau tirage
+  si elle a été supprimée.
+- **Consultées récemment** : 8 mémorisées (comme Windows), 5 affichées en
+  rangée défilante, la plus récente d'abord, sans doublon ; une recette
+  supprimée n'apparaît plus.
+- Mémorisation dans le stockage local du navigateur (`recentRecipeIds`,
+  `dailyRecipe`), lectures/écritures protégées. Politique de
+  confidentialité (fr, en, md) complétée en conséquence.
+
+**Test** : `tests/test_home_highlights.py` (recette du jour imposée dans
+le test pour un résultat reproductible).
+
+**Version testée** : v317
