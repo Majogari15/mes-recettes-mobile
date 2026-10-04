@@ -10306,11 +10306,15 @@ function renderBackup() {
   });
   wrap.appendChild(sharedSection);
 
-  const diagLink = el(`<p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">v${APP_VERSION} · <a href="#" id="open-diagnostic" style="color:var(--accent);display:inline-block;padding:6px 4px;">${escapeHtml(t("nav_diagnostic"))}</a> · <a href="https://majogari15.github.io/mes-recettes-mobile/confidentialite.html" target="_blank" rel="noopener" style="color:var(--accent);display:inline-block;padding:6px 4px;">${escapeHtml(t("privacy_policy_link"))}</a></p>`);
+  const diagLink = el(`<p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">v${APP_VERSION} · <a href="#" id="open-diagnostic" style="color:var(--accent);display:inline-block;padding:6px 4px;">${escapeHtml(t("nav_diagnostic"))}</a> · <a href="https://majogari15.github.io/mes-recettes-mobile/confidentialite.html" target="_blank" rel="noopener" style="color:var(--accent);display:inline-block;padding:6px 4px;">${escapeHtml(t("privacy_policy_link"))}</a> · <a href="#" id="open-disclaimer" style="color:var(--accent);display:inline-block;padding:6px 4px;">${escapeHtml(t("disclaimer_link"))}</a></p>`);
   diagLink.querySelector("#open-diagnostic").addEventListener("click", (e) => {
     e.preventDefault();
     state.screen = "diagnostic";
     render();
+  });
+  diagLink.querySelector("#open-disclaimer").addEventListener("click", (e) => {
+    e.preventDefault();
+    openDisclaimer({ readOnly: true });
   });
   wrap.appendChild(diagLink);
 
@@ -10516,6 +10520,88 @@ function openRecipePickerModal(onPick) {
 // impraticable dès que la liste s'allonge (prévu, voir
 // SUPPORTED_LANGUAGES dans i18n.js). Une seule liste, cochant la
 // langue actuelle, avec son drapeau devant son nom natif.
+/* ======================================================================
+   CLAUSE DE RESPONSABILITÉ (reprise de l'app Windows)
+   Affichée obligatoirement au premier lancement — et une fois pour les
+   utilisateurs déjà installés, à la mise à jour qui l'introduit. Tant
+   qu'elle n'est pas acceptée (case cochée puis « Continuer »),
+   l'application reste masquée derrière. Même texte que Windows, dans les
+   9 langues, avec choix de la langue avant d'accepter. Pas de bouton
+   « Quitter » : une application web ne peut pas se fermer elle-même de
+   façon fiable. Relisible ensuite depuis l'écran Sauvegarde.
+   ====================================================================== */
+const DISCLAIMER_ACCEPTED_KEY = "disclaimerAcceptedAt";
+function isDisclaimerAccepted() {
+  try {
+    return !!localStorage.getItem(DISCLAIMER_ACCEPTED_KEY);
+  } catch (e) {
+    return false;
+  }
+}
+// Navigateur piloté par les tests automatiques (navigator.webdriver,
+// jamais vrai chez un utilisateur) : la clause n'est pas imposée, sans
+// quoi elle masquerait l'application dans chacun des tests existants.
+// tests/test_disclaimer.py force webdriver à false pour la tester.
+function shouldShowDisclaimer() {
+  return !isDisclaimerAccepted() && !navigator.webdriver;
+}
+function openDisclaimer({ readOnly = false } = {}) {
+  if (document.querySelector(".disclaimer-overlay")) return;
+  const overlay = el(`<div class="modal-overlay disclaimer-overlay"></div>`);
+  const sheet = el(`<div class="modal-sheet disclaimer-sheet" role="dialog" aria-modal="true" aria-labelledby="disclaimer-heading"></div>`);
+  overlay.appendChild(sheet);
+  let checked = false;
+  let removeTrap = null;
+  function build() {
+    sheet.innerHTML = `
+      ${readOnly ? "" : `<div class="disclaimer-lang">
+        <select id="disclaimer-lang-select" aria-label="${escapeHtml(t("lang_picker_title"))}">
+          ${SUPPORTED_LANGUAGES.map((l) => `<option value="${l.code}" ${l.code === CURRENT_LANG ? "selected" : ""}>${l.flag} ${escapeHtml(l.nativeName)}</option>`).join("")}
+        </select>
+      </div>`}
+      <h2 id="disclaimer-heading">${escapeHtml(t("disclaimer_heading"))}</h2>
+      ${readOnly ? "" : `<p class="disclaimer-intro">${escapeHtml(t("disclaimer_intro"))}</p>`}
+      <div class="disclaimer-text" tabindex="0">${escapeHtml(t("disclaimer_text"))}</div>
+      ${readOnly
+        ? `<button type="button" class="btn btn-primary" id="disclaimer-close">${escapeHtml(t("cooking_close"))}</button>`
+        : `<div class="checkbox-row disclaimer-check"><input type="checkbox" id="disclaimer-accept" ${checked ? "checked" : ""}><label for="disclaimer-accept">${escapeHtml(t("disclaimer_checkbox"))}</label></div>
+           <button type="button" class="btn btn-primary" id="disclaimer-continue" ${checked ? "" : "disabled"}>${escapeHtml(t("disclaimer_continue_button"))}</button>`}`;
+    if (readOnly) {
+      sheet.querySelector("#disclaimer-close").addEventListener("click", close);
+      return;
+    }
+    const box = sheet.querySelector("#disclaimer-accept");
+    const continueBtn = sheet.querySelector("#disclaimer-continue");
+    box.addEventListener("change", () => { checked = box.checked; continueBtn.disabled = !checked; });
+    continueBtn.addEventListener("click", () => {
+      if (!checked) return;
+      try { localStorage.setItem(DISCLAIMER_ACCEPTED_KEY, new Date().toISOString()); } catch (e) { /* stockage indisponible : redemandée au prochain lancement */ }
+      close();
+    });
+    sheet.querySelector("#disclaimer-lang-select").addEventListener("change", async (e) => {
+      const lang = e.target.value;
+      await ensureUiTranslationsLoaded(lang);
+      setLang(lang);
+      render();
+      build();
+      const select = sheet.querySelector("#disclaimer-lang-select");
+      if (select) select.focus();
+    });
+  }
+  function close() {
+    if (removeTrap) removeTrap();
+    overlay.remove();
+  }
+  build();
+  // Échap ne ferme la clause qu'en lecture seule : au premier lancement,
+  // seule l'acceptation permet de continuer.
+  removeTrap = trapFocusInModal(sheet, () => { if (readOnly) close(); });
+  if (readOnly) overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+  document.body.appendChild(overlay);
+  const firstFocus = sheet.querySelector(readOnly ? "#disclaimer-close" : "#disclaimer-lang-select");
+  if (firstFocus) firstFocus.focus();
+}
+
 function openLanguagePickerModal() {
   const overlay = el(`<div class="modal-overlay"></div>`);
   const sheet = el(`<div class="modal-sheet">
@@ -14282,7 +14368,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 312;
+const APP_VERSION = 313;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
@@ -14461,6 +14547,7 @@ async function initInner() {
   }
 
   render();
+  if (shouldShowDisclaimer()) openDisclaimer();
 }
 
 // Promesse résolue une fois le démarrage terminé, écriture initiale des

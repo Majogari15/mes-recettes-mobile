@@ -9478,3 +9478,28 @@ lien », avant le champ du lien.
 **Test** : `tests/test_recipe_web_search.py`.
 
 **Version testée** : v312
+
+### 147 — Clause de responsabilité au premier lancement (reprise de l'app Windows)
+
+Point 16 de la comparaison avec l'app Windows.
+
+- Même texte que Windows (clés `disclaimer_*` copiées de ses fichiers de
+  langue, 9 langues), affiché au premier lancement — et une fois pour les
+  utilisateurs déjà installés, à la mise à jour v313. L'application reste
+  masquée derrière ; « Continuer » n'est actif qu'une fois la case « J'ai lu
+  et j'accepte » cochée ; ni Échap ni un appui à côté ne ferment la clause.
+- Choix de la langue avant d'accepter (comme Windows), case conservée.
+- Différence avec Windows : pas de bouton « Quitter » (une application web
+  ne peut pas se fermer elle-même de façon fiable).
+- Acceptation mémorisée (`localStorage.disclaimerAcceptedAt`) ; si le
+  stockage est refusé, la clause se ferme quand même et sera redemandée au
+  prochain lancement. Relecture possible depuis l'écran Sauvegarde (lien
+  « Clause de responsabilité » à côté de la politique de confidentialité).
+- Tests automatiques : non imposée quand `navigator.webdriver` est vrai
+  (jamais le cas chez un utilisateur), sans quoi elle masquerait l'app dans
+  tous les tests existants ; règle notée dans CLAUDE.md.
+- Non vérifié : la valeur juridique du texte (repris tel quel de Windows).
+
+**Test** : `tests/test_disclaimer.py` (force `webdriver` à false).
+
+**Version testée** : v313

@@ -23,6 +23,7 @@ Code de sortie 0 = tout passe, 1 = échec. Aucune commande "run all" : chaque fi
 - Après `page.goto(...)` ou `page.reload()`, attendre `page.evaluate("() => appReady")` (promesse de fin de `init()`, app.js) plutôt qu'un délai fixe.
 - Attendre une condition (`wait_for_selector`, `wait_for_function` sur une expression synchrone) plutôt que `wait_for_timeout`.
 - `wait_for_function` n'attend PAS une fonction `async` (la promesse est jugée vraie immédiatement) : pour une condition asynchrone (IndexedDB, Cache API), boucler côté Python sur `page.evaluate`.
+- La clause de responsabilité du premier lancement (`openDisclaimer`, app.js) n'est pas imposée quand `navigator.webdriver` est vrai (navigateur piloté par Playwright) : sans ça elle masquerait l'application dans tous les tests. Pour la tester, forcer `webdriver` à false via `add_init_script` (voir `tests/test_disclaimer.py`).
 
 ## Architecture
 

@@ -1207,3 +1207,23 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .similar-recipe-row:last-child { border-bottom: none; }
 .similar-recipe-row .name { font-weight: 600; font-size: 15px; overflow-wrap: anywhere; }
 .similar-recipe-row .why { font-size: 12px; color: var(--text-muted); }
+
+/* ---------- Clause de responsabilité ---------- */
+.disclaimer-overlay { z-index: 10000; background: rgba(0, 0, 0, 0.75); }
+.disclaimer-sheet { display: flex; flex-direction: column; max-height: 92vh; max-height: 92dvh; }
+.disclaimer-sheet h2 { color: var(--danger); margin: 4px 0 6px; }
+.disclaimer-lang { display: flex; justify-content: flex-end; }
+.disclaimer-lang select {
+  padding: 6px 8px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--card); color: var(--text); font-size: 14px; max-width: 100%;
+}
+.disclaimer-intro { font-size: 13px; color: var(--text-muted); margin: 0 0 10px; }
+.disclaimer-text {
+  flex: 1 1 auto; min-height: 120px; overflow-y: auto;
+  white-space: pre-line; overflow-wrap: anywhere;
+  font-size: 13px; line-height: 1.5;
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 12px; margin-bottom: 12px;
+}
+.disclaimer-check { margin-bottom: 10px; }
+.disclaimer-sheet .btn:disabled { opacity: 0.5; cursor: not-allowed; }
