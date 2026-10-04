@@ -9402,3 +9402,38 @@ Textes dans les 9 langues.
 import Windows invalide, ancien format `cooked_dates`, sauvegarde, 320 px).
 
 **Version testée** : v309
+
+### 144 — Export du planning vers un agenda (.ics), repris de l'app Windows
+
+Point 8 de la comparaison avec l'app Windows. Bouton « 📅 Exporter vers
+l'agenda (.ics) » sur l'écran Planning.
+
+- Fichier iCalendar (RFC 5545) : un événement par repas rempli, mêmes
+  horaires que Windows (petit-déjeuner 8 h-8 h 30, déjeuner 12 h 30-13 h 30,
+  dîner 19 h 30-20 h 30, heure locale). Titre « Déjeuner : recette 1,
+  recette 2 », description avec le nombre de personnes par recette.
+  Échappement des caractères spéciaux, lignes repliées à 75 octets sans
+  couper un caractère, CRLF. Recette supprimée ignorée.
+- **Différence voulue avec Windows** : événements ponctuels de la semaine
+  à venir (chaque jour à sa prochaine occurrence, aujourd'hui compris), sans
+  répétition hebdomadaire (Windows met `RRULE:FREQ=WEEKLY`) : le planning
+  change d'une semaine à l'autre et une répétition infinie remplirait
+  l'agenda de repas périmés.
+- Livraison : menu de partage natif si le téléphone sait partager un
+  fichier, sinon téléchargement ; puis un message d'explication.
+- **Limite vérifiée** (aide Google Agenda, page « Importer des événements
+  dans Google Agenda », 04/10/2026) : l'appli Google Agenda sur Android
+  n'importe pas de fichier ; l'import se fait depuis un ordinateur
+  (Paramètres > Importer et exporter). Le message l'indique. Le choix du
+  fichier .ics avec mode d'emploi (plutôt qu'un lien Google par repas, dont
+  le fonctionnement sur Android est signalé incertain) a été fait par
+  l'utilisateur.
+- Contrôle externe ponctuel : le fichier est relu sans erreur par la
+  bibliothèque Python `icalendar` 7.3.0 (non ajoutée aux dépendances des
+  tests).
+
+Textes dans les 9 langues.
+
+**Test** : `tests/test_planning_ics_export.py`.
+
+**Version testée** : v310

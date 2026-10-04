@@ -10667,6 +10667,98 @@ async function archiveCurrentPlanIfNotEmpty() {
   }
 }
 
+// Export du planning vers un agenda (fichier iCalendar .ics, RFC 5545),
+// mêmes horaires que l'app Windows. Différence voulue avec Windows :
+// événements ponctuels de la semaine à venir (chaque jour du planning
+// placé à sa prochaine occurrence, aujourd'hui compris), sans
+// répétition hebdomadaire — le planning change d'une semaine à l'autre,
+// une répétition infinie remplirait l'agenda de repas périmés.
+const ICS_MEAL_TIMES = {
+  "Petit-déjeuner": ["0800", "0830"],
+  "Déjeuner": ["1230", "1330"],
+  "Dîner": ["1930", "2030"],
+};
+function escapeIcsText(text) {
+  return String(text).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+}
+// Lignes repliées à 75 octets (UTF-8) comme le demande la norme, sans
+// jamais couper un caractère multi-octets.
+function foldIcsLine(line) {
+  const enc = new TextEncoder();
+  if (enc.encode(line).length <= 75) return line;
+  const parts = [];
+  let current = "";
+  for (const ch of line) {
+    if (enc.encode(current + ch).length > (parts.length ? 74 : 75)) {
+      parts.push(current);
+      current = ch;
+    } else {
+      current += ch;
+    }
+  }
+  parts.push(current);
+  return parts.join("\r\n ");
+}
+function icsDate(d) {
+  return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+}
+function buildWeeklyPlanIcs(plan, now = new Date()) {
+  const stamp = now.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const todayIndex = (now.getDay() + 6) % 7; // lundi = 0, comme WEEKDAYS
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Mes Recettes\\, Mes Courses//Mobile//FR", "CALSCALE:GREGORIAN"];
+  let count = 0;
+  WEEKDAYS.forEach((day, dayIndex) => {
+    const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() + ((dayIndex - todayIndex + 7) % 7));
+    MEAL_SLOTS.forEach((slot) => {
+      const items = planSlotAssignments((plan[day] || {})[slot])
+        .map((a) => ({ recipe: state.recipes.find((r) => r.id === a.recipeId), persons: a.persons }))
+        .filter((x) => x.recipe);
+      if (!items.length) return;
+      const [start, end] = ICS_MEAL_TIMES[slot];
+      const summary = t("planning_ics_summary", { meal: translateSlot(slot), names: items.map((x) => x.recipe.name).join(", ") });
+      const description = items.map((x) => t("planning_ics_event_line", { name: x.recipe.name, persons: String(x.persons || x.recipe.defaultPersons || 4) })).join("\n");
+      count++;
+      lines.push(
+        "BEGIN:VEVENT",
+        foldIcsLine(`UID:${uid()}-${count}@mes-recettes-mobile`),
+        `DTSTAMP:${stamp}`,
+        `DTSTART:${icsDate(date)}T${start}00`,
+        `DTEND:${icsDate(date)}T${end}00`,
+        foldIcsLine(`SUMMARY:${escapeIcsText(summary)}`),
+        foldIcsLine(`DESCRIPTION:${escapeIcsText(description)}`),
+        "END:VEVENT",
+      );
+    });
+  });
+  lines.push("END:VCALENDAR");
+  return { content: lines.join("\r\n") + "\r\n", count };
+}
+// Partage (menu natif : agenda, e-mail, Drive...) si possible, sinon
+// téléchargement classique. Pas d'await avant navigator.share (voir
+// shareBackupData). Renvoie "shared", "downloaded" ou "cancelled".
+function shareOrDownloadIcs(content) {
+  const fileName = "planning-repas.ics";
+  const file = new File([content], fileName, { type: "text/calendar" });
+  const download = () => {
+    const url = URL.createObjectURL(file);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    return "downloaded";
+  };
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    return navigator.share({ files: [file], title: t("planning_export_ics") }).then(
+      () => "shared",
+      (e) => (e && e.name === "AbortError" ? "cancelled" : download()),
+    );
+  }
+  return Promise.resolve(download());
+}
+
 function renderPlanning() {
   const wrap = el(`<div></div>`);
   const daysHolder = el(`<div id="days-holder"></div>`);
@@ -10758,6 +10850,18 @@ function renderPlanning() {
     render();
   });
   wrap.appendChild(genBtn);
+
+  const icsBtn = el(`<button class="btn btn-outline planning-ics-btn" style="margin-bottom:10px;">${t("planning_export_ics")}</button>`);
+  icsBtn.addEventListener("click", async () => {
+    const { content, count } = buildWeeklyPlanIcs(state.weeklyPlan);
+    if (!count) {
+      await customAlert(t("planning_ics_empty"));
+      return;
+    }
+    const result = await shareOrDownloadIcs(content);
+    if (result !== "cancelled") await customAlert(t("planning_ics_done", { count: String(count) }));
+  });
+  wrap.appendChild(icsBtn);
 
   const saveTemplateBtn = el(`<button class="btn btn-secondary" style="margin-bottom:10px;">${t("planning_save_template")}</button>`);
   saveTemplateBtn.addEventListener("click", async () => {
@@ -14078,7 +14182,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 309;
+const APP_VERSION = 310;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
