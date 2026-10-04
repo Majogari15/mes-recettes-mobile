@@ -1408,7 +1408,7 @@ function renderHome() {
 
   const lowStock = getLowStockPantryItems();
   if (lowStock.length) {
-    const names = lowStock.map((i) => translateIngredientName(i.name)).sort().join(", ");
+    const names = lowStock.map((i) => translateIngredientName(i.name)).sort().join(listSeparator());
     const reminder = el(`<div style="background:var(--accent-light);color:var(--accent);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;">
       ${escapeHtml(t("home_low_stock_reminder", { count: String(lowStock.length), names }))}
     </div>`);
@@ -1444,7 +1444,7 @@ function renderHome() {
 
   const expiring = getExpiringPantryItems();
   if (expiring.length) {
-    const names = expiring.map((i) => translateIngredientName(i.name)).sort().join(", ");
+    const names = expiring.map((i) => translateIngredientName(i.name)).sort().join(listSeparator());
     const expiringReminder = el(`<div style="background:var(--danger-light);color:var(--danger);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;">
       ${escapeHtml(t("home_expiring_reminder", { count: String(expiring.length), names }))}
     </div>`);
@@ -2780,7 +2780,7 @@ async function resolveDuplicateIngredientsForSave(ingredients) {
   }
   if (!duplicateNames.length) return ingredients;
   const choice = await customTwoChoice(
-    t("recipeform_duplicate_ingredient_message", { list: duplicateNames.join(", ") }),
+    t("recipeform_duplicate_ingredient_message", { list: duplicateNames.join(listSeparator()) }),
     t("recipeform_keep_duplicates_button"),
     t("recipeform_merge_duplicates_button")
   );
@@ -4464,7 +4464,7 @@ function openIngredientNameModal(existingName) {
     <h2>${existingName ? t("ingredient_edit_title") : t("ingredient_new_title")}</h2>
     <div class="field">
       <label for="modal-ing-rename">${t("ingredient_name_label")}</label>
-      <input type="text" id="modal-ing-rename" value="${escapeHtml(existingName || "")}">
+      <input type="text" id="modal-ing-rename" value="${escapeHtml(existingName ? translateIngredientName(existingName) : "")}">
     </div>
     <div id="modal-used-in"></div>
 
@@ -4596,8 +4596,11 @@ function openIngredientNameModal(existingName) {
   sheet.querySelector("#modal-cancel").addEventListener("click", () => overlay.remove());
   const input = sheet.querySelector("#modal-ing-rename");
   sheet.querySelector("#modal-confirm").addEventListener("click", async () => {
-    const value = input.value.trim();
+    let value = input.value.trim();
     if (!value) { input.focus(); return; }
+    // Le champ affiche le nom dans la langue de l'interface (« 糖 » pour
+    // « Sucre ») : laissé tel quel, ce n'est pas un renommage.
+    if (existingName && value === translateIngredientName(existingName).trim()) value = existingName;
     if (existingName) {
       if (value !== existingName && state.ingredientNames.some((n) => normalize(n) === normalize(value))) {
         await customAlert(t("ingredient_already_exists"));
@@ -10692,7 +10695,7 @@ function renderCompare() {
       [t("compare_times_cooked"), (r) => String(r.timesCooked || 0)],
       [t("compare_cost"), costText],
       [t("compare_kcal"), kcalText],
-      [t("recipe_allergens"), (r) => ((r.allergens && r.allergens.length) ? r.allergens.map(translateAllergen).join(", ") : "—")],
+      [t("recipe_allergens"), (r) => ((r.allergens && r.allergens.length) ? r.allergens.map(translateAllergen).join(listSeparator()) : "—")],
     ];
     rows.forEach(([label, valueOf]) => {
       statsCard.appendChild(el(`<div class="compare-row">
@@ -10712,7 +10715,7 @@ function renderCompare() {
 
     const commonBlock = el(`<div class="section"><div class="section-label">${escapeHtml(t("compare_common_ingredients"))}</div></div>`);
     const commonCard = el(`<div class="card compare-ing-list" style="padding:12px 16px;"></div>`);
-    commonCard.textContent = common.length ? common.map(translateIngredientName).join(", ") : t("compare_none");
+    commonCard.textContent = common.length ? common.map(translateIngredientName).join(listSeparator()) : t("compare_none");
     commonBlock.appendChild(commonCard);
     resultHolder.appendChild(commonBlock);
 
@@ -11167,7 +11170,7 @@ function buildWeeklyPlanIcs(plan, now = new Date()) {
         .filter((x) => x.recipe);
       if (!items.length) return;
       const [start, end] = ICS_MEAL_TIMES[slot];
-      const summary = t("planning_ics_summary", { meal: translateSlot(slot), names: items.map((x) => x.recipe.name).join(", ") });
+      const summary = t("planning_ics_summary", { meal: translateSlot(slot), names: items.map((x) => x.recipe.name).join(listSeparator()) });
       const description = items.map((x) => t("planning_ics_event_line", { name: x.recipe.name, persons: String(x.persons || x.recipe.defaultPersons || 4) })).join("\n");
       count++;
       lines.push(
@@ -14711,7 +14714,7 @@ function renderWhatCanICook() {
         <div class="recipe-info">
           <div class="recipe-name">${escapeHtml(recipe.name)}</div>
           <div class="recipe-meta">${isFeasible ? escapeHtml(t("whatcancook_feasible")) : escapeHtml(t("whatcancook_almost", { have: String(have), total: String(total) }))}</div>
-          ${!isFeasible ? `<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${escapeHtml(t("whatcancook_missing", { list: missing.map((m) => translateIngredientName(m.name)).join(", ") }))}</div>` : ""}
+          ${!isFeasible ? `<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${escapeHtml(t("whatcancook_missing", { list: missing.map((m) => translateIngredientName(m.name)).join(listSeparator()) }))}</div>` : ""}
         </div>
       </button>`);
       row.addEventListener("click", () => {
@@ -14984,7 +14987,7 @@ const HEATMAP_WEEKS = 53;
 function groupedNames(names) {
   const counts = new Map();
   names.forEach((n) => counts.set(n, (counts.get(n) || 0) + 1));
-  return [...counts].map(([n, c]) => (c > 1 ? `${n} ×${c}` : n)).join(", ");
+  return [...counts].map(([n, c]) => (c > 1 ? `${n} ×${c}` : n)).join(listSeparator());
 }
 function cookingDayKey(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -15085,7 +15088,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 326;
+const APP_VERSION = 327;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

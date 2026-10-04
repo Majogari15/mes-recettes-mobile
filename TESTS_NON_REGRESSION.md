@@ -9929,3 +9929,36 @@ test avec des pages au contenu inventé) :
 **Tests** : `tests/test_currency.py` (mis à jour).
 
 **Version testée** : v326 (branche)
+
+### 162 — Audit complet de l'application en chinois (branche, pas sur main)
+
+- Contrôle statique : les 700 textes d'interface existent en chinois,
+  mêmes paramètres `{…}` que l'anglais ; les 5 textes sans caractère
+  chinois sont voulus (adresse d'exemple, « {size} MB », icône 🗑…).
+- Contrôle en direct (360 px, données d'exemple) des 24 écrans et de 10
+  fenêtres : aucune erreur JavaScript, aucun débordement, `lang=zh-CN`,
+  aucun texte français/anglais oublié (textes visibles, placeholder,
+  aria-label, title, alt) ; captures relues à l'œil.
+- Parcours vérifiés en chinois : création d'une recette au formulaire
+  (« 番茄 » relié à « Tomate »), recherche, ajout aux courses,
+  convertisseur, format partagé (QR) aller-retour, sauvegarde, « 我能做什么？ »,
+  mode cuisine, lecture à voix haute en zh-CN.
+- Corrigé :
+  - listes affichées avec « , » latine au lieu de « ， » (rappels de
+    l'accueil, ingrédients en double du formulaire, allergènes et
+    ingrédients communs de la comparaison, ingrédients manquants de
+    « 我能做什么？ », calendrier .ics, jours du calendrier des cuissons) :
+    `listSeparator()` ;
+  - fenêtre « 编辑食材 » : le champ affichait le nom enregistré
+    (« Sucre ») au lieu du nom traduit (« 糖 ») — vrai dans toutes les
+    langues sauf le français. Le nom traduit est affiché ; enregistrer
+    sans le modifier ne renomme pas l'ingrédient.
+- Constaté, non modifié : la date de péremption se saisit au format
+  jour/mois/année dans toutes les langues (« 日/月/年 » en chinois, où
+  l'ordre habituel est année/mois/jour).
+
+**Tests** : `tests/test_chinese_ui_audit.py` (nouveau : les 34 écrans et
+fenêtres ; vérifié qu'il échoue bien sur une interface en français),
+`tests/test_chinese_ingredients.py` (fenêtre d'ingrédient).
+
+**Version testée** : v327 (branche)

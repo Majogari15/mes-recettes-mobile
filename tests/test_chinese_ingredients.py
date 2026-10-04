@@ -160,6 +160,16 @@ def main():
         check("recettes « sans 鸡蛋 »", r["noEgg"] == ["R2", "R3"], r["noEgg"])
         check("recettes : nom français toujours reconnu (« boeuf »)", r["fr"] == ["R2"], r["fr"])
 
+        # Fenêtre « 编辑食材 » : nom affiché en chinois ; enregistrer sans le
+        # modifier ne renomme pas l'ingrédient.
+        page.evaluate("() => { state.screen = 'ingredients'; render(); openIngredientNameModal('Sucre'); }")
+        shown = page.input_value("#modal-ing-rename")
+        check("fenêtre d'ingrédient : nom affiché en chinois (« Sucre » -> « 糖 »)", shown == page.evaluate("() => translateIngredientName('Sucre')") and CJK.search(shown), shown)
+        page.click("#modal-confirm")
+        page.wait_for_function("() => !document.querySelector('#modal-ing-rename')")
+        r = page.evaluate("() => ({ sucre: state.ingredientNames.includes('Sucre'), zh: state.ingredientNames.includes(translateIngredientName('Sucre')) })")
+        check("enregistrer sans modifier : pas de renommage", r == {"sucre": True, "zh": False}, r)
+
         page.evaluate("async () => { await ensureIngredientTranslationsLoaded('en'); setLang('en'); }")
         rows = screen_search("ingredients", "beef")
         check("écran Ingrédients en anglais : « beef » trouvé (même correction)", rows and all("beef" in x.lower() for x in rows), rows[:3])
