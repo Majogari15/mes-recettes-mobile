@@ -9250,9 +9250,9 @@ async function buildSharedBackupZip() {
 }
 
 // Restaure depuis l'archive ZIP au format partagé — merge=true fusionne
-// avec les données actuelles (une recette avec un identifiant déjà connu
-// est mise à jour, une recette avec un identifiant inconnu ou absent est
-// ajoutée comme nouvelle recette avec un identifiant généré) ; merge=false
+// avec les données actuelles (une recette avec un identifiant inconnu est
+// ajoutée ; un identifiant déjà connu ne remplace jamais la recette locale :
+// voir la règle de fusion dans restoreFromSharedZip) ; merge=false
 // remplace intégralement les recettes, ingrédients, garde-manger et
 // personnalisations actuels.
 // Fichiers reconnus dans une archive partagée — sert aussi à détecter
@@ -9262,6 +9262,40 @@ async function buildSharedBackupZip() {
 // acceptée avec un rapport "0 élément importé" au lieu d'une erreur
 // claire, laissant croire à tort que l'import avait réussi.
 const SHARED_ZIP_KNOWN_FILES = ["recipes.json", "ingredients.json", "pantry.json", "ingredient_custom_data.json"];
+
+// Empreinte du contenu d'une recette, pour reconnaître à l'import « la
+// même recette » d'une recette réellement différente. Ignore ce qui
+// change sans que l'utilisateur ait rien modifié : identifiant, date de
+// création (recréée à chaque import si l'archive n'en a pas), date
+// d'entrée en liste d'envies (posée au démarrage si absente), marques
+// d'import. Photos comparées par type et taille.
+function recipeContentFingerprint(r) {
+  const photoSig = (ph) => (ph instanceof Blob ? `blob:${ph.type}:${ph.size}` : (typeof ph === "string" && ph ? `str:${ph.length}` : null));
+  const content = {
+    name: r.name || "", category: r.category || "", difficulty: r.difficulty || "",
+    defaultPersons: r.defaultPersons || null, prepTime: r.prepTime ?? null, cookTime: r.cookTime ?? null,
+    favorite: !!r.favorite, vegetarian: !!r.vegetarian, wishlist: !!r.wishlist,
+    personalRating: r.personalRating || 0, tags: recipeTags(r), allergens: Array.isArray(r.allergens) ? r.allergens : [],
+    description: r.description || "", notes: r.notes || "",
+    familyOpinion: r.familyOpinion || "", improvementNotes: r.improvementNotes || "", actualDifficulty: r.actualDifficulty || "",
+    timesCooked: r.timesCooked || 0,
+    ingredients: (r.ingredients || []).filter(Boolean).map((i) => [i.name || "", i.quantity ?? null, i.unit || "", i.containerLabel || ""]),
+    cookLog: (r.cookLog || []).filter(Boolean).map((e) => [e.date || "", e.note || "", e.comment || "", Number(e.rating) || 0, e.persons ?? null, photoSig(e.photo)]),
+    photo: photoSig(r.photo),
+  };
+  // cyrb53 : hachage 53 bits, largement suffisant pour comparer deux
+  // versions d'une même recette.
+  const str = JSON.stringify(content);
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
+}
 
 async function restoreFromSharedZip(file, merge) {
   const buffer = await file.arrayBuffer();
@@ -9331,22 +9365,52 @@ async function restoreFromSharedZip(file, merge) {
   // exactement comme persistShoppingMergeWithClaims ou
   // moveRecordBetweenStores le font déjà ailleurs dans l'app pour la
   // même raison.
-  const report = { recipesImported: 0, recipesUpdated: 0, ingredientsImported: 0 };
+  const report = { recipesImported: 0, recipesUpdated: 0, recipesUnchanged: 0, recipesCopied: 0, ingredientsImported: 0 };
   const ops = [];
 
   if (parsedRecipes) {
     const existing = await storeAll("recipes");
-    const existingById = new Map(existing.map((r) => [r.id, r]));
-    for (const recipe of parsedRecipes) {
-      // Une recette important un identifiant déjà connu localement est mise
-      // à jour plutôt que dupliquée — comportement voulu pour resynchroniser
-      // la même recette entre les deux appareils, contrairement à l'import
-      // classique (fichier JSON de l'app mobile uniquement) qui duplique
-      // toujours par prudence.
-      if (merge && existingById.has(recipe.id)) report.recipesUpdated += 1;
-      else report.recipesImported += 1;
+    if (!merge) {
+      report.recipesImported = parsedRecipes.length;
+      ops.push({ store: "recipes", puts: parsedRecipes, deletes: existing.map((r) => r.id) });
+    } else {
+      // Fusion (même règle que l'app Windows depuis sa build 78) : une
+      // recette de l'archive portant l'identifiant d'une recette locale
+      // n'ÉCRASE plus jamais celle-ci. Contenu identique -> rien à faire ;
+      // contenu différent -> la recette locale est gardée telle quelle
+      // (avec son journal) et celle de l'archive est ajoutée en copie,
+      // sous un nouvel identifiant et avec « (importée) » dans son nom.
+      // Avant, l'archive écrasait la recette locale : une modification
+      // ou une cuisson notée sur le téléphone était perdue en réimportant
+      // une archive Windows plus ancienne. Réimporter la même archive ne
+      // crée pas une seconde copie (importCopyOf + importCopyFingerprint).
+      const existingById = new Map(existing.map((r) => [r.id, r]));
+      const puts = [];
+      for (const recipe of parsedRecipes) {
+        const local = existingById.get(recipe.id);
+        if (!local) {
+          puts.push(recipe);
+          existingById.set(recipe.id, recipe);
+          report.recipesImported += 1;
+          continue;
+        }
+        const incomingFp = recipeContentFingerprint(recipe);
+        if (recipeContentFingerprint(local) === incomingFp
+          || existing.concat(puts).some((r) => r.importCopyOf === recipe.id && r.importCopyFingerprint === incomingFp)) {
+          report.recipesUnchanged += 1;
+          continue;
+        }
+        puts.push({
+          ...recipe,
+          id: uid(),
+          name: `${recipe.name}${t("recipe_import_copy_suffix")}`,
+          importCopyOf: recipe.id,
+          importCopyFingerprint: incomingFp,
+        });
+        report.recipesCopied += 1;
+      }
+      ops.push({ store: "recipes", puts, deletes: [] });
     }
-    ops.push({ store: "recipes", puts: parsedRecipes, deletes: merge ? [] : existing.map((r) => r.id) });
   }
 
   if (parsedIngredientNames) {
@@ -10296,7 +10360,10 @@ function renderBackup() {
       await ensureIngredientListLoaded();
       await loadIngredientOverrides();
       await migrateMergedContainerUnits();
-      await customAlert(t("backup_shared_import_success", { imported: report.recipesImported, updated: report.recipesUpdated }));
+      await customAlert(mode === "merge"
+        ? t("backup_shared_merge_result", { imported: String(report.recipesImported), unchanged: String(report.recipesUnchanged) })
+          + (report.recipesCopied ? `\n\n${t("backup_shared_merge_copies", { count: String(report.recipesCopied) })}` : "")
+        : t("backup_shared_import_success", { imported: report.recipesImported, updated: report.recipesUpdated }));
       state.screen = "home";
       render();
     } catch (err) {
@@ -14385,7 +14452,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 315;
+const APP_VERSION = 316;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

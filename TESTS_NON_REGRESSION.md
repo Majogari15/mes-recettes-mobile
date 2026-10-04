@@ -9568,3 +9568,37 @@ dans les deux pages ; une nouvelle connexion ajoutée sans mettre la
 politique à jour fait échouer le test.
 
 **Version testée** : v315
+
+### 150 — Import d'une archive Windows en fusion : une recette locale n'est plus écrasée
+
+Point 17 de la comparaison avec l'app Windows (relu : il s'agit de la
+protection des recettes lors d'une fusion, build 78 de Windows, pas d'une
+« fusion de deux recettes »).
+
+**Bug corrigé** : en mode « Fusionner », une recette de l'archive portant
+l'identifiant d'une recette locale l'écrasait. Une modification ou une
+cuisson notée sur le téléphone était perdue en réimportant une archive
+Windows plus ancienne.
+
+**Nouvelle règle** (même principe que Windows) : contenu identique -> rien
+à faire ; contenu différent -> la recette locale est gardée telle quelle
+et celle de l'archive est ajoutée en copie, nouvel identifiant, nom suivi de
+« (importée) ». Réimporter la même archive ne crée pas de seconde copie
+(`importCopyOf`, `importCopyFingerprint`). Message de fin : nouvelles,
+déjà identiques, et explication des copies.
+
+- Comparaison par empreinte du contenu (`recipeContentFingerprint`) :
+  ignore l'identifiant, la date de création, la date d'entrée en liste
+  d'envies et les marques d'import ; photos comparées par type et taille.
+- Conséquence assumée : une recette modifiée sur Windows et réimportée sur
+  le téléphone arrive désormais en copie (au lieu de remplacer la version
+  du téléphone) ; l'utilisateur supprime l'ancienne s'il le souhaite.
+- Non vérifiable ici : si l'app Windows réécrit certains champs en
+  réexportant une recette du téléphone, une recette non modifiée pourrait
+  arriver en copie (doublon, sans perte).
+- Mode « Remplacer tout » inchangé. Les menus et plannings ne font pas
+  partie de l'archive importée : rien à rediriger.
+
+**Test** : `tests/test_shared_merge_protection.py`.
+
+**Version testée** : v316
