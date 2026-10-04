@@ -2008,9 +2008,71 @@ function renderRecipeView() {
   editRow.appendChild(editBtn);
   editRow.appendChild(dupBtn);
   editRow.appendChild(delBtn);
+
+  const similar = findSimilarRecipes(r);
+  if (similar.length) {
+    const simSection = el(`<div class="section similar-recipes"><div class="section-label">${escapeHtml(t("similar_recipes_title"))}</div></div>`);
+    const simCard = el(`<div class="card" style="padding:2px 16px;"></div>`);
+    similar.forEach(({ recipe, sameCategory, commonIngredients, commonTags }) => {
+      const reasons = [];
+      if (commonIngredients) reasons.push(t("similar_reason_ingredients", { count: String(commonIngredients) }));
+      if (commonTags) reasons.push(t("similar_reason_tags", { count: String(commonTags) }));
+      if (sameCategory) reasons.push(t("similar_reason_category"));
+      const row = el(`<button type="button" class="similar-recipe-row">
+        <span class="name">${escapeHtml(recipe.name)}</span>
+        <span class="why">${escapeHtml(reasons.join(" · "))}</span>
+      </button>`);
+      row.addEventListener("click", () => {
+        state.currentRecipeId = recipe.id;
+        state.viewPersons = recipe.defaultPersons || 4;
+        render();
+        window.scrollTo(0, 0);
+      });
+      simCard.appendChild(row);
+    });
+    simSection.appendChild(simCard);
+    wrap.appendChild(simSection);
+  }
+
   wrap.appendChild(editRow);
 
   return wrap;
+}
+
+// Recettes proches (repris de l'app Windows, find_similar_recipes) :
+// +2 même catégorie, +1 par étiquette commune, +1 par ingrédient commun
+// (5 au plus), 5 recettes au plus. Deux écarts voulus : il faut au moins
+// un ingrédient ou une étiquette en commun (la catégorie seule ferait
+// remonter n'importe quelle recette de la même catégorie), et les
+// assaisonnements de base ne comptent pas (sel, poivre, eau, huiles :
+// présents partout, ils ne disent rien de la ressemblance).
+const SIMILARITY_IGNORED_INGREDIENTS = new Set([
+  "sel", "sel fin", "gros sel", "fleur de sel", "poivre", "poivre noir", "poivre blanc",
+  "poivre du moulin", "eau", "huile", "huile d olive", "huile de tournesol",
+  "huile vegetale", "huile neutre", "huile de colza",
+].map(searchKey));
+function findSimilarRecipes(recipe, limit = 5) {
+  const ingredientKeys = (r) => new Set((r.ingredients || [])
+    .map((i) => (i && typeof i.name === "string" ? searchKey(i.name) : ""))
+    .filter((k) => k && !SIMILARITY_IGNORED_INGREDIENTS.has(k)));
+  const tagKeys = (r) => new Set(recipeTags(r).map(searchKey));
+  const targetIngredients = ingredientKeys(recipe);
+  const targetTags = tagKeys(recipe);
+  const targetCategory = recipe.category || "Autre";
+  const scored = [];
+  state.recipes.forEach((other) => {
+    if (other.id === recipe.id) return;
+    let commonIngredients = 0;
+    ingredientKeys(other).forEach((k) => { if (targetIngredients.has(k)) commonIngredients++; });
+    let commonTags = 0;
+    tagKeys(other).forEach((k) => { if (targetTags.has(k)) commonTags++; });
+    if (!commonIngredients && !commonTags) return;
+    const sameCategory = (other.category || "Autre") === targetCategory;
+    const score = (sameCategory ? 2 : 0) + commonTags + Math.min(commonIngredients, 5);
+    scored.push({ recipe: other, score, sameCategory, commonIngredients, commonTags });
+  });
+  scored.sort((a, b) => b.score - a.score || a.recipe.name.localeCompare(b.recipe.name, CURRENT_LANG));
+  return scored.slice(0, limit);
 }
 
 /* ======================================================================
@@ -14182,7 +14244,7 @@ function renderStatistics() {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 310;
+const APP_VERSION = 311;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

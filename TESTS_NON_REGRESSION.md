@@ -9437,3 +9437,23 @@ Textes dans les 9 langues.
 **Test** : `tests/test_planning_ics_export.py`.
 
 **Version testée** : v310
+
+### 145 — Recettes similaires en bas de la fiche (repris de l'app Windows)
+
+Point 6 de la comparaison avec l'app Windows. Section « Recettes
+similaires » avant les boutons Modifier/Dupliquer/Supprimer de la fiche ;
+chaque suggestion indique pourquoi (« 3 ingrédient(s) en commun · même
+catégorie ») et ouvre la recette d'un appui.
+
+- Score de Windows (`find_similar_recipes`) : +2 même catégorie, +1 par
+  étiquette commune, +1 par ingrédient commun (5 au plus) ; 5 recettes au
+  plus ; égalités départagées par le nom. Comparaison sans casse ni accent.
+- **Écarts voulus** : (1) au moins un ingrédient ou une étiquette en commun
+  est exigé — sous Windows, la catégorie seule suffit, ce qui proposerait
+  n'importe quelle recette de la même catégorie ; (2) sel, poivre, eau et
+  huiles ne comptent pas (`SIMILARITY_IGNORED_INGREDIENTS`), présents
+  partout. Section absente s'il n'y a aucune suggestion.
+
+**Test** : `tests/test_similar_recipes.py`.
+
+**Version testée** : v311
