@@ -61,20 +61,23 @@
 <body>
 
 <h1>Politique de confidentialité</h1>
-<p class="updated">Mes Recettes, Mes Courses — dernière mise à jour : 17 septembre 2026</p>
+<p class="updated">Mes Recettes, Mes Courses — dernière mise à jour : 4 octobre 2026 · <a href="privacy.html" lang="en" hreflang="en">English version</a></p>
 
 <p class="summary">
   Cette application stocke toutes vos données uniquement sur votre téléphone ;
   rien n'est envoyé à un serveur, sauf lorsque vous choisissez vous-même
-  d'importer une recette depuis un lien internet, ou de rechercher un produit
-  à partir d'un code-barres scanné.
+  d'importer une recette depuis un lien internet, de rechercher un produit
+  à partir d'un code-barres scanné, ou de chercher une recette sur Internet.
 </p>
 
 <h2>Quelles données sont stockées, et où</h2>
 <p>
   Vos recettes, votre garde-manger, vos listes de courses, votre planning et
   vos préférences sont enregistrés <strong>uniquement sur votre appareil</strong>
-  (stockage local du navigateur, technologie IndexedDB). Aucun compte n'est requis.
+  (stockage local du navigateur, technologie IndexedDB), ainsi que quelques
+  réglages et messages techniques (langue, thème, date de la dernière
+  sauvegarde, acceptation de la clause de responsabilité, derniers messages
+  d'erreur affichés dans l'écran Diagnostic). Aucun compte n'est requis.
   Personne d'autre que vous — ni le développeur, ni un tiers — n'a accès à ces données.
 </p>
 <p>
@@ -107,7 +110,7 @@
     collez à l'un des services intermédiaires suivants (essayés automatiquement
     l'un après l'autre en cas d'échec) pour contourner cette restriction technique :
     <ol>
-      <li>Un serveur (Cloudflare Worker) exploité par le développeur, en premier — il ne fait que transmettre la page (et sa photo) sans en garder de copie</li>
+      <li>Un serveur (Cloudflare Worker) exploité par le développeur, en premier — il ne fait que transmettre la page (et sa photo) sans en garder de copie. Il est hébergé par <strong>Cloudflare</strong>, qui voit passer la requête (adresse de la page et votre adresse IP) selon sa propre politique de confidentialité</li>
       <li>Si celui-ci échoue : <strong>Jina AI Reader</strong> (r.jina.ai)</li>
       <li>Si celui-ci échoue aussi : l'un des trois services publics <strong>AllOrigins</strong> (allorigins.win), <strong>CodeTabs</strong> (codetabs.com) ou <strong>cors.lol</strong>, en dernier recours</li>
     </ol>
@@ -127,11 +130,13 @@
     incluse directement dans l'application elle-même, comme la génération de
     QR code et l'export PDF — aucun serveur externe pour cette partie.
     Reconnaître le texte d'une photo nécessite en revanche un fichier de
-    données propre à chaque langue (français, anglais, espagnol, allemand),
-    ainsi qu'un petit fichier supplémentaire servant uniquement à détecter et
-    corriger automatiquement une photo prise à l'envers ou de côté, chacun
-    téléchargé une seule fois lors du tout premier import photo concerné,
-    puis mis en cache pour un usage hors connexion ensuite.
+    données propre à chaque langue (français, anglais, espagnol, allemand,
+    indonésien, portugais, italien, suédois, norvégien), ainsi qu'un petit
+    fichier supplémentaire servant uniquement à détecter et corriger
+    automatiquement une photo prise à l'envers ou de côté, chacun téléchargé
+    une seule fois <strong>depuis le site de l'application elle-même</strong>
+    (aucun service tiers) lors du tout premier import photo concerné, puis mis
+    en cache pour un usage hors connexion ensuite.
     Aucune photo, aucun texte ni aucune donnée personnelle n'est envoyé où que
     ce soit. La <strong>génération et la lecture de QR code</strong>, ainsi que
     l'<strong>export PDF</strong>, fonctionnent entièrement à partir de fichiers
@@ -152,13 +157,16 @@
     exploité par le développeur et peut avoir ses propres règles de
     conservation, sur lesquelles le développeur n'a pas de contrôle direct.
   </li>
+  <li><strong>Recherche d'une recette sur Internet</strong> (écran « Importer depuis un lien ») : ouvre, uniquement si vous lancez la recherche, une page de résultats <strong>Google</strong> dans votre navigateur avec les mots que vous avez saisis (et des noms de sites de recettes ajoutés automatiquement). Google reçoit cette recherche selon sa propre politique de confidentialité ; l'application ne lit pas les résultats.</li>
   <li><strong>Bouton « Faire un don »</strong> : ouvre, uniquement si vous cliquez dessus, la page <a href="https://buymeacoffee.com/majogari" target="_blank" rel="noopener">buymeacoffee.com/majogari</a> dans votre navigateur.</li>
-  <li><strong>Partager la sauvegarde</strong> (fonctionnalité optionnelle) : le bouton « Partager la sauvegarde » ouvre le menu de partage natif de votre téléphone, vous laissant choisir vous-même une application (Google Drive, Dropbox, email...) vers laquelle envoyer votre fichier de sauvegarde. L'application ne communique directement avec aucun de ces services : c'est l'application que vous choisissez dans ce menu qui reçoit le fichier, selon sa propre politique de confidentialité.</li>
+  <li><strong>Partager la sauvegarde ou le fichier agenda du planning</strong> (fonctionnalités optionnelles) : les boutons « Partager la sauvegarde » et « Exporter vers l'agenda (.ics) » ouvrent le menu de partage natif de votre téléphone (ou téléchargent le fichier), vous laissant choisir vous-même une application (Google Drive, Dropbox, agenda, email...) vers laquelle envoyer le fichier. L'application ne communique directement avec aucun de ces services : c'est l'application que vous choisissez dans ce menu qui reçoit le fichier, selon sa propre politique de confidentialité.</li>
+  <li><strong>Rapport de diagnostic</strong> (écran Diagnostic) : il contient la version de l'application, le navigateur et le système, l'espace de stockage utilisé et les derniers messages d'erreur techniques — ni vos recettes, ni les adresses des pages importées. Il n'est envoyé que si vous le partagez ou le copiez vous-même, par le moyen de votre choix.</li>
+  <li><strong>Lecture à voix haute</strong> (mode cuisine) : elle utilise le moteur de synthèse vocale de votre téléphone, selon ses propres réglages ; l'application n'envoie elle-même aucun texte à un service externe.</li>
 </ul>
 
 <h2>Ce que l'application ne fait pas</h2>
 <ul>
-  <li>Le développeur ne collecte aucune donnée personnelle (nom, email, localisation...) — voir cependant la section précédente : votre adresse IP est techniquement visible des services réseau sollicités lors d'un import par lien, comme pour n'importe quelle requête sur internet</li>
+  <li>Le développeur ne collecte aucune donnée personnelle (nom, email, localisation...) — voir cependant la section précédente : votre adresse IP est techniquement visible des services réseau sollicités (import par lien, code-barres, recherche web), comme pour n'importe quelle requête sur internet</li>
   <li>Elle n'utilise aucun outil d'analyse d'audience ou de suivi publicitaire</li>
   <li>Elle n'affiche aucune publicité</li>
   <li>Elle ne partage, ne vend, ni ne transmet vos recettes ou vos données à qui que ce soit</li>
@@ -169,6 +177,8 @@
 <ul>
   <li><strong>Appareil photo</strong> : voir la section « Accès à la caméra » ci-dessus — utilisée uniquement lorsque vous ouvrez vous-même le scan de QR code ou de code-barres, l'ajout d'une photo à une recette/au journal de cuisine, ou l'import de recette depuis une photo.</li>
   <li><strong>Notifications</strong> : uniquement pour vous prévenir qu'un minuteur de cuisine est terminé.</li>
+  <li><strong>Presse-papiers</strong> : lu uniquement quand vous touchez « Coller le lien copié » (écran « Importer depuis un lien ») ; votre téléphone peut vous demander l'autorisation. Le diagnostic peut aussi y copier son rapport, à votre demande.</li>
+  <li><strong>Vibration</strong> : uniquement quand un minuteur de cuisine sonne (aucune autorisation n'est demandée pour cela).</li>
 </ul>
 
 <h2>Vos photos et vos recettes</h2>
@@ -176,7 +186,8 @@
   Les photos que vous ajoutez à vos recettes ou à votre journal de cuisine
   sont stockées uniquement dans le stockage local de votre navigateur. Elles
   ne sont jamais transmises ailleurs, sauf si vous utilisez vous-même une
-  fonctionnalité d'export ou de partage (PDF, QR code, sauvegarde) et
+  fonctionnalité d'export ou de partage (PDF, QR code, sauvegarde, fichier
+  agenda) et
   choisissez de partager le résultat de votre propre initiative.
 </p>
 
@@ -205,6 +216,12 @@
   Cette politique pourra être mise à jour si de nouvelles fonctionnalités
   impliquant un traitement de données étaient ajoutées à l'application. La
   date de mise à jour en haut de ce document sera modifiée en conséquence.
+</p>
+<p>
+  Les conditions d'utilisation de l'application (allergènes, données
+  indicatives, services tiers) figurent dans sa <strong>clause de
+  responsabilité</strong>, affichée au premier lancement et consultable à
+  tout moment depuis l'écran Sauvegarde.
 </p>
 
 <h2>Contact</h2>

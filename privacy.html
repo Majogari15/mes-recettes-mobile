@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy policy — Mes Recettes, Mes Courses</title>
+<style>
+  body {
+    background: #FBF6EF;
+    color: #2B2420;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Arial, sans-serif;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+    line-height: 1.6;
+  }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    color: #2B2420;
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+  .updated {
+    color: #796E5E;
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+  h2 {
+    color: #2F5233;
+    font-size: 19px;
+    margin-top: 36px;
+    border-bottom: 1px solid #E8DCC8;
+    padding-bottom: 8px;
+  }
+  .summary {
+    background: #E4EEE3;
+    border-radius: 14px;
+    padding: 18px 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  ul, ol { padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  a { color: #2F5233; }
+  .contact-box {
+    background: #F6E8CE;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-top: 8px;
+  }
+  footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid #E8DCC8;
+    color: #796E5E;
+    font-size: 13px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<h1>Privacy policy</h1>
+<p class="updated">Mes Recettes, Mes Courses — last updated: 4 October 2026 · <a href="confidentialite.html" lang="fr" hreflang="fr">Version française</a></p>
+
+<p class="summary">
+  This application stores all your data only on your phone; nothing is sent
+  to a server, except when you choose yourself to import a recipe from a web
+  link, to look up a product from a scanned barcode, or to search for a recipe
+  on the Internet.
+</p>
+
+<h2>What data is stored, and where</h2>
+<p>
+  Your recipes, pantry, shopping lists, meal plan and preferences are stored
+  <strong>only on your device</strong> (the browser's local storage, IndexedDB
+  technology), along with a few settings and technical messages (language,
+  theme, date of the last backup, acceptance of the disclaimer, latest error
+  messages shown on the Diagnostic screen). No account is required. Nobody but
+  you — neither the developer nor any third party — has access to this data.
+</p>
+<p>
+  If you uninstall the application or clear your browser's data, this
+  information is permanently deleted, unless you have exported a backup
+  yourself beforehand.
+</p>
+
+<h2>Camera access</h2>
+<p>The application uses the camera in several different ways:</p>
+<ul>
+  <li><strong>QR code scanning</strong> (to import a recipe or a shopping list shared from another device): the application opens a live video stream from the camera, analysed <strong>entirely on your device</strong> to detect a QR code. No image is saved or sent anywhere. You can refuse this permission without affecting the rest of the application; a fallback (pasting the text manually) remains available.</li>
+  <li><strong>Barcode scanning</strong> (to add an item to the pantry): like QR code scanning, the application analyses the video stream <strong>entirely on your device</strong> to detect a barcode — no image is saved or sent anywhere. The detected barcode number (never the image) is then sent to Open Food Facts to find the product name — see the next section. You can refuse this permission or type the barcode yourself; the rest of the application is not affected.</li>
+  <li><strong>Photo of a recipe, of the cooking log, or importing a recipe from a photo</strong>: the application opens your phone's native camera (as any other application would) to take a picture, or lets you pick one already in your gallery. The resulting photo is stored only in the application's local storage.</li>
+</ul>
+
+<h2>Internet connections made by the application</h2>
+<p>
+  The application works offline for the vast majority of its features —
+  including the fonts used for its appearance (Fraunces and Inter), which are
+  bundled with the application rather than loaded from an external service.
+  Here are the connections it makes, all at your explicit initiative:
+</p>
+<ul>
+  <li>
+    <strong>Importing a recipe from a web link</strong>: since browsers prevent
+    a web application from fetching another site's content directly, this
+    feature sends the address you paste to one of the following intermediary
+    services (tried automatically one after the other if one fails) to work
+    around this technical restriction:
+    <ol>
+      <li>A server (Cloudflare Worker) run by the developer, first — it only relays the page (and its photo) without keeping a copy. It is hosted by <strong>Cloudflare</strong>, which sees the request (the page address and your IP address) under its own privacy policy</li>
+      <li>If that fails: <strong>Jina AI Reader</strong> (r.jina.ai)</li>
+      <li>If that also fails: one of the three public services <strong>AllOrigins</strong> (allorigins.win), <strong>CodeTabs</strong> (codetabs.com) or <strong>cors.lol</strong>, as a last resort</li>
+    </ol>
+    In every case, only the address of the page you want to import (and,
+    separately, the address of the recipe photo extracted from it) is sent —
+    never your recipes, your pantry or any other personal data. These services
+    are not run by the developer (except the first one) and may have their own
+    retention rules, over which the developer has no direct control. This only
+    happens if you explicitly choose to import a recipe from a link — it is
+    never an automatic or background behaviour.
+  </li>
+  <li>
+    <strong>Importing a recipe from a photo (text recognition)</strong>: this
+    feature uses a technical library (Tesseract.js) bundled with the
+    application itself, like QR code generation and PDF export — no external
+    server for this part. Recognising the text of a photo does, however,
+    require a data file for each language (French, English, Spanish, German,
+    Indonesian, Portuguese, Italian, Swedish, Norwegian), plus a small extra
+    file used only to detect and automatically correct a photo taken upside
+    down or sideways, each downloaded once <strong>from the application's own
+    website</strong> (no third-party service) during the first relevant photo
+    import, then cached for offline use. No photo, no text and no personal data
+    is sent anywhere. <strong>QR code generation and reading</strong>, as well
+    as <strong>PDF export</strong>, work entirely from files bundled with the
+    application, without any external download.
+  </li>
+  <li>
+    <strong>Barcode scanning (pantry)</strong>: the detected (or manually typed)
+    number is sent to <strong>Open Food Facts</strong> (world.openfoodfacts.org),
+    a free, open database, to find the product name and its net weight/volume if
+    available. No other data is sent with this request — neither your recipes,
+    nor your pantry, nor any personal information. The name found must always be
+    confirmed or edited before it is added; it is never applied automatically,
+    and if the product is not found (or there is no network), you can always
+    continue by typing the name yourself. This only happens if you scan or enter
+    a barcode yourself — never in the background. This service is not run by
+    the developer and may have its own retention rules, over which the
+    developer has no direct control.
+  </li>
+  <li><strong>Searching for a recipe on the Internet</strong> ("Import from a link" screen): opens, only if you start the search, a <strong>Google</strong> results page in your browser with the words you typed (plus the names of recipe websites added automatically). Google receives this search under its own privacy policy; the application does not read the results.</li>
+  <li><strong>"Donate" button</strong>: opens, only if you tap it, the page <a href="https://buymeacoffee.com/majogari" target="_blank" rel="noopener">buymeacoffee.com/majogari</a> in your browser.</li>
+  <li><strong>Sharing the backup or the meal-plan calendar file</strong> (optional features): the "Share backup" and "Export to calendar (.ics)" buttons open your phone's native share menu (or download the file), letting you choose an application yourself (Google Drive, Dropbox, calendar, email...) to send the file to. The application does not communicate directly with any of these services: the application you choose in this menu receives the file, under its own privacy policy.</li>
+  <li><strong>Diagnostic report</strong> (Diagnostic screen): it contains the application version, the browser and system, the storage space used and the latest technical error messages — neither your recipes nor the addresses of imported pages. It is only sent if you share or copy it yourself, by the means of your choice.</li>
+  <li><strong>Reading aloud</strong> (cooking mode): it uses your phone's speech synthesis engine, according to its own settings; the application itself does not send any text to an external service.</li>
+</ul>
+
+<h2>What the application does not do</h2>
+<ul>
+  <li>The developer does not collect any personal data (name, email, location...) — see however the previous section: your IP address is technically visible to the network services contacted (link import, barcode, web search), as with any request on the Internet</li>
+  <li>It does not use any audience analytics or advertising tracking</li>
+  <li>It does not display any advertising</li>
+  <li>It does not share, sell or transmit your recipes or your data to anyone</li>
+  <li>It does not require any account or sign-up</li>
+</ul>
+
+<h2>Device permissions used</h2>
+<ul>
+  <li><strong>Camera</strong>: see the "Camera access" section above — used only when you yourself open QR code or barcode scanning, add a photo to a recipe/the cooking log, or import a recipe from a photo.</li>
+  <li><strong>Notifications</strong>: only to let you know that a cooking timer has finished.</li>
+  <li><strong>Clipboard</strong>: read only when you tap "Paste copied link" ("Import from a link" screen); your phone may ask for permission. The Diagnostic screen can also copy its report to it, at your request.</li>
+  <li><strong>Vibration</strong>: only when a cooking timer rings (no permission is requested for this).</li>
+</ul>
+
+<h2>Your photos and recipes</h2>
+<p>
+  The photos you add to your recipes or your cooking log are stored only in
+  your browser's local storage. They are never sent anywhere else, unless you
+  yourself use an export or sharing feature (PDF, QR code, backup, calendar
+  file) and choose to share the result on your own initiative.
+</p>
+
+<h2>Your rights / control over your data</h2>
+<p>
+  Since no data is collected by the developer, there is nothing to ask the developer to
+  delete, correct or export — your data belongs to you and remains under your
+  direct control on your device, at all times:
+</p>
+<ul>
+  <li>you can view, edit or delete your data at any time directly in the application;</li>
+  <li>you can export all your data at any time through the backup feature, to keep it or move it yourself wherever you wish;</li>
+  <li>uninstalling the application or clearing the site data from your browser settings erases all your local data, since no copy exists anywhere else.</li>
+</ul>
+
+<h2>Children</h2>
+<p>
+  The application is not specifically aimed at children and, as stated above,
+  does not collect any personally identifiable data, whatever the age of the
+  person using it.
+</p>
+
+<h2>Changes to this policy</h2>
+<p>
+  This policy may be updated if new features involving data processing are
+  added to the application. The update date at the top of this document will be
+  changed accordingly. In case of difference between the two versions, the
+  French version prevails.
+</p>
+<p>
+  The application's terms of use (allergens, indicative data, third-party
+  services) are set out in its <strong>disclaimer</strong>, shown at first
+  launch and available at any time from the Backup screen.
+</p>
+
+<h2>Contact</h2>
+<div class="contact-box">
+  For any question about this privacy policy:<br>
+  <strong>majogari81@gmail.com</strong><br>
+  (you can also open an "Issue" on the project's GitHub repository)
+</div>
+
+<footer>
+  Mes Recettes, Mes Courses
+</footer>
+
+</body>
+</html>

@@ -9536,3 +9536,35 @@ laissé tel quel).
 **Test** : `tests/test_disclaimer.py` (complété).
 
 **Version testée** : v314
+
+### 149 — Politique de confidentialité relue et mise à jour (+ version anglaise)
+
+Relecture complète comparée au code (v314) ; points 1 à 4 appliqués à
+`confidentialite.html` et `POLITIQUE_CONFIDENTIALITE.md` (mêmes contenus).
+
+1. **Inexactitudes corrigées** : reconnaissance de texte en 9 langues (le
+   texte n'en citait que 4) ; fichiers de langue téléchargés depuis le site
+   de l'application elle-même (aucun service tiers) ; stockage local du
+   navigateur aussi utilisé pour quelques réglages et messages techniques
+   (langue, thème, dernière sauvegarde, acceptation de la clause, derniers
+   messages d'erreur du Diagnostic), pas seulement IndexedDB.
+2. **Fonctions ajoutées depuis** : recherche web (Google reçoit les mots
+   saisis), export du planning vers l'agenda (partage comme la sauvegarde),
+   rapport de diagnostic (contenu exact, envoyé seulement par
+   l'utilisateur), lecture à voix haute (synthèse vocale du téléphone —
+   fonctionnement réseau des voix Android non vérifiable ici).
+3. **Permissions** : presse-papiers (« Coller le lien copié », copie du
+   rapport de diagnostic) et vibration (minuteur) ajoutées.
+4. **Forme** : date au 4 octobre 2026 ; Cloudflare nommé comme hébergeur
+   du proxy ; renvoi vers la clause de responsabilité ; **version
+   anglaise** `privacy.html` (liens croisés entre les deux pages, la
+   version française prévaut). Le lien de l'écran Sauvegarde ouvre la page
+   française si l'interface est en français, la page anglaise sinon. Les
+   deux pages sont en cache hors ligne (sw.js).
+
+**Test** : `tests/test_privacy_policy_pages.py` — garde-fou : toute
+adresse externe présente dans app.js doit être connue du test et citée
+dans les deux pages ; une nouvelle connexion ajoutée sans mettre la
+politique à jour fait échouer le test.
+
+**Version testée** : v315
