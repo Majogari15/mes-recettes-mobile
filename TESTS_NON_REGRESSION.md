@@ -9915,3 +9915,17 @@ test avec des pages au contenu inventé) :
 **Tests** : `tests/test_chinese_url_import.py` (réseau simulé).
 
 **Version testée** : v325 (branche)
+
+### 161 — Devise par défaut selon la langue (branche, pas sur main)
+
+- Choix de l'utilisateur (4 octobre 2026) : sans devise choisie, yuan
+  (¥) quand l'application est en chinois, euro dans les autres langues.
+  La devise suit donc la langue tant que rien n'a été choisi
+  (`currentCurrency`) ; un choix explicite, même l'euro en chinois,
+  l'emporte toujours. Utilisateurs actuels en français : inchangé.
+- Modèle de reconnaissance de texte chinois : la version compacte
+  (`best_int`, 1,7 Mo) est confirmée.
+
+**Tests** : `tests/test_currency.py` (mis à jour).
+
+**Version testée** : v326 (branche)

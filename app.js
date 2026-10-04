@@ -399,8 +399,9 @@ const state = {
   cookingTimers: [],
   shoppingSortMode: "name",
   currentMenuId: null,
-  // Devise des prix d'ingrédients (code ISO 4217), voir formatPrice.
-  currency: "EUR",
+  // Devise choisie par l'utilisateur (code ISO 4217), null tant qu'il
+  // n'en a pas choisi : voir currentCurrency.
+  currency: null,
   weeklyPlan: {},
   menus: [],
   planTemplates: [],
@@ -4489,7 +4490,7 @@ function openIngredientNameModal(existingName) {
     </div>
     <div class="field">
       <label for="modal-price-currency">${t("currency_label")}</label>
-      <select id="modal-price-currency">${CURRENCY_OPTIONS.map((code) => `<option value="${code}" ${code === normalizeCurrency(state.currency) ? "selected" : ""}>${escapeHtml(currencyOptionLabel(code))}</option>`).join("")}</select>
+      <select id="modal-price-currency">${CURRENCY_OPTIONS.map((code) => `<option value="${code}" ${code === currentCurrency() ? "selected" : ""}>${escapeHtml(currencyOptionLabel(code))}</option>`).join("")}</select>
       <p style="font-size:12px;color:var(--text-muted);margin:6px 0 0;line-height:1.4;">${escapeHtml(t("currency_hint"))}</p>
     </div>
 
@@ -14778,14 +14779,21 @@ function computeRecipeCostInfo(ingredients) {
 // les prix déjà saisis : seul le symbole affiché change.
 const CURRENCY_OPTIONS = ["EUR", "USD", "GBP", "CHF", "CAD", "AUD", "CNY", "HKD", "TWD", "SGD", "JPY", "SEK", "NOK", "DKK", "IDR", "BRL", "MXN"];
 const CURRENCY_KEY = "currency";
+// Code inconnu ou absent -> null (devise par défaut de la langue).
 function normalizeCurrency(code) {
-  return CURRENCY_OPTIONS.includes(code) ? code : "EUR";
+  return CURRENCY_OPTIONS.includes(code) ? code : null;
+}
+// Sans choix de l'utilisateur : yuan en chinois, euro sinon (choix de
+// l'utilisateur, 4 octobre 2026). Un choix explicite, même l'euro en
+// chinois, l'emporte toujours.
+function currentCurrency() {
+  return normalizeCurrency(state.currency) || (CURRENT_LANG === "zh" ? "CNY" : "EUR");
 }
 // Montant avec le symbole et sa place selon la langue (« 2,50 € » en
 // français, « €2.50 » en anglais, « ¥2.50 » en chinois avec le yuan) —
 // remplace le « € » auparavant écrit en dur dans les textes de coût.
 function formatPrice(value) {
-  const currency = normalizeCurrency(state.currency);
+  const currency = currentCurrency();
   try {
     return new Intl.NumberFormat(htmlLangFor(CURRENT_LANG), { style: "currency", currency }).format(Number(value));
   } catch (e) {
@@ -15077,7 +15085,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 325;
+const APP_VERSION = 326;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

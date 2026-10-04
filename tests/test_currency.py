@@ -2,6 +2,9 @@
 Devise configurable (TESTS_NON_REGRESSION.md, entrée 157 ; intégration du
 chinois en cours sur une branche, pas encore sur main).
 
+Devise par défaut sans choix de l'utilisateur : yuan en chinois, euro
+dans les autres langues (choix du 4 octobre 2026).
+
 Le symbole « € » était écrit en dur dans les textes de coût (recette,
 comparaison, statistiques, total des courses). Vérifie : euro par défaut,
 format inchangé en français (« 1,20 € ») ; aucun « € » restant dans les
@@ -103,7 +106,15 @@ def main():
         page.evaluate("() => appReady")
         page.evaluate("() => setLang('fr')")
 
-        check("devise par défaut : euro", page.evaluate("() => state.currency") == "EUR")
+        r = page.evaluate("""async () => {
+            const fr = currentCurrency();
+            await ensureUiTranslationsLoaded('zh'); setLang('zh');
+            const zh = currentCurrency(), zhText = formatPrice(1.2);
+            setLang('fr');
+            return { saved: state.currency, fr, zh, zhText };
+        }""")
+        check("sans choix : euro en français", r["saved"] is None and r["fr"] == "EUR", r)
+        check("sans choix : yuan en chinois (« ¥1.20 »)", r["zh"] == "CNY" and r["zhText"] == "¥1.20", r)
         r = page.evaluate(SCREENS)
         nb = lambda s: s.replace(" ", " ").replace(" ", " ")
         check("français, euro : recette « 1,20 € … 0,30 € »", "1,20 €" in nb(r["recipe"]) and "0,30 €" in nb(r["recipe"]), r["recipe"])
@@ -158,8 +169,10 @@ def main():
         check("chinois : fenêtre sans débordement à 320 px", not r["overflow"])
         page.click("#modal-cancel")
 
-        r = page.evaluate("async () => { await setCurrency('XXX'); return state.currency; }")
-        check("code inconnu ramené à l'euro", r == "EUR", r)
+        r = page.evaluate("async () => { await setCurrency('EUR'); return [currentCurrency(), formatPrice(1.2)]; }")
+        check("euro choisi explicitement : reste l'euro en chinois", r == ["EUR", "€1.20"], r)
+        r = page.evaluate("async () => { await setCurrency('XXX'); const zh = currentCurrency(); setLang('fr'); return [state.currency, zh, currentCurrency()]; }")
+        check("code inconnu : devise par défaut de la langue", r == [None, "CNY", "EUR"], r)
         page.evaluate("() => setLang('fr')")
         check("aucune erreur JS", not errors, errors)
         browser.close()
