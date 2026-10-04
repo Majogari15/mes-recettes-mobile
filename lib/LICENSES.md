@@ -57,7 +57,16 @@ externe. Chacune conserve sa licence d'origine.
   précision, au prix d'un fichier plus volumineux qu'un palier "rapide")
 - Langues incluses : français (`fra`), anglais (`eng`), espagnol
   (`spa`), allemand (`deu`), indonésien (`ind`), portugais (`por`),
-  italien (`ita`), suédois (`swe`), norvégien (`nor`)
+  italien (`ita`), suédois (`swe`), norvégien (`nor`), chinois simplifié
+  (`chi_sim`)
+- Exception pour le chinois simplifié : palier `4.0.0_best_int`
+  (paquet npm `@tesseract.js-data/chi_sim` 1.0.0, même source que les
+  autres fichiers) au lieu du palier standard — 1,7 Mo au lieu de
+  20 Mo. Le fichier standard contient en plus les données de l'ancien
+  moteur de reconnaissance, que l'application n'utilise pas (moteur LSTM
+  seul, `createWorker(lang, 1)`) ; les deux ont été comparés sur une même
+  image de recette chinoise : résultats quasi identiques (une seule
+  erreur de caractère de plus avec `best_int` sur cet essai)
 - Licence : Apache License 2.0, projet Tesseract OCR
   (https://github.com/tesseract-ocr/tessdata)
 - Ces fichiers ne sont volontairement PAS inclus dans le

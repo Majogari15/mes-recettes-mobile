@@ -92,7 +92,7 @@ connexions qu'elle effectue, toutes à votre initiative explicite :
   cette partie. Reconnaître le texte d'une photo nécessite en revanche
   un fichier de données propre à chaque langue (français, anglais,
   espagnol, allemand, indonésien, portugais, italien, suédois,
-  norvégien), ainsi qu'un petit fichier supplémentaire servant
+  norvégien, chinois simplifié), ainsi qu'un petit fichier supplémentaire servant
   uniquement à détecter et corriger automatiquement une photo prise à
   l'envers ou de côté, chacun téléchargé une seule fois **depuis le
   site de l'application elle-même** (aucun service tiers) lors du tout

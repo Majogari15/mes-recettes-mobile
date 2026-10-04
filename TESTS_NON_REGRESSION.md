@@ -9764,3 +9764,44 @@ reconnaissance chinois), symbole € codé en dur.
 **Tests** : `tests/test_chinese_pdf.py`.
 
 **Version testée** : v321 (branche)
+
+### 156 — Chinois simplifié, étape 4 : import par photo (OCR) et par lien (branche, pas sur main)
+
+- Reconnaissance de texte : modèle `lib/tesseract/lang/chi_sim.traineddata.gz`
+  (palier `best_int`, 1,7 Mo au lieu de 20 Mo pour le palier standard —
+  voir `lib/LICENSES.md`), téléchargé au premier import photo en chinois.
+  Avant, le chinois retombait sur le modèle anglais (aucun caractère
+  chinois reconnu).
+- Tesseract sépare chaque caractère chinois par une espace (« 番 茄 炒
+  蛋 ») : retirées par `collapseCjkSpaces` sur tous les textes reconnus
+  (sans effet sur un texte sans chinois).
+- Lignes d'ingrédients (`parseChineseIngredientString`, aussi pour
+  l'import par lien) : « 番茄 2个 », « 面粉：200克 », « 200克面粉 »,
+  « 两个鸡蛋 », « 十二个虾 », « 半个柠檬 », plage « 2-3克 » (première
+  valeur), « 1斤 » = 500 g, « 二两 » = 100 g, « 杯 » = 24 cl comme
+  « cup », « 适量/少许 » = sans quantité, note « （约300克） » gardée
+  dans le nom. Un chiffre chinois n'est une quantité que suivi d'une
+  unité : « 三文鱼 », « 五花肉 », « 四季豆 » restent des noms.
+- Sections : 材料/食材/用料 et 做法/步骤 (hors du `\b`, qui ne marche
+  pas après un caractère chinois), sous-titres 主料/辅料/调料 ignorés,
+  fin de page « 猜你喜欢 », « 相关食谱 »… ; personnes « 2人份 »,
+  « 份量：4 » ; durées « 10分钟 », « 1小时30分钟 », « 半小时 » ;
+  allergènes « 过敏原：鸡蛋、牛奶 » (mots chinois courants + libellé
+  traduit — le libellé traduit est maintenant comparé dans toutes les
+  langues).
+- Filtres jusque-là réservés à l'alphabet latin adaptés : ligne
+  d'ingrédient exigeant une lettre latine, score de confiance fondé sur
+  la longueur des mots (tous les ingrédients chinois étaient « à
+  vérifier »), lignes de texte « plausibles » de la détection de section.
+- Corpus OCR existant (`tests/run_ocr_corpus.py`) : résultat identique
+  avant/après.
+- Limites : un seul essai OCR réel, sur une image générée (texte net) ;
+  une vraie photo (éclairage, police manuscrite, mise en page sur
+  plusieurs colonnes) reste à essayer. Règle existante, toutes langues :
+  une photo avec nombre de personnes, durée et 5 ingrédients ou moins
+  est classée « infos générales » même si elle contient les étapes.
+
+**Tests** : `tests/test_chinese_import.py` ; `test_privacy_policy_pages.py`
+(10 langues de reconnaissance de texte).
+
+**Version testée** : v322 (branche)

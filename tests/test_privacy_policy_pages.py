@@ -4,7 +4,7 @@ Politique de confidentialité (TESTS_NON_REGRESSION.md, entrée 149).
 Garde-fou : chaque service externe contacté par le code (adresse
 https://… dans app.js) doit être cité dans la page française ET la page
 anglaise ; une nouvelle connexion ajoutée sans mettre la politique à jour
-fait échouer ce test. Vérifie aussi : les 9 langues de la reconnaissance de
+fait échouer ce test. Vérifie aussi : les 10 langues de la reconnaissance de
 texte citées, les deux pages liées entre elles avec la même date (et le
 .md), les deux pages en cache hors ligne, et le lien de l'écran Sauvegarde
 qui ouvre la page dans la langue de l'interface (français -> page
@@ -33,8 +33,8 @@ EXPECTED_MENTIONS = {
 }
 # Adresses du code qui ne sont pas des connexions de l'application.
 IGNORED_HOSTS = ("majogari15.github.io", "www.w3.org", "schema.org", "votre-pseudo", "exemple.com")
-OCR_LANGS_FR = ["français", "anglais", "espagnol", "allemand", "indonésien", "portugais", "italien", "suédois", "norvégien"]
-OCR_LANGS_EN = ["French", "English", "Spanish", "German", "Indonesian", "Portuguese", "Italian", "Swedish", "Norwegian"]
+OCR_LANGS_FR = ["français", "anglais", "espagnol", "allemand", "indonésien", "portugais", "italien", "suédois", "norvégien", "chinois simplifié"]
+OCR_LANGS_EN = ["French", "English", "Spanish", "German", "Indonesian", "Portuguese", "Italian", "Swedish", "Norwegian", "Simplified Chinese"]
 
 
 def find_free_port():
@@ -71,7 +71,7 @@ def main():
         used = any(h == key or h.endswith(key) for h in hosts)
         check(f"{key} : {'utilisé, ' if used else 'non utilisé, '}cité en français et en anglais", word_fr in fr and word_en in en and word_fr in md, key)
 
-    check("reconnaissance de texte : 9 langues citées (fr, en, md)",
+    check("reconnaissance de texte : 10 langues citées (fr, en, md)",
           all(l in fr for l in OCR_LANGS_FR) and all(l in en for l in OCR_LANGS_EN) and all(l in md for l in OCR_LANGS_FR))
     def plain(html):
         return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", html))

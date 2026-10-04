@@ -11430,9 +11430,101 @@ function normalizeUnicodeFractions(str) {
     return String(Math.round((wholeNum + UNICODE_FRACTIONS[frac]) * 100) / 100);
   });
 }
+// Unités chinoises (mot de mesure après le nombre) -> unité de
+// l'application. « 斤 » et « 两 » (mesures de poids chinoises : 500 g et
+// 50 g) convertis ; « 杯 » traité comme la tasse anglaise (24 cl), comme
+// « cup » plus bas ; « 勺 » seul compté comme cuillère à soupe. Les plus
+// longues d'abord (« 汤匙 » avant « 匙 »).
+const ZH_UNITS = [
+  [["公斤", "千克", "kg"], "kg", 1], [["毫升", "ml", "mL"], "cl", 0.1], [["公升", "升", "L", "l"], "L", 1],
+  [["克", "公克", "g"], "g", 1], [["斤"], "g", 500], [["两"], "g", 50],
+  [["汤匙", "大勺", "大匙", "汤勺", "勺"], "c. à soupe", 1], [["茶匙", "小勺", "小匙", "茶勺"], "c. à café", 1],
+  [["杯"], "cl", 24], [["片"], "tranche", 1], [["瓣"], "gousse", 1],
+  [["袋", "包", "盒", "罐", "瓶"], "boîte", 1],
+  [["个", "只", "颗", "根", "枚", "块", "条", "粒", "棵", "头", "把", "张", "朵", "株", "尾"], "pièce", 1],
+];
+const ZH_UNIT_LOOKUP = new Map();
+ZH_UNITS.forEach(([words, unit, factor]) => words.forEach((w) => ZH_UNIT_LOOKUP.set(w, { unit, factor })));
+const ZH_UNIT_PATTERN = [...ZH_UNIT_LOOKUP.keys()].sort((a, b) => b.length - a.length).join("|");
+// Quantités sans chiffre : l'ingrédient est gardé, sans quantité.
+const ZH_VAGUE_QUANTITIES = "适量|少许|少量|一点点|一点|一些|若干|酌量|随意|按口味";
+const ZH_NUMERALS = { 一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10 };
+// « 三 », « 十二 », « 二十 », « 半 », « 两个半 » non géré (rare).
+function parseZhNumber(str) {
+  if (/^\d/.test(str)) {
+    if (str.includes("/")) {
+      const [num, den] = str.split("/").map((x) => parseFloat(x.trim().replace(",", ".")));
+      return den ? num / den : null;
+    }
+    const n = parseFloat(str.replace(",", "."));
+    return Number.isNaN(n) ? null : n;
+  }
+  if (str === "半") return 0.5;
+  const m = str.match(/^([一二两三四五六七八九])?(十)?([一二三四五六七八九])?(半)?$/);
+  if (!m || (!m[1] && !m[2])) return null;
+  let n = m[2] ? (m[1] ? ZH_NUMERALS[m[1]] : 1) * 10 + (m[3] ? ZH_NUMERALS[m[3]] : 0) : ZH_NUMERALS[m[1]];
+  if (m[3] && !m[2]) return null;
+  if (m[4]) n += 0.5;
+  return n;
+}
+// Chiffres arabes (unité facultative) ou chinois (unité obligatoire :
+// regex séparées, sinon « 十二个 » s'arrêtait à « 十 »).
+const ZH_QTY_ARABIC = "(\\d+(?:[.,]\\d+)?(?:\\s*\\/\\s*\\d+)?)";
+const ZH_QTY_HANZI = "([一二两三四五六七八九十半]{1,3}?)";
+// Une plage (« 2-3个 », « 2～3克 ») garde la première valeur.
+const ZH_RANGE_TAIL = "(?:\\s*[-~～至到]\\s*\\d+(?:[.,]\\d+)?)?";
+const ZH_QTY_LAST_RES = [
+  new RegExp("^(.+?)\\s*[：:]?\\s*" + ZH_QTY_ARABIC + ZH_RANGE_TAIL + "\\s*(" + ZH_UNIT_PATTERN + ")?\\s*$"),
+  new RegExp("^(.+?)\\s*[：:]?\\s*" + ZH_QTY_HANZI + "\\s*(" + ZH_UNIT_PATTERN + ")\\s*$"),
+];
+const ZH_QTY_FIRST_RES = [
+  new RegExp("^" + ZH_QTY_ARABIC + ZH_RANGE_TAIL + "\\s*(" + ZH_UNIT_PATTERN + ")?\\s*(?:的\\s*)?(.+)$"),
+  new RegExp("^" + ZH_QTY_HANZI + "\\s*(" + ZH_UNIT_PATTERN + ")\\s*(?:的\\s*)?(.+)$"),
+];
+const ZH_VAGUE_LAST_RE = new RegExp("^(.+?)\\s*[：:]?\\s*(?:" + ZH_VAGUE_QUANTITIES + ")\\s*$");
+const ZH_VAGUE_FIRST_RE = new RegExp("^(?:" + ZH_VAGUE_QUANTITIES + ")\\s*(?:的\\s*)?(.+)$");
+// Ligne d'ingrédient chinoise : « 番茄 2个 », « 面粉：200克 », « 鸡蛋3 »,
+// « 2个番茄 », « 两个鸡蛋 », « 200g面粉 », « 盐 少许 », « 少许盐 ».
+// Un chiffre chinois n'est lu comme quantité que suivi d'une unité :
+// « 三文鱼 » (saumon), « 五花肉 », « 八角 », « 四季豆 » sont des noms.
+// Renvoie null si rien ne correspond (analyse générale ensuite).
+function parseChineseIngredientString(text) {
+  let note = "";
+  const paren = text.match(/^(.*?)\s*([（(][^（）()]*[）)])\s*$/);
+  if (paren && paren[1]) { text = paren[1]; note = paren[2]; }
+  const withNote = (name) => (note ? `${name}${note}` : name).trim();
+  const build = (name, qtyStr, unitWord) => {
+    const isArabic = /^\d/.test(qtyStr);
+    if (!unitWord && !isArabic) return null;
+    const quantity = parseZhNumber(qtyStr);
+    if (quantity == null) return null;
+    const cleanName = name.replace(/[\s：:，,]+$/, "").trim();
+    if (!cleanName || !CJK_CHAR_RE.test(cleanName) || /^[\d\s.,/]+$/.test(cleanName)) return null;
+    const u = unitWord ? ZH_UNIT_LOOKUP.get(unitWord) : { unit: "pièce", factor: 1 };
+    return { name: withNote(cleanName), quantity: Math.round(quantity * u.factor * 100) / 100, unit: u.unit, containerLabel: null };
+  };
+  let m = text.match(ZH_VAGUE_LAST_RE) || text.match(ZH_VAGUE_FIRST_RE);
+  if (m && CJK_CHAR_RE.test(m[1])) return { name: withNote(m[1].replace(/[\s：:，,]+$/, "")), quantity: null, unit: "pièce", containerLabel: null, vagueQuantity: true };
+  for (const re of ZH_QTY_LAST_RES) {
+    m = text.match(re);
+    const r = m && build(m[1], m[2], m[3]);
+    if (r) return r;
+  }
+  for (const re of ZH_QTY_FIRST_RES) {
+    m = text.match(re);
+    const r = m && build(m[3], m[1], m[2]);
+    if (r) return r;
+  }
+  return null;
+}
+
 function parseIngredientStringInner(str, fromReversedOrder) {
   let text = String(str || "").trim();
   text = normalizeUnicodeFractions(text);
+  if (CJK_CHAR_RE.test(text)) {
+    const zh = parseChineseIngredientString(text);
+    if (zh) return zh;
+  }
   // "(s)" est un simple marqueur de pluriel optionnel sur certaines
   // fiches (HelloFresh notamment : "sachet(s)", "boîte(s)") — ne porte
   // aucune information utile et gênait la reconnaissance de l'unité.
@@ -11769,7 +11861,7 @@ const OCR_LEADING_NOISE = "[\\s=#«»“”\"'’•/|+@©®\\-*;]{0,6}";
 // réordonner les lignes par Tesseract, ou coller un fragment collé
 // juste devant "Ingrédients" (ex. "d Ingrédients"), faisant échouer
 // une détection strictement ancrée en début de ligne.
-const OCR_INGREDIENT_WORD = /(ingr[ée]dients?|ingredients|ingredientes|zutaten)/i;
+const OCR_INGREDIENT_WORD = /(ingr[ée]dients?|ingredients|ingredientes|zutaten|材料|食材|用料|原料|主料)/i;
 function matchesIngredientTitle(line) {
   const trimmed = line.trim();
   if (trimmed.length > 50) return false;
@@ -11786,25 +11878,56 @@ function matchesIngredientTitle(line) {
   // imparfaite), mais pas une phrase entière avant lui.
   return !!match && match.index <= 15;
 }
-const OCR_INGREDIENT_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(ingr[ée]dients?|ingredients|ingredientes|zutaten)\\b", "i");
-const OCR_INSTRUCTION_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(pr[ée]paration|description|recette|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\\b", "i");
+// Titres de section chinois : en dehors du groupe suivi de \b, qui ne
+// fonctionne pas après un caractère chinois (sans le drapeau u, \b ne
+// connaît que les lettres latines : « 材料 » en fin de ligne n'avait
+// pas de « limite de mot »).
+const OCR_ZH_INGREDIENT_TITLES = "材料|食材|用料|原料|主料";
+const OCR_ZH_INSTRUCTION_TITLES = "做法|步骤|制作方法|制作步骤|烹饪步骤|操作步骤|烹饪方法";
+const OCR_INGREDIENT_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(ingr[ée]dients?|ingredients|ingredientes|zutaten)\\b|" + OCR_ZH_INGREDIENT_TITLES + ")", "i");
+const OCR_INSTRUCTION_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(pr[ée]paration|description|recette|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\\b|" + OCR_ZH_INSTRUCTION_TITLES + ")", "i");
 // Toute section qui doit arrêter la liste des ingrédients, pas
 // seulement celle des étapes — "Ustensiles" par exemple, très courant
 // juste après les ingrédients et avant la vraie section de
 // préparation sur beaucoup de sites.
-const OCR_SECTION_BOUNDARY_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(pr[ée]paration|description|recette|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensi[lt]es?|utensils?|mat[ée]riel|equipment|nutrition\\s+estim[ée]e|valeurs?\\s+nutritionnelles?|nutritional\\s+values?|valores?\\s+nutricionales?|n[äa]hrwerte?|allerg[èeé]nes?|allergens?|al[ée]rgenos?|par\\s+portion|per\\s+serving|pour\\s+100\\s*g|per\\s+100\\s*g|conserver\\s+au\\s+r[ée]frig[ée]rateur|[ée]nergie|energy|kj\\s*\\/?\\s*kcal)\\b", "i");
+const OCR_SECTION_BOUNDARY_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(pr[ée]paration|description|recette|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensi[lt]es?|utensils?|mat[ée]riel|equipment|nutrition\\s+estim[ée]e|valeurs?\\s+nutritionnelles?|nutritional\\s+values?|valores?\\s+nutricionales?|n[äa]hrwerte?|allerg[èeé]nes?|allergens?|al[ée]rgenos?|par\\s+portion|per\\s+serving|pour\\s+100\\s*g|per\\s+100\\s*g|conserver\\s+au\\s+r[ée]frig[ée]rateur|[ée]nergie|energy|kj\\s*\\/?\\s*kcal)\\b|" + OCR_ZH_INSTRUCTION_TITLES + "|厨具|工具|器具|营养成分|营养信息|营养价值|过敏原|小贴士|贴士|小窍门)", "i");
 // Nombre de personnes indiqué juste après le mot-clé "Ingrédients" sur
 // la même ligne (ex. "Ingrédients pour 2 personnes", très courant sur
 // les fiches HelloFresh) — extrait avant de retirer la ligne, pour ne
 // pas perdre cette information quand le titre est filtré.
-const OCR_PERSONS_IN_TITLE = /\b(\d+)\s*(?:personnes?|people|persons?|personas?|personen)\b/i;
+// Sous-titres d'une liste d'ingrédients chinoise (« 主料 » ingrédients
+// principaux, « 辅料 » secondaires, « 调料 » assaisonnements…) : ni des
+// ingrédients, ni une fin de liste.
+const OCR_ZH_INGREDIENT_SUBHEADING = /^[\s【\[]*(?:主料|辅料|调料|配料|调味料|腌料|酱汁)[】\]]?\s*[：:]?\s*$/;
+// Durée écrite en chinois (« 10分钟 », « 1小时30分钟 », « 半小时 »),
+// capturée seule pour ne pas avaler le libellé suivant sur la même ligne.
+const ZH_DURATION = "(半\\s*个?\\s*小时|\\d+\\s*个?\\s*小时\\s*(?:\\d+\\s*分钟?)?|\\d+\\s*分钟?|\\d+\\s*min)";
+// Caractères chinois (idéogrammes) — repère un texte à analyser avec
+// les règles chinoises.
+const CJK_CHAR_RE = /[\u3400-\u9fff\uf900-\ufaff]/;
+// Tesseract (chi_sim) sépare chaque caractère chinois par une espace
+// (« 番茄 炒 蛋 ») : retirées entre deux caractères chinois ou signes
+// de ponctuation chinois, jamais ailleurs (texte latin inchangé).
+function collapseCjkSpaces(text) {
+  if (!text || !CJK_CHAR_RE.test(text)) return text;
+  return text.replace(/([\u3000-\u303f\u3400-\u9fff\uf900-\ufaff\uff00-\uffef])[ \t]+(?=[\u3000-\u303f\u3400-\u9fff\uf900-\ufaff\uff00-\uffef])/g, "$1");
+}
+const OCR_PERSONS_IN_TITLE = /\b(\d+)\s*(?:(?:personnes?|people|persons?|personas?|personen)\b|人份)/i;
 // Marque la fin du vrai contenu de la recette : au-delà, ce n'est
 // presque toujours plus que des avis, des recettes similaires ou de
 // la navigation — sans ça, la description engloberait toute la fin
 // de la page. Liste élargie après avoir constaté des sections encore
 // non couvertes (ex. "Qu'est-ce qu'on mange ce soir ?", propre à
 // Marmiton mais représentative du genre de contenu à exclure).
-const OCR_DESCRIPTION_END_MARKER = /^(\([A-Za-z]\)\s*)?(anonyme|anonymous|commentaires?|comments?|avis|reviews?|vous aimerez aussi|you (may|might) also like|related recipes?|plus de recettes|ces contenus devraient vous int[ée]resser|note de l['’]auteur|donnez votre avis|qu['’]est-ce qu['’]on mange|découvrir aussi|à découvrir|on vous propose|d[ée]couvrez aussi|dans la m[êe]me cat[ée]gorie|recettes similaires|similar recipes?|nos coups de coeur|publicit[ée]|advertisement|partager cette recette|share this recipe|imprimer|print recipe|newsletter)\b|^.{0,20}capture\s*d.{0,2}[ée]cran/i;
+const OCR_DESCRIPTION_END_MARKER = /^(\([A-Za-z]\)\s*)?(anonyme|anonymous|commentaires?|comments?|avis|reviews?|vous aimerez aussi|you (may|might) also like|related recipes?|plus de recettes|ces contenus devraient vous int[ée]resser|note de l['’]auteur|donnez votre avis|qu['’]est-ce qu['’]on mange|découvrir aussi|à découvrir|on vous propose|d[ée]couvrez aussi|dans la m[êe]me cat[ée]gorie|recettes similaires|similar recipes?|nos coups de coeur|publicit[ée]|advertisement|partager cette recette|share this recipe|imprimer|print recipe|newsletter)\b|^.{0,20}capture\s*d.{0,2}[ée]cran|^(?:评论|网友评论|相关食谱|相关推荐|猜你喜欢|推荐食谱|你可能还喜欢)/i;
+// Mots chinois courants des mentions d'allergènes (« 过敏原：鸡蛋、牛奶 »),
+// en plus du libellé traduit de l'application (« 蛋类 », « 乳糖 »…).
+const ZH_ALLERGEN_WORDS = {
+  Gluten: ["小麦", "麸质", "面筋"], Lactose: ["牛奶", "乳制品", "奶"], "Œufs": ["鸡蛋", "蛋"],
+  Arachides: ["花生"], "Fruits à coque": ["坚果"], Soja: ["大豆", "黄豆"], Poisson: ["鱼"],
+  "Crustacés": ["虾", "蟹", "甲壳"], "Sésame": ["芝麻"], "Céleri": ["芹菜"], Moutarde: ["芥末"],
+  Sulfites: ["亚硫酸"], Lupin: ["羽扇豆"], Mollusques: ["贝", "软体动物"],
+};
 function parseOcrRecipeText(rawText) {
   const lines = (rawText || "").split("\n").map((l) => l.trim()).filter(Boolean);
   if (!lines.length) return { name: "", ingredients: [], description: "", prepTime: null, cookTime: null };
@@ -11844,7 +11967,9 @@ function parseOcrRecipeText(rawText) {
   const nextLine = lines[nameIdx + 1];
   if (nextLine && nextLine.length <= 60
     && !/[àa]\s+table\s+dans|pr[eé]paration\s*:|prep(?:aration)?\s*time|cuisson\s*:|cook\s*time|(?:ready|total\s+time)/i.test(nextLine)
-    && !/\d+\s*(personnes?|people|persons?|personas?|personen)/i.test(nextLine)
+    && !/\d+\s*(personnes?|people|persons?|personas?|personen|人份)/i.test(nextLine)
+    // Ligne d'informations chinoise (« 准备时间：10分钟 », « 难度：简单 »).
+    && !/时间|分钟|小时|难度|份量|分量|人数/.test(nextLine)
     && !matchesIngredientTitle(nextLine)
     && !instructionMarker.test(nextLine)
     // Ligne de durée/difficulté/prix isolée (format Marmiton : "6h10 •
@@ -11882,7 +12007,10 @@ function parseOcrRecipeText(rawText) {
     // une ligne courte se terminant par ":" comme pour les autres
     // marqueurs.
     if (/\bkcal\b/i.test(trimmed)) return true;
-    if (/\.\s*$/.test(trimmed)) return false;
+    if (/[.。]\s*$/.test(trimmed)) return false;
+    // Chinois, sans espace entre les mots : un titre reste court en
+    // nombre de caractères (« 做法 », « 制作步骤： »), une phrase non.
+    if (CJK_CHAR_RE.test(trimmed)) return trimmed.replace(/\s+/g, "").length <= 10;
     const words = trimmed.split(/\s+/).filter(Boolean);
     return words.length <= 6;
   }
@@ -11897,7 +12025,8 @@ function parseOcrRecipeText(rawText) {
     ingredientLines = lines.slice(ingIdx + 1, end)
       // Repère de compteur "- personnes +" (choix du nombre de
       // personnes sur la page), pas un ingrédient.
-      .filter((l) => !/^(pour\s+|for\s+)?\d*\s*(personnes?|people|persons?|personas?|personen)\s*[+\-]?$/i.test(l));
+      .filter((l) => !/^(pour\s+|for\s+)?\d*\s*(personnes?|people|persons?|personas?|personen)\s*[+\-]?$/i.test(l))
+      .filter((l) => !OCR_ZH_INGREDIENT_SUBHEADING.test(l));
   }
   if (instrIdx >= 0) {
     const descEndIdx = lines.findIndex((l, i) => i > instrIdx && descriptionEndMarker.test(l));
@@ -11929,7 +12058,10 @@ function parseOcrRecipeText(rawText) {
   let persons = null;
   lines.forEach((line) => {
     if (persons != null) return;
-    const personsMatch = line.match(/\b(\d+)(?:[.,]\d+)?\s*(?:personnes?|convives?|parts?|servings?|portions?|personas?|raciones?|personen|portionen)\b/i);
+    const personsMatch = line.match(/\b(\d+)(?:[.,]\d+)?\s*(?:personnes?|convives?|parts?|servings?|portions?|personas?|raciones?|personen|portionen)\b/i)
+      // Chinois : « 2人份 », « 2-3人份 », « 份量：4人 » (pas de \b après un caractère chinois).
+      || line.match(/\b(\d+)\s*(?:[-~～至到]\s*\d+\s*)?人份/)
+      || line.match(/(?:份量|分量|人数|用餐人数)\s*[：:]\s*(\d+)/);
     if (personsMatch) persons = Math.max(1, parseInt(personsMatch[1], 10));
   });
 
@@ -11940,7 +12072,8 @@ function parseOcrRecipeText(rawText) {
   // premier nombre était lu, sans tenir compte du "h").
   function parseTimeExpression(str) {
     if (!str) return null;
-    const s = str.trim();
+    // Chinois : « 1小时30分钟 », « 半小时 », « 10分钟 ».
+    const s = str.trim().replace(/^半\s*(?:个)?\s*小[时時]/, "30").replace(/(\d)\s*(?:个)?\s*小[时時]/g, "$1h").replace(/分[钟鐘]?/g, "min");
     const hourMinMatch = s.match(/(\d+)\s*h\s*(\d+)/i);
     if (hourMinMatch) return parseInt(hourMinMatch[1], 10) * 60 + parseInt(hourMinMatch[2], 10);
     const hourOnlyMatch = s.match(/(\d+)\s*h\b/i);
@@ -11956,17 +12089,19 @@ function parseOcrRecipeText(rawText) {
   // une correspondance exacte du libellé complet.
   const allergens = [];
   const allergensLineMatch = lines.find((l) => {
-    const m = l.match(/allerg[èeé]nes?\s*:/i);
+    const m = l.match(/allerg[èeé]nes?\s*:|过敏原\s*[：:]/i);
     return !!m && m.index <= 10;
   });
   if (allergensLineMatch) {
-    const afterColon = allergensLineMatch.replace(/^[^:]*:\s*/, "");
-    afterColon.split(/[,;]/).map((s) => s.trim()).filter(Boolean).forEach((token) => {
+    const afterColon = allergensLineMatch.replace(/^[^:：]*[:：]\s*/, "");
+    afterColon.split(/[,;，；、]/).map((s) => s.trim()).filter(Boolean).forEach((token) => {
       const normToken = normalize(token);
-      const match = ALLERGEN_OPTIONS.find((opt) => {
-        const normOpt = normalize(opt);
+      // Comparé aussi au nom traduit de l'allergène (« 鸡蛋 » en chinois),
+      // pas seulement au libellé français.
+      const match = ALLERGEN_OPTIONS.find((opt) => [opt, translateAllergen(opt), ...(ZH_ALLERGEN_WORDS[opt] || [])].some((label) => {
+        const normOpt = normalize(label);
         return normToken.includes(normOpt) || normOpt.includes(normToken);
-      });
+      }));
       if (match && !allergens.includes(match)) allergens.push(match);
     });
   }
@@ -11988,9 +12123,13 @@ function parseOcrRecipeText(rawText) {
       const t = parseTimeExpression(combinedMatch[1]);
       if (t != null) { prepTime = t; cookTime = t; }
     } else {
-      const prepMatch = line.match(/pr[eé]paration\s*:\s*([^\n]+)/i) || line.match(/prep(?:aration)?\s*time\s*:\s*([^\n]+)/i);
+      // Chinois : « 准备时间：10分钟 », « 烹饪时间：5分钟 » — souvent sur la
+      // même ligne, d'où la valeur limitée à la durée elle-même.
+      const prepMatch = line.match(/pr[eé]paration\s*:\s*([^\n]+)/i) || line.match(/prep(?:aration)?\s*time\s*:\s*([^\n]+)/i)
+        || line.match(new RegExp("(?:准备|备料)(?:时间)?\\s*[：:]\\s*" + ZH_DURATION));
       if (prepMatch) { const t = parseTimeExpression(prepMatch[1]); if (t != null) prepTime = t; }
-      const cookMatch = line.match(/cuisson\s*:\s*([^\n]+)/i) || line.match(/cook\s*time\s*:\s*([^\n]+)/i);
+      const cookMatch = line.match(/cuisson\s*:\s*([^\n]+)/i) || line.match(/cook\s*time\s*:\s*([^\n]+)/i)
+        || line.match(new RegExp("(?:烹饪|烹调|烹煮|制作)(?:时间)?\\s*[：:]\\s*" + ZH_DURATION));
       if (cookMatch) { const t = parseTimeExpression(cookMatch[1]); if (t != null) cookTime = t; }
     }
     // Badge de préparation autonome au format "15 min de prépa" (nombre
@@ -12010,7 +12149,8 @@ function parseOcrRecipeText(rawText) {
     // couverture comme telle plutôt que de la confondre avec une
     // section de préparation.
     if (prepTime == null && cookTime == null) {
-      const totalMatch = line.match(/[àa]\s+table\s+dans\s*:?\s*([^\n]+)/i) || line.match(/(?:ready|total\s+time)\s*:?\s*(?:in\s*)?([^\n]+)/i);
+      const totalMatch = line.match(/[àa]\s+table\s+dans\s*:?\s*([^\n]+)/i) || line.match(/(?:ready|total\s+time)\s*:?\s*(?:in\s*)?([^\n]+)/i)
+        || line.match(new RegExp("(?:总时间|总用时|用时|耗时)\\s*[：:]?\\s*" + ZH_DURATION));
       if (totalMatch) { const t = parseTimeExpression(totalMatch[1]); if (t != null) prepTime = t; }
       // Durée isolée sans préfixe explicite (ex. Marmiton : "6h10 •
       // Facile • Assez cher") — reconnue seulement sur une ligne
@@ -12046,7 +12186,7 @@ function loadTesseractLib() {
 }
 const TESSERACT_LANG_MAP = {
   fr: "fra", en: "eng", es: "spa", de: "deu",
-  id: "ind", pt: "por", it: "ita", sv: "swe", no: "nor",
+  id: "ind", pt: "por", it: "ita", sv: "swe", no: "nor", zh: "chi_sim",
 };
 
 // Vrai si le modèle de langue Tesseract nécessaire (plusieurs Mo) est
@@ -12288,7 +12428,8 @@ async function runOcrOnImage(file) {
   // original, qui resterait sinon à l'envers/de travers pour cette
   // analyse complémentaire alors que rawText/layoutText/gridText ont
   // déjà été corrigés ici.
-  return { rawText: data.text, layoutText: reconstructTextFromBlocks(data) || data.text, gridText, tableText: reconstructTableRowsFromBlocks(data), correctedImage: input };
+  // collapseCjkSpaces : sans effet sur un texte sans caractère chinois.
+  return { rawText: collapseCjkSpaces(data.text), layoutText: collapseCjkSpaces(reconstructTextFromBlocks(data) || data.text), gridText: collapseCjkSpaces(gridText), tableText: collapseCjkSpaces(reconstructTableRowsFromBlocks(data)), correctedImage: input };
 }
 
 // OCR dédié à une photo de date de péremption (garde-manger) — un
@@ -12303,7 +12444,7 @@ async function runExpirationDateOcr(file) {
   const worker = await getSharedTesseractWorker();
   const input = await detectAndCorrectOrientation(await resizeImageForOcr(file));
   const { data } = await worker.recognize(input);
-  return data.text;
+  return collapseCjkSpaces(data.text);
 }
 
 // Mots-clés indiquant qu'une date à proximité immédiate est probablement
@@ -12443,7 +12584,7 @@ async function runGridCellOcr(worker, input, numColumns) {
         cellCanvas.height = y1 - y0;
         cellCanvas.getContext("2d").drawImage(srcCanvas, x0, y0, x1 - x0, y1 - y0, 0, 0, x1 - x0, y1 - y0);
         const cellResult = await worker.recognize(cellCanvas);
-        const cellText = cellResult.data.text.trim();
+        const cellText = collapseCjkSpaces(cellResult.data.text).trim();
         if (cellText) cellTexts.push(cellText);
       }
     }
@@ -12492,7 +12633,7 @@ async function runTwoColumnIngredientOcr(worker, input) {
     rightCanvas.getContext("2d").drawImage(srcCanvas, midX - margin, 0, imgWidth - midX + margin, imgHeight, 0, 0, imgWidth - midX + margin, imgHeight);
     const rightResult = await worker.recognize(rightCanvas);
 
-    return { leftText: leftResult.data.text, rightText: rightResult.data.text };
+    return { leftText: collapseCjkSpaces(leftResult.data.text), rightText: collapseCjkSpaces(rightResult.data.text) };
   } catch (e) {
     return null;
   }
@@ -12818,6 +12959,9 @@ function detectPhotoSection(parsed, rawText) {
   const plausibleLines = description.split("\n").filter((l) => {
     const trimmed = l.trim();
     if (!trimmed) return false;
+    // Chinois (pas d'espace entre les mots) : une vraie phrase compte
+    // plusieurs caractères chinois, le bruit d'OCR presque jamais.
+    if (CJK_CHAR_RE.test(trimmed)) return (trimmed.match(/[\u3400-\u9fff]/g) || []).length >= 8;
     const words = trimmed.split(/\s+/).filter(Boolean);
     if (words.length < 3) return false;
     const avgWordLength = words.reduce((sum, w) => sum + w.length, 0) / words.length;
@@ -12873,7 +13017,8 @@ function looksLikeIngredientTableWithoutMarker(rawText) {
   });
   if (plausible.length < 4) return false;
   const unitPattern = /\d+\s*(g|kg|cl|l|cs|cc|c\.?\s*[àa]\s*(caf[eé]|soupe)|sachet|pi[eè]ce|bo[iî]te|barquette|paquet|gousse|tranche|filet)s?\b/i;
-  const matching = plausible.filter((l) => unitPattern.test(l)).length;
+  const zhUnitPattern = /\d+\s*(?:克|千克|公斤|毫升|升|个|汤匙|茶匙|勺|片|瓣|根|颗|只)|(?:适量|少许)\s*$/;
+  const matching = plausible.filter((l) => unitPattern.test(l) || zhUnitPattern.test(l)).length;
   return matching / plausible.length >= 0.25;
 }
 
@@ -12907,6 +13052,7 @@ const INGREDIENT_UNIT_ONLY_WORDS = new Set([
   "boite", "boites", "boîte", "boîtes", "pot", "pots", "barquette", "barquettes",
   "tranche", "tranches", "gousse", "gousses", "filet", "filets", "cs", "cc",
   "cl", "ml", "kg", "l", "autre",
+  "个", "克", "只", "颗", "根", "片", "瓣", "袋", "包", "盒", "罐", "瓶", "勺", "汤匙", "茶匙", "毫升", "千克", "公斤",
 ]);
 function isUnitOnlyOrTooShortName(name) {
   const normalized = normalize((name || "").trim());
@@ -12931,6 +13077,13 @@ function scoreIngredientConfidence(ingredient) {
   // fait plausible autrement, sans ce signal explicite.
   if (ingredient.likelyMisreadFraction) return "uncertain";
   const name = ingredient.name || "";
+  // Chinois : pas d'espace entre les mots, des noms d'un ou deux
+  // caractères tout à fait normaux (« 盐 », « 鸡蛋 ») — les signaux de
+  // longueur de mot ci-dessous n'ont pas de sens. Fiable si une quantité
+  // (ou « 适量/少许 ») a été reconnue et que le nom reste court.
+  if (CJK_CHAR_RE.test(name)) {
+    return (ingredient.quantity != null || ingredient.vagueQuantity) && name.length <= 20 ? "reliable" : "uncertain";
+  }
   const words = name.split(/\s+/).filter(Boolean);
   if (words.length === 0) return "uncertain";
   let score = 0;
@@ -12982,7 +13135,11 @@ function looksLikeIngredientLine(line) {
   if (trimmed.length <= 30 && /ajouter\s{0,3}vous/i.test(trimmed)) return false;
   // Purement numérique/symboles (ex. "2423 /579", "10,2", "0,5") : une
   // ligne de tableau de valeurs nutritionnelles, jamais un ingrédient.
-  if (!/[a-zA-ZÀ-ÿ]/.test(trimmed)) return false;
+  if (!/[a-zA-ZÀ-ÿ]/.test(trimmed) && !CJK_CHAR_RE.test(trimmed)) return false;
+  if (OCR_ZH_INGREDIENT_SUBHEADING.test(trimmed)) return false;
+  // Chinois sans espace : une phrase d'étape égarée se reconnaît à sa
+  // longueur et à sa ponctuation de phrase.
+  if (CJK_CHAR_RE.test(trimmed) && (trimmed.length > 30 || /[。！？]/.test(trimmed))) return false;
   const wordCount = trimmed.split(/\s+/).length;
   if (trimmed.length > 70 && wordCount > 10) return false;
   return true;
@@ -13016,7 +13173,7 @@ function looksLikeIngredientLine(line) {
 // de cette analyse).
 function parseStackedIngredientColumn(text) {
   const lines = (text || "").split("\n").map((l) => l.trim()).filter(Boolean);
-  const filtered = lines.filter((l) => !matchesIngredientTitle(l) && !/(?:^|\D)\d+\s*(personnes?|people|persons?|personas?|personen)/i.test(l));
+  const filtered = lines.filter((l) => !matchesIngredientTitle(l) && !OCR_ZH_INGREDIENT_SUBHEADING.test(l) && !/(?:^|\D)\d+\s*(personnes?|people|persons?|personas?|personen|人份)/i.test(l));
 
   // Retire un préfixe court de case à cocher mal reconnue (symbole ou
   // 1-2 caractères isolés suivis d'un espace) devant le vrai contenu —
@@ -13092,7 +13249,7 @@ function extractIngredientsFromLines(text) {
   let ingredients = lines
     .slice(startIdx, endIdx)
     .filter((l) => {
-      const m = l.match(/(^|\D)\d+\s*(personnes?|people|persons?|personas?|personen)/i);
+      const m = l.match(/(^|\D)\d+\s*(personnes?|people|persons?|personas?|personen|人份)/i);
       // Rejette si le motif "N personnes" apparaît près du début de la
       // ligne — quels que soient les caractères parasites qui suivent
       // (ex. "| 2 personnes | + es"). Une exigence de correspondance
@@ -14760,7 +14917,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 321;
+const APP_VERSION = 322;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
