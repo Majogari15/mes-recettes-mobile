@@ -9850,3 +9850,24 @@ reconnaissance chinois), symbole € codé en dur.
 **Tests** : `tests/test_chinese_ingredients.py` (4 vérifications ajoutées).
 
 **Version testée** : v323 (branche)
+
+### 159 — Chinois : catégorie importée, date de péremption, code-barres (branche, pas sur main)
+
+- Import par lien : la catégorie fournie par le site (`recipeCategory`)
+  n'était reconnue que par des mots latins — une recette chinoise
+  finissait toujours en « Autre ». Mots chinois ajoutés (甜点/甜品/糕点/
+  蛋糕/烘焙, 早餐, 饮料/饮品, 前菜/凉菜, 酱料/酱汁, 小吃/零食/点心,
+  主菜/家常菜/热菜…). « 汤 » (soupe) volontairement absent (« 汤圆 » est
+  un dessert).
+- Date de péremption par photo : format « 2027年3月15日 » reconnu ;
+  mots-clés 保质期, 有效期, 到期日, 最佳食用… ; « 生产日期 » (date de
+  fabrication) volontairement absent, pour que la vraie date de
+  péremption l'emporte.
+- Code-barres : le nom du produit est demandé à Open Food Facts dans la
+  langue de l'interface (`product_name_zh`…), avec repli sur le nom
+  principal. En français, comportement inchangé ; dans les autres
+  langues, le nom traduit est maintenant utilisé quand la fiche en a un.
+
+**Tests** : `tests/test_chinese_misc_import.py`.
+
+**Version testée** : v324 (branche)

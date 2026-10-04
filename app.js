@@ -3389,7 +3389,7 @@ function saveBarcodeIngredientMapping(barcode, name, unit) {
 async function lookupProductByBarcode(barcode) {
   try {
     const res = await fetchWithTimeout(
-      `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json?fields=product_name,product_name_fr,quantity,status`,
+      `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json?fields=product_name,product_name_fr${CURRENT_LANG !== "fr" ? `,product_name_${CURRENT_LANG}` : ""},quantity,status`,
       8000
     );
     // L'API v2 d'Open Food Facts répond parfois par un statut HTTP
@@ -3408,7 +3408,9 @@ async function lookupProductByBarcode(barcode) {
     }
     if (!data || typeof data.status !== "number") return { name: null, quantityHint: null, networkError: !res.ok };
     if (data.status !== 1 || !data.product) return { name: null, quantityHint: null, networkError: false };
-    const name = (CURRENT_LANG === "fr" && data.product.product_name_fr) || data.product.product_name || null;
+    // Nom dans la langue de l'interface s'il existe (« product_name_zh »…),
+    // sinon le nom principal de la fiche.
+    const name = data.product[`product_name_${CURRENT_LANG}`] || data.product.product_name || null;
     return { name: name ? name.trim() : null, quantityHint: data.product.quantity ? String(data.product.quantity).trim() : null, networkError: false };
   } catch (e) {
     return { name: null, quantityHint: null, networkError: true };
@@ -12488,6 +12490,8 @@ const EXPIRATION_DATE_KEYWORDS = [
   "best before", "use by", "sell by", "expiry", "expire", "exp",
   "fecha de caducidad", "caducidad", "consumir antes", "fecha de consumo",
   "mindestens haltbar", "verbrauchen bis", "haltbar bis", "mhd",
+  // Chinois (« 生产日期 », date de fabrication, volontairement absent).
+  "保质期", "有效期", "到期日", "过期日", "最佳食用", "赏味期限", "此日期前",
 ];
 // Fenêtre (en caractères, avant la position de la date candidate) dans
 // laquelle chercher un mot-clé de péremption à proximité — voir
@@ -12541,6 +12545,12 @@ function extractExpirationDateFromOcrText(text) {
   while ((m = isoRegex.exec(text))) {
     const year = parseInt(m[1], 10), month = parseInt(m[2], 10), day = parseInt(m[3], 10);
     const parsed = parseCalendarDateLocal(`${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
+    if (parsed) candidates.push({ parsed, index: m.index, score: scoreExpirationDateCandidate(text, m.index, parsed) });
+  }
+  // Chinois : « 2027年3月15日 » (« 日 » parfois absent ou mal lu).
+  const zhRegex = /(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})/g;
+  while ((m = zhRegex.exec(text))) {
+    const parsed = parseCalendarDateLocal(`${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}`);
     if (parsed) candidates.push({ parsed, index: m.index, score: scoreExpirationDateCandidate(text, m.index, parsed) });
   }
   const euroRegex = /\b(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})\b/g;
@@ -13815,6 +13825,14 @@ function extractRecipeImageUrl(recipeData) {
 function guessCategoryFromText(text) {
   if (!text) return "Autre";
   const key = normalize(String(text));
+  // Catégories des sites chinois (pas de \b ni d'accents : mots cherchés tels quels).
+  const zhCategory = [
+    [/甜点|甜品|糕点|蛋糕|烘焙/, "Dessert"], [/早餐|早点/, "Petit-déjeuner"],
+    [/饮料|饮品|鸡尾酒|果汁|奶茶/, "Boisson"], [/前菜|开胃菜|凉菜|冷盘/, "Entrée"],
+    [/酱料|酱汁|蘸料|调味酱/, "Sauce"], [/小吃|零食|点心/, "Apéro"],
+    [/主菜|主食|家常菜|热菜|午餐|晚餐|正餐/, "Plat"],
+  ].find(([re]) => re.test(key));
+  if (zhCategory) return zhCategory[1];
   if (/dessert|sweet|postre|nachtisch|suss/.test(key)) return "Dessert";
   if (/starter|entree|appetizer|vorspeise|aperitivo|antipasto/.test(key)) return "Entrée";
   if (/breakfast|petit.?dejeuner|desayuno|fruhstuck/.test(key)) return "Petit-déjeuner";
@@ -14978,7 +14996,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 323;
+const APP_VERSION = 324;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
