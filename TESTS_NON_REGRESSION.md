@@ -9953,12 +9953,27 @@ test avec des pages au contenu inventé) :
     (« Sucre ») au lieu du nom traduit (« 糖 ») — vrai dans toutes les
     langues sauf le français. Le nom traduit est affiché ; enregistrer
     sans le modifier ne renomme pas l'ingrédient.
-- Constaté, non modifié : la date de péremption se saisit au format
+- Constaté : la date de péremption se saisissait au format
   jour/mois/année dans toutes les langues (« 日/月/年 » en chinois, où
-  l'ordre habituel est année/mois/jour).
+  l'ordre habituel est année/mois/jour) — corrigé en v328, voir 163.
 
 **Tests** : `tests/test_chinese_ui_audit.py` (nouveau : les 34 écrans et
 fenêtres ; vérifié qu'il échoue bien sur une interface en français),
 `tests/test_chinese_ingredients.py` (fenêtre d'ingrédient).
 
 **Version testée** : v327 (branche)
+
+### 163 — Date de péremption en chinois : année/mois/jour (branche, pas sur main)
+
+- En chinois, la date de péremption du garde-manger se saisit dans
+  l'ordre habituel en Chine, année/mois/jour : « 年/月/日 », mêmes
+  6 chiffres et mêmes « / » automatiques (« 271231 » -> « 27/12/31 » ->
+  31 décembre 2027). Message d'erreur avec un exemple (« 261006 »).
+  Les autres langues gardent jour/mois/année.
+- Même ordre pour réafficher une date déjà enregistrée et pour la date
+  pré-remplie par photo (`isoDateToShortInput`).
+
+**Tests** : `tests/test_chinese_misc_import.py` (4 vérifications
+ajoutées) ; `test_pantry_expiration.py` (français) inchangé.
+
+**Version testée** : v328 (branche)

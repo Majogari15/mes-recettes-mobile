@@ -296,13 +296,21 @@ function formatShortDateInput(rawValue) {
 // date reste optionnelle), "incomplete" (moins de 6 chiffres saisis)
 // ou "invalid" (6 chiffres, mais qui ne forment pas une vraie date —
 // jour hors bornes du mois, mois > 12...).
+// Ordre de saisie selon la langue : année/mois/jour (« 年/月/日 ») en
+// chinois, l'ordre habituel en Chine ; jour/mois/année ailleurs. Mêmes
+// 6 chiffres et mêmes séparateurs dans les deux cas (voir
+// formatShortDateInput, qui ne dépend pas de l'ordre).
+function shortDateIsYearFirst() {
+  return CURRENT_LANG === "zh";
+}
 function parseShortDateToIso(value) {
   const digits = (value || "").replace(/\D/g, "");
   if (!digits) return { iso: null, error: null };
   if (digits.length !== 6) return { iso: null, error: "incomplete" };
-  const day = parseInt(digits.slice(0, 2), 10);
+  const yearFirst = shortDateIsYearFirst();
+  const day = parseInt(yearFirst ? digits.slice(4, 6) : digits.slice(0, 2), 10);
   const month = parseInt(digits.slice(2, 4), 10);
-  const year = 2000 + parseInt(digits.slice(4, 6), 10);
+  const year = 2000 + parseInt(yearFirst ? digits.slice(0, 2) : digits.slice(4, 6), 10);
   if (month < 1 || month > 12) return { iso: null, error: "invalid" };
   const daysInMonth = new Date(year, month, 0).getDate();
   if (day < 1 || day > daysInMonth) return { iso: null, error: "invalid" };
@@ -314,7 +322,7 @@ function parseShortDateToIso(value) {
 function isoDateToShortInput(iso) {
   if (!iso) return "";
   const [year, month, day] = iso.split("-");
-  return `${day}/${month}/${year.slice(2)}`;
+  return shortDateIsYearFirst() ? `${year.slice(2)}/${month}/${day}` : `${day}/${month}/${year.slice(2)}`;
 }
 
 // Formate une erreur interceptée en texte lisible, quelle que soit sa
@@ -15088,7 +15096,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 327;
+const APP_VERSION = 328;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

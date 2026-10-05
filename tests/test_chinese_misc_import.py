@@ -76,6 +76,29 @@ def main():
         check("date impossible (30 février) écartée", r[3] is None, r[3])
         check("format français inchangé", r[4] == "2027-03-15", r[4])
 
+        # Saisie de la date de péremption : année/mois/jour en chinois.
+        r = page.evaluate("""async () => {
+            await ensureUiTranslationsLoaded('zh'); setLang('zh');
+            const zh = { parse: parseShortDateToIso('26/10/06'), back: isoDateToShortInput('2026-10-06'),
+                         invalid: parseShortDateToIso('26/02/30').error, placeholder: t('pantry_expiration_placeholder') };
+            setLang('fr');
+            const fr = { parse: parseShortDateToIso('06/10/26'), back: isoDateToShortInput('2026-10-06') };
+            return { zh, fr };
+        }""")
+        check("date chinoise « 26/10/06 » (年/月/日) -> 2026-10-06", r["zh"]["parse"]["iso"] == "2026-10-06", r["zh"])
+        check("date chinoise : affichage « 26/10/06 », 30 février refusé, « 年/月/日 »",
+              r["zh"]["back"] == "26/10/06" and r["zh"]["invalid"] == "invalid" and r["zh"]["placeholder"] == "年/月/日", r["zh"])
+        check("date française inchangée (« 06/10/26 »)", r["fr"]["parse"]["iso"] == "2026-10-06" and r["fr"]["back"] == "06/10/26", r["fr"])
+        page.evaluate("""async () => { setLang('zh'); state.screen = 'pantry'; render(); openAddItemModal('pantry', null, null, () => {}); }""")
+        page.fill(".modal-sheet input[type=text]:not(#modal-ing-expiration)", "大米")
+        page.locator("#modal-ing-expiration").press_sequentially("271231")
+        typed = page.input_value("#modal-ing-expiration")
+        page.click("#modal-confirm")
+        page.wait_for_function("() => state.pantry.some((p) => p.expirationDate)")
+        saved = page.evaluate("() => state.pantry.find((p) => p.expirationDate).expirationDate")
+        check("garde-manger en chinois : « 271231 » tapé -> « 27/12/31 », enregistré 2027-12-31", typed == "27/12/31" and saved == "2027-12-31", (typed, saved))
+        page.evaluate("() => setLang('fr')")
+
         urls = []
 
         def off(route):
