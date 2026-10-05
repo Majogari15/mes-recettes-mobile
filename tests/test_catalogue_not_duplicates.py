@@ -109,6 +109,27 @@ def main():
         check("installation neuve : aucun doublon affiché dans les 11 langues (avant : plus de 4 300)",
               all(n == 0 for n in counts.values()), counts)
 
+        # Dans chaque langue, pour chaque entrée retirée : son nom traduit
+        # saisi (ou importé) mène à l'entrée gardée, et l'entrée gardée
+        # s'affiche sans nom français ajouté entre parenthèses — sauf vraie
+        # ambiguïté : même traduction qu'un AUTRE ingrédient actif du
+        # catalogue (ex. allemand « Butter, gesalzen » = « Beurre salé » et
+        # « Beurre, en plaquette, salé »), où l'application ne devine pas.
+        bad = {}
+        for lang in LANGS:
+            r = fr_page.evaluate("""async (lang) => { await ensureUiTranslationsLoaded(lang); await ensureIngredientTranslationsLoaded(lang); setLang(lang);
+                const retired = INGREDIENT_CATALOGUE.filter((e) => e.doublonDe);
+                const tr = (id) => (lang === 'fr' ? CATALOGUE_BY_ID[id] : INGREDIENT_TRANSLATIONS[lang][id]);
+                const ambiguous = (e) => INGREDIENT_CATALOGUE.some((x) => !x.doublonDe && x.id !== e.doublonDe && tr(x.id)
+                    && normalize(tr(x.id)) === normalize(tr(e.id)));
+                const out = retired.filter((e) => !ambiguous(e) && (resolveIngredientInput(tr(e.id)) !== state.ingredientNameByCatalogId[e.doublonDe]
+                    || translateIngredientName(state.ingredientNameByCatalogId[e.doublonDe]) !== tr(e.doublonDe))).map((e) => tr(e.id));
+                setLang('fr'); return out; }""", lang)
+            if r:
+                bad[lang] = r[:3]
+        check("11 langues : nom traduit d'une entrée retirée -> entrée gardée, affichée sans parenthèses (hors vraies ambiguïtés)",
+              not bad, bad)
+
         page = fr_page
         r = page.evaluate("""() => ({ beurre: state.ingredientNames.includes('Beurre salé'), virgule: state.ingredientNames.includes('Beurre, salé'),
             noisettes: state.ingredientNames.includes('Noisettes'), subs: getDisplaySubstitutes('Beurre salé').length,

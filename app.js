@@ -7614,7 +7614,10 @@ function getIngredientTranslationCollisions(lang) {
   const collisions = new Set();
   if (dict) {
     const counts = {};
-    Object.values(dict).forEach((v) => { counts[v] = (counts[v] || 0) + 1; });
+    // Entrées retirées (doublons, voir CATALOGUE_REPLACED_BY) ignorées :
+    // même produit que l'entrée gardée, souvent même traduction — sans ça
+    // l'entrée gardée s'affichait « Raisins (Raisins secs) ».
+    Object.entries(dict).forEach(([id, v]) => { if (!CATALOGUE_REPLACED_BY[id]) counts[v] = (counts[v] || 0) + 1; });
     Object.keys(counts).forEach((v) => { if (counts[v] > 1) collisions.add(v); });
   }
   _ingredientTranslationCollisionsCache[lang] = collisions;
@@ -7695,9 +7698,18 @@ function resolveIngredientInput(typedName) {
     const exactInner = state.ingredientNames.find((n) => normalize(n) === normalize(inner));
     if (exactInner) return exactInner;
   }
+  // Nom français exact d'une entrée retirée (doublon, « Beurre, salé ») :
+  // l'entrée gardée (« Beurre salé »).
+  const frId = CATALOGUE_ID_BY_NAME[normalize(trimmed)];
+  if (frId && CATALOGUE_REPLACED_BY[frId] && state.ingredientNameByCatalogId[CATALOGUE_REPLACED_BY[frId]]) {
+    return state.ingredientNameByCatalogId[CATALOGUE_REPLACED_BY[frId]];
+  }
   const dict = INGREDIENT_REVERSE_TRANSLATIONS[CURRENT_LANG];
   if (dict) {
-    const ids = dict[normalize(trimmed)];
+    // Une entrée retirée et son entrée gardée (même produit) comptent
+    // pour une seule.
+    const rawIds = dict[normalize(trimmed)];
+    const ids = rawIds && [...new Set(rawIds.map((id) => CATALOGUE_REPLACED_BY[id] || id))];
     // Un seul ingrédient du catalogue partage cette traduction : résolu
     // vers son nom ACTUEL dans la liste de l'utilisateur (potentiellement
     // renommé depuis), jamais vers le nom français d'origine du
@@ -7711,12 +7723,12 @@ function resolveIngredientInput(typedName) {
     // automatique dans ce cas — mieux vaut laisser créer un ingrédient
     // distinct que de deviner silencieusement le mauvais des deux.
     if (ids && ids.length === 1) {
-      const localName = state.ingredientNameByCatalogId[ids[0]];
+      // Entrée gardée de la liste, sinon (utilisateur qui n'a que l'entrée
+      // retirée) celle-ci, sinon le nom du catalogue de l'entrée gardée.
+      const localName = state.ingredientNameByCatalogId[ids[0]]
+        || rawIds.map((id) => state.ingredientNameByCatalogId[id]).find(Boolean);
       if (localName) return localName;
-      // Entrée retirée (doublon) absente de la liste : son équivalent gardé.
-      const keepId = CATALOGUE_REPLACED_BY[ids[0]];
-      if (keepId && state.ingredientNameByCatalogId[keepId]) return state.ingredientNameByCatalogId[keepId];
-      const fr = CATALOGUE_BY_ID[keepId || ids[0]];
+      const fr = CATALOGUE_BY_ID[ids[0]];
       if (fr) return fr;
     }
   }
@@ -15650,7 +15662,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 338;
+const APP_VERSION = 339;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

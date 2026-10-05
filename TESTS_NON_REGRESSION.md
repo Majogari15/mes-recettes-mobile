@@ -10258,4 +10258,18 @@ propres paires, le catalogue seul n'en donnant plus assez) ;
 `test_catalogue_sync.py`, `test_first_launch_background_seed.py`,
 `test_ingredient_catalog_ids.py` (comptent les entrées actives).
 
-**Version testée** : v338
+- v339 (vérification dans les 11 langues) : une entrée retirée et son
+  entrée gardée ont souvent la même traduction (« Raisins » pour « Raisin
+  sec » et « Raisins secs ») — l'entrée gardée s'affichait alors avec le
+  nom français entre parenthèses (« Raisins (Raisins secs) ») et le nom
+  traduit saisi ou importé n'était relié à rien (deux candidats).
+  Corrigé : entrées retirées ignorées dans le calcul des collisions de
+  traduction, et comptées comme leur entrée gardée dans
+  `resolveIngredientInput` (un utilisateur qui n'a que l'entrée retirée
+  retrouve la sienne) ; nom français exact d'une entrée retirée
+  (« Beurre, salé ») -> entrée gardée. Restent 3 vraies ambiguïtés
+  antérieures (même traduction qu'un autre ingrédient actif : allemand
+  « Butter, gesalzen », « Radieschen, roh », indonésien « Keju Cheddar »),
+  où l'application ne devine pas, comme ailleurs.
+
+**Version testée** : v339
