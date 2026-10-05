@@ -4390,6 +4390,9 @@ function renderIngredientDuplicates() {
     // "ingredientDuplicates" mais désigne une NOUVELLE visite (nouvelle
     // fermeture, nouveau cachedAllPairs) — ce calcul obsolète doit
     // s'arrêter plutôt que de continuer en parallèle du nouveau.
+    // Liste des paires du catalogue déjà vérifiées (voir
+    // isCataloguePairNotDuplicate), chargée pendant le calcul.
+    const notDuplicatesReady = ensureCatalogueNotDuplicatesLoaded();
     findSimilarIngredientPairsAsync(state.ingredientNames, 0.9, {
       onProgress: (progress) => {
         const value = Math.round(progress * 100);
@@ -4397,7 +4400,8 @@ function renderIngredientDuplicates() {
         pct.textContent = `${value} %`;
       },
       shouldContinue: () => listHolder.isConnected,
-    }).then((pairs) => {
+    }).then(async (pairs) => {
+      await notDuplicatesReady;
       if (!pairs || !listHolder.isConnected) return;
       cachedAllPairs = pairs;
       renderPairs();
@@ -8293,8 +8297,35 @@ async function dismissPair(a, b) {
   DISMISSED_PAIRS.add(pairKey(a, b));
   await kvSet("dismissedIngredientPairs", Array.from(DISMISSED_PAIRS));
 }
+// Paires du catalogue vérifiées comme différentes malgré des noms très
+// proches (data/catalogue_not_duplicates.json, par id : « Agneau… paré à
+// 1/4 po » / « … 1/8 po », « avec sel » / « sans sel »…) — sans elles,
+// plus de 4 300 « doublons possibles » s'affichaient avant même que
+// l'utilisateur ait créé un seul ingrédient. Par id : vaut dans toutes les
+// langues et après un renommage.
+let CATALOGUE_NOT_DUPLICATES = null;
+let catalogueNotDuplicatesPromise = null;
+function ensureCatalogueNotDuplicatesLoaded() {
+  if (CATALOGUE_NOT_DUPLICATES) return Promise.resolve();
+  if (!catalogueNotDuplicatesPromise) {
+    catalogueNotDuplicatesPromise = fetch("./data/catalogue_not_duplicates.json")
+      .then((res) => { if (!res.ok) throw new Error("not_duplicates_load_failed"); return res.json(); })
+      .then((data) => { CATALOGUE_NOT_DUPLICATES = new Set((data.pairs || []).map(([x, y]) => `${Math.min(x, y)}-${Math.max(x, y)}`)); })
+      // Fichier indisponible (hors connexion avant le premier chargement) :
+      // l'écran fonctionne quand même, simplement sans ce filtre.
+      .catch(() => { catalogueNotDuplicatesPromise = null; });
+  }
+  return catalogueNotDuplicatesPromise;
+}
+function isCataloguePairNotDuplicate(a, b) {
+  if (!CATALOGUE_NOT_DUPLICATES) return false;
+  const ia = getIngredientCatalogId(a), ib = getIngredientCatalogId(b);
+  if (!ia || !ib) return false;
+  const x = parseInt(ia.slice(4), 10), y = parseInt(ib.slice(4), 10);
+  return CATALOGUE_NOT_DUPLICATES.has(`${Math.min(x, y)}-${Math.max(x, y)}`);
+}
 function isPairDismissed(a, b) {
-  return DISMISSED_PAIRS.has(pairKey(a, b));
+  return DISMISSED_PAIRS.has(pairKey(a, b)) || isCataloguePairNotDuplicate(a, b);
 }
 
 // Fusionne deux ingrédients considérés comme doublons : "remove" disparaît
@@ -15586,7 +15617,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 336;
+const APP_VERSION = 337;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

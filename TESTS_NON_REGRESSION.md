@@ -10220,3 +10220,31 @@ arabo-indien en tête de ligne (« ٣ بيضات ») lu comme une lettre.
 avec la photo moins nette).
 
 **Version testée** : v336 (branche)
+
+### 171 — Doublons : variantes du catalogue marquées « pas un doublon »
+
+- Avant : « Vérifier les doublons » affichait plus de 4 300 paires sur une
+  installation neuve, sans aucun ingrédient créé par l'utilisateur —
+  presque toutes des variantes réellement différentes du catalogue
+  (coupes de viande « paré à 1/4 po » / « 1/8 po », cru / cuit, rôti /
+  braisé, avec / sans sel, avec os / désossé, catégories USDA Choice /
+  Select, 95 % / 75 % de maigre…).
+- Paires calculées comme l'écran (seuil 0,9) dans les 11 langues (union :
+  4 383), classées : 4 353 variantes distinctes (échantillons relus à la
+  main ; « allégé » / « non allégé » et « avec » / « sans » gardés
+  distincts) listées par id dans `data/catalogue_not_duplicates.json`
+  (52 Ko, mis en cache par le service worker, chargé à l'ouverture de
+  l'écran) ; jamais proposées (`isCataloguePairNotDuplicate`). Par id :
+  vaut dans toutes les langues et après un renommage.
+- Restent affichés les 30 vrais doublons du catalogue (même produit deux
+  fois : « Beurre salé » / « Beurre, salé », « Noisette » / « Noisettes »,
+  « Persil séché » / « Persil, séché », « Pommes de terre au gratin » /
+  « gratinées »…).
+- Un ingrédient créé par l'utilisateur reste comparé à tout le catalogue ;
+  « Pas un doublon » choisi par l'utilisateur inchangé.
+
+**Tests** : `tests/test_catalogue_not_duplicates.py` (nouveau) ;
+`tests/test_ingredient_duplicates.py` (affichage par lots : crée ses
+propres paires, le catalogue seul n'en donnant plus assez).
+
+**Version testée** : v337

@@ -11,7 +11,7 @@
 // application, donc caches.keys() y voit potentiellement les caches
 // de tout le monde sur ce domaine.
 const CACHE_PREFIX = "mes-recettes-cache-";
-const CACHE_NAME = `${CACHE_PREFIX}v336`;
+const CACHE_NAME = `${CACHE_PREFIX}v337`;
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -45,6 +45,7 @@ const FILES_TO_CACHE = [
   "./data/ingredient_allergenes.json",
   "./data/valeurs_nutritionnelles.json",
   "./data/ingredient_substitutions.json",
+  "./data/catalogue_not_duplicates.json",
   // Les traductions/notes de substitution PAR LANGUE (ingredient_translations_XX.json,
   // ingredient_substitutions_XX.json) ne sont volontairement PAS
   // préchargées ici : app.js ne demande plus désormais que celles de la

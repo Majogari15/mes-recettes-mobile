@@ -147,6 +147,14 @@ def main():
             """async () => {
                 if (!state.ingredientNames.includes('Testinga')) await addIngredientName('Testinga');
                 if (!state.ingredientNames.includes('Testingaz')) await addIngredientName('Testingaz');
+                // Plus de 50 paires pour vérifier l'affichage par lots : le
+                // catalogue seul n'en donne plus qu'une trentaine (variantes
+                // vérifiées marquées « pas un doublon », entrée 171).
+                for (let i = 0; i < 30; i++) {
+                  const base = `Ingrédient de test numéro ${String.fromCharCode(65 + (i % 26))}${i} long`;
+                  if (!state.ingredientNames.includes(base)) await addIngredientName(base);
+                  if (!state.ingredientNames.includes(base + 's')) await addIngredientName(base + 's');
+                }
                 state.screen = 'ingredientDuplicates';
                 render();
             }"""
