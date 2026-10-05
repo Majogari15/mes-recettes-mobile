@@ -11611,12 +11611,133 @@ function parseChineseIngredientString(text) {
   return null;
 }
 
+// Lignes d'ingrédients arabes : « 200 غرام دقيق », « 4 حبات طماطم »,
+// « ملعقتان كبيرتان زيت زيتون » (duel = 2), « نصف كوب حليب », « كوب ونصف »,
+// « دقيق: 250 غ », « ملح حسب الرغبة », « رشة ملح ». « كوب » traité comme
+// la tasse anglaise (24 cl), « ملعقة » seule comme cuillère à soupe.
+// Comparaison sans voyelles brèves ni variantes d'alif (arabicKey).
+function arabicKey(str) {
+  return String(str || "").replace(/[\u064b-\u0652\u0640]/g, "").replace(/\./g, " ").replace(/[أإآ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه").replace(/\s+/g, " ").trim();
+}
+const AR_UNITS = [
+  [["كيلوغرام", "كيلوجرام", "كيلو غرام", "كيلو جرام", "كيلوغرامات", "كيلو", "كغ", "كجم", "كلغ", "kg"], "kg", 1],
+  [["غرام", "غرامات", "جرام", "جرامات", "غم", "جم", "غ", "g", "gr"], "g", 1],
+  [["مليلتر", "ملليلتر", "مللتر", "ملل", "مل", "ml"], "cl", 0.1],
+  [["لتر", "لترات"], "L", 1], [["لتران", "لترين"], "L", 1, 2],
+  // « معلقة » : orthographe égyptienne courante de « ملعقة ».
+  [["ملعقة كبيرة", "ملاعق كبيرة", "ملعقة طعام", "ملاعق طعام", "ملعقة اكل", "م ك", "ملعقة", "ملاعق", "معلقة كبيرة", "معالق كبيرة", "معلقة", "معالق"], "c. à soupe", 1],
+  [["ملعقتان كبيرتان", "ملعقتين كبيرتين", "ملعقتان", "ملعقتين", "معلقتين كبار", "معلقتين كبيرتين", "معلقتين", "معلقتان"], "c. à soupe", 1, 2],
+  [["ملعقة صغيرة", "ملاعق صغيرة", "ملعقة شاي", "ملاعق شاي", "م ص", "معلقة صغيرة", "معالق صغيرة"], "c. à café", 1],
+  [["ملعقتان صغيرتان", "ملعقتين صغيرتين", "معلقتين صغار", "معلقتين صغيرتين"], "c. à café", 1, 2],
+  [["كوب", "اكواب", "كاس", "فنجان", "فناجين"], "cl", 24], [["كوبان", "كوبين", "فنجانان", "فنجانين"], "cl", 24, 2],
+  [["فص", "فصوص", "سن"], "gousse", 1], [["فصان", "فصين"], "gousse", 1, 2],
+  [["شريحة", "شرائح"], "tranche", 1], [["شريحتان", "شريحتين"], "tranche", 1, 2],
+  [["علبة", "علب", "كيس", "اكياس", "عبوة"], "boîte", 1], [["علبتان", "علبتين", "كيسان", "كيسين"], "boîte", 1, 2],
+  [["حبة", "حبات", "قطعة", "قطع", "راس", "رؤوس", "عود", "اعواد", "عرق", "ورقة", "اوراق", "حزمة", "حزم", "باقة", "ضمة", "رغيف", "ارغفة"], "pièce", 1],
+  [["حبتان", "حبتين", "قطعتان", "قطعتين", "راسان", "راسين", "ورقتان", "ورقتين", "حزمتان", "حزمتين"], "pièce", 1, 2],
+];
+const AR_UNIT_LOOKUP = new Map();
+AR_UNITS.forEach(([words, unit, factor, implied]) => words.forEach((w) => AR_UNIT_LOOKUP.set(arabicKey(w), { unit, factor, implied: implied || null })));
+const AR_UNIT_PATTERN = AR_UNITS.flatMap(([words]) => words).sort((a, b) => b.length - a.length)
+  .map((w) => (/[a-z]/i.test(w) ? w : arabicPattern(w).replace(/\\s\+/g, "\\s*\\.?\\s*"))).join("|");
+const AR_NUMBER_WORDS = { واحد: 1, واحده: 1, اثنان: 2, اثنين: 2, اثنتان: 2, اثنتين: 2, ثلاث: 3, ثلاثه: 3, اربع: 4, اربعه: 4, خمس: 5, خمسه: 5, ست: 6, سته: 6, سبع: 7, سبعه: 7, ثمان: 8, ثماني: 8, ثمانيه: 8, تسع: 9, تسعه: 9, عشر: 10, عشره: 10, نصف: 0.5, ربع: 0.25, ثلث: 1 / 3, ثلثي: 2 / 3, ثلثا: 2 / 3, "ثلاثه ارباع": 0.75 };
+const AR_NUMBER_WORD_PATTERN = arabicPattern("ثلاثة أرباع|واحد|واحدة|اثنان|اثنين|اثنتان|اثنتين|ثلاث|ثلاثة|أربع|أربعة|خمس|خمسة|ست|ستة|سبع|سبعة|ثمان|ثماني|ثمانية|تسع|تسعة|عشر|عشرة|نصف|ربع|ثلث|ثلثي|ثلثا");
+const AR_HALF_TAIL = "(\\s*و\\s*(?:" + arabicPattern("نصف|ربع") + "))?";
+const AR_QTY = "(\\d+(?:[.,]\\d+)?(?:\\s*\\/\\s*\\d+)?(?:\\s*-\\s*\\d+(?:[.,]\\d+)?)?|" + AR_NUMBER_WORD_PATTERN + ")";
+const AR_VAGUE = arabicPattern("العدد حسب الرغبة|الكمية حسب الرغبة|حسب الرغبة|حسب الذوق|حسب الحاجة|حسب الطلب|حسب الرغبه|للتزيين|للتقديم|للقلي|رشة|قليل من|قليلا من|القليل من|كمية قليلة من|كمية قليلة|القليل|قليل|رشة من");
+const AR_QTY_FIRST_RE = new RegExp("^" + AR_QTY + "?" + AR_HALF_TAIL + "\\s*(" + AR_UNIT_PATTERN + ")?" + AR_HALF_TAIL + "(?=\\s|$)\\s*(?:من\\s+)?(.+)$");
+const AR_QTY_LAST_RE = new RegExp("^(.+?)\\s*[:：]?\\s*" + AR_QTY + AR_HALF_TAIL + "\\s*(" + AR_UNIT_PATTERN + ")?" + AR_HALF_TAIL + "\\s*$");
+// « البيض 5 حبات », « طماطم 2 حبة متوسطة الحجم ومفرومة » (Sayidaty) : nom
+// court, quantité, unité, puis une précision gardée en note.
+const AR_QTY_MID_RE = new RegExp("^([^\\d:：]{2,30}?)\\s*[:：]?\\s*" + AR_QTY + AR_HALF_TAIL + "\\s*(" + AR_UNIT_PATTERN + ")" + AR_HALF_TAIL + "\\s+([^\\d]{2,60})$");
+// Taille après une unité de compte (« حبة كبيرة طماطم ») : gardée en note.
+const AR_SIZE_WORD_RE = new RegExp("^(" + arabicPattern("كبيرة الحجم|صغيرة الحجم|متوسطة الحجم|كبير الحجم|صغير الحجم|متوسط الحجم|كبيرة|صغيرة|متوسطة|كبير|صغير|متوسط|كبار|صغار") + ")\\s+(.+)$");
+const AR_VAGUE_LAST_RE = new RegExp("^(.+?)\\s*[:：]?\\s*(?:" + AR_VAGUE + ")\\s*$");
+const AR_VAGUE_FIRST_RE = new RegExp("^(?:" + AR_VAGUE + ")\\s+(.+)$");
+function parseArabicNumber(str) {
+  const s = String(str || "").trim();
+  if (/^\d/.test(s)) {
+    const first = s.split(/\s*-\s*/)[0];
+    if (first.includes("/")) {
+      const [num, den] = first.split("/").map((x) => parseFloat(x.trim().replace(",", ".")));
+      return den ? num / den : null;
+    }
+    const n = parseFloat(first.replace(",", "."));
+    return Number.isNaN(n) ? null : n;
+  }
+  const v = AR_NUMBER_WORDS[arabicKey(s)];
+  return v == null ? null : v;
+}
+function parseArabicIngredientString(text) {
+  let note = "";
+  const paren = text.match(/^(.*?)\s*([(（][^()（）]*[)）])\s*$/);
+  if (paren && paren[1]) { text = paren[1]; note = paren[2]; }
+  const withNote = (name) => (note ? `${name} ${note}` : name).trim();
+  const cleanName = (name) => String(name || "").replace(/^[\s:：،,\-–]+|[\s:：،,\-–]+$/g, "").trim();
+  const build = (name, qtyStr, half1, unitWord, half2, extraNote) => {
+    const u = unitWord ? AR_UNIT_LOOKUP.get(arabicKey(unitWord)) : null;
+    if (unitWord && !u) return null;
+    let quantity = qtyStr ? parseArabicNumber(qtyStr) : null;
+    if (qtyStr && quantity == null) return null;
+    // Nombre écrit en lettres : seulement suivi d'une unité, sinon
+    // « ست » ou « خمس » au début d'un nom passeraient pour une quantité.
+    if (qtyStr && !/^\d/.test(qtyStr.trim()) && !u) return null;
+    if (quantity == null && u) quantity = u.implied || 1;
+    if (quantity == null) return null;
+    if (half1 || half2) quantity += /ربع/.test(arabicKey(half1 || half2)) ? 0.25 : 0.5;
+    let n = cleanName(name);
+    let sizeNote = "";
+    // Parenthèse placée avant le nom (« (10 مل) كمون مطحون ») ou précision
+    // après une virgule (« ثوم، مفرومة ») : gardées en note après le nom.
+    const lead = n.match(/^([(（][^()（）]*[)）])\s*(.+)$/);
+    if (lead) { n = lead[2]; extraNote = [lead[1].replace(/^[(（]|[)）]$/g, ""), extraNote].filter(Boolean).join("، "); }
+    const comma = n.match(/^([^،,]+?)\s*[،,]\s*(.+)$/);
+    if (comma && ARABIC_CHAR_RE.test(comma[1])) { n = comma[1]; extraNote = [comma[2], extraNote].filter(Boolean).join("، "); }
+    const size = u && ["pièce", "gousse", "tranche"].includes(u.unit) ? n.match(AR_SIZE_WORD_RE) : null;
+    if (size) { sizeNote = size[1]; n = size[2].trim(); }
+    if (extraNote) sizeNote = sizeNote ? `${sizeNote}، ${extraNote}` : extraNote;
+    if (!n || !ARABIC_CHAR_RE.test(n) || /^[\d\s.,/]+$/.test(n)) return null;
+    if (sizeNote) n = `${n} (${cleanName(sizeNote)})`;
+    const unit = u ? u.unit : "pièce";
+    const factor = u ? u.factor : 1;
+    return { name: withNote(n), quantity: Math.round(quantity * factor * 100) / 100, unit, containerLabel: null };
+  };
+  let m = text.match(AR_VAGUE_LAST_RE);
+  if (m && ARABIC_CHAR_RE.test(m[1]) && !new RegExp(AR_QTY + "\\s*$").test(m[1])) return { name: withNote(cleanName(m[1])), quantity: null, unit: "pièce", containerLabel: null, vagueQuantity: true };
+  m = text.match(AR_VAGUE_FIRST_RE);
+  if (m && ARABIC_CHAR_RE.test(m[1])) return { name: withNote(cleanName(m[1])), quantity: null, unit: "pièce", containerLabel: null, vagueQuantity: true };
+  m = text.match(AR_QTY_FIRST_RE);
+  if (m && (m[1] || m[3])) {
+    const r = build(m[5], m[1], m[2], m[3], m[4]);
+    if (r) return r;
+  }
+  m = text.match(AR_QTY_LAST_RE);
+  if (m) {
+    const r = build(m[1], m[2], m[3], m[4], m[5]);
+    if (r) return r;
+  }
+  m = text.match(AR_QTY_MID_RE);
+  if (m && ARABIC_CHAR_RE.test(m[6])) {
+    const r = build(m[1], m[2], m[3], m[4], m[5], m[6]);
+    if (r) return r;
+  }
+  // « بيضة واحدة » : nom puis « une ».
+  m = text.match(new RegExp("^(.+?)\\s+(?:" + arabicPattern("واحدة|واحد") + ")\\s*$"));
+  if (m && ARABIC_CHAR_RE.test(m[1])) return { name: withNote(cleanName(m[1])), quantity: 1, unit: "pièce", containerLabel: null };
+  return null;
+}
+
 function parseIngredientStringInner(str, fromReversedOrder) {
   let text = String(str || "").trim();
   text = normalizeUnicodeFractions(text);
   if (CJK_CHAR_RE.test(text)) {
     const zh = parseChineseIngredientString(text);
     if (zh) return zh;
+  }
+  if (ARABIC_CHAR_RE.test(text)) {
+    text = normalizeArabicText(text);
+    const ar = parseArabicIngredientString(text);
+    if (ar) return ar;
   }
   // "(s)" est un simple marqueur de pluriel optionnel sur certaines
   // fiches (HelloFresh notamment : "sachet(s)", "boîte(s)") — ne porte
@@ -11943,6 +12064,65 @@ function parseIsoDurationToMinutes(duration) {
    fiable qu'un import par lien (pas de données structurées), donc la
    relecture avant enregistrement est essentielle.
    ====================================================================== */
+// ---- Arabe ----
+// Lettres arabes — repère un texte à analyser avec les règles arabes.
+const ARABIC_CHAR_RE = /[\u0621-\u064a]/;
+// Motif tolérant les voyelles brèves, la chadda et le tatouil entre les
+// lettres (« المكوّنات » = « المكونات ») et les variantes d'alif à hamza.
+function arabicPattern(words) {
+  return words.split("|").map((w) => [...w].map((ch) => {
+    if (ch === " ") return "\\s+";
+    const letter = /[اأإآ]/.test(ch) ? "[اأإآ]" : ch === "ي" || ch === "ى" ? "[يى]" : ch === "ة" || ch === "ه" ? "[ةه]" : ch;
+    return /[\u0621-\u064a]/.test(ch) ? letter + "[\\u064b-\\u0652\\u0640]*" : ch;
+  }).join("")).join("|");
+}
+// Chiffres arabo-indiens (« ٢٠٠ ») et persans convertis en chiffres
+// occidentaux, virgule décimale arabe « ٫ » en point, séparateur de
+// milliers « ٬ » retiré ; marques invisibles de sens (LRM, RLM, ALM)
+// que Tesseract ajoute en arabe retirées ; tatouil (« لـ ») retiré.
+function normalizeArabicText(text) {
+  if (!text || !/[\u0600-\u06ff\u200e\u200f]/.test(text)) return text;
+  return text
+    .replace(/[\u200e\u200f\u061c]/g, "")
+    .replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+    .replace(/[\u06f0-\u06f9]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
+    .replace(/(\d)\u066b(?=\d)/g, "$1.").replace(/(\d)\u066c(?=\d)/g, "$1").replace(/\u066a/g, "%")
+    .replace(/\u0640/g, "");
+}
+const AR_PERSONS_WORDS = arabicPattern("أشخاص|شخص|أفراد|فرد|حصص|حصة|أطباق|طبق");
+const AR_PERSONS_RE = new RegExp("(\\d+)\\s*(?:-\\s*\\d+\\s*)?(?:" + AR_PERSONS_WORDS + ")");
+const AR_INGREDIENT_TITLES = arabicPattern("المكونات|مكونات|المقادير|مقادير|المواد|مكونات الوصفة|مقادير الوصفة");
+const AR_INSTRUCTION_TITLES = arabicPattern("طريقة التحضير|طريقة تحضير|طريقة عمل|طريقة العمل|طريقة الطبخ|طريقة الإعداد|طريقة التنفيذ|طريقة التقديم|خطوات التحضير|خطوات العمل|الخطوات|التحضير|الطريقة|التعليمات|التحضير والطهي");
+const AR_BOUNDARY_TITLES = arabicPattern("الأدوات|الأدوات المطلوبة|الأواني|القيمة الغذائية|القيم الغذائية|المعلومات الغذائية|مسببات الحساسية|الحساسية|نصائح|ملاحظات|ملاحظة");
+// Titre arabe seul sur sa ligne (deux-points, nombre de personnes entre
+// parenthèses ou « لـ 4 أشخاص » tolérés) : « التحضير: 15 دقيقة » est une
+// durée, pas un titre.
+const AR_TITLE_TAIL = "\\s*(?:[:：]\\s*)?(?:[(（][^()（）]{0,30}[)）]|(?:ل|لـ)?\\s*\\d+\\s*(?:" + AR_PERSONS_WORDS + "))?\\s*[:：]?\\s*$";
+// Titre suivi du nom du plat, sans chiffre (« مقادير طريقة عمل الشكشوكة »,
+// « المقادير لعمل الشكشوكة : », « طريقة التحضير لعمل الشكشوكة : »).
+const AR_TITLE_DISH_TAIL = "(?:\\s+[^\\d.!؟?:：()（）]{1,50}?)?\\s*[:：]?\\s*$";
+const AR_INGREDIENT_TITLE_RE = new RegExp("^[\\s•*\\-]*(?:" + AR_INGREDIENT_TITLES + ")(?:" + AR_TITLE_TAIL + "|" + AR_TITLE_DISH_TAIL + ")");
+const AR_INSTRUCTION_TITLE_RE = new RegExp("^[\\s•*\\-]*(?:" + AR_INSTRUCTION_TITLES + ")(?:" + AR_TITLE_TAIL + "|" + AR_TITLE_DISH_TAIL + ")");
+const AR_BOUNDARY_TITLE_RE = new RegExp("^[\\s•*\\-]*(?:" + AR_BOUNDARY_TITLES + ")\\s*[:：]?");
+// Sous-titres d'une liste d'ingrédients arabe (« للصلصة: », « للعجينة: »,
+// « مكونات الحشوة: ») : ni des ingrédients, ni une fin de liste.
+const AR_INGREDIENT_SUBHEADING = /^[\s•*\-]*(?:لل?[\u0621-\u064a\u064b-\u0652]+(?:\s+[\u0621-\u064a\u064b-\u0652]+)?|(?:مكونات|مقادير|المكونات|المقادير)\s+[^:：]{1,25})\s*[:：]\s*$/;
+// Durée arabe : « 15 دقيقة », « ساعة », « ساعتان », « 1 ساعة و 30 دقيقة »,
+// « نصف ساعة ».
+const AR_DURATION = "((?:نصف|ربع)\\s+ساعة|ساعت(?:ان|ين)(?:\\s*(?:و\\s*)?\\d+\\s*(?:دقيقة|دقائق|د))?|(?:\\d+\\s*)?(?:ساعات|ساعة|س(?![\\u0621-\\u064a]))(?:\\s*(?:و\\s*)?\\d+\\s*(?:دقيقة|دقائق|د))?|\\d+\\s*(?:دقيقة|دقائق|د(?![\\u0621-\\u064a])|min))";
+// Lignes d'une liste d'ingrédients arabe qui n'en sont pas : durée seule
+// (« ٤ دقائق »), nombre de personnes seul (« شخصين », « 4 أشخاص »),
+// boutons d'un site (« تم الحفظ », « احفظ الوصفة »).
+const AR_PERSONS_DUAL_RE = /(?:^|\s|ل)(?:شخصين|شخصان|فردين|فردان)(?:\s|$)/;
+const AR_NON_INGREDIENT_LINE_RE = new RegExp("^(?:" + AR_DURATION + "|(?:لـ?\\s*)?\\d+\\s*(?:" + AR_PERSONS_WORDS + ")|(?:لـ?\\s*)?(?:شخصين|شخصان|فردين|فردان)|تم الحفظ|احفظ الوصفة.*|اطبع الوصفة|شارك(?:ي)? الوصفة)\\s*$");
+// Mots arabes courants des mentions d'allergènes, en plus du libellé
+// traduit de l'application.
+const AR_ALLERGEN_WORDS = {
+  Gluten: ["قمح", "غلوتين", "جلوتين"], Lactose: ["حليب", "لاكتوز", "ألبان", "منتجات الألبان"], "Œufs": ["بيض"],
+  Arachides: ["فول سوداني", "فستق العبيد"], "Fruits à coque": ["مكسرات", "جوز", "لوز", "بندق"], Soja: ["صويا"], Poisson: ["سمك", "أسماك"],
+  "Crustacés": ["قشريات", "روبيان", "جمبري", "قريدس"], "Sésame": ["سمسم"], "Céleri": ["كرفس"], Moutarde: ["خردل", "مستردة"],
+  Sulfites: ["كبريتيت", "كبريتات"], Lupin: ["ترمس"], Mollusques: ["رخويات", "محار"],
+};
 // Symboles parasites que l'OCR ajoute parfois avant un vrai titre de
 // section ("= Ingrédients", "« Préparation", "• Étapes"...) — tolérés
 // en petit nombre avant le mot-clé, sans quoi la ponctuation à elle
@@ -11960,6 +12140,8 @@ function matchesIngredientTitle(line) {
   // Chinois : le titre en tête de ligne courte (« 材料 », « 用料（2人份） ») —
   // pas n'importe où, sinon une étape « 把材料准备好 » deviendrait le titre.
   if (CJK_CHAR_RE.test(trimmed)) return OCR_INGREDIENT_MARKER.test(trimmed) && trimmed.replace(/\s+/g, "").length <= 15;
+  // Arabe : titre seul sur sa ligne (« المقادير », « المكونات (لـ 4 أشخاص) »).
+  if (ARABIC_CHAR_RE.test(trimmed)) return AR_INGREDIENT_TITLE_RE.test(normalizeArabicText(trimmed));
   if (trimmed.length > 50) return false;
   const words = trimmed.split(/\s+/).filter(Boolean);
   // Une vraie phrase d'étape mentionnant le mot au milieu ("Mélanger
@@ -11982,13 +12164,13 @@ const OCR_ZH_INGREDIENT_TITLES = "材料|食材|用料|原料|主料|配料";
 // « 番茄炒蛋的做法 », « 蒸腊鱼的做法步骤 » : titre de section des sites
 // chinois, nom du plat devant.
 const OCR_ZH_INSTRUCTION_TITLES = "做法|步骤|制作方法|制作步骤|烹饪步骤|操作步骤|烹饪方法|[^。！？]{1,40}的(?:家常)?做法(?:步骤)?[：:]?\\s*$";
-const OCR_INGREDIENT_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(ingr[ée]dients?|ingredients|ingredientes|zutaten)\\b|" + OCR_ZH_INGREDIENT_TITLES + ")", "i");
-const OCR_INSTRUCTION_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(pr[ée]paration|description|recette|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\\b|" + OCR_ZH_INSTRUCTION_TITLES + ")", "i");
+const OCR_INGREDIENT_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(ingr[ée]dients?|ingredients|ingredientes|zutaten)\\b|" + OCR_ZH_INGREDIENT_TITLES + "|(?:" + AR_INGREDIENT_TITLES + ")(?:" + AR_TITLE_TAIL + "|" + AR_TITLE_DISH_TAIL + "))", "i");
+const OCR_INSTRUCTION_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(pr[ée]paration|description|recette|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung)\\b|" + OCR_ZH_INSTRUCTION_TITLES + "|(?:" + AR_INSTRUCTION_TITLES + ")(?:" + AR_TITLE_TAIL + "|" + AR_TITLE_DISH_TAIL + "))", "i");
 // Toute section qui doit arrêter la liste des ingrédients, pas
 // seulement celle des étapes — "Ustensiles" par exemple, très courant
 // juste après les ingrédients et avant la vraie section de
 // préparation sur beaucoup de sites.
-const OCR_SECTION_BOUNDARY_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(pr[ée]paration|description|recette|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensi[lt]es?|utensils?|mat[ée]riel|equipment|nutrition\\s+estim[ée]e|valeurs?\\s+nutritionnelles?|nutritional\\s+values?|valores?\\s+nutricionales?|n[äa]hrwerte?|allerg[èeé]nes?|allergens?|al[ée]rgenos?|par\\s+portion|per\\s+serving|pour\\s+100\\s*g|per\\s+100\\s*g|conserver\\s+au\\s+r[ée]frig[ée]rateur|[ée]nergie|energy|kj\\s*\\/?\\s*kcal)\\b|" + OCR_ZH_INSTRUCTION_TITLES + "|厨具|工具|器具|营养成分|营养信息|营养价值|过敏原|小贴士|贴士|小窍门)", "i");
+const OCR_SECTION_BOUNDARY_MARKER = new RegExp("^" + OCR_LEADING_NOISE + "(?:(pr[ée]paration|description|recette|[ée]tapes?(?:\\s*#?\\s*\\d+)?|instructions?|method|steps|elaboraci[oó]n|preparaci[oó]n|zubereitung|anleitung|ustensi[lt]es?|utensils?|mat[ée]riel|equipment|nutrition\\s+estim[ée]e|valeurs?\\s+nutritionnelles?|nutritional\\s+values?|valores?\\s+nutricionales?|n[äa]hrwerte?|allerg[èeé]nes?|allergens?|al[ée]rgenos?|par\\s+portion|per\\s+serving|pour\\s+100\\s*g|per\\s+100\\s*g|conserver\\s+au\\s+r[ée]frig[ée]rateur|[ée]nergie|energy|kj\\s*\\/?\\s*kcal)\\b|" + OCR_ZH_INSTRUCTION_TITLES + "|厨具|工具|器具|营养成分|营养信息|营养价值|过敏原|小贴士|贴士|小窍门|(?:" + AR_INSTRUCTION_TITLES + ")(?:" + AR_TITLE_TAIL + "|" + AR_TITLE_DISH_TAIL + ")|(?:" + AR_BOUNDARY_TITLES + ")\\s*(?:[:：]|$))", "i");
 // Nombre de personnes indiqué juste après le mot-clé "Ingrédients" sur
 // la même ligne (ex. "Ingrédients pour 2 personnes", très courant sur
 // les fiches HelloFresh) — extrait avant de retirer la ligne, pour ne
@@ -12013,14 +12195,14 @@ function collapseCjkSpaces(text) {
   if (!text || !CJK_CHAR_RE.test(text)) return text;
   return text.replace(/([\u3000-\u303f\u3400-\u9fff\uf900-\ufaff\uff00-\uffef])[ \t]+(?=[\u3000-\u303f\u3400-\u9fff\uf900-\ufaff\uff00-\uffef])/g, "$1");
 }
-const OCR_PERSONS_IN_TITLE = /\b(\d+)\s*(?:(?:personnes?|people|persons?|personas?|personen)\b|人份)/i;
+const OCR_PERSONS_IN_TITLE = new RegExp("\\b(\\d+)\\s*(?:(?:personnes?|people|persons?|personas?|personen)\\b|人份|" + AR_PERSONS_WORDS + ")", "i");
 // Marque la fin du vrai contenu de la recette : au-delà, ce n'est
 // presque toujours plus que des avis, des recettes similaires ou de
 // la navigation — sans ça, la description engloberait toute la fin
 // de la page. Liste élargie après avoir constaté des sections encore
 // non couvertes (ex. "Qu'est-ce qu'on mange ce soir ?", propre à
 // Marmiton mais représentative du genre de contenu à exclure).
-const OCR_DESCRIPTION_END_MARKER = /^(\([A-Za-z]\)\s*)?(anonyme|anonymous|commentaires?|comments?|avis|reviews?|vous aimerez aussi|you (may|might) also like|related recipes?|plus de recettes|ces contenus devraient vous int[ée]resser|note de l['’]auteur|donnez votre avis|qu['’]est-ce qu['’]on mange|découvrir aussi|à découvrir|on vous propose|d[ée]couvrez aussi|dans la m[êe]me cat[ée]gorie|recettes similaires|similar recipes?|nos coups de coeur|publicit[ée]|advertisement|partager cette recette|share this recipe|imprimer|print recipe|newsletter)\b|^.{0,20}capture\s*d.{0,2}[ée]cran|^(?:评论|网友评论|相关食谱|相关菜谱|相关推荐|猜你喜欢|推荐食谱|你可能还喜欢|本菜谱为作者|分类[：:])/i;
+const OCR_DESCRIPTION_END_MARKER = /^(\([A-Za-z]\)\s*)?(anonyme|anonymous|commentaires?|comments?|avis|reviews?|vous aimerez aussi|you (may|might) also like|related recipes?|plus de recettes|ces contenus devraient vous int[ée]resser|note de l['’]auteur|donnez votre avis|qu['’]est-ce qu['’]on mange|découvrir aussi|à découvrir|on vous propose|d[ée]couvrez aussi|dans la m[êe]me cat[ée]gorie|recettes similaires|similar recipes?|nos coups de coeur|publicit[ée]|advertisement|partager cette recette|share this recipe|imprimer|print recipe|newsletter)\b|^.{0,20}capture\s*d.{0,2}[ée]cran|^(?:评论|网友评论|相关食谱|相关菜谱|相关推荐|猜你喜欢|推荐食谱|你可能还喜欢|本菜谱为作者|分类[：:])|^(?:التعليقات|تعليقات|تم الحفظ|احفظ الوصفة|أضف كوكسناب|كوكسنابس|وصفات مشابهة|وصفات ذات صلة|وصفات أخرى|قد يعجبك أيضا|قد يعجبك أيضًا|قد يعجبك ايضا|شارك الوصفة|شاركي الوصفة|اطبع الوصفة|طباعة الوصفة)/i;
 // Mots chinois courants des mentions d'allergènes (« 过敏原：鸡蛋、牛奶 »),
 // en plus du libellé traduit de l'application (« 蛋类 », « 乳糖 »…).
 const ZH_ALLERGEN_WORDS = {
@@ -12062,7 +12244,7 @@ function expandInlineChineseIngredientLists(lines) {
   return out;
 }
 function parseOcrRecipeText(rawText) {
-  const lines = expandInlineChineseIngredientLists((rawText || "").split("\n").map((l) => l.trim()).filter(Boolean));
+  const lines = expandInlineChineseIngredientLists((rawText || "").split("\n").map((l) => normalizeArabicText(l).trim()).filter(Boolean));
   if (!lines.length) return { name: "", ingredients: [], description: "", prepTime: null, cookTime: null };
 
   const ingredientMarker = OCR_INGREDIENT_MARKER;
@@ -12100,11 +12282,15 @@ function parseOcrRecipeText(rawText) {
   const nextLine = lines[nameIdx + 1];
   // Pas de fusion d'un sous-titre pour un titre chinois : rarement coupé,
   // et la ligne suivante d'une page web est souvent du menu (« 登录 »).
-  if (nextLine && nextLine.length <= 60 && !CJK_CHAR_RE.test(name)
+  // Arabe : de même, la ligne suivante d'une page est souvent l'auteur
+  // (« بواسطة: … », « حليمة @looloo »).
+  if (nextLine && nextLine.length <= 60 && !CJK_CHAR_RE.test(name) && !ARABIC_CHAR_RE.test(name)
     && !/[àa]\s+table\s+dans|pr[eé]paration\s*:|prep(?:aration)?\s*time|cuisson\s*:|cook\s*time|(?:ready|total\s+time)/i.test(nextLine)
-    && !/\d+\s*(personnes?|people|persons?|personas?|personen|人份)/i.test(nextLine)
+    && !/\d+\s*(personnes?|people|persons?|personas?|personen|人份)/i.test(nextLine) && !AR_PERSONS_RE.test(nextLine)
     // Ligne d'informations chinoise (« 准备时间：10分钟 », « 难度：简单 »).
     && !/时间|分钟|小时|难度|份量|分量|人数/.test(nextLine)
+    // Ligne d'informations arabe (« وقت التحضير: 15 دقيقة », « 4 أشخاص »).
+    && !/وقت|مدة|دقيقة|دقائق|ساعة|الصعوبة|السهولة|أشخاص|اشخاص|حصص|حصة|تكفي|يكفي/.test(nextLine)
     && !matchesIngredientTitle(nextLine)
     && !instructionMarker.test(nextLine)
     // Même titre répété (titre de page puis titre de la fiche), ou
@@ -12164,7 +12350,7 @@ function parseOcrRecipeText(rawText) {
       // Repère de compteur "- personnes +" (choix du nombre de
       // personnes sur la page), pas un ingrédient.
       .filter((l) => !/^(pour\s+|for\s+)?\d*\s*(personnes?|people|persons?|personas?|personen)\s*[+\-]?$/i.test(l))
-      .filter((l) => !OCR_ZH_INGREDIENT_SUBHEADING.test(l) && !OCR_ZH_RECIPE_META_LINE.test(l));
+      .filter((l) => !OCR_ZH_INGREDIENT_SUBHEADING.test(l) && !OCR_ZH_RECIPE_META_LINE.test(l) && !AR_INGREDIENT_SUBHEADING.test(l) && !AR_NON_INGREDIENT_LINE_RE.test(l));
   }
   if (instrIdx >= 0) {
     const descEndIdx = lines.findIndex((l, i) => i > instrIdx && descriptionEndMarker.test(l));
@@ -12199,7 +12385,11 @@ function parseOcrRecipeText(rawText) {
     const personsMatch = line.match(/\b(\d+)(?:[.,]\d+)?\s*(?:personnes?|convives?|parts?|servings?|portions?|personas?|raciones?|personen|portionen)\b/i)
       // Chinois : « 2人份 », « 2-3人份 », « 份量：4人 » (pas de \b après un caractère chinois).
       || line.match(/\b(\d+)\s*(?:[-~～至到]\s*\d+\s*)?人份/)
-      || line.match(/(?:份量|分量|人数|用餐人数)\s*[：:]\s*(\d+)/);
+      || line.match(/(?:份量|分量|人数|用餐人数)\s*[：:]\s*(\d+)/)
+      // Arabe : « 4 أشخاص », « لـ 4 أشخاص », « عدد الحصص: 4 », « يكفي 6 ».
+      || line.match(AR_PERSONS_RE)
+      || (AR_PERSONS_DUAL_RE.test(line) ? [line, "2"] : null)
+      || line.match(/(?:عدد\s+(?:الحصص|الأشخاص|الاشخاص|الأفراد|الافراد)|يكفي|تكفي|الحصص|المقدار)\s*[:：]?\s*(?:لـ?\s*)?(\d+)/);
     if (personsMatch) persons = Math.max(1, parseInt(personsMatch[1], 10));
   });
 
@@ -12211,7 +12401,11 @@ function parseOcrRecipeText(rawText) {
   function parseTimeExpression(str) {
     if (!str) return null;
     // Chinois : « 1小时30分钟 », « 半小时 », « 10分钟 ».
-    const s = str.trim().replace(/^半\s*(?:个)?\s*小[时時]/, "30").replace(/(\d)\s*(?:个)?\s*小[时時]/g, "$1h").replace(/分[钟鐘]?/g, "min");
+    const s = str.trim().replace(/^半\s*(?:个)?\s*小[时時]/, "30").replace(/(\d)\s*(?:个)?\s*小[时時]/g, "$1h").replace(/分[钟鐘]?/g, "min")
+      // Arabe : « نصف ساعة », « ساعتان », « 1 ساعة و 30 دقيقة », « ساعة ».
+      .replace(/^نصف\s+ساعة/, "30").replace(/^ربع\s+ساعة/, "15")
+      .replace(/ساعت(?:ان|ين)/, "2h").replace(/(\d)\s*(?:ساعات|ساعة|س)(?![\u0621-\u064a])/g, "$1h").replace(/^(?:ساعة|س)(?![\u0621-\u064a])/, "1h")
+      .replace(/h\s*و\s*/, "h").replace(/\s*(?:دقيقة|دقائق|د)(?![\u0621-\u064a])/g, "min");
     const hourMinMatch = s.match(/(\d+)\s*h\s*(\d+)/i);
     if (hourMinMatch) return parseInt(hourMinMatch[1], 10) * 60 + parseInt(hourMinMatch[2], 10);
     const hourOnlyMatch = s.match(/(\d+)\s*h\b/i);
@@ -12227,16 +12421,17 @@ function parseOcrRecipeText(rawText) {
   // une correspondance exacte du libellé complet.
   const allergens = [];
   const allergensLineMatch = lines.find((l) => {
-    const m = l.match(/allerg[èeé]nes?\s*:|过敏原\s*[：:]/i);
+    const m = l.match(/allerg[èeé]nes?\s*:|过敏原\s*[：:]|(?:مسببات\s+)?الحساسية\s*[:：]/i);
     return !!m && m.index <= 10;
   });
   if (allergensLineMatch) {
     const afterColon = allergensLineMatch.replace(/^[^:：]*[:：]\s*/, "");
-    afterColon.split(/[,;，；、]/).map((s) => s.trim()).filter(Boolean).forEach((token) => {
+    // « ، » parfois lu « . » par l'OCR arabe : point suivi d'une espace aussi.
+    afterColon.split(/[,;，；、،؛]|\.\s+|\s+و(?=[\u0621-\u064a])/).map((s) => s.trim()).filter(Boolean).forEach((token) => {
       const normToken = normalize(token);
       // Comparé aussi au nom traduit de l'allergène (« 鸡蛋 » en chinois),
       // pas seulement au libellé français.
-      const match = ALLERGEN_OPTIONS.find((opt) => [opt, translateAllergen(opt), ...(ZH_ALLERGEN_WORDS[opt] || [])].some((label) => {
+      const match = ALLERGEN_OPTIONS.find((opt) => [opt, translateAllergen(opt), ...(ZH_ALLERGEN_WORDS[opt] || []), ...(AR_ALLERGEN_WORDS[opt] || [])].some((label) => {
         const normOpt = normalize(label);
         return normToken.includes(normOpt) || normOpt.includes(normToken);
       }));
@@ -12264,10 +12459,12 @@ function parseOcrRecipeText(rawText) {
       // Chinois : « 准备时间：10分钟 », « 烹饪时间：5分钟 » — souvent sur la
       // même ligne, d'où la valeur limitée à la durée elle-même.
       const prepMatch = line.match(/pr[eé]paration\s*:\s*([^\n]+)/i) || line.match(/prep(?:aration)?\s*time\s*:\s*([^\n]+)/i)
-        || line.match(new RegExp("(?:准备|备料)(?:时间)?\\s*[：:]\\s*" + ZH_DURATION));
+        || line.match(new RegExp("(?:准备|备料)(?:时间)?\\s*[：:]\\s*" + ZH_DURATION))
+        || line.match(new RegExp("(?:(?:وقت|مدة|زمن)\\s+)?(?:التحضير|الإعداد|الاعداد|التجهيز)\\s*[:：]?\\s*" + AR_DURATION));
       if (prepMatch) { const t = parseTimeExpression(prepMatch[1]); if (t != null) prepTime = t; }
       const cookMatch = line.match(/cuisson\s*:\s*([^\n]+)/i) || line.match(/cook\s*time\s*:\s*([^\n]+)/i)
-        || line.match(new RegExp("(?:烹饪|烹调|烹煮|制作)(?:时间)?\\s*[：:]\\s*" + ZH_DURATION));
+        || line.match(new RegExp("(?:烹饪|烹调|烹煮|制作)(?:时间)?\\s*[：:]\\s*" + ZH_DURATION))
+        || line.match(new RegExp("(?:(?:وقت|مدة|زمن)\\s+)?(?:الطهي|الطهو|الطبخ|الخبز|الشوي)\\s*[:：]?\\s*" + AR_DURATION));
       if (cookMatch) { const t = parseTimeExpression(cookMatch[1]); if (t != null) cookTime = t; }
     }
     // Badge de préparation autonome au format "15 min de prépa" (nombre
@@ -12288,7 +12485,8 @@ function parseOcrRecipeText(rawText) {
     // section de préparation.
     if (prepTime == null && cookTime == null) {
       const totalMatch = line.match(/[àa]\s+table\s+dans\s*:?\s*([^\n]+)/i) || line.match(/(?:ready|total\s+time)\s*:?\s*(?:in\s*)?([^\n]+)/i)
-        || line.match(new RegExp("(?:总时间|总用时|用时|耗时)\\s*[：:]?\\s*" + ZH_DURATION));
+        || line.match(new RegExp("(?:总时间|总用时|用时|耗时)\\s*[：:]?\\s*" + ZH_DURATION))
+        || line.match(new RegExp("(?:الوقت\\s+(?:الإجمالي|الاجمالي|الكلي)|المدة\\s+(?:الإجمالية|الاجمالية|الكلية)|إجمالي\\s+الوقت|اجمالي\\s+الوقت)\\s*[:：]?\\s*" + AR_DURATION));
       if (totalMatch) { const t = parseTimeExpression(totalMatch[1]); if (t != null) prepTime = t; }
       // Durée isolée sans préfixe explicite (ex. Marmiton : "6h10 •
       // Facile • Assez cher") — reconnue seulement sur une ligne
@@ -12324,7 +12522,7 @@ function loadTesseractLib() {
 }
 const TESSERACT_LANG_MAP = {
   fr: "fra", en: "eng", es: "spa", de: "deu",
-  id: "ind", pt: "por", it: "ita", sv: "swe", no: "nor", zh: "chi_sim",
+  id: "ind", pt: "por", it: "ita", sv: "swe", no: "nor", zh: "chi_sim", ar: "ara",
 };
 
 // Vrai si le modèle de langue Tesseract nécessaire (plusieurs Mo) est
@@ -12414,6 +12612,7 @@ async function terminateSharedTesseractWorker() {
     await w.terminate();
   }
   await terminateSharedOsdWorker();
+  await terminateDigitsTesseractWorker();
 }
 
 // Worker Tesseract séparé, dédié à la détection d'orientation (OSD —
@@ -12506,6 +12705,83 @@ async function detectAndCorrectOrientation(input) {
   return input;
 }
 
+// Arabe : le modèle Tesseract « ara » perd les premiers chiffres d'un
+// nombre placé en tête de ligne (donc à droite) — « 200 غرام » lu
+// « 0 غرام », « 12 حبة » lu « 2 حبة » (constaté avec plusieurs polices ;
+// au milieu d'une ligne, le même nombre est bien lu). Ces lignes-là
+// seulement sont relues avec un modèle latin léger (eng, palier
+// best_int, 2,9 Mo, dossier lang-digits : téléchargé au premier besoin
+// puis mis en cache), et le nombre remplacé seulement si la relecture se
+// termine par les chiffres déjà lus (« 0 » -> « 200 », « 2 » -> « 1/2 »).
+// Chiffres arabo-indiens (« ٢٠٠ ») non rattrapés : le modèle latin ne
+// les lit pas.
+let digitsTesseractWorkerPromise = null;
+function getDigitsTesseractWorker() {
+  if (!digitsTesseractWorkerPromise) {
+    digitsTesseractWorkerPromise = (async () => {
+      await loadTesseractLib();
+      const worker = await window.Tesseract.createWorker("eng", 1, {
+        workerPath: "./lib/tesseract/worker.min.js",
+        corePath: "./lib/tesseract/core",
+        langPath: "./lib/tesseract/lang-digits",
+        // Clé de cache distincte : ne pas mélanger avec le modèle anglais
+        // complet de lib/tesseract/lang (interface en anglais).
+        cachePath: "lang-digits",
+      });
+      // Une seule ligne par image.
+      await worker.setParameters({ tessedit_pageseg_mode: "7" });
+      return worker;
+    })().catch((e) => { digitsTesseractWorkerPromise = null; throw e; });
+  }
+  return digitsTesseractWorkerPromise;
+}
+async function terminateDigitsTesseractWorker() {
+  if (!digitsTesseractWorkerPromise) return;
+  const p = digitsTesseractWorkerPromise;
+  digitsTesseractWorkerPromise = null;
+  try { await (await p).terminate(); } catch (e) { /* déjà arrêté ou jamais démarré */ }
+}
+async function repairArabicLeadingNumbers(data, input) {
+  const lines = [];
+  (data.blocks || []).forEach((b) => (b.paragraphs || []).forEach((p) => (p.lines || []).forEach((l) => {
+    const text = normalizeArabicText(l.text || "").trim();
+    if (/^\d/.test(text) && ARABIC_CHAR_RE.test(text) && l.bbox) lines.push(l);
+  })));
+  if (!lines.length) return;
+  let worker, source;
+  try {
+    worker = await getDigitsTesseractWorker();
+    source = typeof HTMLCanvasElement !== "undefined" && input instanceof HTMLCanvasElement ? input : await createImageBitmap(input);
+  } catch (e) {
+    return; // hors connexion avant le premier téléchargement : texte gardé tel quel
+  }
+  for (const line of lines) {
+    const pad = 6;
+    const x0 = Math.max(0, line.bbox.x0 - pad), y0 = Math.max(0, line.bbox.y0 - pad);
+    const w = Math.min(source.width, line.bbox.x1 + pad) - x0, h = Math.min(source.height, line.bbox.y1 + pad) - y0;
+    if (w <= 0 || h <= 0) continue;
+    const crop = document.createElement("canvas");
+    crop.width = w; crop.height = h;
+    crop.getContext("2d").drawImage(source, x0, y0, w, h, 0, 0, w, h);
+    let words = [];
+    try {
+      words = ((await worker.recognize(crop, {}, { blocks: true })).data.blocks || [])
+        .flatMap((b) => b.paragraphs || []).flatMap((p) => p.lines || []).flatMap((l) => l.words || []);
+    } catch (e) { continue; }
+    // Nombre le plus à droite = premier nombre de la ligne arabe.
+    const num = words.map((x) => ({ x, t: x.text.replace(/[^\d./,]+$/, "").replace(/^[^\d]+/, "") }))
+      .filter((c) => /^\d+(?:[.,/]\d+)?$/.test(c.t) && c.x.confidence >= 60)
+      .sort((a, b) => b.x.bbox.x1 - a.x.bbox.x1)[0];
+    const lineText = normalizeArabicText(line.text);
+    const lead = (lineText.trim().match(/^\d+(?:[.,/]\d+)?/) || [""])[0];
+    if (!num || num.t === lead || !num.t.replace(/,/g, ".").endsWith(lead.replace(/,/g, "."))) continue;
+    const fixed = lineText.replace(lead, num.t);
+    data.text = String(data.text).replace(line.text, fixed.endsWith("\n") ? fixed : fixed + (line.text.endsWith("\n") ? "\n" : ""));
+    const first = (line.words || []).slice().sort((a, b) => b.bbox.x1 - a.bbox.x1)[0];
+    if (first && normalizeArabicText(first.text).trim() === lead) first.text = num.t;
+    line.text = fixed;
+  }
+}
 async function runOcrOnImage(file) {
   const worker = await getSharedTesseractWorker();
   // Redimensionne avant reconnaissance — une photo de smartphone moderne
@@ -12525,6 +12801,7 @@ async function runOcrOnImage(file) {
   // aux versions précédentes ; sans cette option, reconstructTextFromBlocks
   // ci-dessous n'aurait aucune donnée à exploiter.
   const { data } = await worker.recognize(input, {}, { blocks: true });
+  if (sharedTesseractWorkerLang === "ara") await repairArabicLeadingNumbers(data, input);
   // Ne remplace JAMAIS le texte brut par le texte reconstruit — les
   // deux sont conservés séparément. La reconstruction dépend des
   // coordonnées produites par Tesseract, qui peuvent segmenter
@@ -12567,7 +12844,10 @@ async function runOcrOnImage(file) {
   // analyse complémentaire alors que rawText/layoutText/gridText ont
   // déjà été corrigés ici.
   // collapseCjkSpaces : sans effet sur un texte sans caractère chinois.
-  return { rawText: collapseCjkSpaces(data.text), layoutText: collapseCjkSpaces(reconstructTextFromBlocks(data) || data.text), gridText: collapseCjkSpaces(gridText), tableText: collapseCjkSpaces(reconstructTableRowsFromBlocks(data)), correctedImage: input };
+  // normalizeArabicText : chiffres arabo-indiens et marques invisibles ;
+  // sans effet sur un texte sans arabe.
+  const clean = (t) => normalizeArabicText(collapseCjkSpaces(t));
+  return { rawText: clean(data.text), layoutText: clean(reconstructTextFromBlocks(data) || data.text), gridText: clean(gridText), tableText: clean(reconstructTableRowsFromBlocks(data)), correctedImage: input };
 }
 
 // OCR dédié à une photo de date de péremption (garde-manger) — un
@@ -12582,7 +12862,7 @@ async function runExpirationDateOcr(file) {
   const worker = await getSharedTesseractWorker();
   const input = await detectAndCorrectOrientation(await resizeImageForOcr(file));
   const { data } = await worker.recognize(input);
-  return collapseCjkSpaces(data.text);
+  return normalizeArabicText(collapseCjkSpaces(data.text));
 }
 
 // Mots-clés indiquant qu'une date à proximité immédiate est probablement
@@ -12730,7 +13010,7 @@ async function runGridCellOcr(worker, input, numColumns) {
         cellCanvas.height = y1 - y0;
         cellCanvas.getContext("2d").drawImage(srcCanvas, x0, y0, x1 - x0, y1 - y0, 0, 0, x1 - x0, y1 - y0);
         const cellResult = await worker.recognize(cellCanvas);
-        const cellText = collapseCjkSpaces(cellResult.data.text).trim();
+        const cellText = normalizeArabicText(collapseCjkSpaces(cellResult.data.text)).trim();
         if (cellText) cellTexts.push(cellText);
       }
     }
@@ -12779,7 +13059,7 @@ async function runTwoColumnIngredientOcr(worker, input) {
     rightCanvas.getContext("2d").drawImage(srcCanvas, midX - margin, 0, imgWidth - midX + margin, imgHeight, 0, 0, imgWidth - midX + margin, imgHeight);
     const rightResult = await worker.recognize(rightCanvas);
 
-    return { leftText: collapseCjkSpaces(leftResult.data.text), rightText: collapseCjkSpaces(rightResult.data.text) };
+    return { leftText: normalizeArabicText(collapseCjkSpaces(leftResult.data.text)), rightText: normalizeArabicText(collapseCjkSpaces(rightResult.data.text)) };
   } catch (e) {
     return null;
   }
@@ -13052,16 +13332,19 @@ function reconstructTextFromBlocks(data) {
   data.blocks.forEach((block) => {
     (block.paragraphs || []).forEach((para) => {
       (para.lines || []).forEach((line) => {
-        const words = (line.words || []).slice().sort((a, b) => a.bbox.x0 - b.bbox.x0);
+        // Ligne arabe : lue de droite à gauche (mots triés par leur bord
+        // droit, du plus à droite au plus à gauche).
+        const rtl = ARABIC_CHAR_RE.test(line.text || "");
+        const words = (line.words || []).slice().sort((a, b) => (rtl ? b.bbox.x1 - a.bbox.x1 : a.bbox.x0 - b.bbox.x0));
         if (!words.length) return;
         const bigGapIndices = [];
         for (let i = 1; i < words.length; i++) {
-          const gap = words[i].bbox.x0 - words[i - 1].bbox.x1;
+          const gap = rtl ? words[i - 1].bbox.x0 - words[i].bbox.x1 : words[i].bbox.x0 - words[i - 1].bbox.x1;
           if (gap > bigGapThreshold) bigGapIndices.push(i);
         }
         const cut = bigGapIndices.length >= 2 ? bigGapIndices[1] : words.length;
         const kept = words.slice(0, cut).map((w) => w.text).join(" ");
-        if (kept.trim()) outLines.push(kept.trim());
+        if (kept.trim()) outLines.push(normalizeArabicText(kept.trim()));
       });
     });
   });
@@ -13164,7 +13447,8 @@ function looksLikeIngredientTableWithoutMarker(rawText) {
   if (plausible.length < 4) return false;
   const unitPattern = /\d+\s*(g|kg|cl|l|cs|cc|c\.?\s*[àa]\s*(caf[eé]|soupe)|sachet|pi[eè]ce|bo[iî]te|barquette|paquet|gousse|tranche|filet)s?\b/i;
   const zhUnitPattern = /\d+\s*(?:克|千克|公斤|毫升|升|个|汤匙|茶匙|勺|片|瓣|根|颗|只)|(?:适量|少许)\s*$/;
-  const matching = plausible.filter((l) => unitPattern.test(l) || zhUnitPattern.test(l)).length;
+  const arUnitPattern = /\d+\s*(?:غرام|غ|جرام|كغ|كيلو|مل|لتر|كوب|أكواب|ملعقة|ملاعق|حبة|حبات|فص|فصوص|علبة)|حسب\s+(?:الرغبة|الذوق)/;
+  const matching = plausible.filter((l) => unitPattern.test(l) || zhUnitPattern.test(l) || arUnitPattern.test(normalizeArabicText(l))).length;
   return matching / plausible.length >= 0.25;
 }
 
@@ -13199,6 +13483,7 @@ const INGREDIENT_UNIT_ONLY_WORDS = new Set([
   "tranche", "tranches", "gousse", "gousses", "filet", "filets", "cs", "cc",
   "cl", "ml", "kg", "l", "autre",
   "个", "克", "只", "颗", "根", "片", "瓣", "袋", "包", "盒", "罐", "瓶", "勺", "汤匙", "茶匙", "毫升", "千克", "公斤",
+  "غرام", "غ", "جرام", "كغ", "كيلو", "مل", "لتر", "كوب", "ملعقة", "ملاعق", "حبة", "حبات", "فص", "علبة", "شريحة",
 ]);
 function isUnitOnlyOrTooShortName(name) {
   const normalized = normalize((name || "").trim());
@@ -13229,6 +13514,11 @@ function scoreIngredientConfidence(ingredient) {
   // (ou « 适量/少许 ») a été reconnue et que le nom reste court.
   if (CJK_CHAR_RE.test(name)) {
     return (ingredient.quantity != null || ingredient.vagueQuantity) && name.length <= 20 ? "reliable" : "uncertain";
+  }
+  // Arabe : voyelles non écrites, des noms de trois lettres tout à fait
+  // normaux (« جبن », « ملح ») — même règle que pour le chinois.
+  if (ARABIC_CHAR_RE.test(name)) {
+    return (ingredient.quantity != null || ingredient.vagueQuantity) && name.length <= 40 ? "reliable" : "uncertain";
   }
   const words = name.split(/\s+/).filter(Boolean);
   if (words.length === 0) return "uncertain";
@@ -13281,7 +13571,8 @@ function looksLikeIngredientLine(line) {
   if (trimmed.length <= 30 && /ajouter\s{0,3}vous/i.test(trimmed)) return false;
   // Purement numérique/symboles (ex. "2423 /579", "10,2", "0,5") : une
   // ligne de tableau de valeurs nutritionnelles, jamais un ingrédient.
-  if (!/[a-zA-ZÀ-ÿ]/.test(trimmed) && !CJK_CHAR_RE.test(trimmed)) return false;
+  if (!/[a-zA-ZÀ-ÿ]/.test(trimmed) && !CJK_CHAR_RE.test(trimmed) && !ARABIC_CHAR_RE.test(trimmed)) return false;
+  if (AR_INGREDIENT_SUBHEADING.test(trimmed)) return false;
   if (OCR_ZH_INGREDIENT_SUBHEADING.test(trimmed) || OCR_ZH_RECIPE_META_LINE.test(trimmed)) return false;
   // Chinois sans espace : une phrase d'étape égarée se reconnaît à sa
   // longueur et à sa ponctuation de phrase.
@@ -13319,7 +13610,7 @@ function looksLikeIngredientLine(line) {
 // de cette analyse).
 function parseStackedIngredientColumn(text) {
   const lines = (text || "").split("\n").map((l) => l.trim()).filter(Boolean);
-  const filtered = lines.filter((l) => !matchesIngredientTitle(l) && !OCR_ZH_INGREDIENT_SUBHEADING.test(l) && !/(?:^|\D)\d+\s*(personnes?|people|persons?|personas?|personen|人份)/i.test(l));
+  const filtered = lines.filter((l) => !matchesIngredientTitle(l) && !OCR_ZH_INGREDIENT_SUBHEADING.test(l) && !AR_INGREDIENT_SUBHEADING.test(l) && !/(?:^|\D)\d+\s*(personnes?|people|persons?|personas?|personen|人份)/i.test(l) && !AR_PERSONS_RE.test(l));
 
   // Retire un préfixe court de case à cocher mal reconnue (symbole ou
   // 1-2 caractères isolés suivis d'un espace) devant le vrai contenu —
@@ -13395,7 +13686,7 @@ function extractIngredientsFromLines(text) {
   let ingredients = lines
     .slice(startIdx, endIdx)
     .filter((l) => {
-      const m = l.match(/(^|\D)\d+\s*(personnes?|people|persons?|personas?|personen|人份)/i);
+      const m = l.match(/(^|\D)\d+\s*(personnes?|people|persons?|personas?|personen|人份)/i) || l.match(new RegExp("(^|\\D)\\d+\\s*(" + AR_PERSONS_WORDS + ")"));
       // Rejette si le motif "N personnes" apparaît près du début de la
       // ligne — quels que soient les caractères parasites qui suivent
       // (ex. "| 2 personnes | + es"). Une exigence de correspondance
@@ -13962,6 +14253,14 @@ function guessCategoryFromText(text) {
     [/主菜|主食|家常菜|热菜|午餐|晚餐|正餐|快手菜|下饭菜|素菜|荤菜/, "Plat"],
   ].find(([re]) => re.test(key));
   if (zhCategory) return zhCategory[1];
+  // Catégories des sites arabes (texte normalisé : sans hamza ni voyelles).
+  const arCategory = [
+    [/حلويات|حلو|كيك|كعك|تحلية/, "Dessert"], [/فطور|افطار|صباحي/, "Petit-déjeuner"],
+    [/مشروبات|عصائر|عصير/, "Boisson"], [/مقبلات|سلطات|سلطه|شوربات|شوربه|حساء/, "Entrée"],
+    [/صلصات|صلصه|صوص|تتبيله/, "Sauce"], [/وجبات خفيفه|سناك|تسالي/, "Apéro"],
+    [/اطباق رئيسيه|طبق رئيسي|وصفات طبخ|غداء|عشاء|اكلات|لحوم|دجاج|اسماك/, "Plat"],
+  ].find(([re]) => re.test(key.replace(/ة/g, "ه")));
+  if (arCategory) return arCategory[1];
   if (/dessert|sweet|postre|nachtisch|suss/.test(key)) return "Dessert";
   if (/starter|entree|appetizer|vorspeise|aperitivo|antipasto/.test(key)) return "Entrée";
   if (/breakfast|petit.?dejeuner|desayuno|fruhstuck/.test(key)) return "Petit-déjeuner";
@@ -13982,6 +14281,12 @@ function resolveImportedIngredientName(rawName) {
   const exact = resolveIngredientInput(trimmed);
   if (normalize(exact) !== normalize(trimmed) || state.ingredientNames.some((n) => normalize(n) === normalize(trimmed))) {
     return exact;
+  }
+  // Arabe : article « ال » collé (« الطماطم » -> « طماطم » -> Tomate).
+  const withoutArticle = trimmed.split(" ").map((w) => w.replace(/^ال(?=[\u0621-\u064a]{2})/, "")).join(" ");
+  if (withoutArticle !== trimmed) {
+    const resolved = resolveIngredientInput(withoutArticle);
+    if (normalize(resolved) !== normalize(withoutArticle) || state.ingredientNames.some((n) => normalize(n) === normalize(withoutArticle))) return resolved;
   }
   const fuzzy = findClosestIngredientMatch(trimmed);
   if (fuzzy && fuzzy.ratio >= 0.9) return fuzzy.name;
@@ -14140,6 +14445,9 @@ function stripJinaMarkdownNoise(markdown) {
   // Nettoie chaque ligne (images, liens, ponctuation Markdown) avant
   // de les regrouper.
   const cleanedRawLines = relevant.map((l) => l
+    // Lien collé au mot arabe précédent (« ملعقة صغيرة[زنجبيل](…) ») :
+    // une espace, sinon les deux mots fusionnent.
+    .replace(/([\u0621-\u064a])\[(?!\])/g, "$1 [")
     .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
     .replace(/\[image[^\]]*\]/gi, "")
     .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
@@ -14214,8 +14522,12 @@ async function buildRecipeFromStructuredData(recipeData) {
   if (yieldRaw) {
     let y = Array.isArray(yieldRaw) ? yieldRaw[0] : yieldRaw;
     if (y && typeof y === "object") y = y.value || y.name || "";
-    const m = String(y).match(/\d+/);
+    y = normalizeArabicText(String(y));
+    const m = y.match(/\d+/);
     if (m) persons = parseInt(m[0], 10);
+    // Arabe, duel sans chiffre : « شخصين » (deux personnes), « شخص واحد ».
+    else if (/(?:شخص|فرد|حصت|طبق)(?:ين|ان)/.test(y)) persons = 2;
+    else if (/(?:شخص|فرد|حصة|طبق)\s+واحد/.test(y)) persons = 1;
   }
   persons = Math.max(1, persons);
 
@@ -15152,7 +15464,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 331;
+const APP_VERSION = 332;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

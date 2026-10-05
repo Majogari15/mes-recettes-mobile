@@ -58,7 +58,7 @@ externe. Chacune conserve sa licence d'origine.
 - Langues incluses : français (`fra`), anglais (`eng`), espagnol
   (`spa`), allemand (`deu`), indonésien (`ind`), portugais (`por`),
   italien (`ita`), suédois (`swe`), norvégien (`nor`), chinois simplifié
-  (`chi_sim`)
+  (`chi_sim`), arabe (`ara`)
 - Exception pour le chinois simplifié : palier `4.0.0_best_int`
   (paquet npm `@tesseract.js-data/chi_sim` 1.0.0, même source que les
   autres fichiers) au lieu du palier standard — 1,7 Mo au lieu de
@@ -67,6 +67,18 @@ externe. Chacune conserve sa licence d'origine.
   seul, `createWorker(lang, 1)`) ; les deux ont été comparés sur une même
   image de recette chinoise : résultats quasi identiques (une seule
   erreur de caractère de plus avec `best_int` sur cet essai)
+- Exception pour l'arabe : palier `4.0.0_best_int` aussi (paquet npm
+  `@tesseract.js-data/ara` 1.0.0, 1,7 Mo, presque la même taille que le
+  palier standard) — sur une image de recette arabe, le palier standard
+  perdait la ligne de titre, `best_int` non
+- Relecture des nombres en arabe (`tesseract/lang-digits/eng.traineddata.gz`) :
+  modèle anglais, palier `4.0.0_best_int` (paquet npm
+  `@tesseract.js-data/eng` 1.0.0, 2,9 Mo), rangé dans un dossier à part
+  pour ne pas remplacer le modèle anglais standard de l'interface en
+  anglais. Le modèle arabe perd les premiers chiffres d'un nombre en tête
+  de ligne (« 200 » lu « 0 ») : seules ces lignes sont relues avec ce
+  modèle. Téléchargé seulement au premier import photo arabe qui en a
+  besoin, puis mis en cache
 - Licence : Apache License 2.0, projet Tesseract OCR
   (https://github.com/tesseract-ocr/tessdata)
 - Ces fichiers ne sont volontairement PAS inclus dans le

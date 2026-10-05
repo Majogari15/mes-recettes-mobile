@@ -10062,3 +10062,52 @@ case à cocher, nom de fichier ; vérifié qu'il échoue sans la déclaration
 de droite à gauche).
 
 **Version testée** : v331 (branche)
+
+### 167 — Arabe, étape 4 : import par photo (OCR « ara ») et par lien (branche, pas sur main)
+
+- Modèle Tesseract `ara` (palier best_int, 1,7 Mo : le palier standard
+  perdait la ligne de titre sur l'image d'essai). Marques invisibles de
+  sens (LRM/RLM) ajoutées par Tesseract retirées ; chiffres arabo-indiens
+  (« ٢٠٠ ») et persans convertis, virgule décimale « ٫ » en point
+  (`normalizeArabicText`), aussi pour l'import par lien.
+- Défaut constaté du modèle arabe (plusieurs polices) : un nombre en tête
+  de ligne perd ses premiers chiffres (« 200 غرام » lu « 0 غرام », « 12 »
+  lu « 2 », « 1/2 » lu « 2 ») ; au milieu d'une ligne, bien lu. Ces lignes
+  seules sont relues avec un modèle latin léger (eng best_int, 2,9 Mo,
+  `lib/tesseract/lang-digits`, téléchargé au premier besoin), nombre
+  remplacé seulement si la relecture se termine par les chiffres déjà
+  lus. Limite : chiffres arabo-indiens en tête de ligne non rattrapés.
+- Lignes d'ingrédients arabes (`parseArabicIngredientString`) : nombre
+  avant ou après le nom, unités (غرام, كغ, مل, لتر, كوب = 24 cl, ملعقة
+  كبيرة/صغيرة, م.ك, فص, شريحة, علبة, حبة…), orthographe égyptienne
+  « معلقة », duel (« ملعقتان », « حبتين » = 2), « نصف », « ربع »,
+  « كوب ونصف », nombres en lettres suivis d'une unité (pas « سبع بهارات »),
+  quantités vagues (« حسب الرغبة », « رشة », « قليل من »), taille
+  (« حبة كبيرة ») et précisions gardées en note.
+- Analyse du texte : titres « المقادير / المكونات » et « طريقة التحضير /
+  الخطوات », y compris suivis du nom du plat (« مقادير طريقة عمل … »,
+  « … لعمل … : ») — jamais « التحضير: 15 دقيقة » (durée) ; sous-titres
+  « للصلصة: » ignorés ; personnes (« لـ 4 أشخاص », « شخصين », « عدد
+  الحصص ») ; durées (« 1 ساعة و 30 دقيقة », « نصف ساعة ») ; allergènes
+  (« مسببات الحساسية: ») ; fin de recette (« التعليقات », « قد يعجبك
+  أيضاً ») ; durée seule, nombre de personnes seul et boutons d'un site
+  exclus des ingrédients ; pas de fusion du titre avec la ligne suivante
+  (souvent l'auteur). Mots d'une ligne arabe remis de droite à gauche
+  dans le texte reconstruit à partir des positions. Noms arabes courts
+  jugés fiables avec une quantité.
+- Import par lien : article « ال » ignoré pour relier au catalogue
+  (« الزيت النباتي » -> Huile végétale), « شخصين » = 2 personnes,
+  catégories arabes (« وصفات فطور » -> Petit-déjeuner), lien Jina collé
+  au mot précédent séparé. Vérifié sur 4 vraies pages arabes (Cookpad,
+  Sayidaty, Eggs.ca, une encyclopédie de cuisine) le 5 octobre 2026.
+- Politique de confidentialité (fr, en, md) : arabe ajouté, et le fichier
+  de relecture des nombres mentionné.
+- Corpus OCR existant (tests/run_ocr_corpus.py) : inchangé.
+
+**Tests** : `tests/test_arabic_import.py` (nouveau : 40 lignes
+d'ingrédients, texte complet, titres, reconstruction de droite à gauche,
+lien par données structurées et par Jina, vraie reconnaissance OCR d'une
+image arabe ; vérifié qu'il échoue sans la relecture des nombres) ;
+`tests/test_privacy_policy_pages.py` (11 langues).
+
+**Version testée** : v332 (branche)
