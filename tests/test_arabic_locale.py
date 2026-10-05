@@ -1,6 +1,6 @@
 """
-Arabe, étape 5 — devise, chiffres saisis, date, voix, fiche Play Store
-(TESTS_NON_REGRESSION.md, entrée 168 ; intégration en cours sur une
+Arabe, étape 5 — devise, chiffres saisis, date, voix, fiche Play Store,
+grammes des valeurs nutritionnelles (TESTS_NON_REGRESSION.md, entrée 168 ; intégration en cours sur une
 branche, pas encore sur main).
 
 Vérifie : euro par défaut en arabe, monnaies des pays arabophones
@@ -128,6 +128,10 @@ def main():
         check("voix : français sans voix française -> pas de voix d'une autre langue imposée",
               r["fr"] == {"lang": "fr-FR", "voice": None}, r["fr"])
 
+        r = page.evaluate("""() => { const out = { ar: [gramsText(9.3), gramsUnitLabel()] }; setLang('fr');
+            out.fr = [gramsText(9.3), gramsUnitLabel()]; setLang('ar'); return out; }""")
+        check("valeurs nutritionnelles : « 9.3 غ » en arabe, « 9.3g » inchangé en français",
+              r["ar"] == ["9.3 غ", "غ"] and r["fr"] == ["9.3g", "g"], r)
         page.evaluate("() => { document.querySelector('#probe').remove(); setLang('fr'); }")
         check("aucune erreur JS", not errors, errors)
         browser.close()

@@ -10133,6 +10133,15 @@ image arabe ; vérifié qu'il échoue sans la relecture des nombres) ;
 - Fiche Play Store arabe dans `FICHE_PLAY_STORE.md` (titre 16 caractères,
   description courte 51, complète 1453) ; `CLAUDE.md` : 11 langues.
 
+- v334 : grammes des valeurs nutritionnelles (fiche recette, fenêtre de
+  saisie) écrits « غ » en arabe (« 9.3 غ ») au lieu du « g » latin ;
+  inchangé dans les autres langues. Repéré par un balayage de tous les
+  écrans en arabe à la recherche de toute lettre latine (l'audit de
+  `test_arabic_ui.py` ne signale que les mots latins de 3 lettres ou
+  plus) ; restent volontairement en latin : sigles (PDF, QR, JSON, ZIP,
+  ICS), « Windows », codes de devises, unités entre parenthèses du
+  convertisseur, marques et noms scientifiques de certains ingrédients.
+
 **Tests** : `tests/test_arabic_locale.py` (nouveau).
 
-**Version testée** : v333 (branche)
+**Version testée** : v334 (branche)

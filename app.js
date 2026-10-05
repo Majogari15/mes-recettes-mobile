@@ -822,6 +822,14 @@ function stripTrackingParams(urlStr) {
     return urlStr;
   }
 }
+// Grammes des valeurs nutritionnelles : « 9.3g » comme avant, sauf en
+// arabe où le « g » latin devient « غ » (« 9.3 غ »).
+function gramsUnitLabel() {
+  return CURRENT_LANG === "ar" ? translateUnit("g") : "g";
+}
+function gramsText(value) {
+  return CURRENT_LANG === "ar" ? `${value} ${translateUnit("g")}` : `${value}g`;
+}
 function parseQtyOrNull(value) {
   if (value === "" || value == null) return null;
   // Chiffres arabo-indiens (« ٢٫٥ ») d'un clavier arabe.
@@ -2053,9 +2061,9 @@ function renderRecipeView() {
     const nutriCard = el(`<div class="card" style="padding:14px 16px;"></div>`);
     nutriCard.appendChild(el(`<div class="stat-row" style="margin-bottom:0;">
       <div class="stat-pill"><div class="value">${nutrition.kcal}</div><div class="label">${t("nutrition_kcal")}</div></div>
-      <div class="stat-pill"><div class="value">${nutrition.protein}g</div><div class="label">${t("nutrition_protein")}</div></div>
-      <div class="stat-pill"><div class="value">${nutrition.carbs}g</div><div class="label">${t("nutrition_carbs")}</div></div>
-      <div class="stat-pill"><div class="value">${nutrition.fat}g</div><div class="label">${t("nutrition_fat")}</div></div>
+      <div class="stat-pill"><div class="value">${gramsText(nutrition.protein)}</div><div class="label">${t("nutrition_protein")}</div></div>
+      <div class="stat-pill"><div class="value">${gramsText(nutrition.carbs)}</div><div class="label">${t("nutrition_carbs")}</div></div>
+      <div class="stat-pill"><div class="value">${gramsText(nutrition.fat)}</div><div class="label">${t("nutrition_fat")}</div></div>
     </div>`));
     wrap.appendChild(el(`<div class="section"><div class="section-label">${escapeHtml(nutriLabel)}</div></div>`));
     wrap.lastElementChild.appendChild(nutriCard);
@@ -4495,11 +4503,11 @@ function openIngredientNameModal(existingName) {
     <p style="font-size:13px;color:var(--text-muted);margin:0 0 12px;line-height:1.4;">${escapeHtml(t("ingredient_nutrition_hint"))}</p>
     <div class="field-row">
       <div class="field"><label for="modal-nutri-kcal">${t("nutrition_kcal")}</label><input type="number" min="0" step="any" id="modal-nutri-kcal" value="${currentNutrition ? currentNutrition.kcal : ""}"></div>
-      <div class="field"><label for="modal-nutri-protein">${t("nutrition_protein")} (g)</label><input type="number" min="0" step="any" id="modal-nutri-protein" value="${currentNutrition ? currentNutrition.protein_g : ""}"></div>
+      <div class="field"><label for="modal-nutri-protein">${t("nutrition_protein")} (${escapeHtml(gramsUnitLabel())})</label><input type="number" min="0" step="any" id="modal-nutri-protein" value="${currentNutrition ? currentNutrition.protein_g : ""}"></div>
     </div>
     <div class="field-row">
-      <div class="field"><label for="modal-nutri-carbs">${t("nutrition_carbs")} (g)</label><input type="number" min="0" step="any" id="modal-nutri-carbs" value="${currentNutrition ? currentNutrition.carbs_g : ""}"></div>
-      <div class="field"><label for="modal-nutri-fat">${t("nutrition_fat")} (g)</label><input type="number" min="0" step="any" id="modal-nutri-fat" value="${currentNutrition ? currentNutrition.fat_g : ""}"></div>
+      <div class="field"><label for="modal-nutri-carbs">${t("nutrition_carbs")} (${escapeHtml(gramsUnitLabel())})</label><input type="number" min="0" step="any" id="modal-nutri-carbs" value="${currentNutrition ? currentNutrition.carbs_g : ""}"></div>
+      <div class="field"><label for="modal-nutri-fat">${t("nutrition_fat")} (${escapeHtml(gramsUnitLabel())})</label><input type="number" min="0" step="any" id="modal-nutri-fat" value="${currentNutrition ? currentNutrition.fat_g : ""}"></div>
     </div>
 
     <div class="section-label">${t("ingredient_price_label")}</div>
@@ -15500,7 +15508,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 333;
+const APP_VERSION = 334;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
