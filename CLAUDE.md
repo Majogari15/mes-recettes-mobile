@@ -30,12 +30,12 @@ Code de sortie 0 = tout passe, 1 = échec. Aucune commande "run all" : chaque fi
 ### Fichier unique de logique
 Toute la logique applicative vit dans `app.js` (~700 Ko, aucun découpage en modules) et `i18n.js` (moteur de traduction). Ne pas chercher de structure par dossiers/composants : tout est dans ces deux fichiers.
 
-### Langues (9) et chargement à la demande
-`SUPPORTED_LANGUAGES` (i18n.js) est la seule liste de référence des langues : fr, en, es, de, id, pt, it, sv, no. Ajouter une langue touche tous les points ci-dessous — un oubli ne plante pas, il retombe silencieusement sur le français/l'anglais :
+### Langues (11) et chargement à la demande
+`SUPPORTED_LANGUAGES` (i18n.js) est la seule liste de référence des langues : fr, en, es, de, id, pt, it, sv, no, zh (chinois simplifié), ar (arabe, de droite à gauche : `applyDocumentDirection`, propriétés CSS logiques). Ajouter une langue touche tous les points ci-dessous — un oubli ne plante pas, il retombe silencieusement sur le français/l'anglais :
 - Textes d'interface : le français est intégré à `i18n.js` (`TRANSLATIONS.fr`), les autres dans `i18n/<lang>.json` (mêmes clés, mêmes `{placeholders}`), chargés par `ensureUiTranslationsLoaded(lang)`.
 - Ingrédients/substitutions : `data/ingredient_translations_<lang>.json` et `data/ingredient_substitutions_<lang>.json`, chargés par `ensureIngredientTranslationsLoaded(lang)` (app.js).
 - Tables toujours intégrées à `i18n.js` : `ALLERGEN_TRANSLATIONS`, `RAYON_TRANSLATIONS`.
-- app.js : `TESSERACT_LANG_MAP` (+ fichier `lib/tesseract/lang/<code>.traineddata.gz`, voir `lib/LICENSES.md`) et `langMap` de `speakText()` (synthèse vocale).
+- app.js : `TESSERACT_LANG_MAP` (+ fichier `lib/tesseract/lang/<code>.traineddata.gz`, voir `lib/LICENSES.md`) et `langMap` de `speakText()` (synthèse vocale). Écriture non latine : règles propres dans l'analyse OCR/import (`parseChineseIngredientString`, `parseArabicIngredientString`, marqueurs de section) et police PDF dédiée (`preparePdfFont`, `lib/fonts/`).
 - `manifest-<lang>.json`, `manifest-loader.js` (liste `supported`), et `FILES_TO_CACHE` de `sw.js` pour le manifeste.
 
 `setLang()` déclenche lui-même les deux chargements puis un nouveau `render()` : l'interface s'affiche brièvement en français le temps du téléchargement. Dans un test, appeler `await ensureUiTranslationsLoaded(lang)` / `ensureIngredientTranslationsLoaded(lang)` AVANT `setLang(lang)` pour lire un résultat traduit sans course.

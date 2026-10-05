@@ -283,7 +283,8 @@ function localeDateTimeStr(date) {
 // plus simple et plus robuste qu'un suivi précis de la position du
 // curseur pour un champ aussi court.
 function formatShortDateInput(rawValue) {
-  const digits = (rawValue || "").replace(/\D/g, "").slice(0, 6);
+  // normalizeArabicText : chiffres « ٠-٩ » d'un clavier arabe.
+  const digits = normalizeArabicText(rawValue || "").replace(/\D/g, "").slice(0, 6);
   if (digits.length <= 2) return digits;
   if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
   return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
@@ -304,7 +305,7 @@ function shortDateIsYearFirst() {
   return CURRENT_LANG === "zh";
 }
 function parseShortDateToIso(value) {
-  const digits = (value || "").replace(/\D/g, "");
+  const digits = normalizeArabicText(value || "").replace(/\D/g, "");
   if (!digits) return { iso: null, error: null };
   if (digits.length !== 6) return { iso: null, error: "incomplete" };
   const yearFirst = shortDateIsYearFirst();
@@ -823,7 +824,8 @@ function stripTrackingParams(urlStr) {
 }
 function parseQtyOrNull(value) {
   if (value === "" || value == null) return null;
-  const n = Number(value);
+  // Chiffres arabo-indiens (« ٢٫٥ ») d'un clavier arabe.
+  const n = Number(typeof value === "string" ? normalizeArabicText(value) : value);
   // Un champ vide reste `null` (quantité volontairement non précisée,
   // ex. "sel" ou "poivre") et 0 reste 0 — seules les valeurs réellement
   // négatives sont ramenées à `null`, comme si rien n'avait été saisi.
@@ -3622,7 +3624,7 @@ function openBarcodePasteModal() {
   initModalA11y(overlay, sheet);
   sheet.querySelector("#barcode-manual-close").addEventListener("click", () => overlay.remove());
   sheet.querySelector("#barcode-manual-submit").addEventListener("click", async () => {
-    const digits = sheet.querySelector("#barcode-manual-input").value.replace(/\D/g, "");
+    const digits = normalizeArabicText(sheet.querySelector("#barcode-manual-input").value).replace(/\D/g, "");
     if (digits.length < 8) {
       sheet.querySelector("#barcode-manual-status").textContent = t("barcode_manual_invalid");
       return;
@@ -6847,6 +6849,16 @@ function speakText(text) {
     zh: "zh-CN", ar: "ar-SA",
   };
   utterance.lang = langMap[CURRENT_LANG] || "fr-FR";
+  // Voix de la langue exacte, sinon une autre voix de la même langue
+  // (arabe : souvent « ar-XA » ou « ar-EG » sur Android, pas « ar-SA ») —
+  // sans ça le navigateur peut lire avec une voix d'une autre langue.
+  try {
+    const voices = window.speechSynthesis.getVoices() || [];
+    const want = utterance.lang.toLowerCase().replace("_", "-");
+    const voice = voices.find((v) => (v.lang || "").toLowerCase().replace("_", "-") === want)
+      || voices.find((v) => (v.lang || "").toLowerCase().split(/[-_]/)[0] === want.split("-")[0]);
+    if (voice) { utterance.voice = voice; utterance.lang = voice.lang; }
+  } catch (e) { /* choix de la voix laissé au navigateur */ }
   window.speechSynthesis.speak(utterance);
   return true;
 }
@@ -12089,6 +12101,27 @@ function normalizeArabicText(text) {
     .replace(/(\d)\u066b(?=\d)/g, "$1.").replace(/(\d)\u066c(?=\d)/g, "$1").replace(/\u066a/g, "%")
     .replace(/\u0640/g, "");
 }
+// Clavier arabe : chiffres « ٠-٩ » (et virgule décimale « ٫ ») tapés dans
+// un champ convertis en chiffres occidentaux au moment de la frappe. Un
+// champ <input type="number"> les refuse sinon sans rien dire (valeur
+// vide) ; « 2٫ » n'y est pas encore un nombre valide, d'où la mémoire
+// tampon le temps de taper la suite.
+document.addEventListener("beforeinput", (e) => {
+  const el = e.target;
+  if (!(el instanceof HTMLInputElement)) return;
+  if (!e.data || !/[٠-٩۰-۹٫]/.test(e.data)) { el._latinDigitsBuffer = null; return; }
+  const latin = normalizeArabicText(e.data).replace(/٫/g, ".");
+  e.preventDefault();
+  if (el.type === "number") {
+    const next = (el._latinDigitsBuffer != null ? el._latinDigitsBuffer : el.value) + latin;
+    el.value = next;
+    el._latinDigitsBuffer = el.value === "" ? next : null;
+  } else {
+    el.setRangeText(latin, el.selectionStart, el.selectionEnd, "end");
+  }
+  el.dispatchEvent(new Event("input", { bubbles: true }));
+}, true);
+
 const AR_PERSONS_WORDS = arabicPattern("أشخاص|شخص|أفراد|فرد|حصص|حصة|أطباق|طبق");
 const AR_PERSONS_RE = new RegExp("(\\d+)\\s*(?:-\\s*\\d+\\s*)?(?:" + AR_PERSONS_WORDS + ")");
 const AR_INGREDIENT_TITLES = arabicPattern("المكونات|مكونات|المقادير|مقادير|المواد|مكونات الوصفة|مقادير الوصفة");
@@ -15152,7 +15185,10 @@ function computeRecipeCostInfo(ingredients) {
 }
 // Devises proposées (codes ISO 4217). Changer de devise ne convertit pas
 // les prix déjà saisis : seul le symbole affiché change.
-const CURRENCY_OPTIONS = ["EUR", "USD", "GBP", "CHF", "CAD", "AUD", "CNY", "HKD", "TWD", "SGD", "JPY", "SEK", "NOK", "DKK", "IDR", "BRL", "MXN"];
+// Monnaies des pays arabophones ajoutées en fin de liste (euro toujours
+// par défaut en arabe, choix de l'utilisateur, 4 octobre 2026).
+const CURRENCY_OPTIONS = ["EUR", "USD", "GBP", "CHF", "CAD", "AUD", "CNY", "HKD", "TWD", "SGD", "JPY", "SEK", "NOK", "DKK", "IDR", "BRL", "MXN",
+  "MAD", "DZD", "TND", "LYD", "EGP", "SDG", "MRU", "SAR", "AED", "QAR", "KWD", "BHD", "OMR", "JOD", "LBP", "IQD", "SYP", "YER"];
 const CURRENCY_KEY = "currency";
 // Code inconnu ou absent -> null (devise par défaut de la langue).
 function normalizeCurrency(code) {
@@ -15464,7 +15500,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 332;
+const APP_VERSION = 333;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

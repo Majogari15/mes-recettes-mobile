@@ -10111,3 +10111,28 @@ image arabe ; vérifié qu'il échoue sans la relecture des nombres) ;
 `tests/test_privacy_policy_pages.py` (11 langues).
 
 **Version testée** : v332 (branche)
+
+### 168 — Arabe, étape 5 : devise, chiffres saisis, voix, fiche Play Store (branche, pas sur main)
+
+- Devise : euro toujours par défaut en arabe (sans choix de
+  l'utilisateur) ; monnaies des pays arabophones ajoutées à la liste
+  (MAD, DZD, TND, LYD, EGP, SDG, MRU, SAR, AED, QAR, KWD, BHD, OMR, JOD,
+  LBP, IQD, SYP, YER), nom et symbole en arabe, chiffres occidentaux,
+  3 décimales pour les dinars qui en ont (koweïtien…). Changer de devise
+  ne convertit toujours pas les prix saisis.
+- Clavier arabe : chiffres « ٠-٩ » (et « ٫ ») tapés convertis à la frappe
+  (écouteur `beforeinput`) — un champ `type="number"` les refusait sans
+  rien dire (valeur vide). Aussi dans la date de péremption, le code-barres
+  saisi à la main et `parseQtyOrNull`.
+- Date : jour/mois/année en chiffres occidentaux (déjà le cas), rien à
+  changer.
+- Voix de lecture : si la voix de la langue exacte manque (« ar-SA »), une
+  autre voix de la même langue est choisie (« ar-XA », « ar-EG » sur
+  Android) plutôt que de laisser le navigateur lire avec une voix d'une
+  autre langue. Vaut pour toutes les langues.
+- Fiche Play Store arabe dans `FICHE_PLAY_STORE.md` (titre 16 caractères,
+  description courte 51, complète 1453) ; `CLAUDE.md` : 11 langues.
+
+**Tests** : `tests/test_arabic_locale.py` (nouveau).
+
+**Version testée** : v333 (branche)

@@ -86,3 +86,68 @@ majogari81@gmail.com
 Voir `POLITIQUE_CONFIDENTIALITE.md` fourni séparément — à héberger en
 ligne (ex. une page sur votre dépôt GitHub Pages) et à renseigner comme
 URL dans Play Console.
+
+---
+
+# Fiche en arabe (arabe standard moderne)
+
+À ajouter comme traduction de la fiche principale dans Play Console
+(menu indicatif : fiche principale du Play Store > « Gérer les
+traductions » > ajouter vos propres traductions > arabe ; voir l'aide
+Google https://support.google.com/googleplay/android-developer/answer/9844778).
+Même nom que le manifeste arabe (`manifest-ar.json`). Les captures
+d'écran peuvent être refaites avec l'application en arabe.
+
+## Titre de l'application (ar)
+*(30 caractères maximum — actuel : 16)*
+
+```
+وصفاتي، مشترياتي
+```
+
+## Description courte (ar)
+*(80 caractères maximum — actuel : 51)*
+
+```
+الوصفات وقوائم التسوق وخطة الوجبات — كلها على هاتفك
+```
+
+## Description complète (ar)
+*(4000 caractères maximum — actuel : 1453 ; traduction de la description
+française ci-dessus, plus une ligne sur le coût des recettes dans la
+devise choisie)*
+
+```
+نظّم وصفاتك وقوائم تسوقك وخطة وجباتك، كلها على هاتفك — تبقى بياناتك على جهازك، دون الحاجة إلى إنشاء حساب.
+
+الوصفات
+• أضف وصفاتك مع الصور (تلتقطها في الحال أو تختارها من معرض الصور)، والمكونات، ووقت التحضير، ودرجة الصعوبة، ومسببات الحساسية، وملاحظاتك الشخصية
+• استورد وصفة من رابط على الإنترنت أو من صورة (يُتعرَّف على النص تلقائيًا)
+• صنّف الوصفات حسب الفئة (مقبلات، حلويات، أطباق رئيسية...) واعرض وصفاتك المفضلة
+• قارن بين وصفتين جنبًا إلى جنب
+• ميّز وصفاتك المفضلة وقائمة الوصفات التي تتمنى تجربتها
+
+قائمة التسوق
+• تُنشأ تلقائيًا من وصفاتك
+• مرتبة حسب أقسام المتجر، أو يدويًا بالسحب والإفلات (مثلًا حسب ترتيب المتجر)، وأشّر على كل عنصر عند شرائه
+• احفظ قائمة لوقت لاحق، أو صدّرها بصيغة PDF، أو شاركها عبر رمز QR
+
+المخزن والاقتراحات
+• تابع ما لديك في المنزل، مع تاريخ انتهاء صلاحية اختياري وتذكير قبل انتهاء صلاحية أي منتج
+• أضف منتجًا بمسح رمزه الشريطي: يُعثر على اسم المنتج تلقائيًا (للتأكيد)، دون أي تكرار
+• «ماذا يمكنني أن أطبخ؟» انطلاقًا من محتويات مخزنك
+
+التخطيط
+• خطة الأسبوع بنظرة واحدة
+• مؤقتات متعددة للطبخ، مع منبّه
+
+وأيضًا
+• تقدير القيم الغذائية ومسببات الحساسية تلقائيًا
+• إحصاءات عن عاداتك في الطبخ
+• احسب تكلفة وصفاتك بالعملة التي تختارها (اليورو افتراضيًا)
+• مظهر فاتح أو داكن
+• يعمل دون اتصال بالإنترنت بعد تثبيته
+• متوافق مع تطبيق سطح المكتب (Windows) الذي يحمل الاسم نفسه
+
+تبقى وصفاتك ومخزنك وقوائمك محفوظة على هاتفك فقط. لا يُرسَل أي شيء إلى خادم، إلا عندما تستورد بنفسك وصفة من رابط على الإنترنت (يُرسَل العنوان حينها لجلب الصفحة).
+```
