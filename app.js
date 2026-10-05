@@ -4686,10 +4686,16 @@ function openIngredientNameModal(existingName) {
 // hors connexion par le service worker. Pas de version grasse (elle
 // doublerait le poids) : les titres restent distingués par leur taille.
 const PDF_CJK_RE = /[\u2e80-\u9fff\uf900-\ufaff\uff00-\uffef]/;
-let pdfCjkFontPromise = null;
-function loadPdfCjkFont() {
-  if (pdfCjkFontPromise) return pdfCjkFontPromise;
-  pdfCjkFontPromise = fetch("./lib/fonts/noto-sans-sc-pdf.ttf")
+// Arabe : Helvetica n'a aucune lettre arabe. Noto Sans Arabic réduite
+// (lettres arabes, leurs formes liées, latin, €), ~100 Ko par graisse,
+// avec une version grasse cette fois (légère). jsPDF lie lui-même les
+// lettres (formes initiale / médiane / finale, « لا ») et remet les mots
+// dans l'ordre de droite à gauche ; pdfText aligne à droite.
+const PDF_ARABIC_RE = /[\u0600-\u06ff]/;
+const pdfFontPromises = {};
+function loadPdfFontFile(file) {
+  if (pdfFontPromises[file]) return pdfFontPromises[file];
+  pdfFontPromises[file] = fetch(`./lib/fonts/${file}`)
     .then((res) => { if (!res.ok) throw new Error("pdf_font_load_failed"); return res.arrayBuffer(); })
     .then((buf) => {
       const bytes = new Uint8Array(buf);
@@ -4697,18 +4703,34 @@ function loadPdfCjkFont() {
       for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
       return btoa(binary);
     })
-    .catch((e) => { pdfCjkFontPromise = null; throw e; });
-  return pdfCjkFontPromise;
+    .catch((e) => { delete pdfFontPromises[file]; throw e; });
+  return pdfFontPromises[file];
 }
 async function preparePdfFont(doc, contentSample) {
   doc.__pdfFamily = "helvetica";
-  if (CURRENT_LANG !== "zh" && !PDF_CJK_RE.test(contentSample || "")) return;
+  // Mise en page de droite à gauche : suit la langue de l'interface (les
+  // titres et libellés sont dans cette langue), pas le contenu.
+  doc.__pdfRtl = CURRENT_LANG === "ar";
+  const sample = contentSample || "";
+  // Priorité à la langue de l'interface, puis à l'écriture du contenu.
+  const useArabic = CURRENT_LANG === "ar" || (CURRENT_LANG !== "zh" && !PDF_CJK_RE.test(sample) && PDF_ARABIC_RE.test(sample));
+  const useCjk = !useArabic && (CURRENT_LANG === "zh" || PDF_CJK_RE.test(sample));
   try {
-    const base64 = await loadPdfCjkFont();
-    doc.addFileToVFS("noto-sans-sc-pdf.ttf", base64);
-    doc.addFont("noto-sans-sc-pdf.ttf", "NotoSansSC", "normal");
-    doc.__pdfFamily = "NotoSansSC";
-    doc.setFont("NotoSansSC", "normal");
+    if (useArabic) {
+      const [regular, bold] = await Promise.all([loadPdfFontFile("noto-sans-arabic-pdf.ttf"), loadPdfFontFile("noto-sans-arabic-bold-pdf.ttf")]);
+      doc.addFileToVFS("noto-sans-arabic-pdf.ttf", regular);
+      doc.addFont("noto-sans-arabic-pdf.ttf", "NotoSansArabic", "normal");
+      doc.addFileToVFS("noto-sans-arabic-bold-pdf.ttf", bold);
+      doc.addFont("noto-sans-arabic-bold-pdf.ttf", "NotoSansArabic", "bold");
+      doc.__pdfFamily = "NotoSansArabic";
+      doc.setFont("NotoSansArabic", "normal");
+    } else if (useCjk) {
+      const base64 = await loadPdfFontFile("noto-sans-sc-pdf.ttf");
+      doc.addFileToVFS("noto-sans-sc-pdf.ttf", base64);
+      doc.addFont("noto-sans-sc-pdf.ttf", "NotoSansSC", "normal");
+      doc.__pdfFamily = "NotoSansSC";
+      doc.setFont("NotoSansSC", "normal");
+    }
   } catch (e) {
     // Hors connexion avant le premier téléchargement : PDF quand même
     // produit (texte latin lisible), plutôt que pas de PDF du tout.
@@ -4718,7 +4740,23 @@ async function preparePdfFont(doc, contentSample) {
 // le poids du fichier) ; les titres se distinguent par leur taille.
 function pdfSetFont(doc, style) {
   if (doc.__pdfFamily === "NotoSansSC") doc.setFont("NotoSansSC", "normal");
-  else doc.setFont("helvetica", style);
+  else doc.setFont(doc.__pdfFamily || "helvetica", style);
+}
+// Écrit une ligne : x est mesuré depuis le bord de début de ligne (gauche,
+// ou droite en arabe — la page est alors lue en miroir : colonnes de
+// droite à gauche, texte aligné à droite). Retire les caractères
+// invisibles d'isolation et de sens (FSI…PDI, RLM, ALM) que l'interface
+// insère pour l'ordre des mots : absents de la police, et jsPDF fait déjà
+// ce travail. En arabe, la ligne est déclarée de droite à gauche (texte
+// en ordre logique, sortie en ordre visuel) : sans ça, jsPDF la traite
+// de gauche à droite et « - 4 قطعة طماطم » mettait le tiret et la
+// quantité du mauvais côté.
+function pdfText(doc, text, x, y, options) {
+  const clean = String(text).replace(/[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, "");
+  if (!doc.__pdfRtl) return doc.text(clean, x, y, options);
+  const align = options && options.align === "right" ? "left" : "right";
+  return doc.text(clean, doc.internal.pageSize.getWidth() - x, y,
+    { ...(options || {}), align, isInputVisual: false, isInputRtl: true, isOutputVisual: true });
 }
 // Nom de fichier : garde lettres et chiffres de toutes les écritures
 // (avant, [^\w] effaçait tout nom chinois, remplacé par « recette »).
@@ -4738,7 +4776,7 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl)
     ensureSpace(12);
     pdfSetFont(doc, "bold");
     doc.setFontSize(14);
-    doc.text(text, margin, y);
+    pdfText(doc, text, margin, y);
     y += 8;
     pdfSetFont(doc, "normal");
     doc.setFontSize(11);
@@ -4746,7 +4784,7 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl)
   function paragraph(text) {
     doc.splitTextToSize(text, maxWidth).forEach((line) => {
       ensureSpace(6);
-      doc.text(line, margin, y);
+      pdfText(doc, line, margin, y);
       y += 6;
     });
   }
@@ -4754,7 +4792,7 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl)
   pdfSetFont(doc, "bold");
   doc.setFontSize(20);
   doc.splitTextToSize(recipe.name, maxWidth).forEach((line) => {
-    doc.text(line, margin, y);
+    pdfText(doc, line, margin, y);
     y += 9;
   });
 
@@ -4771,7 +4809,7 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl)
         displayWidth = displayHeight * (props.width / props.height);
       }
       ensureSpace(displayHeight + 6);
-      doc.addImage(photoDataUrl, "JPEG", margin, y, displayWidth, displayHeight);
+      doc.addImage(photoDataUrl, "JPEG", doc.__pdfRtl ? doc.internal.pageSize.getWidth() - margin - displayWidth : margin, y, displayWidth, displayHeight);
       y += displayHeight + 8;
     } catch (e) {
       // Photo illisible (format inattendu) : on continue sans elle plutôt
@@ -4786,13 +4824,13 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl)
   pdfSetFont(doc, "normal");
   doc.setFontSize(9);
   const colWidth = maxWidth / 4;
-  doc.text(translateCategory(recipe.category), margin, y);
-  doc.text(`${persons} ${t("recipe_persons")}`, margin + colWidth, y);
-  if (recipe.prepTime) doc.text(labelValue(t("pdf_prep_label"), `${recipe.prepTime} ${t("recipe_min")}`), margin + colWidth * 2, y);
-  if (recipe.cookTime) doc.text(labelValue(t("pdf_cook_label"), `${recipe.cookTime} ${t("recipe_min")}`), margin + colWidth * 3, y);
+  pdfText(doc, translateCategory(recipe.category), margin, y);
+  pdfText(doc, `${persons} ${t("recipe_persons")}`, margin + colWidth, y);
+  if (recipe.prepTime) pdfText(doc, labelValue(t("pdf_prep_label"), `${recipe.prepTime} ${t("recipe_min")}`), margin + colWidth * 2, y);
+  if (recipe.cookTime) pdfText(doc, labelValue(t("pdf_cook_label"), `${recipe.cookTime} ${t("recipe_min")}`), margin + colWidth * 3, y);
   y += 8;
   doc.setFontSize(11);
-  if (recipe.difficulty) { doc.text(labelValue(t("pdf_difficulty_label"), translateDifficulty(recipe.difficulty)), margin, y); y += 6; }
+  if (recipe.difficulty) { pdfText(doc, labelValue(t("pdf_difficulty_label"), translateDifficulty(recipe.difficulty)), margin, y); y += 6; }
   y += 5;
 
   heading(t("pdf_ingredients_label"));
@@ -4800,7 +4838,7 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl)
     ensureSpace(6);
     const scaled = ing.quantity != null ? ing.quantity * persons : null;
     const qty = scaled != null ? `${fmtQty(scaled)} ${translateUnit(ing.unit)} ` : "";
-    doc.text(`-  ${qty}${translateIngredientName(ing.name)}`, margin, y);
+    pdfText(doc, `-  ${qty}${translateIngredientName(ing.name)}`, margin, y);
     y += 6;
   });
   y += 5;
@@ -4846,7 +4884,7 @@ function drawRecipeContent(doc, recipe, persons, margin, maxWidth, photoDataUrl)
 
   doc.setFontSize(8);
   doc.setTextColor(150);
-  doc.text(t("pdf_generated_by"), margin, 290);
+  pdfText(doc, t("pdf_generated_by"), margin, 290);
   doc.setTextColor(0);
 }
 
@@ -4888,14 +4926,18 @@ async function exportShoppingListPdf() {
   function itemLine(item) {
     ensureSpace(6);
     const qty = item.quantity != null ? `${fmtQty(item.quantity)} ${translateUnit(item.unit)} ` : "";
-    const box = item.checked ? "[x] " : "[ ] ";
-    doc.text(`${box}${qty}${translateIngredientName(item.name)}`, margin, y);
+    // Case à cocher écrite à part et sans passage de droite à gauche :
+    // sinon mélangée à la quantité, et ses crochets retournés (« ]x[ »).
+    const box = item.checked ? "[x]" : "[  ]";
+    if (doc.__pdfRtl) doc.text(box, doc.internal.pageSize.getWidth() - margin, y, { align: "right" });
+    else doc.text(box, margin, y);
+    pdfText(doc, `${qty}${translateIngredientName(item.name)}`, margin + 8, y);
     y += 6;
   }
 
   pdfSetFont(doc, "bold");
   doc.setFontSize(20);
-  doc.text(t("shopping_title"), margin, y);
+  pdfText(doc, t("shopping_title"), margin, y);
   y += 10;
   pdfSetFont(doc, "normal");
   doc.setFontSize(11);
@@ -4911,7 +4953,7 @@ async function exportShoppingListPdf() {
       if (!items || !items.length) return;
       ensureSpace(10);
       pdfSetFont(doc, "bold");
-      doc.text(translateRayonName(rayon), margin, y);
+      pdfText(doc, translateRayonName(rayon), margin, y);
       y += 7;
       pdfSetFont(doc, "normal");
       items.forEach(itemLine);
@@ -4923,7 +4965,7 @@ async function exportShoppingListPdf() {
 
   doc.setFontSize(8);
   doc.setTextColor(150);
-  doc.text(t("pdf_generated_by"), margin, 290);
+  pdfText(doc, t("pdf_generated_by"), margin, 290);
   doc.save(`${t("pdf_shopping_filename")}.pdf`);
 }
 
@@ -4948,12 +4990,12 @@ async function exportCookbookPdf(recipes, includePhotos) {
   pdfSetFont(doc, "bold");
   doc.setFontSize(28);
   doc.splitTextToSize(t("cookbook_title"), maxWidth).forEach((line, idx) => {
-    doc.text(line, margin, 100 + idx * 11);
+    pdfText(doc, line, margin, 100 + idx * 11);
   });
   pdfSetFont(doc, "normal");
   doc.setFontSize(12);
-  doc.text(localeDateStr(new Date()), margin, 125);
-  doc.text(t("cookbook_recipe_count", { count: String(recipes.length) }), margin, 133);
+  pdfText(doc, localeDateStr(new Date()), margin, 125);
+  pdfText(doc, t("cookbook_recipe_count", { count: String(recipes.length) }), margin, 133);
 
   // Sommaire : une page dédiée (ou plusieurs si beaucoup de recettes),
   // avec le nom de chaque recette pour l'instant, le numéro de page
@@ -4962,7 +5004,7 @@ async function exportCookbookPdf(recipes, includePhotos) {
   let tocY = 22;
   pdfSetFont(doc, "bold");
   doc.setFontSize(18);
-  doc.text(t("cookbook_toc_title"), margin, tocY);
+  pdfText(doc, t("cookbook_toc_title"), margin, tocY);
   tocY += 12;
   pdfSetFont(doc, "normal");
   doc.setFontSize(11);
@@ -4972,7 +5014,7 @@ async function exportCookbookPdf(recipes, includePhotos) {
       doc.addPage();
       tocY = 22;
     }
-    doc.text(recipe.name, margin, tocY);
+    pdfText(doc, recipe.name, margin, tocY);
     tocEntries.push({ recipe, tocPageIndex: doc.internal.getNumberOfPages(), tocY });
     tocY += 8;
   });
@@ -4993,7 +5035,7 @@ async function exportCookbookPdf(recipes, includePhotos) {
   // maintenant connus.
   tocEntries.forEach((entry) => {
     doc.setPage(entry.tocPageIndex);
-    doc.text(String(entry.pageNumber), pageWidth - margin, entry.tocY, { align: "right" });
+    pdfText(doc, String(entry.pageNumber), pageWidth - margin, entry.tocY, { align: "right" });
   });
 
   doc.save(`${t("pdf_recipes_filename")}.pdf`);
@@ -15110,7 +15152,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 330;
+const APP_VERSION = 331;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

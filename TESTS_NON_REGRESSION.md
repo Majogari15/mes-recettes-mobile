@@ -10037,3 +10037,28 @@ recherches, recettes avec/sans, substituts, écran à 320 px) ;
 de fichier `_ar.json` absent.
 
 **Version testée** : v330 (branche)
+
+### 166 — Arabe, étape 3 : export PDF (branche, pas sur main)
+
+- Police Noto Sans Arabic (normale et grasse, ~100 Ko chacune,
+  `lib/fonts/noto-sans-arabic*-pdf.ttf`, OFL) téléchargée seulement au
+  premier PDF en arabe, ou d'un contenu contenant de l'arabe, puis
+  gardée en mémoire et en cache. Helvetica n'a aucune lettre arabe.
+- jsPDF lie lui-même les lettres (formes initiale / médiane / finale,
+  ligature « لا ») ; chaque ligne lui est déclarée de droite à gauche
+  (`pdfText`), sinon « - 4 قطعة طماطم » mettait le tiret et la quantité
+  du mauvais côté.
+- Page en miroir quand l'interface est en arabe : texte aligné à droite,
+  colonnes (catégorie, personnes, temps) de droite à gauche, photo à
+  droite, numéros du sommaire à gauche. Case à cocher de la liste de
+  courses écrite à part (crochets non retournés).
+- Caractères invisibles d'isolation (FSI…PDI, RLM) retirés du PDF.
+- Une recette au nom arabe exportée dans une autre langue utilise la
+  police arabe, mise en page inchangée (à gauche).
+
+**Tests** : `tests/test_arabic_pdf.py` (nouveau : police, lettres liées,
+ordre de lecture relu depuis les glyphes du PDF, alignement et marges,
+case à cocher, nom de fichier ; vérifié qu'il échoue sans la déclaration
+de droite à gauche).
+
+**Version testée** : v331 (branche)

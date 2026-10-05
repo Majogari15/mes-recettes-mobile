@@ -127,6 +127,25 @@ externe. Chacune conserve sa licence d'origine.
 - Un caractère absent du sous-ensemble (chinois rare hors GB2312)
   apparaît vide dans le PDF
 
+## Police Noto Sans Arabic pour les PDF (`fonts/noto-sans-arabic-pdf.ttf`, `fonts/noto-sans-arabic-bold-pdf.ttf`)
+
+- Noto Sans Arabic, par le projet Noto (https://github.com/notofonts/arabic) ;
+  fichier source récupéré depuis le dépôt Google Fonts
+  (`ofl/notosansarabic/NotoSansArabic[wdth,wght].ttf`)
+- Licence : SIL Open Font License 1.1 — texte complet dans
+  `fonts/OFL-NotoSansArabic.txt`
+- Fichiers modifiés (autorisé par l'OFL) : graisse figée à 400 (normale)
+  et 700 (grasse), largeur 100, avec `fontTools.varLib.instancer`, puis
+  sous-ensemble avec `pyftsubset` (lettres arabes U+0600–06FF, formes de
+  présentation arabes A et B — utilisées par jsPDF pour lier les lettres
+  —, latin de base, Latin-1 et latin étendu A, ponctuation générale, €,
+  ×, flèches), sans tables de mise en page ni hinting — ~100 Ko chacun
+- Utilisation dans l'application : uniquement l'export PDF (la police
+  Helvetica intégrée à jsPDF n'a aucune lettre arabe). Pas incluse dans le
+  préchargement (voir `sw.js`) : téléchargée au premier export PDF en
+  arabe (ou d'un contenu contenant de l'arabe), puis mise en cache. jsPDF
+  n'intègre dans chaque PDF que les caractères utilisés.
+
 ---
 
 Aucune de ces bibliothèques ne collecte ni ne transmet de données —
