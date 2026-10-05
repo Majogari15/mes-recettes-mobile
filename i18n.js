@@ -761,6 +761,12 @@ const ALLERGEN_TRANSLATIONS = {
     "sésame": "Sesam", "céleri": "Selleri", moutarde: "Sennep", sulfites: "Sulfitter",
     lupin: "Lupin", mollusques: "Bløtdyr",
   },
+  ar: {
+    gluten: "الغلوتين", lactose: "اللاكتوز", "œufs": "البيض", arachides: "الفول السوداني",
+    "fruits à coque": "المكسرات", soja: "الصويا", poisson: "السمك", "crustacés": "القشريات",
+    "sésame": "السمسم", "céleri": "الكرفس", moutarde: "الخردل", sulfites: "الكبريتيت",
+    lupin: "الترمس", mollusques: "الرخويات",
+  },
   zh: {
     gluten: "麸质", lactose: "乳糖", "œufs": "蛋类", arachides: "花生",
     "fruits à coque": "坚果", soja: "大豆", poisson: "鱼类", "crustacés": "甲壳类",
@@ -934,6 +940,12 @@ const RAYON_TRANSLATIONS = {
     "épicerie": "Tørrvarer", "herbes & épices": "Urter & Krydder",
     "boissons": "Drikke", "autre": "Annet",
   },
+  ar: {
+    "fruits & légumes": "الفواكه والخضروات", "viandes & poissons": "اللحوم والأسماك",
+    "crèmerie": "الألبان", "boulangerie & pâtisserie": "المخبوزات والحلويات",
+    "épicerie": "البقالة", "herbes & épices": "الأعشاب والتوابل",
+    "boissons": "المشروبات", "autre": "أخرى",
+  },
   zh: {
     "fruits & légumes": "蔬菜水果", "viandes & poissons": "肉类水产",
     "crèmerie": "乳制品", "boulangerie & pâtisserie": "面包糕点",
@@ -1026,6 +1038,10 @@ const SUPPORTED_LANGUAGES = [
   { code: "sv", flag: "🇸🇪", nativeName: "Svenska" },
   { code: "no", flag: "🇳🇴", nativeName: "Norsk" },
   { code: "zh", flag: "🇨🇳", nativeName: "简体中文" },
+  // Arabe standard moderne, commun à tous les pays arabophones : pas de
+  // drapeau de pays (aucun ne représente la langue entière), la lettre
+  // « ع » (initiale de « عربي ») à la place.
+  { code: "ar", flag: "ع", nativeName: "العربية" },
 ];
 
 // Textes de l'interface des langues autres que le français : chargés à
@@ -1074,6 +1090,8 @@ async function ensureUiTranslationsLoaded(lang) {
 function labelValue(label, value) {
   if (CURRENT_LANG === "zh") return `${label}：${value}`;
   if (CURRENT_LANG === "fr") return `${label} : ${value}`;
+  // Valeur isolée en écriture de droite à gauche (voir t()).
+  if (isRtlLang(CURRENT_LANG)) return `${label}: \u2068${value}\u2069`;
   return `${label}: ${value}`;
 }
 // Précision entre parenthèses ajoutée à un libellé : parenthèses pleine
@@ -1082,13 +1100,40 @@ function labelValue(label, value) {
 // Séparateur d'une liste saisie par l'utilisateur (étiquettes) : virgule
 // chinoise en chinois.
 function listSeparator() {
-  return CURRENT_LANG === "zh" ? "，" : ", ";
+  if (CURRENT_LANG === "zh") return "，";
+  if (CURRENT_LANG === "ar") return "، ";
+  return ", ";
 }
 function paren(text) {
   return CURRENT_LANG === "zh" ? `（${text}）` : ` (${text})`;
 }
 function htmlLangFor(lang) {
   return lang === "zh" ? "zh-CN" : lang;
+}
+// Langues écrites de droite à gauche : toute l'interface est inversée
+// (attribut dir du document, propriétés CSS logiques).
+const RTL_LANGUAGES = ["ar"];
+function isRtlLang(lang) {
+  return RTL_LANGUAGES.includes(lang);
+}
+function applyDocumentDirection(lang) {
+  if (typeof document === "undefined") return;
+  document.documentElement.lang = htmlLangFor(lang);
+  document.documentElement.dir = isRtlLang(lang) ? "rtl" : "ltr";
+}
+// Texte libre (nom d'ingrédient, de recette) placé dans une phrase en
+// écriture de droite à gauche : isolé (FSI…PDI), pour que « Tomate — 3
+// قطعة » ne devienne pas « 3 — Tomate قطعة ».
+function bidiIsolate(text) {
+  return isRtlLang(CURRENT_LANG) ? `\u2068${text}\u2069` : text;
+}
+// Locale des dates et nombres (Intl, toLocale…) : en arabe, chiffres
+// occidentaux (« 12 ») imposés plutôt que les chiffres arabes orientaux
+// (« ١٢ ») que certains navigateurs choisissent seuls — les mêmes que
+// ceux tapés dans les champs et que les quantités affichées.
+function intlLocaleFor(lang) {
+  if (lang === "ar") return "ar-u-nu-latn";
+  return htmlLangFor(lang);
 }
 function applyDocumentChrome() {
   if (typeof document === "undefined") return;
@@ -1112,7 +1157,7 @@ if (!SUPPORTED_LANGUAGES.some((l) => l.code === CURRENT_LANG)) CURRENT_LANG = "e
 // l'attribut "fr" figé dans index.html, faisant prononcer le contenu
 // dans la mauvaise langue par un lecteur d'écran.
 if (typeof document !== "undefined") {
-  document.documentElement.lang = htmlLangFor(CURRENT_LANG);
+  applyDocumentDirection(CURRENT_LANG);
   // Utilise ce qui est déjà disponible tout de suite (le français, voir
   // le repli dans t()) ; si CURRENT_LANG n'est pas "fr", ces deux
   // éléments restent temporairement en français le temps du
@@ -1126,8 +1171,15 @@ if (typeof document !== "undefined") {
 function t(key, params) {
   let str = (TRANSLATIONS[CURRENT_LANG] && TRANSLATIONS[CURRENT_LANG][key]) || TRANSLATIONS.fr[key] || key;
   if (params) {
+    // Écriture de droite à gauche : chaque valeur insérée (nom de recette
+    // en alphabet latin ou en chinois, nombre, date) est isolée (FSI…PDI,
+    // caractères invisibles), sinon l'algorithme bidirectionnel la mélange
+    // avec le texte arabe autour (« 2 — Tarte مرة » au lieu de
+    // « Tarte — 2 مرة »).
+    const isolate = isRtlLang(CURRENT_LANG);
     Object.keys(params).forEach((p) => {
-      str = str.replace(new RegExp("\\{" + p + "\\}", "g"), params[p]);
+      const value = isolate ? `\u2068${params[p]}\u2069` : params[p];
+      str = str.replace(new RegExp("\\{" + p + "\\}", "g"), value);
     });
   }
   return str;
@@ -1136,7 +1188,7 @@ function setLang(lang) {
   if (!SUPPORTED_LANGUAGES.some((l) => l.code === lang)) return;
   CURRENT_LANG = lang;
   localStorage.setItem("lang", lang);
-  document.documentElement.lang = htmlLangFor(lang);
+  applyDocumentDirection(lang);
   applyDocumentChrome();
   // Retrie immédiatement selon la traduction de la nouvelle langue —
   // sans ça, la liste restait triée selon l'ordre de la langue

@@ -13,7 +13,7 @@
 // non plus la structure la plus propre.
 (function () {
   var lang = localStorage.getItem("lang") || (navigator.language || "fr").slice(0, 2);
-  var supported = ["fr", "en", "es", "de", "id", "pt", "it", "sv", "no", "zh"];
+  var supported = ["fr", "en", "es", "de", "id", "pt", "it", "sv", "no", "zh", "ar"];
   var file = supported.indexOf(lang) !== -1 && lang !== "fr" ? "manifest-" + lang + ".json" : "manifest.json";
   var link = document.getElementById("app-manifest");
   if (link) {

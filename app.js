@@ -268,10 +268,10 @@ function uid() {
 // réglée en allemand sur un téléphone resté en français affichait quand
 // même les dates au format français.
 function localeDateStr(date) {
-  return new Date(date).toLocaleDateString(CURRENT_LANG);
+  return new Date(date).toLocaleDateString(intlLocaleFor(CURRENT_LANG));
 }
 function localeDateTimeStr(date) {
-  return new Date(date).toLocaleString(CURRENT_LANG);
+  return new Date(date).toLocaleString(intlLocaleFor(CURRENT_LANG));
 }
 
 // Saisie de date "JJ/MM/AA" (6 chiffres, / auto-insérés) pour la date
@@ -513,7 +513,7 @@ const ICONS = {
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
 };
 function icon(name) {
-  return `<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
+  return `<svg class="ui-icon ui-icon-${name}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
 }
 
 // Remplace window.alert()/window.confirm() par des fenêtres propres à
@@ -1979,8 +1979,8 @@ function renderRecipeView() {
   // ÷2 / ×2 dans un groupe à part : passe à la ligne sur écran étroit
   // (320 px) au lieu d'élargir la pastille −/+ au-delà de l'écran.
   const quick = el(`<div class="persons-stepper persons-quick">
-    <button data-action="half" aria-label="${escapeHtml(t("recipe_persons_half"))}">÷2</button>
-    <button data-action="double" aria-label="${escapeHtml(t("recipe_persons_double"))}">×2</button>
+    <button data-action="half" aria-label="${escapeHtml(t("recipe_persons_half"))}" dir="ltr">÷2</button>
+    <button data-action="double" aria-label="${escapeHtml(t("recipe_persons_double"))}" dir="ltr">×2</button>
   </div>`);
   // ÷2 arrondi au supérieur (5 -> 3) et jamais sous 1, comme l'app Windows.
   quick.querySelector('[data-action="half"]').addEventListener("click", () => {
@@ -3224,11 +3224,11 @@ function shoppingItemRow(item, wrap, manualMode) {
   // l'ingrédient n'avait pas de quantité précisée. Sans ce suffixe, la
   // quantité affichée pouvait laisser croire à tort qu'elle était
   // complète.
-  const itemLabel = `${translateIngredientName(item.name)}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + translateUnit(item.unit) + (item.partialQuantity ? t("shopping_quantity_partial_suffix") : "") : ""}`;
+  const itemLabel = `${bidiIsolate(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + translateUnit(item.unit) + (item.partialQuantity ? t("shopping_quantity_partial_suffix") : "") : ""}`;
   const row = el(`<div class="shopping-item ${item.checked ? "checked" : ""}">
     ${manualMode ? `<button type="button" class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</button>` : ""}
     <input type="checkbox" aria-label="${escapeHtml(itemLabel)}" ${item.checked ? "checked" : ""}>
-    <button type="button" class="label" style="flex:1;text-align:left;background:none;border:none;padding:0;font:inherit;color:inherit;cursor:pointer;">${escapeHtml(itemLabel)}</button>
+    <button type="button" class="label" style="flex:1;text-align:start;background:none;border:none;padding:0;font:inherit;color:inherit;cursor:pointer;">${escapeHtml(itemLabel)}</button>
     <button type="button" class="shopping-item-delete" aria-label="${escapeHtml(t("common_delete"))}" style="background:none;border:none;color:var(--text-muted);padding:4px 8px;cursor:pointer;line-height:1;">${icon("trash")}</button>
   </div>`);
   // Utilisé par attachDragReorder (voir fillShoppingList) pour
@@ -4029,7 +4029,7 @@ function pantryExpirationSuffixHtml(item) {
   // repli, l'écran plantait entièrement (impossible d'afficher le
   // garde-manger) au lieu de simplement ignorer cette seule mention.
   if (!parsedExpiration) return "";
-  const dateStr = parsedExpiration.toLocaleDateString(CURRENT_LANG);
+  const dateStr = parsedExpiration.toLocaleDateString(intlLocaleFor(CURRENT_LANG));
   const key = status === "expired" ? "pantry_expiration_expired_suffix" : status === "soon" ? "pantry_expiration_soon_suffix" : "pantry_expiration_future_suffix";
   const color = status === "expired" ? "var(--danger)" : status === "soon" ? "var(--accent)" : "var(--text-muted)";
   return `<span style="color:${color};font-weight:${status ? 600 : 400};">${escapeHtml(t(key, { date: dateStr }))}</span>`;
@@ -4096,7 +4096,7 @@ function renderPantry() {
         // d'accessibilité que pour la liste de courses (shoppingItemRow).
         const row = el(`<div class="shopping-item">
           ${manualMode ? `<button type="button" class="drag-handle" aria-label="${escapeHtml(t("drag_handle_label"))}">☰</button>` : ""}
-          <button type="button" class="label" style="text-align:left;background:none;border:none;padding:0;font:inherit;color:inherit;cursor:pointer;">${escapeHtml(translateIngredientName(item.name))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}${item.threshold != null ? escapeHtml(t("pantry_threshold_suffix", { threshold: fmtQty(item.threshold) })) : ""}${pantryExpirationSuffixHtml(item)}</button>
+          <button type="button" class="label" style="text-align:start;background:none;border:none;padding:0;font:inherit;color:inherit;cursor:pointer;">${escapeHtml(bidiIsolate(translateIngredientName(item.name)))}${item.quantity != null ? " — " + fmtQty(item.quantity) + " " + escapeHtml(translateUnit(item.unit)) : ""}${item.threshold != null ? escapeHtml(t("pantry_threshold_suffix", { threshold: fmtQty(item.threshold) })) : ""}${pantryExpirationSuffixHtml(item)}</button>
           <button class="remove-ing" style="width:32px;height:32px;" aria-label="${t("common_delete")}">${icon("trash")}</button>
         </div>`);
         row._item = item;
@@ -6524,7 +6524,7 @@ function openCookLogViewModal(recipe) {
     const summary = cookLogRatingSummary(entries);
     if (summary) {
       entriesHolder.appendChild(el(`<p class="cooklog-rating-summary">${escapeHtml(t("cooklog_rating_summary", {
-        avg: summary.avg.toLocaleString(CURRENT_LANG, { maximumFractionDigits: 1 }),
+        avg: summary.avg.toLocaleString(intlLocaleFor(CURRENT_LANG), { maximumFractionDigits: 1 }),
         count: String(summary.count),
       }))}</p>`));
     }
@@ -6792,7 +6792,7 @@ function speakText(text) {
   const langMap = {
     fr: "fr-FR", en: "en-US", es: "es-ES", de: "de-DE",
     id: "id-ID", pt: "pt-PT", it: "it-IT", sv: "sv-SE", no: "nb-NO",
-    zh: "zh-CN",
+    zh: "zh-CN", ar: "ar-SA",
   };
   utterance.lang = langMap[CURRENT_LANG] || "fr-FR";
   window.speechSynthesis.speak(utterance);
@@ -10177,7 +10177,7 @@ async function renderDiagnostic() {
   function addRow(label, value) {
     rowsHolder.appendChild(el(`<div style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;">
       <span style="color:var(--text-muted);">${escapeHtml(label)}</span>
-      <span style="text-align:right;font-weight:500;word-break:break-word;">${escapeHtml(value)}</span>
+      <span style="text-align:end;font-weight:500;word-break:break-word;">${escapeHtml(value)}</span>
     </div>`));
   }
 
@@ -11258,7 +11258,7 @@ function renderPlanning() {
         assignments.forEach((assigned, index) => {
           const recipe = state.recipes.find((r) => r.id === assigned.recipeId);
           const row = el(`<div class="ingredient-item" style="padding-top:0;${index === assignments.length - 1 ? "" : "border-bottom:none;padding-bottom:4px;"}"></div>`);
-          row.innerHTML = `<span style="padding-left:12px;">${escapeHtml(recipe ? recipe.name : "?")}</span>`;
+          row.innerHTML = `<span style="padding-inline-start:12px;">${escapeHtml(recipe ? recipe.name : "?")}</span>`;
           const clearBtn = el(`<button aria-label="${t("common_delete")}" style="width:28px;height:28px;border:none;border-radius:8px;background:var(--danger-light);color:var(--danger);">${icon("trash")}</button>`);
           clearBtn.addEventListener("click", async () => {
             const current = planSlotAssignments(state.weeklyPlan[day][slot]);
@@ -14347,7 +14347,7 @@ const RECIPE_SEARCH_SITES = {
   es: ["recetasderechupete.com", "directoalpaladar.com", "javirecetas.com", "hogarmania.com", "cocina-casera.com", "divinacocina.es"],
   de: ["chefkoch.de", "lecker.de", "einfachbacken.de", "gutekueche.at", "essen-und-trinken.de", "kochbar.de"],
 };
-const RECIPE_SEARCH_WORD = { fr: "recette", en: "recipe", es: "receta", de: "Rezept", it: "ricetta", pt: "receita", id: "resep", no: "oppskrift", sv: "recept", zh: "菜谱" };
+const RECIPE_SEARCH_WORD = { fr: "recette", en: "recipe", es: "receta", de: "Rezept", it: "ricetta", pt: "receita", id: "resep", no: "oppskrift", sv: "recept", zh: "菜谱", ar: "وصفة" };
 function buildRecipeSearchUrl(query, lang = CURRENT_LANG) {
   const q = String(query || "").trim();
   if (!q) return "https://www.google.com/";
@@ -14364,7 +14364,7 @@ function renderImportUrl() {
   // comment faire.
   wrap.appendChild(el(`<div class="import-url-intro" style="font-size:13px;color:var(--text-muted);line-height:1.5;margin:0 0 16px;">
     <p style="margin:0 0 8px;color:var(--text);font-weight:600;font-size:14px;">${escapeHtml(t("import_url_intro_title"))}</p>
-    <ol style="margin:0 0 10px;padding-left:20px;">
+    <ol style="margin:0 0 10px;padding-inline-start:20px;">
       <li>${escapeHtml(t("import_url_step1"))}</li>
       <li>${escapeHtml(t("import_url_step2"))}</li>
       <li>${escapeHtml(t("import_url_step3"))}</li>
@@ -14806,7 +14806,7 @@ function currentCurrency() {
 function formatPrice(value) {
   const currency = currentCurrency();
   try {
-    return new Intl.NumberFormat(htmlLangFor(CURRENT_LANG), { style: "currency", currency }).format(Number(value));
+    return new Intl.NumberFormat(intlLocaleFor(CURRENT_LANG), { style: "currency", currency }).format(Number(value));
   } catch (e) {
     return `${Number(value).toFixed(2)} ${currency}`;
   }
@@ -14815,11 +14815,11 @@ function formatPrice(value) {
 function currencyOptionLabel(code) {
   let symbol = code, name = code;
   try {
-    const part = new Intl.NumberFormat(htmlLangFor(CURRENT_LANG), { style: "currency", currency: code }).formatToParts(0).find((x) => x.type === "currency");
+    const part = new Intl.NumberFormat(intlLocaleFor(CURRENT_LANG), { style: "currency", currency: code }).formatToParts(0).find((x) => x.type === "currency");
     if (part) symbol = part.value;
   } catch (e) { /* symbole inconnu : code ISO */ }
   try {
-    if (Intl.DisplayNames) name = new Intl.DisplayNames([htmlLangFor(CURRENT_LANG)], { type: "currency" }).of(code) || code;
+    if (Intl.DisplayNames) name = new Intl.DisplayNames([intlLocaleFor(CURRENT_LANG)], { type: "currency" }).of(code) || code;
   } catch (e) { /* nom inconnu : code ISO */ }
   return symbol === name ? code : `${symbol} — ${name}`;
 }
@@ -14960,14 +14960,16 @@ function renderStatistics() {
   for (let i = 11; i >= 0; i--) {
     const d = new Date(refDate.getFullYear(), refDate.getMonth() - i, 1);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    months.push({ key, label: d.toLocaleDateString(CURRENT_LANG, { month: "short" }), count: monthCounts[key] || 0 });
+    months.push({ key, label: d.toLocaleDateString(intlLocaleFor(CURRENT_LANG), { month: isRtlLang(CURRENT_LANG) ? "numeric" : "short" }), count: monthCounts[key] || 0 });
   }
   const maxCount = Math.max(1, ...months.map((m) => m.count));
   const chartCard = el(`<div class="card" style="padding:16px 10px 10px;display:flex;align-items:flex-end;gap:4px;height:150px;"></div>`);
   months.forEach((m) => {
-    const barWrap = el(`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;"></div>`);
+    // Mois en chiffres en arabe : les noms (« أكتوبر ») ne tiennent pas
+    // dans les 12 colonnes d'un téléphone.
+    const barWrap = el(`<div style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;"></div>`);
     const bar = el(`<div style="width:100%;background:var(--primary);border-radius:3px 3px 0 0;height:${Math.max(2, (m.count / maxCount) * 90)}px;" title="${m.count}"></div>`);
-    const label = el(`<div style="font-size:9px;color:var(--text-muted);margin-top:4px;">${escapeHtml(m.label)}</div>`);
+    const label = el(`<div style="font-size:9px;color:var(--text-muted);margin-top:4px;max-width:100%;overflow:hidden;white-space:nowrap;">${escapeHtml(m.label)}</div>`);
     barWrap.appendChild(bar);
     barWrap.appendChild(label);
     chartCard.appendChild(barWrap);
@@ -15027,7 +15029,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
     const monthLabel = el(`<span></span>`);
     if (weekStart.getMonth() !== lastMonth) {
       // Libellé du mois au-dessus de la première semaine qui le contient.
-      monthLabel.textContent = weekStart.toLocaleDateString(CURRENT_LANG, { month: "short" });
+      monthLabel.textContent = weekStart.toLocaleDateString(intlLocaleFor(CURRENT_LANG), { month: "short" });
       lastMonth = weekStart.getMonth();
     }
     months.appendChild(monthLabel);
@@ -15040,7 +15042,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
       const names = byDay.get(cookingDayKey(day)) || [];
       const level = Math.min(3, names.length);
       if (names.length) { totalCount += names.length; totalDays++; }
-      const dateText = day.toLocaleDateString(CURRENT_LANG, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      const dateText = day.toLocaleDateString(intlLocaleFor(CURRENT_LANG), { weekday: "long", day: "numeric", month: "long", year: "numeric" });
       const label = names.length
         ? t("stats_heatmap_day", { date: dateText, count: String(names.length), names: groupedNames(names) })
         : t("stats_heatmap_day_none", { date: dateText });
@@ -15068,7 +15070,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
   for (let dIdx = 0; dIdx < 7; dIdx++) {
     // Lundi, mercredi, vendredi seulement, comme les calendriers de ce type.
     const ref = new Date(2024, 0, 1 + dIdx); // 1er janvier 2024 = lundi
-    dayLabels.appendChild(el(`<span>${dIdx % 2 === 0 && dIdx < 6 ? escapeHtml(ref.toLocaleDateString(CURRENT_LANG, { weekday: "short" })) : ""}</span>`));
+    dayLabels.appendChild(el(`<span>${dIdx % 2 === 0 && dIdx < 6 ? escapeHtml(ref.toLocaleDateString(intlLocaleFor(CURRENT_LANG), { weekday: "short" })) : ""}</span>`));
   }
   const scroller = el(`<div class="heatmap-scroll" role="region" tabindex="0"></div>`);
   scroller.setAttribute("aria-label", t("stats_heatmap_title"));
@@ -15088,7 +15090,9 @@ function renderCookingHeatmap(recipes, now = new Date()) {
   const detail = el(`<p class="heatmap-detail" aria-live="polite">${escapeHtml(t("stats_heatmap_hint"))}</p>`);
   card.appendChild(detail);
   // Semaines les plus récentes visibles d'emblée (à droite).
-  requestAnimationFrame(() => { scroller.scrollLeft = scroller.scrollWidth; });
+  // Semaines les plus récentes visibles d'abord : à droite en lecture de
+  // gauche à droite ; à gauche de droite à gauche (scrollLeft négatif).
+  requestAnimationFrame(() => { scroller.scrollLeft = isRtlLang(CURRENT_LANG) ? -scroller.scrollWidth : scroller.scrollWidth; });
   return card;
 }
 
@@ -15096,7 +15100,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 328;
+const APP_VERSION = 329;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
@@ -15115,7 +15119,7 @@ function renderStartupError(error) {
       <h1 style="font-size:20px;margin:0 0 12px;">${escapeHtml(t("startup_error_title"))}</h1>
       <p style="font-size:14px;line-height:1.5;color:var(--text-muted, #666);margin:0 0 20px;">${escapeHtml(t("startup_error_message"))}</p>
       <button type="button" id="startup-error-reload" style="font-size:15px;font-weight:600;padding:12px 24px;border-radius:10px;border:none;background:var(--accent, #2f6b3c);color:#fff;cursor:pointer;">${escapeHtml(t("startup_error_reload"))}</button>
-      <details style="margin-top:20px;text-align:left;font-size:12px;color:var(--text-muted, #666);">
+      <details style="margin-top:20px;text-align:start;font-size:12px;color:var(--text-muted, #666);">
         <summary style="cursor:pointer;">${escapeHtml(t("startup_error_details"))}</summary>
         <pre style="white-space:pre-wrap;word-break:break-word;margin-top:8px;">${escapeHtml(formatCaughtError(error))}</pre>
       </details>

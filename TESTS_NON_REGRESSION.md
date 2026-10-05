@@ -9977,3 +9977,39 @@ fenêtres ; vérifié qu'il échoue bien sur une interface en français),
 ajoutées) ; `test_pantry_expiration.py` (français) inchangé.
 
 **Version testée** : v328 (branche)
+
+### 164 — Arabe, étape 1 : interface de droite à gauche (branche, pas sur main)
+
+- Langue `ar` (arabe standard moderne), symbole « ع » dans le sélecteur
+  (pas de drapeau : aucun pays ne représente toute la langue). Les 700
+  textes d'interface traduits (`i18n/ar.json`, mêmes paramètres que
+  l'anglais), clause juridique avec la mention « traduction pour
+  information, le texte français fait foi ». Allergènes et rayons
+  traduits. Manifeste `manifest-ar.json` (`dir: rtl`). Voix de lecture
+  ar-SA. Devise : euro par défaut, chacun choisit la sienne.
+- Droite à gauche : `dir="rtl"` sur le document (`applyDocumentDirection`),
+  propriétés CSS logiques (inline-start/end) à la place de left/right
+  (bouton flottant, étoile des cartes, marges, bordures, alignements,
+  styles en ligne de app.js), flèche retour retournée, dégradé des puces
+  et défilement du calendrier des cuissons du bon côté, champs de
+  chiffres et de date toujours de gauche à droite.
+- Chiffres occidentaux imposés pour les dates, nombres et prix
+  (`intlLocaleFor` : `ar-u-nu-latn`), comme dans les champs de saisie.
+- Ordre des mots : chaque valeur insérée dans un texte traduit (nom,
+  nombre, date) et le nom d'ingrédient d'une ligne de courses ou de
+  garde-manger sont isolés (caractères invisibles FSI…PDI) ; sinon
+  « Tarte — 2 مرة » s'affichait « 2 — Tarte مرة ». Nom de recette et
+  étapes : sens déterminé par leur premier caractère. « ÷2 » / « ×2 »
+  gardés de gauche à droite.
+- Polices : celles du système (Noto Sans/Naskh Arabic, Geeza Pro,
+  Segoe UI), jamais d'espacement entre les lettres (casse la liaison des
+  lettres arabes). Graphique mensuel : mois en chiffres en arabe (les
+  noms ne tiennent pas dans 12 colonnes).
+- Pas encore fait : noms d'ingrédients et substitutions (étape 2, restent
+  en français), PDF (étape 3), reconnaissance de texte et import (étape 4).
+
+**Tests** : `tests/test_arabic_ui.py` (nouveau : textes, manifeste, 34
+écrans et fenêtres, mise en page inversée, chiffres, ordre des mots ;
+vérifié qu'il échoue sur une interface en français).
+
+**Version testée** : v329 (branche)

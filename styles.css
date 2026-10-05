@@ -349,7 +349,7 @@ a { color: inherit; }
 .chip-row-wrap::after {
   content: "";
   position: absolute;
-  top: 0; right: 0; bottom: 4px;
+  top: 0; inset-inline-end: 0; bottom: 4px;
   width: 28px;
   background: linear-gradient(to right, transparent, var(--bg));
   pointer-events: none;
@@ -395,7 +395,7 @@ a { color: inherit; }
   align-items: center;
   gap: 12px;
   padding: 12px;
-  text-align: left;
+  text-align: start;
   width: 100%;
 }
 /* Ligne compacte des fenêtres de choix (recette, langue) : sans .card,
@@ -467,7 +467,7 @@ button.recipe-row:not(.card) {
    remplacée ici par un badge rond superposé en haut à droite. */
 .recipe-star {
   position: absolute;
-  top: 10px; right: 10px;
+  top: 10px; inset-inline-end: 10px;
   width: 30px; height: 30px;
   display: flex; align-items: center; justify-content: center;
   background: rgba(0, 0, 0, 0.4);
@@ -829,7 +829,7 @@ button.recipe-row:not(.card) {
   min-width: 100px;
   text-align: center;
 }
-.timer-row-controls { display: flex; gap: 8px; margin-left: auto; }
+.timer-row-controls { display: flex; gap: 8px; margin-inline-start: auto; }
 .timer-row-controls button {
   width: 40px; height: 40px;
   border-radius: 10px;
@@ -855,7 +855,7 @@ button.recipe-row:not(.card) {
 /* ---------- FAB (bouton flottant) ---------- */
 .fab {
   position: fixed;
-  right: 18px;
+  inset-inline-end: 18px;
   bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 18px);
   z-index: 25;
   width: 58px; height: 58px;
@@ -950,7 +950,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .skip-link {
   position: fixed;
   top: -60px;
-  left: 8px;
+  inset-inline-start: 8px;
   z-index: 1000;
   background: var(--primary);
   color: #fff;
@@ -1049,7 +1049,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   border-bottom: 1px solid var(--border);
 }
 .ingredient-manage-row:last-child { border-bottom: none; }
-.ingredient-manage-row .name { font-size: 15px; flex: 1; min-width: 0; overflow-wrap: anywhere; margin-right: 8px; }
+.ingredient-manage-row .name { font-size: 15px; flex: 1; min-width: 0; overflow-wrap: anywhere; margin-inline-end: 8px; }
 .ingredient-manage-row .row-actions { display: flex; gap: 12px; flex-shrink: 0; }
 .ingredient-manage-row .row-actions button {
   width: 44px; height: 44px;
@@ -1102,7 +1102,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   font-size: 13px;
   line-height: 1.7;
 }
-.compare-only-columns > div + div { border-left: 1px solid var(--border); }
+.compare-only-columns > div + div { border-inline-start: 1px solid var(--border); }
 .compare-values > div, .compare-headers .header-values > div, .compare-only-columns > div { min-width: 0; overflow-wrap: anywhere; }
 .compare-only-columns .col-title {
   font-weight: 700;
@@ -1136,7 +1136,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .recipe-tags .chip, .chip-row-wrapping .chip, .tag-suggestions .chip {
   white-space: normal;
   overflow-wrap: anywhere;
-  text-align: left;
+  text-align: start;
   max-width: 100%;
   min-height: 32px;
   padding: 6px 12px;
@@ -1205,7 +1205,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   border-bottom: 1px solid var(--border);
   background: none;
   color: var(--text);
-  text-align: left;
+  text-align: start;
   cursor: pointer;
   font: inherit;
 }
@@ -1247,7 +1247,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   background: none;
   color: var(--text);
   font: inherit;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
 }
 .home-today-row .slot { font-size: 12px; color: var(--text-muted); overflow-wrap: break-word; }
@@ -1255,12 +1255,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .home-today-row .persons { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
 .home-today-empty {
   border: none; background: none; padding: 6px 0; min-height: 36px;
-  color: var(--text-muted); font: inherit; font-size: 13px; text-align: left; cursor: pointer;
+  color: var(--text-muted); font: inherit; font-size: 13px; text-align: start; cursor: pointer;
 }
 .home-daily {
   display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
   width: 100%; padding: 12px 16px; margin-bottom: 12px;
-  color: var(--text); font: inherit; text-align: left; cursor: pointer;
+  color: var(--text); font: inherit; text-align: start; cursor: pointer;
 }
 .home-daily .label { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; }
 .home-daily .name { font-weight: 700; font-size: 16px; overflow-wrap: anywhere; }
@@ -1287,8 +1287,8 @@ button.heatmap-cell { cursor: pointer; }
 .heatmap-selected, button.heatmap-cell:focus-visible { outline: 2px solid var(--text); outline-offset: 1px; }
 .heatmap-legend .heatmap-cell { width: 12px; height: 12px; }
 .heatmap-legend { display: flex; align-items: center; gap: 3px; justify-content: flex-end; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
-.heatmap-legend span:first-child { margin-right: 3px; }
-.heatmap-legend span:last-child { margin-left: 3px; }
+.heatmap-legend span:first-child { margin-inline-end: 3px; }
+.heatmap-legend span:last-child { margin-inline-start: 3px; }
 .heatmap-detail { font-size: 13px; color: var(--text-muted); margin: 8px 0 0; min-height: 1.4em; overflow-wrap: anywhere; }
 
 /* ---------- Chinois simplifié (html lang="zh-CN") ----------
@@ -1325,4 +1325,39 @@ html:lang(zh) .topbar-title h1:not(.subtitle) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ---------- Arabe (html lang="ar" dir="rtl") ----------
+   Mise en page inversée par dir="rtl" et les propriétés logiques
+   (inline-start/end) ci-dessus. Aucune police arabe embarquée : celles du
+   système (iPhone/Mac : Geeza Pro ; Android : Noto Naskh/Sans Arabic ;
+   Windows : Segoe UI, Tahoma). Inter/Fraunces restent en tête pour les
+   chiffres et lettres latines. Jamais d'espacement entre les lettres :
+   il casse la liaison des lettres arabes. */
+html:lang(ar) body {
+  font-family: 'Inter', "Noto Sans Arabic", "Noto Naskh Arabic", "Geeza Pro", "Segoe UI", Tahoma, system-ui, sans-serif;
+  letter-spacing: 0;
+}
+html:lang(ar) h1, html:lang(ar) h2, html:lang(ar) h3, html:lang(ar) .display,
+html:lang(ar) .card.recipe-row .recipe-name, html:lang(ar) .disclaimer-sheet h2 {
+  font-family: 'Fraunces', "Noto Naskh Arabic", "Noto Sans Arabic", "Geeza Pro", "Times New Roman", serif;
+}
+html:lang(ar) * { letter-spacing: 0 !important; }
+/* L'arabe a besoin d'un peu plus de hauteur de ligne (signes au-dessus
+   et en dessous des lettres) et de taille pour rester lisible. */
+html:lang(ar) .heatmap-months span, html:lang(ar) .heatmap-days,
+html:lang(ar) [style*="font-size:9px"] {
+  font-size: 10px !important;
+}
+/* Flèche « retour » et autres flèches horizontales : retournées. */
+html[dir="rtl"] .ui-icon-back { transform: scaleX(-1); }
+/* Dégradé de fin de défilement des puces : du côté de la fin de ligne. */
+html[dir="rtl"] .chip-row-wrap::after { background: linear-gradient(to left, transparent, var(--bg)); }
+/* Saisie de date et de nombres : toujours de gauche à droite (chiffres). */
+html[dir="rtl"] input[type="number"], html[dir="rtl"] input[inputmode="numeric"] { direction: ltr; text-align: end; }
+/* Textes saisis par l'utilisateur (nom de recette, étapes) : sens de
+   lecture déterminé par leur premier caractère — une recette au nom
+   latin ou chinois garde sa ponctuation à la bonne place. */
+html[dir="rtl"] .recipe-name, html[dir="rtl"] .prose, html[dir="rtl"] textarea {
+  unicode-bidi: plaintext;
 }
