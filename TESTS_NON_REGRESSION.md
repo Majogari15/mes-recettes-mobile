@@ -10145,3 +10145,39 @@ image arabe ; vérifié qu'il échoue sans la relecture des nombres) ;
 **Tests** : `tests/test_arabic_locale.py` (nouveau).
 
 **Version testée** : v334 (branche)
+
+### 169 — Arabe : import par lien sur les 10 sites arabes proposés (branche, pas sur main)
+
+Essai réel le 5 octobre 2026, une recette par site, réponses du vrai
+Worker Cloudflare et de Jina passées au vrai code d'import (interface en
+arabe) :
+
+| Site | Résultat | Voie |
+|---|---|---|
+| مطبخ سيدتي | ✅ 8 ingrédients, 4 personnes, catégorie Petit-déjeuner | Worker |
+| كوكباد | ✅ 7 ingrédients, « شخصين » = 2 personnes | Worker |
+| أطيب طبخة | ✅ 10 ingrédients, 16 personnes, 20 + 30 min | Worker |
+| فتافيت | ✅ 15 ingrédients, 8 personnes, Dessert | Worker |
+| جاست فود | ✅ 14 ingrédients, 4 personnes, 30 + 45 min | Worker |
+| أطيب أكلة | ✅ 7 ingrédients (après correction) | Jina |
+| موسوعة الطبخ العربي | ✅ 7 ingrédients | Jina |
+| شيف العرب | ❌ site entier hors service (HTTP 402 « Deployment Paused », page d'accueil comprise) | — |
+| عالم حواء | ❌ forum (pas de page de recette ni de données structurées) ; Worker et Jina dépassent leur délai (le site met ~10 s à répondre) | — |
+| سي بي سي سفرة | ✅ 15 ingrédients sans quantité (le site n'en donne pas) (après correction) | Jina |
+
+Corrections :
+- « بودرة  ثلث كوب كاكاو », « مذوبة  نصف كوب زبدة » (أطيب طبخة) :
+  qualificatif avant la quantité remis après le nom (« كاكاو بودرة »).
+- أطيب أكلة : la fiche de statistiques « المكوّنات / 7 / عدد » n'est plus
+  prise pour la liste d'ingrédients (`findIngredientTitleIndex`) ; fin des
+  étapes à « اقرأ … مرات ».
+- CBC Sofra : titre « # » placé après la recette (grille des programmes) —
+  la page n'est plus coupée à ce titre quand un titre d'ingrédients arabe
+  le précède ; puces « ● » reconnues ; étapes arrêtées aux boutons de
+  partage (« فيسبوك ») et à « المزيد من … ».
+- Pages françaises par Jina inchangées.
+
+**Tests** : `tests/test_arabic_url_sites.py` (nouveau, contenu inventé
+imitant la structure des pages réelles).
+
+**Version testée** : v335 (branche)

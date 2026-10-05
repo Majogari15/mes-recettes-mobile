@@ -11670,6 +11670,8 @@ const AR_QTY_LAST_RE = new RegExp("^(.+?)\\s*[:：]?\\s*" + AR_QTY + AR_HALF_TAI
 // « البيض 5 حبات », « طماطم 2 حبة متوسطة الحجم ومفرومة » (Sayidaty) : nom
 // court, quantité, unité, puis une précision gardée en note.
 const AR_QTY_MID_RE = new RegExp("^([^\\d:：]{2,30}?)\\s*[:：]?\\s*" + AR_QTY + AR_HALF_TAIL + "\\s*(" + AR_UNIT_PATTERN + ")" + AR_HALF_TAIL + "\\s+([^\\d]{2,60})$");
+// Qualificatif seul (participe « مذوب، مفروم، مقطع… » ou « بودرة »).
+const AR_QUALIFIER_RE = /^(?:م[\u0621-\u064a]{3,6}|بودرة|ناعمة?|طازجة?|مجففة?|ساخنة?|باردة?)$/;
 // Taille après une unité de compte (« حبة كبيرة طماطم ») : gardée en note.
 const AR_SIZE_WORD_RE = new RegExp("^(" + arabicPattern("كبيرة الحجم|صغيرة الحجم|متوسطة الحجم|كبير الحجم|صغير الحجم|متوسط الحجم|كبيرة|صغيرة|متوسطة|كبير|صغير|متوسط|كبار|صغار") + ")\\s+(.+)$");
 const AR_VAGUE_LAST_RE = new RegExp("^(.+?)\\s*[:：]?\\s*(?:" + AR_VAGUE + ")\\s*$");
@@ -11738,6 +11740,14 @@ function parseArabicIngredientString(text) {
   }
   m = text.match(AR_QTY_MID_RE);
   if (m && ARABIC_CHAR_RE.test(m[6])) {
+    // « بودرة ثلث كوب كاكاو », « مذوبة نصف كوب زبدة » (أطيب طبخة) : un
+    // qualificatif avant la quantité, le nom après — remis dans l'ordre
+    // arabe « كاكاو بودرة », « زبدة مذوبة ».
+    const prefix = cleanName(m[1]);
+    if (AR_QUALIFIER_RE.test(prefix) && m[6].trim().split(/\s+/).length <= 2) {
+      const r = build(`${m[6].trim()} ${prefix}`, m[2], m[3], m[4], m[5]);
+      if (r) return r;
+    }
     const r = build(m[1], m[2], m[3], m[4], m[5], m[6]);
     if (r) return r;
   }
@@ -12176,6 +12186,13 @@ const OCR_LEADING_NOISE = "[\\s=#«»“”\"'’•/|+@©®\\-*;【\\[]{0,6}";
 // juste devant "Ingrédients" (ex. "d Ingrédients"), faisant échouer
 // une détection strictement ancrée en début de ligne.
 const OCR_INGREDIENT_WORD = /(ingr[ée]dients?|ingredients|ingredientes|zutaten)/i;
+// Premier titre d'ingrédients, sauf la fiche de statistiques d'un site
+// arabe (أطيب أكلة : « المكوّنات » puis « 7 » puis « عدد ») — pas la vraie
+// liste.
+function findIngredientTitleIndex(lines) {
+  return lines.findIndex((l, i) => matchesIngredientTitle(l)
+    && !(ARABIC_CHAR_RE.test(l) && /^\d+$/.test((lines[i + 1] || "").trim()) && /^عدد/.test((lines[i + 2] || "").trim())));
+}
 function matchesIngredientTitle(line) {
   const trimmed = line.trim();
   // Chinois : le titre en tête de ligne courte (« 材料 », « 用料（2人份） ») —
@@ -12243,7 +12260,7 @@ const OCR_PERSONS_IN_TITLE = new RegExp("\\b(\\d+)\\s*(?:(?:personnes?|people|pe
 // de la page. Liste élargie après avoir constaté des sections encore
 // non couvertes (ex. "Qu'est-ce qu'on mange ce soir ?", propre à
 // Marmiton mais représentative du genre de contenu à exclure).
-const OCR_DESCRIPTION_END_MARKER = /^(\([A-Za-z]\)\s*)?(anonyme|anonymous|commentaires?|comments?|avis|reviews?|vous aimerez aussi|you (may|might) also like|related recipes?|plus de recettes|ces contenus devraient vous int[ée]resser|note de l['’]auteur|donnez votre avis|qu['’]est-ce qu['’]on mange|découvrir aussi|à découvrir|on vous propose|d[ée]couvrez aussi|dans la m[êe]me cat[ée]gorie|recettes similaires|similar recipes?|nos coups de coeur|publicit[ée]|advertisement|partager cette recette|share this recipe|imprimer|print recipe|newsletter)\b|^.{0,20}capture\s*d.{0,2}[ée]cran|^(?:评论|网友评论|相关食谱|相关菜谱|相关推荐|猜你喜欢|推荐食谱|你可能还喜欢|本菜谱为作者|分类[：:])|^(?:التعليقات|تعليقات|تم الحفظ|احفظ الوصفة|أضف كوكسناب|كوكسنابس|وصفات مشابهة|وصفات ذات صلة|وصفات أخرى|قد يعجبك أيضا|قد يعجبك أيضًا|قد يعجبك ايضا|شارك الوصفة|شاركي الوصفة|اطبع الوصفة|طباعة الوصفة)/i;
+const OCR_DESCRIPTION_END_MARKER = /^(\([A-Za-z]\)\s*)?(anonyme|anonymous|commentaires?|comments?|avis|reviews?|vous aimerez aussi|you (may|might) also like|related recipes?|plus de recettes|ces contenus devraient vous int[ée]resser|note de l['’]auteur|donnez votre avis|qu['’]est-ce qu['’]on mange|découvrir aussi|à découvrir|on vous propose|d[ée]couvrez aussi|dans la m[êe]me cat[ée]gorie|recettes similaires|similar recipes?|nos coups de coeur|publicit[ée]|advertisement|partager cette recette|share this recipe|imprimer|print recipe|newsletter)\b|^.{0,20}capture\s*d.{0,2}[ée]cran|^(?:评论|网友评论|相关食谱|相关菜谱|相关推荐|猜你喜欢|推荐食谱|你可能还喜欢|本菜谱为作者|分类[：:])|^(?:التعليقات|تعليقات|تم الحفظ|احفظ الوصفة|أضف كوكسناب|كوكسنابس|وصفات مشابهة|وصفات ذات صلة|وصفات أخرى|قد يعجبك أيضا|قد يعجبك أيضًا|قد يعجبك ايضا|شارك الوصفة|شاركي الوصفة|اطبع الوصفة|طباعة الوصفة|اقرأ\s*\d+\s*مرات?|(?:فيسبوك|فيس بوك)\s*$|المزيد من\s|الأكثر بحث)/i;
 // Mots chinois courants des mentions d'allergènes (« 过敏原：鸡蛋、牛奶 »),
 // en plus du libellé traduit de l'application (« 蛋类 », « 乳糖 »…).
 const ZH_ALLERGEN_WORDS = {
@@ -12379,7 +12396,7 @@ function parseOcrRecipeText(rawText) {
     const words = trimmed.split(/\s+/).filter(Boolean);
     return words.length <= 6;
   }
-  const ingIdx = lines.findIndex((l) => matchesIngredientTitle(l));
+  const ingIdx = findIngredientTitleIndex(lines);
   const boundaryIdx = lines.findIndex((l, i) => (ingIdx < 0 || i > ingIdx) && sectionBoundaryMarker.test(l) && looksLikeGenuineSectionMarker(l));
   const instrIdx = lines.findIndex((l, i) => (ingIdx < 0 || i > ingIdx) && instructionMarker.test(l) && looksLikeGenuineSectionMarker(l));
 
@@ -12406,7 +12423,7 @@ function parseOcrRecipeText(rawText) {
   }
 
   const ingredients = ingredientLines
-    .map((l) => l.replace(/^[-•*]\s*/, ""))
+    .map((l) => l.replace(/^[-•*●▪◦]\s*/, ""))
     .map(parseIngredientString)
     .filter((i) => i.name)
     .map((i) => ({ ...i, confidence: scoreIngredientConfidence(i) }));
@@ -13693,8 +13710,8 @@ function extractIngredientsFromLines(text) {
     // "* Conserver au réfrigérateur" contournait le rejet des
     // mots-clés parasites, qui exige que la ligne commence exactement
     // par le mot-clé attendu, pas par un symbole de puce suivi de lui.
-    .map((l) => l.replace(/^[-•*]\s*/, ""));
-  const ingIdx = lines.findIndex((l) => matchesIngredientTitle(l));
+    .map((l) => l.replace(/^[-•*●▪◦]\s*/, ""));
+  const ingIdx = findIngredientTitleIndex(lines);
   let persons = null;
   if (ingIdx >= 0) {
     const m = lines[ingIdx].match(OCR_PERSONS_IN_TITLE);
@@ -14467,7 +14484,16 @@ function stripJinaMarkdownNoise(markdown) {
   // toujours le titre de la recette elle-même — on coupe tout ce qui
   // précède d'un coup.
   const h1Idx = relevant.findIndex((l) => /^#\s+\S/.test(l.trim()));
-  if (h1Idx > 0) relevant = relevant.slice(h1Idx);
+  // Titre « # » placé APRÈS la liste d'ingrédients (CBC Sofra : la grille
+  // des programmes télé en fin de page) : couper là ferait perdre toute
+  // la recette — début pris au dernier titre « ## » avant les ingrédients.
+  // Limité aux titres d'ingrédients arabes, pour ne rien changer ailleurs.
+  const arIngTitleIdx = relevant.findIndex((l) => ARABIC_CHAR_RE.test(l) && matchesIngredientTitle(l.trim().replace(/^#{1,6}\s*/, "")));
+  if (arIngTitleIdx >= 0 && h1Idx > arIngTitleIdx) {
+    let start = arIngTitleIdx;
+    for (let i = arIngTitleIdx - 1; i >= 0; i--) if (/^#{2,6}\s+[^\s[]/.test(relevant[i].trim())) { start = i; break; }
+    relevant = relevant.slice(start);
+  } else if (h1Idx > 0) relevant = relevant.slice(h1Idx);
   // Pas de titre « # » (下厨房, 美食天下…) : le titre de la page donné
   // par Jina (« Title: 蒸腊鱼的做法_蒸腊鱼怎么做_…_美食天下 ») devient la
   // première ligne, sans le nom du site ni « 的做法 ». Limité au chinois
@@ -14520,7 +14546,8 @@ function stripJinaMarkdownNoise(markdown) {
     }
 
     const headingMatch = trimmed.match(/^#{1,6}\s*(.*)$/);
-    const bulletMatch = trimmed.match(/^[-*•]\s*(?:\[x\]\s*)?(.*)$/i);
+    // « ● » : puces de CBC Sofra.
+    const bulletMatch = trimmed.match(/^[-*•●▪◦]\s*(?:\[x\]\s*)?(.*)$/i);
 
     if (headingMatch) {
       if (current !== null) grouped.push(current);
@@ -15508,7 +15535,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 334;
+const APP_VERSION = 335;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
