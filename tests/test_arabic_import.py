@@ -179,6 +179,13 @@ IMPORT_JS = """async (url) => {
              ingredients: rec.ingredients.map((i) => [i.name, i.quantity, i.unit]) };
 }"""
 
+PHOTO_LINES = [
+    "شكشوكة بالطماطم", "المقادير (لـ 4 أشخاص)", "4 حبات طماطم", "200 غرام جبن",
+    "ملعقتان كبيرتان زيت زيتون", "12 حبة زيتون", "1/2 ملعقة صغيرة كمون", "ملح حسب الرغبة",
+    "طريقة التحضير", "1. يُقطّع البصل ويُقلى في الزيت.", "2. تُضاف الطماطم وتُطهى 10 دقائق.",
+    "3. تُكسر البيضات فوقها وتُغطّى المقلاة.", "وقت التحضير: 15 دقيقة", "وقت الطهي: 20 دقيقة",
+]
+
 IMAGE_LINES = [
     "شكشوكة بالطماطم", "المقادير (لـ 4 أشخاص)", "4 حبات طماطم", "200 غرام جبن",
     "ملعقتان كبيرتان زيت زيتون", "12 حبة زيتون", "1/2 ملعقة صغيرة كمون", "ملح حسب الرغبة",
@@ -335,6 +342,45 @@ def main():
         check("OCR réel : 4 personnes, préparation 15 min", pr["persons"] == 4 and pr["prepTime"] == 15, (pr["persons"], pr["prepTime"]))
         check("OCR réel : allergènes œufs et lactose", sorted(pr["allergens"]) == ["Lactose", "Œufs"], pr["allergens"])
         check("OCR réel : photo classée « recette complète »", r["section"] == "mixed", r["section"])
+
+        # Parcours complet de l'écran « importer par photo » avec une photo
+        # moins nette (fond gris, rotation 1,5°, flou, JPEG compressé) : la
+        # ligne « طريقة التحضير » et des chiffres au milieu d'une ligne
+        # (« وقت الطهي: 20 ») y étaient perdus.
+        photo = page.evaluate("""async (lines) => {
+            const c = document.createElement('canvas'); c.width = 1000; c.height = 100 + lines.length * 56;
+            const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.fillStyle = '#222';
+            g.direction = 'rtl'; g.textAlign = 'right';
+            lines.forEach((l, i) => { g.font = (i === 0 ? 'bold 40px' : '28px') + ' TestAR'; g.fillText(window.jspdf.jsPDF.API.processArabic(l), c.width - 50, 80 + i * 56); });
+            const p = document.createElement('canvas'); p.width = 1200; p.height = c.height + 200;
+            const q = p.getContext('2d'); q.fillStyle = '#b9b2a6'; q.fillRect(0, 0, p.width, p.height);
+            q.translate(p.width / 2, p.height / 2); q.rotate(1.5 * Math.PI / 180); q.filter = 'blur(0.8px) brightness(0.92)';
+            q.drawImage(c, -c.width / 2, -c.height / 2);
+            const r = document.createElement('canvas'); r.width = 900; r.height = Math.round(p.height * 900 / 1200);
+            r.getContext('2d').drawImage(p, 0, 0, r.width, r.height);
+            return r.toDataURL('image/jpeg', 0.7);
+        }""", PHOTO_LINES)
+        import base64
+        import tempfile
+        tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+        tmp.write(base64.b64decode(photo.split(",")[1]))
+        tmp.close()
+        page.evaluate("() => { state.multiPhotoImport = []; state.screen = 'importPhoto'; render(); }")
+        gallery = [i for i in page.query_selector_all("main input[type=file]") if i.get_attribute("capture") is None][0]
+        gallery.set_input_files(tmp.name)
+        page.wait_for_function("() => state.multiPhotoImport.length && state.multiPhotoImport.every((p) => p.status !== 'processing')", timeout=240000)
+        os.unlink(tmp.name)
+        section = page.evaluate("() => state.multiPhotoImport[0].section")
+        page.click("main .btn-primary:not([disabled])")
+        page.wait_for_function("() => state.screen === 'form'", timeout=30000)
+        form = page.evaluate("""() => ({ name: document.querySelector('#f-name').value, persons: document.querySelector('#f-persons').value,
+            prep: document.querySelector('#f-prep').value, cook: document.querySelector('#f-cook').value,
+            ings: [...document.querySelectorAll('main input')].filter((i) => i.closest('[class*=ing]') || i.classList.contains('ing-qty')).map((i) => i.value) })""")
+        check("photo moins nette : classée « recette complète » malgré le titre des étapes perdu", section == "mixed", section)
+        check("photo moins nette : formulaire rempli (nom, 4 personnes, 15 et 20 min)",
+              (form["name"], form["persons"], form["prep"], form["cook"]) == ("شكشوكة بالطماطم", "4", "15", "20"), form)
+        check("photo moins nette : 6 ingrédients et quantités par personne (200 g / 4 = 50, 12 / 4 = 3, ½ / 4 = 0.125)",
+              form["ings"] == ["طماطم", "1", "جبن", "50", "زيت زيتون", "0.5", "زيتون", "3", "كمون", "0.125", "ملح", ""], form["ings"])
 
         page.evaluate("() => setLang('fr')")
         check("aucune erreur JS", not errors, errors)

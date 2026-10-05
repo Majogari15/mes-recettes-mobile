@@ -12402,8 +12402,15 @@ function parseOcrRecipeText(rawText) {
 
   let ingredientLines = [];
   let descriptionLines = [];
+  // Arabe, titre « طريقة التحضير » perdu par l'OCR (photo peu nette) :
+  // la première étape numérotée (« 1 يُقطع البصل… ») termine la liste
+  // d'ingrédients et commence la préparation.
+  const arStepIdx = ingIdx >= 0 && instrIdx < 0
+    ? lines.findIndex((l, i) => i > ingIdx && (boundaryIdx < 0 || i < boundaryIdx) && ARABIC_CHAR_RE.test(l)
+      && /^\d{1,2}\s*[.)\-]?\s+\S/.test(l) && (/[.!؟]\s*$/.test(l) || l.split(/\s+/).length >= 6))
+    : -1;
   if (ingIdx >= 0) {
-    const end = boundaryIdx >= 0 ? boundaryIdx : lines.length;
+    const end = arStepIdx >= 0 ? arStepIdx : boundaryIdx >= 0 ? boundaryIdx : lines.length;
     ingredientLines = lines.slice(ingIdx + 1, end)
       // Repère de compteur "- personnes +" (choix du nombre de
       // personnes sur la page), pas un ingrédient.
@@ -12413,6 +12420,9 @@ function parseOcrRecipeText(rawText) {
   if (instrIdx >= 0) {
     const descEndIdx = lines.findIndex((l, i) => i > instrIdx && descriptionEndMarker.test(l));
     descriptionLines = joinLoneStepNumbers(lines.slice(instrIdx + 1, descEndIdx >= 0 ? descEndIdx : lines.length));
+  } else if (arStepIdx >= 0) {
+    const descEndIdx = lines.findIndex((l, i) => i > arStepIdx && descriptionEndMarker.test(l));
+    descriptionLines = lines.slice(arStepIdx, descEndIdx >= 0 ? descEndIdx : lines.length);
   } else if (ingIdx < 0) {
     // Aucun des deux mots-clés trouvé : impossible de distinguer les
     // sections, tout ce qui suit le nom devient la description — mieux
@@ -12518,11 +12528,11 @@ function parseOcrRecipeText(rawText) {
       // même ligne, d'où la valeur limitée à la durée elle-même.
       const prepMatch = line.match(/pr[eé]paration\s*:\s*([^\n]+)/i) || line.match(/prep(?:aration)?\s*time\s*:\s*([^\n]+)/i)
         || line.match(new RegExp("(?:准备|备料)(?:时间)?\\s*[：:]\\s*" + ZH_DURATION))
-        || line.match(new RegExp("(?:(?:وقت|مدة|زمن)\\s+)?(?:التحضير|الإعداد|الاعداد|التجهيز)\\s*[:：]?\\s*" + AR_DURATION));
+        || line.match(new RegExp("(?:(?:وقت|مدة|زمن)\\s+)?(?:التحضير|الإعداد|الاعداد|التجهيز)\\s*[:：؛]?\\s*" + AR_DURATION));
       if (prepMatch) { const t = parseTimeExpression(prepMatch[1]); if (t != null) prepTime = t; }
       const cookMatch = line.match(/cuisson\s*:\s*([^\n]+)/i) || line.match(/cook\s*time\s*:\s*([^\n]+)/i)
         || line.match(new RegExp("(?:烹饪|烹调|烹煮|制作)(?:时间)?\\s*[：:]\\s*" + ZH_DURATION))
-        || line.match(new RegExp("(?:(?:وقت|مدة|زمن)\\s+)?(?:الطهي|الطهو|الطبخ|الخبز|الشوي)\\s*[:：]?\\s*" + AR_DURATION));
+        || line.match(new RegExp("(?:(?:وقت|مدة|زمن)\\s+)?(?:الطهي|الطهو|الطبخ|الخبز|الشوي)\\s*[:：؛]?\\s*" + AR_DURATION));
       if (cookMatch) { const t = parseTimeExpression(cookMatch[1]); if (t != null) cookTime = t; }
     }
     // Badge de préparation autonome au format "15 min de prépa" (nombre
@@ -12544,7 +12554,7 @@ function parseOcrRecipeText(rawText) {
     if (prepTime == null && cookTime == null) {
       const totalMatch = line.match(/[àa]\s+table\s+dans\s*:?\s*([^\n]+)/i) || line.match(/(?:ready|total\s+time)\s*:?\s*(?:in\s*)?([^\n]+)/i)
         || line.match(new RegExp("(?:总时间|总用时|用时|耗时)\\s*[：:]?\\s*" + ZH_DURATION))
-        || line.match(new RegExp("(?:الوقت\\s+(?:الإجمالي|الاجمالي|الكلي)|المدة\\s+(?:الإجمالية|الاجمالية|الكلية)|إجمالي\\s+الوقت|اجمالي\\s+الوقت)\\s*[:：]?\\s*" + AR_DURATION));
+        || line.match(new RegExp("(?:الوقت\\s+(?:الإجمالي|الاجمالي|الكلي)|المدة\\s+(?:الإجمالية|الاجمالية|الكلية)|إجمالي\\s+الوقت|اجمالي\\s+الوقت)\\s*[:：؛]?\\s*" + AR_DURATION));
       if (totalMatch) { const t = parseTimeExpression(totalMatch[1]); if (t != null) prepTime = t; }
       // Durée isolée sans préfixe explicite (ex. Marmiton : "6h10 •
       // Facile • Assez cher") — reconnue seulement sur une ligne
@@ -12764,10 +12774,10 @@ async function detectAndCorrectOrientation(input) {
 }
 
 // Arabe : le modèle Tesseract « ara » perd les premiers chiffres d'un
-// nombre placé en tête de ligne (donc à droite) — « 200 غرام » lu
-// « 0 غرام », « 12 حبة » lu « 2 حبة » (constaté avec plusieurs polices ;
-// au milieu d'une ligne, le même nombre est bien lu). Ces lignes-là
-// seulement sont relues avec un modèle latin léger (eng, palier
+// nombre — surtout en tête de ligne (donc à droite) : « 200 غرام » lu
+// « 0 غرام », « 12 حبة » lu « 2 حبة » ; parfois aussi au milieu, sur une
+// photo moins nette (« وقت الطهي: 20 » lu « 0 »). Les lignes arabes
+// contenant un chiffre sont relues avec un modèle latin léger (eng, palier
 // best_int, 2,9 Mo, dossier lang-digits : téléchargé au premier besoin
 // puis mis en cache), et le nombre remplacé seulement si la relecture se
 // termine par les chiffres déjà lus (« 0 » -> « 200 », « 2 » -> « 1/2 »).
@@ -12803,7 +12813,7 @@ async function repairArabicLeadingNumbers(data, input) {
   const lines = [];
   (data.blocks || []).forEach((b) => (b.paragraphs || []).forEach((p) => (p.lines || []).forEach((l) => {
     const text = normalizeArabicText(l.text || "").trim();
-    if (/^\d/.test(text) && ARABIC_CHAR_RE.test(text) && l.bbox) lines.push(l);
+    if (/\d/.test(text) && ARABIC_CHAR_RE.test(text) && l.bbox) lines.push(l);
   })));
   if (!lines.length) return;
   let worker, source;
@@ -12826,17 +12836,39 @@ async function repairArabicLeadingNumbers(data, input) {
       words = ((await worker.recognize(crop, {}, { blocks: true })).data.blocks || [])
         .flatMap((b) => b.paragraphs || []).flatMap((p) => p.lines || []).flatMap((l) => l.words || []);
     } catch (e) { continue; }
-    // Nombre le plus à droite = premier nombre de la ligne arabe.
-    const num = words.map((x) => ({ x, t: x.text.replace(/[^\d./,]+$/, "").replace(/^[^\d]+/, "") }))
-      .filter((c) => /^\d+(?:[.,/]\d+)?$/.test(c.t) && c.x.confidence >= 60)
-      .sort((a, b) => b.x.bbox.x1 - a.x.bbox.x1)[0];
+    // Chaque nombre de la ligne arabe (mot repéré par sa position) est
+    // associé au nombre relu au même endroit de l'image, et remplacé
+    // seulement si la relecture est assez sûre (confiance ≥ 30 : la même
+    // position et la même fin de nombre sont déjà exigées) et se termine par
+    // les chiffres déjà lus (« 0 » -> « 200 », jamais « 5 » -> « 12 »). Le
+    // modèle latin lit aussi des « chiffres » dans les lettres arabes :
+    // jamais pris en compte, faute d'un nombre arabe au même endroit.
+    const relus = words.map((x) => ({ x0: x.bbox.x0 + x0, x1: x.bbox.x1 + x0, conf: x.confidence, t: x.text.replace(/[^\d./,]+$/, "").replace(/^[^\d]+/, "") }))
+      .filter((c) => /^\d+(?:[.,/]\d+)?$/.test(c.t) && c.conf >= 30);
     const lineText = normalizeArabicText(line.text);
-    const lead = (lineText.trim().match(/^\d+(?:[.,/]\d+)?/) || [""])[0];
-    if (!num || num.t === lead || !num.t.replace(/,/g, ".").endsWith(lead.replace(/,/g, "."))) continue;
-    const fixed = lineText.replace(lead, num.t);
+    const found = [...lineText.matchAll(/\d+(?:[.,/]\d+)?/g)];
+    const araNumWords = (line.words || []).filter((w) => w.bbox && /\d/.test(normalizeArabicText(w.text)))
+      .sort((p, q) => q.bbox.x1 - p.bbox.x1);
+    if (!found.length || araNumWords.length !== found.length) continue;
+    let fixed = "";
+    let pos = 0;
+    let changed = false;
+    found.forEach((m, k) => {
+      const w = araNumWords[k];
+      const overlap = (c) => Math.min(c.x1, w.bbox.x1) - Math.max(c.x0, w.bbox.x0);
+      const relu = relus.filter((c) => overlap(c) > 0).sort((p, q) => overlap(q) - overlap(p))[0];
+      const ok = relu && relu.t !== m[0] && relu.t.replace(/,/g, ".").endsWith(m[0].replace(/,/g, "."));
+      fixed += lineText.slice(pos, m.index) + (ok ? relu.t : m[0]);
+      pos = m.index + m[0].length;
+      if (ok) {
+        changed = true;
+        const wt = normalizeArabicText(w.text);
+        w.text = wt.replace(m[0], relu.t);
+      }
+    });
+    fixed += lineText.slice(pos);
+    if (!changed) continue;
     data.text = String(data.text).replace(line.text, fixed.endsWith("\n") ? fixed : fixed + (line.text.endsWith("\n") ? "\n" : ""));
-    const first = (line.words || []).slice().sort((a, b) => b.bbox.x1 - a.bbox.x1)[0];
-    if (first && normalizeArabicText(first.text).trim() === lead) first.text = num.t;
     line.text = fixed;
   }
 }
@@ -13208,6 +13240,10 @@ function parseTableRowsIngredients(tableText) {
 async function computeTwoColumnIngredients(file) {
   try {
     const worker = await getSharedTesseractWorker();
+    // Arabe : découpe gauche/droite pensée pour une lecture de gauche à
+    // droite ; sur une liste arabe à une colonne, elle coupait les lignes
+    // en deux (quantités perdues, fragments pris pour des ingrédients).
+    if (sharedTesseractWorkerLang === "ara") return null;
     const input = await resizeImageForOcr(file);
     const columns = await runTwoColumnIngredientOcr(worker, input);
     if (!columns) return null;
@@ -14385,6 +14421,9 @@ function resizeImageBlob(blob) {
 // que pour la page elle-même en repli. Un échec ici n'empêche jamais
 // l'import du reste de la recette.
 async function fetchImageAsPhotoBlob(imageUrl) {
+  // Adresse « http:// » (ex. og:image de أطيب أكلة) : refusée par le Worker
+  // et bloquée depuis une page https — même image demandée en https.
+  imageUrl = String(imageUrl).replace(/^http:\/\//i, "https://");
   const attempts = [{ url: imageUrl, timeout: 15000 }];
   // Le Worker Cloudflare personnel (si configuré) est essayé avant les
   // 3 services de repli publics, pour la même raison de fiabilité que
@@ -14648,7 +14687,17 @@ async function fetchRecipeDataViaWorker(targetUrl) {
   const parser = new DOMParser();
   const docHtml = parser.parseFromString(html, "text/html");
   const recipeData = extractJsonLdRecipe(docHtml) || extractMicrodataRecipe(docHtml);
-  if (!recipeData) throw new Error("worker_no_recipe_in_response");
+  if (!recipeData) {
+    // Page bien récupérée mais sans données de recette : sa photo
+    // principale (« og:image ») est gardée pour la recette lue ensuite par
+    // Jina, dont le texte ne permet pas de la reconnaître (logos, photos
+    // d'autres recettes).
+    const err = new Error("worker_no_recipe_in_response");
+    const og = docHtml.querySelector('meta[property="og:image"], meta[name="og:image"]');
+    const ogUrl = og && (og.getAttribute("content") || "").trim();
+    if (ogUrl) { try { err.ogImageUrl = new URL(ogUrl, targetUrl).href; } catch (e) { /* adresse illisible */ } }
+    throw err;
+  }
   return recipeData;
 }
 
@@ -14688,6 +14737,7 @@ async function fetchRecipeFromUrl(url, onAttempt) {
   // 1. Worker Cloudflare personnel en premier, si configuré : c'est la
   // source la plus fiable et la plus complète (voir commentaire de
   // fetchRecipeDataViaWorker ci-dessus).
+  let workerOgImageUrl = null;
   if (!importTestMode) {
     try {
       const recipeData = await fetchRecipeDataViaWorker(url);
@@ -14701,6 +14751,7 @@ async function fetchRecipeFromUrl(url, onAttempt) {
       // l'import réussit ensuite via un autre service — sans ça,
       // impossible de savoir POURQUOI le Worker a échoué si un service
       // de repli masque le problème en réussissant à sa place.
+      if (e && e.ogImageUrl) workerOgImageUrl = e.ogImageUrl;
       try {
         localStorage.setItem("lastWorkerError", `${new Date().toISOString()} — ${formatCaughtError(e)}`.slice(0, 300));
       } catch (err) { /* sans conséquence */ }
@@ -14738,7 +14789,7 @@ async function fetchRecipeFromUrl(url, onAttempt) {
           // « 分类：热菜家常菜… » (美食天下) : catégorie devinée comme pour
           // les données structurées.
           category: guessCategoryFromText((cleanedText.match(/^(?:分类|类别)[：:]\s*(.+)$/m) || [])[1] || ""),
-          photo: null,
+          photo: workerOgImageUrl ? await fetchImageAsPhotoBlob(workerOgImageUrl).catch(() => null) : null,
         };
       }
     } catch (e) {
@@ -15535,7 +15586,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 335;
+const APP_VERSION = 336;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

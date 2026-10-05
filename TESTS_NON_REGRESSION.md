@@ -10181,3 +10181,42 @@ Corrections :
 imitant la structure des pages réelles).
 
 **Version testée** : v335 (branche)
+
+### 170 — Arabe : photo de la recette (import par lien) et import par photo vérifiés (branche, pas sur main)
+
+**Photo de la recette, import par lien** (mêmes 10 sites que l'entrée 169,
+réseau réel) : récupérée pour 7 des 8 recettes importées (40 à 70 Ko après
+réduction). Le test précédent n'en trouvait aucune à cause du montage
+d'essai (navigateur de test sans accès direct à Internet), pas de
+l'application. Corrections :
+- Recette lue par Jina (pas de données de recette dans la page) : la
+  photo principale déclarée par la page (`og:image`, lue dans la réponse
+  du Worker) est maintenant récupérée — avant, aucune photo sur ce chemin
+  (أطيب أكلة, CBC Sofra). Vaut pour toutes les langues.
+- Adresse d'image en « http:// » demandée en « https:// » (refusée sinon par
+  le Worker et bloquée depuis une page https).
+- Sans photo : موسوعة الطبخ العربي (aucune photo principale déclarée).
+
+**Import par photo**, parcours complet de l'écran (choix dans la galerie,
+analyse, fusion, formulaire), deux recettes arabes, image nette et photo
+moins nette (fond gris, rotation, flou, JPEG compressé). Corrections :
+- Nombres relus aussi au milieu d'une ligne (« وقت الطهي: 20 » lu « 0 »,
+  « 35 » lu « 5 ») : chaque nombre arabe associé au nombre relu au même
+  endroit de l'image (le modèle latin lit aussi des « chiffres » dans les
+  lettres arabes, jamais pris en compte).
+- Titre « طريقة التحضير » perdu par l'OCR : la première étape numérotée
+  termine la liste d'ingrédients (avant : étapes prises pour des
+  ingrédients, photo classée « ingrédients »).
+- « وقت الطهي؛ » (« : » lu « ؛ ») accepté.
+- Découpage en deux colonnes désactivé en arabe (pensé pour une lecture
+  de gauche à droite : coupait les lignes, quantités perdues).
+Résultat : nom, personnes, temps, 6 à 7 ingrédients avec les bonnes
+quantités par personne et étapes, sur image nette comme sur photo moins
+nette. Limites : photo très abîmée (flou fort, bruit, 700 px) illisible —
+même résultat avec une recette française, limite de Tesseract ; chiffre
+arabo-indien en tête de ligne (« ٣ بيضات ») lu comme une lettre.
+
+**Tests** : `tests/test_arabic_import.py` (parcours complet de l'écran
+avec la photo moins nette).
+
+**Version testée** : v336 (branche)
