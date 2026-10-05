@@ -7385,6 +7385,16 @@ let SUBSTITUTIONS_TRANSLATIONS = {}; // {en: {substitutionId: {note, name?}}, es
 // dès qu'un nom est modifié). Voir TESTS_NON_REGRESSION.md pour le
 // contexte de cette migration.
 let INGREDIENT_CATALOGUE = []; // [{id, fr}, ...]
+// Entrées du catalogue retirées car en double d'une autre (« Beurre, salé »
+// = « Beurre salé », « Noisettes » = « Noisette » : même produit présent
+// deux fois) : marquées « doublonDe » dans ingredients_catalogue.json,
+// jamais proposées aux nouvelles installations ni ajoutées aux listes
+// existantes, mais gardées dans les données (allergènes, nutrition,
+// traductions) pour qui les a déjà. Id retiré -> id gardé.
+let CATALOGUE_REPLACED_BY = {};
+function activeCatalogueEntries() {
+  return INGREDIENT_CATALOGUE.filter((entry) => !entry.doublonDe);
+}
 let CATALOGUE_BY_ID = {}; // id -> nom français d'origine du catalogue
 let CATALOGUE_ID_BY_NAME = {}; // normalize(nom français du catalogue) -> id
 
@@ -7406,9 +7416,11 @@ async function loadReferenceData() {
   }
   CATALOGUE_BY_ID = {};
   CATALOGUE_ID_BY_NAME = {};
+  CATALOGUE_REPLACED_BY = {};
   INGREDIENT_CATALOGUE.forEach((entry) => {
     CATALOGUE_BY_ID[entry.id] = entry.fr;
     CATALOGUE_ID_BY_NAME[normalize(entry.fr)] = entry.id;
+    if (entry.doublonDe) CATALOGUE_REPLACED_BY[entry.id] = entry.doublonDe;
   });
 
   try {
@@ -7427,6 +7439,18 @@ async function loadReferenceData() {
     SUBSTITUTIONS_BY_INGREDIENT_ID = {};
     SUBSTITUTIONS_DB.forEach((rel) => {
       (SUBSTITUTIONS_BY_INGREDIENT_ID[rel.ingredientId] = SUBSTITUTIONS_BY_INGREDIENT_ID[rel.ingredientId] || []).push(rel);
+    });
+    // Substitutions d'une entrée retirée (voir CATALOGUE_REPLACED_BY)
+    // reportées sur l'entrée gardée, sans doublon ni substitut d'elle-même.
+    Object.entries(CATALOGUE_REPLACED_BY).forEach(([retiredId, keepId]) => {
+      const list = SUBSTITUTIONS_BY_INGREDIENT_ID[keepId] = SUBSTITUTIONS_BY_INGREDIENT_ID[keepId] || [];
+      const targets = new Set(list.map((rel) => CATALOGUE_REPLACED_BY[rel.targetIngredientId] || rel.targetIngredientId || rel.name));
+      (SUBSTITUTIONS_BY_INGREDIENT_ID[retiredId] || []).forEach((rel) => {
+        const target = CATALOGUE_REPLACED_BY[rel.targetIngredientId] || rel.targetIngredientId || rel.name;
+        if (target === keepId || targets.has(target)) return;
+        targets.add(target);
+        list.push(rel);
+      });
     });
     // Seule la langue actuellement affichée est chargée ici (pas les 3
     // autres en même temps comme avant) — voir ensureIngredientTranslationsLoaded.
@@ -7569,7 +7593,7 @@ function getDisplaySubstitutes(name) {
   const referenceList = getReferenceSubstitutes(name).map((rel) => {
     const subTranslation = (SUBSTITUTIONS_TRANSLATIONS[CURRENT_LANG] || {})[rel.substitutionId];
     const nom = rel.targetIngredientId
-      ? (translateIngredientNameById(rel.targetIngredientId) || rel.name)
+      ? (translateIngredientNameById(CATALOGUE_REPLACED_BY[rel.targetIngredientId] || rel.targetIngredientId) || rel.name)
       : (CURRENT_LANG !== "fr" && subTranslation && subTranslation.name) || rel.name;
     const note = (CURRENT_LANG !== "fr" && subTranslation && subTranslation.note) || rel.note;
     return { nom, note };
@@ -7689,7 +7713,10 @@ function resolveIngredientInput(typedName) {
     if (ids && ids.length === 1) {
       const localName = state.ingredientNameByCatalogId[ids[0]];
       if (localName) return localName;
-      const fr = CATALOGUE_BY_ID[ids[0]];
+      // Entrée retirée (doublon) absente de la liste : son équivalent gardé.
+      const keepId = CATALOGUE_REPLACED_BY[ids[0]];
+      if (keepId && state.ingredientNameByCatalogId[keepId]) return state.ingredientNameByCatalogId[keepId];
+      const fr = CATALOGUE_BY_ID[keepId || ids[0]];
       if (fr) return fr;
     }
   }
@@ -7740,18 +7767,24 @@ async function ensureIngredientListLoaded(options = {}) {
   // catalogue (voir TESTS_NON_REGRESSION.md).
   state.ingredientCatalogIds = {};
   state.ingredientNameByCatalogId = {};
-  const seedItems = INGREDIENT_CATALOGUE.map((entry) => ({ name: entry.fr, catalogId: entry.id }));
-  for (const entry of INGREDIENT_CATALOGUE) {
+  const activeEntries = activeCatalogueEntries();
+  const seedItems = activeEntries.map((entry) => ({ name: entry.fr, catalogId: entry.id }));
+  for (const entry of activeEntries) {
     state.ingredientCatalogIds[normalize(entry.fr)] = entry.id;
     state.ingredientNameByCatalogId[entry.id] = entry.fr;
   }
-  state.ingredientNames = sortIngredientNamesForDisplay(INGREDIENT_CATALOGUE.map((e) => e.fr));
+  state.ingredientNames = sortIngredientNamesForDisplay(activeEntries.map((e) => e.fr));
   if (options.deferSeedWrite) {
     pendingIngredientSeed = seedItems;
   } else {
     await storePutAndDeleteMany("ingredients", seedItems, []);
-    await kvSet(KNOWN_CATALOGUE_IDS_KEY, seedItems.map((item) => item.catalogId));
+    await kvSet(KNOWN_CATALOGUE_IDS_KEY, seedKnownCatalogueIds(seedItems));
   }
+}
+// Ids notés « déjà proposés » après le premier remplissage : ceux de la
+// liste, plus les entrées retirées (doublons), jamais proposées.
+function seedKnownCatalogueIds(seedItems) {
+  return seedItems.map((item) => item.catalogId).concat(Object.keys(CATALOGUE_REPLACED_BY));
 }
 
 // Écriture des ~10 000 ingrédients du premier lancement (1 à 3 s), faite
@@ -7819,7 +7852,7 @@ function putIngredientsInChunks(items, chunkSize) {
 function writeIngredientSeed(seedItems) {
   setSeedIncompleteFlag(true);
   return putIngredientsInChunks(seedItems, 500)
-    .then(() => kvSet(KNOWN_CATALOGUE_IDS_KEY, seedItems.map((item) => item.catalogId)))
+    .then(() => kvSet(KNOWN_CATALOGUE_IDS_KEY, seedKnownCatalogueIds(seedItems)))
     .then(() => setSeedIncompleteFlag(false))
     .catch((error) => console.error("Écriture initiale des ingrédients incomplète, reprise au prochain lancement", error));
 }
@@ -7854,7 +7887,7 @@ async function addNewCatalogueEntries(existingRecords) {
   const toPut = [];
   const addedNames = [];
   for (const entry of INGREDIENT_CATALOGUE) {
-    if (knownSet.has(entry.id) || state.ingredientNameByCatalogId[entry.id]) continue;
+    if (entry.doublonDe || knownSet.has(entry.id) || state.ingredientNameByCatalogId[entry.id]) continue;
     const key = normalize(entry.fr);
     const sameName = recordByKey.get(key);
     if (sameName) {
@@ -15617,7 +15650,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 337;
+const APP_VERSION = 338;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation

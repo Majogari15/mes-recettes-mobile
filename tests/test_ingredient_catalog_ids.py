@@ -125,11 +125,12 @@ def main():
         r = page.evaluate(
             """async () => {
                 const all = await storeAll('ingredients');
-                return { total: all.length, withId: all.filter((i) => i.catalogId).length };
+                return { total: all.length, active: activeCatalogueEntries().length, withId: all.filter((i) => i.catalogId).length };
             }"""
         )
-        check("9992 ingrédients chargés", r["total"] == 9992, str(r["total"]))
-        check("Tous rattachés au catalogue (catalogId)", r["withId"] == 9992, str(r["withId"]))
+        # 9 992 entrées, dont 30 retirées comme doublons (« doublonDe »).
+        check("9962 ingrédients chargés (catalogue sans les doublons retirés)", r["total"] == r["active"] == 9962, str((r["total"], r["active"])))
+        check("Tous rattachés au catalogue (catalogId)", r["withId"] == 9962, str(r["withId"]))
 
         print("\n=== Renommage : allergènes/nutrition/catalogId survivent ===\n")
         before = page.evaluate(

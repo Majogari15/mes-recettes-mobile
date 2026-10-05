@@ -99,6 +99,7 @@ def main():
                     flag: isSeedIncomplete(),
                     known: (await kvGet(KNOWN_CATALOGUE_IDS_KEY) || []).length,
                     catalogue: INGREDIENT_CATALOGUE.length,
+                    active: activeCatalogueEntries().length,
                 };
             }""",
             during,
@@ -107,7 +108,7 @@ def main():
         check("renommage fait pendant l'écriture conservé (ancien nom absent)", after["renamedNew"] and after["renamedOldGone"], str(after))
         check("suppression faite pendant l'écriture conservée (pas réécrite)", after["deletedGone"], str(after))
         check("base et mémoire cohérentes, marqueur retiré, suivi complet",
-              after["stored"] == after["inMemory"] == after["catalogue"] and not after["flag"] and after["known"] == after["catalogue"], str(after))
+              after["stored"] == after["inMemory"] == after["active"] and not after["flag"] and after["known"] == after["catalogue"], str(after))
 
         print("\n=== Premier lancement interrompu avant la fin de l'écriture ===\n")
         page.evaluate(
@@ -124,7 +125,7 @@ def main():
             """async () => ({
                 stored: (await storeAll('ingredients')).length,
                 inMemory: state.ingredientNames.length,
-                catalogue: INGREDIENT_CATALOGUE.length,
+                catalogue: activeCatalogueEntries().length,
                 flag: isSeedIncomplete(),
             })"""
         )

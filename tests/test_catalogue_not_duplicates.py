@@ -9,12 +9,21 @@ cru / cuit, avec / sans sel, catégories USDA…). Ces paires, vérifiées une
 à une par catégorie, sont listées par id dans
 data/catalogue_not_duplicates.json et ne sont plus proposées.
 
+Les 30 vrais doublons du catalogue (même produit deux fois : « Beurre
+salé » / « Beurre, salé », « Noisette » / « Noisettes »…) sont retirés
+(« doublonDe » dans ingredients_catalogue.json) : plus proposés aux
+nouvelles installations, gardés dans les données pour qui les a déjà.
+
 Vérifie : le fichier (ids existants, paires distinctes, aucune paire où
-les deux noms ne diffèrent que par une virgule ou un pluriel) ; dans les
-11 langues, l'écran n'affiche plus que les vrais doublons du catalogue
-(au plus 30) ; un ingrédient créé par l'utilisateur, proche d'un
-ingrédient du catalogue, reste signalé ; « Pas un doublon » choisi par
-l'utilisateur fonctionne toujours.
+les deux noms ne diffèrent que par une virgule ou un pluriel) ; les 30
+entrées retirées (chacune vers une entrée gardée, active) ; dans les 11
+langues, l'écran n'affiche aucun doublon sur une installation neuve ; un
+ingrédient créé par l'utilisateur, proche d'un ingrédient du catalogue,
+reste signalé ; « Pas un doublon » choisi par l'utilisateur fonctionne
+toujours ; entrée retirée gardée par un utilisateur actuel : données
+(allergènes, nutrition) intactes ; substitutions de l'entrée retirée
+reportées sur l'entrée gardée ; saisie du nom traduit d'une entrée retirée
+-> entrée gardée.
 """
 import http.server
 import json
@@ -65,6 +74,12 @@ def main():
           all(a in catalogue and b in catalogue and a < b for a, b in pairs) and len({tuple(p) for p in pairs}) == len(pairs))
     same = [(catalogue[a], catalogue[b]) for a, b in pairs if words(catalogue[a]) == words(catalogue[b])]
     check("fichier : aucun vrai doublon masqué (noms ne différant que par une virgule ou un pluriel)", not same, same[:3])
+    entries = json.load(open(f"{PROJECT_ROOT}/data/ingredients_catalogue.json", encoding="utf-8"))
+    by_id = {e["id"]: e for e in entries}
+    retired = [e for e in entries if e.get("doublonDe")]
+    check("catalogue : 30 entrées retirées, chacune vers une entrée gardée active de même produit",
+          len(retired) == 30 and all(e["doublonDe"] in by_id and not by_id[e["doublonDe"]].get("doublonDe")
+                                     for e in retired), len(retired))
 
     port = find_free_port()
     httpd = http.server.ThreadingHTTPServer(("127.0.0.1", port), Handler)
@@ -91,13 +106,35 @@ def main():
                 page.close()
                 continue
             fr_page = page
-        check("installation neuve : au plus 30 paires affichées dans chacune des 11 langues (avant : plus de 4 300)",
-              all(0 < n <= 30 for n in counts.values()), counts)
+        check("installation neuve : aucun doublon affiché dans les 11 langues (avant : plus de 4 300)",
+              all(n == 0 for n in counts.values()), counts)
 
         page = fr_page
+        r = page.evaluate("""() => ({ beurre: state.ingredientNames.includes('Beurre salé'), virgule: state.ingredientNames.includes('Beurre, salé'),
+            noisettes: state.ingredientNames.includes('Noisettes'), subs: getDisplaySubstitutes('Beurre salé').length,
+            // Substitut proposé = entrée retirée « Beurre, salé » : affiché sous le nom gardé.
+            target: (() => { const rel = SUBSTITUTIONS_DB.find((x) => x.targetIngredientId === 'ing_005961');
+              const src = CATALOGUE_BY_ID[rel.ingredientId]; return getDisplaySubstitutes(src).map((d) => d.nom); })() })""")
+        check("installation neuve : entrée gardée présente, entrée retirée absente (« Beurre salé » oui, « Beurre, salé » / « Noisettes » non)",
+              r["beurre"] and not r["virgule"] and not r["noisettes"], r)
+        check("substitutions de l'entrée retirée reportées sur l'entrée gardée (« Beurre salé » : 0 -> 1)", r["subs"] >= 1, r)
+        check("substitut proposé = entrée retirée : affiché sous le nom gardé (« Beurre salé »)",
+              "Beurre salé" in r["target"] and "Beurre, salé" not in r["target"], r["target"])
+        # Utilisateur actuel ayant encore « Beurre, salé » (entrée retirée).
+        r = page.evaluate("""async () => { await storePut('ingredients', { name: 'Beurre, salé', catalogId: 'ing_005961' });
+            state.ingredientNames.push('Beurre, salé'); state.ingredientCatalogIds[normalize('Beurre, salé')] = 'ing_005961';
+            state.ingredientNameByCatalogId['ing_005961'] = 'Beurre, salé';
+            return { id: getIngredientCatalogId('Beurre, salé'), nutrition: !!NUTRITION_DB['ing_005961'], allergens: !!ALLERGEN_DB['ing_005961'] }; }""")
+        check("utilisateur actuel : entrée retirée toujours reliée à ses données", r == {"id": "ing_005961", "nutrition": True, "allergens": True}, r)
         rows = open_screen(page)
-        check("les paires restantes sont de vrais doublons (« Beurre salé ↔ Beurre, salé », pluriels…)",
-              any("Beurre salé" in r and "Beurre, salé" in r for r in rows) and any("Noisette" in r for r in rows), rows[:3])
+        check("utilisateur actuel : la paire « Beurre salé ↔ Beurre, salé » lui est proposée (fusion possible)",
+              any("Beurre salé" in x and "Beurre, salé" in x for x in rows), rows[:3])
+        page.evaluate("""async () => { await storeDelete('ingredients', 'Beurre, salé'); state.ingredientNames = state.ingredientNames.filter((n) => n !== 'Beurre, salé');
+            delete state.ingredientNameByCatalogId['ing_005961']; delete state.ingredientCatalogIds[normalize('Beurre, salé')]; }""")
+        # Nom traduit d'une entrée retirée saisi (ex. import en anglais) -> entrée gardée.
+        r = page.evaluate("""async () => { await ensureIngredientTranslationsLoaded('en'); setLang('en');
+            const out = resolveIngredientInput(INGREDIENT_TRANSLATIONS.en['ing_005141']); setLang('fr'); return out; }""")
+        check("nom traduit d'une entrée retirée (« Noisettes » en anglais) -> entrée gardée « Noisette »", r == "Noisette", r)
         # Ingrédient créé par l'utilisateur, très proche d'un ingrédient du
         # catalogue : toujours signalé.
         page.evaluate("async () => { await addIngredientName('Agneau, épaule entière (bras et palette), maigre et gras séparables, paré à 1/4 po de gras, catégorie Choix, cuit, grilé au four'); }")

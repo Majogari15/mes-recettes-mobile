@@ -10236,15 +10236,26 @@ avec la photo moins nette).
   (52 Ko, mis en cache par le service worker, chargé à l'ouverture de
   l'écran) ; jamais proposées (`isCataloguePairNotDuplicate`). Par id :
   vaut dans toutes les langues et après un renommage.
-- Restent affichés les 30 vrais doublons du catalogue (même produit deux
-  fois : « Beurre salé » / « Beurre, salé », « Noisette » / « Noisettes »,
-  « Persil séché » / « Persil, séché », « Pommes de terre au gratin » /
-  « gratinées »…).
+- Les 30 vrais doublons du catalogue (même produit deux fois : « Beurre
+  salé » / « Beurre, salé », « Noisette » / « Noisettes », « Persil
+  séché » / « Persil, séché », « Pommes de terre au gratin » /
+  « gratinées »…) : une entrée de chaque paire retirée (v338, choix de
+  l'utilisateur) — marquée `"doublonDe"` dans le catalogue, pas supprimée.
+  Gardée : celle de la liste d'origine (id < 1000), sinon le nom sans
+  virgule, sinon la plus citée par les substitutions. Nouvelles
+  installations : 9 962 ingrédients, écran des doublons vide dans les 11
+  langues. Utilisateurs actuels : entrées retirées conservées avec leurs
+  données (la paire leur est proposée, fusion possible), jamais rajoutées
+  après suppression. Substitutions de l'entrée retirée reportées sur
+  l'entrée gardée, substitut proposé affiché sous le nom gardé, nom
+  traduit d'une entrée retirée saisi -> entrée gardée.
 - Un ingrédient créé par l'utilisateur reste comparé à tout le catalogue ;
   « Pas un doublon » choisi par l'utilisateur inchangé.
 
 **Tests** : `tests/test_catalogue_not_duplicates.py` (nouveau) ;
 `tests/test_ingredient_duplicates.py` (affichage par lots : crée ses
-propres paires, le catalogue seul n'en donnant plus assez).
+propres paires, le catalogue seul n'en donnant plus assez) ;
+`test_catalogue_sync.py`, `test_first_launch_background_seed.py`,
+`test_ingredient_catalog_ids.py` (comptent les entrées actives).
 
-**Version testée** : v337
+**Version testée** : v338

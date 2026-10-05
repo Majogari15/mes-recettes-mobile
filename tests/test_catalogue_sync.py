@@ -64,10 +64,14 @@ def main():
             """async () => ({
                 names: state.ingredientNames.length,
                 catalogue: INGREDIENT_CATALOGUE.length,
+                // Entrées retirées (doublons, « doublonDe ») : jamais proposées.
+                active: activeCatalogueEntries().length,
+                retiredShown: INGREDIENT_CATALOGUE.filter((e) => e.doublonDe && state.ingredientNames.includes(e.fr)).length,
                 known: (await kvGet(KNOWN_CATALOGUE_IDS_KEY) || []).length,
             })"""
         )
-        check("installation neuve : tout le catalogue + suivi des ids", fresh["names"] == fresh["catalogue"] and fresh["known"] == fresh["catalogue"], str(fresh))
+        check("installation neuve : tout le catalogue actif + suivi de tous les ids (doublons retirés compris)",
+              fresh["names"] == fresh["active"] and fresh["known"] == fresh["catalogue"] and fresh["retiredShown"] == 0, str(fresh))
 
         print("\n=== Simulation d'une ancienne installation ===\n")
         setup = page.evaluate(
@@ -97,7 +101,7 @@ def main():
                 const names = state.ingredientNames;
                 const norm = (x) => normalize(x);
                 const count = (n) => names.filter((x) => norm(x) === norm(n)).length;
-                const added = INGREDIENT_CATALOGUE.filter((e) => Number(e.id.slice(4)) > ORIGINAL_CATALOGUE_MAX_ID);
+                const added = activeCatalogueEntries().filter((e) => Number(e.id.slice(4)) > ORIGINAL_CATALOGUE_MAX_ID);
                 return {
                     total: names.length,
                     stored: (await storeAll('ingredients')).length,

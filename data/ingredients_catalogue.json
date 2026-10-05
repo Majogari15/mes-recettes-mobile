@@ -4253,7 +4253,8 @@
  },
  {
   "id": "ing_004242",
-  "fr": "Champignons, Shiitake"
+  "fr": "Champignons, Shiitake",
+  "doublonDe": "ing_000152"
  },
  {
   "id": "ing_004243",
@@ -4301,7 +4302,8 @@
  },
  {
   "id": "ing_004254",
-  "fr": "Radis rouges, crus"
+  "fr": "Radis rouges, crus",
+  "doublonDe": "ing_001446"
  },
  {
   "id": "ing_004255",
@@ -4361,7 +4363,8 @@
  },
  {
   "id": "ing_004269",
-  "fr": "Asperges vertes, crues"
+  "fr": "Asperges vertes, crues",
+  "doublonDe": "ing_001505"
  },
  {
   "id": "ing_004270",
@@ -6057,7 +6060,8 @@
  },
  {
   "id": "ing_004724",
-  "fr": "Dattes Medjool"
+  "fr": "Dattes Medjool",
+  "doublonDe": "ing_000276"
  },
  {
   "id": "ing_004725",
@@ -6669,7 +6673,8 @@
  },
  {
   "id": "ing_004877",
-  "fr": "Tomates vertes, crues"
+  "fr": "Tomates vertes, crues",
+  "doublonDe": "ing_001462"
  },
  {
   "id": "ing_004878",
@@ -6873,7 +6878,8 @@
  },
  {
   "id": "ing_004928",
-  "fr": "Laitue feuille verte, crue"
+  "fr": "Laitue feuille verte, crue",
+  "doublonDe": "ing_004316"
  },
  {
   "id": "ing_004929",
@@ -7657,7 +7663,8 @@
  },
  {
   "id": "ing_005130",
-  "fr": "Vermicelles de soja"
+  "fr": "Vermicelles de soja",
+  "doublonDe": "ing_000992"
  },
  {
   "id": "ing_005131",
@@ -7701,7 +7708,8 @@
  },
  {
   "id": "ing_005141",
-  "fr": "Noisettes"
+  "fr": "Noisettes",
+  "doublonDe": "ing_000607"
  },
  {
   "id": "ing_005142",
@@ -7865,7 +7873,8 @@
  },
  {
   "id": "ing_005182",
-  "fr": "Pommes de terre au gratin, préparation maison, au beurre"
+  "fr": "Pommes de terre au gratin, préparation maison, au beurre",
+  "doublonDe": "ing_005136"
  },
  {
   "id": "ing_005183",
@@ -7885,7 +7894,8 @@
  },
  {
   "id": "ing_005187",
-  "fr": "Pommes de terre au gratin, préparation maison, à la margarine"
+  "fr": "Pommes de terre au gratin, préparation maison, à la margarine",
+  "doublonDe": "ing_005154"
  },
  {
   "id": "ing_005188",
@@ -8401,7 +8411,8 @@
  },
  {
   "id": "ing_005318",
-  "fr": "Amandes émondées"
+  "fr": "Amandes émondées",
+  "doublonDe": "ing_000017"
  },
  {
   "id": "ing_005319",
@@ -9261,7 +9272,8 @@
  },
  {
   "id": "ing_005539",
-  "fr": "Huile de noyau d'abricot"
+  "fr": "Huile de noyau d'abricot",
+  "doublonDe": "ing_003946"
  },
  {
   "id": "ing_005540",
@@ -10949,7 +10961,8 @@
  },
  {
   "id": "ing_005961",
-  "fr": "Beurre, salé"
+  "fr": "Beurre, salé",
+  "doublonDe": "ing_000074"
  },
  {
   "id": "ing_005962",
@@ -11029,7 +11042,8 @@
  },
  {
   "id": "ing_005981",
-  "fr": "Sauce salade, type mayonnaise, allégée"
+  "fr": "Sauce salade, type mayonnaise, allégée",
+  "doublonDe": "ing_005957"
  },
  {
   "id": "ing_005982",
@@ -25641,7 +25655,8 @@
  },
  {
   "id": "ing_009641",
-  "fr": "Fromage, cheddar"
+  "fr": "Fromage, cheddar",
+  "doublonDe": "ing_004445"
  },
  {
   "id": "ing_009642",
@@ -25869,7 +25884,8 @@
  },
  {
   "id": "ing_009698",
-  "fr": "Boissons, café instantané, à la chicorée"
+  "fr": "Boissons, café instantané, à la chicorée",
+  "doublonDe": "ing_009675"
  },
  {
   "id": "ing_009699",
@@ -26673,7 +26689,8 @@
  },
  {
   "id": "ing_009900",
-  "fr": "Yaourt grec, nature, sans matières grasses"
+  "fr": "Yaourt grec, nature, sans matières grasses",
+  "doublonDe": "ing_004501"
  },
  {
   "id": "ing_009901",
@@ -26933,7 +26950,8 @@
  },
  {
   "id": "ing_009965",
-  "fr": "Œuf, entier, cru, surgelé, pasteurisé"
+  "fr": "Œuf, entier, cru, surgelé, pasteurisé",
+  "doublonDe": "ing_004534"
  },
  {
   "id": "ing_009966",
@@ -28737,7 +28755,8 @@
  },
  {
   "id": "ing_001449",
-  "fr": "Épinard, cru"
+  "fr": "Épinard, cru",
+  "doublonDe": "ing_004700"
  },
  {
   "id": "ing_001451",
@@ -29533,7 +29552,8 @@
  },
  {
   "id": "ing_001650",
-  "fr": "Carotte, déshydratée"
+  "fr": "Carotte, déshydratée",
+  "doublonDe": "ing_004772"
  },
  {
   "id": "ing_001651",
@@ -30029,7 +30049,8 @@
  },
  {
   "id": "ing_001774",
-  "fr": "Pois chiche, sec"
+  "fr": "Pois chiche, sec",
+  "doublonDe": "ing_004433"
  },
  {
   "id": "ing_001775",
@@ -30453,7 +30474,8 @@
  },
  {
   "id": "ing_001880",
-  "fr": "Raisin sec"
+  "fr": "Raisin sec",
+  "doublonDe": "ing_000809"
  },
  {
   "id": "ing_001881",
@@ -30473,7 +30495,8 @@
  },
  {
   "id": "ing_001885",
-  "fr": "Baie de goji, séchée"
+  "fr": "Baie de goji, séchée",
+  "doublonDe": "ing_004783"
  },
  {
   "id": "ing_001886",
@@ -37293,7 +37316,8 @@
  },
  {
   "id": "ing_003591",
-  "fr": "Fruit confit"
+  "fr": "Fruit confit",
+  "doublonDe": "ing_000384"
  },
  {
   "id": "ing_003592",
@@ -39381,11 +39405,13 @@
  },
  {
   "id": "ing_004121",
-  "fr": "Cerfeuil, séché"
+  "fr": "Cerfeuil, séché",
+  "doublonDe": "ing_004644"
  },
  {
   "id": "ing_004122",
-  "fr": "Persil, séché"
+  "fr": "Persil, séché",
+  "doublonDe": "ing_004642"
  },
  {
   "id": "ing_004123",
@@ -39393,11 +39419,13 @@
  },
  {
   "id": "ing_004124",
-  "fr": "Marjolaine, séchée"
+  "fr": "Marjolaine, séchée",
+  "doublonDe": "ing_004648"
  },
  {
   "id": "ing_004125",
-  "fr": "Romarin, séché"
+  "fr": "Romarin, séché",
+  "doublonDe": "ing_004650"
  },
  {
   "id": "ing_004126",
@@ -39405,7 +39433,8 @@
  },
  {
   "id": "ing_004127",
-  "fr": "Estragon, séché"
+  "fr": "Estragon, séché",
+  "doublonDe": "ing_004649"
  },
  {
   "id": "ing_004128",
@@ -39413,7 +39442,8 @@
  },
  {
   "id": "ing_004129",
-  "fr": "Aneth, séché"
+  "fr": "Aneth, séché",
+  "doublonDe": "ing_004653"
  },
  {
   "id": "ing_004130",
