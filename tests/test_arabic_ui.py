@@ -13,10 +13,6 @@ navigation inversés, chiffres occidentaux (aucun chiffre arabe oriental),
 valeurs insérées isolées (FSI…PDI) pour l'ordre des mots, retour au
 français en gauche à droite.
 
-Les noms d'ingrédients restent en français tant que leur traduction
-arabe (étape 2) n'existe pas : ils sont acceptés ici, et les deux
-fichiers data/ingredient_*_ar.json absents (404) ignorés.
-
 Pour chacun des 24 écrans et 10 fenêtres (360 px, données d'exemple) :
 aucune erreur JavaScript, aucun débordement horizontal, aucun texte
 visible (ni placeholder / aria-label / title / alt) uniquement en
@@ -40,16 +36,6 @@ ALLOWED_LATIN = re.compile(
     r"(?:Chrome|Firefox|Safari|Edg|Version)/[\d.]+.*|PDF|QR|URL|ICS|JSON|ZIP|CSV|OK|Linux|Windows|Android|iOS|macOS|Mac OS|Chrome|Chromium|Safari|Firefox|"
     r"Google|Cloudflare|Jina|Tesseract|Open Food Facts|IndexedDB|Mes Recettes, Mes Courses|"
     r"https?://\S+|[\d\s.,:/%x×-]*(?:MB|KB|GB|ms|px)?)$")
-
-
-CATALOGUE = [e["fr"] for e in json.load(open(f"{PROJECT_ROOT}/data/ingredients_catalogue.json", encoding="utf-8"))]
-CATALOGUE_SET = set(CATALOGUE)
-
-
-def is_catalogue_text(t):
-    """Nom d'ingrédient du catalogue (encore en français avant l'étape 2)."""
-    parts = [p.strip(" ✕") for p in re.split(r" ↔ ", re.sub(r"^\[[a-z-]+\] ", "", t))]
-    return all(p in CATALOGUE_SET for p in parts if p)
 
 
 def find_free_port():
@@ -132,8 +118,8 @@ def main():
         page = browser.new_page(viewport={"width": 360, "height": 760})
         errors = []
         page.on("pageerror", lambda exc: errors.append(str(exc)))
-        page.on("console", lambda m: errors.append("console: " + m.text) if m.type == "error" and "404" not in m.text else None)
-        page.on("response", lambda r: errors.append(f"HTTP {r.status} {r.url}") if r.status >= 400 and not re.search(r"ingredient_(translations|substitutions)_ar\.json", r.url) else None)
+        page.on("console", lambda m: errors.append("console: " + m.text) if m.type == "error" else None)
+        page.on("response", lambda r: errors.append(f"HTTP {r.status} {r.url}") if r.status >= 400 else None)
         page.goto(f"http://127.0.0.1:{port}/index.html", timeout=15000)
         page.evaluate("() => appReady")
         page.evaluate(SEED)
@@ -144,7 +130,7 @@ def main():
         def audit(label):
             r = page.evaluate(COLLECT)
             latin = sorted({t for t in r["texts"]
-                            if not AR.search(t) and not is_catalogue_text(t) and re.search(r"[A-Za-zÀ-ÿ]{3,}", re.sub(r"^\[[a-z-]+\] ", "", t))
+                            if not AR.search(t) and re.search(r"[A-Za-zÀ-ÿ]{3,}", re.sub(r"^\[[a-z-]+\] ", "", t))
                             and not ALLOWED_LATIN.match(re.sub(r"^\[[a-z-]+\] ", "", t).strip())})
             ok = not errors and not r["overflow"] and r["lang"] == "ar/rtl" and not latin
             check(f"{label} : arabe, de droite à gauche, sans débordement ni erreur", ok,

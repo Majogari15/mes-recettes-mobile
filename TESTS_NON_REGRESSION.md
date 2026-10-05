@@ -10013,3 +10013,27 @@ ajoutées) ; `test_pantry_expiration.py` (français) inchangé.
 vérifié qu'il échoue sur une interface en français).
 
 **Version testée** : v329 (branche)
+
+### 165 — Arabe, étape 2 : noms d'ingrédients et substitutions (branche, pas sur main)
+
+- `data/ingredient_translations_ar.json` : les 9 992 noms du catalogue
+  traduits (mêmes ids que les autres langues), virgule arabe « ، »,
+  aucune traduction en double (même une fois voyelles brèves et chadda
+  retirées), donc aucun nom français ajouté entre parenthèses.
+- `data/ingredient_substitutions_ar.json` : les 1 530 notes de
+  substitution et les 124 noms de substituts traduits, quantités, durées
+  et pourcentages conservés.
+- Recherche : `normalize` retire aussi voyelles brèves, chadda, tatouil
+  et hamza, et lit « ى » comme « ي » (« لوز محمص » trouve « لوز محمّص »,
+  « ارز » trouve « أرز ») — comme les accents latins. Recettes « avec /
+  sans » : virgule et point-virgule arabes (« ، » « ؛ ») acceptés,
+  article « ال » collé au mot ignoré (« طماطم » trouve « صلصة الطماطم »).
+  Étiquettes séparées aussi par « ، ».
+
+**Tests** : `tests/test_arabic_ingredients.py` (nouveau : fichiers
+complets, aucun doublon, chiffres conservés, chargement à la demande,
+recherches, recettes avec/sans, substituts, écran à 320 px) ;
+`tests/test_arabic_ui.py` n'accepte plus de nom d'ingrédient français ni
+de fichier `_ar.json` absent.
+
+**Version testée** : v330 (branche)

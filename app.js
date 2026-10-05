@@ -774,11 +774,15 @@ function roundQtyForInput(qty) {
   if (Number.isNaN(n)) return qty;
   return String(Math.round(n * 1000) / 1000);
 }
+// Arabe : voyelles brèves, chadda, tatouil et hamza retirés (« محمّص » =
+// « محمص », « أرز » = « ارز »), « ى » final lu « ي » — comme les accents
+// latins, l'utilisateur ne les tape presque jamais.
 function normalize(str) {
   return (str || "")
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+    .replace(/[\u0300-\u036f\u064b-\u065f\u0670\u0640]/g, "")
+    .replace(/\u0649/g, "\u064a");
 }
 // Isole la première adresse http(s) trouvée dans une chaîne — utilisé
 // pour le partage natif (share_target), où le lien partagé peut arriver
@@ -1672,8 +1676,8 @@ function searchKey(str) {
 const MAX_RECIPE_TAGS = 20;
 const MAX_RECIPE_TAG_LENGTH = 40;
 function normalizeRecipeTags(value) {
-  // Virgules latines et chinoises (« ， » pleine largeur, « 、 »).
-  const raw = Array.isArray(value) ? value : (typeof value === "string" ? value.split(/[,，、]/) : []);
+  // Virgules latines, chinoises (« ， » pleine largeur, « 、 ») et arabe (« ، »).
+  const raw = Array.isArray(value) ? value : (typeof value === "string" ? value.split(/[,，、،]/) : []);
   const seen = new Set();
   const tags = [];
   raw.forEach((v) => {
@@ -1703,8 +1707,11 @@ function allRecipeTags() {
 function singularWord(w) {
   return w.length > 3 && /[sx]$/.test(w) ? w.slice(0, -1) : w;
 }
+function withoutArabicArticle(w) {
+  return w.length > 4 && w.startsWith("\u0627\u0644") ? w.slice(2) : w;
+}
 function parseIngredientTerms(text) {
-  return String(text || "").split(/[,;，、；]/).map(searchKey).filter(Boolean).map((k) => k.split(" "));
+  return String(text || "").split(/[,;，、；،؛]/).map(searchKey).filter(Boolean).map((k) => k.split(" "));
 }
 function ingredientNameMatchesTerm(name, termWords) {
   // Chinois : pas d'espace entre les mots et le mot principal en fin de
@@ -1714,7 +1721,10 @@ function ingredientNameMatchesTerm(name, termWords) {
   if (termWords.some((w) => CJK_CHAR_RE.test(w))) {
     return searchKey(name).replace(/ /g, "").includes(termWords.join(""));
   }
-  const words = searchKey(name).split(" ");
+  // Arabe : article « ال » collé au mot ignoré (« طماطم » trouve
+  // « صلصة الطماطم »).
+  const words = searchKey(name).split(" ").map(withoutArabicArticle);
+  termWords = termWords.map(withoutArabicArticle);
   const last = termWords.length - 1;
   for (let i = 0; i + termWords.length <= words.length; i++) {
     const ok = termWords.every((tw, j) => {
@@ -15100,7 +15110,7 @@ function renderCookingHeatmap(recipes, now = new Date()) {
 // sw.js — affiché sur l'écran de sauvegarde pour vérifier facilement,
 // sans deviner, que la dernière version est bien celle actuellement
 // utilisée.
-const APP_VERSION = 329;
+const APP_VERSION = 330;
 
 // Affiche un état de secours minimal quand init() échoue avant son
 // premier render() — sans lui, un IndexedDB indisponible (navigation
