@@ -10273,3 +10273,23 @@ propres paires, le catalogue seul n'en donnant plus assez) ;
   où l'application ne devine pas, comme ailleurs.
 
 **Version testée** : v339
+
+### 172 — Fiches Play Store dans les 11 langues de l'application
+
+- `FICHE_PLAY_STORE.md` : fiches ajoutées pour les 9 langues qui n'en
+  avaient pas (anglais, espagnol, allemand, indonésien, portugais,
+  italien, suédois, norvégien, chinois simplifié), à partir de la fiche
+  française et des termes de l'interface de chaque langue, avec la langue
+  à cocher dans Play Console (codes vérifiés sur l'aide Google). Deux
+  lignes en plus du français : coût des recettes dans la devise choisie,
+  disponible en 11 langues.
+- Titres portugais (« Minhas Receitas e Compras ») et norvégien
+  (« Oppskrifter og handleliste ») raccourcis : le nom de l'application
+  dans ces langues (31 et 33 caractères) dépasse la limite de 30.
+- Pas de nouvelle version : aucun fichier mis en cache par l'application
+  ne change.
+
+**Tests** : `tests/test_store_listings.py` (nouveau : une fiche par
+langue, limites 30 / 80 / 4000, écriture arabe et chinoise) ;
+`tests/test_arabic_locale.py` (lit la fiche arabe jusqu'à la section
+suivante seulement).

@@ -47,6 +47,7 @@ def main():
     # Fiche Play Store arabe : limites de Google (30 / 80 / 4000 caractères).
     fiche = open(f"{PROJECT_ROOT}/FICHE_PLAY_STORE.md", encoding="utf-8").read()
     part = fiche.split("# Fiche en arabe", 1)[-1] if "# Fiche en arabe" in fiche else ""
+    part = part.split("\n# ", 1)[0]  # jusqu'à la section suivante (autres langues)
     blocks = re.findall(r"```\n(.*?)\n```", part, re.S)
     check("fiche Play Store arabe : titre, description courte et complète", len(blocks) == 3, len(blocks))
     if len(blocks) == 3:
